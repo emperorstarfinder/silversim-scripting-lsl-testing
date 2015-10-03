@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Scene;
+using SilverSim.Types.Parcel;
 
 namespace SilverSim.Scripting.LSL.API.Parcel
 {
@@ -67,15 +69,33 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [APILevel(APIFlags.LSL)]
         public string llGetParcelMusicURL(ScriptInstance Instance)
         {
-#warning Implement llGetParcelMusicURL()
-            throw new NotImplementedException();
+            lock (Instance)
+            {
+                SceneInterface scene = Instance.Part.ObjectGroup.Scene;
+                try
+                {
+                    ParcelInfo pInfo = scene.Parcels[Instance.Part.ObjectGroup.Position];
+                    if (pInfo.Owner.EqualsGrid(Instance.Part.Owner))
+                    {
+                        return pInfo.MusicURI;
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(2)]
         public void llSetParcelMusicURL(ScriptInstance Instance, string url)
         {
-#warning Implement llSetParcelMusicURL(string)
+#warning Implement llSetParcelMusicURL()
             throw new NotImplementedException();
         }
 
@@ -96,8 +116,19 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [APILevel(APIFlags.LSL)]
         public LSLKey llGetLandOwnerAt(ScriptInstance Instance, Vector3 pos)
         {
-#warning Implement llGetLandOwnerAt(Vector3)
-            throw new NotImplementedException();
+            lock (Instance)
+            {
+                SceneInterface scene = Instance.Part.ObjectGroup.Scene;
+                try
+                {
+                    ParcelInfo pInfo = scene.Parcels[pos];
+                    return pInfo.Owner.ID;
+                }
+                catch
+                {
+                    return UUID.Zero;
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL)]
