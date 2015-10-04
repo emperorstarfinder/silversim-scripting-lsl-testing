@@ -32,7 +32,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
                 {
                     throw new ArgumentException("At least one button must be defined");
                 }
-                SilverSim.LL.Messages.Script.ScriptDialog m = new SilverSim.LL.Messages.Script.ScriptDialog();
+                SilverSim.Viewer.Messages.Script.ScriptDialog m = new SilverSim.Viewer.Messages.Script.ScriptDialog();
                 m.Message = message.Substring(0, 256);
                 m.ObjectID = Instance.Part.ObjectGroup.ID;
                 m.ImageID = UUID.Zero;
@@ -81,7 +81,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
         {
             lock (Instance)
             {
-                SilverSim.LL.Messages.Script.LoadURL m = new LL.Messages.Script.LoadURL();
+                SilverSim.Viewer.Messages.Script.LoadURL m = new Viewer.Messages.Script.LoadURL();
                 m.ObjectName = Instance.Part.ObjectGroup.Name;
                 m.ObjectID = Instance.Part.ObjectGroup.ID;
                 m.OwnerID = Instance.Part.ObjectGroup.Owner.ID;
@@ -111,7 +111,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
                 {
                     try
                     {
-                        SilverSim.LL.Messages.Script.ScriptTeleportRequest m = new LL.Messages.Script.ScriptTeleportRequest();
+                        SilverSim.Viewer.Messages.Script.ScriptTeleportRequest m = new Viewer.Messages.Script.ScriptTeleportRequest();
                         m.ObjectName = Instance.Part.ObjectGroup.Name;
                         m.SimName = simname;
                         m.SimPosition = pos;
