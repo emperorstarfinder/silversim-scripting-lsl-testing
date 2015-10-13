@@ -17,22 +17,25 @@ namespace SilverSim.Scripting.LSL
 
         class LSLScriptAssembly : IScriptAssembly
         {
-            Assembly m_Assembly;
-            Type m_Script;
+            public readonly Assembly Assembly;
+            Type m_ScriptType;
             Dictionary<string, Type> m_StateTypes;
             bool m_ForcedSleep;
 
             public LSLScriptAssembly(Assembly assembly, Type script, Dictionary<string, Type> stateTypes, bool forcedSleep)
             {
-                m_Assembly = assembly;
-                m_Script = script;
+                Assembly = assembly;
+                m_ScriptType = script;
                 m_StateTypes = stateTypes;
                 m_ForcedSleep = forcedSleep;
             }
 
             public ScriptInstance Instantiate(ObjectPart objpart, ObjectPartInventoryItem item)
             {
-                Script m_Script = new Script(objpart, item, m_ForcedSleep);
+                ConstructorInfo scriptconstructor = m_ScriptType.
+                    GetConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) });
+                Script m_Script = (Script)scriptconstructor.Invoke(new object[3] { objpart, item, m_ForcedSleep });
+
                 foreach (KeyValuePair<string, Type> t in m_StateTypes)
                 {
                     ConstructorInfo info = t.Value.GetConstructor(new Type[1] { typeof(Script) });
