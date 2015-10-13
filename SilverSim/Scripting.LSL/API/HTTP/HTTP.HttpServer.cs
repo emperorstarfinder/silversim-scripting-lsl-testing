@@ -21,11 +21,11 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                 UUID reqID = UUID.Random;
                 try
                 {
-                    UUID urlID = m_HTTPHandler.RequestURL(Instance.Part, Instance.Item);
+                    string urlID = m_HTTPHandler.RequestURL(Instance.Part, Instance.Item);
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = "";
+                    ev.Body = urlID;
                     Instance.PostEvent(ev);
                 }
                 catch
@@ -57,11 +57,11 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                 UUID reqID = UUID.Random;
                 try
                 {
-                    UUID urlID = m_HTTPHandler.RequestSecureURL(Instance.Part, Instance.Item);
+                    string urlID = m_HTTPHandler.RequestSecureURL(Instance.Part, Instance.Item);
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = "https://" + m_HTTPHandler;
+                    ev.Body = urlID;
                     Instance.PostEvent(ev);
                 }
                 catch

@@ -205,7 +205,6 @@ namespace SilverSim.Scripting.LSL.API.WindLight
         [APILevel(APIFlags.WindLight_New)]
         public int rwlWindlightSetWaterSettings(ScriptInstance Instance, AnArray rules)
         {
-            AnArray res = new AnArray();
             EnvironmentSettings envsettings;
             lock (Instance)
             {

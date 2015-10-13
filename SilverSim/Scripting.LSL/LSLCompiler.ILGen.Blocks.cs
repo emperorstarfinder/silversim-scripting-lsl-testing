@@ -29,7 +29,6 @@ namespace SilverSim.Scripting.LSL
             localVarsStack.Insert(0, localVars);
             labelsStack.Insert(0, new Dictionary<string,ILLabelInfo>());
             int blockLevel = 1;
-            List<string> markedLabels = new List<string>();
 
             for (; lineIndex < functionBody.Count; ++lineIndex)
             {

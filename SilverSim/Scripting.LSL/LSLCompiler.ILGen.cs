@@ -27,7 +27,6 @@ namespace SilverSim.Scripting.LSL
             LineInfo functionLine,
             Dictionary<string, object> localVars)
         {
-            List<string> actFunctionLine = new List<string>();
             if(startAt > endAt)
             {
                 throw new NotImplementedException();

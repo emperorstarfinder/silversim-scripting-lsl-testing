@@ -629,7 +629,6 @@ namespace SilverSim.Scripting.LSL
                     }
                     else
                     {
-                        List<FuncParamInfo> fp;
                         List<LineInfo> funcList = new List<LineInfo>();
                         /* either type or function name */
                         switch (args[0])
@@ -644,14 +643,14 @@ namespace SilverSim.Scripting.LSL
                             case "quaternion":
                             case "void":
                                 checkUsedName(compileState, p, "Function", args[1]);
-                                fp = checkFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
+                                checkFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
                                 funcList.Add(new LineInfo(args, lineNumber));
                                 parseBlock(compileState, p, funcList, false);
                                 compileState.m_Functions[args[1]] = funcList;
                                 break;
 
                             default:
-                                fp = checkFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
+                                checkFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
                                 args.Insert(0, "void");
                                 funcList.Add(new LineInfo(args, lineNumber));
                                 parseBlock(compileState, p, funcList, false);
