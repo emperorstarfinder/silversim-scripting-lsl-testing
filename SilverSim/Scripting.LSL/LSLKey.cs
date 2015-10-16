@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.LSL
                 {
                     return !uuid.Equals(UUID.Zero) ? 1 : 0;
                 }
-                return m_Value.Length != 0 ? 1 : 0;
+                return 0;
             }
         }
 
