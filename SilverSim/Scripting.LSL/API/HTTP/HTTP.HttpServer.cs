@@ -142,15 +142,5 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                 m_HTTPHandler.SetContentType(id, type);
             }
         }
-
-        [ExecutedOnScriptReset]
-        public static void ResetURLs(ScriptInstance Instance)
-        {
-            Script script = (Script)Instance;
-            lock (script)
-            {
-#warning Implement ResetURLs
-            }
-        }
     }
 }
