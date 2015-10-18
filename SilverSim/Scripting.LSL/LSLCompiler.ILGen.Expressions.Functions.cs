@@ -75,7 +75,7 @@ namespace SilverSim.Scripting.LSL
                 {
                     foreach (KeyValuePair<IScriptApi, MethodInfo> kvp in lslCompiler.m_Methods)
                     {
-                        ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(kvp.Key.GetType(), typeof(ScriptFunctionName)) as ScriptFunctionName;
+                        ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(kvp.Value, typeof(ScriptFunctionName)) as ScriptFunctionName;
                         string funcName;
                         if(funcNameAttr != null)
                         {
