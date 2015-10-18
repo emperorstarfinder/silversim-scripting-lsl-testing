@@ -52,11 +52,11 @@ namespace SilverSim.Scripting.LSL.API.Base
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a script", name));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a script", name));
                     }
                     else if (null == si)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a compiled script", name));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a compiled script", name));
                     }
                     else
                     {
@@ -65,7 +65,7 @@ namespace SilverSim.Scripting.LSL.API.Base
                 }
                 else
                 {
-                    throw new Exception(string.Format("Inventory item {0} does not exist", name));
+                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
                 }
             }
         }
@@ -83,11 +83,11 @@ namespace SilverSim.Scripting.LSL.API.Base
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a script", script));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a script", script));
                     }
                     else if (null == si)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a compiled script", script));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a compiled script", script));
                     }
                     else
                     {
@@ -96,7 +96,7 @@ namespace SilverSim.Scripting.LSL.API.Base
                 }
                 else
                 {
-                    throw new Exception(string.Format("Inventory item {0} does not exist", script));
+                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", script));
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace SilverSim.Scripting.LSL.API.Base
                     }
                     else if (null == si)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a compiled script", script));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a compiled script", script));
                     }
                     else
                     {
@@ -127,7 +127,7 @@ namespace SilverSim.Scripting.LSL.API.Base
                 }
                 else
                 {
-                    throw new Exception(string.Format("Inventory item {0} does not exist", script));
+                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", script));
                 }
             }
         }

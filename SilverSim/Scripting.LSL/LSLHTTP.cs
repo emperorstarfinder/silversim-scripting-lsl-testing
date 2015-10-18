@@ -159,7 +159,7 @@ namespace SilverSim.Scripting.LSL
             {
                 req["x-path-info"] = pathinfo;
             }
-            req["x-remote-ip"] = req.CallerIP.ToString();
+            req["x-remote-ip"] = req.CallerIP;
 
             UUID reqid = UUID.Random;
             HttpRequestData data = new HttpRequestData(req, id);

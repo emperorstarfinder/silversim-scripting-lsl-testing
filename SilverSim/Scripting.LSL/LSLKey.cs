@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.LSL
 
         public LSLKey(string val)
         {
-            m_Value = (string)val.Clone();
+            m_Value = val;
         }
 
         public int CompareTo(LSLKey v)
@@ -65,7 +65,7 @@ namespace SilverSim.Scripting.LSL
 
         public override string ToString()
         {
-            return (string)m_Value.Clone();
+            return m_Value;
         }
 
         public AString Substring(Int32 startIndex)

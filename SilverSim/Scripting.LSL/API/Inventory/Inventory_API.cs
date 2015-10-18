@@ -240,7 +240,7 @@ namespace SilverSim.Scripting.LSL.API.Inventory
                 }
                 catch
                 {
-                    throw new Exception(string.Format("Inventory item {0} does not exist", name));
+                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
                 }
             }
         }

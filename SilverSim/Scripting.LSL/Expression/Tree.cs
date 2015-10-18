@@ -120,7 +120,7 @@ namespace SilverSim.Scripting.LSL.Expression
 
             public new string ToString()
             {
-                return Value.ToString();
+                return Value;
             }
 
             public override ValueBase Negate()

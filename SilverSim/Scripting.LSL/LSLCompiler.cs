@@ -62,12 +62,12 @@ namespace SilverSim.Scripting.LSL
         sealed class ControlFlowElement
         {
             public bool IsExplicitBlock;
-            public bool PopNextImplicit = false;
+            public bool PopNextImplicit;
             public ControlFlowType Type;
             public Label? LoopLabel;
             public Label? EndOfControlFlowLabel;
             public Label? EndOfIfFlowLabel;
-            public bool EndOfIfLabelDefined = false;
+            public bool EndOfIfLabelDefined;
 
             public ControlFlowElement(ControlFlowType type, bool isExplicit, Label looplabel, Label eofclabel)
             {
