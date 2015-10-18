@@ -191,13 +191,15 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public Quaternion llEuler2Rot(ScriptInstance Instance, Vector3 v)
+        [ScriptFunctionName("llEuler2Rot")]
+        public Quaternion Euler2Rot(ScriptInstance instance, Vector3 v)
         {
             return Quaternion.CreateFromEulers(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llAngleBetween(ScriptInstance Instance, Quaternion a, Quaternion b)
+        [ScriptFunctionName("llAngleBetween")]
+        public double AngleBetween(ScriptInstance instance, Quaternion a, Quaternion b)
         {   /* based on http://wiki.secondlife.com/wiki/LlAngleBetween */
             Quaternion r = b / a;
             double s2 = r.W * r.W;
@@ -214,7 +216,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public Quaternion llAxes2Rot(ScriptInstance Instance, Vector3 fwd, Vector3 left, Vector3 up)
+        [ScriptFunctionName("llAxes2Rot")]
+        public Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up)
         {
             double s;
             double t = fwd.X + left.Y + up.Z + 1.0;
@@ -259,7 +262,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llRot2Fwd(ScriptInstance Instance, Quaternion r)
+        [ScriptFunctionName("llRot2Fwd")]
+        public Vector3 Rot2Fwd(ScriptInstance instance, Quaternion r)
         {
             double x, y, z, sq;
             sq = r.LengthSquared;
@@ -279,7 +283,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llRot2Left(ScriptInstance Instance, Quaternion r)
+        [ScriptFunctionName("llRot2Left")]
+        public Vector3 Rot2Left(ScriptInstance instance, Quaternion r)
         {
             double x, y, z, sq;
 
@@ -300,7 +305,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llRot2Up(ScriptInstance Instance, Quaternion r)
+        [ScriptFunctionName("llRot2Up")]
+        public Vector3 Rot2Up(ScriptInstance instance, Quaternion r)
         {
             double x, y, z, sq;
 
@@ -321,32 +327,37 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public Quaternion llRotBetween(ScriptInstance Instance, Vector3 a, Vector3 b)
+        [ScriptFunctionName("llRotBetween")]
+        public Quaternion RotBetween(ScriptInstance instance, Vector3 a, Vector3 b)
         {
             return Quaternion.RotBetween(a, b);
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llFloor(ScriptInstance Instance, double f)
+        [ScriptFunctionName("llFloor")]
+        public int Floor(ScriptInstance instance, double f)
         {
             return (int)Math.Floor(f);
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llCeil(ScriptInstance Instance, double f)
+        [ScriptFunctionName("llCeil")]
+        public int Ceil(ScriptInstance instance, double f)
         {
             return (int)Math.Ceiling(f);
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llRound(ScriptInstance Instance, double f)
+        [ScriptFunctionName("llRound")]
+        public int Round(ScriptInstance instance, double f)
         {
             return (int)Math.Round(f, MidpointRounding.AwayFromZero);
         }
 
         private Random random = new Random();
         [APILevel(APIFlags.LSL)]
-        public double llFrand(ScriptInstance Instance, double mag)
+        [ScriptFunctionName("llFrand")]
+        public double Frand(ScriptInstance instance, double mag)
         {
             return random.NextDouble() * mag;
         }

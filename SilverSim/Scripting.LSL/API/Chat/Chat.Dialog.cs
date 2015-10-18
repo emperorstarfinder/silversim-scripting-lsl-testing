@@ -12,9 +12,10 @@ namespace SilverSim.Scripting.LSL.API.Chat
     {
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(1)]
-        public void llDialog(ScriptInstance Instance, LSLKey avatar, string message, AnArray buttons, int channel)
+        [ScriptFunctionName("llDialog")]
+        public void Dialog(ScriptInstance instance, LSLKey avatar, string message, AnArray buttons, int channel)
         {
-            lock (Instance)
+            lock (instance)
             {
                 if (message.Length > 511)
                 {
@@ -34,11 +35,11 @@ namespace SilverSim.Scripting.LSL.API.Chat
                 }
                 SilverSim.Viewer.Messages.Script.ScriptDialog m = new SilverSim.Viewer.Messages.Script.ScriptDialog();
                 m.Message = message.Substring(0, 256);
-                m.ObjectID = Instance.Part.ObjectGroup.ID;
+                m.ObjectID = instance.Part.ObjectGroup.ID;
                 m.ImageID = UUID.Zero;
-                m.ObjectName = Instance.Part.ObjectGroup.Name;
-                m.FirstName = Instance.Part.ObjectGroup.Owner.FirstName;
-                m.LastName = Instance.Part.ObjectGroup.Owner.LastName;
+                m.ObjectName = instance.Part.ObjectGroup.Name;
+                m.FirstName = instance.Part.ObjectGroup.Owner.FirstName;
+                m.LastName = instance.Part.ObjectGroup.Owner.LastName;
                 m.ChatChannel = channel;
                 for (int c = 0; c < buttons.Count && c < 12; ++c )
                 {
@@ -54,11 +55,11 @@ namespace SilverSim.Scripting.LSL.API.Chat
                     m.Buttons.Add(buttontext);
                 }
 
-                m.OwnerData.Add(Instance.Part.ObjectGroup.Owner.ID);
+                m.OwnerData.Add(instance.Part.ObjectGroup.Owner.ID);
 
                 try
                 {
-                    Instance.Part.ObjectGroup.Scene.Agents[avatar].SendMessageAlways(m, Instance.Part.ObjectGroup.Scene.ID);
+                    instance.Part.ObjectGroup.Scene.Agents[avatar].SendMessageAlways(m, instance.Part.ObjectGroup.Scene.ID);
                 }
                 catch
                 {
@@ -69,29 +70,31 @@ namespace SilverSim.Scripting.LSL.API.Chat
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(1)]
-        public void llTextBox(ScriptInstance Instance, LSLKey avatar, string message, int channel)
+        [ScriptFunctionName("llTextBox")]
+        public void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
         {
             AnArray buttons = new AnArray();
             buttons.Add("!!llTextBox!!");
-            llDialog(Instance, avatar, message, buttons, channel);
+            Dialog(instance, avatar, message, buttons, channel);
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(10)]
-        public void llLoadURL(ScriptInstance Instance, LSLKey avatar, string message, string url)
+        [ScriptFunctionName("llLoadURL")]
+        public void LoadURL(ScriptInstance instance, LSLKey avatar, string message, string url)
         {
-            lock (Instance)
+            lock (instance)
             {
                 SilverSim.Viewer.Messages.Script.LoadURL m = new Viewer.Messages.Script.LoadURL();
-                m.ObjectName = Instance.Part.ObjectGroup.Name;
-                m.ObjectID = Instance.Part.ObjectGroup.ID;
-                m.OwnerID = Instance.Part.ObjectGroup.Owner.ID;
+                m.ObjectName = instance.Part.ObjectGroup.Name;
+                m.ObjectID = instance.Part.ObjectGroup.ID;
+                m.OwnerID = instance.Part.ObjectGroup.Owner.ID;
                 m.Message = message;
                 m.URL = url;
 
                 try
                 {
-                    Instance.Part.ObjectGroup.Scene.Agents[avatar].SendMessageAlways(m, Instance.Part.ObjectGroup.Scene.ID);
+                    instance.Part.ObjectGroup.Scene.Agents[avatar].SendMessageAlways(m, instance.Part.ObjectGroup.Scene.ID);
                 }
                 catch
                 {
@@ -102,23 +105,24 @@ namespace SilverSim.Scripting.LSL.API.Chat
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(1)]
-        public void llMapDestination(ScriptInstance Instance, string simname, Vector3 pos, Vector3 look_at)
+        [ScriptFunctionName("llMapDestination")]
+        public void MapDestination(ScriptInstance instance, string simname, Vector3 pos, Vector3 look_at)
         {
-            lock(Instance)
+            lock(instance)
             {
-                Script script = (Script)Instance;
+                Script script = (Script)instance;
 
                 foreach (DetectInfo detinfo in script.m_Detected)
                 {
                     try
                     {
                         SilverSim.Viewer.Messages.Script.ScriptTeleportRequest m = new Viewer.Messages.Script.ScriptTeleportRequest();
-                        m.ObjectName = Instance.Part.ObjectGroup.Name;
+                        m.ObjectName = instance.Part.ObjectGroup.Name;
                         m.SimName = simname;
                         m.SimPosition = pos;
                         m.LookAt = look_at;
 
-                        Instance.Part.ObjectGroup.Scene.Agents[detinfo.Object.ID].SendMessageAlways(m, Instance.Part.ObjectGroup.Scene.ID);
+                        instance.Part.ObjectGroup.Scene.Agents[detinfo.Object.ID].SendMessageAlways(m, instance.Part.ObjectGroup.Scene.ID);
                     }
                     catch
                     {

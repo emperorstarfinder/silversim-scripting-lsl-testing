@@ -14,54 +14,58 @@ namespace SilverSim.Scripting.LSL.API.Chat
         public static int MaxListenerHandles = 64;
 
         [APILevel(APIFlags.LSL)]
-        public void llShout(ScriptInstance Instance, int channel, string message)
+        [ScriptFunctionName("llShout")]
+        public void Shout(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
             ev.Type = ListenEvent.ChatType.Shout;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
-            ev.OwnerID = getOwner(Instance);
-            sendChat(Instance, ev);
+            ev.OwnerID = getOwner(instance);
+            sendChat(instance, ev);
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSay(ScriptInstance Instance, int channel, string message)
+        [ScriptFunctionName("llSay")]
+        public void Say(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
             ev.Type = ListenEvent.ChatType.Say;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
-            ev.OwnerID = getOwner(Instance);
-            sendChat(Instance, ev);
+            ev.OwnerID = getOwner(instance);
+            sendChat(instance, ev);
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llWhisper(ScriptInstance Instance, int channel, string message)
+        [ScriptFunctionName("llWhisper")]
+        public void Whisper(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
             ev.Type = ListenEvent.ChatType.Whisper;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
-            ev.OwnerID = getOwner(Instance);
-            sendChat(Instance, ev);
+            ev.OwnerID = getOwner(instance);
+            sendChat(instance, ev);
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llOwnerSay(ScriptInstance Instance, string message)
+        [ScriptFunctionName("llOwnerSay")]
+        public void OwnerSay(ScriptInstance instance, string message)
         {
-            lock (Instance)
+            lock (instance)
             {
                 ListenEvent ev = new ListenEvent();
                 ev.Channel = PUBLIC_CHANNEL;
                 ev.Type = ListenEvent.ChatType.OwnerSay;
                 ev.Message = message;
-                ev.TargetID = Instance.Part.ObjectGroup.Owner.ID;
+                ev.TargetID = instance.Part.ObjectGroup.Owner.ID;
                 ev.SourceType = ListenEvent.ChatSourceType.Object;
-                ev.OwnerID = getOwner(Instance);
-                sendChat(Instance, ev);
+                ev.OwnerID = getOwner(instance);
+                sendChat(instance, ev);
             }
         }
 

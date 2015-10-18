@@ -8,9 +8,10 @@ namespace SilverSim.Scripting.LSL.API.Base
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL)]
-        public void llSetTimerEvent(ScriptInstance Instance, double sec)
+        [ScriptFunctionName("llSetTimerEvent")]
+        public void SetTimerEvent(ScriptInstance instance, double sec)
         {
-            Script script = (Script)Instance;
+            Script script = (Script)instance;
             lock (script)
             {
                 script.Timer.Enabled = false;

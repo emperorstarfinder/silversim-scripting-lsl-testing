@@ -16,13 +16,14 @@ namespace SilverSim.Scripting.LSL.API.Base
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL)]
-        public string llGetScriptName(ScriptInstance Instance)
+        [ScriptFunctionName("llGetScriptName")]
+        public string GetScriptName(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
                 try
                 {
-                    return Instance.Item.Name;
+                    return instance.Item.Name;
                 }
                 catch
                 {
@@ -32,19 +33,21 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llResetScript(ScriptInstance Instance)
+        [ScriptFunctionName("llResetScript")]
+        public void ResetScript(ScriptInstance instance)
         {
             throw new ResetScriptException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llResetOtherScript(ScriptInstance Instance, string name)
+        [ScriptFunctionName("llResetOtherScript")]
+        public void ResetOtherScript(ScriptInstance instance, string name)
         {
-            lock (Instance)
+            lock (instance)
             {
                 ObjectPartInventoryItem item;
                 ScriptInstance si;
-                if (Instance.Part.Inventory.TryGetValue(name, out item))
+                if (instance.Part.Inventory.TryGetValue(name, out item))
                 {
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
@@ -68,13 +71,14 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llGetScriptState(ScriptInstance Instance, string script)
+        [ScriptFunctionName("llGetScriptState")]
+        public int GetScriptState(ScriptInstance instance, string script)
         {
             ObjectPartInventoryItem item;
             ScriptInstance si;
-            lock (Instance)
+            lock (instance)
             {
-                if (Instance.Part.Inventory.TryGetValue(script, out item))
+                if (instance.Part.Inventory.TryGetValue(script, out item))
                 {
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
@@ -98,13 +102,14 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetScriptState(ScriptInstance Instance, string script, int running)
+        [ScriptFunctionName("llSetScriptState")]
+        public void SetScriptState(ScriptInstance instance, string script, int running)
         {
             ObjectPartInventoryItem item;
             ScriptInstance si;
-            lock (Instance)
+            lock (instance)
             {
-                if (Instance.Part.Inventory.TryGetValue(script, out item))
+                if (instance.Part.Inventory.TryGetValue(script, out item))
                 {
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
@@ -128,81 +133,83 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRemoteLoadScript(ScriptInstance Instance, LSLKey target, string name, int running, int start_param)
+        [ScriptFunctionName("llRemoteLoadScript")]
+        public void RemoteLoadScript(ScriptInstance instance, LSLKey target, string name, int running, int start_param)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.ShoutError("This function has been deprecated. Please use llRemoteLoadscriptPin instead");
+                instance.ShoutError("This function has been deprecated. Please use llRemoteLoadscriptPin instead");
             }
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(3)]
-        public void llRemoteLoadScriptPin(ScriptInstance Instance, LSLKey target, string name, int pin, int running, int start_param)
+        [ScriptFunctionName("llRemoteLoadScriptPin")]
+        public void RemoteLoadScriptPin(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param)
         {
-            lock(Instance)
+            lock(instance)
             {
                 ObjectPartInventoryItem scriptitem;
                 ObjectPart destpart;
                 AssetData asset;
                 try
                 {
-                    destpart = Instance.Part.ObjectGroup.Scene.Primitives[target];
+                    destpart = instance.Part.ObjectGroup.Scene.Primitives[target];
                 }
                 catch
                 {
-                    Instance.ShoutError("llRemoteLoadScriptPin: destination prim does not exist");
+                    instance.ShoutError("llRemoteLoadScriptPin: destination prim does not exist");
                     return;
                 }
 
                 try
                 {
-                    scriptitem = Instance.Part.Inventory[name];
+                    scriptitem = instance.Part.Inventory[name];
                 }
                 catch
                 {
-                    Instance.ShoutError(string.Format("llRemoteLoadScriptPin: Script '{0}' does not exist", name));
+                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Script '{0}' does not exist", name));
                     return;
                 }
 
                 try
                 {
-                    asset = Instance.Part.ObjectGroup.Scene.AssetService[scriptitem.AssetID];
+                    asset = instance.Part.ObjectGroup.Scene.AssetService[scriptitem.AssetID];
                 }
                 catch
                 {
-                    Instance.ShoutError(string.Format("llRemoteLoadScriptPin: Failed to find asset for script '{0}'", name));
+                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Failed to find asset for script '{0}'", name));
                     return;
                 }
 
-                if(destpart.ID == Instance.Part.ID)
+                if (destpart.ID == instance.Part.ID)
                 {
-                    Instance.ShoutError("llRemoteLoadScriptPin: Unable to add item");
+                    instance.ShoutError("llRemoteLoadScriptPin: Unable to add item");
                     return;
                 }
 
                 if(scriptitem.InventoryType != InventoryType.LSLText)
                 {
-                    Instance.ShoutError(string.Format("llRemoteLoadScriptPin: Inventory item '{0}' is not a script", name));
+                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Inventory item '{0}' is not a script", name));
                     return;
                 }
 
-                if (destpart.Owner != Instance.Part.Owner)
+                if (destpart.Owner != instance.Part.Owner)
                 {
                     if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Transfer) == 0)
                     {
-                        Instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} does not have transfer permission", scriptitem.Name));
+                        instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} does not have transfer permission", scriptitem.Name));
                         return;
                     }
-                    else if(destpart.CheckPermissions(Instance.Part.Owner, Instance.Part.ObjectGroup.Group, InventoryPermissionsMask.Modify))
+                    else if(destpart.CheckPermissions(instance.Part.Owner, instance.Part.ObjectGroup.Group, InventoryPermissionsMask.Modify))
                     {
-                        Instance.ShoutError(string.Format("llRemoteLoadScriptPin: Dest Part {0} does not have modify permission", destpart.Name));
+                        instance.ShoutError(string.Format("llRemoteLoadScriptPin: Dest Part {0} does not have modify permission", destpart.Name));
                         return;
                     }
                 }
                 if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Copy) == 0)
                 {
-                    Instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} does not have copy permission", scriptitem.Name));
+                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} does not have copy permission", scriptitem.Name));
                     return;
                 }
 
@@ -213,15 +220,15 @@ namespace SilverSim.Scripting.LSL.API.Base
 
                 if(destpart.ScriptAccessPin != pin)
                 {
-                    Instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} trying to load script onto prim {1} without correct access pin", Instance.Part.Name, destpart.Name));
+                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} trying to load script onto prim {1} without correct access pin", instance.Part.Name, destpart.Name));
                     return;
                 }
 
                 ObjectPartInventoryItem newitem = new ObjectPartInventoryItem(scriptitem);
                 destpart.Inventory.Replace(name, newitem);
-                ScriptInstance instance = ScriptLoader.Load(destpart, newitem, newitem.Owner, asset);
-                instance.IsRunning = running != 0;
-                instance.PostEvent(new OnRezEvent(start_param));
+                ScriptInstance newInstance = ScriptLoader.Load(destpart, newitem, newitem.Owner, asset);
+                newInstance.IsRunning = running != 0;
+                newInstance.PostEvent(new OnRezEvent(start_param));
             }
         }
     }

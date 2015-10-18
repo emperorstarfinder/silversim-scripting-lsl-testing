@@ -9,7 +9,8 @@ namespace SilverSim.Scripting.LSL.API.Base
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL)]
-        public string llDeleteSubString(ScriptInstance Instance, string src, int start, int end)
+        [ScriptFunctionName("llDeleteSubString")]
+        public string DeleteSubString(ScriptInstance instance, string src, int start, int end)
         {
             if (start < 0)
             {
@@ -49,25 +50,29 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llToLower(ScriptInstance Instance, string s)
+        [ScriptFunctionName("llToLower")]
+        public string ToLower(ScriptInstance instance, string s)
         {
             return s.ToLower();
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llToUpper(ScriptInstance Instance, string s)
+        [ScriptFunctionName("llToUpper")]
+        public string ToUpper(ScriptInstance instance, string s)
         {
             return s.ToUpper();
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llUnescapeURL(ScriptInstance Instance, string url)
+        [ScriptFunctionName("llUnescapeURL")]
+        public string UnescapeURL(ScriptInstance instance, string url)
         {
             return Uri.UnescapeDataString(url);
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llEscapeURL(ScriptInstance Instance, string url)
+        [ScriptFunctionName("llEscapeURL")]
+        public string EscapeURL(ScriptInstance instance, string url)
         {
             return Uri.EscapeDataString(url);
         }
@@ -82,7 +87,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         private static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
 
         [APILevel(APIFlags.LSL)]
-        public string llStringTrim(ScriptInstance Instance, string src, int type)
+        [ScriptFunctionName("llStringTrim")]
+        public string StringTrim(ScriptInstance instance, string src, int type)
         {
             switch(type & STRING_TRIM)
             {
@@ -102,19 +108,22 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llStringLength(ScriptInstance Instance, string src)
+        [ScriptFunctionName("llStringLength")]
+        public int StringLength(ScriptInstance instance, string src)
         {
             return src.Length;
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llSubStringIndex(ScriptInstance Instance, string source, string pattern)
+        [ScriptFunctionName("llSubStringIndex")]
+        public int SubStringIndex(ScriptInstance instance, string source, string pattern)
         {
             return source.IndexOf(pattern);
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetSubstring(ScriptInstance Instance, string src, int start, int end)
+        [ScriptFunctionName("llGetSubstring")]
+        public string GetSubstring(ScriptInstance instance, string src, int start, int end)
         {
             if(start < 0)
             {

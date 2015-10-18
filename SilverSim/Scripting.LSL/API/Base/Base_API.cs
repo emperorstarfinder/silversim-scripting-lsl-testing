@@ -156,13 +156,15 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSleep(ScriptInstance Instance, double secs)
+        [ScriptFunctionName("llSleep")]
+        public void Sleep(ScriptInstance instance, double secs)
         {
-            Instance.Sleep(secs);
+            instance.Sleep(secs);
         }
 
         [APILevel(APIFlags.ASSL)]
-        public void asSetForcedSleep(ScriptInstance Instance, int flag, double factor)
+        [ScriptFunctionName("asSetForcedSleep")]
+        public void SetForcedSleep(ScriptInstance instance, int flag, double factor)
         {
             if(factor > 1)
             {
@@ -172,20 +174,21 @@ namespace SilverSim.Scripting.LSL.API.Base
             {
                 flag = 0;
             }
-            lock(Instance)
+            lock(instance)
             {
-                Script script = (Script)Instance;
+                Script script = (Script)instance;
                 script.ForcedSleepFactor = factor;
                 script.UseForcedSleep = flag != 0;
             }
         }
 
         [APILevel(APIFlags.ASSL)]
-        public void asSetForcedSleepEnable(ScriptInstance Instance, int flag)
+        [ScriptFunctionName("asSetForcedSleepEnable")]
+        public void SetForcedSleepEnable(ScriptInstance instance, int flag)
         {
-            lock(Instance)
+            lock(instance)
             {
-                Script script = (Script)Instance;
+                Script script = (Script)instance;
                 script.UseForcedSleep = flag != 0;
             }
         }
