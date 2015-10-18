@@ -161,7 +161,7 @@ namespace SilverSim.Scripting.LSL
                         }
                         else
                         {
-                            ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[0]));
+                            ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                         }
                         ilgen.Emit(OpCodes.Stloc, lb);
                         break;
@@ -226,7 +226,7 @@ namespace SilverSim.Scripting.LSL
                         }
                         else
                         {
-                            ilgen.Emit(OpCodes.Ldstr, "");
+                            ilgen.Emit(OpCodes.Ldstr, string.Empty);
                         }
                         ilgen.Emit(OpCodes.Stloc, lb);
                         break;
@@ -259,7 +259,7 @@ namespace SilverSim.Scripting.LSL
                         }
                         else
                         {
-                            ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(new Type[0]));
+                            ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
                         }
                         ilgen.Emit(OpCodes.Stloc, lb);
                         break;
@@ -823,7 +823,7 @@ namespace SilverSim.Scripting.LSL
             }
             else if (returnType == typeof(AnArray))
             {
-                ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[0]));
+                ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
             }
             else if (returnType == typeof(Vector3))
             {
@@ -835,7 +835,7 @@ namespace SilverSim.Scripting.LSL
             }
             else if (returnType == typeof(LSLKey))
             {
-                ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(new Type[0]));
+                ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
             }
             ilgen.Emit(OpCodes.Ret);
             compileState.FinishControlFlowChecks();

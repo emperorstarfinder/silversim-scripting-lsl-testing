@@ -20,7 +20,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
                 {
                     throw new ArgumentException("Message more than 511 characters");
                 }
-                else if(message == "")
+                else if(message.Length == 0)
                 {
                     throw new ArgumentException("Message is empty");
                 }
@@ -42,15 +42,16 @@ namespace SilverSim.Scripting.LSL.API.Chat
                 m.ChatChannel = channel;
                 for (int c = 0; c < buttons.Count && c < 12; ++c )
                 {
-                    if(buttons[c].ToString().Equals(""))
+                    string buttontext = buttons[c].ToString();
+                    if (buttontext.Length == 0)
                     {
                         throw new ArgumentException("button label cannot be blank");
                     }
-                    else if(buttons[c].ToString().Length > 24)
+                    else if (buttontext.Length > 24)
                     {
                         throw new ArgumentException("button label cannot be more than 24 characters");
                     }
-                    m.Buttons.Add(buttons.ToString());
+                    m.Buttons.Add(buttontext);
                 }
 
                 m.OwnerData.Add(Instance.Part.ObjectGroup.Owner.ID);

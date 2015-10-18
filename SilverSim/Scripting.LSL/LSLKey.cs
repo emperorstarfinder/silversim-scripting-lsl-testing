@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.LSL
         #endregion Operators
 
         #region Helpers
-        public ABoolean AsBoolean { get { return new ABoolean(m_Value != ""); } }
+        public ABoolean AsBoolean { get { return new ABoolean(m_Value.Length != 0); } }
         public Integer AsInteger { get { return new Integer(Int32.Parse(m_Value)); } }
         public Quaternion AsQuaternion { get { return Quaternion.Parse(m_Value); } }
         public Real AsReal { get { return Real.Parse(m_Value); } }

@@ -390,7 +390,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 
             if (index < 0 || index >= src.Count)
             {
-                return "";
+                return string.Empty;
             }
 
             return src[index].AsString.ToString();
@@ -639,23 +639,23 @@ namespace SilverSim.Scripting.LSL.API.Base
                         {
                             break;
                         }
-                        value += c;
+                        value += c.ToString();
                         break;
 
                     case '<':
                         inbracket = true;
-                        value += c;
+                        value += c.ToString();
                         break;
 
                     case '>':
                         inbracket = false;
-                        value += c;
+                        value += c.ToString();
                         break;
 
                     case ',':
                         if(inbracket)
                         {
-                            value += c;
+                            value += c.ToString();
                             break;
                         }
 
@@ -665,7 +665,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 
                     default:
                         wsconsume = false;
-                        value += c;
+                        value += c.ToString();
                         break;
                 }
             }

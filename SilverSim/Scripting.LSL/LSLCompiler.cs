@@ -553,6 +553,18 @@ namespace SilverSim.Scripting.LSL
                                         m.Name,
                                         m.DeclaringType.FullName);
                                 }
+                                LSLFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(m, typeof(LSLFunctionName)) as LSLFunctionName;
+                                string funcName = m.Name;
+                                if (funcNameAttr == null)
+                                {
+                                    m_Log.DebugFormat("Method '{0}' in '{1}' has no LSLFunctionName attribute!!!",
+                                        m.Name,
+                                        m.DeclaringType.FullName);
+                                }
+                                else
+                                {
+                                    funcName = funcNameAttr.Name;
+                                }
                                 for (int i = 1; i < pi.Length; ++i)
                                 {
                                     if(!IsValidType(pi[i].ParameterType))
@@ -577,9 +589,9 @@ namespace SilverSim.Scripting.LSL
                                 if (methodValid)
                                 {
                                     m_Methods.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
-                                    if (!m_MethodNames.Contains(m.Name))
+                                    if (!m_MethodNames.Contains(funcName))
                                     {
-                                        m_MethodNames.Add(m.Name);
+                                        m_MethodNames.Add(funcName);
                                     }
                                 }
                             }
@@ -797,14 +809,6 @@ namespace SilverSim.Scripting.LSL
         void WriteIndented(TextWriter writer, List<string> list, ref int oldIndent)
         {
             foreach(string s in list)
-            {
-                WriteIndented(writer, s, ref oldIndent);
-            }
-        }
-
-        void WriteIndented(TextWriter writer, string[] strarray, ref int oldIndent)
-        {
-            foreach(string s in strarray)
             {
                 WriteIndented(writer, s, ref oldIndent);
             }

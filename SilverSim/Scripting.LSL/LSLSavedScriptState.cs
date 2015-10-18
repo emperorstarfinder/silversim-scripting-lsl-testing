@@ -69,8 +69,8 @@ namespace SilverSim.Scripting.LSL
 
             static void ListItemFromXml(XmlTextReader reader, AnArray array)
             {
-                string type = "";
-                string attrname = "";
+                string type = string.Empty;
+                string attrname = string.Empty;
                 while (reader.ReadAttributeValue())
                 {
                     switch (reader.NodeType)
@@ -96,7 +96,7 @@ namespace SilverSim.Scripting.LSL
                     }
                 }
 
-                if (type == "")
+                if (type.Length == 0)
                 {
                     throw new InvalidObjectXmlException();
                 }
@@ -176,8 +176,8 @@ namespace SilverSim.Scripting.LSL
 
             static void VariableFromXml(XmlTextReader reader, SavedScriptState state)
             {
-                string type = "";
-                string varname = "";
+                string type = string.Empty;
+                string varname = string.Empty;
                 if(reader.MoveToFirstAttribute())
                 {
                     do
@@ -198,7 +198,7 @@ namespace SilverSim.Scripting.LSL
                     } while (reader.MoveToNextAttribute());
                 }
 
-                if(varname == "" || type == "")
+                if(varname.Length == 0 || type.Length == 0)
                 {
                     throw new InvalidObjectXmlException();
                 }

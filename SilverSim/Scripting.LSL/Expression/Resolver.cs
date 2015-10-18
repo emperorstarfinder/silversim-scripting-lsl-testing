@@ -10,6 +10,7 @@ namespace SilverSim.Scripting.LSL.Expression
 {
     public class Resolver
     {
+        [Serializable]
         public class ResolverException : Exception
         {
             public ResolverException(string msg)
@@ -95,7 +96,7 @@ namespace SilverSim.Scripting.LSL.Expression
             m_BlockOps = blockOps;
         }
 
-        void resolveValues(Tree nt)
+        void ResolveValues(Tree nt)
         {
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(nt));
@@ -121,7 +122,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void resolveSeparators(Tree nt)
+        void ResolveSeparators(Tree nt)
         {
             List<Tree> enumTree = new List<Tree>();
             enumTree.Add(nt);
@@ -137,7 +138,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void resolveBlockOps(Tree nt)
+        void ResolveBlockOps(Tree nt)
         {
             List<Tree> enumTree = new List<Tree>();
             enumTree.Add(nt);
@@ -160,7 +161,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void identifyReservedWords(Tree tree)
+        void IdentifyReservedWords(Tree tree)
         {
             List<Tree> processNodes = new List<Tree>();
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
@@ -192,7 +193,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void sortBlockOps(Tree nt, int i = 0)
+        void SortBlockOps(Tree nt, int i = 0)
         {
             List<Tree> blockSort = new List<Tree>();
 
@@ -241,7 +242,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void identifyFunctions(Tree tree)
+        void IdentifyFunctions(Tree tree)
         {
             List<Tree> processNodes = new List<Tree>();
             List<ListTreeEnumReverseState> enumeratorStack = new List<ListTreeEnumReverseState>();
@@ -311,7 +312,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void reorderDeclarationArguments(Tree nt, int start, int end)
+        void ReorderDeclarationArguments(Tree nt, int start, int end)
         {
             List<Tree> argumentsInput = nt.SubTree.GetRange(start + 1, end - start - 1);
             nt.SubTree.RemoveRange(start + 1, end - start);
@@ -352,7 +353,7 @@ namespace SilverSim.Scripting.LSL.Expression
             nt.SubTree[start].SubTree = argumentsList;
         }
 
-        void identifySquareBracketDeclarations(Tree tree)
+        void IdentifySquareBracketDeclarations(Tree tree)
         {
             int start ;
             List<Tree> processNodes = new List<Tree>();
@@ -408,7 +409,7 @@ namespace SilverSim.Scripting.LSL.Expression
                             }
                             else
                             {
-                                reorderDeclarationArguments(nt, start, end);
+                                ReorderDeclarationArguments(nt, start, end);
                             }
                         }
                         else if (nt.SubTree[start - 1].Type == Tree.EntryType.OperatorUnknown ||
@@ -442,7 +443,7 @@ namespace SilverSim.Scripting.LSL.Expression
                             }
                             else
                             {
-                                reorderDeclarationArguments(nt, start, end);
+                                ReorderDeclarationArguments(nt, start, end);
                             }
                         }
                     }
@@ -450,7 +451,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        bool isValidLeftHand(Tree nt)
+        bool IsValidLeftHand(Tree nt)
         {
             switch(nt.Type)
             {
@@ -473,7 +474,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        bool isValidRightHand(Tree nt)
+        bool IsValidRightHand(Tree nt)
         {
             switch(nt.Type)
             {
@@ -495,7 +496,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        bool isValidUnaryLeft(Tree nt)
+        bool IsValidUnaryLeft(Tree nt)
         {
             switch(nt.Type)
             {
@@ -517,7 +518,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        bool isValidUnaryRight(Tree nt)
+        bool IsValidUnaryRight(Tree nt)
         {
             switch(nt.Type)
             {
@@ -534,7 +535,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void identifyUnaryOps(Tree tree)
+        void IdentifyUnaryOps(Tree tree)
         {
             int pos;
             List<Tree> processNodes = new List<Tree>();
@@ -571,7 +572,7 @@ namespace SilverSim.Scripting.LSL.Expression
                                 {
                                     if (pos == 0 && pos < nt.SubTree.Count - 1)
                                     {
-                                        if (isValidUnaryLeft(nt.SubTree[pos + 1]))
+                                        if (IsValidUnaryLeft(nt.SubTree[pos + 1]))
                                         {
                                             st.Type = Tree.EntryType.OperatorLeftUnary;
                                             break;
@@ -580,7 +581,7 @@ namespace SilverSim.Scripting.LSL.Expression
                                     else if (pos > 0 && pos < nt.SubTree.Count - 1 &&
                                         (nt.SubTree[pos - 1].Type == Tree.EntryType.OperatorUnknown ||
                                         nt.SubTree[pos - 1].Type == Tree.EntryType.OperatorBinary) &&
-                                        isValidUnaryLeft(nt.SubTree[pos + 1]))
+                                        IsValidUnaryLeft(nt.SubTree[pos + 1]))
                                     {
                                         st.Type = Tree.EntryType.OperatorLeftUnary;
                                         break;
@@ -590,7 +591,7 @@ namespace SilverSim.Scripting.LSL.Expression
                                 {
                                     if (pos > 0)
                                     {
-                                        if (isValidUnaryRight(nt.SubTree[pos - 1]))
+                                        if (IsValidUnaryRight(nt.SubTree[pos - 1]))
                                         {
                                             st.Type = Tree.EntryType.OperatorRightUnary;
                                             break;
@@ -604,7 +605,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void identifyBinaryOps(Tree tree)
+        void IdentifyBinaryOps(Tree tree)
         {
             int pos;
             List<Tree> processNodes = new List<Tree>();
@@ -652,8 +653,8 @@ namespace SilverSim.Scripting.LSL.Expression
                                 case OperatorType.Binary:
                                     if (pos > 0 && pos < nt.SubTree.Count - 1)
                                     {
-                                        if (isValidLeftHand(nt.SubTree[pos - 1]) &&
-                                            isValidRightHand(nt.SubTree[pos + 1]))
+                                        if (IsValidLeftHand(nt.SubTree[pos - 1]) &&
+                                            IsValidRightHand(nt.SubTree[pos + 1]))
                                         {
                                             st.Type = Tree.EntryType.OperatorBinary;
                                         }
@@ -666,7 +667,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void sortUnaryOps(Tree tree)
+        void SortUnaryOps(Tree tree)
         {
             List<ListTreeEnumReverseState> enumeratorStack = new List<ListTreeEnumReverseState>();
             enumeratorStack.Insert(0, new ListTreeEnumReverseState(tree));
@@ -708,7 +709,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void sortBinaryOps(Tree tree)
+        void SortBinaryOps(Tree tree)
         {
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(tree));
@@ -786,7 +787,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        void identifyVariables(Tree tree, ICollection<string> variables)
+        void IdentifyVariables(Tree tree, ICollection<string> variables)
         {
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(tree));
@@ -809,7 +810,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        public void solveDotOperator(Tree tree)
+        public void SolveDotOperator(Tree tree)
         {
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
             int pos;
@@ -817,7 +818,7 @@ namespace SilverSim.Scripting.LSL.Expression
             {
                 if (tree.SubTree[pos].Type == Tree.EntryType.OperatorUnknown && tree.SubTree[pos].Entry == "." && pos > 0 && pos + 1 < tree.SubTree.Count)
                 {
-                    if (isValidLeftHand(tree.SubTree[pos - 1]) &&
+                    if (IsValidLeftHand(tree.SubTree[pos - 1]) &&
                         (tree.SubTree[pos + 1].Type == Tree.EntryType.Variable ||
                         tree.SubTree[pos + 1].Type == Tree.EntryType.Unknown))
                     {
@@ -852,7 +853,7 @@ namespace SilverSim.Scripting.LSL.Expression
                     {
                         if (tree.SubTree[pos].Type == Tree.EntryType.OperatorUnknown && tree.SubTree[pos].Entry == "." && pos > 0 && pos + 1 < tree.SubTree.Count)
                         {
-                            if (isValidLeftHand(tree.SubTree[pos - 1]) &&
+                            if (IsValidLeftHand(tree.SubTree[pos - 1]) &&
                                 (tree.SubTree[pos + 1].Type == Tree.EntryType.Variable ||
                                 tree.SubTree[pos + 1].Type == Tree.EntryType.Unknown))
                             {
@@ -880,19 +881,19 @@ namespace SilverSim.Scripting.LSL.Expression
 
         public void Process(Tree tree, ICollection<string> variables)
         {
-            identifyReservedWords(tree);
-            identifyVariables(tree, variables);
-            resolveValues(tree);
-            resolveSeparators(tree);
-            resolveBlockOps(tree);
-            sortBlockOps(tree);
-            identifySquareBracketDeclarations(tree);
-            identifyFunctions(tree);
-            solveDotOperator(tree);
-            identifyUnaryOps(tree);
-            sortUnaryOps(tree);
-            identifyBinaryOps(tree);
-            sortBinaryOps(tree);
+            IdentifyReservedWords(tree);
+            IdentifyVariables(tree, variables);
+            ResolveValues(tree);
+            ResolveSeparators(tree);
+            ResolveBlockOps(tree);
+            SortBlockOps(tree);
+            IdentifySquareBracketDeclarations(tree);
+            IdentifyFunctions(tree);
+            SolveDotOperator(tree);
+            IdentifyUnaryOps(tree);
+            SortUnaryOps(tree);
+            IdentifyBinaryOps(tree);
+            SortBinaryOps(tree);
             if(tree.SubTree.Count != 1)
             {
                 throw new ResolverException("Internal Error! Expression tree not solved");

@@ -30,7 +30,7 @@ namespace SilverSim.Scripting.LSL
             public bool VerboseThrottle = true;
             public bool SendPragmaNoCache = true;
             public int MaxBodyLength = 2048;
-            public string RequestBody = "";
+            public string RequestBody = string.Empty;
             public Dictionary<string, string> Headers = new Dictionary<string, string>();
 
             public LSLHttpRequest()
@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.LSL
             for(i = 0; i < 10; ++i)
             {
                 Thread t = new Thread(ProcessThread);
-                t.Name = "LSL:HTTPClient Processor for region " + scene.ID;
+                t.Name = "LSL:HTTPClient Processor for region " + scene.ID.ToString();
                 t.Start(scene.ID);
             }
         }

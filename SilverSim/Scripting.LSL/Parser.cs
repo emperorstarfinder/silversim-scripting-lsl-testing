@@ -83,25 +83,31 @@ redo:
                         {
                             CurrentLineNumber = getfileinfo().LineNumber;
                         }
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
-                        token = "";
+                        }
+                        token = string.Empty;
                         do
                         {
-                            if(c == '\\')
+                            if (c == '\\')
                             {
-                                token += (char) c;
+                                token += ((char)c).ToString();
                                 c = readc();
-                                token += (char) c;
+                                token += ((char)c).ToString();
                             }
                             else
-                                token += (char) c;
+                            {
+                                token += ((char)c).ToString();
+                            }
                             c = readc();
                         } while(c != '\"');
                         token += "\"";
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
-                        token = "";
+                        }
+                        token = string.Empty;
                         break;
             
                     case '\'':      /* string literal */
@@ -109,25 +115,31 @@ redo:
                         {
                             CurrentLineNumber = getfileinfo().LineNumber;
                         }
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
-                        token = "";
+                        }
+                        token = string.Empty;
                         do
                         {
-                            if(c == '\\')
+                            if (c == '\\')
                             {
-                                token += (char) c;
+                                token += ((char)c).ToString();
                                 c = readc();
-                                token += (char) c;
+                                token += ((char)c).ToString();
                             }
                             else
-                                token += (char) c;
+                            {
+                                token += ((char)c).ToString();
+                            }
                             c = readc();
                         } while(c != '\'');
                         token += "\'";
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
-                        token = "";
+                        }
+                        token = string.Empty;
                         break;
 
                     case '@':
@@ -143,9 +155,11 @@ redo:
                         {
                             CurrentLineNumber = getfileinfo().LineNumber;
                         }
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
-                        token = "";
+                        }
+                        token = string.Empty;
                         args.Add(new string(new char[] {c}));
                         if (c == '(') ++parencount;
                         if( c == ')')
@@ -170,9 +184,11 @@ redo:
                                 if(args[0] == "#include" || args[0] == "#include_once")
                                 {
                                     /* preprocessor literal */
-                                    if(0 != token.Length)
+                                    if (0 != token.Length)
+                                    {
                                         args.Add(token);
-                                    token = "";
+                                    }
+                                    token = string.Empty;
                                     c = '\"';
                                     do
                                     {
@@ -182,7 +198,7 @@ redo:
                                     token += "\"";
                                     if(0 != token.Length)
                                         args.Add(token);
-                                    token = "";
+                                    token = string.Empty;
                                     break;
                                 }
                             }
@@ -197,7 +213,7 @@ redo:
                             if(0 != token.Length)
                             {
                                 args.Add(token);
-                                token = "";
+                                token = string.Empty;
                             }
                         }
                         else
@@ -206,11 +222,13 @@ redo:
                             {
                                 CurrentLineNumber = getfileinfo().LineNumber;
                             }
-                            if (token == "" && args.Count == 0 && c == '#')
+                            if (token.Length == 0 && args.Count == 0 && c == '#')
+                            {
                                 is_preprocess = true;
+                            }
                             while(!Char.IsWhiteSpace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
-                                token += (char) c;
+                                token += ((char) c).ToString();
 
                                 if(token == "//")
                                 {
@@ -222,14 +240,16 @@ redo:
                                         {
                                             c = readc();
                                         }
-                                        catch(EndOfFileException e)
+                                        catch(EndOfFileException)
                                         {
-                                            if(args.Count != 0)
+                                            if (args.Count != 0)
+                                            {
                                                 return;
-                                            throw e;
+                                            }
+                                            throw;
                                         }
                                     }
-                                    token = "";
+                                    token = string.Empty;
                                     goto redo;
                                 }
                                 if(token == "/*")
@@ -242,33 +262,41 @@ redo:
                                         {
                                             c = readc();
                                         }
-                                        catch(EndOfFileException e)
+                                        catch(EndOfFileException)
                                         {
-                                            if(args.Count != 0)
+                                            if (args.Count != 0)
+                                            {
                                                 return;
-                                            throw e;
+                                            }
+                                            throw;
                                         }
-                                        if(c != '*')
+                                        if (c != '*')
+                                        {
                                             continue;
+                                        }
                                         do
                                         {
                                             try
                                             {
                                                 c = readc();
                                             }
-                                            catch(EndOfFileException e)
+                                            catch(EndOfFileException)
                                             {
-                                                if(args.Count != 0)
+                                                if (args.Count != 0)
+                                                {
                                                     return;
-                                                throw e;
+                                                }
+                                                throw;
                                             }
                                         } while(c == '*');
 
-                                        if(c == '/')
+                                        if (c == '/')
+                                        {
                                             break;
+                                        }
                                     }
 
-                                    token = "";
+                                    token = string.Empty;
                                     c = ' ';
                                     goto redo;
                                 }
@@ -277,18 +305,18 @@ redo:
                                 {
                                     c = readc();
                                 }
-                                catch(EndOfFileException e)
+                                catch(EndOfFileException)
                                 {
                                     if(token.Length != 0)
                                     {
                                         args.Add(token);
                                         return;
                                     }
-                                    throw e;
+                                    throw;
                                 }
                             }
                             args.Add(token);
-                            token = "";
+                            token = string.Empty;
                             goto redo;
                         }
                         break;
@@ -307,11 +335,15 @@ redo:
                 {
                     c = args[argi][i];
                     /* ignore strings first */
-                    if('\"' == c)
+                    if ('\"' == c)
+                    {
                         break;
-                    else if('\'' == c)
+                    }
+                    else if ('\'' == c)
+                    {
                         break;
-                    else if('e' == c && i + 1 < curlength && args[argi][i + 1] == '-')
+                    }
+                    else if ('e' == c && i + 1 < curlength && args[argi][i + 1] == '-')
                     {
                         /* float component */
                         i += 2;
@@ -323,36 +355,40 @@ redo:
                     }
                     else if ('+' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal += */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "+=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '+')
                             {
                                 /* compound literal ++ (contextual dependancy if there are more) */
                                 int j = 2;
-                                while (j < curlength && args[argi][j] == '+') 
+                                while (j < curlength && args[argi][j] == '+')
+                                {
                                     ++j;
-                                if(j < curlength)
+                                }
+                                if (j < curlength)
                                 {
                                     args.Insert(argi, args[argi].Substring(0, j));
                                     ++argi;
@@ -360,7 +396,9 @@ redo:
                                     curlength -= j;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -372,13 +410,13 @@ redo:
                         else
                             break;
                     }
-                    else if('.' == c)
+                    else if ('.' == c)
                     {
-                        if(i + 1 < curlength)
+                        if (i + 1 < curlength)
                         {
                             if (!Char.IsDigit(args[argi][i + 1]))
                             {
-                                if(i > 0)
+                                if (i > 0)
                                 {
                                     args.Insert(argi, args[argi].Substring(0, i));
                                     ++argi;
@@ -386,61 +424,71 @@ redo:
                                     curlength -= i;
                                 }
                                 args.Insert(argi++, ".");
-                        
+
                                 i = 0;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
                             else
+                            {
                                 ++i;
+                            }
                         }
                         else
+                        {
                             ++i;
+                        }
                     }
-                    else if('-' == c)
+                    else if ('-' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal -= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "-=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '>')
                             {
                                 /* compound literal -= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "->");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '-')
                             {
                                 /* compound literal -- (contextual dependancy if there are more) */
                                 int j = 2;
-                                while (j < curlength && args[argi][j] == '-') 
+                                while (j < curlength && args[argi][j] == '-')
+                                {
                                     ++j;
-                                if(j < curlength)
+                                }
+                                if (j < curlength)
                                 {
                                     args.Insert(argi, args[argi].Substring(0, j));
                                     ++argi;
@@ -448,7 +496,9 @@ redo:
                                     curlength -= j;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -458,31 +508,35 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('*' == c)
+                    else if ('*' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal *= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "*=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -492,32 +546,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if(':' == c)
+                    else if (':' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == ':')
                             {
                                 /* compound literal :: */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "::");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -527,32 +585,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('/' == c)
+                    else if ('/' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal /= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "/=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -562,32 +624,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('%' == c)
+                    else if ('%' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal %= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "%=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -597,32 +663,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('<' == c)
+                    else if ('<' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal <= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "<=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '<')
                             {
@@ -633,14 +703,16 @@ redo:
                                     args[argi] = args[argi].Substring(3, curlength - 3);
                                     curlength -= 3;
                                 }
-                                else if(2 < curlength)
+                                else if (2 < curlength)
                                 {
                                     args.Insert(argi++, "<<");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -650,32 +722,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('>' == c)
+                    else if ('>' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal >= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, ">=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '>')
                             {
@@ -686,14 +762,16 @@ redo:
                                     args[argi] = args[argi].Substring(3, curlength - 3);
                                     curlength -= 3;
                                 }
-                                else if(2 < curlength)
+                                else if (2 < curlength)
                                 {
                                     args.Insert(argi++, ">>");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -703,44 +781,50 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('=' == c)
+                    else if ('=' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal == */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "==");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '>')
                             {
                                 /* compound literal == */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "=>");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -750,32 +834,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('!' == c)
+                    else if ('!' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal != */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "!=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -785,32 +873,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('^' == c)
+                    else if ('^' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal ^= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "^=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -820,44 +912,50 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('&' == c)
+                    else if ('&' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal &= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "&=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '&')
                             {
                                 /* compound literal && */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "&&");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -867,32 +965,36 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('#' == c)
+                    else if ('#' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '#')
                             {
                                 /* compound literal ## */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "##");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -902,44 +1004,50 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
-                    else if('|' == c)
+                    else if ('|' == c)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
                             ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }
-                    
+
                         i = 0;
-                        if(1 < curlength)
+                        if (1 < curlength)
                         {
                             if (args[argi][1] == '=')
                             {
                                 /* compound literal |= */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "|=");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else if (args[argi][1] == '|')
                             {
                                 /* compound literal || */
-                                if(2 < curlength)
+                                if (2 < curlength)
                                 {
                                     args.Insert(argi++, "||");
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                             else
                             {
@@ -949,10 +1057,14 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
                     else
+                    {
                         ++i;
+                    }
                 }
             }
         }

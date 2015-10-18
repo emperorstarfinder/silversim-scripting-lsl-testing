@@ -25,12 +25,12 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleFlags(ScriptInstance Instance, int flags)
+        public void llSetVehicleFlags(ScriptInstance instance, int flags)
         {
-            IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)
             {
-                Instance.ShoutError("Object has not physical properties");
+                instance.ShoutError("Object has not physical properties");
                 return;
             }
 
@@ -38,12 +38,12 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRemoveVehicleFlags(ScriptInstance Instance, int flags)
+        public void llRemoveVehicleFlags(ScriptInstance instance, int flags)
         {
-            IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)
             {
-                Instance.ShoutError("Object has not physical properties");
+                instance.ShoutError("Object has not physical properties");
                 return;
             }
 
@@ -86,12 +86,12 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
 
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleFloatParam(ScriptInstance Instance, int param, double value)
+        public void llSetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
-            IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if(null == physobj)
             {
-                Instance.ShoutError("Object has not physical properties");
+                instance.ShoutError("Object has not physical properties");
                 return;
             }
 
@@ -193,12 +193,12 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_REFERENCE_FRAME = 44;
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleRotationParam(ScriptInstance Instance, int param, Quaternion rot)
+        public void llSetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
-            IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)
             {
-                Instance.ShoutError("Object has not physical properties");
+                instance.ShoutError("Object has not physical properties");
                 return;
             }
 
@@ -226,12 +226,12 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_TYPE_BALLOON = 5;
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleType(ScriptInstance Instance, int type)
+        public void llSetVehicleType(ScriptInstance instance, int type)
         {
-            IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if(null == physobj)
             {
-                Instance.ShoutError("Object has not physical properties");
+                instance.ShoutError("Object has not physical properties");
                 return;
             }
 
@@ -262,7 +262,7 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
                     break;
 
                 default:
-                    Instance.ShoutError("Invalid vehicle type");
+                    instance.ShoutError("Invalid vehicle type");
                     break;
             }
         }
@@ -278,12 +278,12 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleVectorParam(ScriptInstance Instance, int param, Vector3 vec)
+        public void llSetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
-            IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)
             {
-                Instance.ShoutError("Object has not physical properties");
+                instance.ShoutError("Object has not physical properties");
                 return;
             }
 

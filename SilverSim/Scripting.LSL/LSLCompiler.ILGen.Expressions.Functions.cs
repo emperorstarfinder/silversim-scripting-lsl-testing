@@ -74,7 +74,17 @@ namespace SilverSim.Scripting.LSL
                 {
                     foreach (KeyValuePair<IScriptApi, MethodInfo> kvp in lslCompiler.m_Methods)
                     {
-                        if (kvp.Value.Name == functionTree.Entry)
+                        LSLFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(kvp.Key.GetType(), typeof(LSLFunctionName)) as LSLFunctionName;
+                        string funcName;
+                        if(funcNameAttr != null)
+                        {
+                            funcName = funcNameAttr.Name;
+                        }
+                        else
+                        {
+                            funcName = kvp.Value.Name;
+                        }
+                        if (funcName == functionTree.Entry)
                         {
                             ParameterInfo[] pi = kvp.Value.GetParameters();
                             if (pi.Length - 1 == functionTree.SubTree.Count)

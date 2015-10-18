@@ -125,31 +125,31 @@ namespace SilverSim.Scripting.LSL
                 }
                 else if (fb.FieldType == typeof(string))
                 {
-                    script_ilgen.Emit(OpCodes.Ldstr, "");
+                    script_ilgen.Emit(OpCodes.Ldstr, string.Empty);
                     script_ilgen.Emit(OpCodes.Stfld, fb);
                     varIsInited.Add(varName);
                 }
                 else if (fb.FieldType == typeof(Vector3))
                 {
-                    script_ilgen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[0]));
+                    script_ilgen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(Type.EmptyTypes));
                     script_ilgen.Emit(OpCodes.Stfld, fb);
                     varIsInited.Add(varName);
                 }
                 else if (fb.FieldType == typeof(Quaternion))
                 {
-                    script_ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[0]));
+                    script_ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(Type.EmptyTypes));
                     script_ilgen.Emit(OpCodes.Stfld, fb);
                     varIsInited.Add(varName);
                 }
                 else if (fb.FieldType == typeof(AnArray))
                 {
-                    script_ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[0]));
+                    script_ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     script_ilgen.Emit(OpCodes.Stfld, fb);
                     varIsInited.Add(varName);
                 }
                 else if (fb.FieldType == typeof(LSLKey))
                 {
-                    script_ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(new Type[0]));
+                    script_ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
                     script_ilgen.Emit(OpCodes.Stfld, fb);
                     varIsInited.Add(varName);
                 }
@@ -284,7 +284,7 @@ namespace SilverSim.Scripting.LSL
             {
                 FieldBuilder fb;
                 TypeBuilder state = mb.DefineType(aName.Name + ".State." + stateKvp.Key, TypeAttributes.Public, typeof(object));
-                state.AddInterfaceImplementation(typeof(LSLState));
+                state.AddInterfaceImplementation(typeof(ILSLState));
                 fb = state.DefineField("Instance", scriptTypeBuilder, FieldAttributes.Private | FieldAttributes.InitOnly);
                 compileState.InstanceField = fb;
 
@@ -293,7 +293,7 @@ namespace SilverSim.Scripting.LSL
                     CallingConventions.Standard,
                     new Type[1] { scriptTypeBuilder });
                 ILGenerator state_ilgen = state_cb.GetILGenerator();
-                ConstructorInfo typeConstructor = typeof(object).GetConstructor(new Type[0]);
+                ConstructorInfo typeConstructor = typeof(object).GetConstructor(Type.EmptyTypes);
                 state_ilgen.Emit(OpCodes.Ldarg_0);
                 state_ilgen.Emit(OpCodes.Call, typeConstructor);
                 state_ilgen.Emit(OpCodes.Ldarg_1);

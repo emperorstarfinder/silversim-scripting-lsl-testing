@@ -10,7 +10,8 @@ namespace SilverSim.Scripting.LSL.API.Base
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGenerateKey(ScriptInstance Instance)
+        [LSLFunctionName("llGenerateKey")]
+        public LSLKey LlGenerateKey(ScriptInstance Instance)
         {
             return new LSLKey(UUID.Random);
         }

@@ -145,10 +145,14 @@ namespace SilverSim.Scripting.LSL.API.Base
             double s2 = r.Z * r.Z; // square of the s-element
             double v2 = r.X * r.X + r.Y * r.Y + r.Z * r.Z; // sum of the squares of the v-elements
 
-            if (s2 < v2) // compare the s-component to the v-component
-                return 2.0 * Math.Acos(Math.Sqrt(s2 / (s2 + v2))); // use arccos if the v-component is dominant
-            if (v2 != 0) // make sure the v-component is non-zero
-                return 2.0 * Math.Asin(Math.Sqrt(v2 / (s2 + v2))); // use arcsin if the s-component is dominant
+            if (s2 < v2)
+            {   // compare the s-component to the v-component
+                return 2.0d * Math.Acos(Math.Sqrt(s2 / (s2 + v2))); // use arccos if the v-component is dominant
+            }
+            if (v2 != 0)
+            {   // make sure the v-component is non-zero
+                return 2.0d * Math.Asin(Math.Sqrt(v2 / (s2 + v2))); // use arcsin if the s-component is dominant
+            }
 
             return 0.0; // argument is scaled too small to be meaningful, or it is a zero rotation, so return zer
         }

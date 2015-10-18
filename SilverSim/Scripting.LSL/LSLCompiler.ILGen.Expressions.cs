@@ -12,7 +12,8 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        class ReturnTypeException : Exception
+        [Serializable]
+        public class ReturnTypeException : Exception
         {
             public Type ReturnType;
             public ReturnTypeException(Type t, int lineNumber)

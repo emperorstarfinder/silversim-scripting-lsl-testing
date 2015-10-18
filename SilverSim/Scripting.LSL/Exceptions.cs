@@ -7,6 +7,7 @@ using System.Text;
 
 namespace SilverSim.Scripting.LSL
 {
+    [Serializable]
     public class ResetScriptException : Exception
     {
         public ResetScriptException()
@@ -15,6 +16,7 @@ namespace SilverSim.Scripting.LSL
         }
     }
 
+    [Serializable]
     public class ChangeStateException : Exception
     {
         public string NewState { get; private set; }

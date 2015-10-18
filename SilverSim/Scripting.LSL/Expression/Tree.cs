@@ -172,11 +172,11 @@ namespace SilverSim.Scripting.LSL.Expression
                             nt.Type = EntryType.Value;
                             SubTree.Add(nt);
                         }
-                        nt.Entry += arg[i];
+                        nt.Entry += arg[i].ToString();
                     }
                     else if(nt != null && nt.Type == EntryType.Value && numericchars.Contains(arg[i]))
                     {
-                        nt.Entry += arg[i];
+                        nt.Entry += arg[i].ToString();
                     }
                     else if (singleopcharacters.Contains(arg[i]))
                     {
@@ -195,7 +195,7 @@ namespace SilverSim.Scripting.LSL.Expression
                             nt.Type = EntryType.OperatorUnknown;
                             SubTree.Add(nt);
                         }
-                        nt.Entry += arg[i];
+                        nt.Entry += arg[i].ToString();
                         nt = null;
                     }
                     else if (opcharacters.Contains(arg[i]))
@@ -215,7 +215,7 @@ namespace SilverSim.Scripting.LSL.Expression
                             nt.Type = EntryType.OperatorUnknown;
                             SubTree.Add(nt);
                         }
-                        nt.Entry += arg[i];
+                        nt.Entry += arg[i].ToString();
                     }
                     else
                     {
@@ -234,7 +234,7 @@ namespace SilverSim.Scripting.LSL.Expression
                             nt.Type = EntryType.Unknown;
                             SubTree.Add(nt);
                         }
-                        nt.Entry += arg[i];
+                        nt.Entry += arg[i].ToString();
                     }
                 }
             }

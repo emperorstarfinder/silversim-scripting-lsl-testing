@@ -494,7 +494,7 @@ namespace SilverSim.Scripting.LSL
             }
 
             Parser p = new Parser();
-            p.push(reader, "", lineNumber);
+            p.push(reader, string.Empty, lineNumber);
 
             for (; ; )
             {

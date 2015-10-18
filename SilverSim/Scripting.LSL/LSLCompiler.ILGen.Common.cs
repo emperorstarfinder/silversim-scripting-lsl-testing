@@ -41,7 +41,7 @@ namespace SilverSim.Scripting.LSL
                     ConstructorInfo info = t.Value.GetConstructor(new Type[1] { typeof(Script) });
                     object[] param = new object[1];
                     param[0] = m_Script;
-                    m_Script.AddState(t.Key, (LSLState)info.Invoke(param));
+                    m_Script.AddState(t.Key, (ILSLState)info.Invoke(param));
                 }
 
                 return m_Script;
@@ -351,27 +351,27 @@ namespace SilverSim.Scripting.LSL
             {
                 if (fromType == typeof(int))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(string).GetMethod("ToString", new Type[0]));
+                    ilgen.Emit(OpCodes.Callvirt, typeof(string).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(double))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(double).GetMethod("ToString", new Type[0]));
+                    ilgen.Emit(OpCodes.Callvirt, typeof(double).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(Vector3))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(Vector3).GetMethod("ToString", new Type[0]));
+                    ilgen.Emit(OpCodes.Callvirt, typeof(Vector3).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(Quaternion))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(Quaternion).GetMethod("ToString", new Type[0]));
+                    ilgen.Emit(OpCodes.Callvirt, typeof(Quaternion).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(AnArray))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("ToString", new Type[0]));
+                    ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(LSLKey))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", new Type[0]));
+                    ilgen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else
                 {
@@ -495,7 +495,7 @@ namespace SilverSim.Scripting.LSL
                     ilgen.BeginScope();
                     LocalBuilder lb = ilgen.DeclareLocal(fromType);
                     ilgen.Emit(OpCodes.Stloc, lb);
-                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[0]));
+                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     ilgen.Emit(OpCodes.Ldloc, lb);
                     ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { fromType }));
                     ilgen.Emit(OpCodes.Ldloc, lb);
@@ -506,7 +506,7 @@ namespace SilverSim.Scripting.LSL
                     ilgen.BeginScope();
                     LocalBuilder lb = ilgen.DeclareLocal(fromType);
                     ilgen.Emit(OpCodes.Stloc, lb);
-                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[0]));
+                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     ilgen.Emit(OpCodes.Ldloc, lb);
                     ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                     ilgen.Emit(OpCodes.Ldloc, lb);

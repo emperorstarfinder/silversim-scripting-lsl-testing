@@ -147,7 +147,7 @@ namespace SilverSim.Scripting.LSL
                 return;
             }
 
-            req["x-script-url"] = m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + m_HttpServer.Port.ToString() + "/lslhttp/" + id;
+            req["x-script-url"] = m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + m_HttpServer.Port.ToString() + "/lslhttp/" + id.ToString();
             string pathinfo = req.RawUrl.Substring(45);
             int pos = pathinfo.IndexOf('?');
             if (pos >= 0)
@@ -164,7 +164,7 @@ namespace SilverSim.Scripting.LSL
             UUID reqid = UUID.Random;
             HttpRequestData data = new HttpRequestData(req, id);
 
-            string body = "";
+            string body = string.Empty;
             if(data.Request.Method != "GET" && data.Request.Method != "DELETE")
             {
                 int length = int.Parse(data.Request["Content-Length"]);
@@ -196,7 +196,7 @@ namespace SilverSim.Scripting.LSL
                 ScriptInstance instance = item.ScriptInstance;
                 if (instance == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentException("item.ScriptInstance is null");
                 }
                 instance.PostEvent(ev);
             }
@@ -254,7 +254,7 @@ namespace SilverSim.Scripting.LSL
         {
             UUID newid = UUID.Random;
             m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID));
-            return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttp/" + newid;
+            return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttp/" + newid.ToString();
         }
 
         public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item)

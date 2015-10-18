@@ -31,7 +31,7 @@ namespace SilverSim.Scripting.LSL
                 m_LineNumber = lineNumber;
                 ilgen.BeginScope();
                 m_NewList = ilgen.DeclareLocal(typeof(AnArray));
-                ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[0]));
+                ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                 ilgen.Emit(OpCodes.Stloc, m_NewList);
                 for (int i = 0; i < functionTree.SubTree.Count; ++i)
                 {

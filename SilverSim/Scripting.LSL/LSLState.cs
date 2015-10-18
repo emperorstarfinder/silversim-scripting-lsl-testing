@@ -7,7 +7,7 @@ using System.Text;
 
 namespace SilverSim.Scripting.LSL
 {
-    public interface LSLState
+    public interface ILSLState
     {
     }
 }

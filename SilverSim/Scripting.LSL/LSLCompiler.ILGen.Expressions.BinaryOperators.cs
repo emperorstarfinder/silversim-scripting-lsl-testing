@@ -626,7 +626,7 @@ namespace SilverSim.Scripting.LSL
                         else if(m_LeftHandType == typeof(LSLKey))
                         {
                             ilgen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            ilgen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", new Type[0]));
+                            ilgen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
                             ilgen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(ilgen, typeof(string), m_RightHandType, m_LineNumber);
                             ilgen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));

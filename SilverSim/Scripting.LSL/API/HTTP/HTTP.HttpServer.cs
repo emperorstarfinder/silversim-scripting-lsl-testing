@@ -33,7 +33,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = "";
+                    ev.Body = string.Empty;
                     Instance.PostEvent(ev);
                 }
                 return reqID;
@@ -69,7 +69,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = "";
+                    ev.Body = string.Empty;
                     Instance.PostEvent(ev);
                 }
                 return reqID;

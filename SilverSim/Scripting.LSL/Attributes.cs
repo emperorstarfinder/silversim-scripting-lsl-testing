@@ -23,9 +23,9 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false)]
-    public class APILevel : Attribute
+    public sealed class APILevel : Attribute
     {
-        public readonly APIFlags Flags;
+        public APIFlags Flags { get; private set; }
         public APILevel(APIFlags flags)
         {
             Flags = flags;
@@ -34,9 +34,9 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public class ForcedSleep : Attribute
+    public sealed class ForcedSleep : Attribute
     {
-        public readonly double Seconds;
+        public double Seconds { get; private set; }
         public ForcedSleep(double seconds)
         {
             Seconds = seconds;
@@ -45,7 +45,7 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public class ExecutedOnStateChange : Attribute
+    public sealed class ExecutedOnStateChange : Attribute
     {
         public ExecutedOnStateChange()
         {
@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public class ExecutedOnScriptReset : Attribute
+    public sealed class ExecutedOnScriptReset : Attribute
     {
         public ExecutedOnScriptReset()
         {
@@ -65,7 +65,7 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class LSLImplementation : Attribute
+    public sealed class LSLImplementation : Attribute
     {
         public LSLImplementation()
         {
@@ -75,7 +75,7 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Delegate, Inherited = false)]
-    public class StateEventDelegate : Attribute
+    public sealed class StateEventDelegate : Attribute
     {
         public StateEventDelegate()
         {
@@ -85,25 +85,37 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
-    public class EnergyUsage : Attribute
+    public sealed class EnergyUsage : Attribute
     {
-        public readonly double Energy;
+        public double Energy { get; private set; }
 
-        public EnergyUsage(double val)
+        public EnergyUsage(double energy)
         {
-            Energy = val;
+            Energy = energy;
         }
     }
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter, Inherited = false)]
-    public class LSLTooltip : Attribute
+    public sealed class LSLTooltip : Attribute
     {
-        public readonly string Tooltip;
+        public string Tooltip { get; private set; }
 
         public LSLTooltip(string tooltip)
         {
             Tooltip = tooltip.Replace("\n", "\\n");
+        }
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    public sealed class LSLFunctionName : Attribute
+    {
+        public string Name { get; private set; }
+
+        public LSLFunctionName(string name)
+        {
+            Name = name;
         }
     }
 }

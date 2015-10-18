@@ -23,8 +23,8 @@ namespace SilverSim.Scripting.LSL
         private ObjectPartInventoryItem m_Item;
         private NonblockingQueue<IScriptEvent> m_Events = new NonblockingQueue<IScriptEvent>();
         internal List<DetectInfo> m_Detected = new List<DetectInfo>();
-        private Dictionary<string, LSLState> m_States = new Dictionary<string, LSLState>();
-        private LSLState m_CurrentState = null;
+        private Dictionary<string, ILSLState> m_States = new Dictionary<string, ILSLState>();
+        private ILSLState m_CurrentState = null;
         public int StartParameter = 0;
         internal RwLockedDictionary<int, ChatServiceInterface.Listener> m_Listeners = new RwLockedDictionary<int, ChatServiceInterface.Listener>();
         private double m_ExecutionTime = 0;
@@ -64,7 +64,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        public void AddState(string name, LSLState state)
+        public void AddState(string name, ILSLState state)
         {
             m_States.Add(name, state);
         }
@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.LSL
                 writer.WriteStartElement("ScriptState");
                 {
                     string current_state = "default";
-                    foreach (KeyValuePair<string, LSLState> kvp in m_States)
+                    foreach (KeyValuePair<string, ILSLState> kvp in m_States)
                     {
                         if (kvp.Value == m_CurrentState)
                         {
