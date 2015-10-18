@@ -5,6 +5,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
@@ -66,62 +67,65 @@ namespace SilverSim.Scripting.LSL.API.Permissions
         public delegate void run_time_permissions(int perm);
 
         [APILevel(APIFlags.LSL)]
-        public int llGetPermissions(ScriptInstance Instance)
+        [ScriptFunctionName("llGetPermissions")]
+        public int GetPermissions(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return (int)Instance.Item.PermsGranter.PermsMask;
+                return (int)instance.Item.PermsGranter.PermsMask;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetPermissionsKey(ScriptInstance Instance)
+        [ScriptFunctionName("llGetPermissionsKey")]
+        public LSLKey GetPermissionsKey(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Item.PermsGranter.PermsGranter.ID;
+                return instance.Item.PermsGranter.PermsGranter.ID;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRequestPermissions(ScriptInstance Instance, LSLKey agentID, int permissions)
+        [ScriptFunctionName("llRequestPermissions")]
+        public void RequestPermissions(ScriptInstance instance, LSLKey agentID, int permissions)
         {
-            lock(Instance)
+            lock(instance)
             {
                 if (agentID == UUID.Zero || permissions == 0)
                 {
-                    Instance.RevokePermissions(agentID, (ScriptPermissions)permissions);
+                    instance.RevokePermissions(agentID, (ScriptPermissions)permissions);
                 }
                 else
                 {
                     IAgent a;
                     try
                     {
-                        a = Instance.Part.ObjectGroup.Scene.Agents[agentID];
+                        a = instance.Part.ObjectGroup.Scene.Agents[agentID];
                     }
                     catch
                     {
-                        Instance.Item.PermsGranter = null;
+                        instance.Item.PermsGranter = null;
                         return;
                     }
-                    ScriptPermissions perms = a.RequestPermissions(Instance.Part, Instance.Item.ID, (ScriptPermissions)permissions);
+                    ScriptPermissions perms = a.RequestPermissions(instance.Part, instance.Item.ID, (ScriptPermissions)permissions);
                     if (perms != ScriptPermissions.None)
                     {
                         RuntimePermissionsEvent e = new RuntimePermissionsEvent();
                         e.Permissions = perms;
                         e.PermissionsKey = a.Owner;
-                        Instance.PostEvent(e);
+                        instance.PostEvent(e);
                     }
                 }
             }
         }
 
         [ExecutedOnScriptReset]
-        public static void ResetPermissions(ScriptInstance Instance)
+        public static void ResetPermissions(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Item.PermsGranter = null;
+                instance.Item.PermsGranter = null;
             }
         }
     }

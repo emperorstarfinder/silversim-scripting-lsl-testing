@@ -6,6 +6,7 @@ using SilverSim.Types;
 using SilverSim.Types.Primitive;
 using SilverSim.Scene.Types.Script;
 using System;
+using SilverSim.Scripting.Common;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -120,7 +121,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llLinkParticleSystem(ScriptInstance Instance, int link, AnArray rules)
+        [ScriptFunctionName("llLinkParticleSystem")]
+        public void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
         {
             ParticleSystem ps = new ParticleSystem();
 
@@ -137,7 +139,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                 }
                 catch (InvalidCastException)
                 {
-                    Instance.ShoutError(string.Format("Error running particle system params index #{0}: particle system parameter type must be integer", i));
+                    instance.ShoutError(string.Format("Error running particle system params index #{0}: particle system parameter type must be integer", i));
                     return;
                 }
                 IValue value = rules[i + 1];
@@ -150,7 +152,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_FLAGS: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_FLAGS: arg #{0} - parameter 1 must be integer", i + 1));
                             return;
                         }
                         break;
@@ -162,7 +164,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_START_COLOR: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_COLOR: arg #{0} - parameter 1 must be vector", i + 1));
                             return;
                         }
                         ps.PartStartColor.R = tempv.X;
@@ -177,7 +179,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_START_ALPHA: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_ALPHA: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -189,7 +191,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_END_COLOR: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_COLOR: arg #{0} - parameter 1 must be vector", i + 1));
                             return;
                         }
                         ps.PartEndColor.R = tempv.X;
@@ -204,7 +206,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_END_ALPHA: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_ALPHA: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -216,7 +218,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_START_SCALE: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_SCALE: arg #{0} - parameter 1 must be vector", i + 1));
                             return;
                         }
                         ps.PartStartScaleX = ValidParticleScale(tempv.X);
@@ -230,7 +232,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_END_SCALE: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_SCALE: arg #{0} - parameter 1 must be vector", i + 1));
                             return;
                         }
                         ps.PartEndScaleX = ValidParticleScale(tempv.X);
@@ -244,7 +246,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_MAX_AGE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_MAX_AGE: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -256,7 +258,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_ACCEL: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_ACCEL: arg #{0} - parameter 1 must be vector", i + 1));
                             return;
                         }
                         ps.PartAcceleration.X = tempv.X;
@@ -271,7 +273,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_PATTERN: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_PATTERN: arg #{0} - parameter 1 must be integer", i + 1));
                             return;
                         }
                         break;
@@ -287,7 +289,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_INNERANGLE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_INNERANGLE: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         ps.InnerAngle = tempf;
@@ -301,7 +303,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_OUTERANGLE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_OUTERANGLE: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         ps.OuterAngle = tempf;
@@ -315,7 +317,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_BLEND_FUNC_SOURCE: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_BLEND_FUNC_SOURCE: arg #{0} - parameter 1 must be integer", i + 1));
                             return;
                         }
                         ps.BlendFuncSource = (ParticleSystem.BlendFunc)tmpi;
@@ -328,7 +330,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_BLEND_FUNC_DEST: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_BLEND_FUNC_DEST: arg #{0} - parameter 1 must be integer", i + 1));
                             return;
                         }
                         ps.BlendFuncDest = (ParticleSystem.BlendFunc)tmpi;
@@ -341,7 +343,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_START_GLOW: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_GLOW: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         ps.PartStartGlow = tempf;
@@ -354,7 +356,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_PART_END_GLOW: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_GLOW: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         ps.PartEndGlow = tempf;
@@ -363,16 +365,16 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                     case PSYS_SRC_TEXTURE:
                         try
                         {
-                            ps.Texture = getTextureAssetID(Instance, value.ToString());
+                            ps.Texture = GetTextureAssetID(instance, value.ToString());
                         }
                         catch(InvalidOperationException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_TEXTURE: arg #{0} - parameter 1 must be refering to a texture (either inventory name or texture ID)", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_TEXTURE: arg #{0} - parameter 1 must be refering to a texture (either inventory name or texture ID)", i + 1));
                             return;
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_TEXTURE: arg #{0} - parameter 1 must be string or key", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_TEXTURE: arg #{0} - parameter 1 must be string or key", i + 1));
                             return;
                         }
                         break;
@@ -384,7 +386,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_RATE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_RATE: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -396,7 +398,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_PART_COUNT: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_PART_COUNT: arg #{0} - parameter 1 must be integer", i + 1));
                             return;
                         }
                         break;
@@ -408,7 +410,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_RADIUS: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_RADIUS: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -420,7 +422,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_SPEED_MIN: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_SPEED_MIN: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -432,7 +434,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_SPEED_MAX: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_SPEED_MAX: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -444,7 +446,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_MAX_AGE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_MAX_AGE: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         break;
@@ -457,7 +459,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         else
                         {
-                            ps.Target = Instance.Part.ID;
+                            ps.Target = instance.Part.ID;
                         }
                         break;
 
@@ -468,7 +470,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_OMEGA: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_OMEGA: arg #{0} - parameter 1 must be vector", i + 1));
                             return;
                         }
                         break;
@@ -480,7 +482,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_ANGLE_BEGIN: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_ANGLE_BEGIN: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         ps.InnerAngle = tempf;
@@ -494,7 +496,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            Instance.ShoutError(string.Format("Error running rule PSYS_SRC_ANGLE_END: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_ANGLE_END: arg #{0} - parameter 1 must be float", i + 1));
                             return;
                         }
                         ps.OuterAngle = tempf;
@@ -505,9 +507,9 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
             ps.CRC = 1;
 
-            lock (Instance)
+            lock (instance)
             {
-                foreach (ObjectPart part in GetLinkTargets(Instance, link))
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     part.ParticleSystem = ps;
                 }
@@ -515,9 +517,10 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llParticleSystem(ScriptInstance Instance, AnArray rules)
+        [ScriptFunctionName("llParticleSystem")]
+        public void ParticleSystem(ScriptInstance instance, AnArray rules)
         {
-            llLinkParticleSystem(Instance, LINK_THIS, rules);
+            LinkParticleSystem(instance, LINK_THIS, rules);
         }
     }
 }

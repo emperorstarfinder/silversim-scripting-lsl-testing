@@ -5,6 +5,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types.Primitive;
+using SilverSim.Scripting.Common;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -12,19 +13,21 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     {
         #region Faces
         [APILevel(APIFlags.LSL)]
-        public int llGetNumberOfSides(ScriptInstance Instance)
+        [ScriptFunctionName("llGetNumberOfSides")]
+        public int GetNumberOfSides(ScriptInstance instance)
         {
-            return Instance.Part.NumberOfSides;
+            return instance.Part.NumberOfSides;
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llGetAlpha(ScriptInstance Instance, int face)
+        [ScriptFunctionName("llGetAlpha")]
+        public double GetAlpha(ScriptInstance instance, int face)
         {
-            lock (Instance)
+            lock (instance)
             {
                 try
                 {
-                    TextureEntryFace te = Instance.Part.TextureEntry[(uint)face];
+                    TextureEntryFace te = instance.Part.TextureEntry[(uint)face];
                     return te.TextureColor.A;
                 }
                 catch
@@ -35,20 +38,22 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetAlpha(ScriptInstance Instance, double alpha, int faces)
+        [ScriptFunctionName("llSetAlpha")]
+        public void SetAlpha(ScriptInstance instance, double alpha, int faces)
         {
-            llSetLinkAlpha(Instance, LINK_THIS, alpha, faces);
+            SetLinkAlpha(instance, LINK_THIS, alpha, faces);
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetLinkAlpha(ScriptInstance Instance, int link, double alpha, int face)
+        [ScriptFunctionName("llSetLinkAlpha")]
+        public void SetLinkAlpha(ScriptInstance instance, int link, double alpha, int face)
         {
             if (alpha < 0) alpha = 0;
             if (alpha > 1) alpha = 1;
 
             if (face == ALL_SIDES)
             {
-                foreach (ObjectPart part in GetLinkTargets(Instance, link))
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     TextureEntry te = part.TextureEntry;
                     for (face = 0; face < te.FaceTextures.Length; ++face)
@@ -60,7 +65,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
             else
             {
-                foreach (ObjectPart part in GetLinkTargets(Instance, link))
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     try
                     {
@@ -78,20 +83,22 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(0.2)]
-        public void llSetTexture(ScriptInstance Instance, string texture, int face)
+        [ScriptFunctionName("llSetTexture")]
+        public void SetTexture(ScriptInstance instance, string texture, int face)
         {
-            llSetLinkTexture(Instance, LINK_THIS, texture, face);
+            SetLinkTexture(instance, LINK_THIS, texture, face);
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(0.2)]
-        public void llSetLinkTexture(ScriptInstance Instance, int link, string texture, int face)
+        [ScriptFunctionName("llSetLinkTexture")]
+        public void SetLinkTexture(ScriptInstance instance, int link, string texture, int face)
         {
-            UUID textureID = getTextureAssetID(Instance, texture);
+            UUID textureID = GetTextureAssetID(instance, texture);
 
             if (face == ALL_SIDES)
             {
-                foreach (ObjectPart part in GetLinkTargets(Instance, link))
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     TextureEntry te = part.TextureEntry;
                     for (face = 0; face < te.FaceTextures.Length; ++face)
@@ -103,7 +110,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
             else
             {
-                foreach (ObjectPart part in GetLinkTargets(Instance, link))
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     try
                     {
@@ -120,19 +127,22 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetColor(ScriptInstance Instance, int face)
+        [ScriptFunctionName("llGetColor")]
+        public Vector3 GetColor(ScriptInstance instance, int face)
         {
             return Vector3.Zero;
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetColor(ScriptInstance Instance, Vector3 color, int face)
+        [ScriptFunctionName("llSetColor")]
+        public void SetColor(ScriptInstance instance, Vector3 color, int face)
         {
-            llSetLinkColor(Instance, LINK_THIS, color, face);
+            SetLinkColor(instance, LINK_THIS, color, face);
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetLinkColor(ScriptInstance Instance, int link, Vector3 color, int face)
+        [ScriptFunctionName("llSetLinkColor")]
+        public void SetLinkColor(ScriptInstance instance, int link, Vector3 color, int face)
         {
             if (color.X < 0) color.X = 0;
             if (color.X > 1) color.X = 1;
@@ -143,7 +153,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
             if (face == ALL_SIDES)
             {
-                foreach (ObjectPart part in GetLinkTargets(Instance, link))
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     TextureEntry te = part.TextureEntry;
                     for (face = 0; face < te.FaceTextures.Length; ++face)
@@ -157,7 +167,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
             else
             {
-                foreach (ObjectPart part in GetLinkTargets(Instance, link))
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     try
                     {

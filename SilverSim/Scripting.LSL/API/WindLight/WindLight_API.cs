@@ -8,6 +8,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Types;
 using System;
 using SilverSim.Scene.Types.WindLight;
+using SilverSim.Scripting.Common;
 
 namespace SilverSim.Scripting.LSL.API.WindLight
 {
@@ -25,7 +26,7 @@ namespace SilverSim.Scripting.LSL.API.WindLight
 
         }
 
-        public UUID getTextureAssetID(ScriptInstance instance, string item)
+        public UUID GetTextureAssetID(ScriptInstance instance, string item)
         {
             UUID assetID;
             if (!UUID.TryParse(item, out assetID))
@@ -115,8 +116,8 @@ namespace SilverSim.Scripting.LSL.API.WindLight
         public const int REGION_WL_WATER_LITTLE_WAVE_DIRECTION = 33;
 
         [APILevel(APIFlags.WindLight_New)]
-        [LSLFunctionName("rwlWindlightGetWaterSettings")]
-        public AnArray rwlWindlightGetWaterSettings(ScriptInstance instance, AnArray rules)
+        [ScriptFunctionName("rwlWindlightGetWaterSettings")]
+        public AnArray WindlightGetWaterSettings(ScriptInstance instance, AnArray rules)
         {
             AnArray res = new AnArray();
             EnvironmentSettings envsettings;
@@ -204,8 +205,8 @@ namespace SilverSim.Scripting.LSL.API.WindLight
         }
 
         [APILevel(APIFlags.WindLight_New)]
-        [LSLFunctionName("rwlWindlightSetWaterSettings")]
-        public int RwlWindlightSetWaterSettings(ScriptInstance instance, AnArray rules)
+        [ScriptFunctionName("rwlWindlightSetWaterSettings")]
+        public int WindlightSetWaterSettings(ScriptInstance instance, AnArray rules)
         {
             EnvironmentSettings envsettings;
             lock (instance)
@@ -271,7 +272,7 @@ namespace SilverSim.Scripting.LSL.API.WindLight
                         {
                             try
                             {
-                                waterSettings.NormalMap = getTextureAssetID(instance, ivvalue.ToString());
+                                waterSettings.NormalMap = GetTextureAssetID(instance, ivvalue.ToString());
                             }
                             catch(Exception e)
                             {

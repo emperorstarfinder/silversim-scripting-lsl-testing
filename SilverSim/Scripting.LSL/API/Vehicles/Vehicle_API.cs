@@ -5,6 +5,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 
@@ -25,7 +26,8 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleFlags(ScriptInstance instance, int flags)
+        [ScriptFunctionName("llSetVehicleFlags")]
+        public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)
@@ -38,7 +40,8 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRemoveVehicleFlags(ScriptInstance instance, int flags)
+        [ScriptFunctionName("llRemoveVehicleFlags")]
+        public void RemoveVehicleFlags(ScriptInstance instance, int flags)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)
@@ -86,7 +89,8 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
 
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleFloatParam(ScriptInstance instance, int param, double value)
+        [ScriptFunctionName("llSetVehicleFloatParam")]
+        public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if(null == physobj)
@@ -193,7 +197,8 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_REFERENCE_FRAME = 44;
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
+        [ScriptFunctionName("llSetVehicleRotationParam")]
+        public void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)
@@ -226,7 +231,8 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_TYPE_BALLOON = 5;
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleType(ScriptInstance instance, int type)
+        [ScriptFunctionName("llSetVehicleType")]
+        public void SetVehicleType(ScriptInstance instance, int type)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if(null == physobj)
@@ -278,7 +284,8 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
         [APILevel(APIFlags.LSL)]
-        public void llSetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
+        [ScriptFunctionName("llSetVehicleVectorParam")]
+        public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
             if (null == physobj)

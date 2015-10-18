@@ -13,15 +13,15 @@ namespace SilverSim.Scripting.LSL.API.Sound
     [LSLImplementation]
     public partial class Sound_API : MarshalByRefObject, IScriptApi, IPlugin
     {
-        public UUID getSoundAssetID(ScriptInstance Instance, string item)
+        public UUID GetSoundAssetID(ScriptInstance instance, string item)
         {
             UUID assetID;
             if (!UUID.TryParse(item, out assetID))
             {
                 /* must be an inventory item */
-                lock (Instance)
+                lock (instance)
                 {
-                    ObjectPartInventoryItem i = Instance.Part.Inventory[item];
+                    ObjectPartInventoryItem i = instance.Part.Inventory[item];
                     if (i.InventoryType != Types.Inventory.InventoryType.Sound)
                     {
                         throw new InvalidOperationException(string.Format("Inventory item {0} is not a sound", item));

@@ -553,11 +553,11 @@ namespace SilverSim.Scripting.LSL
                                         m.Name,
                                         m.DeclaringType.FullName);
                                 }
-                                LSLFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(m, typeof(LSLFunctionName)) as LSLFunctionName;
+                                ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(m, typeof(ScriptFunctionName)) as ScriptFunctionName;
                                 string funcName = m.Name;
                                 if (funcNameAttr == null)
                                 {
-                                    m_Log.DebugFormat("Method '{0}' in '{1}' has no LSLFunctionName attribute!!!",
+                                    m_Log.DebugFormat("Method '{0}' in '{1}' has no ScriptFunctionName attribute!!!",
                                         m.Name,
                                         m.DeclaringType.FullName);
                                 }

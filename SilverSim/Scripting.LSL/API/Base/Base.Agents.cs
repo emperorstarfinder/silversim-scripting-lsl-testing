@@ -3,6 +3,7 @@
 
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 
@@ -11,9 +12,10 @@ namespace SilverSim.Scripting.LSL.API.Base
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL)]
-        public int llGetRegionAgentCount(ScriptInstance Instance)
+        [ScriptFunctionName("llGetRegionAgentCount")]
+        public int LlGetRegionAgentCount(ScriptInstance instance)
         {
-            return Instance.Part.ObjectGroup.Scene.Agents.Count;
+            return instance.Part.ObjectGroup.Scene.Agents.Count;
         }
 
         [APILevel(APIFlags.LSL)]
@@ -33,51 +35,57 @@ namespace SilverSim.Scripting.LSL.API.Base
         public const int PAYMENT_INFO_USED = 0x2;
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llRequestAgentData(ScriptInstance Instance, LSLKey id, int data)
+        [ScriptFunctionName("llRequestAgentData")]
+        public LSLKey LlRequestAgentData(ScriptInstance Instance, LSLKey id, int data)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llRequestDisplayName(ScriptInstance Instance, LSLKey id)
+        [ScriptFunctionName("llRequestDisplayName")]
+        public LSLKey LlRequestDisplayName(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llRequestUsername(ScriptInstance Instance, LSLKey id)
+        [ScriptFunctionName("llRequestUsername")]
+        public LSLKey LlRequestUsername(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetDisplayName(ScriptInstance Instance, LSLKey id)
+        [ScriptFunctionName("llGetDisplayName")]
+        public string LlGetDisplayName(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llKey2Name(ScriptInstance Instance, LSLKey id)
+        [ScriptFunctionName("llKey2Name")]
+        public string LlKey2Name(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetAgentSize(ScriptInstance Instance, LSLKey id)
+        [ScriptFunctionName("llGetAgentSize")]
+        public Vector3 LlGetAgentSize(ScriptInstance instance, LSLKey id)
         {
-            lock (Instance)
+            lock (instance)
             {
                 IAgent agent;
                 try
                 {
-                    agent = Instance.Part.ObjectGroup.Scene.Agents[id];
+                    agent = instance.Part.ObjectGroup.Scene.Agents[id];
                 }
                 catch
                 {
                     return Vector3.Zero;
                 }
 
-                if (agent.IsInScene(Instance.Part.ObjectGroup.Scene))
+                if (agent.IsInScene(instance.Part.ObjectGroup.Scene))
                 {
                     return agent.Size;
                 }
@@ -87,15 +95,16 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         #region osGetAvatarList
         [APILevel(APIFlags.OSSL)]
-        public AnArray osGetAvatarList(ScriptInstance Instance)
+        [ScriptFunctionName("osGetAvatarList")]
+        public AnArray OsGetAvatarList(ScriptInstance instance)
         {
             AnArray res = new AnArray();
 
-            lock (Instance)
+            lock (instance)
             {
-                foreach (IAgent agent in Instance.Part.ObjectGroup.Scene.Agents)
+                foreach (IAgent agent in instance.Part.ObjectGroup.Scene.Agents)
                 {
-                    if (agent.ID == Instance.Part.ObjectGroup.Scene.Owner.ID)
+                    if (agent.ID == instance.Part.ObjectGroup.Scene.Owner.ID)
                     {
                         continue;
                     }
@@ -110,13 +119,14 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         #region osGetAgents
         [APILevel(APIFlags.OSSL)]
-        public AnArray osGetAgents(ScriptInstance Instance)
+        [ScriptFunctionName("osGetAgents")]
+        public AnArray OsGetAgents(ScriptInstance instance)
         {
             AnArray res = new AnArray();
 
-            lock (Instance)
+            lock (instance)
             {
-                foreach (IAgent agent in Instance.Part.ObjectGroup.Scene.Agents)
+                foreach (IAgent agent in instance.Part.ObjectGroup.Scene.Agents)
                 {
                     res.Add(agent.Name);
                 }

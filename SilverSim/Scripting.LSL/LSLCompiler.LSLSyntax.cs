@@ -232,6 +232,7 @@ namespace SilverSim.Scripting.LSL
                                 foreach (MethodInfo mi in api.GetType().GetMethods())
                                 {
                                     APILevel level = (APILevel)System.Attribute.GetCustomAttribute(mi, typeof(APILevel));
+                                    ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(mi, typeof(ScriptFunctionName)) as ScriptFunctionName;
                                     if (level != null)
                                     {
                                         writer.WriteNamedValue("key", mi.Name);

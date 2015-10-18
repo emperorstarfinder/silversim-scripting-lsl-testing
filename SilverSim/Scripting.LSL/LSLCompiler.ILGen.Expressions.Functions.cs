@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Scripting.LSL.Expression;
 using System;
 using System.Collections.Generic;
@@ -74,7 +75,7 @@ namespace SilverSim.Scripting.LSL
                 {
                     foreach (KeyValuePair<IScriptApi, MethodInfo> kvp in lslCompiler.m_Methods)
                     {
-                        LSLFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(kvp.Key.GetType(), typeof(LSLFunctionName)) as LSLFunctionName;
+                        ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(kvp.Key.GetType(), typeof(ScriptFunctionName)) as ScriptFunctionName;
                         string funcName;
                         if(funcNameAttr != null)
                         {

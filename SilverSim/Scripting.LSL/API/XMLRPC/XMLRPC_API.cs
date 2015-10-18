@@ -3,6 +3,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 
@@ -24,8 +25,8 @@ namespace SilverSim.Scripting.LSL.API.XMLRPC
         }
 
         [APILevel(APIFlags.LSL)]
-        [LSLFunctionName("llCloseRemoteDataChannel")]
-        public void llCloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
+        [ScriptFunctionName("llCloseRemoteDataChannel")]
+        public void CloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
         {
 #warning Implement llCloseRemoteDataChannel(UUID)
             throw new NotImplementedException();

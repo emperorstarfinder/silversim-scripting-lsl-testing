@@ -9,6 +9,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types;
 using SilverSim.Types;
+using SilverSim.Scripting.Common;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -16,26 +17,28 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     {
         #region Sit Targets
         [APILevel(APIFlags.LSL)]
-        public void llSitTarget(ScriptInstance Instance, Vector3 offset, Quaternion rot)
+        [ScriptFunctionName("llSitTarget")]
+        public void SitTarget(ScriptInstance instance, Vector3 offset, Quaternion rot)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.SitTargetOffset = offset;
-                Instance.Part.SitTargetOrientation = rot;
+                instance.Part.SitTargetOffset = offset;
+                instance.Part.SitTargetOrientation = rot;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llLinkSitTarget(ScriptInstance Instance, int link, Vector3 offset, Quaternion rot)
+        [ScriptFunctionName("llLinkSitTarget")]
+        public void LinkSitTarget(ScriptInstance instance, int link, Vector3 offset, Quaternion rot)
         {
             ObjectPart part;
-            lock (Instance)
+            lock (instance)
             {
                 if (link == LINK_THIS)
                 {
-                    part = Instance.Part;
+                    part = instance.Part;
                 }
-                else if (!Instance.Part.ObjectGroup.TryGetValue(link, out part))
+                else if (!instance.Part.ObjectGroup.TryGetValue(link, out part))
                 {
                     return;
                 }
@@ -46,29 +49,31 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.ASSL)]
-        public AnArray asGetSitTarget(ScriptInstance Instance)
+        [ScriptFunctionName("asGetSitTarget")]
+        public AnArray GetSitTarget(ScriptInstance instance)
         {
             AnArray res = new AnArray();
-            lock(Instance)
+            lock(instance)
             {
-                res.Add(Instance.Part.SitTargetOffset);
-                res.Add(Instance.Part.SitTargetOrientation);
+                res.Add(instance.Part.SitTargetOffset);
+                res.Add(instance.Part.SitTargetOrientation);
             }
             return res;
         }
 
         [APILevel(APIFlags.ASSL)]
-        public AnArray asGetLinkSitTarget(ScriptInstance Instance, int link)
+        [ScriptFunctionName("asGetLinkSitTarget")]
+        public AnArray GetLinkSitTarget(ScriptInstance instance, int link)
         {
             ObjectPart part;
             AnArray res = new AnArray();
-            lock (Instance)
+            lock (instance)
             {
                 if (link == LINK_THIS)
                 {
-                    part = Instance.Part;
+                    part = instance.Part;
                 }
-                else if (!Instance.Part.ObjectGroup.TryGetValue(link, out part))
+                else if (!instance.Part.ObjectGroup.TryGetValue(link, out part))
                 {
                     return res;
                 }
@@ -82,26 +87,30 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         #region Sit control
         [APILevel(APIFlags.LSL)]
-        public LSLKey llAvatarOnSitTarget(ScriptInstance Instance)
+        [ScriptFunctionName("llAvatarOnSitTarget")]
+        public LSLKey AvatarOnSitTarget(ScriptInstance instance)
         {
-            return llAvatarOnLinkSitTarget(Instance, LINK_THIS);
+            return AvatarOnLinkSitTarget(instance, LINK_THIS);
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llAvatarOnLinkSitTarget(ScriptInstance Instance, int link)
+        [ScriptFunctionName("llAvatarOnLinkSitTarget")]
+        public LSLKey AvatarOnLinkSitTarget(ScriptInstance instance, int link)
         {
 #warning Implement llAvatarOnLinkSitTarget(int)
             return UUID.Zero;
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llForceMouselook(ScriptInstance Instance, int mouselook)
+        [ScriptFunctionName("llForceMouselook")]
+        public void ForceMouselook(ScriptInstance instance, int mouselook)
         {
 #warning Implement llForceMouselook(int)
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llUnSit(ScriptInstance Instance, LSLKey id)
+        [ScriptFunctionName("llUnSit")]
+        public void UnSit(ScriptInstance instance, LSLKey id)
         {
 #warning Implement llUnSit(UUID)
         }

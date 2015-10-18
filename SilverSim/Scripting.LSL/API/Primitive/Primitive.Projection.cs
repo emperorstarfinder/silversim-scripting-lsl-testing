@@ -10,6 +10,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scene.Types.Script;
 using System.Reflection;
+using SilverSim.Scripting.Common;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -19,13 +20,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         /// Set parameters for light projection in host prim 
         /// </summary>
         [APILevel(APIFlags.OSSL)]
-        public void osSetProjectionParams(ScriptInstance Instance, int projection, LSLKey texture, double fov, double focus, double amb)
+        [ScriptFunctionName("osSetProjectionParams")]
+        public void SetProjectionParams(ScriptInstance instance, int projection, LSLKey texture, double fov, double focus, double amb)
         {
-            osSetLinkProjectionParams(Instance, LINK_THIS, projection, texture, fov, focus, amb);
+            SetLinkProjectionParams(instance, LINK_THIS, projection, texture, fov, focus, amb);
         }
 
         [APILevel(APIFlags.OSSL)]
-        public void osSetLinkProjectionParams(ScriptInstance Instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
+        [ScriptFunctionName("osSetLinkProjectionParams")]
+        public void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             ObjectPart.ProjectionParam p = new ObjectPart.ProjectionParam();
             p.IsProjecting = projection != 0;
@@ -34,7 +37,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             p.ProjectionFocus = focus;
             p.ProjectionAmbience = amb;
 
-            foreach(ObjectPart part in GetLinkTargets(Instance, link))
+            foreach(ObjectPart part in GetLinkTargets(instance, link))
             {
                 part.Projection = p;
             }
@@ -44,25 +47,26 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         /// Set parameters for light projection with uuid of target prim
         /// </summary>
         [APILevel(APIFlags.OSSL)]
-        public void osSetProjectionParams(ScriptInstance Instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
+        [ScriptFunctionName("osSetProjectionParams")]
+        public void SetProjectionParams(ScriptInstance instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
         {
-            lock (Instance)
+            lock (instance)
             {
                 if (UUID.Zero != prim)
                 {
-                    Instance.CheckThreatLevel(MethodBase.GetCurrentMethod().Name, ScriptInstance.ThreatLevelType.High);
+                    instance.CheckThreatLevel(MethodBase.GetCurrentMethod().Name, ScriptInstance.ThreatLevelType.High);
                 }
 
                 ObjectPart part;
                 if (prim == UUID.Zero)
                 {
-                    part = Instance.Part;
+                    part = instance.Part;
                 }
                 else
                 {
                     try
                     {
-                        part = Instance.Part.ObjectGroup.Scene.Primitives[prim];
+                        part = instance.Part.ObjectGroup.Scene.Primitives[prim];
                     }
                     catch
                     {

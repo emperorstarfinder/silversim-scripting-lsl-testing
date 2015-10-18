@@ -14,15 +14,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     [LSLImplementation]
     public partial class Primitive_API : MarshalByRefObject, IScriptApi, IPlugin
     {
-        public UUID getTextureAssetID(ScriptInstance Instance, string item)
+        public UUID GetTextureAssetID(ScriptInstance instance, string item)
         {
             UUID assetID;
             if (!UUID.TryParse(item, out assetID))
             {
                 /* must be an inventory item */
-                lock (Instance)
+                lock (instance)
                 {
-                    ObjectPartInventoryItem i = Instance.Part.Inventory[item];
+                    ObjectPartInventoryItem i = instance.Part.Inventory[item];
                     if (i.InventoryType != Types.Inventory.InventoryType.Texture)
                     {
                         throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
@@ -268,26 +268,26 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [APILevel(APIFlags.LSL)]
         public const string TEXTURE_MEDIA = "8b5fec65-8d8d-9dc5-cda8-8fdf2716e361";
 
-        protected List<ObjectPart> GetLinkTargets(ScriptInstance Instance, int link)
+        protected List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
         {
             List<ObjectPart> list = new List<ObjectPart>();
             if (link == LINK_THIS)
             {
-                list.Add(Instance.Part);
+                list.Add(instance.Part);
             }
             else if (link == LINK_ROOT)
             {
-                list.Add(Instance.Part.ObjectGroup.RootPart);
+                list.Add(instance.Part.ObjectGroup.RootPart);
             }
             else if (link == LINK_SET)
             {
-                list.AddRange(Instance.Part.ObjectGroup.Values);
+                list.AddRange(instance.Part.ObjectGroup.Values);
             }
             else if (link == LINK_ALL_OTHERS)
             {
-                foreach (ObjectPart part in Instance.Part.ObjectGroup.Values)
+                foreach (ObjectPart part in instance.Part.ObjectGroup.Values)
                 {
-                    if (part != Instance.Part)
+                    if (part != instance.Part)
                     {
                         list.Add(part);
                     }
@@ -295,7 +295,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
             else
             {
-                list.Add(Instance.Part.ObjectGroup[link]);
+                list.Add(instance.Part.ObjectGroup[link]);
             }
 
             return list;

@@ -14,10 +14,11 @@ namespace SilverSim.Scripting.LSL.API.Base
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL)]
-        public void llDie(ScriptInstance Instance)
+        [ScriptFunctionName("llDie")]
+        public void Die(ScriptInstance instance)
         {
-            Instance.AbortBegin();
-            Instance.Part.ObjectGroup.Scene.Remove(Instance.Part.ObjectGroup, Instance);
+            instance.AbortBegin();
+            instance.Part.ObjectGroup.Scene.Remove(instance.Part.ObjectGroup, instance);
             throw new ScriptAbortException();
         }
     }

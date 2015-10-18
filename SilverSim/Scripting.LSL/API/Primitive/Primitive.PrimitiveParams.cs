@@ -5,6 +5,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -13,217 +14,240 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         #region Primitives
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetKey(ScriptInstance Instance)
+        [ScriptFunctionName("llGetKey")]
+        public LSLKey GetKey(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.ID;
+                return instance.Part.ID;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llAllowInventoryDrop(ScriptInstance Instance, int add)
+        [ScriptFunctionName("llAllowInventoryDrop")]
+        public void AllowInventoryDrop(ScriptInstance instance, int add)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.IsAllowedDrop = add != 0;
+                instance.Part.IsAllowedDrop = add != 0;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public AnArray llGetLinkPrimitiveParams(ScriptInstance Instance, int link, AnArray param)
+        [ScriptFunctionName("llGetLinkPrimitiveParams")]
+        public AnArray GetLinkPrimitiveParams(ScriptInstance instance, int link, AnArray param)
         {
             AnArray parout = new AnArray();
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ObjectGroup.GetPrimitiveParams(Instance.Part.LinkNumber, link, param.GetEnumerator(), ref parout);
+                instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, link, param.GetEnumerator(), ref parout);
             }
             return parout;
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(0.2)]
-        public AnArray llGetPrimitiveParams(ScriptInstance Instance, AnArray param)
+        [ScriptFunctionName("llGetPrimitiveParams")]
+        public AnArray GetPrimitiveParams(ScriptInstance instance, AnArray param)
         {
             AnArray parout = new AnArray();
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ObjectGroup.GetPrimitiveParams(Instance.Part.LinkNumber, LINK_THIS, param.GetEnumerator(), ref parout);
+                instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, LINK_THIS, param.GetEnumerator(), ref parout);
             }
             return parout;
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetLocalPos(ScriptInstance Instance)
+        [ScriptFunctionName("llGetLocalPos")]
+        public Vector3 GetLocalPos(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.LocalPosition;
+                return instance.Part.LocalPosition;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetPos(ScriptInstance Instance)
+        [ScriptFunctionName("llGetPos")]
+        public Vector3 GetPos(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.Position;
+                return instance.Part.Position;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetRootPosition(ScriptInstance Instance)
+        [ScriptFunctionName("llGetRootPosition")]
+        public Vector3 GetRootPosition(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.ObjectGroup.Position;
+                return instance.Part.ObjectGroup.Position;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public Quaternion llGetRootRotation(ScriptInstance Instance)
+        [ScriptFunctionName("llGetRootRotation")]
+        public Quaternion GetRootRotation(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.ObjectGroup.RootPart.Rotation;
+                return instance.Part.ObjectGroup.RootPart.Rotation;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public Quaternion llGetRot(ScriptInstance Instance)
+        [ScriptFunctionName("llGetRot")]
+        public Quaternion GetRot(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.Rotation;
+                return instance.Part.Rotation;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetScale(ScriptInstance Instance)
+        [ScriptFunctionName("llGetScale")]
+        public Vector3 GetScale(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.Size;
+                return instance.Part.Size;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llPassCollisions(ScriptInstance Instance, int pass)
+        [ScriptFunctionName("llPassCollisions")]
+        public void PassCollisions(ScriptInstance instance, int pass)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.IsPassCollisions = pass != 0;
+                instance.Part.IsPassCollisions = pass != 0;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llPassTouches(ScriptInstance Instance, int pass)
+        [ScriptFunctionName("llPassTouches")]
+        public void PassTouches(ScriptInstance instance, int pass)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.IsPassTouches = pass != 0;
+                instance.Part.IsPassTouches = pass != 0;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetClickAction(ScriptInstance Instance, int action)
+        [ScriptFunctionName("llSetClickAction")]
+        public void SetClickAction(ScriptInstance instance, int action)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ClickAction = (ClickActionType)action;
+                instance.Part.ClickAction = (ClickActionType)action;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetPayPrice(ScriptInstance Instance, int price, AnArray quick_pay_buttons)
+        [ScriptFunctionName("llSetPayPrice")]
+        public void SetPayPrice(ScriptInstance instance, int price, AnArray quick_pay_buttons)
         {
 #warning Implement llSetPayPrice(int, AnArray)
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetPos(ScriptInstance Instance, Vector3 pos)
+        [ScriptFunctionName("llSetPos")]
+        public void SetPos(ScriptInstance instance, Vector3 pos)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.Position = pos;
+                instance.Part.Position = pos;
             }
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(0.2)]
-        public void llSetPrimitiveParams(ScriptInstance Instance, AnArray rules)
+        [ScriptFunctionName("llSetPrimitiveParams")]
+        public void SetPrimitiveParams(ScriptInstance instance, AnArray rules)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ObjectGroup.SetPrimitiveParams(Instance.Part.LinkNumber, LINK_THIS, rules.GetMarkEnumerator());
+                instance.Part.ObjectGroup.SetPrimitiveParams(instance.Part.LinkNumber, LINK_THIS, rules.GetMarkEnumerator());
             }
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(0.2)]
-        public void llSetLinkPrimitiveParams(ScriptInstance Instance, int linkTarget, AnArray rules)
+        [ScriptFunctionName("llSetLinkPrimitiveParams")]
+        public void SetLinkPrimitiveParams(ScriptInstance instance, int linkTarget, AnArray rules)
         {
-            llSetLinkPrimitiveParamsFast(Instance, linkTarget, rules);
+            SetLinkPrimitiveParamsFast(instance, linkTarget, rules);
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetLinkPrimitiveParamsFast(ScriptInstance Instance, int linkTarget, AnArray rules)
+        [ScriptFunctionName("llSetLinkPrimitiveParamsFast")]
+        public void SetLinkPrimitiveParamsFast(ScriptInstance instance, int linkTarget, AnArray rules)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ObjectGroup.SetPrimitiveParams(Instance.Part.LinkNumber, linkTarget, rules.GetMarkEnumerator());
+                instance.Part.ObjectGroup.SetPrimitiveParams(instance.Part.LinkNumber, linkTarget, rules.GetMarkEnumerator());
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetScale(ScriptInstance Instance, Vector3 size)
+        [ScriptFunctionName("llSetScale")]
+        public void SetScale(ScriptInstance instance, Vector3 size)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.Size = size;
+                instance.Part.Size = size;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetSitText(ScriptInstance Instance, string text)
+        [ScriptFunctionName("llSetSitText")]
+        public void SetSitText(ScriptInstance instance, string text)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ObjectGroup.RootPart.SitText = text;
+                instance.Part.ObjectGroup.RootPart.SitText = text;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetText(ScriptInstance Instance, string text, Vector3 color, double alpha)
+        [ScriptFunctionName("llSetText")]
+        public void SetText(ScriptInstance instance, string text, Vector3 color, double alpha)
         {
             ObjectPart.TextParam tp = new ObjectPart.TextParam();
             tp.Text = text;
             tp.TextColor = new ColorAlpha(color, alpha);
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.Text = tp;
+                instance.Part.Text = tp;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetTouchText(ScriptInstance Instance, string text)
+        [ScriptFunctionName("llSetTouchText")]
+        public void SetTouchText(ScriptInstance instance, string text)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ObjectGroup.RootPart.TouchText = text;
+                instance.Part.ObjectGroup.RootPart.TouchText = text;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llTargetOmega(ScriptInstance Instance, Vector3 axis, double spinrate, double gain)
+        [ScriptFunctionName("llTargetOmega")]
+        public void TargetOmega(ScriptInstance instance, Vector3 axis, double spinrate, double gain)
         {
             ObjectPart.OmegaParam op = new ObjectPart.OmegaParam();
             op.Axis = axis;
             op.Spinrate = spinrate;
             op.Gain = gain;
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.Omega = op;
+                instance.Part.Omega = op;
             }
         }
         #endregion

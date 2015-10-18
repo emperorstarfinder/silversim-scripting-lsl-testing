@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
@@ -26,7 +27,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         public const double SQRT2 = 1.414213538f;
 
         [APILevel(APIFlags.LSL)]
-        public int llAbs(ScriptInstance Instance, int v)
+        [ScriptFunctionName("llAbs")]
+        public int Abs(ScriptInstance instance, int v)
         {
             if(v < 0)
             {
@@ -39,98 +41,114 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llAcos(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llAcos")]
+        public double Acos(ScriptInstance instance, double v)
         {
             return Math.Acos(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llAsin(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llAsin")]
+        public double Asin(ScriptInstance instance, double v)
         {
             return Math.Asin(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llAtan2(ScriptInstance Instance, double y, double x)
+        [ScriptFunctionName("llAtan2")]
+        public double Atan2(ScriptInstance instance, double y, double x)
         {
             return Math.Atan2(y, x);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llCos(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llCos")]
+        public double Cos(ScriptInstance instance, double v)
         {
             return Math.Cos(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llFabs(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llFabs")]
+        public double Fabs(ScriptInstance instance, double v)
         {
             return Math.Abs(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llLog(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llLog")]
+        public double Log(ScriptInstance instance, double v)
         {
             return Math.Log(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llLog10(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llLog10")]
+        public double Log10(ScriptInstance instance, double v)
         {
             return Math.Log10(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llPow(ScriptInstance Instance, double bas, double exponent)
+        [ScriptFunctionName("llPow")]
+        public double Pow(ScriptInstance instance, double bas, double exponent)
         {
             return Math.Pow(bas, exponent);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llSin(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llSin")]
+        public double Sin(ScriptInstance instance, double v)
         {
             return Math.Sin(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llSqrt(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llSqrt")]
+        public double Sqrt(ScriptInstance instance, double v)
         {
             return Math.Sqrt(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llTan(ScriptInstance Instance, double v)
+        [ScriptFunctionName("llTan")]
+        public double Tan(ScriptInstance instance, double v)
         {
             return Math.Tan(v);
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llVecDist(ScriptInstance Instance, Vector3 a, Vector3 b)
+        [ScriptFunctionName("llVecDist")]
+        public double VecDist(ScriptInstance instance, Vector3 a, Vector3 b)
         {
             return (a - b).Length;
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llVecMag(ScriptInstance Instance, Vector3 v)
+        [ScriptFunctionName("llVecMag")]
+        public double VecMag(ScriptInstance instance, Vector3 v)
         {
             return v.Length;
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llVecNorm(ScriptInstance Instance, Vector3 v)
+        [ScriptFunctionName("llVecNorm")]
+        public Vector3 VecNorm(ScriptInstance instance, Vector3 v)
         {
             return v / v.Length;
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(1)]
-        public int llModPow(ScriptInstance Instance, int a, int b, int c)
+        [ScriptFunctionName("llModPow")]
+        public int ModPow(ScriptInstance instance, int a, int b, int c)
         {
             return ((int)Math.Pow(a, b)) % c;
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llRot2Euler(ScriptInstance Instance, Quaternion q)
+        [ScriptFunctionName("llRot2Euler")]
+        public Vector3 Rot2Euler(ScriptInstance instance, Quaternion q)
         {
             double roll, pitch, yaw;
 
@@ -139,7 +157,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public double llRot2Angle(ScriptInstance Instance, Quaternion r)
+        [ScriptFunctionName("llRot2Angle")]
+        public double Rot2Angle(ScriptInstance instance, Quaternion r)
         {
             /* based on http://wiki.secondlife.com/wiki/LlRot2Angle */
             double s2 = r.Z * r.Z; // square of the s-element
@@ -158,12 +177,14 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llRot2Axis(ScriptInstance Instance, Quaternion q)
+        [ScriptFunctionName("llRot2Axis")]
+        public Vector3 Rot2Axis(ScriptInstance instance, Quaternion q)
         {
-            return llVecNorm(Instance, new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
+            return VecNorm(instance, new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
         }
 
         [APILevel(APIFlags.LSL)]
+        [ScriptFunctionName("llAxisAngle2Rot")]
         public Quaternion llAxisAngle2Rot(ScriptInstance Instance, Vector3 axis, double angle)
         {
             return Quaternion.CreateFromAxisAngle(axis, angle);

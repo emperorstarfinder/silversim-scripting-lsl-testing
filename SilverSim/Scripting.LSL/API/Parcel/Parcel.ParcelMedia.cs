@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 
@@ -40,14 +41,16 @@ namespace SilverSim.Scripting.LSL.API.Parcel
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(2)]
-        public void llParcelMediaCommandList(ScriptInstance Instance, AnArray commandList)
+        [ScriptFunctionName("llParcelMediaCommandList")]
+        public void ParcelMediaCommandList(ScriptInstance instance, AnArray commandList)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(2)]
-        public AnArray llParcelMediaQuery(ScriptInstance Instance, AnArray query)
+        [ScriptFunctionName("llParcelMediaQuery")]
+        public AnArray ParcelMediaQuery(ScriptInstance instance, AnArray query)
         {
             throw new NotImplementedException();
         }

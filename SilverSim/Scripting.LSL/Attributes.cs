@@ -109,11 +109,11 @@ namespace SilverSim.Scripting.LSL
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public sealed class LSLFunctionName : Attribute
+    public sealed class ScriptFunctionName : Attribute
     {
         public string Name { get; private set; }
 
-        public LSLFunctionName(string name)
+        public ScriptFunctionName(string name)
         {
             Name = name;
         }

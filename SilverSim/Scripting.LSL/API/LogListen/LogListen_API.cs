@@ -4,6 +4,7 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using System;
 
 namespace SilverSim.Scripting.LSL.API.LogListen
@@ -23,7 +24,8 @@ namespace SilverSim.Scripting.LSL.API.LogListen
         }
 
         [APILevel(APIFlags.ASSL)]
-        public void asLogListen(ScriptInstance Instance, int onChannel, int enable)
+        [ScriptFunctionName("asLogListen")]
+        public void LogListen(ScriptInstance Instance, int onChannel, int enable)
         {
             throw new NotImplementedException();
         }

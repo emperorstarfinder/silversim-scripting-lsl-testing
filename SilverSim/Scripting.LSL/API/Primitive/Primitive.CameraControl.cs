@@ -3,6 +3,7 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 
@@ -58,28 +59,32 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         public const int CAMERA_FOCUS_LOCKED = 22;
 
         [APILevel(APIFlags.LSL)]
-        public void llSetCameraAtOffset(ScriptInstance Instance, Vector3 offset)
+        [ScriptFunctionName("llSetCameraAtOffset")]
+        public void SetCameraAtOffset(ScriptInstance instance, Vector3 offset)
         {
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetLinkCamera(ScriptInstance Instance, int link, Vector3 eye, Vector3 at)
-        {
-
-        }
-
-        [APILevel(APIFlags.LSL)]
-        public void llSetCameraOffset(ScriptInstance Instance, Vector3 offset)
+        [ScriptFunctionName("llSetLinkCamera")]
+        public void SetLinkCamera(ScriptInstance instance, int link, Vector3 eye, Vector3 at)
         {
 
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llClearCameraParams(ScriptInstance Instance)
+        [ScriptFunctionName("llSetCameraOffset")]
+        public void SetCameraOffset(ScriptInstance instance, Vector3 offset)
         {
-            lock (Instance)
+
+        }
+
+        [APILevel(APIFlags.LSL)]
+        [ScriptFunctionName("llClearCameraParams")]
+        public void ClearCameraParams(ScriptInstance instance)
+        {
+            lock (instance)
             {
-                ObjectPartInventoryItem.PermsGranterInfo grantinfo = Instance.Item.PermsGranter;
+                ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
 
@@ -89,11 +94,12 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetCameraParams(ScriptInstance Instance, AnArray rules)
+        [ScriptFunctionName("llSetCameraParams")]
+        public void SetCameraParams(ScriptInstance instance, AnArray rules)
         {
-            lock (Instance)
+            lock (instance)
             {
-                ObjectPartInventoryItem.PermsGranterInfo grantinfo = Instance.Item.PermsGranter;
+                ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
 
@@ -103,9 +109,10 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetCameraPos(ScriptInstance Instance)
+        [ScriptFunctionName("llGetCameraPos")]
+        public Vector3 GetCameraPos(ScriptInstance instance)
         {
-            ObjectPartInventoryItem.PermsGranterInfo grantinfo = Instance.Item.PermsGranter;
+            ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
 
@@ -114,9 +121,10 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public Quaternion llGetCameraRot(ScriptInstance Instance)
+        [ScriptFunctionName("llGetCameraRot")]
+        public Quaternion GetCameraRot(ScriptInstance instance)
         {
-            ObjectPartInventoryItem.PermsGranterInfo grantinfo = Instance.Item.PermsGranter;
+            ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
 

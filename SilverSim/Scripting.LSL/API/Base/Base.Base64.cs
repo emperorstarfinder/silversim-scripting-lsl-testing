@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using System;
 using System.Text;
 
@@ -10,7 +11,8 @@ namespace SilverSim.Scripting.LSL.API.Base
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL)]
-        public string llIntegerToBase64(ScriptInstance Instance, int number)
+        [ScriptFunctionName("llIntegerToBase64")]
+        public string IntegerToBase64(ScriptInstance instance, int number)
         {
             byte[] b = BitConverter.GetBytes(number);
             if (BitConverter.IsLittleEndian)
@@ -21,7 +23,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llBase64ToInteger(ScriptInstance Instance, string s)
+        [ScriptFunctionName("llBase64ToInteger")]
+        public int Base64ToInteger(ScriptInstance instance, string s)
         {
             if (s.Length > 8)
             {
@@ -37,14 +40,16 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llStringToBase64(ScriptInstance Instance, string str)
+        [ScriptFunctionName("llStringToBase64")]
+        public string StringToBase64(ScriptInstance instance, string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
             return System.Convert.ToBase64String(b);
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llBase64ToString(ScriptInstance Instance, string str)
+        [ScriptFunctionName("llBase64ToString")]
+        public string Base64ToString(ScriptInstance instance, string str)
         {
             byte[] b = System.Convert.FromBase64String(str);
             return Encoding.UTF8.GetString(b);
@@ -52,7 +57,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(0.3)]
-        public string llXorBase64(ScriptInstance Instance, string str1, string str2)
+        [ScriptFunctionName("llXorBase64")]
+        public string XorBase64(ScriptInstance instance, string str1, string str2)
         {
             byte[] a = System.Convert.FromBase64String(str1);
             byte[] b = System.Convert.FromBase64String(str2);

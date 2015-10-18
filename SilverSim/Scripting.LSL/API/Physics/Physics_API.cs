@@ -5,6 +5,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 
@@ -25,20 +26,21 @@ namespace SilverSim.Scripting.LSL.API.Physics
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetTorque(ScriptInstance Instance, Vector3 torque, int local)
+        [ScriptFunctionName("llSetTorque")]
+        public void SetTorque(ScriptInstance instance, Vector3 torque, int local)
         {
-            lock (Instance)
+            lock (instance)
             {
-                IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    Instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has not physical properties");
                     return;
                 }
                 
                 if (local != 0)
                 {
-                    physobj.AppliedTorque = torque / Instance.Part.ObjectGroup.GlobalRotation;
+                    physobj.AppliedTorque = torque / instance.Part.ObjectGroup.GlobalRotation;
                 }
                 else
                 {
@@ -48,20 +50,21 @@ namespace SilverSim.Scripting.LSL.API.Physics
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetForce(ScriptInstance Instance, Vector3 force, int local)
+        [ScriptFunctionName("llSetForce")]
+        public void SetForce(ScriptInstance instance, Vector3 force, int local)
         {
-            lock (Instance)
+            lock (instance)
             {
-                IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    Instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has not physical properties");
                     return;
                 }
 
                 if (local != 0)
                 {
-                    physobj.AppliedForce = force / Instance.Part.ObjectGroup.GlobalRotation;
+                    physobj.AppliedForce = force / instance.Part.ObjectGroup.GlobalRotation;
                 }
                 else
                 {
@@ -71,14 +74,15 @@ namespace SilverSim.Scripting.LSL.API.Physics
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetForceAndTorque(ScriptInstance Instance, Vector3 force, Vector3 torque, int local)
+        [ScriptFunctionName("llSetForceAndTorque")]
+        public void SetForceAndTorque(ScriptInstance instance, Vector3 force, Vector3 torque, int local)
         {
-            lock (Instance)
+            lock (instance)
             {
-                IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    Instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has not physical properties");
                     return;
                 }
 
@@ -89,8 +93,8 @@ namespace SilverSim.Scripting.LSL.API.Physics
                 }
                 else if(local != 0)
                 {
-                    physobj.AppliedForce = force / Instance.Part.ObjectGroup.GlobalRotation;
-                    physobj.AppliedTorque = torque / Instance.Part.ObjectGroup.GlobalRotation;
+                    physobj.AppliedForce = force / instance.Part.ObjectGroup.GlobalRotation;
+                    physobj.AppliedTorque = torque / instance.Part.ObjectGroup.GlobalRotation;
                 }
                 else
                 {
@@ -101,14 +105,15 @@ namespace SilverSim.Scripting.LSL.API.Physics
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetBuoyancy(ScriptInstance Instance, double buoyancy)
+        [ScriptFunctionName("llSetBuoyancy")]
+        public void SetBuoyancy(ScriptInstance instance, double buoyancy)
         {
-            lock(Instance)
+            lock(instance)
             {
-                IPhysicsObject physobj = Instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    Instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has not physical properties");
                     return;
                 }
 
@@ -117,70 +122,76 @@ namespace SilverSim.Scripting.LSL.API.Physics
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llPushObject(ScriptInstance Instance, LSLKey target, Vector3 impulse, Vector3 ang_impulse, int local)
+        [ScriptFunctionName("llPushObject")]
+        public void PushObject(ScriptInstance instance, LSLKey target, Vector3 impulse, Vector3 ang_impulse, int local)
         {
 #warning Implement llPushObject
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llApplyImpulse(ScriptInstance Instance, Vector3 momentum, int local)
+        [ScriptFunctionName("llApplyImpulse")]
+        public void ApplyImpulse(ScriptInstance instance, Vector3 momentum, int local)
         {
 #warning Implement llApplyImpulse
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llApplyRotationalImpulse(ScriptInstance Instance, Vector3 ang_impulse, int local)
+        [ScriptFunctionName("llApplyRotationalImpulse")]
+        public void ApplyRotationalImpulse(ScriptInstance instance, Vector3 ang_impulse, int local)
         {
 #warning Implement llApplyRotationalImpulse
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetVelocity(ScriptInstance Instance, Vector3 velocity, int local)
+        [ScriptFunctionName("llSetVelocity")]
+        public void SetVelocity(ScriptInstance instance, Vector3 velocity, int local)
         {
-            lock (Instance)
+            lock (instance)
             {
                 /* we leave the physics check out here since it has an interesting use */
                 if (local != 0)
                 {
-                    Instance.Part.ObjectGroup.Velocity = velocity / Instance.Part.ObjectGroup.GlobalRotation;
+                    instance.Part.ObjectGroup.Velocity = velocity / instance.Part.ObjectGroup.GlobalRotation;
                 }
                 else
                 {
-                    Instance.Part.ObjectGroup.Velocity = velocity;
+                    instance.Part.ObjectGroup.Velocity = velocity;
                 }
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetAngularVelocity(ScriptInstance Instance, Vector3 initial_omega, int local)
+        [ScriptFunctionName("llSetAngularVelocity")]
+        public void SetAngularVelocity(ScriptInstance instance, Vector3 initial_omega, int local)
         {
-            lock (Instance)
+            lock (instance)
             {
                 /* we leave the physics check out here since it has an interesting use */
                 if (local != 0)
                 {
-                    Instance.Part.ObjectGroup.AngularVelocity = initial_omega / Instance.Part.ObjectGroup.GlobalRotation;
+                    instance.Part.ObjectGroup.AngularVelocity = initial_omega / instance.Part.ObjectGroup.GlobalRotation;
                 }
                 else
                 {
-                    Instance.Part.ObjectGroup.AngularVelocity = initial_omega;
+                    instance.Part.ObjectGroup.AngularVelocity = initial_omega;
                 }
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public AnArray llGetPhysicsMaterial(ScriptInstance Instance)
+        [ScriptFunctionName("llGetPhysicsMaterial")]
+        public AnArray GetPhysicsMaterial(ScriptInstance instance)
         {
             AnArray array = new AnArray();
-            lock (Instance)
+            lock (instance)
             {
-                array.Add(Instance.Part.ObjectGroup.RootPart.PhysicsGravityMultiplier);
-                array.Add(Instance.Part.ObjectGroup.RootPart.PhysicsRestitution);
-                array.Add(Instance.Part.ObjectGroup.RootPart.PhysicsFriction);
-                array.Add(Instance.Part.ObjectGroup.RootPart.PhysicsDensity);
+                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsGravityMultiplier);
+                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsRestitution);
+                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsFriction);
+                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsDensity);
                 return array;
             }
         }
@@ -191,9 +202,10 @@ namespace SilverSim.Scripting.LSL.API.Physics
         const int GRAVITY_MULTIPLIER = 8;
 
         [APILevel(APIFlags.LSL)]
-        public void llSetPhysicsMaterial(ScriptInstance Instance, int mask, double gravity_multiplier, double restitution, double friction, double density)
+        [ScriptFunctionName("llSetPhysicsMaterial")]
+        public void SetPhysicsMaterial(ScriptInstance instance, int mask, double gravity_multiplier, double restitution, double friction, double density)
         {
-            lock (Instance)
+            lock (instance)
             {
                 if (0 != (mask & DENSITY))
                 {
@@ -205,7 +217,7 @@ namespace SilverSim.Scripting.LSL.API.Physics
                     {
                         density = 22587f;
                     }
-                    Instance.Part.ObjectGroup.RootPart.PhysicsDensity = density;
+                    instance.Part.ObjectGroup.RootPart.PhysicsDensity = density;
                 }
                 if (0 != (mask & FRICTION))
                 {
@@ -217,7 +229,7 @@ namespace SilverSim.Scripting.LSL.API.Physics
                     {
                         friction = 255f;
                     }
-                    Instance.Part.ObjectGroup.RootPart.PhysicsFriction = friction;
+                    instance.Part.ObjectGroup.RootPart.PhysicsFriction = friction;
                 }
                 if (0 != (mask & RESTITUTION))
                 {
@@ -229,7 +241,7 @@ namespace SilverSim.Scripting.LSL.API.Physics
                     {
                         restitution = 1f;
                     }
-                    Instance.Part.ObjectGroup.RootPart.PhysicsRestitution = restitution;
+                    instance.Part.ObjectGroup.RootPart.PhysicsRestitution = restitution;
                 }
                 if (0 != (mask & GRAVITY_MULTIPLIER))
                 {
@@ -241,20 +253,22 @@ namespace SilverSim.Scripting.LSL.API.Physics
                     {
                         gravity_multiplier = 28f;
                     }
-                    Instance.Part.ObjectGroup.RootPart.PhysicsGravityMultiplier = gravity_multiplier;
+                    instance.Part.ObjectGroup.RootPart.PhysicsGravityMultiplier = gravity_multiplier;
                 }
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetHoverHeight(ScriptInstance Instance, double height, int water, double tau)
+        [ScriptFunctionName("llSetHoverHeight")]
+        public void SetHoverHeight(ScriptInstance instance, double height, int water, double tau)
         {
 #warning Implement llSetHoverHeight
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llStopHover(ScriptInstance Instance)
+        [ScriptFunctionName("llStopHover")]
+        public void StopHover(ScriptInstance instance)
         {
 #warning Implement llStopHover
             throw new NotImplementedException();

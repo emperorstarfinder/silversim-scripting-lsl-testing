@@ -4,6 +4,7 @@
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System.Reflection;
 
@@ -61,99 +62,110 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         public const int OBJECT_TEMP_ON_REZ = 23;
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetCenterOfMass(ScriptInstance Instance)
+        [ScriptFunctionName("llGetCenterOfMass")]
+        public Vector3 GetCenterOfMass(ScriptInstance instance)
         {
 #warning Implement llGetCenterOfMass()
             return Vector3.Zero;
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetCreator(ScriptInstance Instance)
+        [ScriptFunctionName("llGetCreator")]
+        public LSLKey GetCreator(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.Creator.ID;
+                return instance.Part.Creator.ID;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetObjectDesc(ScriptInstance Instance)
+        [ScriptFunctionName("llGetObjectDesc")]
+        public string GetObjectDesc(ScriptInstance instance)
         {
-            lock(Instance) return Instance.Part.Name;
+            lock(instance) return instance.Part.Name;
         }
 
         [APILevel(APIFlags.LSL)]
-        public AnArray llGetObjectDetails(ScriptInstance Instance, AnArray param)
+        [ScriptFunctionName("llGetObjectDetails")]
+        public AnArray GetObjectDetails(ScriptInstance instance, AnArray param)
         {
             AnArray parout = new AnArray();
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.ObjectGroup.GetObjectDetails(param.GetEnumerator(), ref parout);
+                instance.Part.ObjectGroup.GetObjectDetails(param.GetEnumerator(), ref parout);
             }
             return parout;
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetObjectName(ScriptInstance Instance)
+        [ScriptFunctionName("llGetObjectName")]
+        public string GetObjectName(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.Description;
+                return instance.Part.Description;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetObjectDesc(ScriptInstance Instance, string desc)
+        [ScriptFunctionName("llSetObjectDesc")]
+        public void SetObjectDesc(ScriptInstance instance, string desc)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.Description = desc;
+                instance.Part.Description = desc;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetObjectName(ScriptInstance Instance, string name)
+        [ScriptFunctionName("llSetObjectName")]
+        public void SetObjectName(ScriptInstance instance, string name)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.Part.Name = name;
+                instance.Part.Name = name;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llSetRegionPos(ScriptInstance Instance, Vector3 pos)
+        [ScriptFunctionName("llSetRegionPos")]
+        public int SetRegionPos(ScriptInstance instance, Vector3 pos)
         {
 #warning Implement llSetRegionPos(Vector3)
             return 0;
         }
 
         [APILevel(APIFlags.LSL)]
-        public Vector3 llGetVel(ScriptInstance Instance)
+        [ScriptFunctionName("llGetVel")]
+        public Vector3 GetVel(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.ObjectGroup.Velocity;
+                return instance.Part.ObjectGroup.Velocity;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetOwner(ScriptInstance Instance)
+        [ScriptFunctionName("llGetOwner")]
+        public LSLKey GetOwner(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.ObjectGroup.Owner.ID;
+                return instance.Part.ObjectGroup.Owner.ID;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetOwnerKey(ScriptInstance Instance, LSLKey id)
+        [ScriptFunctionName("llGetOwnerKey")]
+        public LSLKey GetOwnerKey(ScriptInstance instance, LSLKey id)
         {
-            lock (Instance)
+            lock (instance)
             {
                 ObjectPart part;
                 try
                 {
-                    part = Instance.Part.ObjectGroup.Scene.Primitives[id];
+                    part = instance.Part.ObjectGroup.Scene.Primitives[id];
                 }
                 catch
                 {
@@ -164,52 +176,56 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llGetNumberOfPrims(ScriptInstance Instance)
+        [ScriptFunctionName("llGetNumberOfPrims")]
+        public int GetNumberOfPrims(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.ObjectGroup.Count;
+                return instance.Part.ObjectGroup.Count;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetLinkKey(ScriptInstance Instance, int link)
+        [ScriptFunctionName("llGetLinkKey")]
+        public LSLKey GetLinkKey(ScriptInstance instance, int link)
         {
-            lock (Instance)
+            lock (instance)
             {
                 if (link == LINK_THIS)
                 {
-                    return Instance.Part.ID;
+                    return instance.Part.ID;
                 }
                 else
                 {
-                    return Instance.Part.ObjectGroup[link].ID;
+                    return instance.Part.ObjectGroup[link].ID;
                 }
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetLinkName(ScriptInstance Instance, int link)
+        [ScriptFunctionName("llGetLinkName")]
+        public string GetLinkName(ScriptInstance instance, int link)
         {
-            lock (Instance)
+            lock (instance)
             {
                 if (link == LINK_THIS)
                 {
-                    return Instance.Part.Name;
+                    return instance.Part.Name;
                 }
                 else
                 {
-                    return Instance.Part.ObjectGroup[link].Name;
+                    return instance.Part.ObjectGroup[link].Name;
                 }
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llGetLinkNumber(ScriptInstance Instance)
+        [ScriptFunctionName("llGetLinkNumber")]
+        public int GetLinkNumber(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.LinkNumber;
+                return instance.Part.LinkNumber;
             }
         }
 
@@ -219,16 +235,17 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         public delegate void object_message(LSLKey id, string data);
 
         [APILevel(APIFlags.OSSL)]
-        public void osMessageObject(ScriptInstance Instance, LSLKey objectUUID, string message)
+        [ScriptFunctionName("osMessageObject")]
+        public void MessageObject(ScriptInstance instance, LSLKey objectUUID, string message)
         {
-            lock (Instance)
+            lock (instance)
             {
-                Instance.CheckThreatLevel(MethodBase.GetCurrentMethod().Name, ScriptInstance.ThreatLevelType.Low);
+                instance.CheckThreatLevel(MethodBase.GetCurrentMethod().Name, ScriptInstance.ThreatLevelType.Low);
 
-                IObject obj = Instance.Part.ObjectGroup.Scene.Objects[objectUUID];
+                IObject obj = instance.Part.ObjectGroup.Scene.Objects[objectUUID];
                 MessageObjectEvent ev = new MessageObjectEvent();
                 ev.Data = message;
-                ev.ObjectID = Instance.Part.ObjectGroup.ID;
+                ev.ObjectID = instance.Part.ObjectGroup.ID;
                 obj.PostEvent(ev);
             }
         }

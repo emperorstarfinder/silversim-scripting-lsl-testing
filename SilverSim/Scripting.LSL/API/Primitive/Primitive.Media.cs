@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
@@ -9,7 +10,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     public partial class Primitive_API
     {
         [APILevel(APIFlags.LSL)]
-        public int llClearLinkMedia(ScriptInstance Instance, int link, int face)
+        [ScriptFunctionName("llClearLinkMedia")]
+        public int ClearLinkMedia(ScriptInstance instance, int link, int face)
         {
 #warning Implement llClearLinkMedia(int, int)
             return 0;
@@ -17,9 +19,10 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(1.0)]
-        public int llClearPrimMedia(ScriptInstance Instance, int face)
+        [ScriptFunctionName("llClearPrimMedia")]
+        public int ClearPrimMedia(ScriptInstance instance, int face)
         {
-            return llClearLinkMedia(Instance, LINK_THIS, face);
+            return ClearLinkMedia(instance, LINK_THIS, face);
         }
 
         [APILevel(APIFlags.LSL)]
@@ -85,7 +88,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         public const int LSL_STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL)]
-        public AnArray llGetPrimMediaParams(ScriptInstance Instance, int face, AnArray param)
+        [ScriptFunctionName("llGetPrimMediaParams")]
+        public AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
 #warning Implement llGetPrimMediaParams(int, AnArray)
             return new AnArray();
@@ -109,7 +113,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         public const int STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL)]
-        public int llSetLinkMedia(ScriptInstance Instance, int link, int face, AnArray param)
+        [ScriptFunctionName("llSetLinkMedia")]
+        public int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
 #warning Implement llSetLinkMedia(int, int, AnArray)
             return 0;
@@ -117,9 +122,10 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(1.0)]
-        public int llSetPrimMediaParams(ScriptInstance Instance, int face, AnArray param)
+        [ScriptFunctionName("llSetPrimMediaParams")]
+        public int SetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
-            return llSetLinkMedia(Instance, LINK_THIS, face, param);
+            return SetLinkMedia(instance, LINK_THIS, face, param);
         }
     }
 }
