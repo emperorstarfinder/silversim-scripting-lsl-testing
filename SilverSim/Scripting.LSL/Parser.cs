@@ -16,7 +16,7 @@ namespace SilverSim.Scripting.LSL
 
         }
 
-        public void read_pass_1(List<string> args)
+        public void ReadPass1(List<string> args)
         {
             char c;
             string token = string.Empty;
@@ -324,7 +324,7 @@ redo:
             }
         }
 
-        public void eval_compounds(List<string> args)
+        public void EvalCompounds(List<string> args)
         {
             for(int argi = 0; argi < args.Count; ++argi)
             {
@@ -1069,7 +1069,7 @@ redo:
             }
         }
 
-        public void read_pass_2(List<string> arguments)
+        public void ReadPass2(List<string> arguments)
         {
             List<string> inargs = new List<string>(arguments);
             arguments.Clear();
@@ -1118,9 +1118,9 @@ redo:
 
         public override void read(List<string> args)
         {
-            read_pass_1(args);
-            eval_compounds(args);
-            read_pass_2(args);
+            ReadPass1(args);
+            EvalCompounds(args);
+            ReadPass2(args);
         }
 
     }

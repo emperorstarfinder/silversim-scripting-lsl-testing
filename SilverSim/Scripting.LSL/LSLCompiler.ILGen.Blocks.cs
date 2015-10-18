@@ -42,7 +42,7 @@ namespace SilverSim.Scripting.LSL
                     case "@":
                         if (functionLine.Line.Count != 3 || functionLine.Line[2] != ";")
                         {
-                            throw compilerException(functionLine, "not a valid label definition");
+                            throw CompilerException(functionLine, "not a valid label definition");
                         }
                         else
                         {
@@ -54,7 +54,7 @@ namespace SilverSim.Scripting.LSL
                             }
                             else if (labels[labelName].IsDefined)
                             {
-                                throw compilerException(functionLine, "label already defined");
+                                throw CompilerException(functionLine, "label already defined");
                             }
                             else
                             {
@@ -70,7 +70,7 @@ namespace SilverSim.Scripting.LSL
                     case "integer":
                         if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
                         {
-                            throw compilerException(functionLine,
+                            throw CompilerException(functionLine,
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
@@ -103,7 +103,7 @@ namespace SilverSim.Scripting.LSL
                     case "vector":
                         if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
                         {
-                            throw compilerException(functionLine,
+                            throw CompilerException(functionLine,
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
@@ -136,7 +136,7 @@ namespace SilverSim.Scripting.LSL
                     case "list":
                         if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
                         {
-                            throw compilerException(functionLine,
+                            throw CompilerException(functionLine,
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
@@ -169,7 +169,7 @@ namespace SilverSim.Scripting.LSL
                     case "float":
                         if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
                         {
-                            throw compilerException(functionLine,
+                            throw CompilerException(functionLine,
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
@@ -201,7 +201,7 @@ namespace SilverSim.Scripting.LSL
                     case "string":
                         if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
                         {
-                            throw compilerException(functionLine,
+                            throw CompilerException(functionLine,
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
@@ -234,7 +234,7 @@ namespace SilverSim.Scripting.LSL
                     case "key":
                         if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
                         {
-                            throw compilerException(functionLine,
+                            throw CompilerException(functionLine,
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
@@ -268,7 +268,7 @@ namespace SilverSim.Scripting.LSL
                     case "quaternion":
                         if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
                         {
-                            throw compilerException(functionLine,
+                            throw CompilerException(functionLine,
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
@@ -323,7 +323,7 @@ namespace SilverSim.Scripting.LSL
 
                             if (endoffor != functionLine.Line.Count - 1 && endoffor != functionLine.Line.Count - 2)
                             {
-                                throw compilerException(functionLine, "Invalid 'for' encountered");
+                                throw CompilerException(functionLine, "Invalid 'for' encountered");
                             }
 
                             semicolon1 = functionLine.Line.IndexOf(";");
@@ -402,7 +402,7 @@ namespace SilverSim.Scripting.LSL
 
                             if ((endofwhile != functionLine.Line.Count - 1 && endofwhile != functionLine.Line.Count - 2) || endofwhile == 2)
                             {
-                                throw compilerException(functionLine, "Invalid 'while' encountered");
+                                throw CompilerException(functionLine, "Invalid 'while' encountered");
                             }
 
                             Label looplabel = ilgen.DefineLabel();
@@ -504,7 +504,7 @@ namespace SilverSim.Scripting.LSL
 
                             if ((endofif != functionLine.Line.Count - 1 && endofif != functionLine.Line.Count - 2) || endofif == 2)
                             {
-                                throw compilerException(functionLine, "Invalid 'if' encountered");
+                                throw CompilerException(functionLine, "Invalid 'if' encountered");
                             }
 
                             ProcessExpression(
@@ -532,7 +532,7 @@ namespace SilverSim.Scripting.LSL
                     case "else":
                         if (null == compileState.LastBlock)
                         {
-                            throw compilerException(functionLine, "No matching 'if' found for 'else'");
+                            throw CompilerException(functionLine, "No matching 'if' found for 'else'");
                         }
                         else if (functionLine.Line.Count > 1 && functionLine.Line[1] == "if")
                         { /* else if */
@@ -568,7 +568,7 @@ namespace SilverSim.Scripting.LSL
 
                             if ((endofif != functionLine.Line.Count - 1 && endofif != functionLine.Line.Count - 2) || endofif == 2)
                             {
-                                throw compilerException(functionLine, "Invalid 'else if' encountered");
+                                throw CompilerException(functionLine, "Invalid 'else if' encountered");
                             }
 
                             ProcessExpression(
@@ -663,7 +663,7 @@ namespace SilverSim.Scripting.LSL
                                     return;
                                     
                                 case -1:
-                                    throw compilerException(functionLine, "Unmatched '}' found");
+                                    throw CompilerException(functionLine, "Unmatched '}' found");
 
                                 default:
                                     break;
@@ -691,7 +691,7 @@ namespace SilverSim.Scripting.LSL
 
             if (blockLevel != 0)
             {
-                throw compilerException(functionBody[functionBody.Count - 1], "Missing '}'");
+                throw CompilerException(functionBody[functionBody.Count - 1], "Missing '}'");
             }
         }
 
@@ -791,7 +791,7 @@ namespace SilverSim.Scripting.LSL
                         break;
 
                     default:
-                        throw compilerException(functionBody[0], "Internal Error");
+                        throw CompilerException(functionBody[0], "Internal Error");
                 }
                 /* parameter name and type in order */
                 localVars[functionDeclaration[functionStart]] = new ILParameterInfo(t, paramidx + 1);

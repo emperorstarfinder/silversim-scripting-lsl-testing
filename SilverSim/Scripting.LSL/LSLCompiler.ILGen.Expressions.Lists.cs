@@ -12,7 +12,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        class ListExpression : IExpressionStackElement
+        sealed class ListExpression : IExpressionStackElement
         {
             LocalBuilder m_NewList;
             List<Tree> m_ListElements = new List<Tree>();

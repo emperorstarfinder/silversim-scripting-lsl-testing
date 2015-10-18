@@ -185,7 +185,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llAxisAngle2Rot")]
-        public Quaternion llAxisAngle2Rot(ScriptInstance Instance, Vector3 axis, double angle)
+        public Quaternion AxisAngle2Rot(ScriptInstance instance, Vector3 axis, double angle)
         {
             return Quaternion.CreateFromAxisAngle(axis, angle);
         }

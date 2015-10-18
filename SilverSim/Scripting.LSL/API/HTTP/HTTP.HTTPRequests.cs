@@ -51,24 +51,25 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         static readonly Encoding UTF8NoBOM = new UTF8Encoding(false);
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llHTTPRequest(ScriptInstance Instance, string url, AnArray parameters, string body)
+        [ScriptFunctionName("llHTTPRequest")]
+        public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
         {
             LSLHTTPClient_RequestQueue.LSLHttpRequest req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();
-            lock (Instance)
+            lock (instance)
             {
-                req.SceneID = Instance.Part.ObjectGroup.Scene.ID;
-                req.PrimID = Instance.Part.ID;
-                req.ItemID = Instance.Item.ID;
+                req.SceneID = instance.Part.ObjectGroup.Scene.ID;
+                req.PrimID = instance.Part.ID;
+                req.ItemID = instance.Item.ID;
             }
 
             if (url.Contains(' '))
             {
-                lock (Instance)
+                lock (instance)
                 {
                     HttpResponseEvent e = new HttpResponseEvent();
                     e.RequestID = UUID.Random;
                     e.Status = 499;
-                    Instance.Part.PostEvent(e);
+                    instance.Part.PostEvent(e);
                     return e.RequestID;
                 }
             }
@@ -80,9 +81,9 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     case HTTP_METHOD:
                         if(i + 1 >= parameters.Count)
                         {
-                            lock(Instance)
+                            lock(instance)
                             {
-                                Instance.ShoutError("Missing parameter for HTTP_METHOD");
+                                instance.ShoutError("Missing parameter for HTTP_METHOD");
                                 return UUID.Zero;
                             }
                         }
@@ -93,9 +94,9 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     case HTTP_MIMETYPE:
                         if(i + 1 >= parameters.Count)
                         {
-                            lock(Instance)
+                            lock(instance)
                             {
-                                Instance.ShoutError("Missing parameter for HTTP_MIMEYPE");
+                                instance.ShoutError("Missing parameter for HTTP_MIMEYPE");
                                 return UUID.Zero;
                             }
                         }
@@ -106,9 +107,9 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     case HTTP_BODY_MAXLENGTH:
                         if(i + 1 >= parameters.Count)
                         {
-                            lock(Instance)
+                            lock(instance)
                             {
-                                Instance.ShoutError("Missing parameter for HTTP_METHOD");
+                                instance.ShoutError("Missing parameter for HTTP_METHOD");
                                 return UUID.Zero;
                             }
                         }
@@ -119,9 +120,9 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     case HTTP_VERIFY_CERT:
                         if(i + 1 >= parameters.Count)
                         {
-                            lock(Instance)
+                            lock(instance)
                             {
-                                Instance.ShoutError("Missing parameter for HTTP_VERIFY_CERT");
+                                instance.ShoutError("Missing parameter for HTTP_VERIFY_CERT");
                                 return UUID.Zero;
                             }
                         }
@@ -132,9 +133,9 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     case HTTP_VERBOSE_THROTTLE:
                         if(i + 1 >= parameters.Count)
                         {
-                            lock(Instance)
+                            lock(instance)
                             {
-                                Instance.ShoutError("Missing parameter for HTTP_VERBOSE_THROTTLE");
+                                instance.ShoutError("Missing parameter for HTTP_VERBOSE_THROTTLE");
                                 return UUID.Zero;
                             }
                         }
@@ -145,9 +146,9 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     case HTTP_CUSTOM_HEADER:
                         if(i + 2 >= parameters.Count)
                         {
-                            lock(Instance)
+                            lock(instance)
                             {
-                                Instance.ShoutError("Missing parameter for HTTP_CUSTOM_HEADER");
+                                instance.ShoutError("Missing parameter for HTTP_CUSTOM_HEADER");
                                 return UUID.Zero;
                             }
                         }
@@ -157,7 +158,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
 
                         if (!m_AllowedHttpHeaders.Contains(name))
                         {
-                            Instance.ShoutError(string.Format("Custom header {0} not allowed", name));
+                            instance.ShoutError(string.Format("Custom header {0} not allowed", name));
                             return UUID.Zero;
                         }
                         try
@@ -166,7 +167,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                         }
                         catch
                         {
-                            Instance.ShoutError(string.Format("Custom header {0} already defined", name));
+                            instance.ShoutError(string.Format("Custom header {0} already defined", name));
                             return UUID.Zero;
                         }
                         break;
@@ -174,9 +175,9 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     case HTTP_PRAGMA_NO_CACHE:
                         if(i + 1 >= parameters.Count)
                         {
-                            lock(Instance)
+                            lock(instance)
                             {
-                                Instance.ShoutError("Missing parameter for HTTP_PRAGMA_NO_CACHE");
+                                instance.ShoutError("Missing parameter for HTTP_PRAGMA_NO_CACHE");
                                 return UUID.Zero;
                             }
                         }
@@ -185,25 +186,25 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                         break;
 
                     default:
-                        lock(Instance)
+                        lock(instance)
                         {
-                            Instance.ShoutError(string.Format("Unknown parameter {0} for llHTTPRequest", parameters[i].AsInt));
+                            instance.ShoutError(string.Format("Unknown parameter {0} for llHTTPRequest", parameters[i].AsInt));
                             return UUID.Zero;
                         }
                 }
                 
             }
 
-            lock (Instance)
+            lock (instance)
             {
-                req.Headers.Add("X-SecondLife-Object-Name", Instance.Part.ObjectGroup.Name);
-                req.Headers.Add("X-SecondLife-Object-Key", (string)Instance.Part.ObjectGroup.ID);
-                req.Headers.Add("X-SecondLife-Region", Instance.Part.ObjectGroup.Scene.RegionData.Name);
-                req.Headers.Add("X-SecondLife-Local-Position", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000})", Instance.Part.ObjectGroup.GlobalPosition.X, Instance.Part.ObjectGroup.GlobalPosition.Y, Instance.Part.ObjectGroup.GlobalPosition.Z));
-                req.Headers.Add("X-SecondLife-Local-Velocity", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000})", Instance.Part.ObjectGroup.Velocity.X, Instance.Part.ObjectGroup.Velocity.Y, Instance.Part.ObjectGroup.Velocity.Z));
-                req.Headers.Add("X-SecondLife-Local-Rotation", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000}, {3:0.000000})", Instance.Part.ObjectGroup.GlobalRotation.X, Instance.Part.ObjectGroup.GlobalRotation.Y, Instance.Part.ObjectGroup.GlobalRotation.Z, Instance.Part.ObjectGroup.GlobalRotation.W));
-                req.Headers.Add("X-SecondLife-Owner-Name", Instance.Part.ObjectGroup.Owner.FullName);
-                req.Headers.Add("X-SecondLife-Owner-Key", (string)Instance.Part.ObjectGroup.Owner.ID);
+                req.Headers.Add("X-SecondLife-Object-Name", instance.Part.ObjectGroup.Name);
+                req.Headers.Add("X-SecondLife-Object-Key", (string)instance.Part.ObjectGroup.ID);
+                req.Headers.Add("X-SecondLife-Region", instance.Part.ObjectGroup.Scene.RegionData.Name);
+                req.Headers.Add("X-SecondLife-Local-Position", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000})", instance.Part.ObjectGroup.GlobalPosition.X, instance.Part.ObjectGroup.GlobalPosition.Y, instance.Part.ObjectGroup.GlobalPosition.Z));
+                req.Headers.Add("X-SecondLife-Local-Velocity", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000})", instance.Part.ObjectGroup.Velocity.X, instance.Part.ObjectGroup.Velocity.Y, instance.Part.ObjectGroup.Velocity.Z));
+                req.Headers.Add("X-SecondLife-Local-Rotation", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000}, {3:0.000000})", instance.Part.ObjectGroup.GlobalRotation.X, instance.Part.ObjectGroup.GlobalRotation.Y, instance.Part.ObjectGroup.GlobalRotation.Z, instance.Part.ObjectGroup.GlobalRotation.W));
+                req.Headers.Add("X-SecondLife-Owner-Name", instance.Part.ObjectGroup.Owner.FullName);
+                req.Headers.Add("X-SecondLife-Owner-Key", (string)instance.Part.ObjectGroup.Owner.ID);
 
                 Match authMatch = m_AuthRegex.Match(url);
                 if(authMatch.Success)

@@ -25,16 +25,16 @@ namespace SilverSim.Scripting.LSL.API.Animation
 
         }
 
-        public UUID getAnimationAssetID(ScriptInstance Instance, string item)
+        public UUID GetAnimationAssetID(ScriptInstance instance, string item)
         {
             UUID assetID;
             if (!UUID.TryParse(item, out assetID))
             {
 #warning Implement viewer built-in animations
                 /* must be an inventory item */
-                lock (Instance)
+                lock (instance)
                 {
-                    ObjectPartInventoryItem i = Instance.Part.Inventory[item];
+                    ObjectPartInventoryItem i = instance.Part.Inventory[item];
                     if (i.InventoryType != Types.Inventory.InventoryType.Animation)
                     {
                         throw new InvalidOperationException(string.Format("Inventory item {0} is not an animation", item));
@@ -46,14 +46,15 @@ namespace SilverSim.Scripting.LSL.API.Animation
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llStartAnimation(
+        [ScriptFunctionName("llStartAnimation")]
+        public void StartAnimation(
             ScriptInstance instance,
             [LSLTooltip("animation to be played")]
             string anim)
         {
             lock (instance)
             {
-                UUID animID = getAnimationAssetID(instance, anim);
+                UUID animID = GetAnimationAssetID(instance, anim);
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if ((grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0 ||
@@ -77,7 +78,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
 
         [APILevel(APIFlags.OSSL)]
         [LSLTooltip("causes an animation to be played on the specified avatar.")]
-        public void osAvatarPlayAnimation(
+        [ScriptFunctionName("osAvatarPlayAnimation")]
+        public void AvatarPlayAnimation(
             ScriptInstance instance, 
             [LSLTooltip("UUID of the agent")]
             LSLKey avatar, 
@@ -87,7 +89,7 @@ namespace SilverSim.Scripting.LSL.API.Animation
             lock (instance)
             {
                 instance.CheckThreatLevel("osAvatarPlayAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
-                UUID animID = getAnimationAssetID(instance, animation);
+                UUID animID = GetAnimationAssetID(instance, animation);
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 try
@@ -105,14 +107,15 @@ namespace SilverSim.Scripting.LSL.API.Animation
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llStopAnimation(
+        [ScriptFunctionName("llStopAnimation")]
+        public void StopAnimation(
             ScriptInstance instance, 
             [LSLTooltip("animation to be stopped")]
             string anim)
         {
             lock (instance)
             {
-                UUID animID = getAnimationAssetID(instance, anim);
+                UUID animID = GetAnimationAssetID(instance, anim);
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if ((grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0 ||
@@ -136,7 +139,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
 
         [APILevel(APIFlags.OSSL)]
         [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
-        public void osAvatarStopAnimation(
+        [ScriptFunctionName("osAvatarStopAnimation")]
+        public void AvatarStopAnimation(
             ScriptInstance instance,
             [LSLTooltip("UUID of the agent")]
             LSLKey avatar,
@@ -146,7 +150,7 @@ namespace SilverSim.Scripting.LSL.API.Animation
             lock (instance)
             {
                 instance.CheckThreatLevel("osAvatarStopAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
-                UUID animID = getAnimationAssetID(instance, animation);
+                UUID animID = GetAnimationAssetID(instance, animation);
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 try
@@ -164,14 +168,16 @@ namespace SilverSim.Scripting.LSL.API.Animation
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetAnimation(ScriptInstance Instance, LSLKey agent)
+        [ScriptFunctionName("llGetAnimation")]
+        public string GetAnimation(ScriptInstance instance, LSLKey agent)
         {
 #warning Implement llGetAnimation
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetAnimationList(ScriptInstance Instance, LSLKey agent)
+        [ScriptFunctionName("llGetAnimationList")]
+        public string GetAnimationList(ScriptInstance instance, LSLKey agent)
         {
 #warning Implement llGetAnimation
             throw new NotImplementedException();

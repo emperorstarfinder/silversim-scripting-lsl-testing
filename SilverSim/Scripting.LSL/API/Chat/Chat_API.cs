@@ -19,21 +19,21 @@ namespace SilverSim.Scripting.LSL.API.Chat
         [APILevel(APIFlags.LSL)]
         public const int DEBUG_CHANNEL = 0x7FFFFFFF;
 
-        private UUID getOwner(ScriptInstance Instance)
+        private UUID GetOwner(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                return Instance.Part.ObjectGroup.Owner.ID;
+                return instance.Part.ObjectGroup.Owner.ID;
             }
         }
 
-        private void sendChat(ScriptInstance Instance, ListenEvent ev)
+        private void SendChat(ScriptInstance instance, ListenEvent ev)
         {
-            lock (Instance)
+            lock (instance)
             {
-                ev.ID = Instance.Part.ObjectGroup.ID;
-                ev.Name = Instance.Part.ObjectGroup.Name;
-                Instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>().Send(ev);
+                ev.ID = instance.Part.ObjectGroup.ID;
+                ev.Name = instance.Part.ObjectGroup.Name;
+                instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>().Send(ev);
             }
         }
 

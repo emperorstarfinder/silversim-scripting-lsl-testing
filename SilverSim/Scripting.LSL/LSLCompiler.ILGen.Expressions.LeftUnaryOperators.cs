@@ -12,7 +12,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        class LeftUnaryOperators : IExpressionStackElement
+        sealed class LeftUnaryOperators : IExpressionStackElement
         {
             Tree m_ExpressionTree;
             string m_Operator;

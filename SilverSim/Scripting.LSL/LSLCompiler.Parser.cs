@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        private CompilerException parserException(Parser p, string message)
+        private CompilerException ParserException(Parser p, string message)
         {
             string fname;
             int lineno;
@@ -21,51 +21,51 @@ namespace SilverSim.Scripting.LSL
             return new CompilerException(lineno, message);
         }
 
-        private void checkValidName(Parser p, string type, string name)
+        private void CheckValidName(Parser p, string type, string name)
         {
             if (name.Length == 0)
             {
-                throw parserException(p, string.Format("{1} name '{0}' is not valid.", name, type));
+                throw ParserException(p, string.Format("{1} name '{0}' is not valid.", name, type));
             }
             if (name[0] != '_' && !(name[0] >= 'a' && name[0] <= 'z') && !(name[0] >= 'A' && name[0] <= 'Z') && name[0] != '_' && name[0] != '$')
             {
-                throw parserException(p, string.Format("{1} name '{0}' is not valid.", name, type));
+                throw ParserException(p, string.Format("{1} name '{0}' is not valid.", name, type));
             }
             foreach (char c in name.Substring(1))
             {
                 if (!(name[0] >= 'a' && name[0] <= 'z') && !(name[0] >= 'A' && name[0] <= 'Z') && name[0] != '_' && name[0] != '$')
                 {
-                    throw parserException(p, string.Format("{1} name '{0}' is not valid.", name, type));
+                    throw ParserException(p, string.Format("{1} name '{0}' is not valid.", name, type));
                 }
             }
         }
 
-        private void checkUsedName(CompileState cs, Parser p, string type, string name)
+        private void CheckUsedName(CompileState cs, Parser p, string type, string name)
         {
-            checkValidName(p, type, name);
+            CheckValidName(p, type, name);
             if (m_ReservedWords.Contains(name))
             {
-                throw parserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is a reserved word.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is a reserved word.", name, type));
             }
             else if (m_MethodNames.Contains(name))
             {
-                throw parserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined function name.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined function name.", name, type));
             }
             else if (m_Constants.ContainsKey(name) && (m_Constants[name] & cs.AcceptedFlags) != 0)
             {
-                throw parserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined constant.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined constant.", name, type));
             }
             else if (m_EventDelegates.ContainsKey(name))
             {
-                throw parserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined constant.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined constant.", name, type));
             }
             else if (cs.m_VariableDeclarations.ContainsKey(name))
             {
-                throw parserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as user variable.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as user variable.", name, type));
             }
             else if (cs.m_Functions.ContainsKey(name))
             {
-                throw parserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as user function.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as user function.", name, type));
             }
             if(cs.m_LocalVariables.Count == 0)
             {
@@ -73,7 +73,7 @@ namespace SilverSim.Scripting.LSL
             }
             else if (cs.m_LocalVariables[cs.m_LocalVariables.Count - 1].Contains(name))
             {
-                throw parserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as local variable in the same block.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as local variable in the same block.", name, type));
             }
         }
 
@@ -83,12 +83,12 @@ namespace SilverSim.Scripting.LSL
             public string Name;
         }
 
-        List<FuncParamInfo> checkFunctionParameters(CompileState cs, Parser p, List<string> arguments)
+        List<FuncParamInfo> CheckFunctionParameters(CompileState cs, Parser p, List<string> arguments)
         {
             List<FuncParamInfo> funcParams = new List<FuncParamInfo>();
             if (cs.m_LocalVariables.Count != 0)
             {
-                throw parserException(p, "Internal parser error");
+                throw ParserException(p, "Internal parser error");
             }
             cs.m_LocalVariables.Add(new List<string>());
             if (arguments.Count == 1 && arguments[0] == ")")
@@ -130,10 +130,10 @@ namespace SilverSim.Scripting.LSL
                         break;
 
                     default:
-                        throw parserException(p, string.Format("Invalid type for parameter {0}", i / 3));
+                        throw ParserException(p, string.Format("Invalid type for parameter {0}", i / 3));
                 }
 
-                checkUsedName(cs, p, "Parameter", arguments[i + 1]);
+                CheckUsedName(cs, p, "Parameter", arguments[i + 1]);
                 cs.m_LocalVariables[0].Add(arguments[i + 1]);
                 fp.Name = arguments[i + 1];
                 funcParams.Add(fp);
@@ -145,15 +145,15 @@ namespace SilverSim.Scripting.LSL
                 {
                     if (i + 3 != arguments.Count)
                     {
-                        throw parserException(p, string.Format("Missing ')' at the end of function declaration"));
+                        throw ParserException(p, string.Format("Missing ')' at the end of function declaration"));
                     }
                     return funcParams;
                 }
             }
-            throw parserException(p, string.Format("Missing ')' at the end of function declaration"));
+            throw ParserException(p, string.Format("Missing ')' at the end of function declaration"));
         }
 
-        int findEndOfControlFlow(List<string> line, int lineNumber)
+        int FindEndOfControlFlow(List<string> line, int lineNumber)
         {
             int i;
             List<string> parenstack = new List<string>();
@@ -212,18 +212,18 @@ namespace SilverSim.Scripting.LSL
             throw new CompilerException(lineNumber, string.Format("Could not find end of '{0}'", line[0]));
         }
 
-        void parseBlockLine(CompileState compileState, Parser p, List<LineInfo> block, List<string> args, int lineNumber, bool inState)
+        void ParseBlockLine(CompileState compileState, Parser p, List<LineInfo> block, List<string> args, int lineNumber, bool inState)
         {
             for (; ; )
             {
                 if(args[0] == "else" && args[1] == "if")
                 {
-                    int eocf = findEndOfControlFlow(args.GetRange(1, args.Count - 1), lineNumber) + 1;
+                    int eocf = FindEndOfControlFlow(args.GetRange(1, args.Count - 1), lineNumber) + 1;
                     /* make it a block */
                     if (args[eocf + 1] == "{")
                     {
                         block.Add(new LineInfo(args, lineNumber));
-                        parseBlock(compileState, p, block, inState, true);
+                        ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
@@ -238,7 +238,7 @@ namespace SilverSim.Scripting.LSL
                     if (args[1] == "{")
                     {
                         block.Add(new LineInfo(args, lineNumber));
-                        parseBlock(compileState, p, block, inState, true);
+                        ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
@@ -252,7 +252,7 @@ namespace SilverSim.Scripting.LSL
                 {
                     if (args[1] == "{")
                     {
-                        parseBlock(compileState, p, block, inState, true);
+                        ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
@@ -265,12 +265,12 @@ namespace SilverSim.Scripting.LSL
                 }
                 else if (args[0] == "if")
                 {
-                    int eocf = findEndOfControlFlow(args, lineNumber);
+                    int eocf = FindEndOfControlFlow(args, lineNumber);
                     /* make it a block */
                     if (args[eocf + 1] == "{")
                     {
                         block.Add(new LineInfo(args, lineNumber));
-                        parseBlock(compileState, p, block, inState, true);
+                        ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
@@ -282,11 +282,11 @@ namespace SilverSim.Scripting.LSL
                 }
                 else if (args[0] == "for" || args[0] == "while")
                 {
-                    int eocf = findEndOfControlFlow(args, lineNumber);
+                    int eocf = FindEndOfControlFlow(args, lineNumber);
                     /* make it a block */
                     if(args[eocf + 1] == "{")
                     {
-                        parseBlock(compileState, p, block, inState, true);
+                        ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
@@ -299,7 +299,7 @@ namespace SilverSim.Scripting.LSL
                 else if (args[0] == "{")
                 {
                     block.Add(new LineInfo(args, lineNumber));
-                    parseBlock(compileState, p, block, inState, true);
+                    ParseBlock(compileState, p, block, inState, true);
                     return;
                 }
                 else if (args[0] == ";")
@@ -309,7 +309,7 @@ namespace SilverSim.Scripting.LSL
                 }
                 else if(args[args.Count - 1] == "{")
                 {
-                    throw parserException(p, "'{' not allowed at end of line without control flow instruction");
+                    throw ParserException(p, "'{' not allowed at end of line without control flow instruction");
                 }
                 else
                 {
@@ -323,18 +323,18 @@ namespace SilverSim.Scripting.LSL
                         case "key":
                         case "rotation":
                         case "quaternion":
-                            checkUsedName(compileState, p, "Local Variable", args[1]);
+                            CheckUsedName(compileState, p, "Local Variable", args[1]);
                             compileState.m_LocalVariables[compileState.m_LocalVariables.Count - 1].Add(args[1]);
                             if (args[2] != ";" && args[2] != "=")
                             {
-                                throw parserException(p, string.Format("Expecting '=' or ';' after variable name {0}", args[1]));
+                                throw ParserException(p, string.Format("Expecting '=' or ';' after variable name {0}", args[1]));
                             }
                             break;
 
                         case "state":
                             if (!inState)
                             {
-                                throw parserException(p, "state change not allowed in global function");
+                                throw ParserException(p, "state change not allowed in global function");
                             }
                             break;
 
@@ -347,7 +347,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        void parseBlock(CompileState compileState, Parser p, List<LineInfo> block, bool inState, bool addNewLocals = false)
+        void ParseBlock(CompileState compileState, Parser p, List<LineInfo> block, bool inState, bool addNewLocals = false)
         {
             if (addNewLocals)
             {
@@ -363,11 +363,11 @@ namespace SilverSim.Scripting.LSL
                 }
                 catch (ParserBase.EndOfStringException)
                 {
-                    throw parserException(p, "Missing '\"' at the end of string");
+                    throw ParserException(p, "Missing '\"' at the end of string");
                 }
                 catch (ParserBase.EndOfFileException)
                 {
-                    throw parserException(p, "Premature end of script");
+                    throw ParserException(p, "Premature end of script");
                 }
                 lineNumber = p.CurrentLineNumber;
 
@@ -383,12 +383,12 @@ namespace SilverSim.Scripting.LSL
                 }
                 else
                 {
-                    parseBlockLine(compileState, p, block, args, lineNumber, inState);
+                    ParseBlockLine(compileState, p, block, args, lineNumber, inState);
                 }
             }
         }
 
-        void parseState(CompileState compileState, Parser p, string stateName)
+        void ParseState(CompileState compileState, Parser p, string stateName)
         {
             compileState.m_States.Add(stateName, new Dictionary<string, List<LineInfo>>());
             for (; ; )
@@ -401,11 +401,11 @@ namespace SilverSim.Scripting.LSL
                 }
                 catch (ParserBase.EndOfStringException)
                 {
-                    throw parserException(p, "Missing '\"' at the end of string");
+                    throw ParserException(p, "Missing '\"' at the end of string");
                 }
                 catch (ParserBase.EndOfFileException)
                 {
-                    throw parserException(p, "Missing '}' at end of script");
+                    throw ParserException(p, "Missing '}' at end of script");
                 }
                 lineNumber = p.CurrentLineNumber;
 
@@ -415,43 +415,43 @@ namespace SilverSim.Scripting.LSL
                 }
                 else if (args[args.Count - 1] == ";")
                 {
-                    throw parserException(p, string.Format("Neither variable declarations nor statements allowed outside of event functions. Offending state {0}.", stateName));
+                    throw ParserException(p, string.Format("Neither variable declarations nor statements allowed outside of event functions. Offending state {0}.", stateName));
                 }
                 else if (args[args.Count - 1] == "{")
                 {
                     if (!m_EventDelegates.ContainsKey(args[0]))
                     {
-                        throw parserException(p, string.Format("'{0}' is not a valid event.", args[0]));
+                        throw ParserException(p, string.Format("'{0}' is not a valid event.", args[0]));
                     }
-                    List<FuncParamInfo> fp = checkFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
+                    List<FuncParamInfo> fp = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
                     MethodInfo m = m_EventDelegates[args[0]];
                     ParameterInfo[] pi = m.GetParameters();
                     if (fp.Count != pi.Length)
                     {
-                        throw parserException(p, string.Format("'{0}' does not have the correct parameters.", args[0]));
+                        throw ParserException(p, string.Format("'{0}' does not have the correct parameters.", args[0]));
                     }
                     int i;
                     for (i = 0; i < fp.Count; ++i)
                     {
                         if (!fp[i].Type.Equals(pi[i].ParameterType))
                         {
-                            throw parserException(p, string.Format("'{0}' does not match in parameter types", args[0]));
+                            throw ParserException(p, string.Format("'{0}' does not match in parameter types", args[0]));
                         }
                     }
                     if (compileState.m_States[stateName].ContainsKey(args[0]))
                     {
-                        throw parserException(p, string.Format("Event '{0}' already defined", args[0]));
+                        throw ParserException(p, string.Format("Event '{0}' already defined", args[0]));
                     }
                     List<LineInfo> stateList = new List<LineInfo>();
                     compileState.m_States[stateName].Add(args[0], stateList);
                     stateList.Add(new LineInfo(args, lineNumber));
-                    parseBlock(compileState, p, stateList, true);
+                    ParseBlock(compileState, p, stateList, true);
                 }
                 else if (args[0] == "}")
                 {
                     if(compileState.m_States[stateName].Count == 0)
                     {
-                        throw parserException(p, string.Format("state '{0}' does not have any events.", stateName));
+                        throw ParserException(p, string.Format("state '{0}' does not have any events.", stateName));
                     }
                     return;
                 }
@@ -505,7 +505,7 @@ namespace SilverSim.Scripting.LSL
                 }
                 catch (ParserBase.EndOfStringException)
                 {
-                    throw parserException(p, "Missing '\"' at the end of string");
+                    throw ParserException(p, "Missing '\"' at the end of string");
                 }
                 catch (ParserBase.EndOfFileException)
                 {
@@ -521,12 +521,12 @@ namespace SilverSim.Scripting.LSL
                     /* variable definition */
                     if (args[2] != "=" && args[2] != ";")
                     {
-                        throw parserException(p, "Invalid variable definition. Either ';' or an expression preceeded by '='");
+                        throw ParserException(p, "Invalid variable definition. Either ';' or an expression preceeded by '='");
                     }
                     switch (args[0])
                     {
                         case "integer":
-                            checkUsedName(compileState, p, "Variable", args[1]);
+                            CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(int);
                             if (args[2] == "=")
                             {
@@ -535,7 +535,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         case "vector":
-                            checkUsedName(compileState, p, "Variable", args[1]);
+                            CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(Vector3);
                             if (args[2] == "=")
                             {
@@ -544,7 +544,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         case "list":
-                            checkUsedName(compileState, p, "Variable", args[1]);
+                            CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(AnArray);
                             if (args[2] == "=")
                             {
@@ -553,7 +553,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         case "float":
-                            checkUsedName(compileState, p, "Variable", args[1]);
+                            CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(double);
                             if (args[2] == "=")
                             {
@@ -562,7 +562,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         case "string":
-                            checkUsedName(compileState, p, "Variable", args[1]);
+                            CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(string);
                             if (args[2] == "=")
                             {
@@ -571,7 +571,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         case "key":
-                            checkUsedName(compileState, p, "Variable", args[1]);
+                            CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(string);
                             if (args[2] == "=")
                             {
@@ -581,7 +581,7 @@ namespace SilverSim.Scripting.LSL
 
                         case "rotation":
                         case "quaternion":
-                            checkUsedName(compileState, p, "Variable", args[1]);
+                            CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(Quaternion);
                             if(args[2] == "=")
                             {
@@ -590,7 +590,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         default:
-                            throw parserException(p, string.Format("Invalid variable definition. Wrong type {0}.", args[0]));
+                            throw ParserException(p, string.Format("Invalid variable definition. Wrong type {0}.", args[0]));
                     }
                 }
                 else if (args[args.Count - 1] == "{")
@@ -600,32 +600,32 @@ namespace SilverSim.Scripting.LSL
                         /* default state begin */
                         if (args[1] != "{")
                         {
-                            throw parserException(p, "Invalid default state declaration");
+                            throw ParserException(p, "Invalid default state declaration");
                         }
-                        parseState(compileState, p, "default");
+                        ParseState(compileState, p, "default");
                     }
                     else if (args[0] == "state")
                     {
                         /* state begin */
                         if (args[1] == "default")
                         {
-                            throw parserException(p, "default state cannot be declared with state");
+                            throw ParserException(p, "default state cannot be declared with state");
                         }
                         else if (compileState.m_States.Count == 0)
                         {
-                            throw parserException(p, "default state must be first declared state in script");
+                            throw ParserException(p, "default state must be first declared state in script");
                         }
-                        checkValidName(p, "State", args[1]);
+                        CheckValidName(p, "State", args[1]);
                         if (compileState.m_States.ContainsKey(args[1]))
                         {
-                            throw parserException(p, "state definition cannot be declared twice");
+                            throw ParserException(p, "state definition cannot be declared twice");
                         }
 
                         if (args[2] != "{")
                         {
-                            throw parserException(p, "Invalid state declaration");
+                            throw ParserException(p, "Invalid state declaration");
                         }
-                        parseState(compileState, p, args[1]);
+                        ParseState(compileState, p, args[1]);
                     }
                     else
                     {
@@ -642,18 +642,18 @@ namespace SilverSim.Scripting.LSL
                             case "rotation":
                             case "quaternion":
                             case "void":
-                                checkUsedName(compileState, p, "Function", args[1]);
-                                checkFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
+                                CheckUsedName(compileState, p, "Function", args[1]);
+                                CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
                                 funcList.Add(new LineInfo(args, lineNumber));
-                                parseBlock(compileState, p, funcList, false);
+                                ParseBlock(compileState, p, funcList, false);
                                 compileState.m_Functions[args[1]] = funcList;
                                 break;
 
                             default:
-                                checkFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
+                                CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
                                 args.Insert(0, "void");
                                 funcList.Add(new LineInfo(args, lineNumber));
-                                parseBlock(compileState, p, funcList, false);
+                                ParseBlock(compileState, p, funcList, false);
                                 compileState.m_Functions[args[1]] = funcList;
                                 break;
                         }
@@ -661,7 +661,7 @@ namespace SilverSim.Scripting.LSL
                 }
                 else if (args[0] == "}")
                 {
-                    throw parserException(p, "'}' found without matching '{'");
+                    throw ParserException(p, "'}' found without matching '{'");
                 }
             }
             return compileState;

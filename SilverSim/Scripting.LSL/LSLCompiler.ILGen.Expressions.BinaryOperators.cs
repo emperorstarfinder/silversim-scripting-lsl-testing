@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        class BinaryOperatorExpression : IExpressionStackElement
+        sealed class BinaryOperatorExpression : IExpressionStackElement
         {
             string m_Operator;
             LocalBuilder m_LeftHandLocal;

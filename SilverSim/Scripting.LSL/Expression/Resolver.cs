@@ -20,7 +20,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        class ListTreeEnumState
+        sealed class ListTreeEnumState
         {
             public int Position = -1;
             public Tree Tree;
@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.LSL.Expression
             }
         }
 
-        class ListTreeEnumReverseState
+        sealed class ListTreeEnumReverseState
         {
             public int Position;
             public Tree Tree;

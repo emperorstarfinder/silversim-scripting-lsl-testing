@@ -17,7 +17,7 @@ namespace SilverSim.Scripting.LSL
 
         IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault)
         {
-            string assetAssemblyName = "Script." + assetID.ToString().Replace("-", "_");
+            string assetAssemblyName = "Script." + assetID.ToString().Replace('-', '_');
             AssemblyName aName = new AssemblyName(assetAssemblyName);
             AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, AssemblyBuilderAccess.RunAndCollect);
             ModuleBuilder mb = ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols);
@@ -84,11 +84,11 @@ namespace SilverSim.Scripting.LSL
                     try
                     {
                         expressionTree = new Tree(initargs.Line, m_OpChars, m_SingleOps, m_NumericChars);
-                        solveTree(compileState, expressionTree, typeLocals.Keys);
+                        SolveTree(compileState, expressionTree, typeLocals.Keys);
                     }
                     catch (Exception e)
                     {
-                        throw compilerException(initargs, string.Format("Init value of variable {0} has syntax error. {1}", varName, e.Message));
+                        throw CompilerException(initargs, string.Format("Init value of variable {0} has syntax error. {1}", varName, e.Message));
                     }
 
                     if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))
@@ -253,7 +253,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         default:
-                            throw compilerException(functionKvp.Value[0], "Internal Error");
+                            throw CompilerException(functionKvp.Value[0], "Internal Error");
                     }
                 }
 

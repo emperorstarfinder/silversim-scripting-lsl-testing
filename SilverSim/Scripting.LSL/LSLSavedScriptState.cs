@@ -18,7 +18,7 @@ namespace SilverSim.Scripting.LSL
         public class SavedScriptState : IScriptState
         {
             public Dictionary<string, object> Variables = new Dictionary<string, object>();
-            public bool IsRunning = false;
+            public bool IsRunning;
             public string CurrentState = "default";
 
             static void ScriptPermissionsFromXML(XmlTextReader reader, ObjectPartInventoryItem item)

@@ -89,7 +89,8 @@ namespace SilverSim.Scripting.LSL.API.Money
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llGiveMoney(ScriptInstance instance, LSLKey destination, int amount)
+        [ScriptFunctionName("llGiveMoney")]
+        public void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
@@ -101,7 +102,8 @@ namespace SilverSim.Scripting.LSL.API.Money
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llTransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
+        [ScriptFunctionName("llTransferLindenDollars")]
+        public LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||

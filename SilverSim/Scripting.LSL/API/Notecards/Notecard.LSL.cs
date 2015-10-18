@@ -103,20 +103,21 @@ namespace SilverSim.Scripting.LSL.API.Notecards
             caller.EndInvoke(ar);
         }
 
-        void GetNumberOfNotecardLinesAsync(ScriptInstance Instance, UUID queryID, UUID assetID)
+        void GetNumberOfNotecardLinesAsync(ScriptInstance instance, UUID queryID, UUID assetID)
         {
             Action<ObjectPart, UUID, UUID> del = GetNumberOfNotecardLines;
-            del.BeginInvoke(Instance.Part, queryID, assetID, GetNumberOfNotecardLinesEnd, this);
+            del.BeginInvoke(instance.Part, queryID, assetID, GetNumberOfNotecardLinesEnd, this);
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(0.1)]
-        public LSLKey llGetNumberOfNotecardLines(ScriptInstance Instance, string name)
+        [ScriptFunctionName("llGetNumberOfNotecardLines")]
+        public LSLKey GetNumberOfNotecardLines(ScriptInstance instance, string name)
         {
             ObjectPartInventoryItem item;
-            lock (Instance)
+            lock (instance)
             {
-                if (Instance.Part.Inventory.TryGetValue(name, out item))
+                if (instance.Part.Inventory.TryGetValue(name, out item))
                 {
                     if (item.InventoryType != InventoryType.Notecard)
                     {
@@ -125,7 +126,7 @@ namespace SilverSim.Scripting.LSL.API.Notecards
                     else
                     {
                         UUID query = UUID.Random;
-                        GetNumberOfNotecardLinesAsync(Instance, query, item.AssetID);
+                        GetNumberOfNotecardLinesAsync(instance, query, item.AssetID);
                         return query;
                     }
                 }

@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        class RotationExpression : IExpressionStackElement
+        sealed class RotationExpression : IExpressionStackElement
         {
             List<Tree> m_ListElements = new List<Tree>();
             int m_LineNumber;

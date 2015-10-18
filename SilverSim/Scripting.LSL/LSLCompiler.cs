@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.LSL
         List<char> m_OpChars = new List<char>();
         Resolver m_Resolver;
 
-        class LineInfo
+        sealed class LineInfo
         {
             public readonly List<string> Line;
             public readonly int LineNumber;
@@ -59,7 +59,7 @@ namespace SilverSim.Scripting.LSL
             While
         }
 
-        class ControlFlowElement
+        sealed class ControlFlowElement
         {
             public bool IsExplicitBlock;
             public bool PopNextImplicit = false;
@@ -108,7 +108,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        class CompileState
+        sealed class CompileState
         {
             public bool EmitDebugSymbols = false;
             public APIFlags AcceptedFlags;

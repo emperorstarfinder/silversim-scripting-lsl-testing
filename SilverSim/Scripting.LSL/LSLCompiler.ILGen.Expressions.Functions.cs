@@ -13,9 +13,9 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        class FunctionExpression : IExpressionStackElement
+        sealed class FunctionExpression : IExpressionStackElement
         {
-            class FunctionParameterInfo
+            sealed class FunctionParameterInfo
             {
                 public readonly string ParameterName;
                 public readonly Type ParameterType;

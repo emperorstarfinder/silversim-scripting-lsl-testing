@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        CompilerException compilerException(LineInfo p, string message)
+        CompilerException CompilerException(LineInfo p, string message)
         {
             return new CompilerException(p.LineNumber, message);
         }
@@ -38,11 +38,11 @@ namespace SilverSim.Scripting.LSL
                 List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
                 CollapseStringConstants(expressionLine);
                 expressionTree = new Tree(expressionLine, m_OpChars, m_SingleOps, m_NumericChars);
-                solveTree(compileState, expressionTree, localVars.Keys);
+                SolveTree(compileState, expressionTree, localVars.Keys);
             }
             catch(Exception e)
             {
-                throw compilerException(functionLine, e.Message);
+                throw CompilerException(functionLine, e.Message);
             }
             ProcessExpression(
                 compileState, 

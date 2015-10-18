@@ -15,7 +15,7 @@ namespace SilverSim.Scripting.LSL
     public partial class LSLCompiler
     {
 
-        class LSLScriptAssembly : IScriptAssembly
+        public sealed class LSLScriptAssembly : IScriptAssembly
         {
             public readonly Assembly Assembly;
             Type m_ScriptType;
@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        internal class ILParameterInfo
+        internal sealed class ILParameterInfo
         {
             public int Position;
             public Type ParameterType;
@@ -60,7 +60,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        internal class ILLabelInfo
+        internal sealed class ILLabelInfo
         {
             public Label Label;
             public bool IsDefined = false;

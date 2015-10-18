@@ -67,37 +67,43 @@ namespace SilverSim.Scripting.LSL.API.Experience
         public delegate void experience_permissions_denied(LSLKey agent_id, int reason);
 
         [APILevel(APIFlags.LSL)]
-        public int llAgentInExperience(ScriptInstance Instance, LSLKey agent)
+        [ScriptFunctionName("llAgentInExperience")]
+        public int AgentInExperience(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llCreateKeyValue(ScriptInstance Instance, string k, string v)
+        [ScriptFunctionName("llCreateKeyValue")]
+        public LSLKey CreateKeyValue(ScriptInstance instance, string k, string v)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llDataSizeKeyValue(ScriptInstance Instance)
+        [ScriptFunctionName("llDataSizeKeyValue")]
+        public LSLKey DataSizeKeyValue(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llDeleteKeyValue(ScriptInstance Instance, string k)
+        [ScriptFunctionName("llDeleteKeyValue")]
+        public LSLKey DeleteKeyValue(ScriptInstance instance, string k)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public AnArray llGetExperienceDetails(ScriptInstance Instance, LSLKey experience_id)
+        [ScriptFunctionName("llGetExperienceDetails")]
+        public AnArray GetExperienceDetails(ScriptInstance instance, LSLKey experience_id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetExperienceErrorMessage(ScriptInstance Instance, int error)
+        [ScriptFunctionName("llGetExperienceErrorMessage")]
+        public string GetExperienceErrorMessage(ScriptInstance instance, int error)
         {
             switch(error)
             {
@@ -123,31 +129,36 @@ namespace SilverSim.Scripting.LSL.API.Experience
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llKeyCountKeyValue(ScriptInstance Instance)
+        [ScriptFunctionName("llKeyCountKeyValue")]
+        public LSLKey KeyCountKeyValue(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llKeysKeyValue(ScriptInstance Instance, int first, int count)
+        [ScriptFunctionName("llKeysKeyValue")]
+        public LSLKey KeysKeyValue(ScriptInstance instance, int first, int count)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llReadKeyValue(ScriptInstance Instance, string k)
+        [ScriptFunctionName("llReadKeyValue")]
+        public LSLKey ReadKeyValue(ScriptInstance instance, string k)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRequestExperiencePermissions(ScriptInstance Instance, LSLKey agent, string name /* unused */)
+        [ScriptFunctionName("llRequestExperiencePermissions")]
+        public void RequestExperiencePermissions(ScriptInstance instance, LSLKey agent, string name /* unused */)
         {
 
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llUpdateKeyValue(ScriptInstance Instance, string k, string v, int checked_orig, string original_value)
+        [ScriptFunctionName("llUpdateKeyValue")]
+        public LSLKey UpdateKeyValue(ScriptInstance instance, string k, string v, int checked_orig, string original_value)
         {
             throw new NotImplementedException();
         }

@@ -22,8 +22,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
             ev.Type = ListenEvent.ChatType.Shout;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
-            ev.OwnerID = getOwner(instance);
-            sendChat(instance, ev);
+            ev.OwnerID = GetOwner(instance);
+            SendChat(instance, ev);
         }
 
         [APILevel(APIFlags.LSL)]
@@ -35,8 +35,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
             ev.Type = ListenEvent.ChatType.Say;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
-            ev.OwnerID = getOwner(instance);
-            sendChat(instance, ev);
+            ev.OwnerID = GetOwner(instance);
+            SendChat(instance, ev);
         }
 
         [APILevel(APIFlags.LSL)]
@@ -48,8 +48,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
             ev.Type = ListenEvent.ChatType.Whisper;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
-            ev.OwnerID = getOwner(instance);
-            sendChat(instance, ev);
+            ev.OwnerID = GetOwner(instance);
+            SendChat(instance, ev);
         }
 
         [APILevel(APIFlags.LSL)]
@@ -64,13 +64,14 @@ namespace SilverSim.Scripting.LSL.API.Chat
                 ev.Message = message;
                 ev.TargetID = instance.Part.ObjectGroup.Owner.ID;
                 ev.SourceType = ListenEvent.ChatSourceType.Object;
-                ev.OwnerID = getOwner(instance);
-                sendChat(instance, ev);
+                ev.OwnerID = GetOwner(instance);
+                SendChat(instance, ev);
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRegionSay(ScriptInstance Instance, int channel, string message)
+        [ScriptFunctionName("llRegionSay")]
+        public void RegionSay(ScriptInstance instance, int channel, string message)
         {
             if (channel != PUBLIC_CHANNEL)
             {
@@ -78,36 +79,38 @@ namespace SilverSim.Scripting.LSL.API.Chat
                 ev.Type = ListenEvent.ChatType.Region;
                 ev.Channel = channel;
                 ev.Message = message;
-                ev.OwnerID = getOwner(Instance);
+                ev.OwnerID = GetOwner(instance);
                 ev.SourceType = ListenEvent.ChatSourceType.Object;
-                sendChat(Instance, ev);
+                SendChat(instance, ev);
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRegionSayTo(ScriptInstance Instance, LSLKey target, int channel, string message)
+        [ScriptFunctionName("llRegionSayTo")]
+        public void RegionSayTo(ScriptInstance instance, LSLKey target, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
             ev.Type = ListenEvent.ChatType.Region;
             ev.Message = message;
             ev.TargetID = target;
-            ev.OwnerID = getOwner(Instance);
+            ev.OwnerID = GetOwner(instance);
             ev.SourceType = ListenEvent.ChatSourceType.Object;
-            sendChat(Instance, ev);
+            SendChat(instance, ev);
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llListen(ScriptInstance Instance, int channel, string name, LSLKey id, string msg)
+        [ScriptFunctionName("llListen")]
+        public int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg)
         {
-            Script script = (Script)Instance;
+            Script script = (Script)instance;
             lock (script)
             {
                 if (script.m_Listeners.Count >= MaxListenerHandles)
                 {
                     return new Integer(-1);
                 }
-                ChatServiceInterface chatservice = Instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
+                ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
 
                 int newhandle = 0;
                 ChatServiceInterface.Listener l;
@@ -120,9 +123,9 @@ namespace SilverSim.Scripting.LSL.API.Chat
                             name,
                             id,
                             msg,
-                            delegate() { return Instance.Part.ID; },
-                            delegate() { return Instance.Part.GlobalPosition; },
-                            script.onListen);
+                            delegate() { return instance.Part.ID; },
+                            delegate() { return instance.Part.GlobalPosition; },
+                            script.OnListen);
                         try
                         {
                             script.m_Listeners.Add(newhandle, l);
@@ -140,9 +143,10 @@ namespace SilverSim.Scripting.LSL.API.Chat
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llListenRemove(ScriptInstance Instance, int handle)
+        [ScriptFunctionName("llListenRemove")]
+        public void ListenRemove(ScriptInstance instance, int handle)
         {
-            Script script = (Script)Instance;
+            Script script = (Script)instance;
             ChatServiceInterface.Listener l;
             lock (script)
             {
@@ -154,9 +158,10 @@ namespace SilverSim.Scripting.LSL.API.Chat
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llListenControl(ScriptInstance Instance, int handle, int active)
+        [ScriptFunctionName("llListenControl")]
+        public void ListenControl(ScriptInstance instance, int handle, int active)
         {
-            Script script = (Script)Instance;
+            Script script = (Script)instance;
             ChatServiceInterface.Listener l;
             lock (script)
             {
@@ -169,16 +174,17 @@ namespace SilverSim.Scripting.LSL.API.Chat
 
         #region osListenRegex
         [APILevel(APIFlags.OSSL)]
-        public int osListenRegex(ScriptInstance Instance, int channel, string name, LSLKey id, string msg, int regexBitfield)
+        [ScriptFunctionName("osListenRegex")]
+        public int ListenRegex(ScriptInstance instance, int channel, string name, LSLKey id, string msg, int regexBitfield)
         {
-            Script script = (Script)Instance;
+            Script script = (Script)instance;
             lock (script)
             {
                 if (script.m_Listeners.Count >= MaxListenerHandles)
                 {
                     return -1;
                 }
-                ChatServiceInterface chatservice = Instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
+                ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
 
                 int newhandle = 0;
                 ChatServiceInterface.Listener l;
@@ -192,9 +198,9 @@ namespace SilverSim.Scripting.LSL.API.Chat
                             id,
                             msg,
                             regexBitfield,
-                            delegate() { return Instance.Part.ID; },
-                            delegate() { return Instance.Part.GlobalPosition; },
-                            script.onListen);
+                            delegate() { return instance.Part.ID; },
+                            delegate() { return instance.Part.GlobalPosition; },
+                            script.OnListen);
                         try
                         {
                             script.m_Listeners.Add(newhandle, l);
@@ -213,9 +219,9 @@ namespace SilverSim.Scripting.LSL.API.Chat
         #endregion
 
         [ExecutedOnStateChange]
-        public static void ResetListeners(ScriptInstance Instance)
+        public static void ResetListeners(ScriptInstance instance)
         {
-            Script script = (Script)Instance;
+            Script script = (Script)instance;
             lock (script)
             {
                 ICollection<ChatServiceInterface.Listener> coll = script.m_Listeners.Values;

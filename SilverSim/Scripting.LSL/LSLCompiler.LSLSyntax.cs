@@ -232,10 +232,17 @@ namespace SilverSim.Scripting.LSL
                                 foreach (MethodInfo mi in api.GetType().GetMethods())
                                 {
                                     APILevel level = (APILevel)System.Attribute.GetCustomAttribute(mi, typeof(APILevel));
-                                    ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(mi, typeof(ScriptFunctionName)) as ScriptFunctionName;
                                     if (level != null)
                                     {
-                                        writer.WriteNamedValue("key", mi.Name);
+                                        ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(mi, typeof(ScriptFunctionName)) as ScriptFunctionName;
+                                        if (funcNameAttr != null)
+                                        {
+                                            writer.WriteNamedValue("key", funcNameAttr.Name);
+                                        }
+                                        else
+                                        {
+                                            writer.WriteNamedValue("key", mi.Name);
+                                        }
                                         writer.WriteStartElement("map");
                                         {
                                             EnergyUsage energy = (EnergyUsage)System.Attribute.GetCustomAttribute(mi, typeof(EnergyUsage));

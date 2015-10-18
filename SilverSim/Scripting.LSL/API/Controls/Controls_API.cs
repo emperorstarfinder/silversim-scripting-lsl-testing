@@ -51,7 +51,8 @@ namespace SilverSim.Scripting.LSL.API.Controls
         public delegate void control(LSLKey id, int level, int edge);
 
         [APILevel(APIFlags.LSL)]
-        public void llTakeControls(ScriptInstance instance, int controls, int accept, int pass_on)
+        [ScriptFunctionName("llTakeControls")]
+        public void TakeControls(ScriptInstance instance, int controls, int accept, int pass_on)
         {
             lock (instance)
             {
@@ -78,7 +79,8 @@ namespace SilverSim.Scripting.LSL.API.Controls
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llReleaseControls(ScriptInstance instance)
+        [ScriptFunctionName("llReleaseControls")]
+        public void ReleaseControls(ScriptInstance instance)
         {
             lock (instance)
             {

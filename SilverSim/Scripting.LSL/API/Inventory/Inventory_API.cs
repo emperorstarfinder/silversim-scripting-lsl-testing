@@ -77,30 +77,33 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         public const string EOF = "\n\n\n";
 
         [APILevel(APIFlags.LSL)]
-        public void llGiveInventory(ScriptInstance Instance, LSLKey destination, string inventory)
+        [ScriptFunctionName("llGiveInventory")]
+        public void GiveInventory(ScriptInstance instance, LSLKey destination, string inventory)
         {
 #warning Implement llGiveInventory(UUID, string)
         }
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(3)]
-        public void llGiveInventoryList(ScriptInstance Instance, LSLKey target, string folder, AnArray inventory)
+        [ScriptFunctionName("llGiveInventoryList")]
+        public void GiveInventoryList(ScriptInstance instance, LSLKey target, string folder, AnArray inventory)
         {
 #warning Implement llGiveInventory(UUID, string, AnArray)
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRemoveInventory(ScriptInstance Instance, string item)
+        [ScriptFunctionName("llRemoveInventory")]
+        public void RemoveInventory(ScriptInstance instance, string item)
         {
             ObjectPartInventoryItem resitem;
-            lock (Instance)
+            lock (instance)
             {
-                if (Instance.Part.Inventory.TryGetValue(item, out resitem))
+                if (instance.Part.Inventory.TryGetValue(item, out resitem))
                 {
                     ScriptInstance si = resitem.ScriptInstance;
 
-                    Instance.Part.Inventory.Remove(resitem.ID);
-                    if (si == Instance)
+                    instance.Part.Inventory.Remove(resitem.ID);
+                    if (si == instance)
                     {
                         throw new ScriptAbortException();
                     }
@@ -118,13 +121,14 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetInventoryCreator(ScriptInstance Instance, string item)
+        [ScriptFunctionName("llGetInventoryCreator")]
+        public LSLKey GetInventoryCreator(ScriptInstance instance, string item)
         {
-            lock (Instance)
+            lock (instance)
             {
                 try
                 {
-                    return Instance.Part.Inventory[item].Creator.ID;
+                    return instance.Part.Inventory[item].Creator.ID;
                 }
                 catch
                 {
@@ -134,13 +138,14 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llGetInventoryKey(ScriptInstance Instance, string item)
+        [ScriptFunctionName("llGetInventoryKey")]
+        public LSLKey GetInventoryKey(ScriptInstance instance, string item)
         {
-            lock (Instance)
+            lock (instance)
             {
                 try
                 {
-                    return Instance.Part.Inventory[item].AssetID;
+                    return instance.Part.Inventory[item].AssetID;
                 }
                 catch
                 {
@@ -150,19 +155,20 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetInventoryName(ScriptInstance Instance, int type, int number)
+        [ScriptFunctionName("llGetInventoryName")]
+        public string GetInventoryName(ScriptInstance instance, int type, int number)
         {
-            lock(Instance)
+            lock(instance)
             {
                 try
                 {
                     if (type == INVENTORY_ALL)
                     {
-                        return Instance.Part.Inventory[(uint)number].Name;
+                        return instance.Part.Inventory[(uint)number].Name;
                     }
                     else if (type >= 0)
                     {
-                        return Instance.Part.Inventory[(Types.Inventory.InventoryType)type, (uint)number].Name;
+                        return instance.Part.Inventory[(Types.Inventory.InventoryType)type, (uint)number].Name;
                     }
                 }
                 catch
@@ -174,32 +180,35 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llGetInventoryNumber(ScriptInstance Instance, int type)
+        [ScriptFunctionName("llGetInventoryNumber")]
+        public int GetInventoryNumber(ScriptInstance instance, int type)
         {
-            lock (Instance)
+            lock (instance)
             {
                 if (type == INVENTORY_ALL)
                 {
-                    return Instance.Part.Inventory.Count;
+                    return instance.Part.Inventory.Count;
                 }
-                return Instance.Part.Inventory.CountType((Types.Inventory.InventoryType)type);
+                return instance.Part.Inventory.CountType((Types.Inventory.InventoryType)type);
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llSetInventoryPermMask(ScriptInstance Instance, string name, int category, int mask)
+        [ScriptFunctionName("llSetInventoryPermMask")]
+        public void SetInventoryPermMask(ScriptInstance instance, string name, int category, int mask)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llGetInventoryPermMask(ScriptInstance Instance, string name, int category)
+        [ScriptFunctionName("llGetInventoryPermMask")]
+        public int GetInventoryPermMask(ScriptInstance instance, string name, int category)
         {
-            lock(Instance)
+            lock(instance)
             {
                 try
                 {
-                    ObjectPartInventoryItem item = Instance.Part.Inventory[name];
+                    ObjectPartInventoryItem item = instance.Part.Inventory[name];
                     InventoryPermissionsMask mask;
                     switch(category)
                     {
@@ -237,13 +246,14 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         }
 
         [APILevel(APIFlags.LSL)]
-        public int llGetInventoryType(ScriptInstance Instance, string name)
+        [ScriptFunctionName("llGetInventoryType")]
+        public int GetInventoryType(ScriptInstance instance, string name)
         {
-            lock (Instance)
+            lock (instance)
             {
                 try
                 {
-                    return (int)Instance.Part.Inventory[name].InventoryType;
+                    return (int)instance.Part.Inventory[name].InventoryType;
                 }
                 catch
                 {
@@ -254,7 +264,8 @@ namespace SilverSim.Scripting.LSL.API.Inventory
 
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(1.0)]
-        public LSLKey llRequestInventoryData(ScriptInstance Instance, string name)
+        [ScriptFunctionName("llRequestInventoryData")]
+        public LSLKey RequestInventoryData(ScriptInstance instance, string name)
         {
 #warning Implement llRequestInventoryData
             throw new NotImplementedException();
@@ -262,13 +273,14 @@ namespace SilverSim.Scripting.LSL.API.Inventory
 
         #region osGetInventoryDesc
         [APILevel(APIFlags.OSSL)]
-        public string osGetInventoryDesc(ScriptInstance Instance, string item)
+        [ScriptFunctionName("osGetInventoryDesc")]
+        public string GetInventoryDesc(ScriptInstance instance, string item)
         {
-            lock (Instance)
+            lock (instance)
             {
                 try
                 {
-                    return Instance.Part.Inventory[item].Description;
+                    return instance.Part.Inventory[item].Description;
                 }
                 catch
                 {
@@ -280,14 +292,16 @@ namespace SilverSim.Scripting.LSL.API.Inventory
 
         #region Rez Inventory
         [APILevel(APIFlags.LSL)]
-        public void llRezObject(ScriptInstance Instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
+        [ScriptFunctionName("llRezObject")]
+        public void RezObject(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
 #warning Implement llRezObject
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llRezAtRoot(ScriptInstance Instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
+        [ScriptFunctionName("llRezAtRoot")]
+        public void RezAtRoot(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
 #warning Implement llRezAtRoot
             throw new NotImplementedException();

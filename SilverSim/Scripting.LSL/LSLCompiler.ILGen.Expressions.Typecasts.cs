@@ -12,7 +12,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        class TypecastExpression : IExpressionStackElement
+        sealed class TypecastExpression : IExpressionStackElement
         {
             Tree m_TypecastTree;
             Type m_TargetType;

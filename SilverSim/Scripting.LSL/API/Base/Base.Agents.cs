@@ -36,42 +36,42 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llRequestAgentData")]
-        public LSLKey LlRequestAgentData(ScriptInstance Instance, LSLKey id, int data)
+        public LSLKey RequestAgentData(ScriptInstance instance, LSLKey id, int data)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llRequestDisplayName")]
-        public LSLKey LlRequestDisplayName(ScriptInstance instance, LSLKey id)
+        public LSLKey RequestDisplayName(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llRequestUsername")]
-        public LSLKey LlRequestUsername(ScriptInstance instance, LSLKey id)
+        public LSLKey RequestUsername(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llGetDisplayName")]
-        public string LlGetDisplayName(ScriptInstance instance, LSLKey id)
+        public string GetDisplayName(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llKey2Name")]
-        public string LlKey2Name(ScriptInstance instance, LSLKey id)
+        public string Key2Name(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llGetAgentSize")]
-        public Vector3 LlGetAgentSize(ScriptInstance instance, LSLKey id)
+        public Vector3 GetAgentSize(ScriptInstance instance, LSLKey id)
         {
             lock (instance)
             {
@@ -96,7 +96,7 @@ namespace SilverSim.Scripting.LSL.API.Base
         #region osGetAvatarList
         [APILevel(APIFlags.OSSL)]
         [ScriptFunctionName("osGetAvatarList")]
-        public AnArray OsGetAvatarList(ScriptInstance instance)
+        public AnArray GetAvatarList(ScriptInstance instance)
         {
             AnArray res = new AnArray();
 
@@ -120,7 +120,7 @@ namespace SilverSim.Scripting.LSL.API.Base
         #region osGetAgents
         [APILevel(APIFlags.OSSL)]
         [ScriptFunctionName("osGetAgents")]
-        public AnArray OsGetAgents(ScriptInstance instance)
+        public AnArray GetAgents(ScriptInstance instance)
         {
             AnArray res = new AnArray();
 

@@ -24,14 +24,14 @@ namespace SilverSim.Scripting.LSL
         {
             if (functionLine.Line[startAt] == "@")
             {
-                throw compilerException(functionLine, "Invalid label declaration");
+                throw CompilerException(functionLine, "Invalid label declaration");
             }
             #region Jump to label
             else if (functionLine.Line[startAt] == "jump")
             {
                 if (functionLine.Line.Count <= startAt + 2)
                 {
-                    throw compilerException(functionLine, "Invalid jump statement");
+                    throw CompilerException(functionLine, "Invalid jump statement");
                 }
                 if (!labels.ContainsKey(functionLine.Line[1]))
                 {
@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.LSL
                 /* when same state, the state instruction compiles to nop according to wiki */
                 if (stateTypeBuilder == scriptTypeBuilder)
                 {
-                    throw compilerException(functionLine, "Global functions cannot change state");
+                    throw CompilerException(functionLine, "Global functions cannot change state");
                 }
                 ilgen.Emit(OpCodes.Ldstr, functionLine.Line[1]);
                 ilgen.Emit(OpCodes.Newobj, typeof(ChangeStateException).GetConstructor(new Type[1] { typeof(string) }));
@@ -200,7 +200,7 @@ namespace SilverSim.Scripting.LSL
                 /* component access */
                 if (startAt != 0)
                 {
-                    throw compilerException(functionLine, "Invalid assignment");
+                    throw CompilerException(functionLine, "Invalid assignment");
                 }
                 else
                 {
@@ -229,7 +229,7 @@ namespace SilverSim.Scripting.LSL
                                 break;
 
                             default:
-                                throw compilerException(functionLine, "vector does not have member " + functionLine.Line[startAt + 2]);
+                                throw CompilerException(functionLine, "vector does not have member " + functionLine.Line[startAt + 2]);
                         }
 
                     }
@@ -254,12 +254,12 @@ namespace SilverSim.Scripting.LSL
                                 break;
 
                             default:
-                                throw compilerException(functionLine, "quaternion does not have member " + functionLine.Line[startAt + 2]);
+                                throw CompilerException(functionLine, "quaternion does not have member " + functionLine.Line[startAt + 2]);
                         }
                     }
                     else
                     {
-                        throw compilerException(functionLine, "Type " + MapType(varType) + " does not have accessible components");
+                        throw CompilerException(functionLine, "Type " + MapType(varType) + " does not have accessible components");
                     }
 
                     ilgen.Emit(OpCodes.Ldloca, lb_struct);
@@ -311,7 +311,7 @@ namespace SilverSim.Scripting.LSL
                             break;
 
                         default:
-                            throw compilerException(functionLine, string.Format("invalid assignment operator '{0}'", functionLine.Line[startAt + 3]));
+                            throw CompilerException(functionLine, string.Format("invalid assignment operator '{0}'", functionLine.Line[startAt + 3]));
                     }
                     ilgen.Emit(OpCodes.Ldloc, lb_struct);
                     SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, o, functionLine.LineNumber);
@@ -324,7 +324,7 @@ namespace SilverSim.Scripting.LSL
             {
                 if (startAt != 0)
                 {
-                    throw compilerException(functionLine, "Invalid assignment");
+                    throw CompilerException(functionLine, "Invalid assignment");
                 }
                 else
                 {
@@ -351,7 +351,7 @@ namespace SilverSim.Scripting.LSL
                     }
                     else
                     {
-                        throw compilerException(functionLine, string.Format("operator '+=' is not supported for {0}", MapType(ret)));
+                        throw CompilerException(functionLine, string.Format("operator '+=' is not supported for {0}", MapType(ret)));
                     }
                     SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
                 }
@@ -360,7 +360,7 @@ namespace SilverSim.Scripting.LSL
             {
                 if (startAt != 0)
                 {
-                    throw compilerException(functionLine, "Invalid assignment");
+                    throw CompilerException(functionLine, "Invalid assignment");
                 }
                 else
                 {
@@ -387,7 +387,7 @@ namespace SilverSim.Scripting.LSL
                     }
                     else
                     {
-                        throw compilerException(functionLine, string.Format("operator '-=' is not supported for {0}", MapType(ret)));
+                        throw CompilerException(functionLine, string.Format("operator '-=' is not supported for {0}", MapType(ret)));
                     }
                     SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
                 }
@@ -396,7 +396,7 @@ namespace SilverSim.Scripting.LSL
             {
                 if (startAt != 0)
                 {
-                    throw compilerException(functionLine, "Invalid assignment");
+                    throw CompilerException(functionLine, "Invalid assignment");
                 }
                 else
                 {
@@ -423,7 +423,7 @@ namespace SilverSim.Scripting.LSL
                     }
                     else
                     {
-                        throw compilerException(functionLine, string.Format("operator '*=' is not supported for {0}", MapType(ret)));
+                        throw CompilerException(functionLine, string.Format("operator '*=' is not supported for {0}", MapType(ret)));
                     }
                     SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
                 }
@@ -432,7 +432,7 @@ namespace SilverSim.Scripting.LSL
             {
                 if (startAt != 0)
                 {
-                    throw compilerException(functionLine, "Invalid assignment");
+                    throw CompilerException(functionLine, "Invalid assignment");
                 }
                 else
                 {
@@ -459,7 +459,7 @@ namespace SilverSim.Scripting.LSL
                     }
                     else
                     {
-                        throw compilerException(functionLine, string.Format("operator '/=' is not supported for {0}", MapType(ret)));
+                        throw CompilerException(functionLine, string.Format("operator '/=' is not supported for {0}", MapType(ret)));
                     }
                     SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
                 }
@@ -468,7 +468,7 @@ namespace SilverSim.Scripting.LSL
             {
                 if (startAt != 0)
                 {
-                    throw compilerException(functionLine, "Invalid assignment");
+                    throw CompilerException(functionLine, "Invalid assignment");
                 }
                 else
                 {
@@ -491,7 +491,7 @@ namespace SilverSim.Scripting.LSL
                     }
                     else
                     {
-                        throw compilerException(functionLine, string.Format("operator '%=' is not supported for {0}", MapType(ret)));
+                        throw CompilerException(functionLine, string.Format("operator '%=' is not supported for {0}", MapType(ret)));
                     }
                     SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
                 }

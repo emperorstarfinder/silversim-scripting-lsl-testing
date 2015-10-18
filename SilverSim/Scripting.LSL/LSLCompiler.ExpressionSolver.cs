@@ -10,7 +10,7 @@ namespace SilverSim.Scripting.LSL
 {
     public partial class LSLCompiler
     {
-        void solveDeclarations(Tree tree)
+        void SolveDeclarations(Tree tree)
         {
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(tree));
@@ -44,7 +44,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        class ConstantValueVector : Tree.ConstantValue
+        sealed class ConstantValueVector : Tree.ConstantValue
         {
             public Vector3 Value;
 
@@ -64,7 +64,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        class ConstantValueRotation : Tree.ConstantValue
+        sealed class ConstantValueRotation : Tree.ConstantValue
         {
             public Quaternion Value;
 
@@ -84,7 +84,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        void solveConstantOperations(Tree tree)
+        void SolveConstantOperations(Tree tree)
         {
             List<Tree> processNodes = new List<Tree>();
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
@@ -910,7 +910,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        void combineTypecasts(CompileState cs, Tree resolvetree)
+        void CombineTypecasts(CompileState cs, Tree resolvetree)
         {
             int i;
 
@@ -952,7 +952,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        class ListTreeEnumState
+        sealed class ListTreeEnumState
         {
             public int Position = -1;
             public Tree Tree;
@@ -980,7 +980,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        void solveMaxNegValues(CompileState cs, Tree resolvetree)
+        void SolveMaxNegValues(CompileState cs, Tree resolvetree)
         {
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(resolvetree));
@@ -1010,13 +1010,13 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        void solveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames)
+        void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames)
         {
-            combineTypecasts(cs, resolvetree);
+            CombineTypecasts(cs, resolvetree);
             m_Resolver.Process(resolvetree, varNames);
-            solveDeclarations(resolvetree);
-            solveMaxNegValues(cs, resolvetree);
-            solveConstantOperations(resolvetree);
+            SolveDeclarations(resolvetree);
+            SolveMaxNegValues(cs, resolvetree);
+            SolveConstantOperations(resolvetree);
         }
 
     }

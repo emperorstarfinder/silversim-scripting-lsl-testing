@@ -34,11 +34,11 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [ExecutedOnScriptReset]
-        public void RemoveURLs(ScriptInstance Instance)
+        public void RemoveURLs(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
-                foreach (UUID ids in ((Script)Instance).m_RequestedURLs)
+                foreach (UUID ids in ((Script)instance).m_RequestedURLs)
                 {
                     m_HTTPHandler.ReleaseURL((string)ids);
                 }

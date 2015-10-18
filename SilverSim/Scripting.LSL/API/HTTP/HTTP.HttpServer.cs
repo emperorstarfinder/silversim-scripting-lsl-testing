@@ -14,19 +14,20 @@ namespace SilverSim.Scripting.LSL.API.HTTP
     public partial class HTTP_API
     {
         [APILevel(APIFlags.LSL)]
-        public LSLKey llRequestURL(ScriptInstance Instance)
+        [ScriptFunctionName("llRequestURL")]
+        public LSLKey RequestURL(ScriptInstance instance)
         {
-            lock(Instance)
+            lock(instance)
             {
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestURL(Instance.Part, Instance.Item);
+                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item);
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_GRANTED;
                     ev.Body = urlID;
-                    Instance.PostEvent(ev);
+                    instance.PostEvent(ev);
                 }
                 catch
                 {
@@ -34,35 +35,37 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_DENIED;
                     ev.Body = string.Empty;
-                    Instance.PostEvent(ev);
+                    instance.PostEvent(ev);
                 }
                 return reqID;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llReleaseURL(ScriptInstance Instance, string url)
+        [ScriptFunctionName("llReleaseURL")]
+        public void ReleaseURL(ScriptInstance instance, string url)
         {
-            lock (Instance)
+            lock (instance)
             {
                 m_HTTPHandler.ReleaseURL(url);
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public LSLKey llRequestSecureURL(ScriptInstance Instance)
+        [ScriptFunctionName("llRequestSecureURL")]
+        public LSLKey RequestSecureURL(ScriptInstance instance)
         {
-            lock (Instance)
+            lock (instance)
             {
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestSecureURL(Instance.Part, Instance.Item);
+                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item);
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_GRANTED;
                     ev.Body = urlID;
-                    Instance.PostEvent(ev);
+                    instance.PostEvent(ev);
                 }
                 catch
                 {
@@ -70,25 +73,27 @@ namespace SilverSim.Scripting.LSL.API.HTTP
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_DENIED;
                     ev.Body = string.Empty;
-                    Instance.PostEvent(ev);
+                    instance.PostEvent(ev);
                 }
                 return reqID;
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public string llGetHTTPHeader(ScriptInstance Instance, LSLKey requestID, string header)
+        [ScriptFunctionName("llGetHTTPHeader")]
+        public string GetHTTPHeader(ScriptInstance instance, LSLKey requestID, string header)
         {
-            lock (Instance)
+            lock (instance)
             {
                 return m_HTTPHandler.GetHttpHeader(requestID, header);
             }
         }
 
         [APILevel(APIFlags.LSL)]
-        public void llHTTPResponse(ScriptInstance Instance, LSLKey requestID, int status, string body)
+        [ScriptFunctionName("llHTTPResponse")]
+        public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, string body)
         {
-            lock(Instance)
+            lock(instance)
             {
                 m_HTTPHandler.HttpResponse(requestID, status, body);
             }
@@ -114,9 +119,10 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         public const int CONTENT_TYPE_RSS = 8;
 
         [APILevel(APIFlags.LSL)]
-        public void llSetContentType(ScriptInstance Instance, LSLKey requestID, int contenttype)
+        [ScriptFunctionName("llSetContentType")]
+        public void SetContentType(ScriptInstance instance, LSLKey requestID, int contenttype)
         {
-            lock(Instance)
+            lock(instance)
             {
                 switch(contenttype)
                 {
@@ -135,9 +141,10 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.OSSL)]
-        public void osSetContentType(ScriptInstance Instance, LSLKey id, string type)
+        [ScriptFunctionName("osSetContentType")]
+        public void SetContentType(ScriptInstance instance, LSLKey id, string type)
         {
-            lock(Instance)
+            lock(instance)
             {
                 m_HTTPHandler.SetContentType(id, type);
             }

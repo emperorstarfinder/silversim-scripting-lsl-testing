@@ -594,7 +594,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        internal void onListen(ListenEvent ev)
+        internal void OnListen(ListenEvent ev)
         {
             PostEvent(ev);
         }

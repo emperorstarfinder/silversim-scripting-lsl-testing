@@ -14,22 +14,23 @@ namespace SilverSim.Scripting.LSL.APIs.IM
     {
         [APILevel(APIFlags.LSL)]
         [ForcedSleep(2)]
-        public void llInstantMessage(ScriptInstance Instance, LSLKey user, string message)
+        [ScriptFunctionName("llInstantMessage")]
+        public void InstantMessage(ScriptInstance instance, LSLKey user, string message)
         {
-            lock(Instance)
+            lock(instance)
             {
-                IMServiceInterface imservice = Instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
                 GridInstantMessage im = new GridInstantMessage();
-                im.FromAgent.ID = Instance.Part.Owner.ID;
-                im.FromAgent.FullName = Instance.Part.ObjectGroup.Name;
-                im.IMSessionID = Instance.Part.ObjectGroup.ID;
+                im.FromAgent.ID = instance.Part.Owner.ID;
+                im.FromAgent.FullName = instance.Part.ObjectGroup.Name;
+                im.IMSessionID = instance.Part.ObjectGroup.ID;
                 im.ToAgent.ID = user;
-                im.Position = Instance.Part.ObjectGroup.GlobalPosition;
-                im.RegionID = Instance.Part.ObjectGroup.Scene.ID;
+                im.Position = instance.Part.ObjectGroup.GlobalPosition;
+                im.RegionID = instance.Part.ObjectGroup.Scene.ID;
                 im.Message = message;
                 im.Dialog = GridInstantMessageDialog.MessageFromObject;
                 string binBuck = string.Format("{0}/{1}/{2}/{3}\0", 
-                    Instance.Part.ObjectGroup.Scene.Name,
+                    instance.Part.ObjectGroup.Scene.Name,
                     (int)Math.Floor(im.Position.X),
                     (int)Math.Floor(im.Position.Y),
                     (int)Math.Floor(im.Position.Z));
