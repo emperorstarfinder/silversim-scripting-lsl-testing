@@ -63,8 +63,8 @@ namespace SilverSim.Scripting.LSL.API.Permissions
 
 
         [APILevel(APIFlags.LSL)]
-        [StateEventDelegate]
-        public delegate void run_time_permissions(int perm);
+        [StateEventDelegate("run_time_permissions")]
+        public delegate void State_run_time_permissions(int perm);
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llGetPermissions")]

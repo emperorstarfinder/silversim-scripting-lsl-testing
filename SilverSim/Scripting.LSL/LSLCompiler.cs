@@ -498,7 +498,8 @@ namespace SilverSim.Scripting.LSL
                 foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                 {
                     System.Attribute attr = System.Attribute.GetCustomAttribute(t, typeof(APILevel));
-                    if(attr != null)
+                    StateEventDelegate stateEventAttr = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
+                    if (attr != null && stateEventAttr != null)
                     {
                         MethodInfo mi = t.GetMethod("Invoke");
                         ParameterInfo[] pi = mi.GetParameters();
@@ -527,8 +528,22 @@ namespace SilverSim.Scripting.LSL
 
                         if (eventValid)
                         {
-                            m_EventDelegates.Add(t.Name, mi);
+                            m_EventDelegates.Add(stateEventAttr.Name, mi);
                         }
+                    }
+                    else if (null != attr)
+                    {
+                        MethodInfo mi = t.GetMethod("Invoke");
+                        m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. StateEventDelegate attribute missing.",
+                            mi.Name,
+                            mi.DeclaringType.FullName);
+                    }
+                    else if (null != stateEventAttr)
+                    {
+                        MethodInfo mi = t.GetMethod("Invoke");
+                        m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. APILevel attribute missing.",
+                            mi.Name,
+                            mi.DeclaringType.FullName);
                     }
                 }
                 #endregion

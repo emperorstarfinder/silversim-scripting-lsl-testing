@@ -152,10 +152,11 @@ namespace SilverSim.Scripting.LSL
                                 foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                                 {
                                     APILevel level = (APILevel)System.Attribute.GetCustomAttribute(t, typeof(APILevel));
-                                    if (level != null && System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate)) != null)
+                                    StateEventDelegate stateEventDel = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
+                                    if (level != null && stateEventDel != null)
                                     {
                                         MethodInfo mi = t.GetMethod("Invoke");
-                                        writer.WriteNamedValue("key", t.Name);
+                                        writer.WriteNamedValue("key", stateEventDel.Name);
                                         writer.WriteStartElement("map");
                                         {
                                             writer.WriteNamedValue("key", "arguments");

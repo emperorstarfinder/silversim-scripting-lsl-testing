@@ -47,8 +47,8 @@ namespace SilverSim.Scripting.LSL.API.Controls
         public const int CONTROL_ML_LBUTTON = 0x40000000;
 
         [APILevel(APIFlags.LSL)]
-        [StateEventDelegate]
-        public delegate void control(LSLKey id, int level, int edge);
+        [StateEventDelegate("control")]
+        public delegate void State_control(LSLKey id, int level, int edge);
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llTakeControls")]

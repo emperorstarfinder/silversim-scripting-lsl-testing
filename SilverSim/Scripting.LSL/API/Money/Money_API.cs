@@ -28,8 +28,8 @@ namespace SilverSim.Scripting.LSL.API.Money
         }
 
         [APILevel(APIFlags.LSL)]
-        [StateEventDelegate]
-        public delegate void transaction_result(LSLKey id, int success, string data);
+        [StateEventDelegate("transaction_result")]
+        public delegate void State_transaction_result(LSLKey id, int success, string data);
 
         delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
             UUI destinationid, int amount, ScriptInstance instance);

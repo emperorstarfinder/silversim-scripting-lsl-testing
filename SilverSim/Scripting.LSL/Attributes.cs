@@ -77,9 +77,11 @@ namespace SilverSim.Scripting.LSL
     [AttributeUsage(AttributeTargets.Delegate, Inherited = false)]
     public sealed class StateEventDelegate : Attribute
     {
-        public StateEventDelegate()
-        {
+        public string Name { get; private set; }
 
+        public StateEventDelegate(string name)
+        {
+            Name = name;
         }
     }
 

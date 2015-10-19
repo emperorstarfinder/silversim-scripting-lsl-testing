@@ -231,8 +231,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         #region osMessageObject
         [APILevel(APIFlags.ASSL)]
-        [StateEventDelegate]
-        public delegate void object_message(LSLKey id, string data);
+        [StateEventDelegate("object_message")]
+        public delegate void State_object_message(LSLKey id, string data);
 
         [APILevel(APIFlags.OSSL)]
         [ScriptFunctionName("osMessageObject")]
