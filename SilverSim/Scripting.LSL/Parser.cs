@@ -20,7 +20,7 @@ namespace SilverSim.Scripting.LSL
         {
             char c;
             string token = string.Empty;
-            begin();
+            Begin();
             args.Clear();
             bool is_preprocess = false;
             int parencount = 0;
@@ -28,7 +28,7 @@ namespace SilverSim.Scripting.LSL
 
             for(;;)
             {
-                c = readc();
+                c = ReadC();
 redo:
                 switch(c)
                 {
@@ -49,7 +49,7 @@ redo:
                     case ';':       /* end of statement */
                         if (CurrentLineNumber < 0)
                         {
-                            CurrentLineNumber = getfileinfo().LineNumber;
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                         }
                         if(0 != token.Length)
                             args.Add(token);
@@ -61,7 +61,7 @@ redo:
                     case '{':       /* opening statement */
                         if (CurrentLineNumber < 0)
                         {
-                            CurrentLineNumber = getfileinfo().LineNumber;
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                         }
                         if(0 != token.Length)
                             args.Add(token);
@@ -71,7 +71,7 @@ redo:
                     case '}':       /* closing statement */
                         if (CurrentLineNumber < 0)
                         {
-                            CurrentLineNumber = getfileinfo().LineNumber;
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                         }
                         if(0 != token.Length)
                             args.Add(token);
@@ -81,7 +81,7 @@ redo:
                     case '\"':      /* string literal */
                         if (CurrentLineNumber < 0)
                         {
-                            CurrentLineNumber = getfileinfo().LineNumber;
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                         }
                         if (0 != token.Length)
                         {
@@ -93,14 +93,14 @@ redo:
                             if (c == '\\')
                             {
                                 token += ((char)c).ToString();
-                                c = readc();
+                                c = ReadC();
                                 token += ((char)c).ToString();
                             }
                             else
                             {
                                 token += ((char)c).ToString();
                             }
-                            c = readc();
+                            c = ReadC();
                         } while(c != '\"');
                         token += "\"";
                         if (0 != token.Length)
@@ -113,7 +113,7 @@ redo:
                     case '\'':      /* string literal */
                         if (CurrentLineNumber < 0)
                         {
-                            CurrentLineNumber = getfileinfo().LineNumber;
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                         }
                         if (0 != token.Length)
                         {
@@ -125,14 +125,14 @@ redo:
                             if (c == '\\')
                             {
                                 token += ((char)c).ToString();
-                                c = readc();
+                                c = ReadC();
                                 token += ((char)c).ToString();
                             }
                             else
                             {
                                 token += ((char)c).ToString();
                             }
-                            c = readc();
+                            c = ReadC();
                         } while(c != '\'');
                         token += "\'";
                         if (0 != token.Length)
@@ -153,7 +153,7 @@ redo:
                     case ']':
                         if (CurrentLineNumber < 0)
                         {
-                            CurrentLineNumber = getfileinfo().LineNumber;
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                         }
                         if (0 != token.Length)
                         {
@@ -175,7 +175,7 @@ redo:
                     case '<':
                         if (CurrentLineNumber < 0)
                         {
-                            CurrentLineNumber = getfileinfo().LineNumber;
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                         }
                         if(is_preprocess)
                         {
@@ -193,7 +193,7 @@ redo:
                                     do
                                     {
                                         token += ((char)c).ToString();
-                                        c = readc();
+                                        c = ReadC();
                                     } while(c != '>');
                                     token += "\"";
                                     if(0 != token.Length)
@@ -220,7 +220,7 @@ redo:
                         {
                             if (CurrentLineNumber < 0)
                             {
-                                CurrentLineNumber = getfileinfo().LineNumber;
+                                CurrentLineNumber = GetFileInfo().LineNumber;
                             }
                             if (token.Length == 0 && args.Count == 0 && c == '#')
                             {
@@ -238,7 +238,7 @@ redo:
                                     {
                                         try
                                         {
-                                            c = readc();
+                                            c = ReadC();
                                         }
                                         catch(EndOfFileException)
                                         {
@@ -260,7 +260,7 @@ redo:
                                     {
                                         try
                                         {
-                                            c = readc();
+                                            c = ReadC();
                                         }
                                         catch(EndOfFileException)
                                         {
@@ -278,7 +278,7 @@ redo:
                                         {
                                             try
                                             {
-                                                c = readc();
+                                                c = ReadC();
                                             }
                                             catch(EndOfFileException)
                                             {
@@ -303,7 +303,7 @@ redo:
 
                                 try
                                 {
-                                    c = readc();
+                                    c = ReadC();
                                 }
                                 catch(EndOfFileException)
                                 {
@@ -1116,7 +1116,7 @@ redo:
             }
         }
 
-        public override void read(List<string> args)
+        public override void Read(List<string> args)
         {
             ReadPass1(args);
             EvalCompounds(args);

@@ -17,7 +17,7 @@ namespace SilverSim.Scripting.LSL
         {
             string fname;
             int lineno;
-            p.getfileinfo(out fname, out lineno);
+            p.GetFileInfo(out fname, out lineno);
             return new CompilerException(lineno, message);
         }
 
@@ -361,7 +361,7 @@ namespace SilverSim.Scripting.LSL
                 List<string> args = new List<string>();
                 try
                 {
-                    p.read(args);
+                    p.Read(args);
                 }
                 catch (ParserBase.EndOfStringException)
                 {
@@ -399,7 +399,7 @@ namespace SilverSim.Scripting.LSL
                 List<string> args = new List<string>();
                 try
                 {
-                    p.read(args);
+                    p.Read(args);
                 }
                 catch (ParserBase.EndOfStringException)
                 {
@@ -496,14 +496,14 @@ namespace SilverSim.Scripting.LSL
             }
 
             Parser p = new Parser();
-            p.push(reader, string.Empty, lineNumber);
+            p.Push(reader, string.Empty, lineNumber);
 
             for (; ; )
             {
                 List<string> args = new List<string>();
                 try
                 {
-                    p.read(args);
+                    p.Read(args);
                 }
                 catch (ParserBase.EndOfStringException)
                 {
