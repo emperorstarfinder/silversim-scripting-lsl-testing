@@ -9,7 +9,7 @@ using System.Text;
 namespace SilverSim.Scripting.LSL
 {
     [Flags]
-    public enum APIFlags
+    public enum APIFlags : uint
     {
         None = 0,
         LSL = 1 << 0,
@@ -18,7 +18,8 @@ namespace SilverSim.Scripting.LSL
         ASSL = 1 << 3,
         ASSL_Admin = 1 << 4,
         WindLight_Aurora = 1 << 5,
-        WindLight_New = 1 << 6
+        WindLight_New = 1 << 6,
+        Any = 0xFFFFFFFF
     }
 
     [Serializable]
@@ -110,14 +111,16 @@ namespace SilverSim.Scripting.LSL
     }
 
     [Serializable]
-    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public sealed class ScriptFunctionName : Attribute
     {
         public string Name { get; private set; }
+        public APIFlags ValidApis { get; private set; }
 
-        public ScriptFunctionName(string name)
+        public ScriptFunctionName(string name, APIFlags validApis = APIFlags.Any)
         {
             Name = name;
+            ValidApis = validApis;
         }
     }
 }

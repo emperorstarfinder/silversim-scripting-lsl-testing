@@ -6,6 +6,7 @@ using SilverSim.Types;
 using SilverSim.Types.Primitive;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
+using System;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -152,7 +153,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llSetPayPrice")]
         public void SetPayPrice(ScriptInstance instance, int price, AnArray quick_pay_buttons)
         {
-#warning Implement llSetPayPrice(int, AnArray)
+            throw new NotImplementedException("llSetPayPrice(int, list)");
         }
 
         [APILevel(APIFlags.LSL)]

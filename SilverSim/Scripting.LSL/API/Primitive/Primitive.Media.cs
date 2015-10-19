@@ -4,6 +4,7 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
+using System;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -13,8 +14,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llClearLinkMedia")]
         public int ClearLinkMedia(ScriptInstance instance, int link, int face)
         {
-#warning Implement llClearLinkMedia(int, int)
-            return 0;
+            throw new NotImplementedException("llClearLinkMedia(int, int)");
         }
 
         [APILevel(APIFlags.LSL)]
@@ -91,8 +91,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llGetPrimMediaParams")]
         public AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
-#warning Implement llGetPrimMediaParams(int, AnArray)
-            return new AnArray();
+            throw new NotImplementedException("llGetPrimMediaParams(int, list)");
         }
 
         [APILevel(APIFlags.LSL)]
@@ -116,8 +115,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llSetLinkMedia")]
         public int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
-#warning Implement llSetLinkMedia(int, int, AnArray)
-            return 0;
+            throw new NotImplementedException("llSetLinkMedia(int, int, list)");
         }
 
         [APILevel(APIFlags.LSL)]

@@ -153,7 +153,7 @@ namespace SilverSim.Scripting.LSL.API.Experience
         [ScriptFunctionName("llRequestExperiencePermissions")]
         public void RequestExperiencePermissions(ScriptInstance instance, LSLKey agent, string name /* unused */)
         {
-
+            throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]

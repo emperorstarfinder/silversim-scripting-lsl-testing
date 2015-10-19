@@ -50,7 +50,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llGetParcelDetails")]
         public AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
         {
-#warning Implement llGetParcelDetails(Vector3, AnArray)
             throw new NotImplementedException();
         }
 
@@ -58,7 +57,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llGetParcelFlags")]
         public int GetParcelFlags(ScriptInstance instance, Vector3 pos)
         {
-#warning Implement llGetParcelFlags(Vector3)
             throw new NotImplementedException();
         }
 
@@ -66,7 +64,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llGetParcelMaxPrims")]
         public int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
         {
-#warning Implement llGetParcelMaxPrims(Vector3, int)
             throw new NotImplementedException();
         }
 
@@ -101,7 +98,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llSetParcelMusicURL")]
         public void SetParcelMusicURL(ScriptInstance instance, string url)
         {
-#warning Implement llSetParcelMusicURL()
             throw new NotImplementedException();
         }
 
@@ -109,7 +105,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llReturnObjectsByID")]
         public int ReturnObjectsByID(ScriptInstance instance, AnArray objects)
         {
-#warning Implement llReturnObjectsByID(AnArray)
             throw new NotImplementedException();
         }
 
@@ -117,7 +112,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llReturnObjectsByOwner")]
         public int ReturnObjectsByOwner(ScriptInstance instance, LSLKey owner, int scope)
         {
-#warning Implement llReturnObjectsByOwner(UUID, int)
             throw new NotImplementedException();
         }
 
@@ -144,7 +138,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llGetParcelPrimCount")]
         public int GetParcelPrimCount(ScriptInstance instance, Vector3 pos, int category, int sim_wide)
         {
-#warning Implement llGetParcelPrimCount(Vector3, int, int)
             throw new NotImplementedException();
         }
 
@@ -153,7 +146,6 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ScriptFunctionName("llGetParcelPrimOwners")]
         public AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
         {
-#warning Implement llGetParcelPrimOwners(Vector3)
             throw new NotImplementedException();
         }
     }

@@ -25,7 +25,6 @@ namespace SilverSim.Scripting.LSL.API.Region
         [ScriptFunctionName("llGetSimulatorHostname")]
         public string GetSimulatorHostname(ScriptInstance instance)
         {
-#warning Implement llGetSimulatorHostname()
             throw new NotImplementedException();
         }
 
@@ -33,8 +32,7 @@ namespace SilverSim.Scripting.LSL.API.Region
         [ScriptFunctionName("llGetRegionCorner")]
         public Vector3 GetRegionCorner(ScriptInstance instance)
         {
-#warning Implement llGetRegionCorner()
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetRegionCorner()");
         }
 
         [APILevel(APIFlags.LSL)]
@@ -42,8 +40,7 @@ namespace SilverSim.Scripting.LSL.API.Region
         [ScriptFunctionName("llRequestSimulatorData")]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
         {
-#warning Implement llRequestSimulatorData()
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRequestSimulatorData(string, integer)");
         }
     }
 }

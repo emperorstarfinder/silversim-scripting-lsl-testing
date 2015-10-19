@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
+using System;
 using System.Reflection;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
@@ -65,8 +66,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llGetCenterOfMass")]
         public Vector3 GetCenterOfMass(ScriptInstance instance)
         {
-#warning Implement llGetCenterOfMass()
-            return Vector3.Zero;
+            throw new NotImplementedException("llGetCenterOfMass()");
         }
 
         [APILevel(APIFlags.LSL)]
@@ -83,7 +83,10 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llGetObjectDesc")]
         public string GetObjectDesc(ScriptInstance instance)
         {
-            lock(instance) return instance.Part.Name;
+            lock (instance)
+            {
+                return instance.Part.Name;
+            }
         }
 
         [APILevel(APIFlags.LSL)]
@@ -132,8 +135,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llSetRegionPos")]
         public int SetRegionPos(ScriptInstance instance, Vector3 pos)
         {
-#warning Implement llSetRegionPos(Vector3)
-            return 0;
+            throw new NotImplementedException("llSetRegionPos(vector)");
         }
 
         [APILevel(APIFlags.LSL)]

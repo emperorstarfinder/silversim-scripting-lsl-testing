@@ -43,7 +43,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llLoopSound")]
         public void LoopSound(ScriptInstance instance, string sound, double volume)
         {
-#warning Implement llLoopSound(string, double)
             throw new NotImplementedException();
         }
 
@@ -51,7 +50,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llLoopSoundMaster")]
         public void LoopSoundMaster(ScriptInstance instance, string sound, double volume)
         {
-#warning Implement llLoopSoundMaster(string, double)
             throw new NotImplementedException();
         }
 
@@ -59,7 +57,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llLoopSoundSlave")]
         public void LoopSoundSlave(ScriptInstance instance, string sound, double volume)
         {
-#warning Implement llLoopSoundSlave(string, double)
             throw new NotImplementedException();
         }
 
@@ -88,7 +85,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llStopSound")]
         public void StopSound(ScriptInstance instance)
         {
-#warning Implement llStopSound()
             throw new NotImplementedException();
         }
 
@@ -96,7 +92,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llPlaySound")]
         public void PlaySound(ScriptInstance instance, string sound, double volume)
         {
-#warning Implement llPlaySound(string, double)
             throw new NotImplementedException();
         }
 
@@ -104,7 +99,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llPlaySoundSlave")]
         public void PlaySoundSlave(ScriptInstance instance, string sound, double volume)
         {
-#warning Implement llPlaySoundSlave(string, double)
             throw new NotImplementedException();
         }
 
@@ -153,7 +147,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llAdjustSoundVolume")]
         public void AdjustSoundVolume(ScriptInstance instance, double volume)
         {
-#warning Implement llAdjustSoundVolume(double)
             throw new NotImplementedException();
         }
 
@@ -171,7 +164,6 @@ namespace SilverSim.Scripting.LSL.API.Sound
         [ScriptFunctionName("llSetSoundRadius")]
         public void SetSoundRadius(ScriptInstance instance, double radius)
         {
-#warning Implement llSetSoundRadius(double)
             throw new NotImplementedException();
         }
     }

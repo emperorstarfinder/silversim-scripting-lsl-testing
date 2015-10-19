@@ -42,12 +42,14 @@ namespace SilverSim.Scripting.LSL
 
         private void CheckUsedName(CompileState cs, Parser p, string type, string name)
         {
+            APIFlags validApiFlags;
             CheckValidName(p, type, name);
             if (m_ReservedWords.Contains(name))
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is a reserved word.", name, type));
             }
-            else if (m_MethodNames.Contains(name))
+            else if (m_MethodNames.TryGetValue(name, out validApiFlags) &&
+                (validApiFlags & cs.AcceptedFlags) != 0)
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined function name.", name, type));
             }

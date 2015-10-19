@@ -97,22 +97,21 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llAvatarOnLinkSitTarget")]
         public LSLKey AvatarOnLinkSitTarget(ScriptInstance instance, int link)
         {
-#warning Implement llAvatarOnLinkSitTarget(int)
-            return UUID.Zero;
+            throw new NotImplementedException("llAvatarOnLinkSitTarget(integer)");
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llForceMouselook")]
         public void ForceMouselook(ScriptInstance instance, int mouselook)
         {
-#warning Implement llForceMouselook(int)
+            throw new NotImplementedException("llForceMouselook(integer)");
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llUnSit")]
         public void UnSit(ScriptInstance instance, LSLKey id)
         {
-#warning Implement llUnSit(UUID)
+            throw new NotImplementedException("llUnSit(key)");
         }
         #endregion
     }

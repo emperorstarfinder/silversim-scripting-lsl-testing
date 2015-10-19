@@ -114,7 +114,7 @@ namespace SilverSim.Scripting.LSL.API.Base
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a script", script));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a script", script));
                     }
                     else if (null == si)
                     {

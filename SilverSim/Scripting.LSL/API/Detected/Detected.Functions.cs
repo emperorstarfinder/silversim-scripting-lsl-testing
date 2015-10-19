@@ -31,7 +31,6 @@ namespace SilverSim.Scripting.LSL.API.Detected
         [ScriptFunctionName("llDetectedGroup")]
         public int DetectedGroup(ScriptInstance instance, int number)
         {
-#warning Implement llDetectedGroup(int)
             throw new NotImplementedException();
         }
 
@@ -219,7 +218,6 @@ namespace SilverSim.Scripting.LSL.API.Detected
         [ScriptFunctionName("llDetectedType")]
         public int DetectedType(ScriptInstance instance, int number)
         {
-#warning Implement llDetectedType(int)
             throw new NotImplementedException();
         }
 

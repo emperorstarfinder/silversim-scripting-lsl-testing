@@ -166,7 +166,7 @@ redo:
                         {
                             if(parencount == 0)
                             {
-                                throw new Exception("Mismatching ')'");
+                                throw new ArgumentException("Mismatching ')'");
                             }
                             --parencount;
                         }
@@ -192,7 +192,7 @@ redo:
                                     c = '\"';
                                     do
                                     {
-                                        token += (char) c;
+                                        token += ((char)c).ToString();
                                         c = readc();
                                     } while(c != '>');
                                     token += "\"";

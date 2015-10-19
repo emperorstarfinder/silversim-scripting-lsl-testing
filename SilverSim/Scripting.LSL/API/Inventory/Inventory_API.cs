@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         [ScriptFunctionName("llGiveInventory")]
         public void GiveInventory(ScriptInstance instance, LSLKey destination, string inventory)
         {
-#warning Implement llGiveInventory(UUID, string)
+            throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
@@ -88,7 +88,7 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         [ScriptFunctionName("llGiveInventoryList")]
         public void GiveInventoryList(ScriptInstance instance, LSLKey target, string folder, AnArray inventory)
         {
-#warning Implement llGiveInventory(UUID, string, AnArray)
+            throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL)]
@@ -267,7 +267,6 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         [ScriptFunctionName("llRequestInventoryData")]
         public LSLKey RequestInventoryData(ScriptInstance instance, string name)
         {
-#warning Implement llRequestInventoryData
             throw new NotImplementedException();
         }
 
@@ -295,7 +294,6 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         [ScriptFunctionName("llRezObject")]
         public void RezObject(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
-#warning Implement llRezObject
             throw new NotImplementedException();
         }
 
@@ -303,7 +301,6 @@ namespace SilverSim.Scripting.LSL.API.Inventory
         [ScriptFunctionName("llRezAtRoot")]
         public void RezAtRoot(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
-#warning Implement llRezAtRoot
             throw new NotImplementedException();
         }
         #endregion

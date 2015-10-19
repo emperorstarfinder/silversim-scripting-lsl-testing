@@ -63,7 +63,7 @@ namespace SilverSim.Scripting.LSL
         internal sealed class ILLabelInfo
         {
             public Label Label;
-            public bool IsDefined = false;
+            public bool IsDefined;
             public List<int> UsedInLines = new List<int>();
 
             public ILLabelInfo(Label label, bool isDefined)
@@ -530,25 +530,30 @@ namespace SilverSim.Scripting.LSL
             TypeBuilder stateTypeBuilder,
             object v)
         {
-            if (v is ILParameterInfo)
+            ILParameterInfo ilpi;
+            LocalBuilder lb;
+            FieldBuilder fb;
+            FieldInfo fi;
+
+            if (null != (ilpi = v as ILParameterInfo))
             {
-                return ((ILParameterInfo)v).ParameterType;
+                return ilpi.ParameterType;
             }
-            else if (v is LocalBuilder)
+            else if (null != (lb = v as LocalBuilder))
             {
-                return ((LocalBuilder)v).LocalType;
+                return lb.LocalType;
             }
-            else if (v is FieldBuilder)
+            else if (null != (fb = v as FieldBuilder))
             {
-                return ((FieldBuilder)v).FieldType;
+                return fb.FieldType;
             }
-            else if (v is FieldInfo)
+            else if (null != (fi = v as FieldInfo))
             {
-                return ((FieldInfo)v).FieldType;
+                return fi.FieldType;
             }
             else
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
         }
 
@@ -559,43 +564,48 @@ namespace SilverSim.Scripting.LSL
             object v)
         {
             Type retType;
-            if (v is ILParameterInfo)
+            ILParameterInfo ilpi;
+            LocalBuilder lb;
+            FieldBuilder fb;
+            FieldInfo fi;
+
+            if (null != (ilpi = v as ILParameterInfo))
             {
-                ilgen.Emit(OpCodes.Ldarg, ((ILParameterInfo)v).Position);
-                retType = ((ILParameterInfo)v).ParameterType;
+                ilgen.Emit(OpCodes.Ldarg, ilpi.Position);
+                retType = ilpi.ParameterType;
             }
-            else if (v is LocalBuilder)
+            else if (null != (lb = v as LocalBuilder))
             {
-                ilgen.Emit(OpCodes.Ldloc, (LocalBuilder)v);
-                retType = ((LocalBuilder)v).LocalType;
+                ilgen.Emit(OpCodes.Ldloc, lb);
+                retType = lb.LocalType;
             }
-            else if (v is FieldBuilder)
+            else if (null != (fb = v as FieldBuilder))
             {
-                if ((((FieldBuilder)v).Attributes & FieldAttributes.Static) != 0)
+                if ((fb.Attributes & FieldAttributes.Static) != 0)
                 {
-                    ilgen.Emit(OpCodes.Ldsfld, ((FieldBuilder)v));
+                    ilgen.Emit(OpCodes.Ldsfld, fb);
                 }
                 else
                 {
-                    ilgen.Emit(OpCodes.Ldfld, ((FieldBuilder)v));
+                    ilgen.Emit(OpCodes.Ldfld, fb);
                 }
-                retType = ((FieldBuilder)v).FieldType;
+                retType = fb.FieldType;
             }
-            else if (v is FieldInfo)
+            else if (null != (fi = v as FieldInfo))
             {
-                if ((((FieldInfo)v).Attributes & FieldAttributes.Static) != 0)
+                if ((fi.Attributes & FieldAttributes.Static) != 0)
                 {
-                    ilgen.Emit(OpCodes.Ldsfld, ((FieldInfo)v));
+                    ilgen.Emit(OpCodes.Ldsfld, fi);
                 }
                 else
                 {
-                    ilgen.Emit(OpCodes.Ldfld, ((FieldInfo)v));
+                    ilgen.Emit(OpCodes.Ldfld, fi);
                 }
-                retType = ((FieldInfo)v).FieldType;
+                retType = fi.FieldType;
             }
             else
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
             if (retType == typeof(AnArray))
             {
@@ -612,33 +622,38 @@ namespace SilverSim.Scripting.LSL
             object v,
             int lineNumber)
         {
-            if (v is ILParameterInfo)
+            ILParameterInfo ilpi;
+            LocalBuilder lb;
+            FieldBuilder fb;
+            FieldInfo fi;
+
+            if (null != (ilpi = v as ILParameterInfo))
             {
-                ilgen.Emit(OpCodes.Starg, ((ILParameterInfo)v).Position);
+                ilgen.Emit(OpCodes.Starg, ilpi.Position);
             }
-            else if (v is LocalBuilder)
+            else if (null != (lb = v as LocalBuilder))
             {
-                ilgen.Emit(OpCodes.Stloc, (LocalBuilder)v);
+                ilgen.Emit(OpCodes.Stloc, lb);
             }
-            else if (v is FieldBuilder)
+            else if (null != (fb = v as FieldBuilder))
             {
-                if ((((FieldInfo)v).Attributes & FieldAttributes.Static) != 0)
+                if ((fb.Attributes & FieldAttributes.Static) != 0)
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
-                ilgen.Emit(OpCodes.Stfld, ((FieldBuilder)v));
+                ilgen.Emit(OpCodes.Stfld, fb);
             }
-            else if (v is FieldInfo)
+            else if (null != (fi = v as FieldInfo))
             {
-                if ((((FieldInfo)v).Attributes & FieldAttributes.Static) != 0)
+                if ((fi.Attributes & FieldAttributes.Static) != 0)
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
-                ilgen.Emit(OpCodes.Stfld, ((FieldInfo)v));
+                ilgen.Emit(OpCodes.Stfld, fi);
             }
             else
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
         }
         #endregion

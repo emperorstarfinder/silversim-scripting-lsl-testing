@@ -36,10 +36,10 @@ namespace SilverSim.Scripting.LSL.Expression
             Variable
         }
 
-        public bool ProcessedOpSort = false;
+        public bool ProcessedOpSort;
 
         public List<Tree> SubTree = new List<Tree>();
-        public EntryType Type = EntryType.Unknown;
+        public EntryType Type /* = EntryType.Unknown */;
         public string Entry = string.Empty;
 
         public abstract class ValueBase
@@ -224,14 +224,14 @@ namespace SilverSim.Scripting.LSL.Expression
                             if (nt.Type != EntryType.Unknown)
                             {
                                 nt = new Tree();
-                                nt.Type = EntryType.Unknown;
+                                /* nt.Type = EntryType.Unknown;*/
                                 SubTree.Add(nt);
                             }
                         }
                         else
                         {
                             nt = new Tree();
-                            nt.Type = EntryType.Unknown;
+                            /* nt.Type = EntryType.Unknown; */
                             SubTree.Add(nt);
                         }
                         nt.Entry += arg[i].ToString();

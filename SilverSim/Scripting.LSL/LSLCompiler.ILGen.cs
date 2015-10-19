@@ -29,7 +29,7 @@ namespace SilverSim.Scripting.LSL
         {
             if(startAt > endAt)
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
 
             Tree expressionTree;

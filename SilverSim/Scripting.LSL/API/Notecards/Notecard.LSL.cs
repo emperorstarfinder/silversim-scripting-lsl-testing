@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.LSL.API.Notecards
                 {
                     if (item.InventoryType != InventoryType.Notecard)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a notecard", name));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a notecard", name));
                     }
                     else
                     {
@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.LSL.API.Notecards
                 }
                 else
                 {
-                    throw new Exception(string.Format("Inventory item {0} does not exist", name));
+                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
                 }
             }
         }
@@ -121,7 +121,7 @@ namespace SilverSim.Scripting.LSL.API.Notecards
                 {
                     if (item.InventoryType != InventoryType.Notecard)
                     {
-                        throw new Exception(string.Format("Inventory item {0} is not a notecard", name));
+                        throw new ArgumentException(string.Format("Inventory item {0} is not a notecard", name));
                     }
                     else
                     {
@@ -132,7 +132,7 @@ namespace SilverSim.Scripting.LSL.API.Notecards
                 }
                 else
                 {
-                    throw new Exception(string.Format("Inventory item {0} does not exist", name));
+                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
                 }
             }
         }

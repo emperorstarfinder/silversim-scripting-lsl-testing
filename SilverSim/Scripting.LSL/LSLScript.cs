@@ -24,11 +24,11 @@ namespace SilverSim.Scripting.LSL
         private NonblockingQueue<IScriptEvent> m_Events = new NonblockingQueue<IScriptEvent>();
         internal List<DetectInfo> m_Detected = new List<DetectInfo>();
         private Dictionary<string, ILSLState> m_States = new Dictionary<string, ILSLState>();
-        private ILSLState m_CurrentState = null;
-        public int StartParameter = 0;
+        private ILSLState m_CurrentState;
+        public int StartParameter;
         internal RwLockedDictionary<int, ChatServiceInterface.Listener> m_Listeners = new RwLockedDictionary<int, ChatServiceInterface.Listener>();
-        private double m_ExecutionTime = 0;
-        protected bool UseMessageObjectEvent = false;
+        private double m_ExecutionTime;
+        protected bool UseMessageObjectEvent;
         internal RwLockedList<UUID> m_RequestedURLs = new RwLockedList<UUID>();
 
         public readonly Timer Timer = new Timer();
@@ -312,6 +312,72 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
+        static string MapTypeToString(Type t)
+        {
+            if(typeof(string) == t)
+            {
+                return "string";
+            }
+            else if(typeof(int) == t)
+            {
+                return "integer";
+            }
+            else if(typeof(Quaternion) == t)
+            {
+                return "rotation";
+            }
+            else if(typeof(AnArray) == t)
+            {
+                return "list";
+            }
+            else if(typeof(Vector3) == t)
+            {
+                return "vector";
+            }
+            else if(typeof(double) == t)
+            {
+                return "float";
+            }
+            else if(typeof(LSLKey) == t)
+            {
+                return "key";
+            }
+            else
+            {
+                return "???";
+            }
+        }
+
+        void ShoutUnimplementedException(NotImplementedException e)
+        {
+            MethodBase mb = e.TargetSite;
+            ScriptFunctionName funcNameAttr = (ScriptFunctionName)System.Attribute.GetCustomAttribute(mb, typeof(ScriptFunctionName));
+            APILevel apiLevel = (APILevel)System.Attribute.GetCustomAttribute(mb, typeof(APILevel));
+            if (apiLevel != null)
+            {
+                string methodName = mb.Name;
+                if (funcNameAttr != null)
+                {
+                    methodName = funcNameAttr.Name;
+                }
+
+                string funcSignature = methodName + "(";
+
+                ParameterInfo[] pi = mb.GetParameters();
+                for (int i = 1; i < pi.Length; ++i)
+                {
+                    if (i > 1)
+                    {
+                        funcSignature += ", ";
+                    }
+                    funcSignature = MapTypeToString(pi[i].ParameterType);
+                }
+                funcSignature += ")";
+
+                ShoutError("Script called unimplemented function " + funcSignature);
+            }
+        }
+
         public override void ProcessEvent()
         {
             IScriptEvent ev;
@@ -324,6 +390,16 @@ namespace SilverSim.Scripting.LSL
                     InvokeStateEvent("state_entry");
                 }
             }
+            catch(NotImplementedException e)
+            {
+                ShoutUnimplementedException(e);
+                return;
+            }
+            catch (ResetScriptException)
+            {
+                ShoutError("Script error! llResetScript used in default.state_entry");
+                return;
+            }
             catch
             {
                 return;
@@ -332,53 +408,54 @@ namespace SilverSim.Scripting.LSL
             int startticks = Environment.TickCount;
             try
             {
-                if (ev is AtRotTargetEvent)
+                Type evt = ev.GetType();
+                if(evt == typeof(AtRotTargetEvent))
                 {
                     AtRotTargetEvent e = (AtRotTargetEvent)ev;
                     InvokeStateEvent("at_rot_target", e.TargetRotation, e.OurRotation);
                 }
-                else if (ev is AttachEvent)
+                else if(evt == typeof(AttachEvent))
                 {
                     AttachEvent e = (AttachEvent)ev;
                     InvokeStateEvent("attach", new LSLKey(e.ObjectID));
                 }
-                else if (ev is AtTargetEvent)
+                else if(evt == typeof(AtTargetEvent))
                 {
                     AtTargetEvent e = (AtTargetEvent)ev;
                     InvokeStateEvent("at_target", e.Handle, e.TargetPosition, e.OurPosition);
                 }
-                else if (ev is ChangedEvent)
+                else if(evt == typeof(ChangedEvent))
                 {
                     ChangedEvent e = (ChangedEvent)ev;
-                    m_CurrentState.GetType().GetMethod("changed").Invoke(m_CurrentState, new object[] {(int)e.Flags});
+                    m_CurrentState.GetType().GetMethod("changed").Invoke(m_CurrentState, new object[] { (int)e.Flags });
                 }
-                else if (ev is CollisionEvent)
+                else if(evt == typeof(CollisionEvent))
                 {
-                    m_Detected = ((CollisionEvent)ev).Detected;
-                    switch(((CollisionEvent)ev).Type)
-                    {
-                        case CollisionEvent.CollisionType.Start:
-                            InvokeStateEvent("collision_start", m_Detected.Count);
-                            break;
+                        m_Detected = ((CollisionEvent)ev).Detected;
+                        switch (((CollisionEvent)ev).Type)
+                        {
+                            case CollisionEvent.CollisionType.Start:
+                                InvokeStateEvent("collision_start", m_Detected.Count);
+                                break;
 
-                        case CollisionEvent.CollisionType.End:
-                            InvokeStateEvent("collision_end", m_Detected.Count);
-                            break;
+                            case CollisionEvent.CollisionType.End:
+                                InvokeStateEvent("collision_end", m_Detected.Count);
+                                break;
 
-                        case CollisionEvent.CollisionType.Continuous:
-                            InvokeStateEvent("collision", m_Detected.Count);
-                            break;
+                            case CollisionEvent.CollisionType.Continuous:
+                                InvokeStateEvent("collision", m_Detected.Count);
+                                break;
 
-                        default:
-                            break;
-                    }
+                            default:
+                                break;
+                        }
                 }
-                else if (ev is DataserverEvent)
+                else if(evt == typeof(DataserverEvent))
                 {
                     DataserverEvent e = (DataserverEvent)ev;
                     InvokeStateEvent("dataserver", new LSLKey(e.QueryID), e.Data);
                 }
-                else if(ev is MessageObjectEvent)
+                else if(evt == typeof(MessageObjectEvent))
                 {
                     MessageObjectEvent e = (MessageObjectEvent)ev;
                     if (UseMessageObjectEvent)
@@ -390,25 +467,26 @@ namespace SilverSim.Scripting.LSL
                         InvokeStateEvent("dataserver", new LSLKey(e.ObjectID), e.Data);
                     }
                 }
-                else if (ev is EmailEvent)
+                else if(evt == typeof(EmailEvent))
                 {
                     EmailEvent e = (EmailEvent)ev;
                     InvokeStateEvent("email", e.Time, e.Address, e.Subject, e.Message, e.NumberLeft);
                 }
-                else if (ev is HttpRequestEvent)
+                else if(evt == typeof(HttpRequestEvent))
                 {
                     HttpRequestEvent e = (HttpRequestEvent)ev;
                     InvokeStateEvent("http_request", new LSLKey(e.RequestID), e.Method, e.Body);
                 }
-                else if (ev is HttpResponseEvent)
+
+                else if(evt == typeof(HttpResponseEvent))
                 {
                     HttpResponseEvent e = (HttpResponseEvent)ev;
                     InvokeStateEvent("http_response", new LSLKey(e.RequestID), e.Status, e.Metadata, e.Body);
                 }
-                else if (ev is LandCollisionEvent)
+                else if(evt == typeof(LandCollisionEvent))
                 {
                     LandCollisionEvent e = (LandCollisionEvent)ev;
-                    switch(e.Type)
+                    switch (e.Type)
                     {
                         case LandCollisionEvent.CollisionType.Start:
                             InvokeStateEvent("land_collision_start", e.Position);
@@ -426,79 +504,80 @@ namespace SilverSim.Scripting.LSL
                             break;
                     }
                 }
-                else if (ev is LinkMessageEvent)
+                else if(evt == typeof(LinkMessageEvent))
                 {
                     LinkMessageEvent e = (LinkMessageEvent)ev;
                     InvokeStateEvent("link_message", e.SenderNumber, e.Number, e.Data, new LSLKey(e.Id));
                 }
-                else if (ev is ListenEvent)
+                else if(evt == typeof(ListenEvent))
                 {
                     ListenEvent e = (ListenEvent)ev;
                     InvokeStateEvent("listen", e.Channel, e.Name, new LSLKey(e.ID), e.Message);
                 }
-                else if (ev is MoneyEvent)
+                else if(evt == typeof(MoneyEvent))
                 {
                     MoneyEvent e = (MoneyEvent)ev;
                     InvokeStateEvent("money", e.ID, e.Amount);
                 }
-                else if (ev is MovingEndEvent)
+                else if(evt == typeof(MovingEndEvent))
                 {
                     InvokeStateEvent("moving_end");
                 }
-                else if (ev is MovingStartEvent)
+                else if(evt == typeof(MovingStartEvent))
                 {
                     InvokeStateEvent("moving_start");
                 }
-                else if (ev is NoSensorEvent)
+                else if(evt == typeof(NoSensorEvent))
                 {
                     InvokeStateEvent("no_sensor");
                 }
-                else if (ev is NotAtRotTargetEvent)
+                else if(evt == typeof(NotAtRotTargetEvent))
                 {
                     InvokeStateEvent("not_at_rot_target");
                 }
-                else if (ev is NotAtTargetEvent)
+                else if(evt == typeof(NotAtRotTargetEvent))
                 {
                     InvokeStateEvent("not_at_target");
                 }
-                else if (ev is ObjectRezEvent)
+                else if(evt == typeof(ObjectRezEvent))
                 {
                     ObjectRezEvent e = (ObjectRezEvent)ev;
                     InvokeStateEvent("object_rez", new LSLKey(e.ObjectID));
                 }
-                else if (ev is OnRezEvent)
+                else if(evt == typeof(OnRezEvent))
                 {
                     OnRezEvent e = (OnRezEvent)ev;
                     StartParameter = new Integer(e.StartParam);
                     InvokeStateEvent("on_rez", e.StartParam);
                 }
-                else if (ev is PathUpdateEvent)
+                else if(evt == typeof(PathUpdateEvent))
                 {
                     PathUpdateEvent e = (PathUpdateEvent)ev;
                     InvokeStateEvent("path_update", e.Type, e.Reserved);
                 }
-                else if (ev is RemoteDataEvent)
+                else if(evt == typeof(RemoteDataEvent))
                 {
-                    RemoteDataEvent e =(RemoteDataEvent)ev;
+                    RemoteDataEvent e = (RemoteDataEvent)ev;
                     InvokeStateEvent("remote_data", e.Type, new LSLKey(e.Channel), new LSLKey(e.MessageID), e.Sender, e.IData, e.SData);
                 }
-                else if (ev is ResetScriptEvent)
+                else if(evt == typeof(ResetScriptEvent))
                 {
                     throw new ResetScriptException();
                 }
-                else if (ev is RuntimePermissionsEvent)
+
+                else if(evt == typeof(RuntimePermissionsEvent))
                 {
                     RuntimePermissionsEvent e = (RuntimePermissionsEvent)ev;
-                    if(e.PermissionsKey != Item.Owner)
+                    if (e.PermissionsKey != Item.Owner)
                     {
                         e.Permissions &= ~(ScriptPermissions.Debit | ScriptPermissions.SilentEstateManagement | ScriptPermissions.ChangeLinks);
                     }
-                    if(e.PermissionsKey != Item.Owner)
+                    if (e.PermissionsKey != Item.Owner)
                     {
 #warning Add group support here (also allowed are group owners)
                         e.Permissions &= ~ScriptPermissions.ReturnObjects;
                     }
-                    if(Item.IsGroupOwned)
+                    if (Item.IsGroupOwned)
                     {
                         e.Permissions &= ~ScriptPermissions.Debit;
                     }
@@ -509,17 +588,17 @@ namespace SilverSim.Scripting.LSL
                     Item.PermsGranter = grantinfo;
                     InvokeStateEvent("run_time_permissions", (ScriptPermissions)e.Permissions);
                 }
-                else if (ev is SensorEvent)
+                else if(evt == typeof(SensorEvent))
                 {
                     SensorEvent e = (SensorEvent)ev;
                     m_Detected = e.Data;
                     InvokeStateEvent("sensor", m_Detected.Count);
                 }
-                else if (ev is TouchEvent)
+                else if(evt == typeof(TouchEvent))
                 {
                     TouchEvent e = (TouchEvent)ev;
                     m_Detected = e.Detected;
-                    switch(e.Type)
+                    switch (e.Type)
                     {
                         case TouchEvent.TouchType.Start:
                             InvokeStateEvent("touch_start", m_Detected.Count);
@@ -538,7 +617,7 @@ namespace SilverSim.Scripting.LSL
                     }
                 }
             }
-            catch(ResetScriptException)
+            catch (ResetScriptException)
             {
                 TriggerOnStateChange();
                 TriggerOnScriptReset();
@@ -572,7 +651,7 @@ namespace SilverSim.Scripting.LSL
             }
             catch (NotImplementedException e)
             {
-                ShoutError("Script uses not implemented function " + e.StackTrace[0].ToString());
+                ShoutUnimplementedException(e);
             }
             catch (Exception e)
             {

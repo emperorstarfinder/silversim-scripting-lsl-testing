@@ -28,7 +28,7 @@ namespace SilverSim.Scripting.LSL
         List<Script.StateChangeEventDelegate> m_StateChangeDelegates = new List<ScriptInstance.StateChangeEventDelegate>();
         List<Script.ScriptResetEventDelegate> m_ScriptResetDelegates = new List<ScriptInstance.ScriptResetEventDelegate>();
         List<string> m_ReservedWords = new List<string>();
-        internal List<string> m_MethodNames = new List<string>();
+        internal Dictionary<string, APIFlags> m_MethodNames = new Dictionary<string, APIFlags>();
         List<char> m_SingleOps = new List<char>();
         List<char> m_MultiOps = new List<char>();
         List<char> m_NumericChars = new List<char>();
@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.LSL
             public Label? LoopLabel;
             public Label? EndOfControlFlowLabel;
             public Label? EndOfIfFlowLabel;
-            public bool EndOfIfLabelDefined;
+            //public bool EndOfIfLabelDefined;
 
             public ControlFlowElement(ControlFlowType type, bool isExplicit, Label looplabel, Label eofclabel)
             {
@@ -110,7 +110,7 @@ namespace SilverSim.Scripting.LSL
 
         sealed class CompileState
         {
-            public bool EmitDebugSymbols = false;
+            public bool EmitDebugSymbols;
             public APIFlags AcceptedFlags;
             public Dictionary<string, MethodBuilder> m_FunctionInfo = new Dictionary<string, MethodBuilder>();
             public Dictionary<string, KeyValuePair<Type, KeyValuePair<string, Type>[]>> m_FunctionSignature = new Dictionary<string, KeyValuePair<Type, KeyValuePair<string, Type>[]>>();
@@ -124,7 +124,7 @@ namespace SilverSim.Scripting.LSL
             public Dictionary<string, FieldBuilder> m_ApiFieldInfo = new Dictionary<string, FieldBuilder>();
             List<ControlFlowElement> m_ControlFlowStack = new List<ControlFlowElement>();
             public Dictionary<Label, KeyValuePair<int, string>> m_UnnamedLabels = new Dictionary<Label, KeyValuePair<int, string>>();
-            public ControlFlowElement LastBlock = null;
+            public ControlFlowElement LastBlock;
 
             public void InitControlFlow()
             {
@@ -568,45 +568,47 @@ namespace SilverSim.Scripting.LSL
                                         m.Name,
                                         m.DeclaringType.FullName);
                                 }
-                                ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(m, typeof(ScriptFunctionName)) as ScriptFunctionName;
-                                string funcName = m.Name;
-                                if (funcNameAttr == null)
+                                ScriptFunctionName[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(ScriptFunctionName)) as ScriptFunctionName[];
+                                if (funcNameAttrs.Length == 0)
                                 {
                                     m_Log.DebugFormat("Method '{0}' in '{1}' has no ScriptFunctionName attribute!!!",
                                         m.Name,
                                         m.DeclaringType.FullName);
                                 }
-                                else
+                                else foreach(ScriptFunctionName funcNameAttr in funcNameAttrs)
                                 {
-                                    funcName = funcNameAttr.Name;
-                                }
-                                for (int i = 1; i < pi.Length; ++i)
-                                {
-                                    if(!IsValidType(pi[i].ParameterType))
+                                    for (int i = 1; i < pi.Length; ++i)
+                                    {
+                                        if (!IsValidType(pi[i].ParameterType))
+                                        {
+                                            methodValid = false;
+                                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
+                                                m.Name,
+                                                m.DeclaringType.FullName,
+                                                pi[i].Name,
+                                                pi[i].ParameterType.FullName);
+                                        }
+                                    }
+                                    if (!IsValidType(m.ReturnType))
                                     {
                                         methodValid = false;
-                                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
+                                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Return value does not have LSL compatible type '{2}'.",
                                             m.Name,
                                             m.DeclaringType.FullName,
-                                            pi[i].Name,
-                                            pi[i].ParameterType.FullName);
+                                            m.ReturnType.FullName);
                                     }
-                                }
-                                if (!IsValidType(m.ReturnType))
-                                {
-                                    methodValid = false;
-                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Return value does not have LSL compatible type '{2}'.",
-                                        m.Name,
-                                        m.DeclaringType.FullName,
-                                        m.ReturnType.FullName);
-                                }
 
-                                if (methodValid)
-                                {
-                                    m_Methods.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
-                                    if (!m_MethodNames.Contains(funcName))
+                                    if (methodValid)
                                     {
-                                        m_MethodNames.Add(funcName);
+                                        m_Methods.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
+                                        if (!m_MethodNames.ContainsKey(funcNameAttr.Name))
+                                        {
+                                            m_MethodNames.Add(funcNameAttr.Name, funcNameAttr.ValidApis);
+                                        }
+                                        else
+                                        {
+                                            m_MethodNames[funcNameAttr.Name] = m_MethodNames[funcNameAttr.Name] | funcNameAttr.ValidApis;
+                                        }
                                     }
                                 }
                             }

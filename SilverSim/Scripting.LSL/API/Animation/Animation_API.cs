@@ -171,7 +171,6 @@ namespace SilverSim.Scripting.LSL.API.Animation
         [ScriptFunctionName("llGetAnimation")]
         public string GetAnimation(ScriptInstance instance, LSLKey agent)
         {
-#warning Implement llGetAnimation
             throw new NotImplementedException();
         }
 
@@ -179,7 +178,6 @@ namespace SilverSim.Scripting.LSL.API.Animation
         [ScriptFunctionName("llGetAnimationList")]
         public string GetAnimationList(ScriptInstance instance, LSLKey agent)
         {
-#warning Implement llGetAnimation
             throw new NotImplementedException();
         }
     }

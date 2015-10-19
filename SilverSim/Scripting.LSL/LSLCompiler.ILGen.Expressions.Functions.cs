@@ -47,6 +47,7 @@ namespace SilverSim.Scripting.LSL
             {
                 MethodBuilder mb;
                 m_LineNumber = lineNumber;
+                APIFlags validApis;
                 if (compileState.m_FunctionInfo.TryGetValue(functionTree.Entry, out mb))
                 {
                     KeyValuePair<Type, KeyValuePair<string, Type>[]> signatureInfo = compileState.m_FunctionSignature[functionTree.Entry];
@@ -71,21 +72,26 @@ namespace SilverSim.Scripting.LSL
 
                     m_FunctionReturnType = signatureInfo.Key;
                 }
-                else if (lslCompiler.m_MethodNames.Contains(functionTree.Entry))
+                else if (lslCompiler.m_MethodNames.TryGetValue(functionTree.Entry, out validApis) &&
+                    (validApis & compileState.AcceptedFlags) != 0)
                 {
                     foreach (KeyValuePair<IScriptApi, MethodInfo> kvp in lslCompiler.m_Methods)
                     {
-                        ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(kvp.Value, typeof(ScriptFunctionName)) as ScriptFunctionName;
-                        string funcName;
-                        if(funcNameAttr != null)
+                        ScriptFunctionName funcNameAttr = null;
+                        ScriptFunctionName[] funcNameAttrs = System.Attribute.GetCustomAttributes(kvp.Value, typeof(ScriptFunctionName)) as ScriptFunctionName[];
+                        if(funcNameAttrs.Length != 0)
                         {
-                            funcName = funcNameAttr.Name;
+                            string funcName = functionTree.Entry;
+                            foreach(ScriptFunctionName it in funcNameAttrs)
+                            {
+                                if (it.Name == funcName && (it.ValidApis & compileState.AcceptedFlags) != 0)
+                                {
+                                    funcNameAttr = it;
+                                    break;
+                                }
+                            }
                         }
-                        else
-                        {
-                            funcName = kvp.Value.Name;
-                        }
-                        if (funcName == functionTree.Entry)
+                        if (funcNameAttr != null)
                         {
                             ParameterInfo[] pi = kvp.Value.GetParameters();
                             if (pi.Length - 1 == functionTree.SubTree.Count)

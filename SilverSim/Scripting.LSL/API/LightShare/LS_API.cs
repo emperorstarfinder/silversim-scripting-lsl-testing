@@ -102,7 +102,6 @@ namespace SilverSim.Scripting.LSL.API.LightShare
         [ScriptFunctionName("lsGetWindlightScene")]
         public AnArray GetWindlightScene(ScriptInstance instance, AnArray rules)
         {
-#warning Implement lsGetWindlightScene(AnArray)
             throw new NotImplementedException();
         }
 
@@ -110,7 +109,6 @@ namespace SilverSim.Scripting.LSL.API.LightShare
         [ScriptFunctionName("lsSetWindlightScene")]
         public int SetWindlightScene(ScriptInstance instance, AnArray rules)
         {
-#warning Implement lsSetWindlightScene(AnArray)
             throw new NotImplementedException();
         }
 
@@ -118,7 +116,6 @@ namespace SilverSim.Scripting.LSL.API.LightShare
         [ScriptFunctionName("lsClearWindlightScene")]
         public void ClearWindlightScene(ScriptInstance instance)
         {
-#warning Implement lsClearWindlightScene()
             throw new NotImplementedException();
         }
 
@@ -126,7 +123,6 @@ namespace SilverSim.Scripting.LSL.API.LightShare
         [ScriptFunctionName("lsSetWindlightSceneTargeted")]
         public int SetWindlightSceneTargeted(ScriptInstance instance, AnArray rules, LSLKey target)
         {
-#warning Implement lsSetWindlightSceneTargeted(AnArray, UUID)
             throw new NotImplementedException();
         }
     }

@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Script;
+using System;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -62,20 +63,21 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [ScriptFunctionName("llSetCameraAtOffset")]
         public void SetCameraAtOffset(ScriptInstance instance, Vector3 offset)
         {
+            throw new NotImplementedException("llSetCameraAtOffset(vector)");
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llSetLinkCamera")]
         public void SetLinkCamera(ScriptInstance instance, int link, Vector3 eye, Vector3 at)
         {
-
+            throw new NotImplementedException("llSetLinkCamera(int, vector, vector)");
         }
 
         [APILevel(APIFlags.LSL)]
         [ScriptFunctionName("llSetCameraOffset")]
         public void SetCameraOffset(ScriptInstance instance, Vector3 offset)
         {
-
+            throw new NotImplementedException("llSetCameraOffset(vector)");
         }
 
         [APILevel(APIFlags.LSL)]
@@ -87,10 +89,9 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
-
+                    throw new NotImplementedException("llClearCameraParams()");
                 }
             }
-
         }
 
         [APILevel(APIFlags.LSL)]
@@ -102,7 +103,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
-
+                    throw new NotImplementedException("llSetCameraParams(list)");
                 }
             }
 
@@ -115,7 +116,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
-
+                throw new NotImplementedException("llGetCameraPos()");
             }
             return Vector3.Zero;
         }
@@ -127,7 +128,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
-
+                throw new NotImplementedException("llGetCameraRot()");
             }
             return Quaternion.Identity;
         }

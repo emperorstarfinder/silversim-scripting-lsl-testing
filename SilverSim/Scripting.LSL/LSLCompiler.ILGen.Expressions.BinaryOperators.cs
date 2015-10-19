@@ -19,9 +19,9 @@ namespace SilverSim.Scripting.LSL
             LocalBuilder m_LeftHandLocal;
             LocalBuilder m_RightHandLocal;
             Tree m_LeftHand;
-            Type m_LeftHandType = null;
+            Type m_LeftHandType;
             Tree m_RightHand;
-            Type m_RightHandType = null;
+            Type m_RightHandType;
             int m_LineNumber;
             enum State
             {
@@ -30,7 +30,7 @@ namespace SilverSim.Scripting.LSL
             }
 
             List<State> m_ProcessOrder;
-            bool m_HaveBeginScope = false;
+            bool m_HaveBeginScope;
 
             static readonly Dictionary<string, State[]> m_ProcessOrders = new Dictionary<string, State[]>();
 
