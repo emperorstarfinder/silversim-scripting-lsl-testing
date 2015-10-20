@@ -23,7 +23,7 @@ namespace SilverSim.Scripting.LSL
         private static readonly ILog m_Log = LogManager.GetLogger("LSL COMPILER");
         internal List<IScriptApi> m_Apis = new List<IScriptApi>();
         Dictionary<string, APIFlags> m_Constants = new Dictionary<string, APIFlags>();
-        internal List<KeyValuePair<IScriptApi, MethodInfo>> m_Methods = new List<KeyValuePair<IScriptApi,MethodInfo>>();
+        internal Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>> m_Methods = new Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>>();
         Dictionary<string, MethodInfo> m_EventDelegates = new Dictionary<string, MethodInfo>();
         List<Script.StateChangeEventDelegate> m_StateChangeDelegates = new List<ScriptInstance.StateChangeEventDelegate>();
         List<Script.ScriptResetEventDelegate> m_ScriptResetDelegates = new List<ScriptInstance.ScriptResetEventDelegate>();
@@ -600,14 +600,23 @@ namespace SilverSim.Scripting.LSL
 
                                     if (methodValid)
                                     {
-                                        m_Methods.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
-                                        if (!m_MethodNames.ContainsKey(funcNameAttr.Name))
+                                        foreach (ScriptFunctionName funcNameAttrIt in funcNameAttrs)
                                         {
-                                            m_MethodNames.Add(funcNameAttr.Name, funcNameAttr.ValidApis);
-                                        }
-                                        else
-                                        {
-                                            m_MethodNames[funcNameAttr.Name] = m_MethodNames[funcNameAttr.Name] | funcNameAttr.ValidApis;
+                                            string funcName = funcNameAttrIt.Name;
+                                            List<KeyValuePair<IScriptApi, MethodInfo>> methodList;
+                                            if (!m_Methods.TryGetValue(funcName, out methodList))
+                                            {
+                                                m_Methods.Add(funcName, methodList = new List<KeyValuePair<IScriptApi, MethodInfo>>());
+                                            }
+                                            methodList.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
+                                            if (!m_MethodNames.ContainsKey(funcNameAttr.Name))
+                                            {
+                                                m_MethodNames.Add(funcNameAttr.Name, funcNameAttr.ValidApis);
+                                            }
+                                            else
+                                            {
+                                                m_MethodNames[funcNameAttr.Name] = m_MethodNames[funcNameAttr.Name] | funcNameAttr.ValidApis;
+                                            }
                                         }
                                     }
                                 }
