@@ -76,44 +76,40 @@ namespace SilverSim.Scripting.LSL
                 {
                     foreach (ApiMethodInfo method in methods)
                     {
-                        APILevel funcNameAttr = null;
-                        if (funcNameAttr != null)
+                        ParameterInfo[] pi = method.Method.GetParameters();
+                        if (pi.Length - 1 == functionTree.SubTree.Count)
                         {
-                            ParameterInfo[] pi = method.Method.GetParameters();
-                            if (pi.Length - 1 == functionTree.SubTree.Count)
+                            ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(method.Api.GetType(), typeof(ScriptApiName));
+
+                            if (!IsValidType(method.Method.ReturnType))
                             {
-                                ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(method.Api.GetType(), typeof(ScriptApiName));
-
-                                if (!IsValidType(method.Method.ReturnType))
-                                {
-                                    throw new CompilerException(lineNumber, string.Format("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name));
-                                }
-                                if (null == stateTypeBuilder)
-                                {
-                                    ilgen.Emit(OpCodes.Ldarg_0);
-                                }
-                                else
-                                {
-                                    ilgen.Emit(OpCodes.Ldarg_0);
-                                    ilgen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                                }
-
-                                ilgen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
-
-                                for (int i = 0; i < functionTree.SubTree.Count; ++i)
-                                {
-                                    if (!IsValidType(pi[i + 1].ParameterType))
-                                    {
-                                        throw new CompilerException(lineNumber, string.Format("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
-                                            pi[i + 1].Name, pi[i + 1].ParameterType.FullName, functionTree.Entry));
-                                    }
-
-                                    m_Parameters.Add(new FunctionParameterInfo(pi[i + 1].Name, pi[i + 1].ParameterType, functionTree.SubTree[i], i));
-                                }
-
-                                m_FunctionReturnType = method.Method.ReturnType;
-                                return;
+                                throw new CompilerException(lineNumber, string.Format("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name));
                             }
+                            if (null == stateTypeBuilder)
+                            {
+                                ilgen.Emit(OpCodes.Ldarg_0);
+                            }
+                            else
+                            {
+                                ilgen.Emit(OpCodes.Ldarg_0);
+                                ilgen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                            }
+
+                            ilgen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
+
+                            for (int i = 0; i < functionTree.SubTree.Count; ++i)
+                            {
+                                if (!IsValidType(pi[i + 1].ParameterType))
+                                {
+                                    throw new CompilerException(lineNumber, string.Format("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
+                                        pi[i + 1].Name, pi[i + 1].ParameterType.FullName, functionTree.Entry));
+                                }
+
+                                m_Parameters.Add(new FunctionParameterInfo(pi[i + 1].Name, pi[i + 1].ParameterType, functionTree.SubTree[i], i));
+                            }
+
+                            m_FunctionReturnType = method.Method.ReturnType;
+                            return;
                         }
                     }
                     throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}", functionTree.Entry));
