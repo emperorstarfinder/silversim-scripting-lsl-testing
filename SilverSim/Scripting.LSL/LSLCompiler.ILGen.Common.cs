@@ -662,37 +662,21 @@ namespace SilverSim.Scripting.LSL
         Dictionary<string, object> AddConstants(CompileState compileState, TypeBuilder typeBuilder, ILGenerator ilgen)
         {
             Dictionary<string, object> localVars = new Dictionary<string, object>();
-            foreach (IScriptApi api in m_Apis)
+            foreach(KeyValuePair<string, FieldInfo> kvp in compileState.ApiInfo.Constants)
             {
-                foreach (FieldInfo f in api.GetType().GetFields())
+                FieldInfo f = kvp.Value;
+                if ((f.Attributes & FieldAttributes.Static) != 0)
                 {
-                    APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
-
-                    if ((f.Attributes & FieldAttributes.Static) != 0)
+                    if ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0)
                     {
-                        foreach (APILevel apilevel in apiLevelAttrs)
-                        {
-                            if ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0)
-                            {
-                                if ((apilevel.Flags & compileState.AcceptedFlags) != 0)
-                                {
-                                    if (string.IsNullOrEmpty(apilevel.Name))
-                                    {
-                                        localVars[f.Name] = f;
-                                    }
-                                    else
-                                    {
-                                        localVars[apilevel.Name] = f;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
-                            }
-                        }
+                        localVars[kvp.Key] = f;
+                    }
+                    else
+                    {
+                        m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", kvp.Key, f.Attributes.ToString());
                     }
                 }
+
             }
             return localVars;
         }

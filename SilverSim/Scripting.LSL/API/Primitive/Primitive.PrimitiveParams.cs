@@ -7,6 +7,7 @@ using SilverSim.Types.Primitive;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using System;
+using SilverSim.Scene.Types.Scene;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -148,6 +149,54 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             lock (instance)
             {
                 instance.Part.Position = pos;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osSetPrimitiveParams")]
+        public void SetPrimitiveParams(ScriptInstance instance, LSLKey key, AnArray rules)
+        {
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart part;
+                try
+                {
+                    part = scene.Primitives[key.AsUUID];
+                }
+                catch
+                {
+                    return;
+                }
+                if(part.Owner != instance.Part.Owner)
+                {
+                    return;
+                }
+                part.SetPrimitiveParams(rules.GetMarkEnumerator());
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetPrimitiveParams")]
+        public AnArray GetPrimitiveParams(ScriptInstance instance, LSLKey key, AnArray paramList)
+        {
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart part;
+                AnArray res = new AnArray();
+                try
+                {
+                    part = scene.Primitives[key.AsUUID];
+                }
+                catch
+                {
+                    return res;
+                }
+                if (part.Owner != instance.Part.Owner)
+                {
+                    return res;
+                }
+                part.GetPrimitiveParams(paramList.GetEnumerator(), ref res);
+                return res;
             }
         }
 

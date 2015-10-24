@@ -13,12 +13,12 @@ namespace SilverSim.Scripting.LSL
     {
         None = 0,
         LSL = 1 << 0,
-        LightShare = 1 << 1,
-        OSSL = 1 << 2,
-        ASSL = 1 << 3,
-        ASSL_Admin = 1 << 4,
-        WindLight_Aurora = 1 << 5,
-        WindLight_New = 1 << 6,
+        OSSL = 1 << 1,
+        ASSL = 1 << 2,
+        //LightShare = 1 << 1,
+        //ASSL_Admin = 1 << 4,
+        //WindLight_Aurora = 1 << 5,
+        //WindLight_New = 1 << 6,
         Any = 0xFFFFFFFF
     }
 
@@ -34,6 +34,26 @@ namespace SilverSim.Scripting.LSL
         public APILevel(APIFlags flags, string name)
         {
             Flags = flags;
+            Name = name;
+        }
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
+    public sealed class APIExtension : Attribute
+    {
+        public string Extension { get; private set; }
+        public string Name { get; private set; }
+
+        public const string KeepCsName = "";
+
+        public const string LightShare = "LightShare";
+        public const string WindLight_New = "WindLight";
+        public const string WindLight_Aurora = "WindLight_Aurora";
+
+        public APIExtension(string extension, string name)
+        {
+            Extension = extension;
             Name = name;
         }
     }

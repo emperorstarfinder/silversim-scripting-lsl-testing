@@ -42,22 +42,20 @@ namespace SilverSim.Scripting.LSL
 
         private void CheckUsedName(CompileState cs, Parser p, string type, string name)
         {
-            APIFlags validApiFlags;
             CheckValidName(p, type, name);
             if (m_ReservedWords.Contains(name))
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is a reserved word.", name, type));
             }
-            else if (m_MethodNames.TryGetValue(name, out validApiFlags) &&
-                (validApiFlags & cs.AcceptedFlags) != 0)
+            else if (cs.ApiInfo.Methods.ContainsKey(name))
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined function name.", name, type));
             }
-            else if (m_Constants.ContainsKey(name) && (m_Constants[name] & cs.AcceptedFlags) != 0)
+            else if (cs.ApiInfo.Constants.ContainsKey(name))
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined constant.", name, type));
             }
-            else if (m_EventDelegates.ContainsKey(name))
+            else if (cs.ApiInfo.EventDelegates.ContainsKey(name))
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined constant.", name, type));
             }
@@ -421,12 +419,12 @@ namespace SilverSim.Scripting.LSL
                 }
                 else if (args[args.Count - 1] == "{")
                 {
-                    if (!m_EventDelegates.ContainsKey(args[0]))
+                    if (!compileState.ApiInfo.EventDelegates.ContainsKey(args[0]))
                     {
                         throw ParserException(p, string.Format("'{0}' is not a valid event.", args[0]));
                     }
                     List<FuncParamInfo> fp = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
-                    MethodInfo m = m_EventDelegates[args[0]];
+                    MethodInfo m = compileState.ApiInfo.EventDelegates[args[0]];
                     ParameterInfo[] pi = m.GetParameters();
                     if (fp.Count != pi.Length)
                     {
@@ -463,8 +461,11 @@ namespace SilverSim.Scripting.LSL
         CompileState Preprocess(UUI user, Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1)
         {
             CompileState compileState = new CompileState();
-            compileState.AcceptedFlags = APIFlags.OSSL | APIFlags.LSL | APIFlags.LightShare;
-            APIFlags extraflags = APIFlags.None;
+            APIFlags acceptedFlags;
+            List<string> apiExtensions = new List<string>();
+            acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
+            string windLightApiType = APIExtension.LightShare;
+            compileState.ForcedSleepDefault = true;
             foreach (KeyValuePair<int, string> shbang in shbangs)
             {
                 if (shbang.Value.StartsWith("//#!Mode:"))
@@ -473,26 +474,56 @@ namespace SilverSim.Scripting.LSL
                     string mode = shbang.Value.Substring(9).Trim().ToLower();
                     if (mode == "lsl")
                     {
-                        compileState.AcceptedFlags = APIFlags.LSL;
+                        windLightApiType = string.Empty;
+                        acceptedFlags = APIFlags.LSL;
+                        compileState.ForcedSleepDefault = true;
+                    }
+                    else if(mode == "ossl")
+                    {
+                        windLightApiType = APIExtension.LightShare;
+                        acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
+                        compileState.ForcedSleepDefault = true;
                     }
                     else if (mode == "assl")
                     {
-                        compileState.AcceptedFlags = APIFlags.ASSL | APIFlags.OSSL | APIFlags.LightShare | APIFlags.LSL;
+                        windLightApiType = APIExtension.LightShare;
+                        acceptedFlags = APIFlags.ASSL | APIFlags.OSSL | APIFlags.LSL;
+                        compileState.ForcedSleepDefault = false;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
-                        compileState.AcceptedFlags = APIFlags.OSSL | APIFlags.WindLight_Aurora | APIFlags.LSL;
+                        windLightApiType = APIExtension.WindLight_Aurora;
+                        acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
+                        compileState.ForcedSleepDefault = true;
                     }
                 }
                 else if (shbang.Value.StartsWith("//#!Enable:"))
                 {
                     string api = shbang.Value.Substring(11).Trim().ToLower();
-                    if (api == "admin")
-                    {
-                        extraflags |= APIFlags.ASSL_Admin;
-                    }
+                    apiExtensions.Add(api);
                 }
-                compileState.AcceptedFlags |= extraflags;
+            }
+
+            foreach(KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+            {
+                if((kvp.Key & acceptedFlags) != 0)
+                {
+                    compileState.ApiInfo.Add(kvp.Value);
+                }
+            }
+
+            if(windLightApiType != "" && !apiExtensions.Contains(windLightApiType))
+            {
+                apiExtensions.Add(windLightApiType);
+            }
+
+            foreach(string extension in apiExtensions)
+            {
+                ApiInfo apiInfo;
+                if (m_ApiExtensions.TryGetValue(extension, out apiInfo))
+                {
+                    compileState.ApiInfo.Add(apiInfo);
+                }
             }
 
             Parser p = new Parser();

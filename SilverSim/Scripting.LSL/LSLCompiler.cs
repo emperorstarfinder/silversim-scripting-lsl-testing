@@ -20,15 +20,69 @@ namespace SilverSim.Scripting.LSL
     [CompilerUsesRunAndCollectMode]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory
     {
+        internal struct ApiMethodInfo
+        {
+            public string FunctionName;
+            public IScriptApi Api;
+            public MethodInfo Method;
+
+            public ApiMethodInfo(string functionName, IScriptApi api, MethodInfo method)
+            {
+                FunctionName = functionName;
+                Api = api;
+                Method = method;
+            }
+        }
+
+        internal class ApiInfo
+        {
+            public Dictionary<string, List<ApiMethodInfo>> Methods = new Dictionary<string, List<ApiMethodInfo>>();
+            public Dictionary<string, FieldInfo> Constants = new Dictionary<string, FieldInfo>();
+            public Dictionary<string, MethodInfo> EventDelegates = new Dictionary<string, MethodInfo>();
+
+            public ApiInfo()
+            {
+
+            }
+
+            public void Add(ApiInfo info)
+            {
+                foreach(KeyValuePair<string, List<ApiMethodInfo>> mInfo in info.Methods)
+                {
+                    if(!Methods.ContainsKey(mInfo.Key))
+                    {
+                        Methods[mInfo.Key] = new List<ApiMethodInfo>(mInfo.Value);
+                    }
+                    else
+                    {
+                        Methods[mInfo.Key].AddRange(mInfo.Value);
+                    }
+                }
+                foreach(KeyValuePair<string, FieldInfo> kvp in info.Constants)
+                {
+                    Constants.Add(kvp.Key, kvp.Value);
+                }
+                foreach(KeyValuePair<string, MethodInfo> kvp in info.EventDelegates)
+                {
+                    EventDelegates.Add(kvp.Key, kvp.Value);
+                }
+            }
+        }
+
         private static readonly ILog m_Log = LogManager.GetLogger("LSL COMPILER");
         internal List<IScriptApi> m_Apis = new List<IScriptApi>();
-        Dictionary<string, APIFlags> m_Constants = new Dictionary<string, APIFlags>();
-        internal Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>> m_Methods = new Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>>();
-        Dictionary<string, MethodInfo> m_EventDelegates = new Dictionary<string, MethodInfo>();
+        //Dictionary<string, APIFlags> m_Constants = new Dictionary<string, APIFlags>();
+
+        //internal Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>> m_Methods = new Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>>();
+
+        internal Dictionary<APIFlags, ApiInfo> m_ApiInfos = new Dictionary<APIFlags, ApiInfo>();
+        internal Dictionary<string, ApiInfo> m_ApiExtensions = new Dictionary<string, ApiInfo>();
+
+        //Dictionary<string, MethodInfo> m_EventDelegates = new Dictionary<string, MethodInfo>();
         List<Script.StateChangeEventDelegate> m_StateChangeDelegates = new List<ScriptInstance.StateChangeEventDelegate>();
         List<Script.ScriptResetEventDelegate> m_ScriptResetDelegates = new List<ScriptInstance.ScriptResetEventDelegate>();
         List<string> m_ReservedWords = new List<string>();
-        internal Dictionary<string, APIFlags> m_MethodNames = new Dictionary<string, APIFlags>();
+        //internal Dictionary<string, APIFlags> m_MethodNames = new Dictionary<string, APIFlags>();
         List<char> m_SingleOps = new List<char>();
         List<char> m_MultiOps = new List<char>();
         List<char> m_NumericChars = new List<char>();
@@ -110,8 +164,9 @@ namespace SilverSim.Scripting.LSL
 
         sealed class CompileState
         {
+            public ApiInfo ApiInfo = new ApiInfo();
+            public bool ForcedSleepDefault;
             public bool EmitDebugSymbols;
-            public APIFlags AcceptedFlags;
             public Dictionary<string, MethodBuilder> m_FunctionInfo = new Dictionary<string, MethodBuilder>();
             public Dictionary<string, KeyValuePair<Type, KeyValuePair<string, Type>[]>> m_FunctionSignature = new Dictionary<string, KeyValuePair<Type, KeyValuePair<string, Type>[]>>();
             public Dictionary<string, Type> m_VariableDeclarations = new Dictionary<string, Type>();
@@ -361,6 +416,10 @@ namespace SilverSim.Scripting.LSL
 
         public LSLCompiler()
         {
+            m_ApiInfos.Add(APIFlags.ASSL, new ApiInfo());
+            m_ApiInfos.Add(APIFlags.LSL, new ApiInfo());
+            m_ApiInfos.Add(APIFlags.OSSL, new ApiInfo());
+
             m_ReservedWords.Add("integer");
             m_ReservedWords.Add("vector");
             m_ReservedWords.Add("list");
@@ -466,7 +525,8 @@ namespace SilverSim.Scripting.LSL
                             if (IsValidType(f.FieldType))
                             {
                                 APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
-                                if(apiLevelAttrs.Length != 0)
+                                APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
+                                if(apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                                 {
                                     foreach(APILevel attr in apiLevelAttrs)
                                     {
@@ -475,14 +535,30 @@ namespace SilverSim.Scripting.LSL
                                         {
                                             constName = f.Name;
                                         }
-                                        if (!m_Constants.ContainsKey(constName))
+                                        foreach(KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                                         {
-                                            m_Constants.Add(constName, attr.Flags);
+                                            if((kvp.Key & attr.Flags) != 0)
+                                            {
+                                                kvp.Value.Constants.Add(constName, f);
+                                            }
                                         }
-                                        else
+                                    }
+                                    foreach(APIExtension attr in apiExtensionAttrs)
+                                    {
+                                        string constName = attr.Name;
+                                        if (string.IsNullOrEmpty(constName))
                                         {
-                                            m_Constants[constName] |= attr.Flags;
+                                            constName = f.Name;
                                         }
+
+                                        ApiInfo apiInfo;
+                                        string extensionName = attr.Extension.ToLower();
+                                        if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                                        {
+                                            apiInfo = new ApiInfo();
+                                            m_ApiExtensions.Add(extensionName, apiInfo);
+                                        }
+                                        apiInfo.Constants.Add(constName, f);
                                     }
                                 }
                                 else
@@ -509,10 +585,11 @@ namespace SilverSim.Scripting.LSL
                     if (stateEventAttr != null)
                     {
                         APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevel)) as APILevel[];
+                        APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(t, typeof(APIExtension)) as APIExtension[];
                         MethodInfo mi = t.GetMethod("Invoke");
-                        if (apiLevelAttrs.Length == 0)
+                        if (apiLevelAttrs.Length == 0 && apiExtensionAttrs.Length == 0)
                         {
-                            m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. StateEventDelegate attribute missing.",
+                            m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has StateEventDelegate attribute. APILevel or APIExtension attribute missing.",
                                 mi.Name,
                                 mi.DeclaringType.FullName);
                         }
@@ -552,7 +629,30 @@ namespace SilverSim.Scripting.LSL
                                     funcName = mi.Name;
                                 }
 
-                                m_EventDelegates.Add(funcName, mi);
+                                foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+                                {
+                                    if ((kvp.Key & apiLevelAttr.Flags) != 0)
+                                    {
+                                        kvp.Value.EventDelegates.Add(funcName, mi);
+                                    }
+                                }
+                            }
+                            foreach(APIExtension apiExtensionAttr in apiExtensionAttrs)
+                            {
+                                string funcName = apiExtensionAttr.Name;
+                                if (string.IsNullOrEmpty(funcName))
+                                {
+                                    funcName = mi.Name;
+                                }
+
+                                ApiInfo apiInfo;
+                                string extensionName = apiExtensionAttr.Extension.ToLower();
+                                if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                                {
+                                    apiInfo = new ApiInfo();
+                                    m_ApiExtensions.Add(extensionName, apiInfo);
+                                }
+                                apiInfo.EventDelegates.Add(funcName, mi);
                             }
                         }
                     }
@@ -570,7 +670,8 @@ namespace SilverSim.Scripting.LSL
                 foreach (MethodInfo m in api.GetType().GetMethods())
                 {
                     APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(APILevel)) as APILevel[];
-                    if (funcNameAttrs.Length != 0)
+                    APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(m, typeof(APIExtension)) as APIExtension[];
+                    if (funcNameAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                     {
                         ParameterInfo[] pi = m.GetParameters();
                         if (pi.Length >= 1)
@@ -616,20 +717,37 @@ namespace SilverSim.Scripting.LSL
                                         {
                                             funcName = m.Name;
                                         }
-                                        List<KeyValuePair<IScriptApi, MethodInfo>> methodList;
-                                        if (!m_Methods.TryGetValue(funcName, out methodList))
+                                        foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                                         {
-                                            m_Methods.Add(funcName, methodList = new List<KeyValuePair<IScriptApi, MethodInfo>>());
+                                            List<ApiMethodInfo> methodList;
+                                            if (!kvp.Value.Methods.TryGetValue(funcName, out methodList))
+                                            {
+                                                kvp.Value.Methods.Add(funcName, methodList = new List<ApiMethodInfo>());
+                                            }
+                                            methodList.Add(new ApiMethodInfo(funcName, api, m));
                                         }
-                                        methodList.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
-                                        if (!m_MethodNames.ContainsKey(funcNameAttr.Name))
+                                    }
+                                    foreach(APIExtension funcNameAttr in apiExtensionAttrs)
+                                    {
+                                        string funcName = funcNameAttr.Name;
+                                        if (string.IsNullOrEmpty(funcName))
                                         {
-                                            m_MethodNames.Add(funcNameAttr.Name, funcNameAttr.Flags);
+                                            funcName = m.Name;
                                         }
-                                        else
+
+                                        ApiInfo apiInfo;
+                                        string extensionName = funcNameAttr.Extension.ToLower();
+                                        if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
                                         {
-                                            m_MethodNames[funcNameAttr.Name] = m_MethodNames[funcNameAttr.Name] | funcNameAttr.Flags;
+                                            apiInfo = new ApiInfo();
+                                            m_ApiExtensions.Add(extensionName, apiInfo);
                                         }
+                                        List<ApiMethodInfo> methodList;
+                                        if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
+                                        {
+                                            apiInfo.Methods.Add(funcName, methodList = new List<ApiMethodInfo>());
+                                        }
+                                        methodList.Add(new ApiMethodInfo(funcName, api, m));
                                     }
                                 }
                             }
@@ -930,7 +1048,7 @@ namespace SilverSim.Scripting.LSL
         public IScriptAssembly Compile(AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1)
         {
             CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
-            return PostProcess(compileState, appDom, assetID, (compileState.AcceptedFlags & APIFlags.ASSL) == 0);
+            return PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault);
         }
     }
 }

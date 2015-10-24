@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.LSL
             {
                 MethodBuilder mb;
                 m_LineNumber = lineNumber;
-                APIFlags validApis;
+                List<ApiMethodInfo> methods;
                 if (compileState.m_FunctionInfo.TryGetValue(functionTree.Entry, out mb))
                 {
                     KeyValuePair<Type, KeyValuePair<string, Type>[]> signatureInfo = compileState.m_FunctionSignature[functionTree.Entry];
@@ -72,40 +72,21 @@ namespace SilverSim.Scripting.LSL
 
                     m_FunctionReturnType = signatureInfo.Key;
                 }
-                else if (lslCompiler.m_MethodNames.TryGetValue(functionTree.Entry, out validApis) &&
-                    (validApis & compileState.AcceptedFlags) != 0)
+                else if (compileState.ApiInfo.Methods.TryGetValue(functionTree.Entry, out methods))
                 {
-                    foreach (KeyValuePair<IScriptApi, MethodInfo> kvp in lslCompiler.m_Methods[functionTree.Entry])
+                    foreach (ApiMethodInfo method in methods)
                     {
                         APILevel funcNameAttr = null;
-                        APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(kvp.Value, typeof(APILevel)) as APILevel[];
-                        if(funcNameAttrs.Length != 0)
-                        {
-                            string funcName = functionTree.Entry;
-                            foreach (APILevel it in funcNameAttrs)
-                            {
-                                string itName = it.Name;
-                                if(string.IsNullOrEmpty(itName))
-                                {
-                                    itName = kvp.Value.Name;
-                                }
-                                if (itName == funcName && (it.Flags & compileState.AcceptedFlags) != 0)
-                                {
-                                    funcNameAttr = it;
-                                    break;
-                                }
-                            }
-                        }
                         if (funcNameAttr != null)
                         {
-                            ParameterInfo[] pi = kvp.Value.GetParameters();
+                            ParameterInfo[] pi = method.Method.GetParameters();
                             if (pi.Length - 1 == functionTree.SubTree.Count)
                             {
-                                ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(kvp.Key.GetType(), typeof(ScriptApiName));
+                                ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(method.Api.GetType(), typeof(ScriptApiName));
 
-                                if (!IsValidType(kvp.Value.ReturnType))
+                                if (!IsValidType(method.Method.ReturnType))
                                 {
-                                    throw new CompilerException(lineNumber, string.Format("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", kvp.Value.Name, kvp.Value.ReturnType.Name));
+                                    throw new CompilerException(lineNumber, string.Format("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name));
                                 }
                                 if (null == stateTypeBuilder)
                                 {
@@ -130,7 +111,7 @@ namespace SilverSim.Scripting.LSL
                                     m_Parameters.Add(new FunctionParameterInfo(pi[i + 1].Name, pi[i + 1].ParameterType, functionTree.SubTree[i], i));
                                 }
 
-                                m_FunctionReturnType = kvp.Value.ReturnType;
+                                m_FunctionReturnType = method.Method.ReturnType;
                                 return;
                             }
                         }

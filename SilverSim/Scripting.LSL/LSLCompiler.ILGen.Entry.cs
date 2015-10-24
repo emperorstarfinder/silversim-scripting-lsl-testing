@@ -316,7 +316,7 @@ namespace SilverSim.Scripting.LSL
 
                 foreach (KeyValuePair<string, List<LineInfo>> eventKvp in stateKvp.Value)
                 {
-                    MethodInfo d = m_EventDelegates[eventKvp.Key];
+                    MethodInfo d = compileState.ApiInfo.EventDelegates[eventKvp.Key];
                     ParameterInfo[] pinfo = d.GetParameters();
                     Type[] paramtypes = new Type[pinfo.Length];
                     for (int pi = 0; pi < pinfo.Length; ++pi)
