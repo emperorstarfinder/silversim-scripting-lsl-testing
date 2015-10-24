@@ -12,15 +12,13 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     public partial class Primitive_API
     {
         #region Faces
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetNumberOfSides")]
+        [APILevel(APIFlags.LSL, "llGetNumberOfSides")]
         public int GetNumberOfSides(ScriptInstance instance)
         {
             return instance.Part.NumberOfSides;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetAlpha")]
+        [APILevel(APIFlags.LSL, "llGetAlpha")]
         public double GetAlpha(ScriptInstance instance, int face)
         {
             lock (instance)
@@ -37,15 +35,13 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetAlpha")]
+        [APILevel(APIFlags.LSL, "llSetAlpha")]
         public void SetAlpha(ScriptInstance instance, double alpha, int faces)
         {
             SetLinkAlpha(instance, LINK_THIS, alpha, faces);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetLinkAlpha")]
+        [APILevel(APIFlags.LSL, "llSetLinkAlpha")]
         public void SetLinkAlpha(ScriptInstance instance, int link, double alpha, int face)
         {
             if (alpha < 0) alpha = 0;
@@ -81,17 +77,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llSetTexture")]
         [ForcedSleep(0.2)]
-        [ScriptFunctionName("llSetTexture")]
         public void SetTexture(ScriptInstance instance, string texture, int face)
         {
             SetLinkTexture(instance, LINK_THIS, texture, face);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llSetLinkTexture")]
         [ForcedSleep(0.2)]
-        [ScriptFunctionName("llSetLinkTexture")]
         public void SetLinkTexture(ScriptInstance instance, int link, string texture, int face)
         {
             UUID textureID = GetTextureAssetID(instance, texture);
@@ -126,22 +120,19 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetColor")]
+        [APILevel(APIFlags.LSL, "llGetColor")]
         public Vector3 GetColor(ScriptInstance instance, int face)
         {
             return Vector3.Zero;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetColor")]
+        [APILevel(APIFlags.LSL, "llSetColor")]
         public void SetColor(ScriptInstance instance, Vector3 color, int face)
         {
             SetLinkColor(instance, LINK_THIS, color, face);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetLinkColor")]
+        [APILevel(APIFlags.LSL, "llSetLinkColor")]
         public void SetLinkColor(ScriptInstance instance, int link, Vector3 color, int face)
         {
             if (color.X < 0) color.X = 0;

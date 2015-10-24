@@ -15,8 +15,7 @@ namespace SilverSim.Scripting.LSL.API.Sound
 {
     public partial class Sound_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llCollisionSound")]
+        [APILevel(APIFlags.LSL, "llCollisionSound")]
         public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume)
         {
             ObjectPart.CollisionSoundParam para = new ObjectPart.CollisionSoundParam();
@@ -39,30 +38,26 @@ namespace SilverSim.Scripting.LSL.API.Sound
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llLoopSound")]
+        [APILevel(APIFlags.LSL, "llLoopSound")]
         public void LoopSound(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llLoopSoundMaster")]
+        [APILevel(APIFlags.LSL, "llLoopSoundMaster")]
         public void LoopSoundMaster(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llLoopSoundSlave")]
+        [APILevel(APIFlags.LSL, "llLoopSoundSlave")]
         public void LoopSoundSlave(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llPreloadSound")]
         [ForcedSleep(1)]
-        [ScriptFunctionName("llPreloadSound")]
         public void PreloadSound(ScriptInstance instance, string sound)
         {
             lock(instance)
@@ -81,29 +76,25 @@ namespace SilverSim.Scripting.LSL.API.Sound
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llStopSound")]
+        [APILevel(APIFlags.LSL, "llStopSound")]
         public void StopSound(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llPlaySound")]
+        [APILevel(APIFlags.LSL, "llPlaySound")]
         public void PlaySound(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llPlaySoundSlave")]
+        [APILevel(APIFlags.LSL, "llPlaySoundSlave")]
         public void PlaySoundSlave(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llTriggerSound")]
+        [APILevel(APIFlags.LSL, "llTriggerSound")]
         public void TriggerSound(ScriptInstance instance, string sound, double volume)
         {
             lock (instance)
@@ -122,8 +113,7 @@ namespace SilverSim.Scripting.LSL.API.Sound
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llTriggerSoundLimited")]
+        [APILevel(APIFlags.LSL, "llTriggerSoundLimited")]
         public void TriggerSoundLimited(ScriptInstance instance, string sound, double volume, Vector3 top_north_east, Vector3 bottom_south_west)
         {
             lock (instance)
@@ -142,16 +132,14 @@ namespace SilverSim.Scripting.LSL.API.Sound
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llAdjustSoundVolume")]
         [ForcedSleep(0.1)]
-        [ScriptFunctionName("llAdjustSoundVolume")]
         public void AdjustSoundVolume(ScriptInstance instance, double volume)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetSoundQueueing")]
+        [APILevel(APIFlags.LSL, "llSetSoundQueueing")]
         public void SetSoundQueueing(ScriptInstance instance, int queue)
         {
             lock (instance)
@@ -160,8 +148,7 @@ namespace SilverSim.Scripting.LSL.API.Sound
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetSoundRadius")]
+        [APILevel(APIFlags.LSL, "llSetSoundRadius")]
         public void SetSoundRadius(ScriptInstance instance, double radius)
         {
             throw new NotImplementedException();

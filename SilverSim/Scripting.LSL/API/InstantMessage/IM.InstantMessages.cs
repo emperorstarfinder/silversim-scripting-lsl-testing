@@ -12,9 +12,8 @@ namespace SilverSim.Scripting.LSL.APIs.IM
 {
     public partial class IM_API
     {
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llInstantMessage")]
         [ForcedSleep(2)]
-        [ScriptFunctionName("llInstantMessage")]
         public void InstantMessage(ScriptInstance instance, LSLKey user, string message)
         {
             lock(instance)

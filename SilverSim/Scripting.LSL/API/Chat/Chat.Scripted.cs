@@ -13,8 +13,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
     {
         public static int MaxListenerHandles = 64;
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llShout")]
+        [APILevel(APIFlags.LSL, "llShout")]
         public void Shout(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -26,8 +25,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSay")]
+        [APILevel(APIFlags.LSL, "llSay")]
         public void Say(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -39,8 +37,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llWhisper")]
+        [APILevel(APIFlags.LSL, "llWhisper")]
         public void Whisper(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -52,8 +49,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llOwnerSay")]
+        [APILevel(APIFlags.LSL, "llOwnerSay")]
         public void OwnerSay(ScriptInstance instance, string message)
         {
             lock (instance)
@@ -69,8 +65,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llRegionSay")]
+        [APILevel(APIFlags.LSL, "llRegionSay")]
         public void RegionSay(ScriptInstance instance, int channel, string message)
         {
             if (channel != PUBLIC_CHANNEL)
@@ -85,8 +80,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llRegionSayTo")]
+        [APILevel(APIFlags.LSL, "llRegionSayTo")]
         public void RegionSayTo(ScriptInstance instance, LSLKey target, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -99,8 +93,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llListen")]
+        [APILevel(APIFlags.LSL, "llListen")]
         public int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg)
         {
             Script script = (Script)instance;
@@ -142,8 +135,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llListenRemove")]
+        [APILevel(APIFlags.LSL, "llListenRemove")]
         public void ListenRemove(ScriptInstance instance, int handle)
         {
             Script script = (Script)instance;
@@ -157,8 +149,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llListenControl")]
+        [APILevel(APIFlags.LSL, "llListenControl")]
         public void ListenControl(ScriptInstance instance, int handle, int active)
         {
             Script script = (Script)instance;
@@ -173,8 +164,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
         }
 
         #region osListenRegex
-        [APILevel(APIFlags.OSSL)]
-        [ScriptFunctionName("osListenRegex")]
+        [APILevel(APIFlags.OSSL, "osListenRegex")]
         public int ListenRegex(ScriptInstance instance, int channel, string name, LSLKey id, string msg, int regexBitfield)
         {
             Script script = (Script)instance;

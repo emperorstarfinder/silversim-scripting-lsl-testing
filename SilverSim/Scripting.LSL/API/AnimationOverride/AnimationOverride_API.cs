@@ -25,8 +25,7 @@ namespace SilverSim.Scripting.LSL.API.AnimationOverride
 
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetAnimationOverride")]
+        [APILevel(APIFlags.LSL, "llSetAnimationOverride")]
         public void SetAnimationOverride(ScriptInstance instance, string anim_state, string anim)
         {
             lock (instance)
@@ -60,8 +59,7 @@ namespace SilverSim.Scripting.LSL.API.AnimationOverride
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetAnimationOverride")]
+        [APILevel(APIFlags.LSL, "llGetAnimationOverride")]
         public string GetAnimationOverride(ScriptInstance instance, string anim_state)
         {
             lock (instance)
@@ -89,8 +87,7 @@ namespace SilverSim.Scripting.LSL.API.AnimationOverride
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llResetAnimationOverride")]
+        [APILevel(APIFlags.LSL, "llResetAnimationOverride")]
         public void ResetAnimationOverride(ScriptInstance instance, string anim_state)
         {
             lock (instance)

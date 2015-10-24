@@ -16,8 +16,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     public partial class Primitive_API
     {
         #region Texture Animation
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetLinkTextureAnim")]
+        [APILevel(APIFlags.LSL, "llSetLinkTextureAnim")]
         public void SetLinkTextureAnim(ScriptInstance instance, int link, int mode, int face, int sizeX, int sizeY, double start, double length, double rate)
         {
             TextureAnimationEntry te = new TextureAnimationEntry();
@@ -35,8 +34,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetTextureAnim")]
+        [APILevel(APIFlags.LSL, "llSetTextureAnim")]
         public void SetTextureAnim(ScriptInstance instance, int mode, int face, int sizeX, int sizeY, double start, double length, double rate)
         {
             SetLinkTextureAnim(instance, LINK_THIS, mode, face, sizeX, sizeY, start, length, rate);

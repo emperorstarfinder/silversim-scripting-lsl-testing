@@ -351,14 +351,13 @@ namespace SilverSim.Scripting.LSL
         void ShoutUnimplementedException(NotImplementedException e)
         {
             MethodBase mb = e.TargetSite;
-            ScriptFunctionName funcNameAttr = (ScriptFunctionName)System.Attribute.GetCustomAttribute(mb, typeof(ScriptFunctionName));
             APILevel apiLevel = (APILevel)System.Attribute.GetCustomAttribute(mb, typeof(APILevel));
             if (apiLevel != null)
             {
                 string methodName = mb.Name;
-                if (funcNameAttr != null)
+                if (!string.IsNullOrEmpty(apiLevel.Name))
                 {
-                    methodName = funcNameAttr.Name;
+                    methodName = apiLevel.Name;
                 }
 
                 string funcSignature = methodName + "(";

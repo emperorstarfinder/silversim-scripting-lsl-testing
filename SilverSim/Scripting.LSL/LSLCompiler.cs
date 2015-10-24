@@ -459,8 +459,8 @@ namespace SilverSim.Scripting.LSL
                 #region Collect constants
                 foreach (FieldInfo f in api.GetType().GetFields())
                 {
-                    APILevel attr = (APILevel) System.Attribute.GetCustomAttribute(f, typeof(APILevel));
-                    if(attr != null)
+                    APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
+                    if(apiLevelAttrs.Length != 0)
                     {
                         if ((f.Attributes & FieldAttributes.Static) != 0)
                         {
@@ -468,13 +468,21 @@ namespace SilverSim.Scripting.LSL
                             {
                                 if (IsValidType(f.FieldType))
                                 {
-                                    try
+                                    foreach(APILevel attr in apiLevelAttrs)
                                     {
-                                        m_Constants.Add(f.Name, attr.Flags);
-                                    }
-                                    catch
-                                    {
-                                        m_Constants[f.Name] |= attr.Flags;
+                                        string constName = attr.Name;
+                                        if(string.IsNullOrEmpty(constName))
+                                        {
+                                            constName = f.Name;
+                                        }
+                                        if (!m_Constants.ContainsKey(constName))
+                                        {
+                                            m_Constants.Add(constName, attr.Flags);
+                                        }
+                                        else
+                                        {
+                                            m_Constants[constName] |= attr.Flags;
+                                        }
                                     }
                                 }
                                 else
@@ -497,14 +505,22 @@ namespace SilverSim.Scripting.LSL
                 #region Collect event definitions
                 foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                 {
-                    System.Attribute attr = System.Attribute.GetCustomAttribute(t, typeof(APILevel));
                     StateEventDelegate stateEventAttr = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
-                    if (attr != null && stateEventAttr != null)
+                    if (stateEventAttr != null)
                     {
+                        APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevel)) as APILevel[];
                         MethodInfo mi = t.GetMethod("Invoke");
-                        ParameterInfo[] pi = mi.GetParameters();
+                        if (apiLevelAttrs.Length == 0)
+                        {
+                            m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. StateEventDelegate attribute missing.",
+                                mi.Name,
+                                mi.DeclaringType.FullName);
+                        }
+
                         /* validate parameters */
+                        ParameterInfo[] pi = mi.GetParameters();
                         bool eventValid = true;
+
                         for (int i = 0; i < pi.Length; ++i)
                         {
                             if (!IsValidType(pi[i].ParameterType))
@@ -528,15 +544,17 @@ namespace SilverSim.Scripting.LSL
 
                         if (eventValid)
                         {
-                            m_EventDelegates.Add(stateEventAttr.Name, mi);
+                            foreach (APILevel apiLevelAttr in apiLevelAttrs)
+                            {
+                                string funcName = apiLevelAttr.Name;
+                                if(string.IsNullOrEmpty(funcName))
+                                {
+                                    funcName = mi.Name;
+                                }
+
+                                m_EventDelegates.Add(funcName, mi);
+                            }
                         }
-                    }
-                    else if (null != attr)
-                    {
-                        MethodInfo mi = t.GetMethod("Invoke");
-                        m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. StateEventDelegate attribute missing.",
-                            mi.Name,
-                            mi.DeclaringType.FullName);
                     }
                     else if (null != stateEventAttr)
                     {
@@ -551,8 +569,14 @@ namespace SilverSim.Scripting.LSL
                 #region Collect API functions, reset delegates and state change delegates
                 foreach (MethodInfo m in api.GetType().GetMethods())
                 {
-                    System.Attribute attr = System.Attribute.GetCustomAttribute(m, typeof(APILevel));
-                    if(attr != null)
+                    APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(APILevel)) as APILevel[];
+                    if (funcNameAttrs.Length == 0)
+                    {
+                        m_Log.DebugFormat("Method '{0}' in '{1}' has no ScriptFunctionName attribute!!!",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else
                     {
                         ParameterInfo[] pi = m.GetParameters();
                         if (pi.Length >= 1)
@@ -568,55 +592,49 @@ namespace SilverSim.Scripting.LSL
                                         m.Name,
                                         m.DeclaringType.FullName);
                                 }
-                                ScriptFunctionName[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(ScriptFunctionName)) as ScriptFunctionName[];
-                                if (funcNameAttrs.Length == 0)
+                                for (int i = 1; i < pi.Length; ++i)
                                 {
-                                    m_Log.DebugFormat("Method '{0}' in '{1}' has no ScriptFunctionName attribute!!!",
-                                        m.Name,
-                                        m.DeclaringType.FullName);
-                                }
-                                else foreach(ScriptFunctionName funcNameAttr in funcNameAttrs)
-                                {
-                                    for (int i = 1; i < pi.Length; ++i)
-                                    {
-                                        if (!IsValidType(pi[i].ParameterType))
-                                        {
-                                            methodValid = false;
-                                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
-                                                m.Name,
-                                                m.DeclaringType.FullName,
-                                                pi[i].Name,
-                                                pi[i].ParameterType.FullName);
-                                        }
-                                    }
-                                    if (!IsValidType(m.ReturnType))
+                                    if (!IsValidType(pi[i].ParameterType))
                                     {
                                         methodValid = false;
-                                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Return value does not have LSL compatible type '{2}'.",
+                                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
                                             m.Name,
                                             m.DeclaringType.FullName,
-                                            m.ReturnType.FullName);
+                                            pi[i].Name,
+                                            pi[i].ParameterType.FullName);
                                     }
+                                }
+                                if (!IsValidType(m.ReturnType))
+                                {
+                                    methodValid = false;
+                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Return value does not have LSL compatible type '{2}'.",
+                                        m.Name,
+                                        m.DeclaringType.FullName,
+                                        m.ReturnType.FullName);
+                                }
 
-                                    if (methodValid)
+                                if (methodValid)
+                                {
+                                    foreach (APILevel funcNameAttr in funcNameAttrs)
                                     {
-                                        foreach (ScriptFunctionName funcNameAttrIt in funcNameAttrs)
+                                        string funcName = funcNameAttr.Name;
+                                        if(string.IsNullOrEmpty(funcName))
                                         {
-                                            string funcName = funcNameAttrIt.Name;
-                                            List<KeyValuePair<IScriptApi, MethodInfo>> methodList;
-                                            if (!m_Methods.TryGetValue(funcName, out methodList))
-                                            {
-                                                m_Methods.Add(funcName, methodList = new List<KeyValuePair<IScriptApi, MethodInfo>>());
-                                            }
-                                            methodList.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
-                                            if (!m_MethodNames.ContainsKey(funcNameAttr.Name))
-                                            {
-                                                m_MethodNames.Add(funcNameAttr.Name, funcNameAttr.ValidApis);
-                                            }
-                                            else
-                                            {
-                                                m_MethodNames[funcNameAttr.Name] = m_MethodNames[funcNameAttr.Name] | funcNameAttr.ValidApis;
-                                            }
+                                            funcName = m.Name;
+                                        }
+                                        List<KeyValuePair<IScriptApi, MethodInfo>> methodList;
+                                        if (!m_Methods.TryGetValue(funcName, out methodList))
+                                        {
+                                            m_Methods.Add(funcName, methodList = new List<KeyValuePair<IScriptApi, MethodInfo>>());
+                                        }
+                                        methodList.Add(new KeyValuePair<IScriptApi, MethodInfo>(api, m));
+                                        if (!m_MethodNames.ContainsKey(funcNameAttr.Name))
+                                        {
+                                            m_MethodNames.Add(funcNameAttr.Name, funcNameAttr.Flags);
+                                        }
+                                        else
+                                        {
+                                            m_MethodNames[funcNameAttr.Name] = m_MethodNames[funcNameAttr.Name] | funcNameAttr.Flags;
                                         }
                                     }
                                 }
@@ -624,7 +642,7 @@ namespace SilverSim.Scripting.LSL
                         }
                     }
 
-                    attr = System.Attribute.GetCustomAttribute(m, typeof(ExecutedOnStateChange));
+                    Attribute attr = System.Attribute.GetCustomAttribute(m, typeof(ExecutedOnStateChange));
                     if (attr != null && (m.Attributes & MethodAttributes.Static) != 0)
                     {
                         ParameterInfo[] pi = m.GetParameters();

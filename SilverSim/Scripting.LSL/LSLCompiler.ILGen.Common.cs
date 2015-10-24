@@ -666,21 +666,30 @@ namespace SilverSim.Scripting.LSL
             {
                 foreach (FieldInfo f in api.GetType().GetFields())
                 {
-                    System.Attribute attr = System.Attribute.GetCustomAttribute(f, typeof(APILevel));
+                    APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
 
-                    if (attr != null && (f.Attributes & FieldAttributes.Static) != 0)
+                    if ((f.Attributes & FieldAttributes.Static) != 0)
                     {
-                        if ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0)
+                        foreach (APILevel apilevel in apiLevelAttrs)
                         {
-                            APILevel apilevel = (APILevel)attr;
-                            if ((apilevel.Flags & compileState.AcceptedFlags) != 0)
+                            if ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0)
                             {
-                                localVars[f.Name] = f;
+                                if ((apilevel.Flags & compileState.AcceptedFlags) != 0)
+                                {
+                                    if (string.IsNullOrEmpty(apilevel.Name))
+                                    {
+                                        localVars[f.Name] = f;
+                                    }
+                                    else
+                                    {
+                                        localVars[apilevel.Name] = f;
+                                    }
+                                }
                             }
-                        }
-                        else
-                        {
-                            m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
+                            else
+                            {
+                                m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
+                            }
                         }
                     }
                 }

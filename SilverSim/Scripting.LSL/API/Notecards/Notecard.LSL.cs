@@ -49,9 +49,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
             del.BeginInvoke(instance.Part, queryID, assetID, line, GetNotecardLineEnd, this);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llGetNotecardLine")]
         [ForcedSleep(0.1)]
-        [ScriptFunctionName("llGetNotecardLine")]
         public LSLKey GetNotecardLine(ScriptInstance instance, string name, int line)
         {
             lock (instance)
@@ -109,9 +108,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
             del.BeginInvoke(instance.Part, queryID, assetID, GetNumberOfNotecardLinesEnd, this);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llGetNumberOfNotecardLines")]
         [ForcedSleep(0.1)]
-        [ScriptFunctionName("llGetNumberOfNotecardLines")]
         public LSLKey GetNumberOfNotecardLines(ScriptInstance instance, string name)
         {
             ObjectPartInventoryItem item;

@@ -24,8 +24,7 @@ namespace SilverSim.Scripting.LSL.API.XMLRPC
 
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llCloseRemoteDataChannel")]
+        [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]
         public void CloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
         {
             throw new NotImplementedException();

@@ -13,136 +13,136 @@ namespace SilverSim.Scripting.LSL.API.Base
     [LSLImplementation]
     public partial class Base_API : MarshalByRefObject, IScriptApi, IPlugin
     {
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("at_rot_target")]
+        [APILevel(APIFlags.LSL, "at_rot_target")]
+        [StateEventDelegate]
         public delegate void State_at_rot_target(int handle, Quaternion targetrot, Quaternion ourrot);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("at_target")]
+        [APILevel(APIFlags.LSL, "at_target")]
+        [StateEventDelegate]
         public delegate void State_at_target(int tnum, Vector3 targetpos, Vector3 ourpos);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("attach")]
+        [APILevel(APIFlags.LSL, "attach")]
+        [StateEventDelegate]
         public delegate void State_attach(LSLKey id);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("changed")]
+        [APILevel(APIFlags.LSL, "changed")]
+        [StateEventDelegate]
         public delegate void State_changed(int change);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("collision")]
+        [APILevel(APIFlags.LSL, "collision")]
+        [StateEventDelegate]
         public delegate void State_collision(int num_detected);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("collision_end")]
+        [APILevel(APIFlags.LSL, "collision_end")]
+        [StateEventDelegate]
         public delegate void State_collision_end(int num_detected);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("collision_start")]
+        [APILevel(APIFlags.LSL, "collision_start")]
+        [StateEventDelegate]
         public delegate void State_collision_start(int num_detected);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("dataserver")]
+        [APILevel(APIFlags.LSL, "dataserver")]
+        [StateEventDelegate]
         public delegate void State_dataserver(LSLKey queryid, string data);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("email")]
+        [APILevel(APIFlags.LSL, "email")]
+        [StateEventDelegate]
         public delegate void State_email(string time, string address, string subject, string message, int num_left);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("http_request")]
+        [APILevel(APIFlags.LSL, "http_request")]
+        [StateEventDelegate]
         public delegate void State_http_request(LSLKey request_id, string method, string body);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("http_response")]
+        [APILevel(APIFlags.LSL, "http_response")]
+        [StateEventDelegate]
         public delegate void State_http_response(LSLKey request_id, int status, AnArray metadata, string body);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("land_collision")]
+        [APILevel(APIFlags.LSL, "land_collision")]
+        [StateEventDelegate]
         public delegate void State_land_collision(Vector3 pos);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("land_collision_end")]
+        [APILevel(APIFlags.LSL, "land_collision_end")]
+        [StateEventDelegate]
         public delegate void State_land_collision_end(Vector3 pos);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("land_collision_start")]
+        [APILevel(APIFlags.LSL, "land_collision_start")]
+        [StateEventDelegate]
         public delegate void State_land_collision_start(Vector3 pos);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("link_message")]
+        [APILevel(APIFlags.LSL, "link_message")]
+        [StateEventDelegate]
         public delegate void State_link_message(int sender_num, int num, string str, LSLKey id);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("listen")]
+        [APILevel(APIFlags.LSL, "listen")]
+        [StateEventDelegate]
         public delegate void State_listen(int channel, string name, LSLKey id, string message);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("money")]
+        [APILevel(APIFlags.LSL, "money")]
+        [StateEventDelegate]
         public delegate void State_money(LSLKey id, int amount);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("moving_end")]
+        [APILevel(APIFlags.LSL, "moving_end")]
+        [StateEventDelegate]
         public delegate void State_moving_end();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("moving_start")]
+        [APILevel(APIFlags.LSL, "moving_start")]
+        [StateEventDelegate]
         public delegate void State_moving_start();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("no_sensor")]
+        [APILevel(APIFlags.LSL, "no_sensor")]
+        [StateEventDelegate]
         public delegate void State_no_sensor();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("not_at_rot_target")]
+        [APILevel(APIFlags.LSL, "not_at_rot_target")]
+        [StateEventDelegate]
         public delegate void State_not_at_rot_target();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("not_at_target")]
+        [APILevel(APIFlags.LSL, "not_at_target")]
+        [StateEventDelegate]
         public delegate void State_not_at_target();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("object_rez")]
+        [APILevel(APIFlags.LSL, "object_rez")]
+        [StateEventDelegate]
         public delegate void State_object_rez(LSLKey id);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("on_rez")]
+        [APILevel(APIFlags.LSL, "on_rez")]
+        [StateEventDelegate]
         public delegate void State_on_rez(int start_param);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("path_update")]
+        [APILevel(APIFlags.LSL, "path_update")]
+        [StateEventDelegate]
         public delegate void State_path_update(int type, AnArray reserved);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("remote_data")]
+        [APILevel(APIFlags.LSL, "remote_data")]
+        [StateEventDelegate]
         public delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("sensor")]
+        [APILevel(APIFlags.LSL, "sensor")]
+        [StateEventDelegate]
         public delegate void State_sensor(int num_detected);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("state_entry")]
+        [APILevel(APIFlags.LSL, "state_entry")]
+        [StateEventDelegate]
         public delegate void State_state_entry();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("state_exit")]
+        [APILevel(APIFlags.LSL, "state_exit")]
+        [StateEventDelegate]
         public delegate void State_state_exit();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("timer")]
+        [APILevel(APIFlags.LSL, "timer")]
+        [StateEventDelegate]
         public delegate void State_timer();
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("touch")]
+        [APILevel(APIFlags.LSL, "touch")]
+        [StateEventDelegate]
         public delegate void State_touch(int num_detected);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("touch_end")]
+        [APILevel(APIFlags.LSL, "touch_end")]
+        [StateEventDelegate]
         public delegate void State_touch_end(int num_detected);
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("touch_start")]
+        [APILevel(APIFlags.LSL, "touch_start")]
+        [StateEventDelegate]
         public delegate void State_touch_start(int num_detected);
 
         public Base_API()
@@ -155,15 +155,13 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSleep")]
+        [APILevel(APIFlags.LSL, "llSleep")]
         public void Sleep(ScriptInstance instance, double secs)
         {
             instance.Sleep(secs);
         }
 
-        [APILevel(APIFlags.ASSL)]
-        [ScriptFunctionName("asSetForcedSleep")]
+        [APILevel(APIFlags.ASSL, "asSetForcedSleep")]
         public void SetForcedSleep(ScriptInstance instance, int flag, double factor)
         {
             if(factor > 1)
@@ -182,8 +180,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.ASSL)]
-        [ScriptFunctionName("asSetForcedSleepEnable")]
+        [APILevel(APIFlags.ASSL, "asSetForcedSleepEnable")]
         public void SetForcedSleepEnable(ScriptInstance instance, int flag)
         {
             lock(instance)

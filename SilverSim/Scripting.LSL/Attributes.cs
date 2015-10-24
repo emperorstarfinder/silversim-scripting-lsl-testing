@@ -23,13 +23,18 @@ namespace SilverSim.Scripting.LSL
     }
 
     [Serializable]
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
     public sealed class APILevel : Attribute
     {
         public APIFlags Flags { get; private set; }
-        public APILevel(APIFlags flags)
+        public string Name { get; private set; }
+
+        public const string KeepCsName = "";
+
+        public APILevel(APIFlags flags, string name)
         {
             Flags = flags;
+            Name = name;
         }
     }
 
@@ -78,11 +83,8 @@ namespace SilverSim.Scripting.LSL
     [AttributeUsage(AttributeTargets.Delegate, Inherited = false)]
     public sealed class StateEventDelegate : Attribute
     {
-        public string Name { get; private set; }
-
-        public StateEventDelegate(string name)
+        public StateEventDelegate()
         {
-            Name = name;
         }
     }
 
@@ -107,20 +109,6 @@ namespace SilverSim.Scripting.LSL
         public LSLTooltip(string tooltip)
         {
             Tooltip = tooltip.Replace("\n", "\\n");
-        }
-    }
-
-    [Serializable]
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
-    public sealed class ScriptFunctionName : Attribute
-    {
-        public string Name { get; private set; }
-        public APIFlags ValidApis { get; private set; }
-
-        public ScriptFunctionName(string name, APIFlags validApis = APIFlags.Any)
-        {
-            Name = name;
-            ValidApis = validApis;
         }
     }
 }

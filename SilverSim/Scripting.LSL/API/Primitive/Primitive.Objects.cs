@@ -13,64 +13,62 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 {
     public partial class Primitive_API
     {
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_UNKNOWN_DETAIL = -1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_NAME = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_DESC = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_POS = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_ROT = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_VELOCITY = 5;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_OWNER = 6;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_GROUP = 7;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_CREATOR = 8;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_RUNNING_SCRIPT_COUNT = 9;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_TOTAL_SCRIPT_COUNT = 10;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_SCRIPT_MEMORY = 11;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_SCRIPT_TIME = 12;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_PRIM_EQUIVALENCE = 13;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_SERVER_COST = 14;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_STREAMING_COST = 15;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_PHYSICS_COST = 16;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_CHARACTER_TIME = 17;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_ROOT = 18;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_ATTACHED_POINT = 19;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_PATHFINDING_TYPE = 20;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_PHYSICS = 21;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_PHANTOM = 22;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_TEMP_ON_REZ = 23;
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetCenterOfMass")]
+        [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
         public Vector3 GetCenterOfMass(ScriptInstance instance)
         {
             throw new NotImplementedException("llGetCenterOfMass()");
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetCreator")]
+        [APILevel(APIFlags.LSL, "llGetCreator")]
         public LSLKey GetCreator(ScriptInstance instance)
         {
             lock (instance)
@@ -79,8 +77,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetObjectDesc")]
+        [APILevel(APIFlags.LSL, "llGetObjectDesc")]
         public string GetObjectDesc(ScriptInstance instance)
         {
             lock (instance)
@@ -89,8 +86,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetObjectDetails")]
+        [APILevel(APIFlags.LSL, "llGetObjectDetails")]
         public AnArray GetObjectDetails(ScriptInstance instance, AnArray param)
         {
             AnArray parout = new AnArray();
@@ -101,8 +97,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             return parout;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetObjectName")]
+        [APILevel(APIFlags.LSL, "llGetObjectName")]
         public string GetObjectName(ScriptInstance instance)
         {
             lock (instance)
@@ -111,8 +106,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetObjectDesc")]
+        [APILevel(APIFlags.LSL, "llSetObjectDesc")]
         public void SetObjectDesc(ScriptInstance instance, string desc)
         {
             lock (instance)
@@ -121,8 +115,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetObjectName")]
+        [APILevel(APIFlags.LSL, "llSetObjectName")]
         public void SetObjectName(ScriptInstance instance, string name)
         {
             lock (instance)
@@ -131,15 +124,13 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetRegionPos")]
+        [APILevel(APIFlags.LSL, "llSetRegionPos")]
         public int SetRegionPos(ScriptInstance instance, Vector3 pos)
         {
             throw new NotImplementedException("llSetRegionPos(vector)");
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetVel")]
+        [APILevel(APIFlags.LSL, "llGetVel")]
         public Vector3 GetVel(ScriptInstance instance)
         {
             lock (instance)
@@ -148,8 +139,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetOwner")]
+        [APILevel(APIFlags.LSL, "llGetOwner")]
         public LSLKey GetOwner(ScriptInstance instance)
         {
             lock (instance)
@@ -158,8 +148,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetOwnerKey")]
+        [APILevel(APIFlags.LSL, "llGetOwnerKey")]
         public LSLKey GetOwnerKey(ScriptInstance instance, LSLKey id)
         {
             lock (instance)
@@ -177,8 +166,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetNumberOfPrims")]
+        [APILevel(APIFlags.LSL, "llGetNumberOfPrims")]
         public int GetNumberOfPrims(ScriptInstance instance)
         {
             lock (instance)
@@ -187,8 +175,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetLinkKey")]
+        [APILevel(APIFlags.LSL, "llGetLinkKey")]
         public LSLKey GetLinkKey(ScriptInstance instance, int link)
         {
             lock (instance)
@@ -204,8 +191,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetLinkName")]
+        [APILevel(APIFlags.LSL, "llGetLinkName")]
         public string GetLinkName(ScriptInstance instance, int link)
         {
             lock (instance)
@@ -221,8 +207,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetLinkNumber")]
+        [APILevel(APIFlags.LSL, "llGetLinkNumber")]
         public int GetLinkNumber(ScriptInstance instance)
         {
             lock (instance)
@@ -232,12 +217,11 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         #region osMessageObject
-        [APILevel(APIFlags.ASSL)]
-        [StateEventDelegate("object_message")]
+        [APILevel(APIFlags.ASSL, "object_message")]
+        [StateEventDelegate]
         public delegate void State_object_message(LSLKey id, string data);
 
-        [APILevel(APIFlags.OSSL)]
-        [ScriptFunctionName("osMessageObject")]
+        [APILevel(APIFlags.OSSL, "osMessageObject")]
         public void MessageObject(ScriptInstance instance, LSLKey objectUUID, string message)
         {
             lock (instance)

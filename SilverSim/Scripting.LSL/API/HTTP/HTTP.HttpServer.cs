@@ -13,8 +13,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
 {
     public partial class HTTP_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llRequestURL")]
+        [APILevel(APIFlags.LSL, "llRequestURL")]
         public LSLKey RequestURL(ScriptInstance instance)
         {
             lock(instance)
@@ -41,8 +40,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llReleaseURL")]
+        [APILevel(APIFlags.LSL, "llReleaseURL")]
         public void ReleaseURL(ScriptInstance instance, string url)
         {
             lock (instance)
@@ -51,8 +49,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llRequestSecureURL")]
+        [APILevel(APIFlags.LSL, "llRequestSecureURL")]
         public LSLKey RequestSecureURL(ScriptInstance instance)
         {
             lock (instance)
@@ -79,8 +76,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetHTTPHeader")]
+        [APILevel(APIFlags.LSL, "llGetHTTPHeader")]
         public string GetHTTPHeader(ScriptInstance instance, LSLKey requestID, string header)
         {
             lock (instance)
@@ -89,8 +85,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llHTTPResponse")]
+        [APILevel(APIFlags.LSL, "llHTTPResponse")]
         public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, string body)
         {
             lock(instance)
@@ -99,27 +94,26 @@ namespace SilverSim.Scripting.LSL.API.HTTP
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_TEXT = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_HTML = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_XML = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_XHTML = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_ATOM = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_JSON = 5;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_LLSD = 6;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_FORM = 7;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int CONTENT_TYPE_RSS = 8;
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetContentType")]
+        [APILevel(APIFlags.LSL, "llSetContentType")]
         public void SetContentType(ScriptInstance instance, LSLKey requestID, int contenttype)
         {
             lock(instance)
@@ -140,8 +134,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
             }
         }
 
-        [APILevel(APIFlags.OSSL)]
-        [ScriptFunctionName("osSetContentType")]
+        [APILevel(APIFlags.OSSL, "osSetContentType")]
         public void SetContentType(ScriptInstance instance, LSLKey id, string type)
         {
             lock(instance)

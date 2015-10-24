@@ -45,8 +45,7 @@ namespace SilverSim.Scripting.LSL.API.Animation
             return assetID;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llStartAnimation")]
+        [APILevel(APIFlags.LSL, "llStartAnimation")]
         public void StartAnimation(
             ScriptInstance instance,
             [LSLTooltip("animation to be played")]
@@ -76,9 +75,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
             }
         }
 
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, "osAvatarPlayAnimation")]
         [LSLTooltip("causes an animation to be played on the specified avatar.")]
-        [ScriptFunctionName("osAvatarPlayAnimation")]
         public void AvatarPlayAnimation(
             ScriptInstance instance, 
             [LSLTooltip("UUID of the agent")]
@@ -106,8 +104,7 @@ namespace SilverSim.Scripting.LSL.API.Animation
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llStopAnimation")]
+        [APILevel(APIFlags.LSL, "llStopAnimation")]
         public void StopAnimation(
             ScriptInstance instance, 
             [LSLTooltip("animation to be stopped")]
@@ -137,9 +134,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
             }
         }
 
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, "osAvatarStopAnimation")]
         [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
-        [ScriptFunctionName("osAvatarStopAnimation")]
         public void AvatarStopAnimation(
             ScriptInstance instance,
             [LSLTooltip("UUID of the agent")]
@@ -167,15 +163,13 @@ namespace SilverSim.Scripting.LSL.API.Animation
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetAnimation")]
+        [APILevel(APIFlags.LSL, "llGetAnimation")]
         public string GetAnimation(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetAnimationList")]
+        [APILevel(APIFlags.LSL, "llGetAnimationList")]
         public string GetAnimationList(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();

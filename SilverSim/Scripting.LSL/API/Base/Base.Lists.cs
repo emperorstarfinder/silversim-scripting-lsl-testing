@@ -9,9 +9,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llDeleteSubList")]
         [LSLTooltip("Returns a list that is a copy of src but with the slice from start to end removed.")]
-        [ScriptFunctionName("llDeleteSubList")]
         public AnArray DeleteSubList(ScriptInstance instance,
             [LSLTooltip("source")]
             AnArray src,
@@ -75,9 +74,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llList2ListStrided")]
         [LSLTooltip("Returns a list of all the entries in the strided list whose index is a multiple of stride in the range start to end.")]
-        [ScriptFunctionName("llList2ListStrided")]
         public AnArray List2ListStrided(ScriptInstance instance,
             AnArray src,
             [LSLTooltip("start index")]
@@ -195,8 +193,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             return result;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llList2List")]
+        [APILevel(APIFlags.LSL, "llList2List")]
         public AnArray List2List(ScriptInstance instance, AnArray src, int start, int end)
         {
             if (start < 0)
@@ -254,8 +251,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llList2Float")]
+        [APILevel(APIFlags.LSL, "llList2Float")]
         public double List2Float(ScriptInstance instance, AnArray src, int index)
         {
             if(index < 0)
@@ -271,9 +267,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return src[index].AsReal;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llListFindList")]
         [LSLTooltip("Returns the integer index of the first instance of test in src.")]
-        [ScriptFunctionName("llListFindList")]
         public int ListFindList(ScriptInstance instance,
             [LSLTooltip("what to search in (haystack)")]
             AnArray src,
@@ -307,9 +302,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return index;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llList2Integer")]
         [LSLTooltip("Returns an integer that is at index in src")]
-        [ScriptFunctionName("llList2Integer")]
         public int List2Integer(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
@@ -340,9 +334,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llList2Key")]
         [LSLTooltip("Returns a key that is at index in src")]
-        [ScriptFunctionName("llList2Key")]
         public LSLKey List2Key(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
@@ -362,9 +355,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return src[index].ToString();
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llList2Rot")]
         [LSLTooltip("Returns a rotation that is at index in src")]
-        [ScriptFunctionName("llList2Rot")]
         public Quaternion List2Rot(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
@@ -384,9 +376,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return src[index].AsQuaternion;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llList2String")]
         [LSLTooltip("Returns a string that is at index in src")]
-        [ScriptFunctionName("llList2String")]
         public string List2String(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
@@ -406,9 +397,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return src[index].AsString.ToString();
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llList2Vector")]
         [LSLTooltip("Returns a vector that is at index in src")]
-        [ScriptFunctionName("llList2Vector")]
         public Vector3 List2Vector(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
@@ -428,9 +418,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return src[index].AsVector3;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llDumpList2String")]
         [LSLTooltip("Returns a string that is the list src converted to a string with separator between the entries.")]
-        [ScriptFunctionName("llDumpList2String")]
         public string DumpList2String(ScriptInstance instance, AnArray src, string separator)
         {
             string s = string.Empty;
@@ -446,32 +435,30 @@ namespace SilverSim.Scripting.LSL.API.Base
             return s;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llList2CSV")]
         [LSLTooltip("Returns a string of comma separated values taken in order from src.")]
-        [ScriptFunctionName("llList2CSV")]
         public string List2CSV(ScriptInstance instance, AnArray src)
         {
             return DumpList2String(instance, src, ", ");
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TYPE_INTEGER = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TYPE_FLOAT = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TYPE_STRING = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TYPE_KEY = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TYPE_VECTOR = 5;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TYPE_ROTATION = 6;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TYPE_INVALID = 0;
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llGetListEntryType")]
         [LSLTooltip("Returns the type (an integer) of the entry at index in src.")]
-        [ScriptFunctionName("llGetListEntryType")]
         public int GetListEntryType(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
@@ -491,9 +478,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return (int)src[index].LSL_Type;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llGetListLength")]
         [LSLTooltip("Returns an integer that is the number of elements in the list src")]
-        [ScriptFunctionName("llGetListLength")]
         public int GetListLength(ScriptInstance instance, AnArray src)
         {
             return src.Count;
@@ -610,9 +596,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return res;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llParseString2List")]
         [LSLTooltip("Returns a list that is src broken into a list of strings, discarding separators, keeping spacers, discards any null (empty string) values generated.")]
-        [ScriptFunctionName("llParseString2List")]
         public AnArray ParseString2List(ScriptInstance instance,
             [LSLTooltip("source string")]
             string src,
@@ -624,9 +609,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return ParseString2List(instance, src, separators, spacers, false);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
         [LSLTooltip("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
-        [ScriptFunctionName("llParseStringKeepNulls")]
         public AnArray ParseStringKeepNulls(ScriptInstance instance,
             [LSLTooltip("source string")]
             string src,
@@ -638,9 +622,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             return ParseString2List(instance, src, separators, spacers, true);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llCSV2List")]
         [LSLTooltip("This function takes a string of values separated by commas, and turns it into a list.")]
-        [ScriptFunctionName("llCSV2List")]
         public AnArray CSV2List(ScriptInstance instance, string src)
         {
             bool wsconsume = true;

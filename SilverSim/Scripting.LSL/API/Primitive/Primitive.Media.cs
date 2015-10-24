@@ -10,117 +10,112 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 {
     public partial class Primitive_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llClearLinkMedia")]
+        [APILevel(APIFlags.LSL, "llClearLinkMedia")]
         public int ClearLinkMedia(ScriptInstance instance, int link, int face)
         {
             throw new NotImplementedException("llClearLinkMedia(int, int)");
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llClearPrimMedia")]
         [ForcedSleep(1.0)]
-        [ScriptFunctionName("llClearPrimMedia")]
         public int ClearPrimMedia(ScriptInstance instance, int face)
         {
             return ClearLinkMedia(instance, LINK_THIS, face);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_ALT_IMAGE_ENABLE = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_CONTROLS = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_CURRENT_URL = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_HOME_URL = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_AUTO_LOOP = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_AUTO_PLAY = 5;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_AUTO_SCALE = 6;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_AUTO_ZOOM = 7;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_FIRST_CLICK_INTERACT = 8;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_WIDTH_PIXELS = 9;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_HEIGHT_PIXELS = 10;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_WHITELIST_ENABLE = 11;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_WHITELIST = 12;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_PERMS_INTERACT = 13;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_PERMS_CONTROL = 14;
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_PERM_NONE = 0x0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_PERM_OWNER = 0x1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_PERM_GROUP = 0x2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_PERM_ANYONE = 0x4;
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_CONTROLS_STANDARD = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PRIM_MEDIA_CONTROLS_MINI = 1;
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_OK = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_MALFORMED_PARAMS = 1000;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_TYPE_MISMATCH = 1001;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_BOUNDS_ERROR = 1002;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_NOT_FOUND = 1003;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_NOT_SUPPORTED = 1004;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_INTERNAL_ERROR = 1999;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int LSL_STATUS_WHITELIST_FAILED = 2001;
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetPrimMediaParams")]
+        [APILevel(APIFlags.LSL, "llGetPrimMediaParams")]
         public AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
             throw new NotImplementedException("llGetPrimMediaParams(int, list)");
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_OK = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_MALFORMED_PARAMS = 1000;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_TYPE_MISMATCH = 1001;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_BOUNDS_ERROR = 1002;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_NOT_FOUND = 1003;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_NOT_SUPPORTED = 1004;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_INTERNAL_ERROR = 1999;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_WHITELIST_FAILED = 2001;
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetLinkMedia")]
+        [APILevel(APIFlags.LSL, "llSetLinkMedia")]
         public int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
             throw new NotImplementedException("llSetLinkMedia(int, int, list)");
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llSetPrimMediaParams")]
         [ForcedSleep(1.0)]
-        [ScriptFunctionName("llSetPrimMediaParams")]
         public int SetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
             return SetLinkMedia(instance, LINK_THIS, face, param);

@@ -16,9 +16,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
     public partial class Notecard_API
     {
         #region osMakeNotecard
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, "osMakeNotecard")]
         [LSLTooltip("Creates a notecard with text in the prim that contains the script. Contents can be either a list or a string.")]
-        [ScriptFunctionName("osMakeNotecard")]
         public void MakeNotecard(
             ScriptInstance instance, 
             [LSLTooltip("Name of notecard to be created")]
@@ -81,9 +80,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
         #endregion
 
         #region osGetNotecard
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, "osGetNotecard")]
         [LSLTooltip("read the entire contents of a notecard directly.\nIt does not use the dataserver event.")]
-        [ScriptFunctionName("osGetNotecard")]
         public string GetNotecard(
             ScriptInstance instance, 
             [LSLTooltip("name of notecard in inventory")]
@@ -113,9 +111,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
         #endregion
 
         #region osGetNotecardLine
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, "osGetNotecardLine")]
         [LSLTooltip("read a line of a notecard directly.\nIt does not use the dataserver event.")]
-        [ScriptFunctionName("osGetNotecardLine")]
         public string OsGetNotecardLine(
             ScriptInstance instance, 
             [LSLTooltip("name of notecard in inventory")]
@@ -152,9 +149,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
         #endregion
 
         #region osGetNumberOfNotecardLines
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, "osGetNumberOfNotecardLines")]
         [LSLTooltip("read number of lines of a notecard directly.\nIt does not use the dataserver event.")]
-        [ScriptFunctionName("osGetNumberOfNotecardLines")]
         public int OsGetNumberOfNotecardLines(
             ScriptInstance instance,
             [LSLTooltip("name of notecard in inventory")]

@@ -13,8 +13,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDie")]
+        [APILevel(APIFlags.LSL, "llDie")]
         public void Die(ScriptInstance instance)
         {
             instance.AbortBegin();

@@ -17,19 +17,19 @@ namespace SilverSim.Scripting.LSL.API.HTTP
 {
     public partial class HTTP_API
     {
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int HTTP_METHOD = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int HTTP_MIMETYPE = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int HTTP_BODY_MAXLENGTH = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int HTTP_VERIFY_CERT = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int HTTP_VERBOSE_THROTTLE = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int HTTP_CUSTOM_HEADER = 5;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int HTTP_PRAGMA_NO_CACHE = 6;
 
         private string[] m_AllowedHttpHeaders =
@@ -50,8 +50,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         static readonly Regex m_AuthRegex = new Regex(@"^(https?:\/\/)(\w+):(\w+)@(.*)$");
         static readonly Encoding UTF8NoBOM = new UTF8Encoding(false);
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llHTTPRequest")]
+        [APILevel(APIFlags.LSL, "llHTTPRequest")]
         public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
         {
             LSLHTTPClient_RequestQueue.LSLHttpRequest req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();

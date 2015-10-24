@@ -10,8 +10,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llIntegerToBase64")]
+        [APILevel(APIFlags.LSL, "llIntegerToBase64")]
         public string IntegerToBase64(ScriptInstance instance, int number)
         {
             byte[] b = BitConverter.GetBytes(number);
@@ -22,8 +21,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             return System.Convert.ToBase64String(b);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llBase64ToInteger")]
+        [APILevel(APIFlags.LSL, "llBase64ToInteger")]
         public int Base64ToInteger(ScriptInstance instance, string s)
         {
             if (s.Length > 8)
@@ -39,25 +37,22 @@ namespace SilverSim.Scripting.LSL.API.Base
             return BitConverter.ToInt32(b, 0);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llStringToBase64")]
+        [APILevel(APIFlags.LSL, "llStringToBase64")]
         public string StringToBase64(ScriptInstance instance, string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
             return System.Convert.ToBase64String(b);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llBase64ToString")]
+        [APILevel(APIFlags.LSL, "llBase64ToString")]
         public string Base64ToString(ScriptInstance instance, string str)
         {
             byte[] b = System.Convert.FromBase64String(str);
             return Encoding.UTF8.GetString(b);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llXorBase64")]
         [ForcedSleep(0.3)]
-        [ScriptFunctionName("llXorBase64")]
         public string XorBase64(ScriptInstance instance, string str1, string str2)
         {
             byte[] a = System.Convert.FromBase64String(str1);

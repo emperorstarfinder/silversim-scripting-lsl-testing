@@ -25,8 +25,7 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
 
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetVehicleFlags")]
+        [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
@@ -39,8 +38,7 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
             physobj.SetVehicleFlags = (VehicleFlags)flags;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llRemoveVehicleFlags")]
+        [APILevel(APIFlags.LSL, "llRemoveVehicleFlags")]
         public void RemoveVehicleFlags(ScriptInstance instance, int flags)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
@@ -53,43 +51,42 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
             physobj.ClearVehicleFlags = (VehicleFlags)flags;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY = 32;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_ANGULAR_DEFLECTION_TIMESCALE = 33;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE = 35;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_ANGULAR_MOTOR_TIMESCALE = 34;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_BANKING_EFFICIENCY = 38;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_BANKING_MIX = 39;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_BANKING_TIMESCALE = 40;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_BUOYANCY = 27;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_HOVER_HEIGHT = 24;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_HOVER_EFFICIENCY = 25;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_HOVER_TIMESCALE = 26;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_LINEAR_DEFLECTION_EFFICIENCY = 28;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_LINEAR_DEFLECTION_TIMESCALE = 29;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE = 31;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_LINEAR_MOTOR_TIMESCALE = 30;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY = 36;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetVehicleFloatParam")]
+        [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
         public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
@@ -194,10 +191,10 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_REFERENCE_FRAME = 44;
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetVehicleRotationParam")]
+
+        [APILevel(APIFlags.LSL, "llSetVehicleRotationParam")]
         public void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
@@ -218,20 +215,20 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_TYPE_NONE = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_TYPE_SLED = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_TYPE_CAR = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_TYPE_BOAT = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_TYPE_AIRPLANE = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_TYPE_BALLOON = 5;
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetVehicleType")]
+
+        [APILevel(APIFlags.LSL, "llSetVehicleType")]
         public void SetVehicleType(ScriptInstance instance, int type)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
@@ -273,18 +270,18 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_ANGULAR_FRICTION_TIMESCALE = 17;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_ANGULAR_MOTOR_DIRECTION = 19;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_LINEAR_FRICTION_TIMESCALE = 16;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_LINEAR_MOTOR_DIRECTION = 18;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetVehicleVectorParam")]
+
+        [APILevel(APIFlags.LSL, "llSetVehicleVectorParam")]
         public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
             IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;

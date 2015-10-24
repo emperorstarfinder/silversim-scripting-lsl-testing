@@ -9,8 +9,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llResetTime")]
+        [APILevel(APIFlags.LSL, "llResetTime")]
         public void ResetTime(ScriptInstance instance)
         {
             lock(instance)
@@ -19,8 +18,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetTime")]
+        [APILevel(APIFlags.LSL, "llGetTime")]
         public double GetTime(ScriptInstance instance)
         {
             double v;
@@ -31,8 +29,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             return v;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetAndResetTime")]
+        [APILevel(APIFlags.LSL, "llGetAndResetTime")]
         public double GetAndResetTime(ScriptInstance instance)
         {
             double old;

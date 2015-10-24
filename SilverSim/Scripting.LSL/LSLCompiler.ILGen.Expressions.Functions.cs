@@ -77,14 +77,19 @@ namespace SilverSim.Scripting.LSL
                 {
                     foreach (KeyValuePair<IScriptApi, MethodInfo> kvp in lslCompiler.m_Methods[functionTree.Entry])
                     {
-                        ScriptFunctionName funcNameAttr = null;
-                        ScriptFunctionName[] funcNameAttrs = System.Attribute.GetCustomAttributes(kvp.Value, typeof(ScriptFunctionName)) as ScriptFunctionName[];
+                        APILevel funcNameAttr = null;
+                        APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(kvp.Value, typeof(APILevel)) as APILevel[];
                         if(funcNameAttrs.Length != 0)
                         {
                             string funcName = functionTree.Entry;
-                            foreach(ScriptFunctionName it in funcNameAttrs)
+                            foreach (APILevel it in funcNameAttrs)
                             {
-                                if (it.Name == funcName && (it.ValidApis & compileState.AcceptedFlags) != 0)
+                                string itName = it.Name;
+                                if(string.IsNullOrEmpty(itName))
+                                {
+                                    itName = kvp.Value.Name;
+                                }
+                                if (itName == funcName && (it.Flags & compileState.AcceptedFlags) != 0)
                                 {
                                     funcNameAttr = it;
                                     break;

@@ -28,8 +28,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llMessageLinked")]
+        [APILevel(APIFlags.LSL, "llMessageLinked")]
         public void MessageLinked(ScriptInstance instance, int link, int num, string str, LSLKey id)
         {
             lock (instance)

@@ -15,8 +15,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetScriptName")]
+        [APILevel(APIFlags.LSL, "llGetScriptName")]
         public string GetScriptName(ScriptInstance instance)
         {
             lock (instance)
@@ -32,15 +31,13 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llResetScript")]
+        [APILevel(APIFlags.LSL, "llResetScript")]
         public void ResetScript(ScriptInstance instance)
         {
             throw new ResetScriptException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llResetOtherScript")]
+        [APILevel(APIFlags.LSL, "llResetOtherScript")]
         public void ResetOtherScript(ScriptInstance instance, string name)
         {
             lock (instance)
@@ -70,8 +67,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetScriptState")]
+        [APILevel(APIFlags.LSL, "llGetScriptState")]
         public int GetScriptState(ScriptInstance instance, string script)
         {
             ObjectPartInventoryItem item;
@@ -101,8 +97,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetScriptState")]
+        [APILevel(APIFlags.LSL, "llSetScriptState")]
         public void SetScriptState(ScriptInstance instance, string script, int running)
         {
             ObjectPartInventoryItem item;
@@ -132,8 +127,7 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llRemoteLoadScript")]
+        [APILevel(APIFlags.LSL, "llRemoteLoadScript")]
         public void RemoteLoadScript(ScriptInstance instance, LSLKey target, string name, int running, int start_param)
         {
             lock (instance)
@@ -142,9 +136,8 @@ namespace SilverSim.Scripting.LSL.API.Base
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llRemoteLoadScriptPin")]
         [ForcedSleep(3)]
-        [ScriptFunctionName("llRemoteLoadScriptPin")]
         public void RemoteLoadScriptPin(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param)
         {
             lock(instance)

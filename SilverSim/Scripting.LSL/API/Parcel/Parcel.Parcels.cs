@@ -15,60 +15,56 @@ namespace SilverSim.Scripting.LSL.API.Parcel
 {
     public partial class Parcel_API
     {
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_COUNT_TOTAL = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_COUNT_OWNER = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_COUNT_GROUP = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_COUNT_OTHER = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_COUNT_SELECTED = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_COUNT_TEMP = 5;
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_NAME = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_DESC = 1;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_OWNER = 2;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_GROUP = 3;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_AREA = 4;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_ID = 5;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_SEE_AVATARS = 6; // not implemented
 
         //osSetParcelDetails
         public const int PARCEL_DETAILS_CLAIMDATE = 10;
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetParcelDetails")]
+        [APILevel(APIFlags.LSL, "llGetParcelDetails")]
         public AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetParcelFlags")]
+        [APILevel(APIFlags.LSL, "llGetParcelFlags")]
         public int GetParcelFlags(ScriptInstance instance, Vector3 pos)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetParcelMaxPrims")]
+        [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
         public int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetParcelMusicURL")]
+        [APILevel(APIFlags.LSL, "llGetParcelMusicURL")]
         public string GetParcelMusicURL(ScriptInstance instance)
         {
             lock (instance)
@@ -93,30 +89,26 @@ namespace SilverSim.Scripting.LSL.API.Parcel
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llSetParcelMusicURL")]
         [ForcedSleep(2)]
-        [ScriptFunctionName("llSetParcelMusicURL")]
         public void SetParcelMusicURL(ScriptInstance instance, string url)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llReturnObjectsByID")]
+        [APILevel(APIFlags.LSL, "llReturnObjectsByID")]
         public int ReturnObjectsByID(ScriptInstance instance, AnArray objects)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llReturnObjectsByOwner")]
+        [APILevel(APIFlags.LSL, "llReturnObjectsByOwner")]
         public int ReturnObjectsByOwner(ScriptInstance instance, LSLKey owner, int scope)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetLandOwnerAt")]
+        [APILevel(APIFlags.LSL, "llGetLandOwnerAt")]
         public LSLKey GetLandOwnerAt(ScriptInstance instance, Vector3 pos)
         {
             lock (instance)
@@ -134,16 +126,14 @@ namespace SilverSim.Scripting.LSL.API.Parcel
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetParcelPrimCount")]
+        [APILevel(APIFlags.LSL, "llGetParcelPrimCount")]
         public int GetParcelPrimCount(ScriptInstance instance, Vector3 pos, int category, int sim_wide)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llGetParcelPrimOwners")]
         [ForcedSleep(2)]
-        [ScriptFunctionName("llGetParcelPrimOwners")]
         public AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
         {
             throw new NotImplementedException();

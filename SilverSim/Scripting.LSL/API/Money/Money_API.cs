@@ -27,8 +27,8 @@ namespace SilverSim.Scripting.LSL.API.Money
 
         }
 
-        [APILevel(APIFlags.LSL)]
-        [StateEventDelegate("transaction_result")]
+        [APILevel(APIFlags.LSL, "transaction_result")]
+        [StateEventDelegate]
         public delegate void State_transaction_result(LSLKey id, int success, string data);
 
         delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
@@ -88,8 +88,7 @@ namespace SilverSim.Scripting.LSL.API.Money
             d.BeginInvoke(transactionID, sourceid, destinationid, amount, instance, TransferMoneyEnd, this);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGiveMoney")]
+        [APILevel(APIFlags.LSL, "llGiveMoney")]
         public void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
@@ -101,8 +100,7 @@ namespace SilverSim.Scripting.LSL.API.Money
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llTransferLindenDollars")]
+        [APILevel(APIFlags.LSL, "llTransferLindenDollars")]
         public LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;

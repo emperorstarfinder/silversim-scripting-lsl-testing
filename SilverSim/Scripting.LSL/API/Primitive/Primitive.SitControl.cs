@@ -16,8 +16,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     public partial class Primitive_API
     {
         #region Sit Targets
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSitTarget")]
+        [APILevel(APIFlags.LSL, "llSitTarget")]
         public void SitTarget(ScriptInstance instance, Vector3 offset, Quaternion rot)
         {
             lock (instance)
@@ -27,8 +26,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llLinkSitTarget")]
+        [APILevel(APIFlags.LSL, "llLinkSitTarget")]
         public void LinkSitTarget(ScriptInstance instance, int link, Vector3 offset, Quaternion rot)
         {
             ObjectPart part;
@@ -48,8 +46,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.ASSL)]
-        [ScriptFunctionName("asGetSitTarget")]
+        [APILevel(APIFlags.ASSL, "asGetSitTarget")]
         public AnArray GetSitTarget(ScriptInstance instance)
         {
             AnArray res = new AnArray();
@@ -61,8 +58,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             return res;
         }
 
-        [APILevel(APIFlags.ASSL)]
-        [ScriptFunctionName("asGetLinkSitTarget")]
+        [APILevel(APIFlags.ASSL, "asGetLinkSitTarget")]
         public AnArray GetLinkSitTarget(ScriptInstance instance, int link)
         {
             ObjectPart part;
@@ -86,29 +82,25 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         #endregion
 
         #region Sit control
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llAvatarOnSitTarget")]
+        [APILevel(APIFlags.LSL, "llAvatarOnSitTarget")]
         public LSLKey AvatarOnSitTarget(ScriptInstance instance)
         {
             return AvatarOnLinkSitTarget(instance, LINK_THIS);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llAvatarOnLinkSitTarget")]
+        [APILevel(APIFlags.LSL, "llAvatarOnLinkSitTarget")]
         public LSLKey AvatarOnLinkSitTarget(ScriptInstance instance, int link)
         {
             throw new NotImplementedException("llAvatarOnLinkSitTarget(integer)");
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llForceMouselook")]
+        [APILevel(APIFlags.LSL, "llForceMouselook")]
         public void ForceMouselook(ScriptInstance instance, int mouselook)
         {
             throw new NotImplementedException("llForceMouselook(integer)");
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llUnSit")]
+        [APILevel(APIFlags.LSL, "llUnSit")]
         public void UnSit(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException("llUnSit(key)");

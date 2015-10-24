@@ -10,16 +10,14 @@ namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGenerateKey")]
+        [APILevel(APIFlags.LSL, "llGenerateKey")]
         public LSLKey GenerateKey(ScriptInstance instance)
         {
             return new LSLKey(UUID.Random);
         }
 
         #region osIsUUID
-        [APILevel(APIFlags.OSSL)]
-        [ScriptFunctionName("osIsUUID")]
+        [APILevel(APIFlags.OSSL, "osIsUUID")]
         public int IsUUID(ScriptInstance instance, string input)
         {
             Guid v;

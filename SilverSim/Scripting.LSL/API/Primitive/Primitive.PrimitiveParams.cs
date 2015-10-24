@@ -14,8 +14,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     {
         #region Primitives
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetKey")]
+        [APILevel(APIFlags.LSL, "llGetKey")]
         public LSLKey GetKey(ScriptInstance instance)
         {
             lock (instance)
@@ -24,8 +23,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llAllowInventoryDrop")]
+        [APILevel(APIFlags.LSL, "llAllowInventoryDrop")]
         public void AllowInventoryDrop(ScriptInstance instance, int add)
         {
             lock (instance)
@@ -34,8 +32,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetLinkPrimitiveParams")]
+        [APILevel(APIFlags.LSL, "llGetLinkPrimitiveParams")]
         public AnArray GetLinkPrimitiveParams(ScriptInstance instance, int link, AnArray param)
         {
             AnArray parout = new AnArray();
@@ -46,9 +43,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             return parout;
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llGetPrimitiveParams")]
         [ForcedSleep(0.2)]
-        [ScriptFunctionName("llGetPrimitiveParams")]
         public AnArray GetPrimitiveParams(ScriptInstance instance, AnArray param)
         {
             AnArray parout = new AnArray();
@@ -59,8 +55,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             return parout;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetLocalPos")]
+        [APILevel(APIFlags.LSL, "llGetLocalPos")]
         public Vector3 GetLocalPos(ScriptInstance instance)
         {
             lock (instance)
@@ -69,8 +64,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetPos")]
+        [APILevel(APIFlags.LSL, "llGetPos")]
         public Vector3 GetPos(ScriptInstance instance)
         {
             lock (instance)
@@ -79,8 +73,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetRootPosition")]
+        [APILevel(APIFlags.LSL, "llGetRootPosition")]
         public Vector3 GetRootPosition(ScriptInstance instance)
         {
             lock (instance)
@@ -89,8 +82,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetRootRotation")]
+        [APILevel(APIFlags.LSL, "llGetRootRotation")]
         public Quaternion GetRootRotation(ScriptInstance instance)
         {
             lock (instance)
@@ -99,8 +91,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetRot")]
+        [APILevel(APIFlags.LSL, "llGetRot")]
         public Quaternion GetRot(ScriptInstance instance)
         {
             lock (instance)
@@ -109,8 +100,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetScale")]
+        [APILevel(APIFlags.LSL, "llGetScale")]
         public Vector3 GetScale(ScriptInstance instance)
         {
             lock (instance)
@@ -119,8 +109,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llPassCollisions")]
+        [APILevel(APIFlags.LSL, "llPassCollisions")]
         public void PassCollisions(ScriptInstance instance, int pass)
         {
             lock (instance)
@@ -129,8 +118,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llPassTouches")]
+        [APILevel(APIFlags.LSL, "llPassTouches")]
         public void PassTouches(ScriptInstance instance, int pass)
         {
             lock (instance)
@@ -139,8 +127,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetClickAction")]
+        [APILevel(APIFlags.LSL, "llSetClickAction")]
         public void SetClickAction(ScriptInstance instance, int action)
         {
             lock (instance)
@@ -149,15 +136,13 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetPayPrice")]
+        [APILevel(APIFlags.LSL, "llSetPayPrice")]
         public void SetPayPrice(ScriptInstance instance, int price, AnArray quick_pay_buttons)
         {
             throw new NotImplementedException("llSetPayPrice(int, list)");
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetPos")]
+        [APILevel(APIFlags.LSL, "llSetPos")]
         public void SetPos(ScriptInstance instance, Vector3 pos)
         {
             lock (instance)
@@ -166,9 +151,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llSetPrimitiveParams")]
         [ForcedSleep(0.2)]
-        [ScriptFunctionName("llSetPrimitiveParams")]
         public void SetPrimitiveParams(ScriptInstance instance, AnArray rules)
         {
             lock (instance)
@@ -177,16 +161,14 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llSetLinkPrimitiveParams")]
         [ForcedSleep(0.2)]
-        [ScriptFunctionName("llSetLinkPrimitiveParams")]
         public void SetLinkPrimitiveParams(ScriptInstance instance, int linkTarget, AnArray rules)
         {
             SetLinkPrimitiveParamsFast(instance, linkTarget, rules);
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetLinkPrimitiveParamsFast")]
+        [APILevel(APIFlags.LSL, "llSetLinkPrimitiveParamsFast")]
         public void SetLinkPrimitiveParamsFast(ScriptInstance instance, int linkTarget, AnArray rules)
         {
             lock (instance)
@@ -195,8 +177,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetScale")]
+        [APILevel(APIFlags.LSL, "llSetScale")]
         public void SetScale(ScriptInstance instance, Vector3 size)
         {
             lock (instance)
@@ -205,8 +186,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetSitText")]
+        [APILevel(APIFlags.LSL, "llSetSitText")]
         public void SetSitText(ScriptInstance instance, string text)
         {
             lock (instance)
@@ -215,8 +195,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetText")]
+        [APILevel(APIFlags.LSL, "llSetText")]
         public void SetText(ScriptInstance instance, string text, Vector3 color, double alpha)
         {
             ObjectPart.TextParam tp = new ObjectPart.TextParam();
@@ -228,8 +207,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llSetTouchText")]
+        [APILevel(APIFlags.LSL, "llSetTouchText")]
         public void SetTouchText(ScriptInstance instance, string text)
         {
             lock (instance)
@@ -238,8 +216,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llTargetOmega")]
+        [APILevel(APIFlags.LSL, "llTargetOmega")]
         public void TargetOmega(ScriptInstance instance, Vector3 axis, double spinrate, double gain)
         {
             ObjectPart.OmegaParam op = new ObjectPart.OmegaParam();

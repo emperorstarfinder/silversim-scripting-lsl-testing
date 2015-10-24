@@ -12,8 +12,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
         /* REMARKS: The internal attribute for the LSLScript has been done deliberately here.
          * The other option of implementing this would have been to make it a namespace class of the Script class.
          */
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedGrab")]
+        [APILevel(APIFlags.LSL, "llDetectedGrab")]
         public Vector3 DetectedGrab(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -27,15 +26,13 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedGroup")]
+        [APILevel(APIFlags.LSL, "llDetectedGroup")]
         public int DetectedGroup(ScriptInstance instance, int number)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedKey")]
+        [APILevel(APIFlags.LSL, "llDetectedKey")]
         public LSLKey DetectedKey(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -49,8 +46,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedLinkNumber")]
+        [APILevel(APIFlags.LSL, "llDetectedLinkNumber")]
         public int DetectedLinkNumber(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -64,8 +60,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedName")]
+        [APILevel(APIFlags.LSL, "llDetectedName")]
         public string DetectedName(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -79,8 +74,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedOwner")]
+        [APILevel(APIFlags.LSL, "llDetectedOwner")]
         public LSLKey DetectedOwner(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -94,8 +88,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedPos")]
+        [APILevel(APIFlags.LSL, "llDetectedPos")]
         public Vector3 DetectedPos(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -109,8 +102,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedRot")]
+        [APILevel(APIFlags.LSL, "llDetectedRot")]
         public Quaternion DetectedRot(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -124,8 +116,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedTouchBinormal")]
+        [APILevel(APIFlags.LSL, "llDetectedTouchBinormal")]
         public Vector3 DetectedTouchBinormal(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -139,8 +130,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedTouchFace")]
+        [APILevel(APIFlags.LSL, "llDetectedTouchFace")]
         public int DetectedTouchFace(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -154,8 +144,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedTouchNormal")]
+        [APILevel(APIFlags.LSL, "llDetectedTouchNormal")]
         public Vector3 DetectedTouchNormal(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -169,8 +158,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedTouchPos")]
+        [APILevel(APIFlags.LSL, "llDetectedTouchPos")]
         public Vector3 DetectedTouchPos(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -184,8 +172,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             return Vector3.Zero;
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedTouchST")]
+        [APILevel(APIFlags.LSL, "llDetectedTouchST")]
         public Vector3 DetectedTouchST(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -199,8 +186,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedTouchUV")]
+        [APILevel(APIFlags.LSL, "llDetectedTouchUV")]
         public Vector3 DetectedTouchUV(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -214,14 +200,13 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llDetectedType")]
+        [APILevel(APIFlags.LSL, "llDetectedType")]
         public int DetectedType(ScriptInstance instance, int number)
         {
             throw new NotImplementedException();
         }
 
-        [ScriptFunctionName("llDetectedVel")]
+        [APILevel(APIFlags.LSL, "llDetectedVel")]
         public Vector3 DetectedVel(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;

@@ -45,78 +45,77 @@ namespace SilverSim.Scripting.LSL.API.WindLight
             return assetID;
         }
 
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_AMBIENT = 0;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_BLUE_DENSITY = 1;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_BLUR_HORIZON = 2;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_COLOR = 3;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_POS_DENSITY1 = 4;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_POS_DENSITY2 = 5;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_SCALE = 6;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_SCROLL_X = 7;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_SCROLL_Y = 8;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_SCROLL_X_LOCK = 9;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_SCROLL_Y_LOCK = 10;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_CLOUD_SHADOW = 11;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_DENSITY_MULTIPLIER = 12;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_DISTANCE_MULTIPLIER = 13;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_GAMMA = 14;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_GLOW = 15;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_HAZE_DENSITY = 16;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_HAZE_HORIZON = 17;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_LIGHT_NORMALS = 18;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_MAX_ALTITUDE = 19;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_STAR_BRIGHTNESS = 20;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_SKY_SUNLIGHT_COLOR = 21;
 
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_BLUR_MULTIPLIER = 22;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_FRESNEL_OFFSET = 23;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_FRESNEL_SCALE = 24;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_NORMAL_MAP = 25;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_NORMAL_SCALE = 26;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_SCALE_ABOVE = 27;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_SCALE_BELOW = 28;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_UNDERWATER_FOG_MODIFIER = 29;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_FOG_COLOR = 30;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_FOG_DENSITY = 31;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_BIG_WAVE_DIRECTION = 32;
-        [APILevel(APIFlags.WindLight_New)]
+        [APILevel(APIFlags.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_WATER_LITTLE_WAVE_DIRECTION = 33;
 
-        [APILevel(APIFlags.WindLight_New)]
-        [ScriptFunctionName("rwlWindlightGetWaterSettings")]
+        [APILevel(APIFlags.WindLight_New, "rwlWindlightGetWaterSettings")]
         public AnArray WindlightGetWaterSettings(ScriptInstance instance, AnArray rules)
         {
             AnArray res = new AnArray();
@@ -204,8 +203,7 @@ namespace SilverSim.Scripting.LSL.API.WindLight
             return res;
         }
 
-        [APILevel(APIFlags.WindLight_New)]
-        [ScriptFunctionName("rwlWindlightSetWaterSettings")]
+        [APILevel(APIFlags.WindLight_New, "rwlWindlightSetWaterSettings")]
         public int WindlightSetWaterSettings(ScriptInstance instance, AnArray rules)
         {
             EnvironmentSettings envsettings;

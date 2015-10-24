@@ -14,9 +14,9 @@ namespace SilverSim.Scripting.LSL.API.Chat
     [ScriptApiName("Chat")]
     public partial class Chat_API : MarshalByRefObject, IScriptApi, IPlugin
     {
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PUBLIC_CHANNEL = 0;
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int DEBUG_CHANNEL = 0x7FFFFFFF;
 
         private UUID GetOwner(ScriptInstance instance)
@@ -37,9 +37,9 @@ namespace SilverSim.Scripting.LSL.API.Chat
             }
         }
 
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int OS_LISTEN_REGEX_NAME = 0x1;
-        [APILevel(APIFlags.OSSL)]
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int OS_LISTEN_REGEX_MESSAGE = 0x2;
 
         public Chat_API()

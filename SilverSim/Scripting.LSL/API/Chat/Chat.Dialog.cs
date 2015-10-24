@@ -10,9 +10,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
 {
     public partial class Chat_API
     {
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llDialog")]
         [ForcedSleep(1)]
-        [ScriptFunctionName("llDialog")]
         public void Dialog(ScriptInstance instance, LSLKey avatar, string message, AnArray buttons, int channel)
         {
             lock (instance)
@@ -68,9 +67,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llTextBox")]
         [ForcedSleep(1)]
-        [ScriptFunctionName("llTextBox")]
         public void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
         {
             AnArray buttons = new AnArray();
@@ -78,9 +76,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
             Dialog(instance, avatar, message, buttons, channel);
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llLoadURL")]
         [ForcedSleep(10)]
-        [ScriptFunctionName("llLoadURL")]
         public void LoadURL(ScriptInstance instance, LSLKey avatar, string message, string url)
         {
             lock (instance)
@@ -103,9 +100,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llMapDestination")]
         [ForcedSleep(1)]
-        [ScriptFunctionName("llMapDestination")]
         public void MapDestination(ScriptInstance instance, string simname, Vector3 pos, Vector3 look_at)
         {
             lock(instance)

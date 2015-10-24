@@ -85,12 +85,19 @@ namespace SilverSim.Scripting.LSL
                             {
                                 foreach (FieldInfo fi in api.GetType().GetFields())
                                 {
-                                    APILevel level = (APILevel)System.Attribute.GetCustomAttribute(fi, typeof(APILevel));
-                                    if (level != null)
+                                    if (IsValidType(fi.FieldType))
                                     {
-                                        if (IsValidType(fi.FieldType))
+                                        APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(fi, typeof(APILevel)) as APILevel[];
+                                        foreach(APILevel level in apiLevelAttrs)
                                         {
-                                            writer.WriteNamedValue("key", fi.Name);
+                                            if (string.IsNullOrEmpty(level.Name))
+                                            {
+                                                writer.WriteNamedValue("key", fi.Name);
+                                            }
+                                            else
+                                            {
+                                                writer.WriteNamedValue("key", level.Name);
+                                            }
                                             writer.WriteStartElement("map");
                                             {
                                                 writer.WriteNamedValue("key", "type");
@@ -151,72 +158,82 @@ namespace SilverSim.Scripting.LSL
                             {
                                 foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                                 {
-                                    APILevel level = (APILevel)System.Attribute.GetCustomAttribute(t, typeof(APILevel));
+                                    APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevel)) as APILevel[];
                                     StateEventDelegate stateEventDel = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
-                                    if (level != null && stateEventDel != null)
+                                    MethodInfo mi = t.GetMethod("Invoke");
+                                    if (apiLevelAttrs.Length != 0 && stateEventDel != null)
                                     {
-                                        MethodInfo mi = t.GetMethod("Invoke");
-                                        writer.WriteNamedValue("key", stateEventDel.Name);
-                                        writer.WriteStartElement("map");
+                                        foreach (APILevel level in apiLevelAttrs)
                                         {
-                                            writer.WriteNamedValue("key", "arguments");
-                                            writer.WriteStartElement("map");
-                                            foreach (ParameterInfo pi in mi.GetParameters())
+                                            if (string.IsNullOrEmpty(level.Name))
                                             {
-                                                writer.WriteNamedValue("key", pi.Name);
-                                                writer.WriteNamedValue("string", MapType(pi.ParameterType));
-                                                LSLTooltip ptooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(pi, typeof(LSLTooltip));
-                                                writer.WriteNamedValue("key", "tooltip");
-                                                if (null != ptooltip)
-                                                {
-                                                    writer.WriteNamedValue("string", ptooltip.Tooltip);
-                                                }
-                                                else
-                                                {
-                                                    writer.WriteStartElement("string");
-                                                    writer.WriteEndElement();
-                                                }
-                                            }
-                                            writer.WriteEndElement();
-
-                                            LSLTooltip tooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(mi, typeof(LSLTooltip));
-                                            writer.WriteNamedValue("key", "tooltip");
-                                            string avail = "Supported for";
-                                            if ((level.Flags & APIFlags.LSL) != APIFlags.None)
-                                            {
-                                                avail += " LSL";
-                                            }
-                                            if ((level.Flags & APIFlags.LightShare) != APIFlags.None)
-                                            {
-                                                avail += " Lightshare";
-                                            }
-                                            if ((level.Flags & APIFlags.ASSL) != APIFlags.None)
-                                            {
-                                                avail += " ASSL";
-                                            }
-                                            if ((level.Flags & APIFlags.ASSL_Admin) != APIFlags.None)
-                                            {
-                                                avail += " Admin";
-                                            }
-                                            if ((level.Flags & APIFlags.WindLight_New) != APIFlags.None)
-                                            {
-                                                avail += " WindLight_New";
-                                            }
-                                            if ((level.Flags & APIFlags.OSSL) != APIFlags.None)
-                                            {
-                                                avail += " OSSL";
-                                            }
-
-                                            if (tooltip != null)
-                                            {
-                                                writer.WriteNamedValue("string", tooltip.Tooltip + "\\n" + avail);
+                                                writer.WriteNamedValue("key", mi.Name);
                                             }
                                             else
                                             {
-                                                writer.WriteNamedValue("string", t.Name + "\\n" + avail);
+                                                writer.WriteNamedValue("key", level.Name);
                                             }
+                                            writer.WriteStartElement("map");
+                                            {
+                                                writer.WriteNamedValue("key", "arguments");
+                                                writer.WriteStartElement("map");
+                                                foreach (ParameterInfo pi in mi.GetParameters())
+                                                {
+                                                    writer.WriteNamedValue("key", pi.Name);
+                                                    writer.WriteNamedValue("string", MapType(pi.ParameterType));
+                                                    LSLTooltip ptooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(pi, typeof(LSLTooltip));
+                                                    writer.WriteNamedValue("key", "tooltip");
+                                                    if (null != ptooltip)
+                                                    {
+                                                        writer.WriteNamedValue("string", ptooltip.Tooltip);
+                                                    }
+                                                    else
+                                                    {
+                                                        writer.WriteStartElement("string");
+                                                        writer.WriteEndElement();
+                                                    }
+                                                }
+                                                writer.WriteEndElement();
+
+                                                LSLTooltip tooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(mi, typeof(LSLTooltip));
+                                                writer.WriteNamedValue("key", "tooltip");
+                                                string avail = "Supported for";
+                                                if ((level.Flags & APIFlags.LSL) != APIFlags.None)
+                                                {
+                                                    avail += " LSL";
+                                                }
+                                                if ((level.Flags & APIFlags.LightShare) != APIFlags.None)
+                                                {
+                                                    avail += " Lightshare";
+                                                }
+                                                if ((level.Flags & APIFlags.ASSL) != APIFlags.None)
+                                                {
+                                                    avail += " ASSL";
+                                                }
+                                                if ((level.Flags & APIFlags.ASSL_Admin) != APIFlags.None)
+                                                {
+                                                    avail += " Admin";
+                                                }
+                                                if ((level.Flags & APIFlags.WindLight_New) != APIFlags.None)
+                                                {
+                                                    avail += " WindLight_New";
+                                                }
+                                                if ((level.Flags & APIFlags.OSSL) != APIFlags.None)
+                                                {
+                                                    avail += " OSSL";
+                                                }
+
+                                                if (tooltip != null)
+                                                {
+                                                    writer.WriteNamedValue("string", tooltip.Tooltip + "\\n" + avail);
+                                                }
+                                                else
+                                                {
+                                                    writer.WriteNamedValue("string", t.Name + "\\n" + avail);
+                                                }
+                                            }
+                                            writer.WriteEndElement();
                                         }
-                                        writer.WriteEndElement();
                                     }
                                 }
                             }
@@ -232,17 +249,15 @@ namespace SilverSim.Scripting.LSL
                             {
                                 foreach (MethodInfo mi in api.GetType().GetMethods())
                                 {
-                                    APILevel level = (APILevel)System.Attribute.GetCustomAttribute(mi, typeof(APILevel));
-                                    if (level != null)
+                                    foreach(APILevel level in (APILevel[])System.Attribute.GetCustomAttributes(mi, typeof(APILevel)))
                                     {
-                                        ScriptFunctionName funcNameAttr = System.Attribute.GetCustomAttribute(mi, typeof(ScriptFunctionName)) as ScriptFunctionName;
-                                        if (funcNameAttr != null)
+                                        if (string.IsNullOrEmpty(level.Name))
                                         {
-                                            writer.WriteNamedValue("key", funcNameAttr.Name);
+                                            writer.WriteNamedValue("key", mi.Name);
                                         }
                                         else
                                         {
-                                            writer.WriteNamedValue("key", mi.Name);
+                                            writer.WriteNamedValue("key", level.Name);
                                         }
                                         writer.WriteStartElement("map");
                                         {

@@ -10,8 +10,7 @@ namespace SilverSim.Scripting.LSL.API.Region
 {
     public partial class Region_API
     {
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetRegionName")]
+        [APILevel(APIFlags.LSL, "llGetRegionName")]
         public string GetRegionName(ScriptInstance instance)
         {
             lock (instance)
@@ -20,24 +19,21 @@ namespace SilverSim.Scripting.LSL.API.Region
             }
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llGetSimulatorHostname")]
         [ForcedSleep(10)]
-        [ScriptFunctionName("llGetSimulatorHostname")]
         public string GetSimulatorHostname(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL)]
-        [ScriptFunctionName("llGetRegionCorner")]
+        [APILevel(APIFlags.LSL, "llGetRegionCorner")]
         public Vector3 GetRegionCorner(ScriptInstance instance)
         {
             throw new NotImplementedException("llGetRegionCorner()");
         }
 
-        [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
-        [ScriptFunctionName("llRequestSimulatorData")]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
         {
             throw new NotImplementedException("llRequestSimulatorData(string, integer)");
