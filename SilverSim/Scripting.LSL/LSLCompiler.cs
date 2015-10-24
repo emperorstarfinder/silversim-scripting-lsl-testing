@@ -459,14 +459,14 @@ namespace SilverSim.Scripting.LSL
                 #region Collect constants
                 foreach (FieldInfo f in api.GetType().GetFields())
                 {
-                    APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
-                    if(apiLevelAttrs.Length != 0)
+                    if ((f.Attributes & FieldAttributes.Static) != 0)
                     {
-                        if ((f.Attributes & FieldAttributes.Static) != 0)
+                        if ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0)
                         {
-                            if ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0)
+                            if (IsValidType(f.FieldType))
                             {
-                                if (IsValidType(f.FieldType))
+                                APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
+                                if(apiLevelAttrs.Length != 0)
                                 {
                                     foreach(APILevel attr in apiLevelAttrs)
                                     {
@@ -570,13 +570,7 @@ namespace SilverSim.Scripting.LSL
                 foreach (MethodInfo m in api.GetType().GetMethods())
                 {
                     APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(APILevel)) as APILevel[];
-                    if (funcNameAttrs.Length == 0)
-                    {
-                        m_Log.DebugFormat("Method '{0}' in '{1}' has no ScriptFunctionName attribute!!!",
-                            m.Name,
-                            m.DeclaringType.FullName);
-                    }
-                    else
+                    if (funcNameAttrs.Length != 0)
                     {
                         ParameterInfo[] pi = m.GetParameters();
                         if (pi.Length >= 1)
