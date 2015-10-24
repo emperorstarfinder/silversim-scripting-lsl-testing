@@ -520,7 +520,7 @@ namespace SilverSim.Scripting.LSL
             foreach(string extension in apiExtensions)
             {
                 ApiInfo apiInfo;
-                if (m_ApiExtensions.TryGetValue(extension, out apiInfo))
+                if (m_ApiExtensions.TryGetValue(extension.ToLower(), out apiInfo))
                 {
                     compileState.ApiInfo.Add(apiInfo);
                 }
