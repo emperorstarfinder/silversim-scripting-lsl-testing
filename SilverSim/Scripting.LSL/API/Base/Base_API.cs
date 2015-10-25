@@ -113,10 +113,6 @@ namespace SilverSim.Scripting.LSL.API.Base
         [StateEventDelegate]
         public delegate void State_path_update(int type, AnArray reserved);
 
-        [APILevel(APIFlags.LSL, "remote_data")]
-        [StateEventDelegate]
-        public delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
-
         [APILevel(APIFlags.LSL, "sensor")]
         [StateEventDelegate]
         public delegate void State_sensor(int num_detected);
