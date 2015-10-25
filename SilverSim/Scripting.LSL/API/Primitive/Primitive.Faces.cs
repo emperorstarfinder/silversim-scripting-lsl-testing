@@ -125,14 +125,30 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         {
             lock (instance)
             {
-                try
+                if (face == ALL_SIDES)
                 {
-                    TextureEntryFace te = instance.Part.TextureEntry[(uint)face];
-                    return te.TextureColor.AsVector3;
+                    TextureEntry te = instance.Part.TextureEntry;
+                    Vector3 v = Vector3.Zero;
+                    int n = 0;
+
+                    for (face = 0; face < te.FaceTextures.Length && face < instance.Part.NumberOfSides; ++face)
+                    {
+                        v += te.FaceTextures[face].TextureColor.AsVector3;
+                    }
+                    v /= n;
+                    return v;
                 }
-                catch
+                else
                 {
-                    return Vector3.Zero;
+                    try
+                    {
+                        TextureEntryFace te = instance.Part.TextureEntry[(uint)face];
+                        return te.TextureColor.AsVector3;
+                    }
+                    catch
+                    {
+                        return Vector3.Zero;
+                    }
                 }
             }
         }
