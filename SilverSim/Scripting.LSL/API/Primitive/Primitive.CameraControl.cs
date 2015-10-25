@@ -1,6 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
@@ -110,7 +111,14 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
-                throw new NotImplementedException("llGetCameraPos()");
+                lock(this)
+                {
+                    IAgent agent;
+                    if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
+                    {
+                        return agent.CameraPosition;
+                    }
+                }
             }
             return Vector3.Zero;
         }
@@ -121,7 +129,14 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
-                throw new NotImplementedException("llGetCameraRot()");
+                lock(this)
+                {
+                    IAgent agent;
+                    if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
+                    {
+                        return agent.CameraRotation;
+                    }
+                }
             }
             return Quaternion.Identity;
         }
