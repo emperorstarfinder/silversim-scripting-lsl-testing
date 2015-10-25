@@ -6,6 +6,7 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Threading;
 
 namespace SilverSim.Scripting.LSL
 {
@@ -838,6 +839,7 @@ namespace SilverSim.Scripting.LSL
                 ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
             }
             ilgen.Emit(OpCodes.Ret);
+
             compileState.FinishControlFlowChecks();
         }
     }

@@ -49,13 +49,65 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelDetails")]
         public AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
         {
-            throw new NotImplementedException();
+            AnArray res = new AnArray();
+            lock (instance)
+            {
+                ParcelInfo pinfo;
+                if (instance.Part.ObjectGroup.Scene.Parcels.TryGetValue(pos, out pinfo))
+                {
+                    foreach(IValue val in param)
+                    {
+                        switch(val.AsInt)
+                        {
+                            case PARCEL_DETAILS_NAME:
+                                res.Add(pinfo.Name);
+                                break;
+
+                            case PARCEL_DETAILS_DESC:
+                                res.Add(pinfo.Description);
+                                break;
+
+                            case PARCEL_DETAILS_OWNER:
+                                res.Add(pinfo.Owner.ID);
+                                break;
+
+                            case PARCEL_DETAILS_GROUP:
+                                res.Add(pinfo.Group.ID);
+                                break;
+
+                            case PARCEL_DETAILS_AREA:
+                                res.Add(pinfo.Area);
+                                break;
+
+                            case PARCEL_DETAILS_ID:
+                                res.Add(pinfo.ID);
+                                break;
+
+                            case PARCEL_DETAILS_SEE_AVATARS:
+                                throw new NotImplementedException("PARCEL_DETAILS_SEE_AVATARS in llGetParcelDetails");
+
+                            default:
+                                res.Add(string.Empty);
+                                break;
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelFlags")]
         public int GetParcelFlags(ScriptInstance instance, Vector3 pos)
         {
-            throw new NotImplementedException();
+            lock(instance)
+            {
+                ParcelInfo pinfo;
+                if(instance.Part.ObjectGroup.Scene.Parcels.TryGetValue(pos, out pinfo))
+                {
+                    return (int)pinfo.Flags;
+                }
+                return 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
@@ -70,9 +122,10 @@ namespace SilverSim.Scripting.LSL.API.Parcel
             lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                try
+
+                ParcelInfo pInfo;
+                if(scene.Parcels.TryGetValue(instance.Part.ObjectGroup.Position, out pInfo))
                 {
-                    ParcelInfo pInfo = scene.Parcels[instance.Part.ObjectGroup.Position];
                     if (pInfo.Owner.EqualsGrid(instance.Part.Owner))
                     {
                         return pInfo.MusicURI;
@@ -82,7 +135,7 @@ namespace SilverSim.Scripting.LSL.API.Parcel
                         return string.Empty;
                     }
                 }
-                catch
+                else
                 {
                     return string.Empty;
                 }
@@ -93,7 +146,19 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [ForcedSleep(2)]
         public void SetParcelMusicURL(ScriptInstance instance, string url)
         {
-            throw new NotImplementedException();
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+
+                ParcelInfo pInfo;
+                if(scene.Parcels.TryGetValue(instance.Part.ObjectGroup.Position, out pInfo))
+                {
+                    if (pInfo.Owner.EqualsGrid(instance.Part.Owner))
+                    {
+                        pInfo.MusicURI = new URI(url);
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llReturnObjectsByID")]
@@ -114,12 +179,12 @@ namespace SilverSim.Scripting.LSL.API.Parcel
             lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                try
+                ParcelInfo pInfo;
+                if(scene.Parcels.TryGetValue(pos, out pInfo))
                 {
-                    ParcelInfo pInfo = scene.Parcels[pos];
                     return pInfo.Owner.ID;
                 }
-                catch
+                else
                 {
                     return UUID.Zero;
                 }

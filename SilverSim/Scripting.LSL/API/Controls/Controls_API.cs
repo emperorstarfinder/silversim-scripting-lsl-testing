@@ -61,19 +61,13 @@ namespace SilverSim.Scripting.LSL.API.Controls
                 {
                     return;
                 }
-                throw new NotImplementedException();
-#if NOT_IMPLEMENTED
                 IAgent agent;
-                try
-                {
-                    agent = instance.Part.ObjectGroup.Scene.Agents[grantinfo.PermsGranter.ID];
-                }
-                catch
+                if (!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
                 {
                     instance.ShoutError("llTakeControls: permission granter not in region");
                     return;
                 }
-#endif
+                throw new NotImplementedException();
             }
         }
 
@@ -85,16 +79,12 @@ namespace SilverSim.Scripting.LSL.API.Controls
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 grantinfo.PermsMask &= (~ScriptPermissions.TakeControls);
-                try
+                if(!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
                 {
-                    agent = instance.Part.ObjectGroup.Scene.Agents[grantinfo.PermsGranter.ID];
-                }
-                catch
-                {
-                    instance.ShoutError("llTakeControls: permission granter not in region");
+                    instance.ShoutError("llReleaseControls: permission granter not in region");
                     return;
                 }
-                agent.RevokePermissions(instance.Part.ID, instance.Item.ID, ScriptPermissions.TakeControls);
+                throw new NotImplementedException();
             }
         }
     }

@@ -50,6 +50,7 @@ namespace SilverSim.Scripting.LSL
         public const string LightShare = "LightShare";
         public const string WindLight_New = "WindLight";
         public const string WindLight_Aurora = "WindLight_Aurora";
+        public const string Admin = "Admin";
 
         public APIExtension(string extension, string name)
         {

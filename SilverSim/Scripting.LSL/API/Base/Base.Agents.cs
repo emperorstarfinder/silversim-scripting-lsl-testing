@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Agent;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
@@ -14,7 +15,10 @@ namespace SilverSim.Scripting.LSL.API.Base
         [APILevel(APIFlags.LSL, "llGetRegionAgentCount")]
         public int GetRegionAgentCount(ScriptInstance instance)
         {
-            return instance.Part.ObjectGroup.Scene.Agents.Count;
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.Agents.Count;
+            }
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
@@ -60,7 +64,15 @@ namespace SilverSim.Scripting.LSL.API.Base
         [APILevel(APIFlags.LSL, "llKey2Name")]
         public string Key2Name(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            lock(instance)
+            {
+                IObject obj;
+                if(instance.Part.ObjectGroup.Scene.Objects.TryGetValue(id, out obj))
+                {
+                    return obj.Name;
+                }
+            }
+            return string.Empty;
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentSize")]
@@ -69,20 +81,11 @@ namespace SilverSim.Scripting.LSL.API.Base
             lock (instance)
             {
                 IAgent agent;
-                try
-                {
-                    agent = instance.Part.ObjectGroup.Scene.Agents[id];
-                }
-                catch
+                if(!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
                 {
                     return Vector3.Zero;
                 }
-
-                if (agent.IsInScene(instance.Part.ObjectGroup.Scene))
-                {
-                    return agent.Size;
-                }
-                return Vector3.Zero;
+                return agent.Size;
             }
         }
 
@@ -94,9 +97,10 @@ namespace SilverSim.Scripting.LSL.API.Base
 
             lock (instance)
             {
+                UUID ownerID = instance.Part.ObjectGroup.Scene.Owner.ID;
                 foreach (IAgent agent in instance.Part.ObjectGroup.Scene.Agents)
                 {
-                    if (agent.ID == instance.Part.ObjectGroup.Scene.Owner.ID)
+                    if (agent.ID == ownerID)
                     {
                         continue;
                     }

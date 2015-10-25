@@ -4,6 +4,8 @@
 using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
 using System;
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Agent;
 
 namespace SilverSim.Scripting.LSL.API.Detected
 {
@@ -29,7 +31,15 @@ namespace SilverSim.Scripting.LSL.API.Detected
         [APILevel(APIFlags.LSL, "llDetectedGroup")]
         public int DetectedGroup(ScriptInstance instance, int number)
         {
-            throw new NotImplementedException();
+            Script script = (Script)instance;
+            lock (script)
+            {
+                if (script.m_Detected.Count > number && number >= 0)
+                {
+                    return script.m_Detected[number].Object.Group.Equals(instance.Part.Group).ToLSLBoolean();
+                }
+                return 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llDetectedKey")]
@@ -200,10 +210,76 @@ namespace SilverSim.Scripting.LSL.API.Detected
             }
         }
 
+        const int AGENT = 1;
+        const int ACTIVE = 2;
+        const int PASSIVE = 4;
+        const int SCRIPTED = 8;
+
         [APILevel(APIFlags.LSL, "llDetectedType")]
         public int DetectedType(ScriptInstance instance, int number)
         {
-            throw new NotImplementedException();
+            Script script = (Script)instance;
+            lock (script)
+            {
+                if (script.m_Detected.Count > number && number >= 0)
+                {
+                    IObject obj = script.m_Detected[number].Object;
+
+                    ObjectGroup grp;
+                    ObjectPart part;
+                    IAgent agent;
+                    if(null != (agent = obj as IAgent))
+                    {
+                        if (agent.SittingOnObject != null)
+                        {
+                            return AGENT;
+                        }
+                        else
+                        {
+                            return AGENT | ACTIVE;
+                        }
+                    }
+                    else if(null != (grp = obj as ObjectGroup))
+                    {
+                        int flags = 0;
+                        if(obj.PhysicsActor.IsPhysicsActive)
+                        {
+                            flags |= ACTIVE;
+                        }
+                        else
+                        {
+                            flags |= PASSIVE;
+                        }
+                        foreach(ObjectPart p in grp.Values)
+                        {
+                            if(p.Inventory.CountScripts != 0)
+                            {
+                                flags |= SCRIPTED;
+                                break;
+                            }
+                        }
+                        return flags;
+                    }
+                    else if (null != (part = obj as ObjectPart))
+                    {
+                        int flags = 0;
+                        if (part.ObjectGroup.PhysicsActor.IsPhysicsActive)
+                        {
+                            flags |= ACTIVE;
+                        }
+                        else
+                        {
+                            flags |= PASSIVE;
+                        }
+                        if(part.Inventory.CountScripts != 0)
+                        {
+                            flags |= SCRIPTED;
+                        }
+                        return flags;
+                    }
+                }
+                return 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llDetectedVel")]

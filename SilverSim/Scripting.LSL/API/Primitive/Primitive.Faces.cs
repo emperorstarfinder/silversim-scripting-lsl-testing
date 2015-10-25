@@ -123,7 +123,18 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [APILevel(APIFlags.LSL, "llGetColor")]
         public Vector3 GetColor(ScriptInstance instance, int face)
         {
-            return Vector3.Zero;
+            lock (instance)
+            {
+                try
+                {
+                    TextureEntryFace te = instance.Part.TextureEntry[(uint)face];
+                    return te.TextureColor.AsVector3;
+                }
+                catch
+                {
+                    return Vector3.Zero;
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSetColor")]
