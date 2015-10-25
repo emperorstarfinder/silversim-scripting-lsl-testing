@@ -365,7 +365,10 @@ namespace SilverSim.Scripting.LSL.API.WindLight
             envsettings.WaterSettings = waterSettings;
             lock(instance)
             {
-                instance.Part.ObjectGroup.Scene.EnvironmentSettings = envsettings;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                scene.EnvironmentSettings = envsettings;
+                /* Windlight settings are updated when we send a new RegionInfo to a viewer */
+                scene.TriggerRegionSettingsChanged();
             }
             return 1;
         }
