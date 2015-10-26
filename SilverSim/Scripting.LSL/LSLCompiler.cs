@@ -561,13 +561,6 @@ namespace SilverSim.Scripting.LSL
                                         apiInfo.Constants.Add(constName, f);
                                     }
                                 }
-                                else
-                                {
-                                    m_Log.DebugFormat("Invalid constant '{0}' in '{1}' has APILevel attribute. It does not have LSL compatible type '{2}'.",
-                                        f.Name,
-                                        f.DeclaringType.FullName,
-                                        f.FieldType.FullName);
-                                }
                             }
                             else
                             {

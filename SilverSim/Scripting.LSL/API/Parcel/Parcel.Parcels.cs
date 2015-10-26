@@ -44,6 +44,7 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         public const int PARCEL_DETAILS_SEE_AVATARS = 6; // not implemented
 
         //osSetParcelDetails
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_CLAIMDATE = 10;
 
         [APILevel(APIFlags.LSL, "llGetParcelDetails")]
