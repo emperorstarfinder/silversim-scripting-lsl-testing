@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL.API.Animation
 {
     [ScriptApiName("Animation")]
     [LSLImplementation]
-    public partial class Animation_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Animation_API : IScriptApi, IPlugin
     {
         public Animation_API()
         {

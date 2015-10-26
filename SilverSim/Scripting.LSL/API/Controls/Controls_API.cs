@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL.API.Controls
 {
     [ScriptApiName("Controls")]
     [LSLImplementation]
-    public partial class Controls_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Controls_API : IScriptApi, IPlugin
     {
         public Controls_API()
         {

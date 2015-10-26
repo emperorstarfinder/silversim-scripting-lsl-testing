@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.LSL.API.HTTP
 {
     [ScriptApiName("HTTP")]
     [LSLImplementation]
-    public partial class HTTP_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class HTTP_API : IScriptApi, IPlugin
     {
         LSLHTTP m_HTTPHandler;
         LSLHTTPClient_RequestQueue m_LSLHTTPClient;

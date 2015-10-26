@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL.API.Inventory
 {
     [ScriptApiName("Inventory")]
     [LSLImplementation]
-    public class Inventory_API : MarshalByRefObject, IScriptApi, IPlugin
+    public class Inventory_API : IScriptApi, IPlugin
     {
         public Inventory_API()
         {

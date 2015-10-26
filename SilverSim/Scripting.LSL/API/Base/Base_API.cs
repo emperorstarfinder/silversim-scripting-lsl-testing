@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.LSL.API.Base
 {
     [ScriptApiName("Base")]
     [LSLImplementation]
-    public partial class Base_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Base_API : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, "at_rot_target")]
         [StateEventDelegate]

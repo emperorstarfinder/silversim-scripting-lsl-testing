@@ -12,7 +12,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
 {
     [LSLImplementation]
     [ScriptApiName("Chat")]
-    public partial class Chat_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Chat_API : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PUBLIC_CHANNEL = 0;

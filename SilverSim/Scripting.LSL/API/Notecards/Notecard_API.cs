@@ -9,7 +9,7 @@ namespace SilverSim.Scripting.LSL.API.Notecards
 {
     [ScriptApiName("Notecard")]
     [LSLImplementation]
-    public partial class Notecard_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Notecard_API : IScriptApi, IPlugin
     {
         public Notecard_API()
         {

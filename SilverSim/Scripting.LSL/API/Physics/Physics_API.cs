@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL.API.Physics
 {
     [ScriptApiName("Physics")]
     [LSLImplementation]
-    public class Physics_API : MarshalByRefObject, IScriptApi, IPlugin
+    public class Physics_API : IScriptApi, IPlugin
     {
         public Physics_API()
         {

@@ -14,7 +14,7 @@ namespace SilverSim.Scripting.LSL.API.WindLight
 {
     [ScriptApiName("WindLight")]
     [LSLImplementation]
-    public class WindLight_API : MarshalByRefObject, IScriptApi, IPlugin
+    public class WindLight_API : IScriptApi, IPlugin
     {
         public WindLight_API()
         {

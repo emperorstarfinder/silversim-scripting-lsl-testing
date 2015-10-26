@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
 {
     [ScriptApiName("Detected")]
     [LSLImplementation]
-    public partial class Detected_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Detected_API : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int TOUCH_INVALID_FACE = -1;

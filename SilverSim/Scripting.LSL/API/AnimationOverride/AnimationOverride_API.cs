@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL.API.AnimationOverride
 {
     [ScriptApiName("AnimationOverride")]
     [LSLImplementation]
-    public partial class AnimationOverride_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class AnimationOverride_API : IScriptApi, IPlugin
     {
         public AnimationOverride_API()
         {

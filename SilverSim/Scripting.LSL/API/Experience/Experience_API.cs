@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.LSL.API.Experience
 {
     [ScriptApiName("Experience")]
     [LSLImplementation]
-    public partial class Experience_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Experience_API : IScriptApi, IPlugin
     {
         public Experience_API()
         {

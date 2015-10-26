@@ -12,7 +12,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 {
     [ScriptApiName("Primitive")]
     [LSLImplementation]
-    public partial class Primitive_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Primitive_API : IScriptApi, IPlugin
     {
         public UUID GetTextureAssetID(ScriptInstance instance, string item)
         {

@@ -14,7 +14,7 @@ namespace SilverSim.Scripting.LSL.API.Permissions
 {
     [ScriptApiName("Permissions")]
     [LSLImplementation]
-    public partial class Permissions_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Permissions_API : IScriptApi, IPlugin
     {
         public Permissions_API()
         {

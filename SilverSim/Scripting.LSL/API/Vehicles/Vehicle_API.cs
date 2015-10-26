@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
 {
     [ScriptApiName("Vehicle")]
     [LSLImplementation]
-    public class Vehicle_API : MarshalByRefObject, IScriptApi, IPlugin
+    public class Vehicle_API : IScriptApi, IPlugin
     {
         public Vehicle_API()
         {

@@ -15,7 +15,7 @@ namespace SilverSim.Scripting.LSL.API.Money
 {
     [ScriptApiName("Money")]
     [LSLImplementation]
-    public partial class Money_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Money_API : IScriptApi, IPlugin
     {
         public Money_API()
         {

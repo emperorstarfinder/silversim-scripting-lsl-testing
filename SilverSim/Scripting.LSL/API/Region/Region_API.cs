@@ -9,7 +9,7 @@ namespace SilverSim.Scripting.LSL.API.Region
 {
     [ScriptApiName("Region")]
     [LSLImplementation]
-    public partial class Region_API : MarshalByRefObject, IScriptApi, IPlugin
+    public partial class Region_API : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int REGION_FLAG_ALLOW_DAMAGE = 0x1;
