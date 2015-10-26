@@ -28,27 +28,13 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
-            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-            if (null == physobj)
-            {
-                instance.ShoutError("Object has not physical properties");
-                return;
-            }
-
-            physobj.SetVehicleFlags = (VehicleFlags)flags;
+            instance.Part.ObjectGroup.SetVehicleFlags = (VehicleFlags)flags;
         }
 
         [APILevel(APIFlags.LSL, "llRemoveVehicleFlags")]
         public void RemoveVehicleFlags(ScriptInstance instance, int flags)
         {
-            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-            if (null == physobj)
-            {
-                instance.ShoutError("Object has not physical properties");
-                return;
-            }
-
-            physobj.ClearVehicleFlags = (VehicleFlags)flags;
+            instance.Part.ObjectGroup.ClearVehicleFlags = (VehicleFlags)flags;
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
@@ -89,101 +75,94 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
         public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
-            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-            if(null == physobj)
-            {
-                instance.ShoutError("Object has not physical properties");
-                return;
-            }
-
             switch(param)
             {
                 case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
-                    physobj[VehicleVectorParamId.AngularFrictionTimescale] = new Vector3(value);
+                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularFrictionTimescale] = new Vector3(value);
                     break;
 
                 case VEHICLE_ANGULAR_MOTOR_DIRECTION:
-                    physobj[VehicleVectorParamId.AngularMotorDirection] = new Vector3(value);
+                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularMotorDirection] = new Vector3(value);
                     break;
 
                 case VEHICLE_LINEAR_FRICTION_TIMESCALE:
-                    physobj[VehicleVectorParamId.LinearFrictionTimescale] = new Vector3(value);
+                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale] = new Vector3(value);
                     break;
 
                 case VEHICLE_LINEAR_MOTOR_DIRECTION:
-                    physobj[VehicleVectorParamId.LinearMotorDirection] = new Vector3(value);
+                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection] = new Vector3(value);
                     break;
 
                 case VEHICLE_LINEAR_MOTOR_OFFSET:
-                    physobj[VehicleVectorParamId.LinearMotorOffset] = new Vector3(value);
+                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset] = new Vector3(value);
                     break;
 
                 case VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY:
-                    physobj[VehicleFloatParamId.AngularDeflectionEfficiency] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularDeflectionEfficiency] = value;
                     break;
 
                 case VEHICLE_ANGULAR_DEFLECTION_TIMESCALE:
-                    physobj[VehicleFloatParamId.AngularDeflectionTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularDeflectionTimescale] = value;
                     break;
 
                 case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
-                    physobj[VehicleFloatParamId.AngularMotorDecayTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularMotorDecayTimescale] = value;
                     break;
 
                 case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
-                    physobj[VehicleFloatParamId.AngularMotorTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularMotorTimescale] = value;
                     break;
 
                 case VEHICLE_BANKING_EFFICIENCY:
-                    physobj[VehicleFloatParamId.BankingEfficiency] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.BankingEfficiency] = value;
                     break;
 
                 case VEHICLE_BANKING_MIX:
-                    physobj[VehicleFloatParamId.BankingMix] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.BankingMix] = value;
                     break;
 
                 case VEHICLE_BANKING_TIMESCALE:
-                    physobj[VehicleFloatParamId.BankingTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.BankingTimescale] = value;
                     break;
 
                 case VEHICLE_BUOYANCY:
-                    physobj[VehicleFloatParamId.Buoyancy] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.Buoyancy] = value;
                     break;
 
                 case VEHICLE_HOVER_HEIGHT:
-                    physobj[VehicleFloatParamId.HoverHeight] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.HoverHeight] = value;
                     break;
 
                 case VEHICLE_HOVER_EFFICIENCY:
-                    physobj[VehicleFloatParamId.HoverEfficiency] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.HoverEfficiency] = value;
                     break;
 
                 case VEHICLE_HOVER_TIMESCALE:
-                    physobj[VehicleFloatParamId.HoverTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.HoverTimescale] = value;
                     break;
 
                 case VEHICLE_LINEAR_DEFLECTION_EFFICIENCY:
-                    physobj[VehicleFloatParamId.LinearDeflectionEfficiency] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearDeflectionEfficiency] = value;
                     break;
 
                 case VEHICLE_LINEAR_DEFLECTION_TIMESCALE:
-                    physobj[VehicleFloatParamId.LinearDeflectionTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearDeflectionTimescale] = value;
                     break;
 
                 case VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE:
-                    physobj[VehicleFloatParamId.LinearMotorDecayTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearMotorDecayTimescale] = value;
                     break;
 
                 case VEHICLE_LINEAR_MOTOR_TIMESCALE:
-                    physobj[VehicleFloatParamId.LinearMotorTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearMotorTimescale] = value;
                     break;
 
                 case VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY:
-                    physobj[VehicleFloatParamId.VerticalAttractionEfficiency] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.VerticalAttractionEfficiency] = value;
                     break;
 
                 case VEHICLE_VERTICAL_ATTRACTION_TIMESCALE:
-                    physobj[VehicleFloatParamId.VerticalAttractionTimescale] = value;
+                    instance.Part.ObjectGroup[VehicleFloatParamId.VerticalAttractionTimescale] = value;
                     break;
 
                 default:
@@ -197,17 +176,10 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleRotationParam")]
         public void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
-            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-            if (null == physobj)
-            {
-                instance.ShoutError("Object has not physical properties");
-                return;
-            }
-
             switch(param)
             {
                 case VEHICLE_REFERENCE_FRAME:
-                    physobj[VehicleRotationParamId.ReferenceFrame] = rot;
+                    instance.Part.ObjectGroup[VehicleRotationParamId.ReferenceFrame] = rot;
                     break;
 
                 default:
@@ -231,37 +203,30 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleType")]
         public void SetVehicleType(ScriptInstance instance, int type)
         {
-            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-            if(null == physobj)
-            {
-                instance.ShoutError("Object has not physical properties");
-                return;
-            }
-
             switch(type)
             {
                 case VEHICLE_TYPE_NONE:
-                    physobj.VehicleType = VehicleType.None;
+                    instance.Part.ObjectGroup.VehicleType = VehicleType.None;
                     break;
 
                 case VEHICLE_TYPE_SLED:
-                    physobj.VehicleType = VehicleType.Sled;
+                    instance.Part.ObjectGroup.VehicleType = VehicleType.Sled;
                     break;
 
                 case VEHICLE_TYPE_CAR:
-                    physobj.VehicleType = VehicleType.Car;
+                    instance.Part.ObjectGroup.VehicleType = VehicleType.Car;
                     break;
 
                 case VEHICLE_TYPE_BOAT:
-                    physobj.VehicleType = VehicleType.Boat;
+                    instance.Part.ObjectGroup.VehicleType = VehicleType.Boat;
                     break;
 
                 case VEHICLE_TYPE_AIRPLANE:
-                    physobj.VehicleType = VehicleType.Airplane;
+                    instance.Part.ObjectGroup.VehicleType = VehicleType.Airplane;
                     break;
 
                 case VEHICLE_TYPE_BALLOON:
-                    physobj.VehicleType = VehicleType.Balloon;
+                    instance.Part.ObjectGroup.VehicleType = VehicleType.Balloon;
                     break;
 
                 default:
@@ -284,33 +249,26 @@ namespace SilverSim.Scripting.LSL.API.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleVectorParam")]
         public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
-            IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-            if (null == physobj)
-            {
-                instance.ShoutError("Object has not physical properties");
-                return;
-            }
-
             switch(param)
             {
                 case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
-                    physobj[VehicleVectorParamId.AngularFrictionTimescale] = vec;
+                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularFrictionTimescale] = vec;
                     break;
                 
                 case VEHICLE_ANGULAR_MOTOR_DIRECTION:
-                    physobj[VehicleVectorParamId.AngularMotorDirection] = vec;
+                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularMotorDirection] = vec;
                     break;
                 
                 case VEHICLE_LINEAR_FRICTION_TIMESCALE:
-                    physobj[VehicleVectorParamId.LinearFrictionTimescale] = vec;
+                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale] = vec;
                     break;
                 
                 case VEHICLE_LINEAR_MOTOR_DIRECTION:
-                    physobj[VehicleVectorParamId.LinearMotorDirection] = vec;
+                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection] = vec;
                     break;
 
                 case VEHICLE_LINEAR_MOTOR_OFFSET:
-                    physobj[VehicleVectorParamId.LinearMotorOffset] = vec;
+                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset] = vec;
                     break;
 
             }

@@ -200,22 +200,24 @@ namespace SilverSim.Scripting.LSL
 
         }
 
-        private void OnPrimUpdate(ObjectPart part, ChangedEvent.ChangedFlags flags)
+        private void OnPrimUpdate(ObjectPart part, UpdateChangedFlags flags)
         {
-            if(flags != 0)
+            ChangedEvent.ChangedFlags changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
+            if (changedflags != 0)
             {
                 ChangedEvent e = new ChangedEvent();
-                e.Flags = flags;
+                e.Flags = changedflags;
                 PostEvent(e);
             }
         }
 
-        private void OnGroupUpdate(ObjectGroup group, ChangedEvent.ChangedFlags flags)
+        private void OnGroupUpdate(ObjectGroup group, UpdateChangedFlags flags)
         {
-            if (flags != 0)
+            ChangedEvent.ChangedFlags changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
+            if (changedflags != 0)
             {
                 ChangedEvent e = new ChangedEvent();
-                e.Flags = flags;
+                e.Flags = changedflags;
                 PostEvent(e);
             }
         }
