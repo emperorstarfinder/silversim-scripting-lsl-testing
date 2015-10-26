@@ -63,19 +63,30 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [APILevel(APIFlags.LSL, "llSetCameraAtOffset")]
         public void SetCameraAtOffset(ScriptInstance instance, Vector3 offset)
         {
-            throw new NotImplementedException("llSetCameraAtOffset(vector)");
+            lock(instance)
+            {
+                instance.Part.CameraAtOffset = offset;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSetLinkCamera")]
         public void SetLinkCamera(ScriptInstance instance, int link, Vector3 eye, Vector3 at)
         {
-            throw new NotImplementedException("llSetLinkCamera(int, vector, vector)");
+            lock (instance)
+            {
+                ObjectPart part = instance.Part.ObjectGroup[link];
+                part.CameraAtOffset = at;
+                part.CameraEyeOffset = eye;
+            }
         }
 
-        [APILevel(APIFlags.LSL, "llSetCameraOffset")]
-        public void SetCameraOffset(ScriptInstance instance, Vector3 offset)
+        [APILevel(APIFlags.LSL, "llSetCameraEyeOffset")]
+        public void SetCameraEyeOffset(ScriptInstance instance, Vector3 offset)
         {
-            throw new NotImplementedException("llSetCameraOffset(vector)");
+            lock (instance)
+            {
+                instance.Part.CameraEyeOffset = offset;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llClearCameraParams")]
