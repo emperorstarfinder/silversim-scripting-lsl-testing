@@ -6,7 +6,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using System;
 
-namespace SilverSim.Scripting.LSL.APIs.IM
+namespace SilverSim.Scripting.LSL.API.IM
 {
     [ScriptApiName("InstantMessage")]
     [LSLImplementation]
