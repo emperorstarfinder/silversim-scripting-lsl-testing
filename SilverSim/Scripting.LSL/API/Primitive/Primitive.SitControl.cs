@@ -97,7 +97,10 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         [APILevel(APIFlags.LSL, "llForceMouselook")]
         public void ForceMouselook(ScriptInstance instance, int mouselook)
         {
-            throw new NotImplementedException("llForceMouselook(integer)");
+            lock(instance)
+            {
+                instance.Part.ForceMouselook = mouselook != 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llUnSit")]
