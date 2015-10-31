@@ -126,7 +126,11 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             {
                 link = LINK_ROOT;
             }
-            if(!instance.Part.ObjectGroup.TryGetValue(link, out part))
+            if(LINK_THIS == link)
+            {
+                part = instance.Part;
+            }
+            else if(!instance.Part.ObjectGroup.TryGetValue(link, out part))
             {
                 return new AnArray();
             }
