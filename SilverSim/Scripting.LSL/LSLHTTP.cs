@@ -20,7 +20,7 @@ using ThreadedClasses;
 
 namespace SilverSim.Scripting.LSL
 {
-    sealed class LSLHTTP : IPlugin, IPluginShutdown
+    public sealed class LSLHTTP : IPlugin, IPluginShutdown
     {
         BaseHttpServer m_HttpServer;
         Timer m_HttpTimer;

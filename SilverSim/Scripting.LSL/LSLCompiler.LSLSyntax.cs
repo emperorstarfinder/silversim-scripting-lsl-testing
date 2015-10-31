@@ -439,10 +439,12 @@ namespace SilverSim.Scripting.LSL
                     }
                     writer.WriteEndElement();
 
-                    MD5 md5 = MD5.Create();
-                    LSLSyntaxFile = ms.GetBuffer();
-                    byte[] hash = md5.ComputeHash(LSLSyntaxFile);
-                    LSLSyntaxId = new UUID(hash, 0);
+                    using (MD5 md5 = MD5.Create())
+                    {
+                        LSLSyntaxFile = ms.GetBuffer();
+                        byte[] hash = md5.ComputeHash(LSLSyntaxFile);
+                        LSLSyntaxId = new UUID(hash, 0);
+                    }
                 }
             }
         }

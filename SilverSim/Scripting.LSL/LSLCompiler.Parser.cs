@@ -512,7 +512,7 @@ namespace SilverSim.Scripting.LSL
                 }
             }
 
-            if(windLightApiType != "" && !apiExtensions.Contains(windLightApiType))
+            if(windLightApiType.Length != 0 && !apiExtensions.Contains(windLightApiType))
             {
                 apiExtensions.Add(windLightApiType);
             }
