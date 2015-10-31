@@ -308,139 +308,122 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                     switch(param[i].AsInt)
                     {
                         case PRIM_MEDIA_ALT_IMAGE_ENABLE:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.IsAlternativeImageEnabled = param[i + 1].AsBoolean;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.IsAlternativeImageEnabled = param[i + 1].AsBoolean;
                             break;
 
                         case PRIM_MEDIA_CONTROLS:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                v = param[i + 1].AsInt;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            v = param[i + 1].AsInt;
                             if(v > PRIM_MEDIA_CONTROLS_MINI || v < PRIM_MEDIA_CONTROLS_STANDARD)
                             {
-                                return STATUS_MALFORMED_PARAMS;
+                                return STATUS_BOUNDS_ERROR;
                             }
                             entry.Controls = (Types.Primitive.PrimitiveMediaControls)v;
                             break;
 
                         case PRIM_MEDIA_CURRENT_URL:
+                            if(param[i + 1].LSL_Type != LSLValueType.String)
+                            {
+                                return STATUS_TYPE_MISMATCH;
+                            }
                             entry.CurrentURL = param[i + 1].ToString();
                             break;
 
                         case PRIM_MEDIA_HOME_URL:
+                            if(param[i + 1].LSL_Type != LSLValueType.String)
+                            {
+                                return STATUS_TYPE_MISMATCH;
+                            }
                             entry.HomeURL = param[i + 1].ToString();
                             break;
 
                         case PRIM_MEDIA_AUTO_LOOP:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.IsAutoLoop = param[i + 1].AsBoolean;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.IsAutoLoop = param[i + 1].AsBoolean;
                             break;
 
                             
                         case PRIM_MEDIA_AUTO_PLAY:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.IsAutoPlay = param[i + 1].AsBoolean;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.IsAutoPlay = param[i + 1].AsBoolean;
                             break;
 
                         case PRIM_MEDIA_AUTO_SCALE:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.IsAutoScale = param[i + 1].AsBoolean;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.IsAutoScale = param[i + 1].AsBoolean;
                             break;
 
                         case PRIM_MEDIA_AUTO_ZOOM:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.IsAutoZoom = param[i + 1].AsBoolean;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.IsAutoZoom = param[i + 1].AsBoolean;
                             break;
 
                         case PRIM_MEDIA_FIRST_CLICK_INTERACT:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.IsInteractOnFirstClick = param[i + 1].AsBoolean;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.IsInteractOnFirstClick = param[i + 1].AsBoolean;
                             break;
 
 
                         case PRIM_MEDIA_WIDTH_PIXELS:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.Width = param[i + 1].AsInt;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.Width = param[i + 1].AsInt;
                             if(entry.Width < 1)
                             {
-                                return STATUS_MALFORMED_PARAMS;
+                                return STATUS_BOUNDS_ERROR;
                             }
                             break;
 
                         case PRIM_MEDIA_HEIGHT_PIXELS:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.Height = param[i + 1].AsInt;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.Height = param[i + 1].AsInt;
                             if(entry.Height < 1)
                             {
-                                return STATUS_MALFORMED_PARAMS;
+                                return STATUS_BOUNDS_ERROR;
                             }
                             break;
 
                         case PRIM_MEDIA_WHITELIST_ENABLE:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.IsWhiteListEnabled = param[i + 1].AsBoolean;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.IsWhiteListEnabled = param[i + 1].AsBoolean;
                             break;
 
                         case PRIM_MEDIA_WHITELIST:
+                            if(param[i + 1].LSL_Type != LSLValueType.String)
+                            {
+                                return STATUS_TYPE_MISMATCH;
+                            }
+                            else
                             {
                                 string[] parts = param[i + 1].ToString().Split(',');
                                 string[] whitelist = new string[parts.Length];
@@ -453,25 +436,19 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                             break;
 
                         case PRIM_MEDIA_PERMS_INTERACT:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.InteractPermissions = (Types.Primitive.PrimitiveMediaPermission)param[i + 1].AsInt;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.InteractPermissions = (Types.Primitive.PrimitiveMediaPermission)param[i + 1].AsInt;
                             break;
 
                         case PRIM_MEDIA_PERMS_CONTROL:
-                            try
+                            if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
-                                entry.ControlPermissions = (Types.Primitive.PrimitiveMediaPermission)param[i + 1].AsInt;
+                                return STATUS_TYPE_MISMATCH;
                             }
-                            catch
-                            {
-                                return STATUS_MALFORMED_PARAMS;
-                            }
+                            entry.ControlPermissions = (Types.Primitive.PrimitiveMediaPermission)param[i + 1].AsInt;
                             break;
 
                         default:
