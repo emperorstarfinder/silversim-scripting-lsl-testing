@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.LSL.API.Base
         [APILevel(APIFlags.LSL, "llResetScript")]
         public void ResetScript(ScriptInstance instance)
         {
-            throw new ResetScriptException();
+            throw new ResetScriptException(); /* exception triggers state change code */
         }
 
         [APILevel(APIFlags.LSL, "llResetOtherScript")]
