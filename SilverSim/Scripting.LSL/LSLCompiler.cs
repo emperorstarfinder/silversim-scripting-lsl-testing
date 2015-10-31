@@ -79,8 +79,8 @@ namespace SilverSim.Scripting.LSL
         internal Dictionary<string, ApiInfo> m_ApiExtensions = new Dictionary<string, ApiInfo>();
 
         //Dictionary<string, MethodInfo> m_EventDelegates = new Dictionary<string, MethodInfo>();
-        List<Script.StateChangeEventDelegate> m_StateChangeDelegates = new List<ScriptInstance.StateChangeEventDelegate>();
-        List<Script.ScriptResetEventDelegate> m_ScriptResetDelegates = new List<ScriptInstance.ScriptResetEventDelegate>();
+        List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
+        List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
         List<string> m_ReservedWords = new List<string>();
         //internal Dictionary<string, APIFlags> m_MethodNames = new Dictionary<string, APIFlags>();
         List<char> m_SingleOps = new List<char>();
@@ -771,8 +771,8 @@ namespace SilverSim.Scripting.LSL
                         }
                         else
                         {
-                            Delegate d = Delegate.CreateDelegate(typeof(Script.StateChangeEventDelegate), null, m);
-                            m_StateChangeDelegates.Add((Script.StateChangeEventDelegate)d);
+                            Delegate d = Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m);
+                            m_StateChangeDelegates.Add((Action<ScriptInstance>)d);
                         }
                     }
 
@@ -800,8 +800,8 @@ namespace SilverSim.Scripting.LSL
                         }
                         else
                         {
-                            Delegate d = Delegate.CreateDelegate(typeof(Script.ScriptResetEventDelegate), null, m);
-                            m_ScriptResetDelegates.Add((Script.ScriptResetEventDelegate)d);
+                            Delegate d = Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m);
+                            m_ScriptResetDelegates.Add((Action<ScriptInstance>)d);
                         }
                     }
                 }
