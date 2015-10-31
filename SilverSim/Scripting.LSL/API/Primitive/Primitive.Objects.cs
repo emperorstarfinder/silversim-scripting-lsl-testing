@@ -7,6 +7,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
@@ -14,62 +15,64 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     public partial class Primitive_API
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_UNKNOWN_DETAIL = -1;
+        const int OBJECT_UNKNOWN_DETAIL = -1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_NAME = 1;
+        const int OBJECT_NAME = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_DESC = 2;
+        const int OBJECT_DESC = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_POS = 3;
+        const int OBJECT_POS = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_ROT = 4;
+        const int OBJECT_ROT = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_VELOCITY = 5;
+        const int OBJECT_VELOCITY = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_OWNER = 6;
+        const int OBJECT_OWNER = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_GROUP = 7;
+        const int OBJECT_GROUP = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_CREATOR = 8;
+        const int OBJECT_CREATOR = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_RUNNING_SCRIPT_COUNT = 9;
+        const int OBJECT_RUNNING_SCRIPT_COUNT = 9;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_TOTAL_SCRIPT_COUNT = 10;
+        const int OBJECT_TOTAL_SCRIPT_COUNT = 10;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_SCRIPT_MEMORY = 11;
+        const int OBJECT_SCRIPT_MEMORY = 11;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_SCRIPT_TIME = 12;
+        const int OBJECT_SCRIPT_TIME = 12;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_PRIM_EQUIVALENCE = 13;
+        const int OBJECT_PRIM_EQUIVALENCE = 13;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_SERVER_COST = 14;
+        const int OBJECT_SERVER_COST = 14;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_STREAMING_COST = 15;
+        const int OBJECT_STREAMING_COST = 15;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_PHYSICS_COST = 16;
+        const int OBJECT_PHYSICS_COST = 16;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_CHARACTER_TIME = 17;
+        const int OBJECT_CHARACTER_TIME = 17;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_ROOT = 18;
+        const int OBJECT_ROOT = 18;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_ATTACHED_POINT = 19;
+        const int OBJECT_ATTACHED_POINT = 19;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_PATHFINDING_TYPE = 20;
+        const int OBJECT_PATHFINDING_TYPE = 20;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_PHYSICS = 21;
+        const int OBJECT_PHYSICS = 21;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_PHANTOM = 22;
+        const int OBJECT_PHANTOM = 22;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int OBJECT_TEMP_ON_REZ = 23;
+        const int OBJECT_TEMP_ON_REZ = 23;
 
         [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
-        public Vector3 GetCenterOfMass(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetCenterOfMass(ScriptInstance instance)
         {
             throw new NotImplementedException("llGetCenterOfMass()");
         }
 
         [APILevel(APIFlags.LSL, "llGetCreator")]
-        public LSLKey GetCreator(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey GetCreator(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -78,7 +81,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectDesc")]
-        public string GetObjectDesc(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetObjectDesc(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -87,7 +91,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectDetails")]
-        public AnArray GetObjectDetails(ScriptInstance instance, AnArray param)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetObjectDetails(ScriptInstance instance, AnArray param)
         {
             AnArray parout = new AnArray();
             lock (instance)
@@ -98,7 +103,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectName")]
-        public string GetObjectName(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetObjectName(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -107,7 +113,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetObjectDesc")]
-        public void SetObjectDesc(ScriptInstance instance, string desc)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetObjectDesc(ScriptInstance instance, string desc)
         {
             lock (instance)
             {
@@ -116,7 +123,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetObjectName")]
-        public void SetObjectName(ScriptInstance instance, string name)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetObjectName(ScriptInstance instance, string name)
         {
             lock (instance)
             {
@@ -125,13 +133,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetRegionPos")]
-        public int SetRegionPos(ScriptInstance instance, Vector3 pos)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int SetRegionPos(ScriptInstance instance, Vector3 pos)
         {
             throw new NotImplementedException("llSetRegionPos(vector)");
         }
 
         [APILevel(APIFlags.LSL, "llGetVel")]
-        public Vector3 GetVel(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetVel(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -140,7 +150,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetOwner")]
-        public LSLKey GetOwner(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey GetOwner(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -149,7 +160,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetOwnerKey")]
-        public LSLKey GetOwnerKey(ScriptInstance instance, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey GetOwnerKey(ScriptInstance instance, LSLKey id)
         {
             lock (instance)
             {
@@ -167,7 +179,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetNumberOfPrims")]
-        public int GetNumberOfPrims(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int GetNumberOfPrims(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -176,7 +189,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkKey")]
-        public LSLKey GetLinkKey(ScriptInstance instance, int link)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey GetLinkKey(ScriptInstance instance, int link)
         {
             lock (instance)
             {
@@ -192,7 +206,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkName")]
-        public string GetLinkName(ScriptInstance instance, int link)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetLinkName(ScriptInstance instance, int link)
         {
             lock (instance)
             {
@@ -208,7 +223,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkNumber")]
-        public int GetLinkNumber(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int GetLinkNumber(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -219,10 +235,11 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         #region osMessageObject
         [APILevel(APIFlags.ASSL, "object_message")]
         [StateEventDelegate]
-        public delegate void State_object_message(LSLKey id, string data);
+        delegate void State_object_message(LSLKey id, string data);
 
         [APILevel(APIFlags.OSSL, "osMessageObject")]
-        public void MessageObject(ScriptInstance instance, LSLKey objectUUID, string message)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void MessageObject(ScriptInstance instance, LSLKey objectUUID, string message)
         {
             lock (instance)
             {

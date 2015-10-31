@@ -8,60 +8,62 @@ using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
     public partial class Primitive_API
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_PITCH = 0;
+        const int CAMERA_PITCH = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_OFFSET = 1;
+        const int CAMERA_FOCUS_OFFSET = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_OFFSET_X = 2;
+        const int CAMERA_FOCUS_OFFSET_X = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_OFFSET_Y = 3;
+        const int CAMERA_FOCUS_OFFSET_Y = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_OFFSET_Z = 4;
+        const int CAMERA_FOCUS_OFFSET_Z = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_POSITION_LAG = 5;
+        const int CAMERA_POSITION_LAG = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_LAG = 6;
+        const int CAMERA_FOCUS_LAG = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_DISTANCE = 7;
+        const int CAMERA_DISTANCE = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_BEHINDNESS_ANGLE = 8;
+        const int CAMERA_BEHINDNESS_ANGLE = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_BEHINDNESS_LAG = 9;
+        const int CAMERA_BEHINDNESS_LAG = 9;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_POSITION_THRESHOLD = 10;
+        const int CAMERA_POSITION_THRESHOLD = 10;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_THRESHOLD = 11;
+        const int CAMERA_FOCUS_THRESHOLD = 11;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_ACTIVE = 12;
+        const int CAMERA_ACTIVE = 12;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_POSITION = 13;
+        const int CAMERA_POSITION = 13;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_POSITION_X = 14;
+        const int CAMERA_POSITION_X = 14;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_POSITION_Y = 15;
+        const int CAMERA_POSITION_Y = 15;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_POSITION_Z = 16;
+        const int CAMERA_POSITION_Z = 16;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS = 17;
+        const int CAMERA_FOCUS = 17;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_X = 18;
+        const int CAMERA_FOCUS_X = 18;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_Y = 19;
+        const int CAMERA_FOCUS_Y = 19;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_Z = 20;
+        const int CAMERA_FOCUS_Z = 20;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_POSITION_LOCKED = 21;
+        const int CAMERA_POSITION_LOCKED = 21;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CAMERA_FOCUS_LOCKED = 22;
+        const int CAMERA_FOCUS_LOCKED = 22;
 
         [APILevel(APIFlags.LSL, "llSetCameraAtOffset")]
-        public void SetCameraAtOffset(ScriptInstance instance, Vector3 offset)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetCameraAtOffset(ScriptInstance instance, Vector3 offset)
         {
             lock(instance)
             {
@@ -70,7 +72,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetLinkCamera")]
-        public void SetLinkCamera(ScriptInstance instance, int link, Vector3 eye, Vector3 at)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetLinkCamera(ScriptInstance instance, int link, Vector3 eye, Vector3 at)
         {
             lock (instance)
             {
@@ -81,7 +84,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetCameraEyeOffset")]
-        public void SetCameraEyeOffset(ScriptInstance instance, Vector3 offset)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetCameraEyeOffset(ScriptInstance instance, Vector3 offset)
         {
             lock (instance)
             {
@@ -90,7 +94,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llClearCameraParams")]
-        public void ClearCameraParams(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void ClearCameraParams(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -103,7 +108,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetCameraParams")]
-        public void SetCameraParams(ScriptInstance instance, AnArray rules)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetCameraParams(ScriptInstance instance, AnArray rules)
         {
             lock (instance)
             {
@@ -117,7 +123,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetCameraPos")]
-        public Vector3 GetCameraPos(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetCameraPos(ScriptInstance instance)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
@@ -135,7 +142,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetCameraRot")]
-        public Quaternion GetCameraRot(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Quaternion GetCameraRot(ScriptInstance instance)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)

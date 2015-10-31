@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.LogListen
 {
@@ -24,7 +25,8 @@ namespace SilverSim.Scripting.LSL.API.LogListen
         }
 
         [APIExtension(APIExtension.Admin, "asLogListen")]
-        public void LogListen(ScriptInstance instance, int onChannel, int enable)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void LogListen(ScriptInstance instance, int onChannel, int enable)
         {
             throw new NotImplementedException();
         }

@@ -8,6 +8,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Animation
 {
@@ -25,7 +26,7 @@ namespace SilverSim.Scripting.LSL.API.Animation
 
         }
 
-        public UUID GetAnimationAssetID(ScriptInstance instance, string item)
+        UUID GetAnimationAssetID(ScriptInstance instance, string item)
         {
             UUID assetID;
             if (!UUID.TryParse(item, out assetID))
@@ -46,7 +47,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
         }
 
         [APILevel(APIFlags.LSL, "llStartAnimation")]
-        public void StartAnimation(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void StartAnimation(
             ScriptInstance instance,
             [LSLTooltip("animation to be played")]
             string anim)
@@ -77,7 +79,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
 
         [APILevel(APIFlags.OSSL, "osAvatarPlayAnimation")]
         [LSLTooltip("causes an animation to be played on the specified avatar.")]
-        public void AvatarPlayAnimation(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void AvatarPlayAnimation(
             ScriptInstance instance, 
             [LSLTooltip("UUID of the agent")]
             LSLKey avatar, 
@@ -105,7 +108,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
         }
 
         [APILevel(APIFlags.LSL, "llStopAnimation")]
-        public void StopAnimation(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void StopAnimation(
             ScriptInstance instance, 
             [LSLTooltip("animation to be stopped")]
             string anim)
@@ -136,7 +140,8 @@ namespace SilverSim.Scripting.LSL.API.Animation
 
         [APILevel(APIFlags.OSSL, "osAvatarStopAnimation")]
         [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
-        public void AvatarStopAnimation(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void AvatarStopAnimation(
             ScriptInstance instance,
             [LSLTooltip("UUID of the agent")]
             LSLKey avatar,
@@ -164,13 +169,15 @@ namespace SilverSim.Scripting.LSL.API.Animation
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimation")]
-        public string GetAnimation(ScriptInstance instance, LSLKey agent)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetAnimation(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimationList")]
-        public string GetAnimationList(ScriptInstance instance, LSLKey agent)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetAnimationList(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }

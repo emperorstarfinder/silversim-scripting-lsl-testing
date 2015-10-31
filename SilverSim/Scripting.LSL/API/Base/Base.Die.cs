@@ -8,13 +8,15 @@ using System.Text;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL, "llDie")]
-        public void Die(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void Die(ScriptInstance instance)
         {
             instance.AbortBegin();
             instance.Part.ObjectGroup.Scene.Remove(instance.Part.ObjectGroup, instance);

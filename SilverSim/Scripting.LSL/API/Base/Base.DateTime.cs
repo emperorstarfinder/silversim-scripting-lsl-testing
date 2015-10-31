@@ -8,13 +8,15 @@ using System.Text;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL, "llGetTimestamp")]
-        public string GetTimestamp(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetTimestamp(ScriptInstance instance)
         {
             return DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         }

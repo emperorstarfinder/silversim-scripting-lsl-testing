@@ -10,6 +10,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types;
 using SilverSim.Types;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -17,7 +18,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     {
         #region Sit Targets
         [APILevel(APIFlags.LSL, "llSitTarget")]
-        public void SitTarget(ScriptInstance instance, Vector3 offset, Quaternion rot)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SitTarget(ScriptInstance instance, Vector3 offset, Quaternion rot)
         {
             lock (instance)
             {
@@ -27,7 +29,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llLinkSitTarget")]
-        public void LinkSitTarget(ScriptInstance instance, int link, Vector3 offset, Quaternion rot)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void LinkSitTarget(ScriptInstance instance, int link, Vector3 offset, Quaternion rot)
         {
             ObjectPart part;
             lock (instance)
@@ -47,7 +50,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.ASSL, "asGetSitTarget")]
-        public AnArray GetSitTarget(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetSitTarget(ScriptInstance instance)
         {
             AnArray res = new AnArray();
             lock(instance)
@@ -59,7 +63,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.ASSL, "asGetLinkSitTarget")]
-        public AnArray GetLinkSitTarget(ScriptInstance instance, int link)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetLinkSitTarget(ScriptInstance instance, int link)
         {
             ObjectPart part;
             AnArray res = new AnArray();
@@ -83,19 +88,22 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         #region Sit control
         [APILevel(APIFlags.LSL, "llAvatarOnSitTarget")]
-        public LSLKey AvatarOnSitTarget(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey AvatarOnSitTarget(ScriptInstance instance)
         {
             return AvatarOnLinkSitTarget(instance, LINK_THIS);
         }
 
         [APILevel(APIFlags.LSL, "llAvatarOnLinkSitTarget")]
-        public LSLKey AvatarOnLinkSitTarget(ScriptInstance instance, int link)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey AvatarOnLinkSitTarget(ScriptInstance instance, int link)
         {
             throw new NotImplementedException("llAvatarOnLinkSitTarget(integer)");
         }
 
         [APILevel(APIFlags.LSL, "llForceMouselook")]
-        public void ForceMouselook(ScriptInstance instance, int mouselook)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void ForceMouselook(ScriptInstance instance, int mouselook)
         {
             lock(instance)
             {
@@ -104,7 +112,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llUnSit")]
-        public void UnSit(ScriptInstance instance, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void UnSit(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException("llUnSit(key)");
         }

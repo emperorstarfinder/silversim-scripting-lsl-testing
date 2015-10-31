@@ -4,13 +4,15 @@
 using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL, "llResetTime")]
-        public void ResetTime(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void ResetTime(ScriptInstance instance)
         {
             lock(instance)
             {
@@ -19,7 +21,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetTime")]
-        public double GetTime(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        double GetTime(ScriptInstance instance)
         {
             double v;
             lock (instance)
@@ -30,7 +33,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetAndResetTime")]
-        public double GetAndResetTime(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        double GetAndResetTime(ScriptInstance instance)
         {
             double old;
             lock(instance)

@@ -9,6 +9,7 @@ using SilverSim.ServiceInterfaces.Economy;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 
 namespace SilverSim.Scripting.LSL.API.Money
@@ -29,12 +30,12 @@ namespace SilverSim.Scripting.LSL.API.Money
 
         [APILevel(APIFlags.LSL, "transaction_result")]
         [StateEventDelegate]
-        public delegate void State_transaction_result(LSLKey id, int success, string data);
+        delegate void State_transaction_result(LSLKey id, int success, string data);
 
         delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
             UUI destinationid, int amount, ScriptInstance instance);
 
-        public void TransferMoney(UUID transactionID, UUI sourceid,
+        void TransferMoney(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance)
         {
             EconomyServiceInterface sourceservice = null;
@@ -89,7 +90,8 @@ namespace SilverSim.Scripting.LSL.API.Money
         }
 
         [APILevel(APIFlags.LSL, "llGiveMoney")]
-        public void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
@@ -101,7 +103,8 @@ namespace SilverSim.Scripting.LSL.API.Money
         }
 
         [APILevel(APIFlags.LSL, "llTransferLindenDollars")]
-        public LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||

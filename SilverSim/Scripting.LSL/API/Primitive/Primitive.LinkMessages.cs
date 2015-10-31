@@ -7,12 +7,13 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
     public partial class Primitive_API
     {
-        private void EnqueueToScripts(ObjectPart part, LinkMessageEvent ev)
+        void EnqueueToScripts(ObjectPart part, LinkMessageEvent ev)
         {
             foreach(ObjectPartInventoryItem item in part.Inventory.Values)
             {
@@ -29,7 +30,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llMessageLinked")]
-        public void MessageLinked(ScriptInstance instance, int link, int num, string str, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void MessageLinked(ScriptInstance instance, int link, int num, string str, LSLKey id)
         {
             lock (instance)
             {

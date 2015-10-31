@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Script;
 using System;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Agent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Detected
 {
@@ -15,7 +16,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
          * The other option of implementing this would have been to make it a namespace class of the Script class.
          */
         [APILevel(APIFlags.LSL, "llDetectedGrab")]
-        public Vector3 DetectedGrab(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedGrab(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -29,7 +31,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedGroup")]
-        public int DetectedGroup(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int DetectedGroup(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -43,7 +46,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedKey")]
-        public LSLKey DetectedKey(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey DetectedKey(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -57,7 +61,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedLinkNumber")]
-        public int DetectedLinkNumber(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int DetectedLinkNumber(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -71,7 +76,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedName")]
-        public string DetectedName(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string DetectedName(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -85,7 +91,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedOwner")]
-        public LSLKey DetectedOwner(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey DetectedOwner(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -99,7 +106,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedPos")]
-        public Vector3 DetectedPos(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedPos(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -113,7 +121,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedRot")]
-        public Quaternion DetectedRot(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Quaternion DetectedRot(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -127,7 +136,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchBinormal")]
-        public Vector3 DetectedTouchBinormal(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedTouchBinormal(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -141,7 +151,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchFace")]
-        public int DetectedTouchFace(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int DetectedTouchFace(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -155,7 +166,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchNormal")]
-        public Vector3 DetectedTouchNormal(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedTouchNormal(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -169,7 +181,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchPos")]
-        public Vector3 DetectedTouchPos(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedTouchPos(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -183,7 +196,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchST")]
-        public Vector3 DetectedTouchST(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedTouchST(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -197,7 +211,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchUV")]
-        public Vector3 DetectedTouchUV(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedTouchUV(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -216,7 +231,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         const int SCRIPTED = 8;
 
         [APILevel(APIFlags.LSL, "llDetectedType")]
-        public int DetectedType(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int DetectedType(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)
@@ -283,7 +299,8 @@ namespace SilverSim.Scripting.LSL.API.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedVel")]
-        public Vector3 DetectedVel(ScriptInstance instance, int number)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 DetectedVel(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
             lock (script)

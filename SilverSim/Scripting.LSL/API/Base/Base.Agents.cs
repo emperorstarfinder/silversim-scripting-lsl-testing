@@ -7,13 +7,15 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL, "llGetRegionAgentCount")]
-        public int GetRegionAgentCount(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int GetRegionAgentCount(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -22,47 +24,52 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int DATA_ONLINE = 1;
+        const int DATA_ONLINE = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int DATA_NAME = 2;
+        const int DATA_NAME = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int DATA_BORN = 3;
+        const int DATA_BORN = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int DATA_RATING = 4;
+        const int DATA_RATING = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int DATA_PAYINFO = 8;
+        const int DATA_PAYINFO = 8;
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int PAYMENT_INFO_ON_FILE = 0x1;
+        const int PAYMENT_INFO_ON_FILE = 0x1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int PAYMENT_INFO_USED = 0x2;
+        const int PAYMENT_INFO_USED = 0x2;
 
         [APILevel(APIFlags.LSL, "llRequestAgentData")]
-        public LSLKey RequestAgentData(ScriptInstance instance, LSLKey id, int data)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey RequestAgentData(ScriptInstance instance, LSLKey id, int data)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llRequestDisplayName")]
-        public LSLKey RequestDisplayName(ScriptInstance instance, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey RequestDisplayName(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llRequestUsername")]
-        public LSLKey RequestUsername(ScriptInstance instance, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey RequestUsername(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetDisplayName")]
-        public string GetDisplayName(ScriptInstance instance, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetDisplayName(ScriptInstance instance, LSLKey id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llKey2Name")]
-        public string Key2Name(ScriptInstance instance, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string Key2Name(ScriptInstance instance, LSLKey id)
         {
             lock(instance)
             {
@@ -76,7 +83,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentSize")]
-        public Vector3 GetAgentSize(ScriptInstance instance, LSLKey id)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetAgentSize(ScriptInstance instance, LSLKey id)
         {
             lock (instance)
             {
@@ -91,7 +99,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         #region osGetAvatarList
         [APILevel(APIFlags.OSSL, "osGetAvatarList")]
-        public AnArray GetAvatarList(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetAvatarList(ScriptInstance instance)
         {
             AnArray res = new AnArray();
 
@@ -115,7 +124,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         #region osGetAgents
         [APILevel(APIFlags.OSSL, "osGetAgents")]
-        public AnArray GetAgents(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetAgents(ScriptInstance instance)
         {
             AnArray res = new AnArray();
 

@@ -3,13 +3,15 @@
 
 using SilverSim.Scene.Types.Script;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL, "llDeleteSubString")]
-        public string DeleteSubString(ScriptInstance instance, string src, int start, int end)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string DeleteSubString(ScriptInstance instance, string src, int start, int end)
         {
             if (start < 0)
             {
@@ -49,40 +51,45 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llToLower")]
-        public string ToLower(ScriptInstance instance, string s)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string ToLower(ScriptInstance instance, string s)
         {
             return s.ToLower();
         }
 
         [APILevel(APIFlags.LSL, "llToUpper")]
-        public string ToUpper(ScriptInstance instance, string s)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string ToUpper(ScriptInstance instance, string s)
         {
             return s.ToUpper();
         }
 
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
-        public string UnescapeURL(ScriptInstance instance, string url)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string UnescapeURL(ScriptInstance instance, string url)
         {
             return Uri.UnescapeDataString(url);
         }
 
         [APILevel(APIFlags.LSL, "llEscapeURL")]
-        public string EscapeURL(ScriptInstance instance, string url)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string EscapeURL(ScriptInstance instance, string url)
         {
             return Uri.EscapeDataString(url);
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int STRING_TRIM_HEAD = 0x1;
+        const int STRING_TRIM_HEAD = 0x1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int STRING_TRIM_TAIL = 0x2;
+        const int STRING_TRIM_TAIL = 0x2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int STRING_TRIM = 0x3;
+        const int STRING_TRIM = 0x3;
 
-        private static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
+        static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
 
         [APILevel(APIFlags.LSL, "llStringTrim")]
-        public string StringTrim(ScriptInstance instance, string src, int type)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string StringTrim(ScriptInstance instance, string src, int type)
         {
             switch(type & STRING_TRIM)
             {
@@ -102,19 +109,22 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
-        public int StringLength(ScriptInstance instance, string src)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int StringLength(ScriptInstance instance, string src)
         {
             return src.Length;
         }
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
-        public int SubStringIndex(ScriptInstance instance, string source, string pattern)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int SubStringIndex(ScriptInstance instance, string source, string pattern)
         {
             return source.IndexOf(pattern);
         }
 
         [APILevel(APIFlags.LSL, "llGetSubstring")]
-        public string GetSubstring(ScriptInstance instance, string src, int start, int end)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetSubstring(ScriptInstance instance, string src, int start, int end)
         {
             if(start < 0)
             {

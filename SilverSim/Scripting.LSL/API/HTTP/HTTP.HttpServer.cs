@@ -8,13 +8,15 @@ using System.Text;
 using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.HTTP
 {
     public partial class HTTP_API
     {
         [APILevel(APIFlags.LSL, "llRequestURL")]
-        public LSLKey RequestURL(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey RequestURL(ScriptInstance instance)
         {
             lock(instance)
             {
@@ -41,7 +43,8 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.LSL, "llReleaseURL")]
-        public void ReleaseURL(ScriptInstance instance, string url)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void ReleaseURL(ScriptInstance instance, string url)
         {
             lock (instance)
             {
@@ -50,7 +53,8 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.LSL, "llRequestSecureURL")]
-        public LSLKey RequestSecureURL(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey RequestSecureURL(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -77,7 +81,8 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.LSL, "llGetHTTPHeader")]
-        public string GetHTTPHeader(ScriptInstance instance, LSLKey requestID, string header)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetHTTPHeader(ScriptInstance instance, LSLKey requestID, string header)
         {
             lock (instance)
             {
@@ -86,7 +91,8 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.LSL, "llHTTPResponse")]
-        public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, string body)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, string body)
         {
             lock(instance)
             {
@@ -95,26 +101,27 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_TEXT = 0;
+        const int CONTENT_TYPE_TEXT = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_HTML = 1;
+        const int CONTENT_TYPE_HTML = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_XML = 2;
+        const int CONTENT_TYPE_XML = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_XHTML = 3;
+        const int CONTENT_TYPE_XHTML = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_ATOM = 4;
+        const int CONTENT_TYPE_ATOM = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_JSON = 5;
+        const int CONTENT_TYPE_JSON = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_LLSD = 6;
+        const int CONTENT_TYPE_LLSD = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_FORM = 7;
+        const int CONTENT_TYPE_FORM = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int CONTENT_TYPE_RSS = 8;
+        const int CONTENT_TYPE_RSS = 8;
 
         [APILevel(APIFlags.LSL, "llSetContentType")]
-        public void SetContentType(ScriptInstance instance, LSLKey requestID, int contenttype)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetContentType(ScriptInstance instance, LSLKey requestID, int contenttype)
         {
             lock(instance)
             {
@@ -135,7 +142,8 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.OSSL, "osSetContentType")]
-        public void SetContentType(ScriptInstance instance, LSLKey id, string type)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetContentType(ScriptInstance instance, LSLKey id, string type)
         {
             lock(instance)
             {

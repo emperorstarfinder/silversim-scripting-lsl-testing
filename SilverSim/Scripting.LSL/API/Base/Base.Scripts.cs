@@ -10,13 +10,15 @@ using SilverSim.Types.Agent;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Inventory;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL, "llGetScriptName")]
-        public string GetScriptName(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetScriptName(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -32,13 +34,15 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llResetScript")]
-        public void ResetScript(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void ResetScript(ScriptInstance instance)
         {
             throw new ResetScriptException(); /* exception triggers state change code */
         }
 
         [APILevel(APIFlags.LSL, "llResetOtherScript")]
-        public void ResetOtherScript(ScriptInstance instance, string name)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void ResetOtherScript(ScriptInstance instance, string name)
         {
             lock (instance)
             {
@@ -68,7 +72,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetScriptState")]
-        public int GetScriptState(ScriptInstance instance, string script)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int GetScriptState(ScriptInstance instance, string script)
         {
             ObjectPartInventoryItem item;
             ScriptInstance si;
@@ -98,7 +103,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llSetScriptState")]
-        public void SetScriptState(ScriptInstance instance, string script, int running)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetScriptState(ScriptInstance instance, string script, int running)
         {
             ObjectPartInventoryItem item;
             ScriptInstance si;
@@ -128,7 +134,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llRemoteLoadScript")]
-        public void RemoteLoadScript(ScriptInstance instance, LSLKey target, string name, int running, int start_param)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void RemoteLoadScript(ScriptInstance instance, LSLKey target, string name, int running, int start_param)
         {
             lock (instance)
             {
@@ -138,7 +145,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llRemoteLoadScriptPin")]
         [ForcedSleep(3)]
-        public void RemoteLoadScriptPin(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void RemoteLoadScriptPin(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param)
         {
             lock(instance)
             {

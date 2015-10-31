@@ -10,6 +10,7 @@ using SilverSim.Types.Asset;
 using SilverSim.Types.Asset.Format;
 using SilverSim.Types.Inventory;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Notecards
 {
@@ -18,7 +19,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
         #region osMakeNotecard
         [APILevel(APIFlags.OSSL, "osMakeNotecard")]
         [LSLTooltip("Creates a notecard with text in the prim that contains the script. Contents can be either a list or a string.")]
-        public void MakeNotecard(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void MakeNotecard(
             ScriptInstance instance, 
             [LSLTooltip("Name of notecard to be created")]
             string notecardName, 
@@ -38,9 +40,14 @@ namespace SilverSim.Scripting.LSL.API.Notecards
             MakeNotecard(instance, notecardName, nc);
         }
 
-        public void MakeNotecard(
-            ScriptInstance instance, 
-            string notecardName, 
+        [APILevel(APIFlags.OSSL, "osMakeNotecard")]
+        [LSLTooltip("Creates a notecard with text in the prim that contains the script. Contents can be either a list or a string.")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void MakeNotecard(
+            ScriptInstance instance,
+            [LSLTooltip("Name of notecard to be created")]
+            string notecardName,
+            [LSLTooltip("Contents for the notecard.")]
             string contents)
         {
             lock (instance)
@@ -82,7 +89,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
         #region osGetNotecard
         [APILevel(APIFlags.OSSL, "osGetNotecard")]
         [LSLTooltip("read the entire contents of a notecard directly.\nIt does not use the dataserver event.")]
-        public string GetNotecard(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetNotecard(
             ScriptInstance instance, 
             [LSLTooltip("name of notecard in inventory")]
             string name)
@@ -113,7 +121,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
         #region osGetNotecardLine
         [APILevel(APIFlags.OSSL, "osGetNotecardLine")]
         [LSLTooltip("read a line of a notecard directly.\nIt does not use the dataserver event.")]
-        public string OsGetNotecardLine(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string OsGetNotecardLine(
             ScriptInstance instance, 
             [LSLTooltip("name of notecard in inventory")]
             string name, 
@@ -151,7 +160,8 @@ namespace SilverSim.Scripting.LSL.API.Notecards
         #region osGetNumberOfNotecardLines
         [APILevel(APIFlags.OSSL, "osGetNumberOfNotecardLines")]
         [LSLTooltip("read number of lines of a notecard directly.\nIt does not use the dataserver event.")]
-        public int OsGetNumberOfNotecardLines(
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int OsGetNumberOfNotecardLines(
             ScriptInstance instance,
             [LSLTooltip("name of notecard in inventory")]
             string name)

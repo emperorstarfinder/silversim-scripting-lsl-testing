@@ -6,13 +6,15 @@ using SilverSim.Scene.Types.Script;
 using System;
 using SilverSim.Scripting.Common;
 using SilverSim.Main.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Region
 {
     public partial class Region_API
     {
         [APILevel(APIFlags.LSL, "llGetRegionName")]
-        public string GetRegionName(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetRegionName(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -22,7 +24,8 @@ namespace SilverSim.Scripting.LSL.API.Region
 
         [APILevel(APIFlags.LSL, "llGetSimulatorHostname")]
         [ForcedSleep(10)]
-        public string GetSimulatorHostname(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string GetSimulatorHostname(ScriptInstance instance)
         {
             lock(this)
             {
@@ -33,7 +36,8 @@ namespace SilverSim.Scripting.LSL.API.Region
         }
 
         [APILevel(APIFlags.LSL, "llGetRegionCorner")]
-        public Vector3 GetRegionCorner(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetRegionCorner(ScriptInstance instance)
         {
             lock(this)
             {
@@ -43,13 +47,15 @@ namespace SilverSim.Scripting.LSL.API.Region
 
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
-        public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
         {
             throw new NotImplementedException("llRequestSimulatorData(string, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llGetEnv")]
-        public string llGetEnv(ScriptInstance instance, string name)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string llGetEnv(ScriptInstance instance, string name)
         {
             switch(name)
             {

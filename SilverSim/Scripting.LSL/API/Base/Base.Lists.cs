@@ -4,6 +4,7 @@
 using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
@@ -11,7 +12,8 @@ namespace SilverSim.Scripting.LSL.API.Base
     {
         [APILevel(APIFlags.LSL, "llDeleteSubList")]
         [LSLTooltip("Returns a list that is a copy of src but with the slice from start to end removed.")]
-        public AnArray DeleteSubList(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray DeleteSubList(ScriptInstance instance,
             [LSLTooltip("source")]
             AnArray src,
             [LSLTooltip("start index")]
@@ -76,7 +78,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llList2ListStrided")]
         [LSLTooltip("Returns a list of all the entries in the strided list whose index is a multiple of stride in the range start to end.")]
-        public AnArray List2ListStrided(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray List2ListStrided(ScriptInstance instance,
             AnArray src,
             [LSLTooltip("start index")]
             int start,
@@ -194,7 +197,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llList2List")]
-        public AnArray List2List(ScriptInstance instance, AnArray src, int start, int end)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray List2List(ScriptInstance instance, AnArray src, int start, int end)
         {
             if (start < 0)
             {
@@ -252,7 +256,8 @@ namespace SilverSim.Scripting.LSL.API.Base
         }
 
         [APILevel(APIFlags.LSL, "llList2Float")]
-        public double List2Float(ScriptInstance instance, AnArray src, int index)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        double List2Float(ScriptInstance instance, AnArray src, int index)
         {
             if(index < 0)
             {
@@ -269,7 +274,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llListFindList")]
         [LSLTooltip("Returns the integer index of the first instance of test in src.")]
-        public int ListFindList(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int ListFindList(ScriptInstance instance,
             [LSLTooltip("what to search in (haystack)")]
             AnArray src,
             [LSLTooltip("what to search for (needle)")]
@@ -304,7 +310,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llList2Integer")]
         [LSLTooltip("Returns an integer that is at index in src")]
-        public int List2Integer(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int List2Integer(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
             [LSLTooltip("Index of the element of interest.")]
@@ -336,7 +343,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llList2Key")]
         [LSLTooltip("Returns a key that is at index in src")]
-        public LSLKey List2Key(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey List2Key(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
             [LSLTooltip("Index of the element of interest.")]
@@ -357,7 +365,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llList2Rot")]
         [LSLTooltip("Returns a rotation that is at index in src")]
-        public Quaternion List2Rot(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Quaternion List2Rot(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
             [LSLTooltip("Index of the element of interest.")]
@@ -378,7 +387,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llList2String")]
         [LSLTooltip("Returns a string that is at index in src")]
-        public string List2String(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string List2String(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
             [LSLTooltip("Index of the element of interest.")]
@@ -399,7 +409,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llList2Vector")]
         [LSLTooltip("Returns a vector that is at index in src")]
-        public Vector3 List2Vector(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 List2Vector(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
             [LSLTooltip("Index of the element of interest.")]
@@ -420,7 +431,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llDumpList2String")]
         [LSLTooltip("Returns a string that is the list src converted to a string with separator between the entries.")]
-        public string DumpList2String(ScriptInstance instance, AnArray src, string separator)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string DumpList2String(ScriptInstance instance, AnArray src, string separator)
         {
             string s = string.Empty;
 
@@ -437,29 +449,31 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llList2CSV")]
         [LSLTooltip("Returns a string of comma separated values taken in order from src.")]
-        public string List2CSV(ScriptInstance instance, AnArray src)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        string List2CSV(ScriptInstance instance, AnArray src)
         {
             return DumpList2String(instance, src, ", ");
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int TYPE_INTEGER = 1;
+        const int TYPE_INTEGER = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int TYPE_FLOAT = 2;
+        const int TYPE_FLOAT = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int TYPE_STRING = 3;
+        const int TYPE_STRING = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int TYPE_KEY = 4;
+        const int TYPE_KEY = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int TYPE_VECTOR = 5;
+        const int TYPE_VECTOR = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int TYPE_ROTATION = 6;
+        const int TYPE_ROTATION = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int TYPE_INVALID = 0;
+        const int TYPE_INVALID = 0;
 
         [APILevel(APIFlags.LSL, "llGetListEntryType")]
         [LSLTooltip("Returns the type (an integer) of the entry at index in src.")]
-        public int GetListEntryType(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int GetListEntryType(ScriptInstance instance,
             [LSLTooltip("List containing the element of interest")]
             AnArray src,
             [LSLTooltip("Index of the element of interest")]
@@ -480,12 +494,13 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llGetListLength")]
         [LSLTooltip("Returns an integer that is the number of elements in the list src")]
-        public int GetListLength(ScriptInstance instance, AnArray src)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int GetListLength(ScriptInstance instance, AnArray src)
         {
             return src.Count;
         }
 
-        private AnArray ParseString2List(ScriptInstance instance, string src, AnArray separators, AnArray spacers, bool keepNulls)
+        AnArray ParseString2List(ScriptInstance instance, string src, AnArray separators, AnArray spacers, bool keepNulls)
         {
             AnArray res = new AnArray();
             string value = null;
@@ -598,7 +613,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llParseString2List")]
         [LSLTooltip("Returns a list that is src broken into a list of strings, discarding separators, keeping spacers, discards any null (empty string) values generated.")]
-        public AnArray ParseString2List(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray ParseString2List(ScriptInstance instance,
             [LSLTooltip("source string")]
             string src,
             [LSLTooltip("separators to be discarded")]
@@ -611,7 +627,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
         [LSLTooltip("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
-        public AnArray ParseStringKeepNulls(ScriptInstance instance,
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray ParseStringKeepNulls(ScriptInstance instance,
             [LSLTooltip("source string")]
             string src,
             [LSLTooltip("separators to be discarded")]
@@ -624,7 +641,8 @@ namespace SilverSim.Scripting.LSL.API.Base
 
         [APILevel(APIFlags.LSL, "llCSV2List")]
         [LSLTooltip("This function takes a string of values separated by commas, and turns it into a list.")]
-        public AnArray CSV2List(ScriptInstance instance, string src)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray CSV2List(ScriptInstance instance, string src)
         {
             bool wsconsume = true;
             bool inbracket = false;

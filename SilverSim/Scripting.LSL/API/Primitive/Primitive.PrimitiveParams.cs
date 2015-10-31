@@ -8,6 +8,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using System;
 using SilverSim.Scene.Types.Scene;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -16,7 +17,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         #region Primitives
 
         [APILevel(APIFlags.LSL, "llGetKey")]
-        public LSLKey GetKey(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey GetKey(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -25,7 +27,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llAllowInventoryDrop")]
-        public void AllowInventoryDrop(ScriptInstance instance, int add)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void AllowInventoryDrop(ScriptInstance instance, int add)
         {
             lock (instance)
             {
@@ -34,7 +37,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkPrimitiveParams")]
-        public AnArray GetLinkPrimitiveParams(ScriptInstance instance, int link, AnArray param)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetLinkPrimitiveParams(ScriptInstance instance, int link, AnArray param)
         {
             AnArray parout = new AnArray();
             lock (instance)
@@ -46,7 +50,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         [APILevel(APIFlags.LSL, "llGetPrimitiveParams")]
         [ForcedSleep(0.2)]
-        public AnArray GetPrimitiveParams(ScriptInstance instance, AnArray param)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetPrimitiveParams(ScriptInstance instance, AnArray param)
         {
             AnArray parout = new AnArray();
             lock (instance)
@@ -57,7 +62,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLocalPos")]
-        public Vector3 GetLocalPos(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetLocalPos(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -66,7 +72,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetPos")]
-        public Vector3 GetPos(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetPos(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -75,7 +82,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetRootPosition")]
-        public Vector3 GetRootPosition(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetRootPosition(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -84,7 +92,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetRootRotation")]
-        public Quaternion GetRootRotation(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Quaternion GetRootRotation(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -93,7 +102,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetRot")]
-        public Quaternion GetRot(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Quaternion GetRot(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -102,7 +112,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetScale")]
-        public Vector3 GetScale(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetScale(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -111,7 +122,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llPassCollisions")]
-        public void PassCollisions(ScriptInstance instance, int pass)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void PassCollisions(ScriptInstance instance, int pass)
         {
             lock (instance)
             {
@@ -120,7 +132,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llPassTouches")]
-        public void PassTouches(ScriptInstance instance, int pass)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void PassTouches(ScriptInstance instance, int pass)
         {
             lock (instance)
             {
@@ -129,7 +142,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetClickAction")]
-        public void SetClickAction(ScriptInstance instance, int action)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetClickAction(ScriptInstance instance, int action)
         {
             lock (instance)
             {
@@ -138,13 +152,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetPayPrice")]
-        public void SetPayPrice(ScriptInstance instance, int price, AnArray quick_pay_buttons)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetPayPrice(ScriptInstance instance, int price, AnArray quick_pay_buttons)
         {
             throw new NotImplementedException("llSetPayPrice(int, list)");
         }
 
         [APILevel(APIFlags.LSL, "llSetPos")]
-        public void SetPos(ScriptInstance instance, Vector3 pos)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetPos(ScriptInstance instance, Vector3 pos)
         {
             lock (instance)
             {
@@ -153,7 +169,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.OSSL, "osSetPrimitiveParams")]
-        public void SetPrimitiveParams(ScriptInstance instance, LSLKey key, AnArray rules)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetPrimitiveParams(ScriptInstance instance, LSLKey key, AnArray rules)
         {
             lock(instance)
             {
@@ -176,7 +193,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.OSSL, "osGetPrimitiveParams")]
-        public AnArray GetPrimitiveParams(ScriptInstance instance, LSLKey key, AnArray paramList)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetPrimitiveParams(ScriptInstance instance, LSLKey key, AnArray paramList)
         {
             lock (instance)
             {
@@ -202,7 +220,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         [APILevel(APIFlags.LSL, "llSetPrimitiveParams")]
         [ForcedSleep(0.2)]
-        public void SetPrimitiveParams(ScriptInstance instance, AnArray rules)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetPrimitiveParams(ScriptInstance instance, AnArray rules)
         {
             lock (instance)
             {
@@ -212,13 +231,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         [APILevel(APIFlags.LSL, "llSetLinkPrimitiveParams")]
         [ForcedSleep(0.2)]
-        public void SetLinkPrimitiveParams(ScriptInstance instance, int linkTarget, AnArray rules)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetLinkPrimitiveParams(ScriptInstance instance, int linkTarget, AnArray rules)
         {
             SetLinkPrimitiveParamsFast(instance, linkTarget, rules);
         }
 
         [APILevel(APIFlags.LSL, "llSetLinkPrimitiveParamsFast")]
-        public void SetLinkPrimitiveParamsFast(ScriptInstance instance, int linkTarget, AnArray rules)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetLinkPrimitiveParamsFast(ScriptInstance instance, int linkTarget, AnArray rules)
         {
             lock (instance)
             {
@@ -227,7 +248,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetScale")]
-        public void SetScale(ScriptInstance instance, Vector3 size)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetScale(ScriptInstance instance, Vector3 size)
         {
             lock (instance)
             {
@@ -236,7 +258,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetSitText")]
-        public void SetSitText(ScriptInstance instance, string text)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetSitText(ScriptInstance instance, string text)
         {
             lock (instance)
             {
@@ -245,7 +268,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetText")]
-        public void SetText(ScriptInstance instance, string text, Vector3 color, double alpha)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetText(ScriptInstance instance, string text, Vector3 color, double alpha)
         {
             ObjectPart.TextParam tp = new ObjectPart.TextParam();
             tp.Text = text;
@@ -257,7 +281,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetTouchText")]
-        public void SetTouchText(ScriptInstance instance, string text)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetTouchText(ScriptInstance instance, string text)
         {
             lock (instance)
             {
@@ -266,7 +291,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llTargetOmega")]
-        public void TargetOmega(ScriptInstance instance, Vector3 axis, double spinrate, double gain)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void TargetOmega(ScriptInstance instance, Vector3 axis, double spinrate, double gain)
         {
             ObjectPart.OmegaParam op = new ObjectPart.OmegaParam();
             op.Axis = axis;

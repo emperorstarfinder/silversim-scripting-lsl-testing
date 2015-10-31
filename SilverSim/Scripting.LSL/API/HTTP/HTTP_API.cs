@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.HTTP
 {
@@ -22,10 +23,10 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const string URL_REQUEST_GRANTED = "URL_REQUEST_GRANTED";
+        const string URL_REQUEST_GRANTED = "URL_REQUEST_GRANTED";
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const string URL_REQUEST_DENIED = "URL_REQUEST_DENIED";
+        const string URL_REQUEST_DENIED = "URL_REQUEST_DENIED";
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -34,7 +35,8 @@ namespace SilverSim.Scripting.LSL.API.HTTP
         }
 
         [ExecutedOnScriptReset]
-        public void RemoveURLs(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void RemoveURLs(ScriptInstance instance)
         {
             lock (instance)
             {

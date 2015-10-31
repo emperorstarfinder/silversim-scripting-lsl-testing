@@ -5,20 +5,23 @@ using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
 using System;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Base
 {
     public partial class Base_API
     {
         [APILevel(APIFlags.LSL, "llGenerateKey")]
-        public LSLKey GenerateKey(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        LSLKey GenerateKey(ScriptInstance instance)
         {
             return new LSLKey(UUID.Random);
         }
 
         #region osIsUUID
         [APILevel(APIFlags.OSSL, "osIsUUID")]
-        public int IsUUID(ScriptInstance instance, string input)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int IsUUID(ScriptInstance instance, string input)
         {
             Guid v;
             return Guid.TryParse(input, out v) ? TRUE : FALSE;

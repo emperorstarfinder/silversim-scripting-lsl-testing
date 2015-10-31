@@ -6,6 +6,7 @@ using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types.Primitive;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -13,13 +14,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
     {
         #region Faces
         [APILevel(APIFlags.LSL, "llGetNumberOfSides")]
-        public int GetNumberOfSides(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int GetNumberOfSides(ScriptInstance instance)
         {
             return instance.Part.NumberOfSides;
         }
 
         [APILevel(APIFlags.LSL, "llGetAlpha")]
-        public double GetAlpha(ScriptInstance instance, int face)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        double GetAlpha(ScriptInstance instance, int face)
         {
             lock (instance)
             {
@@ -36,13 +39,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetAlpha")]
-        public void SetAlpha(ScriptInstance instance, double alpha, int faces)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetAlpha(ScriptInstance instance, double alpha, int faces)
         {
             SetLinkAlpha(instance, LINK_THIS, alpha, faces);
         }
 
         [APILevel(APIFlags.LSL, "llSetLinkAlpha")]
-        public void SetLinkAlpha(ScriptInstance instance, int link, double alpha, int face)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetLinkAlpha(ScriptInstance instance, int link, double alpha, int face)
         {
             if (alpha < 0) alpha = 0;
             if (alpha > 1) alpha = 1;
@@ -79,14 +84,16 @@ namespace SilverSim.Scripting.LSL.API.Primitive
 
         [APILevel(APIFlags.LSL, "llSetTexture")]
         [ForcedSleep(0.2)]
-        public void SetTexture(ScriptInstance instance, string texture, int face)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetTexture(ScriptInstance instance, string texture, int face)
         {
             SetLinkTexture(instance, LINK_THIS, texture, face);
         }
 
         [APILevel(APIFlags.LSL, "llSetLinkTexture")]
         [ForcedSleep(0.2)]
-        public void SetLinkTexture(ScriptInstance instance, int link, string texture, int face)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetLinkTexture(ScriptInstance instance, int link, string texture, int face)
         {
             UUID textureID = GetTextureAssetID(instance, texture);
 
@@ -121,7 +128,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetColor")]
-        public Vector3 GetColor(ScriptInstance instance, int face)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        Vector3 GetColor(ScriptInstance instance, int face)
         {
             lock (instance)
             {
@@ -154,13 +162,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetColor")]
-        public void SetColor(ScriptInstance instance, Vector3 color, int face)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetColor(ScriptInstance instance, Vector3 color, int face)
         {
             SetLinkColor(instance, LINK_THIS, color, face);
         }
 
         [APILevel(APIFlags.LSL, "llSetLinkColor")]
-        public void SetLinkColor(ScriptInstance instance, int link, Vector3 color, int face)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetLinkColor(ScriptInstance instance, int link, Vector3 color, int face)
         {
             if (color.X < 0) color.X = 0;
             if (color.X > 1) color.X = 1;

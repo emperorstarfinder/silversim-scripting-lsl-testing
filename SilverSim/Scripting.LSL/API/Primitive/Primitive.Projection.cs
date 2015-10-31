@@ -11,6 +11,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scene.Types.Script;
 using System.Reflection;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Primitive
 {
@@ -20,13 +21,15 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         /// Set parameters for light projection in host prim 
         /// </summary>
         [APILevel(APIFlags.OSSL, "osSetProjectionParams")]
-        public void SetProjectionParams(ScriptInstance instance, int projection, LSLKey texture, double fov, double focus, double amb)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetProjectionParams(ScriptInstance instance, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             SetLinkProjectionParams(instance, LINK_THIS, projection, texture, fov, focus, amb);
         }
 
         [APILevel(APIFlags.OSSL, "osSetLinkProjectionParams")]
-        public void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             ObjectPart.ProjectionParam p = new ObjectPart.ProjectionParam();
             p.IsProjecting = projection != 0;
@@ -45,7 +48,8 @@ namespace SilverSim.Scripting.LSL.API.Primitive
         /// Set parameters for light projection with uuid of target prim
         /// </summary>
         [APILevel(APIFlags.OSSL, "osSetProjectionParams")]
-        public void SetProjectionParams(ScriptInstance instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void SetProjectionParams(ScriptInstance instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             lock (instance)
             {
@@ -80,6 +84,5 @@ namespace SilverSim.Scripting.LSL.API.Primitive
                 part.Projection = p;
             }
         }
-
     }
 }

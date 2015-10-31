@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.LightShare
 {
@@ -24,100 +25,104 @@ namespace SilverSim.Scripting.LSL.API.LightShare
         }
 
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_WATER_COLOR = 0;
+        const int WL_WATER_COLOR = 0;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_WATER_FOG_DENSITY_EXPONENT = 1;
+        const int WL_WATER_FOG_DENSITY_EXPONENT = 1;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_UNDERWATER_FOG_MODIFIER = 2;
+        const int WL_UNDERWATER_FOG_MODIFIER = 2;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_REFLECTION_WAVELET_SCALE = 3;
+        const int WL_REFLECTION_WAVELET_SCALE = 3;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_FRESNEL_SCALE = 4;
+        const int WL_FRESNEL_SCALE = 4;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_FRESNEL_OFFSET = 5;
+        const int WL_FRESNEL_OFFSET = 5;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_REFRACT_SCALE_ABOVE = 6;
+        const int WL_REFRACT_SCALE_ABOVE = 6;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_REFRACT_SCALE_BELOW = 7;
+        const int WL_REFRACT_SCALE_BELOW = 7;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_BLUR_MULTIPLIER = 8;
+        const int WL_BLUR_MULTIPLIER = 8;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_BIG_WAVE_DIRECTION = 9;
+        const int WL_BIG_WAVE_DIRECTION = 9;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_LITTLE_WAVE_DIRECTION = 10;
+        const int WL_LITTLE_WAVE_DIRECTION = 10;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_NORMAL_MAP_TEXTURE = 11;
+        const int WL_NORMAL_MAP_TEXTURE = 11;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_HORIZON = 12;
+        const int WL_HORIZON = 12;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_HAZE_HORIZON = 13;
+        const int WL_HAZE_HORIZON = 13;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_BLUE_DENSITY = 14;
+        const int WL_BLUE_DENSITY = 14;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_HAZE_DENSITY = 15;
+        const int WL_HAZE_DENSITY = 15;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_DENSITY_MULTIPLIER = 16;
+        const int WL_DENSITY_MULTIPLIER = 16;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_DISTANCE_MULTIPLIER = 17;
+        const int WL_DISTANCE_MULTIPLIER = 17;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_MAX_ALTITUDE = 18;
+        const int WL_MAX_ALTITUDE = 18;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_SUN_MOON_COLOR = 19;
+        const int WL_SUN_MOON_COLOR = 19;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_AMBIENT = 20;
+        const int WL_AMBIENT = 20;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_EAST_ANGLE = 21;
+        const int WL_EAST_ANGLE = 21;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_SUN_GLOW_FOCUS = 22;
+        const int WL_SUN_GLOW_FOCUS = 22;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_SUN_GLOW_SIZE = 23;
+        const int WL_SUN_GLOW_SIZE = 23;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_SCENE_GAMMA = 24;
+        const int WL_SCENE_GAMMA = 24;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_STAR_BRIGHTNESS = 25;
+        const int WL_STAR_BRIGHTNESS = 25;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_COLOR = 26;
+        const int WL_CLOUD_COLOR = 26;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_XY_DENSITY = 27;
+        const int WL_CLOUD_XY_DENSITY = 27;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_COVERAGE = 28;
+        const int WL_CLOUD_COVERAGE = 28;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_SCALE = 29;
+        const int WL_CLOUD_SCALE = 29;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_DETAIL_XY_DENSITY = 30;
+        const int WL_CLOUD_DETAIL_XY_DENSITY = 30;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_SCROLL_X = 31;
+        const int WL_CLOUD_SCROLL_X = 31;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_SCROLL_Y = 32;
+        const int WL_CLOUD_SCROLL_Y = 32;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_SCROLL_Y_LOCK = 33;
+        const int WL_CLOUD_SCROLL_Y_LOCK = 33;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_CLOUD_SCROLL_X_LOCK = 34;
+        const int WL_CLOUD_SCROLL_X_LOCK = 34;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_DRAW_CLASSIC_CLOUDS = 35;
+        const int WL_DRAW_CLASSIC_CLOUDS = 35;
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]
-        public const int WL_SUN_MOON_POSITION = 36;
+        const int WL_SUN_MOON_POSITION = 36;
 
         [APIExtension(APIExtension.LightShare, "lsGetWindlightScene")]
-        public AnArray GetWindlightScene(ScriptInstance instance, AnArray rules)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        AnArray GetWindlightScene(ScriptInstance instance, AnArray rules)
         {
             throw new NotImplementedException();
         }
 
         [APIExtension(APIExtension.LightShare, "lsSetWindlightScene")]
-        public int SetWindlightScene(ScriptInstance instance, AnArray rules)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int SetWindlightScene(ScriptInstance instance, AnArray rules)
         {
             throw new NotImplementedException();
         }
 
         [APIExtension(APIExtension.LightShare, "lsClearWindlightScene")]
-        public void ClearWindlightScene(ScriptInstance instance)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void ClearWindlightScene(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APIExtension(APIExtension.LightShare, "lsSetWindlightSceneTargeted")]
-        public int SetWindlightSceneTargeted(ScriptInstance instance, AnArray rules, LSLKey target)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        int SetWindlightSceneTargeted(ScriptInstance instance, AnArray rules, LSLKey target)
         {
             throw new NotImplementedException();
         }

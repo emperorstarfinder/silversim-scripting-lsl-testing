@@ -5,6 +5,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.API.Chat
 {
@@ -12,7 +13,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
     {
         [APILevel(APIFlags.LSL, "llDialog")]
         [ForcedSleep(1)]
-        public void Dialog(ScriptInstance instance, LSLKey avatar, string message, AnArray buttons, int channel)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void Dialog(ScriptInstance instance, LSLKey avatar, string message, AnArray buttons, int channel)
         {
             lock (instance)
             {
@@ -69,7 +71,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
 
         [APILevel(APIFlags.LSL, "llTextBox")]
         [ForcedSleep(1)]
-        public void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
         {
             AnArray buttons = new AnArray();
             buttons.Add("!!llTextBox!!");
@@ -78,7 +81,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
 
         [APILevel(APIFlags.LSL, "llLoadURL")]
         [ForcedSleep(10)]
-        public void LoadURL(ScriptInstance instance, LSLKey avatar, string message, string url)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void LoadURL(ScriptInstance instance, LSLKey avatar, string message, string url)
         {
             lock (instance)
             {
@@ -102,7 +106,8 @@ namespace SilverSim.Scripting.LSL.API.Chat
 
         [APILevel(APIFlags.LSL, "llMapDestination")]
         [ForcedSleep(1)]
-        public void MapDestination(ScriptInstance instance, string simname, Vector3 pos, Vector3 look_at)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void MapDestination(ScriptInstance instance, string simname, Vector3 pos, Vector3 look_at)
         {
             lock(instance)
             {

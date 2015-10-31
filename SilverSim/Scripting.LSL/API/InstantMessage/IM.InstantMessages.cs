@@ -7,6 +7,7 @@ using SilverSim.Types;
 using SilverSim.Types.IM;
 using System.Text;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.LSL.APIs.IM
 {
@@ -14,7 +15,8 @@ namespace SilverSim.Scripting.LSL.APIs.IM
     {
         [APILevel(APIFlags.LSL, "llInstantMessage")]
         [ForcedSleep(2)]
-        public void InstantMessage(ScriptInstance instance, LSLKey user, string message)
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        void InstantMessage(ScriptInstance instance, LSLKey user, string message)
         {
             lock(instance)
             {
