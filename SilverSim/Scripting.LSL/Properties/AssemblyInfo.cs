@@ -9,6 +9,7 @@ using System.Reflection;
 
 /* gendarme suppressors */
 [assembly: SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidDeclaringCustomDelegatesRule")]
+[assembly: SuppressMessage("Gendarme.Rules.Naming", "DoNotUseReservedInEnumValueNamesRule")]
 [module: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule", Scope = "namespace", Target = "SilverSim.Scripting.LSL")]
 [module: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule", Scope = "namespace", Target = "SilverSim.Scripting.LSL")]
 [module: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule", Scope = "namespace", Target = "SilverSim.Scripting.LSL.API")]
