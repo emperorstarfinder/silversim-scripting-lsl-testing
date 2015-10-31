@@ -53,7 +53,7 @@ namespace SilverSim.Scripting.LSL
                 Value = v;
             }
 
-            public new string ToString()
+            public override string ToString()
             {
                 return Value.ToString();
             }
@@ -73,7 +73,7 @@ namespace SilverSim.Scripting.LSL
                 Value = v;
             }
 
-            public new string ToString()
+            public override string ToString()
             {
                 return Value.ToString();
             }

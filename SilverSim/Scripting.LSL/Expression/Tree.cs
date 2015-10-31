@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.LSL.Expression
                 }
             }
 
-            public new string ToString()
+            public override string ToString()
             {
                 return Value.ToString(CultureInfo.InvariantCulture);
             }
@@ -99,7 +99,7 @@ namespace SilverSim.Scripting.LSL.Expression
                 Value = value;
             }
 
-            public new string ToString()
+            public override string ToString()
             {
                 return Value.ToString(CultureInfo.InvariantCulture);
             }
@@ -118,7 +118,7 @@ namespace SilverSim.Scripting.LSL.Expression
                 Value = value;
             }
 
-            public new string ToString()
+            public override string ToString()
             {
                 return Value;
             }
