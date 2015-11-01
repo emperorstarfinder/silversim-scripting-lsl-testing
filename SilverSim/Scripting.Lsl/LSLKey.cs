@@ -3,9 +3,11 @@
 
 using SilverSim.Types;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl
 {
+    [SuppressMessage("Gendarme.Rules.Design", "EnsureSymmetryForOverloadedOperatorsRule")]
     public sealed class LSLKey : IEquatable<LSLKey>, IEquatable<string>, IValue
     {
         private string m_Value;
