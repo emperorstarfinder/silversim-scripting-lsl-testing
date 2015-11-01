@@ -69,6 +69,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock(instance)
             {
+                ObjectPart thisPart = instance.Part;
                 UUID soundID;
                 try
                 {
@@ -79,7 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                instance.Part.ObjectGroup.Scene.SendPreloadSound(instance.Part, soundID);
+                thisPart.ObjectGroup.Scene.SendPreloadSound(thisPart, soundID);
             }
         }
 
@@ -97,6 +98,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             PrimitiveSoundFlags flags = 0;
             lock (instance)
             {
+                ObjectPart thisPart = instance.Part;
                 UUID soundID;
                 try
                 {
@@ -107,11 +109,11 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                if (instance.Part.IsSoundQueueing)
+                if (thisPart.IsSoundQueueing)
                 {
                     flags |= PrimitiveSoundFlags.Queue;
                 }
-                instance.Part.ObjectGroup.Scene.SendAttachedSound(instance.Part, soundID, volume, 20, flags);
+                thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, 20, flags);
             }
         }
 
@@ -128,6 +130,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
+                ObjectPart thisPart = instance.Part;
                 UUID soundID;
                 try
                 {
@@ -138,7 +141,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                instance.Part.ObjectGroup.Scene.SendTriggerSound(instance.Part, soundID, volume, 20);
+                thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, 20);
             }
         }
 
@@ -148,6 +151,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
+                ObjectPart thisPart = instance.Part;
                 UUID soundID;
                 try
                 {
@@ -158,7 +162,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                instance.Part.ObjectGroup.Scene.SendTriggerSound(instance.Part, soundID, volume, instance.Part.Sound.Radius, top_north_east, bottom_south_west);
+                thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
             }
         }
 
@@ -169,7 +173,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock(instance)
             {
-                instance.Part.ObjectGroup.Scene.SendAttachedSoundGainChange(instance.Part, volume, instance.Part.Sound.Radius);
+                ObjectPart thisPart = instance.Part;
+                thisPart.ObjectGroup.Scene.SendAttachedSoundGainChange(thisPart, volume, thisPart.Sound.Radius);
             }
         }
 

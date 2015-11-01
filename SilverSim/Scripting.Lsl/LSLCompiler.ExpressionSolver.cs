@@ -4,6 +4,7 @@
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace SilverSim.Scripting.Lsl
@@ -84,6 +85,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         void SolveConstantOperations(Tree tree)
         {
             List<Tree> processNodes = new List<Tree>();

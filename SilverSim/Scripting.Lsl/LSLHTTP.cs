@@ -168,9 +168,15 @@ namespace SilverSim.Scripting.Lsl
             HttpRequestData data = new HttpRequestData(req, id);
 
             string body = string.Empty;
-            if(data.Request.Method != "GET" && data.Request.Method != "DELETE")
+            string method = data.Request.Method;
+            if (method != "GET" && method != "DELETE")
             {
-                int length = int.Parse(data.Request["Content-Length"]);
+                int length;
+                if(!int.TryParse(data.Request["Content-Length"], out length))
+                {
+                    req.ErrorResponse(HttpStatusCode.InternalServerError, "script access error");
+                    return;
+                }
                 byte[] buf = new byte[length];
                 data.Request.Body.Read(buf, 0, length);
                 body = UTF8NoBOM.GetString(buf);

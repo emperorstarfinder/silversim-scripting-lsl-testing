@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
@@ -77,100 +78,105 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         internal void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
-            switch(param)
+            lock (instance)
             {
-                case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularFrictionTimescale] = new Vector3(value);
-                    break;
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                switch (param)
+                {
+                    case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularFrictionTimescale] = new Vector3(value);
+                        break;
 
-                case VEHICLE_ANGULAR_MOTOR_DIRECTION:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularMotorDirection] = new Vector3(value);
-                    break;
+                    case VEHICLE_ANGULAR_MOTOR_DIRECTION:
+                        thisGroup[VehicleVectorParamId.AngularMotorDirection] = new Vector3(value);
+                        break;
 
-                case VEHICLE_LINEAR_FRICTION_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale] = new Vector3(value);
-                    break;
+                    case VEHICLE_LINEAR_FRICTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearFrictionTimescale] = new Vector3(value);
+                        break;
 
-                case VEHICLE_LINEAR_MOTOR_DIRECTION:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection] = new Vector3(value);
-                    break;
+                    case VEHICLE_LINEAR_MOTOR_DIRECTION:
+                        thisGroup[VehicleVectorParamId.LinearMotorDirection] = new Vector3(value);
+                        break;
 
-                case VEHICLE_LINEAR_MOTOR_OFFSET:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset] = new Vector3(value);
-                    break;
+                    case VEHICLE_LINEAR_MOTOR_OFFSET:
+                        thisGroup[VehicleVectorParamId.LinearMotorOffset] = new Vector3(value);
+                        break;
 
-                case VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularDeflectionEfficiency] = value;
-                    break;
+                    case VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY:
+                        thisGroup[VehicleFloatParamId.AngularDeflectionEfficiency] = value;
+                        break;
 
-                case VEHICLE_ANGULAR_DEFLECTION_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularDeflectionTimescale] = value;
-                    break;
+                    case VEHICLE_ANGULAR_DEFLECTION_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.AngularDeflectionTimescale] = value;
+                        break;
 
-                case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularMotorDecayTimescale] = value;
-                    break;
+                    case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.AngularMotorDecayTimescale] = value;
+                        break;
 
-                case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.AngularMotorTimescale] = value;
-                    break;
+                    case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.AngularMotorTimescale] = value;
+                        break;
 
-                case VEHICLE_BANKING_EFFICIENCY:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.BankingEfficiency] = value;
-                    break;
+                    case VEHICLE_BANKING_EFFICIENCY:
+                        thisGroup[VehicleFloatParamId.BankingEfficiency] = value;
+                        break;
 
-                case VEHICLE_BANKING_MIX:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.BankingMix] = value;
-                    break;
+                    case VEHICLE_BANKING_MIX:
+                        thisGroup[VehicleFloatParamId.BankingMix] = value;
+                        break;
 
-                case VEHICLE_BANKING_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.BankingTimescale] = value;
-                    break;
+                    case VEHICLE_BANKING_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.BankingTimescale] = value;
+                        break;
 
-                case VEHICLE_BUOYANCY:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.Buoyancy] = value;
-                    break;
+                    case VEHICLE_BUOYANCY:
+                        thisGroup[VehicleFloatParamId.Buoyancy] = value;
+                        break;
 
-                case VEHICLE_HOVER_HEIGHT:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.HoverHeight] = value;
-                    break;
+                    case VEHICLE_HOVER_HEIGHT:
+                        thisGroup[VehicleFloatParamId.HoverHeight] = value;
+                        break;
 
-                case VEHICLE_HOVER_EFFICIENCY:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.HoverEfficiency] = value;
-                    break;
+                    case VEHICLE_HOVER_EFFICIENCY:
+                        thisGroup[VehicleFloatParamId.HoverEfficiency] = value;
+                        break;
 
-                case VEHICLE_HOVER_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.HoverTimescale] = value;
-                    break;
+                    case VEHICLE_HOVER_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.HoverTimescale] = value;
+                        break;
 
-                case VEHICLE_LINEAR_DEFLECTION_EFFICIENCY:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearDeflectionEfficiency] = value;
-                    break;
+                    case VEHICLE_LINEAR_DEFLECTION_EFFICIENCY:
+                        thisGroup[VehicleFloatParamId.LinearDeflectionEfficiency] = value;
+                        break;
 
-                case VEHICLE_LINEAR_DEFLECTION_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearDeflectionTimescale] = value;
-                    break;
+                    case VEHICLE_LINEAR_DEFLECTION_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.LinearDeflectionTimescale] = value;
+                        break;
 
-                case VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearMotorDecayTimescale] = value;
-                    break;
+                    case VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.LinearMotorDecayTimescale] = value;
+                        break;
 
-                case VEHICLE_LINEAR_MOTOR_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.LinearMotorTimescale] = value;
-                    break;
+                    case VEHICLE_LINEAR_MOTOR_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.LinearMotorTimescale] = value;
+                        break;
 
-                case VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.VerticalAttractionEfficiency] = value;
-                    break;
+                    case VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY:
+                        thisGroup[VehicleFloatParamId.VerticalAttractionEfficiency] = value;
+                        break;
 
-                case VEHICLE_VERTICAL_ATTRACTION_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleFloatParamId.VerticalAttractionTimescale] = value;
-                    break;
+                    case VEHICLE_VERTICAL_ATTRACTION_TIMESCALE:
+                        thisGroup[VehicleFloatParamId.VerticalAttractionTimescale] = value;
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -181,14 +187,18 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
-            switch(param)
+            lock (instance)
             {
-                case VEHICLE_REFERENCE_FRAME:
-                    instance.Part.ObjectGroup[VehicleRotationParamId.ReferenceFrame] = rot;
-                    break;
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                switch (param)
+                {
+                    case VEHICLE_REFERENCE_FRAME:
+                        thisGroup[VehicleRotationParamId.ReferenceFrame] = rot;
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -209,35 +219,39 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal void SetVehicleType(ScriptInstance instance, int type)
         {
-            switch(type)
+            lock (instance)
             {
-                case VEHICLE_TYPE_NONE:
-                    instance.Part.ObjectGroup.VehicleType = VehicleType.None;
-                    break;
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                switch (type)
+                {
+                    case VEHICLE_TYPE_NONE:
+                        thisGroup.VehicleType = VehicleType.None;
+                        break;
 
-                case VEHICLE_TYPE_SLED:
-                    instance.Part.ObjectGroup.VehicleType = VehicleType.Sled;
-                    break;
+                    case VEHICLE_TYPE_SLED:
+                        thisGroup.VehicleType = VehicleType.Sled;
+                        break;
 
-                case VEHICLE_TYPE_CAR:
-                    instance.Part.ObjectGroup.VehicleType = VehicleType.Car;
-                    break;
+                    case VEHICLE_TYPE_CAR:
+                        thisGroup.VehicleType = VehicleType.Car;
+                        break;
 
-                case VEHICLE_TYPE_BOAT:
-                    instance.Part.ObjectGroup.VehicleType = VehicleType.Boat;
-                    break;
+                    case VEHICLE_TYPE_BOAT:
+                        thisGroup.VehicleType = VehicleType.Boat;
+                        break;
 
-                case VEHICLE_TYPE_AIRPLANE:
-                    instance.Part.ObjectGroup.VehicleType = VehicleType.Airplane;
-                    break;
+                    case VEHICLE_TYPE_AIRPLANE:
+                        thisGroup.VehicleType = VehicleType.Airplane;
+                        break;
 
-                case VEHICLE_TYPE_BALLOON:
-                    instance.Part.ObjectGroup.VehicleType = VehicleType.Balloon;
-                    break;
+                    case VEHICLE_TYPE_BALLOON:
+                        thisGroup.VehicleType = VehicleType.Balloon;
+                        break;
 
-                default:
-                    instance.ShoutError("Invalid vehicle type");
-                    break;
+                    default:
+                        instance.ShoutError("Invalid vehicle type");
+                        break;
+                }
             }
         }
 
@@ -256,28 +270,31 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
-            switch(param)
+            lock (instance)
             {
-                case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularFrictionTimescale] = vec;
-                    break;
-                
-                case VEHICLE_ANGULAR_MOTOR_DIRECTION:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.AngularMotorDirection] = vec;
-                    break;
-                
-                case VEHICLE_LINEAR_FRICTION_TIMESCALE:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale] = vec;
-                    break;
-                
-                case VEHICLE_LINEAR_MOTOR_DIRECTION:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection] = vec;
-                    break;
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                switch (param)
+                {
+                    case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularFrictionTimescale] = vec;
+                        break;
 
-                case VEHICLE_LINEAR_MOTOR_OFFSET:
-                    instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset] = vec;
-                    break;
+                    case VEHICLE_ANGULAR_MOTOR_DIRECTION:
+                        thisGroup[VehicleVectorParamId.AngularMotorDirection] = vec;
+                        break;
 
+                    case VEHICLE_LINEAR_FRICTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearFrictionTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_DIRECTION:
+                        thisGroup[VehicleVectorParamId.LinearMotorDirection] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_OFFSET:
+                        thisGroup[VehicleVectorParamId.LinearMotorOffset] = vec;
+                        break;
+                }
             }
         }
     }

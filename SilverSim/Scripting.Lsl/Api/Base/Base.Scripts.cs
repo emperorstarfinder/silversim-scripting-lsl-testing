@@ -151,23 +151,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock(instance)
             {
                 ObjectPartInventoryItem scriptitem;
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
                 ObjectPart destpart;
                 AssetData asset;
-                try
-                {
-                    destpart = instance.Part.ObjectGroup.Scene.Primitives[target];
-                }
-                catch
+                if(!thisGroup.Scene.Primitives.TryGetValue(target, out destpart))
                 {
                     instance.ShoutError("llRemoteLoadScriptPin: destination prim does not exist");
                     return;
                 }
 
-                try
-                {
-                    scriptitem = instance.Part.Inventory[name];
-                }
-                catch
+                if(!thisPart.Inventory.TryGetValue(name, out scriptitem))
                 {
                     instance.ShoutError(string.Format("llRemoteLoadScriptPin: Script '{0}' does not exist", name));
                     return;
@@ -183,7 +177,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     return;
                 }
 
-                if (destpart.ID == instance.Part.ID)
+                if (destpart.ID == thisPart.ID)
                 {
                     instance.ShoutError("llRemoteLoadScriptPin: Unable to add item");
                     return;
@@ -195,14 +189,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     return;
                 }
 
-                if (destpart.Owner != instance.Part.Owner)
+                if (destpart.Owner != thisPart.Owner)
                 {
                     if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Transfer) == 0)
                     {
                         instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} does not have transfer permission", scriptitem.Name));
                         return;
                     }
-                    else if(destpart.CheckPermissions(instance.Part.Owner, instance.Part.ObjectGroup.Group, InventoryPermissionsMask.Modify))
+                    else if (destpart.CheckPermissions(thisPart.Owner, thisGroup.Group, InventoryPermissionsMask.Modify))
                     {
                         instance.ShoutError(string.Format("llRemoteLoadScriptPin: Dest Part {0} does not have modify permission", destpart.Name));
                         return;
@@ -221,7 +215,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 if(destpart.ScriptAccessPin != pin)
                 {
-                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} trying to load script onto prim {1} without correct access pin", instance.Part.Name, destpart.Name));
+                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} trying to load script onto prim {1} without correct access pin", thisPart.Name, destpart.Name));
                     return;
                 }
 

@@ -153,20 +153,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llSetPayPrice")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         internal void SetPayPrice(ScriptInstance instance, int price, AnArray quick_pay_buttons)
         {
             lock (instance)
             {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 if (quick_pay_buttons.Count < 4)
                 {
                     instance.ShoutError("llSetPayPrice: List must have at least 4 elements.");
                     return;
                 }
-                instance.Part.ObjectGroup.PayPrice0 = price;
-                instance.Part.ObjectGroup.PayPrice1 = quick_pay_buttons[0].AsInt;
-                instance.Part.ObjectGroup.PayPrice2 = quick_pay_buttons[1].AsInt;
-                instance.Part.ObjectGroup.PayPrice3 = quick_pay_buttons[2].AsInt;
-                instance.Part.ObjectGroup.PayPrice4 = quick_pay_buttons[3].AsInt;
+                thisGroup.PayPrice0 = price;
+                thisGroup.PayPrice1 = quick_pay_buttons[0].AsInt;
+                thisGroup.PayPrice2 = quick_pay_buttons[1].AsInt;
+                thisGroup.PayPrice3 = quick_pay_buttons[2].AsInt;
+                thisGroup.PayPrice4 = quick_pay_buttons[3].AsInt;
             }
         }
 
@@ -186,21 +188,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart thisPart = instance.Part;
+                SceneInterface scene = thisPart.ObjectGroup.Scene;
                 ObjectPart part;
-                try
-                {
-                    part = scene.Primitives[key.AsUUID];
-                }
-                catch
+                if (!scene.Primitives.TryGetValue(key.AsUUID, out part))
                 {
                     return;
                 }
-                if(part.Owner != instance.Part.Owner)
+                if (part.Owner != thisPart.Owner)
                 {
                     return;
                 }
-                part.SetPrimitiveParams(rules.GetMarkEnumerator());
+                using(AnArray.MarkEnumerator enumerator = rules.GetMarkEnumerator())
+                {
+                    part.SetPrimitiveParams(enumerator);
+                }
             }
         }
 
@@ -210,22 +212,23 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart thisPart = instance.Part;
+                SceneInterface scene = thisPart.ObjectGroup.Scene;
                 ObjectPart part;
                 AnArray res = new AnArray();
-                try
-                {
-                    part = scene.Primitives[key.AsUUID];
-                }
-                catch
+                if(!scene.Primitives.TryGetValue(key.AsUUID, out part))
                 {
                     return res;
                 }
-                if (part.Owner != instance.Part.Owner)
+                if (part.Owner != thisPart.Owner)
                 {
                     return res;
                 }
-                part.GetPrimitiveParams(paramList.GetEnumerator(), ref res);
+
+                using(AnArray.Enumerator enumerator = paramList.GetEnumerator())
+                {
+                    part.GetPrimitiveParams(enumerator, ref res);
+                }
                 return res;
             }
         }
@@ -237,7 +240,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                instance.Part.ObjectGroup.SetPrimitiveParams(instance.Part.LinkNumber, LINK_THIS, rules.GetMarkEnumerator());
+                ObjectPart thisPart = instance.Part;
+                using(AnArray.MarkEnumerator enumerator = rules.GetMarkEnumerator())
+                {
+                    thisPart.ObjectGroup.SetPrimitiveParams(thisPart.LinkNumber, LINK_THIS, enumerator);
+                }
             }
         }
 
@@ -255,7 +262,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                instance.Part.ObjectGroup.SetPrimitiveParams(instance.Part.LinkNumber, linkTarget, rules.GetMarkEnumerator());
+                ObjectPart thisPart = instance.Part;
+                using (AnArray.MarkEnumerator enumerator = rules.GetMarkEnumerator())
+                {
+                    thisPart.ObjectGroup.SetPrimitiveParams(thisPart.LinkNumber, linkTarget, enumerator);
+                }
             }
         }
 

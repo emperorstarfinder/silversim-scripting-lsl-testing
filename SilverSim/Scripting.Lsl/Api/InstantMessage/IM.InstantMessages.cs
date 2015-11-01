@@ -8,6 +8,8 @@ using SilverSim.Types.IM;
 using System.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 
 namespace SilverSim.Scripting.Lsl.Api.IM
 {
@@ -20,18 +22,21 @@ namespace SilverSim.Scripting.Lsl.Api.IM
         {
             lock(instance)
             {
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
                 IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
                 GridInstantMessage im = new GridInstantMessage();
-                im.FromAgent.ID = instance.Part.Owner.ID;
-                im.FromAgent.FullName = instance.Part.ObjectGroup.Name;
-                im.IMSessionID = instance.Part.ObjectGroup.ID;
+                im.FromAgent.ID = thisPart.Owner.ID;
+                im.FromAgent.FullName = thisGroup.Name;
+                im.IMSessionID = thisGroup.ID;
                 im.ToAgent.ID = user;
-                im.Position = instance.Part.ObjectGroup.GlobalPosition;
-                im.RegionID = instance.Part.ObjectGroup.Scene.ID;
+                im.Position = thisGroup.GlobalPosition;
+                im.RegionID = thisScene.ID;
                 im.Message = message;
                 im.Dialog = GridInstantMessageDialog.MessageFromObject;
-                string binBuck = string.Format("{0}/{1}/{2}/{3}\0", 
-                    instance.Part.ObjectGroup.Scene.Name,
+                string binBuck = string.Format("{0}/{1}/{2}/{3}\0",
+                    thisScene.Name,
                     (int)Math.Floor(im.Position.X),
                     (int)Math.Floor(im.Position.Y),
                     (int)Math.Floor(im.Position.Z));

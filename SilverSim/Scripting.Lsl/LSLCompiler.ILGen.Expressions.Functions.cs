@@ -6,6 +6,7 @@ using SilverSim.Scripting.Common;
 using SilverSim.Scripting.Lsl.Expression;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -13,6 +14,7 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         sealed class FunctionExpression : IExpressionStackElement
         {
             sealed class FunctionParameterInfo

@@ -775,8 +775,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            Delegate d = Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m);
-                            m_StateChangeDelegates.Add((Action<ScriptInstance>)d);
+                            m_StateChangeDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m));
                         }
                     }
 
@@ -804,8 +803,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            Delegate d = Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m);
-                            m_ScriptResetDelegates.Add((Action<ScriptInstance>)d);
+                            m_ScriptResetDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m));
                         }
                     }
                 }

@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
 using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Expression
 {
+    [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
     public class Tree
     {
         public enum EntryType
@@ -56,6 +58,7 @@ namespace SilverSim.Scripting.Lsl.Expression
         {
         }
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public class ConstantValueInt : ConstantValue
         {
             public int Value;
@@ -91,6 +94,7 @@ namespace SilverSim.Scripting.Lsl.Expression
             }
         }
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public class ConstantValueFloat : ConstantValue
         {
             public double Value;

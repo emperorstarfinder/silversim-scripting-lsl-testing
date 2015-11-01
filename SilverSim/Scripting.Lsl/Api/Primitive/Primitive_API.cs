@@ -271,21 +271,23 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
         {
             List<ObjectPart> list = new List<ObjectPart>();
+            ObjectPart thisPart = instance.Part;
+            ObjectGroup thisGroup = thisPart.ObjectGroup;
             if (link == LINK_THIS)
             {
-                list.Add(instance.Part);
+                list.Add(thisPart);
             }
             else if (link == LINK_ROOT)
             {
-                list.Add(instance.Part.ObjectGroup.RootPart);
+                list.Add(thisGroup.RootPart);
             }
             else if (link == LINK_SET)
             {
-                list.AddRange(instance.Part.ObjectGroup.Values);
+                list.AddRange(thisGroup.Values);
             }
             else if (link == LINK_ALL_OTHERS)
             {
-                foreach (ObjectPart part in instance.Part.ObjectGroup.Values)
+                foreach (ObjectPart part in thisGroup.Values)
                 {
                     if (part != instance.Part)
                     {
@@ -295,7 +297,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
             else
             {
-                list.Add(instance.Part.ObjectGroup[link]);
+                list.Add(thisGroup[link]);
             }
 
             return list;

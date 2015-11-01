@@ -3,6 +3,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.ServiceInterfaces.Chat;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
@@ -31,9 +32,10 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             lock (instance)
             {
-                ev.ID = instance.Part.ObjectGroup.ID;
-                ev.Name = instance.Part.ObjectGroup.Name;
-                instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>().Send(ev);
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                ev.ID = thisGroup.ID;
+                ev.Name = thisGroup.Name;
+                thisGroup.Scene.GetService<ChatServiceInterface>().Send(ev);
             }
         }
 

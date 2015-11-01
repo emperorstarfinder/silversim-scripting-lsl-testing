@@ -123,6 +123,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llLinkParticleSystem")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         internal void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
         {
             ParticleSystem ps = new ParticleSystem();

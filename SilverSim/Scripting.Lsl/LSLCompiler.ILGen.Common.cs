@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -118,6 +119,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public static int ConvToInt(string v)
         {
             if (v.ToLower().StartsWith("0x"))

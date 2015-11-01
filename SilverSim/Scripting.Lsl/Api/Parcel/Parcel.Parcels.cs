@@ -11,6 +11,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Types.Parcel;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
+using SilverSim.Scene.Types.Object;
 
 namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
@@ -127,12 +128,13 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         {
             lock (instance)
             {
-                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart thisPart = instance.Part;
+                SceneInterface scene = thisPart.ObjectGroup.Scene;
 
                 ParcelInfo pInfo;
-                if(scene.Parcels.TryGetValue(instance.Part.ObjectGroup.Position, out pInfo))
+                if (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo))
                 {
-                    if (pInfo.Owner.EqualsGrid(instance.Part.Owner))
+                    if (pInfo.Owner.EqualsGrid(thisPart.Owner))
                     {
                         return pInfo.MusicURI;
                     }
@@ -155,12 +157,13 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         {
             lock (instance)
             {
-                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart thisPart = instance.Part;
+                SceneInterface scene = thisPart.ObjectGroup.Scene;
 
                 ParcelInfo pInfo;
-                if(scene.Parcels.TryGetValue(instance.Part.ObjectGroup.Position, out pInfo))
+                if (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo))
                 {
-                    if (pInfo.Owner.EqualsGrid(instance.Part.Owner))
+                    if (pInfo.Owner.EqualsGrid(thisPart.Owner))
                     {
                         pInfo.MusicURI = new URI(url);
                     }

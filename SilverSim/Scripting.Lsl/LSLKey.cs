@@ -143,14 +143,21 @@ namespace SilverSim.Scripting.Lsl
 
         #region Helpers
         public ABoolean AsBoolean { get { return new ABoolean(m_Value.Length != 0); } }
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Integer AsInteger { get { return new Integer(Int32.Parse(m_Value)); } }
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Quaternion AsQuaternion { get { return Quaternion.Parse(m_Value); } }
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Real AsReal { get { return Real.Parse(m_Value); } }
         public AString AsString { get { return new AString(m_Value); } }
         public UUID AsUUID { get { return new UUID(m_Value); } }
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Vector3 AsVector3 { get { return Vector3.Parse(m_Value); } }
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public uint AsUInt { get { return uint.Parse(m_Value); } }
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public int AsInt { get { return int.Parse(m_Value); } }
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public ulong AsULong { get { return ulong.Parse(m_Value); } }
         #endregion
     }

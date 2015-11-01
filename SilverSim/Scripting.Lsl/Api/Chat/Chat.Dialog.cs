@@ -1,6 +1,9 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Agent;
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
@@ -18,6 +21,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             lock (instance)
             {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                UUI groupOwner = thisGroup.Owner;
                 if (message.Length > 511)
                 {
                     throw new ArgumentException("Message more than 511 characters");
@@ -36,11 +41,11 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
                 SilverSim.Viewer.Messages.Script.ScriptDialog m = new SilverSim.Viewer.Messages.Script.ScriptDialog();
                 m.Message = message.Substring(0, 256);
-                m.ObjectID = instance.Part.ObjectGroup.ID;
+                m.ObjectID = thisGroup.ID;
                 m.ImageID = UUID.Zero;
-                m.ObjectName = instance.Part.ObjectGroup.Name;
-                m.FirstName = instance.Part.ObjectGroup.Owner.FirstName;
-                m.LastName = instance.Part.ObjectGroup.Owner.LastName;
+                m.ObjectName = thisGroup.Name;
+                m.FirstName = groupOwner.FirstName;
+                m.LastName = groupOwner.LastName;
                 m.ChatChannel = channel;
                 for (int c = 0; c < buttons.Count && c < 12; ++c )
                 {
@@ -56,15 +61,13 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     m.Buttons.Add(buttontext);
                 }
 
-                m.OwnerData.Add(instance.Part.ObjectGroup.Owner.ID);
+                m.OwnerData.Add(groupOwner.ID);
 
-                try
+                SceneInterface thisScene = thisGroup.Scene;
+                IAgent agent;
+                if(thisScene.Agents.TryGetValue(avatar, out agent))
                 {
-                    instance.Part.ObjectGroup.Scene.Agents[avatar].SendMessageAlways(m, instance.Part.ObjectGroup.Scene.ID);
-                }
-                catch
-                {
-
+                    agent.SendMessageAlways(m, thisScene.ID);
                 }
             }
         }
@@ -86,16 +89,18 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             lock (instance)
             {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
                 SilverSim.Viewer.Messages.Script.LoadURL m = new Viewer.Messages.Script.LoadURL();
-                m.ObjectName = instance.Part.ObjectGroup.Name;
-                m.ObjectID = instance.Part.ObjectGroup.ID;
-                m.OwnerID = instance.Part.ObjectGroup.Owner.ID;
+                m.ObjectName = thisGroup.Name;
+                m.ObjectID = thisGroup.ID;
+                m.OwnerID = thisGroup.Owner.ID;
                 m.Message = message;
                 m.URL = url;
 
                 try
                 {
-                    instance.Part.ObjectGroup.Scene.Agents[avatar].SendMessageAlways(m, instance.Part.ObjectGroup.Scene.ID);
+                    thisScene.Agents[avatar].SendMessageAlways(m, thisScene.ID);
                 }
                 catch
                 {
@@ -112,18 +117,20 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             lock(instance)
             {
                 Script script = (Script)instance;
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
 
                 foreach (DetectInfo detinfo in script.m_Detected)
                 {
                     try
                     {
                         SilverSim.Viewer.Messages.Script.ScriptTeleportRequest m = new Viewer.Messages.Script.ScriptTeleportRequest();
-                        m.ObjectName = instance.Part.ObjectGroup.Name;
+                        m.ObjectName = thisGroup.Name;
                         m.SimName = simname;
                         m.SimPosition = pos;
                         m.LookAt = look_at;
 
-                        instance.Part.ObjectGroup.Scene.Agents[detinfo.Object.ID].SendMessageAlways(m, instance.Part.ObjectGroup.Scene.ID);
+                        thisScene.Agents[detinfo.Object.ID].SendMessageAlways(m, thisScene.ID);
                     }
                     catch
                     {

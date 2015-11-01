@@ -17,15 +17,16 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         internal int ClearLinkMedia(ScriptInstance instance, int link, int face)
         {
             ObjectPart part;
+            ObjectPart thisPart = instance.Part;
             if (link == 0)
             {
                 link = LINK_ROOT;
             }
             if(LINK_THIS == link)
             {
-                part = instance.Part;
+                part = thisPart;
             }
-            else if (!instance.Part.ObjectGroup.TryGetValue(link, out part))
+            else if (!thisPart.ObjectGroup.TryGetValue(link, out part))
             {
                 return STATUS_NOT_FOUND;
             }
@@ -46,7 +47,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     return STATUS_OK;
                 }
-                part.UpdateMediaFace(face, null, instance.Part.Owner.ID);
+                part.UpdateMediaFace(face, null, thisPart.Owner.ID);
                 return STATUS_OK;
             }
         }
@@ -272,6 +273,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llSetLinkMedia")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         internal int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
             ObjectPart part;

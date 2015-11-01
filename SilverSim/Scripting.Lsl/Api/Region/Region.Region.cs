@@ -55,27 +55,28 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         [APILevel(APIFlags.LSL, "llGetEnv")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         internal string GetEnv(ScriptInstance instance, string name)
         {
-            switch(name)
+            switch (name)
             {
                 case "agent_limit":
-                    lock(instance)
+                    lock (instance)
                     {
                         return instance.Part.ObjectGroup.Scene.RegionSettings.AgentLimit.ToString();
                     }
 
                 case "dynamic_pathfinding":
                     return "disabled";
-                    
+
                 case "estate_id":
-                    lock(instance)
+                    lock (instance)
                     {
                         return instance.Part.ObjectGroup.Scene.EstateService.RegionMap[instance.Part.ObjectGroup.Scene.ID].ToString();
                     }
-                    
+
                 case "estate_name":
-                    lock(instance)
+                    lock (instance)
                     {
                         return instance.Part.ObjectGroup.Scene.EstateService[instance.Part.ObjectGroup.Scene.EstateService.RegionMap[instance.Part.ObjectGroup.Scene.ID]].Name;
                     }

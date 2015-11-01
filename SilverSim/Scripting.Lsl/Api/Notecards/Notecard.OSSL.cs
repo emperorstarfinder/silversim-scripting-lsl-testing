@@ -52,15 +52,17 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock (instance)
             {
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
                 Notecard nc = new Notecard();
                 nc.Text = contents;
                 AssetData asset = nc;
                 asset.ID = UUID.Random;
                 asset.Name = notecardName;
-                asset.Creator = instance.Part.ObjectGroup.Owner;
-                instance.Part.ObjectGroup.Scene.AssetService.Store(asset);
+                asset.Creator = thisGroup.Owner;
+                thisGroup.Scene.AssetService.Store(asset);
                 ObjectPartInventoryItem item = new ObjectPartInventoryItem(asset);
-                item.ParentFolderID = instance.Part.ID;
+                item.ParentFolderID = thisPart.ID;
 
                 for (uint i = 0; i < 1000; ++i)
                 {
@@ -74,7 +76,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                     }
                     try
                     {
-                        instance.Part.Inventory.Add(item.ID, item.Name, item);
+                        thisPart.Inventory.Add(item.ID, item.Name, item);
                     }
                     catch
                     {
@@ -132,7 +134,8 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             ObjectPartInventoryItem item;
             lock (instance)
             {
-                if (instance.Part.Inventory.TryGetValue(name, out item))
+                ObjectPart thisPart = instance.Part;
+                if (thisPart.Inventory.TryGetValue(name, out item))
                 {
                     if (item.InventoryType != InventoryType.Notecard)
                     {
@@ -140,7 +143,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                     }
                     else
                     {
-                        Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[item.AssetID];
+                        Notecard nc = thisPart.ObjectGroup.Scene.GetService<NotecardCache>()[item.AssetID];
                         string[] lines = nc.Text.Split('\n');
                         if (line >= lines.Length || line < 0)
                         {
@@ -169,7 +172,8 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             ObjectPartInventoryItem item;
             lock (instance)
             {
-                if (instance.Part.Inventory.TryGetValue(name, out item))
+                ObjectPart thisPart = instance.Part;
+                if (thisPart.Inventory.TryGetValue(name, out item))
                 {
                     if (item.InventoryType != InventoryType.Notecard)
                     {
@@ -177,7 +181,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                     }
                     else
                     {
-                        Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[item.AssetID];
+                        Notecard nc = thisPart.ObjectGroup.Scene.GetService<NotecardCache>()[item.AssetID];
                         return nc.Text.Split('\n').Length;
                     }
                 }

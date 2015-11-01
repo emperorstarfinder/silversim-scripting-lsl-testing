@@ -19,6 +19,7 @@ using ThreadedClasses;
 namespace SilverSim.Scripting.Lsl
 {
     [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
+    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
     public partial class Script : ScriptInstance, IScriptState
     {
         private ObjectPart m_Part;
@@ -277,27 +278,25 @@ namespace SilverSim.Scripting.Lsl
 
         public override void RevokePermissions(UUID permissionsKey, ScriptPermissions permissions)
         {
-            ObjectPartInventoryItem.PermsGranterInfo grantinfo = Item.PermsGranter;
+            ObjectPartInventoryItem thisItem = Item;
+            ObjectPart thisPart = Part;
+            ObjectPartInventoryItem.PermsGranterInfo grantinfo = thisItem.PermsGranter;
             if (permissionsKey == grantinfo.PermsGranter.ID && grantinfo.PermsGranter != UUI.Unknown)
             {
                 IAgent agent;
-                try
-                {
-                    agent = Part.ObjectGroup.Scene.Agents[grantinfo.PermsGranter.ID];
-                }
-                catch
+                if(!thisPart.ObjectGroup.Scene.Agents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
                 {
                    return;
                 }
-                agent.RevokePermissions(Part.ID, Item.ID, (~permissions) & (grantinfo.PermsMask));
+                agent.RevokePermissions(thisPart.ID, thisItem.ID, (~permissions) & (grantinfo.PermsMask));
                 grantinfo.PermsMask &= (~permissions);
                 if (ScriptPermissions.None == grantinfo.PermsMask)
                 {
-                    Item.PermsGranter = null;
+                    thisItem.PermsGranter = null;
                 }
                 else
                 {
-                    Item.PermsGranter = grantinfo;
+                    thisItem.PermsGranter = grantinfo;
                 }
             }
         }
@@ -382,6 +381,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public override void ProcessEvent()
         {
             IScriptEvent ev;
@@ -691,15 +691,20 @@ namespace SilverSim.Scripting.Lsl
             ChatServiceInterface chatService;
             lock (this)
             {
-                ev.Message = "At region " + Part.ObjectGroup.Scene.Name + ":\n" + message;
+                ObjectPart part = Part;
+                ObjectGroup objGroup = part.ObjectGroup;
+                ev.Message = "At region " + objGroup.Scene.Name + ":\n" + message;
                 ev.SourceType = ListenEvent.ChatSourceType.Object;
-                ev.OwnerID = Part.ObjectGroup.Owner.ID;
-                ev.GlobalPosition = Part.ObjectGroup.GlobalPosition;
-                ev.ID = Part.ObjectGroup.ID;
-                ev.Name = Part.ObjectGroup.Name;
-                chatService = Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
+                ev.OwnerID = objGroup.Owner.ID;
+                ev.GlobalPosition = objGroup.GlobalPosition;
+                ev.ID = objGroup.ID;
+                ev.Name = objGroup.Name;
+                chatService = objGroup.Scene.GetService<ChatServiceInterface>();
             }
-            chatService.Send(ev);
+            if (null != chatService)
+            {
+                chatService.Send(ev);
+            }
         }
     }
 }

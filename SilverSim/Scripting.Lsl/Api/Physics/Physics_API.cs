@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
@@ -80,7 +81,8 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             lock (instance)
             {
-                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                IPhysicsObject physobj = thisGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
                     instance.ShoutError("Object has not physical properties");
@@ -94,8 +96,8 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 }
                 else if(local != 0)
                 {
-                    physobj.AppliedForce = force / instance.Part.ObjectGroup.GlobalRotation;
-                    physobj.AppliedTorque = torque / instance.Part.ObjectGroup.GlobalRotation;
+                    physobj.AppliedForce = force / thisGroup.GlobalRotation;
+                    physobj.AppliedTorque = torque / thisGroup.GlobalRotation;
                 }
                 else
                 {
@@ -149,14 +151,15 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             lock (instance)
             {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 /* we leave the physics check out here since it has an interesting use */
                 if (local != 0)
                 {
-                    instance.Part.ObjectGroup.Velocity = velocity / instance.Part.ObjectGroup.GlobalRotation;
+                    thisGroup.Velocity = velocity / thisGroup.GlobalRotation;
                 }
                 else
                 {
-                    instance.Part.ObjectGroup.Velocity = velocity;
+                    thisGroup.Velocity = velocity;
                 }
             }
         }
@@ -167,14 +170,15 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             lock (instance)
             {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 /* we leave the physics check out here since it has an interesting use */
                 if (local != 0)
                 {
-                    instance.Part.ObjectGroup.AngularVelocity = initial_omega / instance.Part.ObjectGroup.GlobalRotation;
+                    thisGroup.AngularVelocity = initial_omega / thisGroup.GlobalRotation;
                 }
                 else
                 {
-                    instance.Part.ObjectGroup.AngularVelocity = initial_omega;
+                    thisGroup.AngularVelocity = initial_omega;
                 }
             }
         }
@@ -186,10 +190,11 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             AnArray array = new AnArray();
             lock (instance)
             {
-                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsGravityMultiplier);
-                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsRestitution);
-                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsFriction);
-                array.Add(instance.Part.ObjectGroup.RootPart.PhysicsDensity);
+                ObjectPart rootPart = instance.Part.ObjectGroup.RootPart;
+                array.Add(rootPart.PhysicsGravityMultiplier);
+                array.Add(rootPart.PhysicsRestitution);
+                array.Add(rootPart.PhysicsFriction);
+                array.Add(rootPart.PhysicsDensity);
                 return array;
             }
         }
@@ -205,6 +210,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             lock (instance)
             {
+                ObjectPart rootPart = instance.Part.ObjectGroup.RootPart;
                 if (0 != (mask & DENSITY))
                 {
                     if (density < 1)
@@ -215,7 +221,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     {
                         density = 22587f;
                     }
-                    instance.Part.ObjectGroup.RootPart.PhysicsDensity = density;
+                    rootPart.PhysicsDensity = density;
                 }
                 if (0 != (mask & FRICTION))
                 {
@@ -227,7 +233,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     {
                         friction = 255f;
                     }
-                    instance.Part.ObjectGroup.RootPart.PhysicsFriction = friction;
+                    rootPart.PhysicsFriction = friction;
                 }
                 if (0 != (mask & RESTITUTION))
                 {
@@ -239,7 +245,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     {
                         restitution = 1f;
                     }
-                    instance.Part.ObjectGroup.RootPart.PhysicsRestitution = restitution;
+                    rootPart.PhysicsRestitution = restitution;
                 }
                 if (0 != (mask & GRAVITY_MULTIPLIER))
                 {
@@ -251,7 +257,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     {
                         gravity_multiplier = 28f;
                     }
-                    instance.Part.ObjectGroup.RootPart.PhysicsGravityMultiplier = gravity_multiplier;
+                    rootPart.PhysicsGravityMultiplier = gravity_multiplier;
                 }
             }
         }

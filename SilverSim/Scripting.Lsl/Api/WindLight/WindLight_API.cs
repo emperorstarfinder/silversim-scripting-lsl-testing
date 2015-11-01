@@ -132,6 +132,8 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                 return res;
             }
 
+            WaterEntry waterSettings = envsettings.WaterSettings;
+
             foreach(IValue iv in rules)
             {
                 if (!(iv is Integer))
@@ -146,55 +148,58 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                 switch(iv.AsInt)
                 {
                     case REGION_WL_WATER_BLUR_MULTIPLIER:
-                        res.Add(envsettings.WaterSettings.BlurMultiplier);
+                        res.Add(waterSettings.BlurMultiplier);
                         break;
 
                     case REGION_WL_WATER_FRESNEL_OFFSET:
-                        res.Add(envsettings.WaterSettings.FresnelOffset);
+                        res.Add(waterSettings.FresnelOffset);
                         break;
 
                     case REGION_WL_WATER_FRESNEL_SCALE:
-                        res.Add(envsettings.WaterSettings.FresnelScale);
+                        res.Add(waterSettings.FresnelScale);
                         break;
 
                     case REGION_WL_WATER_NORMAL_MAP:
-                        res.Add(envsettings.WaterSettings.NormalMap);
+                        res.Add(waterSettings.NormalMap);
                         break;
 
                     case REGION_WL_WATER_UNDERWATER_FOG_MODIFIER:
-                        res.Add(envsettings.WaterSettings.UnderwaterFogModifier);
+                        res.Add(waterSettings.UnderwaterFogModifier);
                         break;
 
                     case REGION_WL_WATER_SCALE_ABOVE:
-                        res.Add(envsettings.WaterSettings.ScaleAbove);
+                        res.Add(waterSettings.ScaleAbove);
                         break;
 
                     case REGION_WL_WATER_SCALE_BELOW:
-                        res.Add(envsettings.WaterSettings.ScaleBelow);
+                        res.Add(waterSettings.ScaleBelow);
                         break;
 
                     case REGION_WL_WATER_FOG_DENSITY:
-                        res.Add(envsettings.WaterSettings.WaterFogDensity);
+                        res.Add(waterSettings.WaterFogDensity);
                         break;
 
                     case REGION_WL_WATER_FOG_COLOR:
-                        res.Add(new Quaternion(
-                            envsettings.WaterSettings.WaterFogColor.X,
-                            envsettings.WaterSettings.WaterFogColor.Y,
-                            envsettings.WaterSettings.WaterFogColor.Z,
-                            envsettings.WaterSettings.WaterFogColor.W));
+                        {
+                            Vector4 col = waterSettings.WaterFogColor;
+                            res.Add(new Quaternion(
+                                col.X,
+                                col.Y,
+                                col.Z,
+                                col.W));
+                        }
                         break;
 
                     case REGION_WL_WATER_BIG_WAVE_DIRECTION:
-                        res.Add(envsettings.WaterSettings.Wave1Direction);
+                        res.Add(waterSettings.Wave1Direction);
                         break;
 
                     case REGION_WL_WATER_LITTLE_WAVE_DIRECTION:
-                        res.Add(envsettings.WaterSettings.Wave2Direction);
+                        res.Add(waterSettings.Wave2Direction);
                         break;
 
                     case REGION_WL_WATER_NORMAL_SCALE:
-                        res.Add(envsettings.WaterSettings.NormScale);
+                        res.Add(waterSettings.NormScale);
                         break;
 
                     default:
@@ -207,6 +212,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
 
         [APIExtension(APIExtension.WindLight_New, "rwlWindlightSetWaterSettings")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         internal int WindlightSetWaterSettings(ScriptInstance instance, AnArray rules)
         {
             EnvironmentSettings envsettings;

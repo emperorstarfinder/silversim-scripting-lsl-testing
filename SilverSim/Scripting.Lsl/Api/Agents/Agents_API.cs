@@ -4,6 +4,7 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
@@ -119,8 +120,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             lock (instance)
             {
-                UUID ownerID = instance.Part.ObjectGroup.Scene.Owner.ID;
-                foreach (IAgent agent in instance.Part.ObjectGroup.Scene.Agents)
+                SceneInterface thisScene = instance.Part.ObjectGroup.Scene;
+                UUID ownerID = thisScene.Owner.ID;
+                foreach (IAgent agent in thisScene.Agents)
                 {
                     if (agent.ID == ownerID)
                     {

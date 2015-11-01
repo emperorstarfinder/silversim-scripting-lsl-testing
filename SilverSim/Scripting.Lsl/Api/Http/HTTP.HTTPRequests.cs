@@ -53,6 +53,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 
         [APILevel(APIFlags.LSL, "llHTTPRequest")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
+        [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
         internal LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
         {
             LSLHTTPClient_RequestQueue.LSLHttpRequest req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -67,6 +68,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
             static void ListItemFromXml(XmlTextReader reader, AnArray array)
             {
                 string type = string.Empty;
@@ -174,6 +176,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
             static void VariableFromXml(XmlTextReader reader, SavedScriptState state)
             {
                 string type = string.Empty;
