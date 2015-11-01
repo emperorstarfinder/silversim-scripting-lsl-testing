@@ -11,6 +11,7 @@ using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
+using SilverSim.Types.Primitive;
 
 namespace SilverSim.Scripting.Lsl.Api.Sound
 {
@@ -93,7 +94,25 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal void PlaySound(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException();
+            PrimitiveSoundFlags flags = 0;
+            lock (instance)
+            {
+                UUID soundID;
+                try
+                {
+                    soundID = GetSoundAssetID(instance, sound);
+                }
+                catch
+                {
+                    instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                    return;
+                }
+                if (instance.Part.IsSoundQueueing)
+                {
+                    flags |= PrimitiveSoundFlags.Queue;
+                }
+                instance.Part.ObjectGroup.Scene.SendAttachedSound(instance.Part, soundID, volume, 20, flags);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llPlaySoundSlave")]
@@ -139,7 +158,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                instance.Part.ObjectGroup.Scene.SendTriggerSound(instance.Part, soundID, volume, 20, top_north_east, bottom_south_west);
+                instance.Part.ObjectGroup.Scene.SendTriggerSound(instance.Part, soundID, volume, instance.Part.Sound.Radius, top_north_east, bottom_south_west);
             }
         }
 
@@ -148,7 +167,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal void AdjustSoundVolume(ScriptInstance instance, double volume)
         {
-            throw new NotImplementedException();
+            lock(instance)
+            {
+                instance.Part.ObjectGroup.Scene.SendAttachedSoundGainChange(instance.Part, volume, instance.Part.Sound.Radius);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSetSoundQueueing")]
@@ -165,7 +187,12 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal void SetSoundRadius(ScriptInstance instance, double radius)
         {
-            throw new NotImplementedException();
+            lock(instance)
+            {
+                ObjectPart.SoundParam sound = instance.Part.Sound;
+                sound.Radius = radius;
+                instance.Part.Sound = sound;
+            }
         }
     }
 }

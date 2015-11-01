@@ -155,7 +155,19 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal void SetPayPrice(ScriptInstance instance, int price, AnArray quick_pay_buttons)
         {
-            throw new NotImplementedException("llSetPayPrice(int, list)");
+            lock (instance)
+            {
+                if (quick_pay_buttons.Count < 4)
+                {
+                    instance.ShoutError("llSetPayPrice: List must have at least 4 elements.");
+                    return;
+                }
+                instance.Part.ObjectGroup.PayPrice0 = price;
+                instance.Part.ObjectGroup.PayPrice1 = quick_pay_buttons[0].AsInt;
+                instance.Part.ObjectGroup.PayPrice2 = quick_pay_buttons[1].AsInt;
+                instance.Part.ObjectGroup.PayPrice3 = quick_pay_buttons[2].AsInt;
+                instance.Part.ObjectGroup.PayPrice4 = quick_pay_buttons[3].AsInt;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSetPos")]
