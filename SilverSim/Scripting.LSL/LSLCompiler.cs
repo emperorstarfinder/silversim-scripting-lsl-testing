@@ -655,7 +655,7 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region Collect API functions, reset delegates and state change delegates
-                foreach (MethodInfo m in api.GetType().GetMethods())
+                foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(APILevel)) as APILevel[];
                     APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(m, typeof(APIExtension)) as APIExtension[];
