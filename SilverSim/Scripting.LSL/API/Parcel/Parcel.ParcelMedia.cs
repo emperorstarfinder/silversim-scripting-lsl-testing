@@ -12,38 +12,38 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
     public partial class ParcelApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_STOP = 0;
+        internal const int PARCEL_MEDIA_COMMAND_STOP = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_PAUSE = 1;
+        internal const int PARCEL_MEDIA_COMMAND_PAUSE = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_PLAY = 2;
+        internal const int PARCEL_MEDIA_COMMAND_PLAY = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_LOOP = 3;
+        internal const int PARCEL_MEDIA_COMMAND_LOOP = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_TEXTURE = 4;
+        internal const int PARCEL_MEDIA_COMMAND_TEXTURE = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_URL = 5;
+        internal const int PARCEL_MEDIA_COMMAND_URL = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_TIME = 6;
+        internal const int PARCEL_MEDIA_COMMAND_TIME = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_AGENT = 7;
+        internal const int PARCEL_MEDIA_COMMAND_AGENT = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_UNLOAD = 8;
+        internal const int PARCEL_MEDIA_COMMAND_UNLOAD = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_AUTO_ALIGN = 9;
+        internal const int PARCEL_MEDIA_COMMAND_AUTO_ALIGN = 9;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_TYPE = 10;
+        internal const int PARCEL_MEDIA_COMMAND_TYPE = 10;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_SIZE = 11;
+        internal const int PARCEL_MEDIA_COMMAND_SIZE = 11;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_DESC = 12;
+        internal const int PARCEL_MEDIA_COMMAND_DESC = 12;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PARCEL_MEDIA_COMMAND_LOOP_SET = 13;
+        internal const int PARCEL_MEDIA_COMMAND_LOOP_SET = 13;
 
         [APILevel(APIFlags.LSL, "llParcelMediaCommandList")]
         [ForcedSleep(2)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void ParcelMediaCommandList(ScriptInstance instance, AnArray commandList)
+        internal void ParcelMediaCommandList(ScriptInstance instance, AnArray commandList)
         {
             throw new NotImplementedException();
         }
@@ -51,7 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llParcelMediaQuery")]
         [ForcedSleep(2)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        AnArray ParcelMediaQuery(ScriptInstance instance, AnArray query)
+        internal AnArray ParcelMediaQuery(ScriptInstance instance, AnArray query)
         {
             throw new NotImplementedException();
         }

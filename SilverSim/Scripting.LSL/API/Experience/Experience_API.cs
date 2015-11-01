@@ -25,86 +25,86 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_NONE = 0;
+        internal const int XP_ERROR_NONE = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_THROTTLED = 1;
+        internal const int XP_ERROR_THROTTLED = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_EXPERIENCES_DISABLED = 2;
+        internal const int XP_ERROR_EXPERIENCES_DISABLED = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_INVALID_PARAMETERS = 3;
+        internal const int XP_ERROR_INVALID_PARAMETERS = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_NOT_PERMITTED = 4;
+        internal const int XP_ERROR_NOT_PERMITTED = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_NO_EXPERIENCE = 5;
+        internal const int XP_ERROR_NO_EXPERIENCE = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_NOT_FOUND = 6;
+        internal const int XP_ERROR_NOT_FOUND = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_INVALID_EXPERIENCE = 7;
+        internal const int XP_ERROR_INVALID_EXPERIENCE = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_EXPERIENCE_DISABLED = 8;
+        internal const int XP_ERROR_EXPERIENCE_DISABLED = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_EXPERIENCE_SUSPENDED = 9;
+        internal const int XP_ERROR_EXPERIENCE_SUSPENDED = 9;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_UNKNOWN_ERROR = 10;
+        internal const int XP_ERROR_UNKNOWN_ERROR = 10;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_QUOTA_EXCEEDED = 11;
+        internal const int XP_ERROR_QUOTA_EXCEEDED = 11;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_STORE_DISABLED = 12;
+        internal const int XP_ERROR_STORE_DISABLED = 12;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_STORAGE_EXCEPTION = 13;
+        internal const int XP_ERROR_STORAGE_EXCEPTION = 13;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_KEY_NOT_FOUND = 14;
+        internal const int XP_ERROR_KEY_NOT_FOUND = 14;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_RETRY_UPDATE = 15;
+        internal const int XP_ERROR_RETRY_UPDATE = 15;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int XP_ERROR_MATURITY_EXCEEDED = 16;
+        internal const int XP_ERROR_MATURITY_EXCEEDED = 16;
 
         [APILevel(APIFlags.LSL, "experience_permissions")]
         [StateEventDelegate]
-        delegate void State_experience_permissions(LSLKey agent_id);
+        internal delegate void State_experience_permissions(LSLKey agent_id);
 
         [APILevel(APIFlags.LSL, "experience_permissions_denied")]
         [StateEventDelegate]
-        delegate void State_experience_permissions_denied(LSLKey agent_id, int reason);
+        internal delegate void State_experience_permissions_denied(LSLKey agent_id, int reason);
 
         [APILevel(APIFlags.LSL, "llAgentInExperience")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        int AgentInExperience(ScriptInstance instance, LSLKey agent)
+        internal int AgentInExperience(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llCreateKeyValue")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey CreateKeyValue(ScriptInstance instance, string k, string v)
+        internal LSLKey CreateKeyValue(ScriptInstance instance, string k, string v)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llDataSizeKeyValue")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey DataSizeKeyValue(ScriptInstance instance)
+        internal LSLKey DataSizeKeyValue(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llDeleteKeyValue")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey DeleteKeyValue(ScriptInstance instance, string k)
+        internal LSLKey DeleteKeyValue(ScriptInstance instance, string k)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceDetails")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        AnArray GetExperienceDetails(ScriptInstance instance, LSLKey experience_id)
+        internal AnArray GetExperienceDetails(ScriptInstance instance, LSLKey experience_id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceErrorMessage")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string GetExperienceErrorMessage(ScriptInstance instance, int error)
+        internal string GetExperienceErrorMessage(ScriptInstance instance, int error)
         {
             switch(error)
             {
@@ -131,35 +131,35 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
 
         [APILevel(APIFlags.LSL, "llKeyCountKeyValue")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey KeyCountKeyValue(ScriptInstance instance)
+        internal LSLKey KeyCountKeyValue(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llKeysKeyValue")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey KeysKeyValue(ScriptInstance instance, int first, int count)
+        internal LSLKey KeysKeyValue(ScriptInstance instance, int first, int count)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llReadKeyValue")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey ReadKeyValue(ScriptInstance instance, string k)
+        internal LSLKey ReadKeyValue(ScriptInstance instance, string k)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llRequestExperiencePermissions")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void RequestExperiencePermissions(ScriptInstance instance, LSLKey agent, string name /* unused */)
+        internal void RequestExperiencePermissions(ScriptInstance instance, LSLKey agent, string name /* unused */)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llUpdateKeyValue")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey UpdateKeyValue(ScriptInstance instance, string k, string v, int checked_orig, string original_value)
+        internal LSLKey UpdateKeyValue(ScriptInstance instance, string k, string v, int checked_orig, string original_value)
         {
             throw new NotImplementedException();
         }

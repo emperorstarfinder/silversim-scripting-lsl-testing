@@ -16,7 +16,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llShout")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void Shout(ScriptInstance instance, int channel, string message)
+        internal void Shout(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
@@ -29,7 +29,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llSay")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void Say(ScriptInstance instance, int channel, string message)
+        internal void Say(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
@@ -42,7 +42,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llWhisper")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void Whisper(ScriptInstance instance, int channel, string message)
+        internal void Whisper(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llOwnerSay")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void OwnerSay(ScriptInstance instance, string message)
+        internal void OwnerSay(ScriptInstance instance, string message)
         {
             lock (instance)
             {
@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llRegionSay")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void RegionSay(ScriptInstance instance, int channel, string message)
+        internal void RegionSay(ScriptInstance instance, int channel, string message)
         {
             if (channel != PUBLIC_CHANNEL)
             {
@@ -88,7 +88,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llRegionSayTo")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void RegionSayTo(ScriptInstance instance, LSLKey target, int channel, string message)
+        internal void RegionSayTo(ScriptInstance instance, LSLKey target, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
@@ -102,7 +102,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llListen")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg)
+        internal int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg)
         {
             Script script = (Script)instance;
             lock (script)
@@ -145,7 +145,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llListenRemove")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void ListenRemove(ScriptInstance instance, int handle)
+        internal void ListenRemove(ScriptInstance instance, int handle)
         {
             Script script = (Script)instance;
             ChatServiceInterface.Listener l;
@@ -160,7 +160,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llListenControl")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void ListenControl(ScriptInstance instance, int handle, int active)
+        internal void ListenControl(ScriptInstance instance, int handle, int active)
         {
             Script script = (Script)instance;
             ChatServiceInterface.Listener l;
@@ -176,7 +176,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         #region osListenRegex
         [APILevel(APIFlags.OSSL, "osListenRegex")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        int ListenRegex(ScriptInstance instance, int channel, string name, LSLKey id, string msg, int regexBitfield)
+        internal int ListenRegex(ScriptInstance instance, int channel, string name, LSLKey id, string msg, int regexBitfield)
         {
             Script script = (Script)instance;
             lock (script)
@@ -221,7 +221,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [ExecutedOnStateChange]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        static void ResetListeners(ScriptInstance instance)
+        internal static void ResetListeners(ScriptInstance instance)
         {
             Script script = (Script)instance;
             lock (script)

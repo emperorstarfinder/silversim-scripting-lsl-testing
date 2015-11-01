@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llDeleteSubString")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string DeleteSubString(ScriptInstance instance, string src, int start, int end)
+        internal string DeleteSubString(ScriptInstance instance, string src, int start, int end)
         {
             if (start < 0)
             {
@@ -52,44 +52,44 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llToLower")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string ToLower(ScriptInstance instance, string s)
+        internal string ToLower(ScriptInstance instance, string s)
         {
             return s.ToLower();
         }
 
         [APILevel(APIFlags.LSL, "llToUpper")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string ToUpper(ScriptInstance instance, string s)
+        internal string ToUpper(ScriptInstance instance, string s)
         {
             return s.ToUpper();
         }
 
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string UnescapeURL(ScriptInstance instance, string url)
+        internal string UnescapeURL(ScriptInstance instance, string url)
         {
             return Uri.UnescapeDataString(url);
         }
 
         [APILevel(APIFlags.LSL, "llEscapeURL")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string EscapeURL(ScriptInstance instance, string url)
+        internal string EscapeURL(ScriptInstance instance, string url)
         {
             return Uri.EscapeDataString(url);
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int STRING_TRIM_HEAD = 0x1;
+        internal const int STRING_TRIM_HEAD = 0x1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int STRING_TRIM_TAIL = 0x2;
+        internal const int STRING_TRIM_TAIL = 0x2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int STRING_TRIM = 0x3;
+        internal const int STRING_TRIM = 0x3;
 
         static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
 
         [APILevel(APIFlags.LSL, "llStringTrim")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string StringTrim(ScriptInstance instance, string src, int type)
+        internal string StringTrim(ScriptInstance instance, string src, int type)
         {
             switch(type & STRING_TRIM)
             {
@@ -110,21 +110,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llStringLength")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        int StringLength(ScriptInstance instance, string src)
+        internal int StringLength(ScriptInstance instance, string src)
         {
             return src.Length;
         }
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        int SubStringIndex(ScriptInstance instance, string source, string pattern)
+        internal int SubStringIndex(ScriptInstance instance, string source, string pattern)
         {
             return source.IndexOf(pattern);
         }
 
         [APILevel(APIFlags.LSL, "llGetSubstring")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string GetSubstring(ScriptInstance instance, string src, int start, int end)
+        internal string GetSubstring(ScriptInstance instance, string src, int start, int end)
         {
             if(start < 0)
             {

@@ -14,7 +14,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llDialog")]
         [ForcedSleep(1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void Dialog(ScriptInstance instance, LSLKey avatar, string message, AnArray buttons, int channel)
+        internal void Dialog(ScriptInstance instance, LSLKey avatar, string message, AnArray buttons, int channel)
         {
             lock (instance)
             {
@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llTextBox")]
         [ForcedSleep(1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
+        internal void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
         {
             AnArray buttons = new AnArray();
             buttons.Add("!!llTextBox!!");
@@ -82,7 +82,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llLoadURL")]
         [ForcedSleep(10)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void LoadURL(ScriptInstance instance, LSLKey avatar, string message, string url)
+        internal void LoadURL(ScriptInstance instance, LSLKey avatar, string message, string url)
         {
             lock (instance)
             {
@@ -107,7 +107,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llMapDestination")]
         [ForcedSleep(1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void MapDestination(ScriptInstance instance, string simname, Vector3 pos, Vector3 look_at)
+        internal void MapDestination(ScriptInstance instance, string simname, Vector3 pos, Vector3 look_at)
         {
             lock(instance)
             {

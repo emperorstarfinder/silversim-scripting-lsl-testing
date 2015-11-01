@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llIntegerToBase64")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string IntegerToBase64(ScriptInstance instance, int number)
+        internal string IntegerToBase64(ScriptInstance instance, int number)
         {
             byte[] b = BitConverter.GetBytes(number);
             if (BitConverter.IsLittleEndian)
@@ -25,7 +25,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llBase64ToInteger")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        int Base64ToInteger(ScriptInstance instance, string s)
+        internal int Base64ToInteger(ScriptInstance instance, string s)
         {
             if (s.Length > 8)
             {
@@ -42,7 +42,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llStringToBase64")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string StringToBase64(ScriptInstance instance, string str)
+        internal string StringToBase64(ScriptInstance instance, string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
             return System.Convert.ToBase64String(b);
@@ -59,7 +59,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llXorBase64")]
         [ForcedSleep(0.3)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string XorBase64(ScriptInstance instance, string str1, string str2)
+        internal string XorBase64(ScriptInstance instance, string str1, string str2)
         {
             byte[] a = System.Convert.FromBase64String(str1);
             byte[] b = System.Convert.FromBase64String(str2);

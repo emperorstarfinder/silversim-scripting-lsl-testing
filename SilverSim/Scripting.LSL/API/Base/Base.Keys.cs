@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llGenerateKey")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey GenerateKey(ScriptInstance instance)
+        internal LSLKey GenerateKey(ScriptInstance instance)
         {
             return new LSLKey(UUID.Random);
         }
@@ -21,7 +21,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         #region osIsUUID
         [APILevel(APIFlags.OSSL, "osIsUUID")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        int IsUUID(ScriptInstance instance, string input)
+        internal int IsUUID(ScriptInstance instance, string input)
         {
             Guid v;
             return Guid.TryParse(input, out v) ? TRUE : FALSE;

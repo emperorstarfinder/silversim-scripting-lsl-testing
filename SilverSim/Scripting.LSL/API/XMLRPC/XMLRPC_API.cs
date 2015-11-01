@@ -26,15 +26,15 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REMOTE_DATA_CHANNEL = 1;
+        internal const int REMOTE_DATA_CHANNEL = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REMOTE_DATA_REQUEST = 2;
+        internal const int REMOTE_DATA_REQUEST = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REMOTE_DATA_REPLY = 3;
+        internal const int REMOTE_DATA_REPLY = 3;
 
         [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void CloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
+        internal void CloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
         {
             throw new NotImplementedException();
         }
@@ -42,7 +42,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [APILevel(APIFlags.LSL, "llOpenRemoteDataChannel")]
         [ForcedSleep(1.0)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void OpenRemoteDataChannel(ScriptInstance instance)
+        internal void OpenRemoteDataChannel(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [APILevel(APIFlags.LSL, "llRemoteDataReply")]
         [ForcedSleep(3.0)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void RemoteDataReply(ScriptInstance instance, LSLKey channel, LSLKey message_id, string sdata, int idata)
+        internal void RemoteDataReply(ScriptInstance instance, LSLKey channel, LSLKey message_id, string sdata, int idata)
         {
             throw new NotImplementedException();
         }
@@ -58,13 +58,13 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [APILevel(APIFlags.LSL, "llSendRemoteData")]
         [ForcedSleep(3.0)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey SendRemoteData(ScriptInstance instance, LSLKey channel, string dest, int idata, string sdata)
+        internal LSLKey SendRemoteData(ScriptInstance instance, LSLKey channel, string dest, int idata, string sdata)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "remote_data")]
         [StateEventDelegate]
-        delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
+        internal delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
     }
 }

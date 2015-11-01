@@ -19,7 +19,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         #region Texture Animation
         [APILevel(APIFlags.LSL, "llSetLinkTextureAnim")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void SetLinkTextureAnim(ScriptInstance instance, int link, int mode, int face, int sizeX, int sizeY, double start, double length, double rate)
+        internal void SetLinkTextureAnim(ScriptInstance instance, int link, int mode, int face, int sizeX, int sizeY, double start, double length, double rate)
         {
             TextureAnimationEntry te = new TextureAnimationEntry();
             te.Flags = (TextureAnimationEntry.TextureAnimMode)mode;
@@ -38,7 +38,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llSetTextureAnim")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void SetTextureAnim(ScriptInstance instance, int mode, int face, int sizeX, int sizeY, double start, double length, double rate)
+        internal void SetTextureAnim(ScriptInstance instance, int mode, int face, int sizeX, int sizeY, double start, double length, double rate)
         {
             SetLinkTextureAnim(instance, LINK_THIS, mode, face, sizeX, sizeY, start, length, rate);
         }

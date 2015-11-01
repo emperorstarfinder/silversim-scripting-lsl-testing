@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.LSL, "llStartAnimation")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void StartAnimation(
+        internal void StartAnimation(
             ScriptInstance instance,
             [LSLTooltip("animation to be played")]
             string anim)
@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         [APILevel(APIFlags.OSSL, "osAvatarPlayAnimation")]
         [LSLTooltip("causes an animation to be played on the specified avatar.")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void AvatarPlayAnimation(
+        internal void AvatarPlayAnimation(
             ScriptInstance instance, 
             [LSLTooltip("UUID of the agent")]
             LSLKey avatar, 
@@ -109,7 +109,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.LSL, "llStopAnimation")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void StopAnimation(
+        internal void StopAnimation(
             ScriptInstance instance, 
             [LSLTooltip("animation to be stopped")]
             string anim)
@@ -141,7 +141,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         [APILevel(APIFlags.OSSL, "osAvatarStopAnimation")]
         [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void AvatarStopAnimation(
+        internal void AvatarStopAnimation(
             ScriptInstance instance,
             [LSLTooltip("UUID of the agent")]
             LSLKey avatar,
@@ -170,14 +170,14 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.LSL, "llGetAnimation")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string GetAnimation(ScriptInstance instance, LSLKey agent)
+        internal string GetAnimation(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimationList")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string GetAnimationList(ScriptInstance instance, LSLKey agent)
+        internal string GetAnimationList(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }

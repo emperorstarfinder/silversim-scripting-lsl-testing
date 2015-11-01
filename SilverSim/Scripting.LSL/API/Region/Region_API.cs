@@ -12,23 +12,23 @@ namespace SilverSim.Scripting.Lsl.Api.Region
     public partial class RegionApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_ALLOW_DAMAGE = 0x1;
+        internal const int REGION_FLAG_ALLOW_DAMAGE = 0x1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_FIXED_SUN = 0x10;
+        internal const int REGION_FLAG_FIXED_SUN = 0x10;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_BLOCK_TERRAFORM = 0x40;
+        internal const int REGION_FLAG_BLOCK_TERRAFORM = 0x40;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_SANDBOX = 0x100;
+        internal const int REGION_FLAG_SANDBOX = 0x100;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_DISABLE_COLLISIONS = 0x1000;
+        internal const int REGION_FLAG_DISABLE_COLLISIONS = 0x1000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_DISABLE_PHYSICS = 0x4000;
+        internal const int REGION_FLAG_DISABLE_PHYSICS = 0x4000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_BLOCK_FLY = 0x80000;
+        internal const int REGION_FLAG_BLOCK_FLY = 0x80000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_ALLOW_DIRECT_TELEPORT = 0x100000;
+        internal const int REGION_FLAG_ALLOW_DIRECT_TELEPORT = 0x100000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int REGION_FLAG_RESTRICT_PUSHOBJECT = 0x400000;   
+        internal const int REGION_FLAG_RESTRICT_PUSHOBJECT = 0x400000;   
       
         public RegionApi()
         {

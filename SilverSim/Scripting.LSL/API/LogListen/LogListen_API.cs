@@ -26,7 +26,7 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
 
         [APIExtension(APIExtension.Admin, "asLogListen")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void LogListen(ScriptInstance instance, int onChannel, int enable)
+        internal void LogListen(ScriptInstance instance, int onChannel, int enable)
         {
             throw new NotImplementedException();
         }

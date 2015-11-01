@@ -14,105 +14,105 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     public partial class PrimitiveApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_INTERP_COLOR_MASK = 1;
+        internal const int PSYS_PART_INTERP_COLOR_MASK = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_INTERP_SCALE_MASK = 2;
+        internal const int PSYS_PART_INTERP_SCALE_MASK = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BOUNCE_MASK = 4;
+        internal const int PSYS_PART_BOUNCE_MASK = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_WIND_MASK = 8;
+        internal const int PSYS_PART_WIND_MASK = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_FOLLOW_SRC_MASK = 16;
+        internal const int PSYS_PART_FOLLOW_SRC_MASK = 16;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_FOLLOW_VELOCITY_MASK = 32;
+        internal const int PSYS_PART_FOLLOW_VELOCITY_MASK = 32;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_TARGET_POS_MASK = 64;
+        internal const int PSYS_PART_TARGET_POS_MASK = 64;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_TARGET_LINEAR_MASK = 128;
+        internal const int PSYS_PART_TARGET_LINEAR_MASK = 128;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_EMISSIVE_MASK = 256;
+        internal const int PSYS_PART_EMISSIVE_MASK = 256;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_RIBBON_MASK = 1024;
+        internal const int PSYS_PART_RIBBON_MASK = 1024;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_FLAGS = 0;
+        internal const int PSYS_PART_FLAGS = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_START_COLOR = 1;
+        internal const int PSYS_PART_START_COLOR = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_START_ALPHA = 2;
+        internal const int PSYS_PART_START_ALPHA = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_END_COLOR = 3;
+        internal const int PSYS_PART_END_COLOR = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_END_ALPHA = 4;
+        internal const int PSYS_PART_END_ALPHA = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_START_SCALE = 5;
+        internal const int PSYS_PART_START_SCALE = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_END_SCALE = 6;
+        internal const int PSYS_PART_END_SCALE = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_MAX_AGE = 7;
+        internal const int PSYS_PART_MAX_AGE = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_ACCEL = 8;
+        internal const int PSYS_SRC_ACCEL = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_PATTERN = 9;
+        internal const int PSYS_SRC_PATTERN = 9;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_INNERANGLE = 10;
+        internal const int PSYS_SRC_INNERANGLE = 10;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_OUTERANGLE = 11;
+        internal const int PSYS_SRC_OUTERANGLE = 11;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_TEXTURE = 12;
+        internal const int PSYS_SRC_TEXTURE = 12;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_BURST_RATE = 13;
+        internal const int PSYS_SRC_BURST_RATE = 13;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_BURST_PART_COUNT = 15;
+        internal const int PSYS_SRC_BURST_PART_COUNT = 15;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_BURST_RADIUS = 16;
+        internal const int PSYS_SRC_BURST_RADIUS = 16;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_BURST_SPEED_MIN = 17;
+        internal const int PSYS_SRC_BURST_SPEED_MIN = 17;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_BURST_SPEED_MAX = 18;
+        internal const int PSYS_SRC_BURST_SPEED_MAX = 18;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_MAX_AGE = 19;
+        internal const int PSYS_SRC_MAX_AGE = 19;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_TARGET_KEY = 20;
+        internal const int PSYS_SRC_TARGET_KEY = 20;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_OMEGA = 21;
+        internal const int PSYS_SRC_OMEGA = 21;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_ANGLE_BEGIN = 22;
+        internal const int PSYS_SRC_ANGLE_BEGIN = 22;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_ANGLE_END = 23;
+        internal const int PSYS_SRC_ANGLE_END = 23;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BLEND_FUNC_SOURCE = 24;
+        internal const int PSYS_PART_BLEND_FUNC_SOURCE = 24;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BLEND_FUNC_DEST = 25;
+        internal const int PSYS_PART_BLEND_FUNC_DEST = 25;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_START_GLOW = 26;
+        internal const int PSYS_PART_START_GLOW = 26;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_END_GLOW = 27;
+        internal const int PSYS_PART_END_GLOW = 27;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_ONE = 0;
+        internal const int PSYS_PART_BF_ONE = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_ZERO = 1;
+        internal const int PSYS_PART_BF_ZERO = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_DEST_COLOR = 2;
+        internal const int PSYS_PART_BF_DEST_COLOR = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_SOURCE_COLOR = 3;
+        internal const int PSYS_PART_BF_SOURCE_COLOR = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_ONE_MINUS_DEST_COLOR = 4;
+        internal const int PSYS_PART_BF_ONE_MINUS_DEST_COLOR = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_ONE_MINUS_SOURCE_COLOR = 5;
+        internal const int PSYS_PART_BF_ONE_MINUS_SOURCE_COLOR = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_SOURCE_ALPHA = 7;
+        internal const int PSYS_PART_BF_SOURCE_ALPHA = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_PART_BF_ONE_MINUS_SOURCE_ALPHA = 9;
+        internal const int PSYS_PART_BF_ONE_MINUS_SOURCE_ALPHA = 9;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_PATTERN_DROP = 1;
+        internal const int PSYS_SRC_PATTERN_DROP = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_PATTERN_EXPLODE = 2;
+        internal const int PSYS_SRC_PATTERN_EXPLODE = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_PATTERN_ANGLE = 4;
+        internal const int PSYS_SRC_PATTERN_ANGLE = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_PATTERN_ANGLE_CONE = 8;
+        internal const int PSYS_SRC_PATTERN_ANGLE_CONE = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PSYS_SRC_PATTERN_ANGLE_CONE_EMPTY = 16;
+        internal const int PSYS_SRC_PATTERN_ANGLE_CONE_EMPTY = 16;
 
         static float ValidParticleScale(double value)
         {
@@ -123,7 +123,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llLinkParticleSystem")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
+        internal void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
         {
             ParticleSystem ps = new ParticleSystem();
 
@@ -519,7 +519,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llParticleSystem")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void ParticleSystem(ScriptInstance instance, AnArray rules)
+        internal void ParticleSystem(ScriptInstance instance, AnArray rules)
         {
             LinkParticleSystem(instance, LINK_THIS, rules);
         }

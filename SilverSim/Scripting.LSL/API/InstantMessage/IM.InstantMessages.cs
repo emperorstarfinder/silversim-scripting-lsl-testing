@@ -16,7 +16,7 @@ namespace SilverSim.Scripting.Lsl.Api.IM
         [APILevel(APIFlags.LSL, "llInstantMessage")]
         [ForcedSleep(2)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void InstantMessage(ScriptInstance instance, LSLKey user, string message)
+        internal void InstantMessage(ScriptInstance instance, LSLKey user, string message)
         {
             lock(instance)
             {

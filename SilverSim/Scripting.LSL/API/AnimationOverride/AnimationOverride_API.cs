@@ -28,7 +28,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 
         [APILevel(APIFlags.LSL, "llSetAnimationOverride")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void SetAnimationOverride(ScriptInstance instance, string anim_state, string anim)
+        internal void SetAnimationOverride(ScriptInstance instance, string anim_state, string anim)
         {
             lock (instance)
             {
@@ -63,7 +63,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 
         [APILevel(APIFlags.LSL, "llGetAnimationOverride")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string GetAnimationOverride(ScriptInstance instance, string anim_state)
+        internal string GetAnimationOverride(ScriptInstance instance, string anim_state)
         {
             lock (instance)
             {
@@ -92,7 +92,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 
         [APILevel(APIFlags.LSL, "llResetAnimationOverride")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void ResetAnimationOverride(ScriptInstance instance, string anim_state)
+        internal void ResetAnimationOverride(ScriptInstance instance, string anim_state)
         {
             lock (instance)
             {

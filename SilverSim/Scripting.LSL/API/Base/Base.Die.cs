@@ -16,7 +16,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llDie")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void Die(ScriptInstance instance)
+        internal void Die(ScriptInstance instance)
         {
             instance.AbortBegin();
             instance.Part.ObjectGroup.Scene.Remove(instance.Part.ObjectGroup, instance);

@@ -30,12 +30,12 @@ namespace SilverSim.Scripting.Lsl.Api.Money
 
         [APILevel(APIFlags.LSL, "transaction_result")]
         [StateEventDelegate]
-        delegate void State_transaction_result(LSLKey id, int success, string data);
+        internal delegate void State_transaction_result(LSLKey id, int success, string data);
 
-        delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
+        internal delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
             UUI destinationid, int amount, ScriptInstance instance);
 
-        void TransferMoney(UUID transactionID, UUI sourceid,
+        internal void TransferMoney(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance)
         {
             EconomyServiceInterface sourceservice = null;
@@ -75,14 +75,14 @@ namespace SilverSim.Scripting.Lsl.Api.Money
             }
         }
 
-        void TransferMoneyEnd(IAsyncResult ar)
+        internal void TransferMoneyEnd(IAsyncResult ar)
         {
             AsyncResult result = (AsyncResult)ar;
             TransferMoneyDelegate caller = (TransferMoneyDelegate)result.AsyncDelegate;
             caller.EndInvoke(ar);
         }
 
-        void InvokeTransferMoney(UUID transactionID, UUI sourceid,
+        internal void InvokeTransferMoney(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance)
         {
             TransferMoneyDelegate d = TransferMoney;
@@ -91,7 +91,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
 
         [APILevel(APIFlags.LSL, "llGiveMoney")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
+        internal void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
@@ -104,7 +104,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
 
         [APILevel(APIFlags.LSL, "llTransferLindenDollars")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
+        internal LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||

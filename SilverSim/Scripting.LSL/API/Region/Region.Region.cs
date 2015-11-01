@@ -14,7 +14,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
     {
         [APILevel(APIFlags.LSL, "llGetRegionName")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string GetRegionName(ScriptInstance instance)
+        internal string GetRegionName(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -25,7 +25,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetSimulatorHostname")]
         [ForcedSleep(10)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string GetSimulatorHostname(ScriptInstance instance)
+        internal string GetSimulatorHostname(ScriptInstance instance)
         {
             lock(this)
             {
@@ -37,7 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         [APILevel(APIFlags.LSL, "llGetRegionCorner")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        Vector3 GetRegionCorner(ScriptInstance instance)
+        internal Vector3 GetRegionCorner(ScriptInstance instance)
         {
             lock(this)
             {
@@ -48,14 +48,14 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
+        internal LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
         {
             throw new NotImplementedException("llRequestSimulatorData(string, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llGetEnv")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string llGetEnv(ScriptInstance instance, string name)
+        internal string llGetEnv(ScriptInstance instance, string name)
         {
             switch(name)
             {
