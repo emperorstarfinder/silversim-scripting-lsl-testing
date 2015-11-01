@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             m_InternalAnimations.Add("surf", "41426836-7437-7e89-025d-0aa4d10f1d69");
             m_InternalAnimations.Add("express_surprise", "313b9881-4302-73c0-c7d0-0e7a36b6c224");
             m_InternalAnimations.Add("sword_strike_r", "85428680-6bf9-3e64-b489-6f81087c24bd");
-            m_InternalAnimations.Add("talk", "5c682a95-6da4-a463-0bf6-0f5b7be129d");
+            m_InternalAnimations.Add("talk", "5c682a95-6da4-a463-0bf6-0f5b7be129d1");
             m_InternalAnimations.Add("angry_tantrum", "11000694-3f41-adc2-606b-eee1d66f3724");
             m_InternalAnimations.Add("throw_r", "aa134404-7dac-7aca-2cba-435f9db875ca");
             m_InternalAnimations.Add("tryon_shirt", "83ff59fe-2346-f236-9009-4e3608af64c1");
