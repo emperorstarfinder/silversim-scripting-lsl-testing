@@ -10,9 +10,9 @@ using SilverSim.Types;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Base
+namespace SilverSim.Scripting.LSL.Api.Base
 {
-    public partial class Base_API
+    public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llGetTimestamp")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

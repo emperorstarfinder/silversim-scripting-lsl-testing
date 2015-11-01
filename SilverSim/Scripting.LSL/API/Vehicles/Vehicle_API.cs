@@ -10,13 +10,13 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Vehicles
+namespace SilverSim.Scripting.LSL.Api.Vehicles
 {
     [ScriptApiName("Vehicle")]
     [LSLImplementation]
-    public class Vehicle_API : IScriptApi, IPlugin
+    public class VehicleApi : IScriptApi, IPlugin
     {
-        public Vehicle_API()
+        public VehicleApi()
         {
 
         }

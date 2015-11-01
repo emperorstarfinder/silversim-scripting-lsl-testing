@@ -6,11 +6,11 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using System;
 
-namespace SilverSim.Scripting.LSL.API.Parcel
+namespace SilverSim.Scripting.LSL.Api.Parcel
 {
     [ScriptApiName("Parcel")]
     [LSLImplementation]
-    public partial class Parcel_API : IScriptApi, IPlugin
+    public partial class ParcelApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int PARCEL_FLAG_ALLOW_FLY = 0x1;
@@ -45,7 +45,7 @@ namespace SilverSim.Scripting.LSL.API.Parcel
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int PARCEL_FLAG_ALLOW_GROUP_OBJECT_ENTRY = 0x10000000;
 
-        public Parcel_API()
+        public ParcelApi()
         {
 
         }

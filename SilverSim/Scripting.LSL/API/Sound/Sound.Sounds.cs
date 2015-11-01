@@ -12,9 +12,9 @@ using SilverSim.Types.Asset;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Sound
+namespace SilverSim.Scripting.LSL.Api.Sound
 {
-    public partial class Sound_API
+    public partial class SoundApi
     {
         [APILevel(APIFlags.LSL, "llCollisionSound")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

@@ -7,9 +7,9 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Parcel
+namespace SilverSim.Scripting.LSL.Api.Parcel
 {
-    public partial class Parcel_API
+    public partial class ParcelApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int PARCEL_MEDIA_COMMAND_STOP = 0;

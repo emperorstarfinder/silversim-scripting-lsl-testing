@@ -7,11 +7,11 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 
-namespace SilverSim.Scripting.LSL.API.Sound
+namespace SilverSim.Scripting.LSL.Api.Sound
 {
     [ScriptApiName("Sound")]
     [LSLImplementation]
-    public partial class Sound_API : IScriptApi, IPlugin
+    public partial class SoundApi : IScriptApi, IPlugin
     {
         UUID GetSoundAssetID(ScriptInstance instance, string item)
         {
@@ -32,7 +32,7 @@ namespace SilverSim.Scripting.LSL.API.Sound
             return assetID;
         }
 
-        public Sound_API()
+        public SoundApi()
         {
 
         }

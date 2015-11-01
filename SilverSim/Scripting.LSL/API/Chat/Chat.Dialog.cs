@@ -7,9 +7,9 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Chat
+namespace SilverSim.Scripting.LSL.Api.Chat
 {
-    public partial class Chat_API
+    public partial class ChatApi
     {
         [APILevel(APIFlags.LSL, "llDialog")]
         [ForcedSleep(1)]

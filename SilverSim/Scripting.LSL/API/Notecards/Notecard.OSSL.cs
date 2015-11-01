@@ -12,9 +12,9 @@ using SilverSim.Types.Inventory;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Notecards
+namespace SilverSim.Scripting.LSL.Api.Notecards
 {
-    public partial class Notecard_API
+    public partial class NotecardApi
     {
         #region osMakeNotecard
         [APILevel(APIFlags.OSSL, "osMakeNotecard")]

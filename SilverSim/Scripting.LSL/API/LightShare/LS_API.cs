@@ -8,13 +8,13 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.LightShare
+namespace SilverSim.Scripting.LSL.Api.LightShare
 {
     [ScriptApiName("LightShare")]
     [LSLImplementation]
-    public class LS_API : IScriptApi, IPlugin
+    public class LightShareApi : IScriptApi, IPlugin
     {
-        public LS_API()
+        public LightShareApi()
         {
 
         }

@@ -8,14 +8,14 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.XMLRPC
+namespace SilverSim.Scripting.LSL.Api.XMLRPC
 {
     [ScriptApiName("XMLRPC")]
     [LSLImplementation]
-    public class XMLRPC_API : IScriptApi, IPlugin
+    public class XmlRpcApi : IScriptApi, IPlugin
     {
 
-        public XMLRPC_API()
+        public XmlRpcApi()
         {
 
         }

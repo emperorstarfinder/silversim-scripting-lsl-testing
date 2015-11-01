@@ -8,16 +8,16 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.HTTP
+namespace SilverSim.Scripting.LSL.Api.Http
 {
     [ScriptApiName("HTTP")]
     [LSLImplementation]
-    public partial class HTTP_API : IScriptApi, IPlugin
+    public partial class HttpApi : IScriptApi, IPlugin
     {
         LSLHTTP m_HTTPHandler;
         LSLHTTPClient_RequestQueue m_LSLHTTPClient;
 
-        public HTTP_API()
+        public HttpApi()
         {
 
         }

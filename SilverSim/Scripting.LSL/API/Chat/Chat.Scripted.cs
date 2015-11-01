@@ -8,9 +8,9 @@ using SilverSim.Types;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Chat
+namespace SilverSim.Scripting.LSL.Api.Chat
 {
-    public partial class Chat_API
+    public partial class ChatApi
     {
         public static int MaxListenerHandles = 64;
 

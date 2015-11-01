@@ -12,9 +12,9 @@ using SilverSim.Types.Parcel;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Parcel
+namespace SilverSim.Scripting.LSL.Api.Parcel
 {
-    public partial class Parcel_API
+    public partial class ParcelApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int PARCEL_COUNT_TOTAL = 0;

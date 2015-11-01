@@ -14,9 +14,9 @@ using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.HTTP
+namespace SilverSim.Scripting.LSL.Api.Http
 {
-    public partial class HTTP_API
+    public partial class HttpApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int HTTP_METHOD = 0;

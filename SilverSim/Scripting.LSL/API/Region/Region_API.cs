@@ -5,11 +5,11 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
 
-namespace SilverSim.Scripting.LSL.API.Region
+namespace SilverSim.Scripting.LSL.Api.Region
 {
     [ScriptApiName("Region")]
     [LSLImplementation]
-    public partial class Region_API : IScriptApi, IPlugin
+    public partial class RegionApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int REGION_FLAG_ALLOW_DAMAGE = 0x1;
@@ -30,7 +30,7 @@ namespace SilverSim.Scripting.LSL.API.Region
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int REGION_FLAG_RESTRICT_PUSHOBJECT = 0x400000;   
       
-        public Region_API()
+        public RegionApi()
         {
 
         }

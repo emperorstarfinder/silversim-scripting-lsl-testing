@@ -10,9 +10,9 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.HTTP
+namespace SilverSim.Scripting.LSL.Api.Http
 {
-    public partial class HTTP_API
+    public partial class HttpApi
     {
         [APILevel(APIFlags.LSL, "llRequestURL")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

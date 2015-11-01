@@ -9,9 +9,9 @@ using System.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.IM
+namespace SilverSim.Scripting.LSL.Api.IM
 {
-    public partial class IM_API
+    public partial class InstantMessageApi
     {
         [APILevel(APIFlags.LSL, "llInstantMessage")]
         [ForcedSleep(2)]

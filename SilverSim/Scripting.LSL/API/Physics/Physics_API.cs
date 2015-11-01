@@ -10,13 +10,13 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Physics
+namespace SilverSim.Scripting.LSL.Api.Physics
 {
     [ScriptApiName("Physics")]
     [LSLImplementation]
-    public class Physics_API : IScriptApi, IPlugin
+    public class PhysicsApi : IScriptApi, IPlugin
     {
-        public Physics_API()
+        public PhysicsApi()
         {
 
         }

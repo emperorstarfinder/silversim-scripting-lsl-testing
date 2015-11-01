@@ -3,9 +3,9 @@
 
 using SilverSim.Types;
 
-namespace SilverSim.Scripting.LSL.API.Base
+namespace SilverSim.Scripting.LSL.Api.Base
 {
-    public partial class Base_API
+    public partial class BaseApi
     {
         #region LSL Constants
 

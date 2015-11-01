@@ -7,11 +7,11 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 
-namespace SilverSim.Scripting.LSL.API.Detected
+namespace SilverSim.Scripting.LSL.Api.Detected
 {
     [ScriptApiName("Detected")]
     [LSLImplementation]
-    public partial class Detected_API : IScriptApi, IPlugin
+    public partial class DetectedApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int TOUCH_INVALID_FACE = -1;
@@ -20,7 +20,7 @@ namespace SilverSim.Scripting.LSL.API.Detected
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         static readonly Vector3 TOUCH_INVALID_VECTOR = Vector3.Zero;
 
-        public Detected_API()
+        public DetectedApi()
         {
 
         }

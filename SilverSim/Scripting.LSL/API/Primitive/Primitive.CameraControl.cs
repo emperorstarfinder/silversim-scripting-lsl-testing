@@ -10,9 +10,9 @@ using SilverSim.Types.Script;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Primitive
+namespace SilverSim.Scripting.LSL.Api.Primitive
 {
-    public partial class Primitive_API
+    public partial class PrimitiveApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int CAMERA_PITCH = 0;

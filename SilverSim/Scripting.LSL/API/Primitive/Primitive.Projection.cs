@@ -13,9 +13,9 @@ using System.Reflection;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Primitive
+namespace SilverSim.Scripting.LSL.Api.Primitive
 {
-    public partial class Primitive_API
+    public partial class PrimitiveApi
     {
         /// <summary>
         /// Set parameters for light projection in host prim 

@@ -9,9 +9,9 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Base
+namespace SilverSim.Scripting.LSL.Api.Base
 {
-    public partial class Base_API
+    public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llGetRegionAgentCount")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

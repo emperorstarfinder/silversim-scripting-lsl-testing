@@ -10,13 +10,13 @@ using System;
 using SilverSim.Scene.Types.Agent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Controls
+namespace SilverSim.Scripting.LSL.Api.Controls
 {
     [ScriptApiName("Controls")]
     [LSLImplementation]
-    public partial class Controls_API : IScriptApi, IPlugin
+    public partial class ControlsApi : IScriptApi, IPlugin
     {
-        public Controls_API()
+        public ControlsApi()
         {
 
         }

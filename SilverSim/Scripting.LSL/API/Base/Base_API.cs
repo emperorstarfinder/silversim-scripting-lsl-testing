@@ -8,11 +8,11 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Base
+namespace SilverSim.Scripting.LSL.Api.Base
 {
     [ScriptApiName("Base")]
     [LSLImplementation]
-    public partial class Base_API : IScriptApi, IPlugin
+    public partial class BaseApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, "at_rot_target")]
         [StateEventDelegate]
@@ -142,7 +142,7 @@ namespace SilverSim.Scripting.LSL.API.Base
         [StateEventDelegate]
         delegate void State_touch_start(int num_detected);
 
-        public Base_API()
+        public BaseApi()
         {
 
         }

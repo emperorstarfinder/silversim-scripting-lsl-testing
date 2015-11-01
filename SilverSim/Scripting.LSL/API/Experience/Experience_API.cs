@@ -8,13 +8,13 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Experience
+namespace SilverSim.Scripting.LSL.Api.Experience
 {
     [ScriptApiName("Experience")]
     [LSLImplementation]
-    public partial class Experience_API : IScriptApi, IPlugin
+    public partial class ExperienceApi : IScriptApi, IPlugin
     {
-        public Experience_API()
+        public ExperienceApi()
         {
 
         }

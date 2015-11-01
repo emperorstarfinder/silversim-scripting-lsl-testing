@@ -8,11 +8,11 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 
-namespace SilverSim.Scripting.LSL.API.Chat
+namespace SilverSim.Scripting.LSL.Api.Chat
 {
     [LSLImplementation]
     [ScriptApiName("Chat")]
-    public partial class Chat_API : IScriptApi, IPlugin
+    public partial class ChatApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int PUBLIC_CHANNEL = 0;
@@ -42,7 +42,7 @@ namespace SilverSim.Scripting.LSL.API.Chat
         [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         const int OS_LISTEN_REGEX_MESSAGE = 0x2;
 
-        public Chat_API()
+        public ChatApi()
         {
 
         }

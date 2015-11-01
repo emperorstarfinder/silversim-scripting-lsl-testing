@@ -11,13 +11,13 @@ using SilverSim.Scene.Types.WindLight;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.WindLight
+namespace SilverSim.Scripting.LSL.Api.WindLight
 {
     [ScriptApiName("WindLight")]
     [LSLImplementation]
-    public class WindLight_API : IScriptApi, IPlugin
+    public class WindLightApi : IScriptApi, IPlugin
     {
-        public WindLight_API()
+        public WindLightApi()
         {
 
         }

@@ -7,9 +7,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace SilverSim.Scripting.LSL.API.Base
+namespace SilverSim.Scripting.LSL.Api.Base
 {
-    public partial class Base_API
+    public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llIntegerToBase64")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

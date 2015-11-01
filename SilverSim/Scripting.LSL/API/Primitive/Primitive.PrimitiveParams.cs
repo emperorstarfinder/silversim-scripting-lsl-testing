@@ -10,9 +10,9 @@ using System;
 using SilverSim.Scene.Types.Scene;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Primitive
+namespace SilverSim.Scripting.LSL.Api.Primitive
 {
-    public partial class Primitive_API
+    public partial class PrimitiveApi
     {
         #region Primitives
 

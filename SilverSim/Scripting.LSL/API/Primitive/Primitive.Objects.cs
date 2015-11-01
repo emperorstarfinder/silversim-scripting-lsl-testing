@@ -10,9 +10,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace SilverSim.Scripting.LSL.API.Primitive
+namespace SilverSim.Scripting.LSL.Api.Primitive
 {
-    public partial class Primitive_API
+    public partial class PrimitiveApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         const int OBJECT_UNKNOWN_DETAIL = -1;

@@ -11,13 +11,13 @@ using SilverSim.Types.Script;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Permissions
+namespace SilverSim.Scripting.LSL.Api.Permissions
 {
     [ScriptApiName("Permissions")]
     [LSLImplementation]
-    public partial class Permissions_API : IScriptApi, IPlugin
+    public partial class PermissionsApi : IScriptApi, IPlugin
     {
-        public Permissions_API()
+        public PermissionsApi()
         {
 
         }

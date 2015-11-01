@@ -8,9 +8,9 @@ using SilverSim.Scripting.Common;
 using SilverSim.Main.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Region
+namespace SilverSim.Scripting.LSL.Api.Region
 {
-    public partial class Region_API
+    public partial class RegionApi
     {
         [APILevel(APIFlags.LSL, "llGetRegionName")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

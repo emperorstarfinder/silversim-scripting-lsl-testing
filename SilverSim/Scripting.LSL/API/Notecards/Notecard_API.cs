@@ -5,13 +5,13 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
 
-namespace SilverSim.Scripting.LSL.API.Notecards
+namespace SilverSim.Scripting.LSL.Api.Notecards
 {
     [ScriptApiName("Notecard")]
     [LSLImplementation]
-    public partial class Notecard_API : IScriptApi, IPlugin
+    public partial class NotecardApi : IScriptApi, IPlugin
     {
-        public Notecard_API()
+        public NotecardApi()
         {
 
         }

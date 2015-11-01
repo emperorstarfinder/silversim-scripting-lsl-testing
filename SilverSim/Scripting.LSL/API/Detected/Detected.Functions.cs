@@ -8,9 +8,9 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Agent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Detected
+namespace SilverSim.Scripting.LSL.Api.Detected
 {
-    public partial class Detected_API
+    public partial class DetectedApi
     {
         /* REMARKS: The internal attribute for the LSLScript has been done deliberately here.
          * The other option of implementing this would have been to make it a namespace class of the Script class.

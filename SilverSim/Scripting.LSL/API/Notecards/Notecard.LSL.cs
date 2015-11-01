@@ -13,9 +13,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 
-namespace SilverSim.Scripting.LSL.API.Notecards
+namespace SilverSim.Scripting.LSL.Api.Notecards
 {
-    public partial class Notecard_API
+    public partial class NotecardApi
     {
         const string EOF = "\n\n\n";
 

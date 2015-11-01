@@ -12,9 +12,9 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Primitive
+namespace SilverSim.Scripting.LSL.Api.Primitive
 {
-    public partial class Primitive_API
+    public partial class PrimitiveApi
     {
         #region Texture Animation
         [APILevel(APIFlags.LSL, "llSetLinkTextureAnim")]

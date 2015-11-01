@@ -8,11 +8,11 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 
-namespace SilverSim.Scripting.LSL.API.Primitive
+namespace SilverSim.Scripting.LSL.Api.Primitive
 {
     [ScriptApiName("Primitive")]
     [LSLImplementation]
-    public partial class Primitive_API : IScriptApi, IPlugin
+    public partial class PrimitiveApi : IScriptApi, IPlugin
     {
         UUID GetTextureAssetID(ScriptInstance instance, string item)
         {
@@ -301,7 +301,7 @@ namespace SilverSim.Scripting.LSL.API.Primitive
             return list;
         }
 
-        public Primitive_API()
+        public PrimitiveApi()
         {
 
         }

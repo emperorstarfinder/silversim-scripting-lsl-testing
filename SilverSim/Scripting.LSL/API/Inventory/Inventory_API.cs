@@ -10,13 +10,13 @@ using SilverSim.Types.Inventory;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.Inventory
+namespace SilverSim.Scripting.LSL.Api.Inventory
 {
     [ScriptApiName("Inventory")]
     [LSLImplementation]
-    public class Inventory_API : IScriptApi, IPlugin
+    public class InventoryApi : IScriptApi, IPlugin
     {
-        public Inventory_API()
+        public InventoryApi()
         {
 
         }

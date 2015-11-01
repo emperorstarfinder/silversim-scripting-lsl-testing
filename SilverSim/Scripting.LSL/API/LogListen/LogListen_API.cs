@@ -8,13 +8,13 @@ using SilverSim.Scripting.Common;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.API.LogListen
+namespace SilverSim.Scripting.LSL.Api.LogListen
 {
     [ScriptApiName("LogListen")]
     [LSLImplementation]
-    public class LogListen_API : IScriptApi, IPlugin
+    public class LogListenApi : IScriptApi, IPlugin
     {
-        public LogListen_API()
+        public LogListenApi()
         {
 
         }

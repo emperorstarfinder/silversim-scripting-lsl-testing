@@ -11,7 +11,6 @@ using System.Reflection;
 [assembly: SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidDeclaringCustomDelegatesRule")]
 [assembly: SuppressMessage("Gendarme.Rules.Naming", "DoNotUseReservedInEnumValueNamesRule")]
 [assembly: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectSuffixRule")]
-[module: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule", Scope = "namespace", Target = "SilverSim.Scripting.LSL")]
 [module: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule", Scope = "namespace", Target = "SilverSim.Scripting.LSL.API")]
 [module: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule", Scope = "namespace", Target = "SilverSim.Scripting.LSL.API.HTTP")]
 [module: SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule", Scope = "namespace", Target = "SilverSim.Scripting.LSL.API.XMLRPC")]

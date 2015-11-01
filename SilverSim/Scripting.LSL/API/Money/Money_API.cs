@@ -12,13 +12,13 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 
-namespace SilverSim.Scripting.LSL.API.Money
+namespace SilverSim.Scripting.LSL.Api.Money
 {
     [ScriptApiName("Money")]
     [LSLImplementation]
-    public partial class Money_API : IScriptApi, IPlugin
+    public partial class MoneyApi : IScriptApi, IPlugin
     {
-        public Money_API()
+        public MoneyApi()
         {
 
         }
