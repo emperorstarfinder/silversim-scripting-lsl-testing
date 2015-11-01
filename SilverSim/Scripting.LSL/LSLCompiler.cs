@@ -511,7 +511,7 @@ namespace SilverSim.Scripting.Lsl
             foreach (IScriptApi api in apis)
             {
                 #region Collect constants
-                foreach (FieldInfo f in api.GetType().GetFields())
+                foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
                 {
                     if ((f.Attributes & FieldAttributes.Static) != 0)
                     {
