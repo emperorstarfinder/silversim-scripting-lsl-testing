@@ -6,7 +6,7 @@ using System;
 
 namespace SilverSim.Scripting.LSL
 {
-    public sealed class LSLKey : IComparable<LSLKey>, IEquatable<LSLKey>, IComparable<string>, IEquatable<string>, IValue
+    public sealed class LSLKey : IEquatable<LSLKey>, IEquatable<string>, IValue
     {
         private string m_Value;
 
