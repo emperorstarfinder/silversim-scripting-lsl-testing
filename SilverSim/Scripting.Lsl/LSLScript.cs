@@ -10,6 +10,7 @@ using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Timers;
 using System.Xml;
@@ -17,6 +18,7 @@ using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl
 {
+    [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
     public partial class Script : ScriptInstance, IScriptState
     {
         private ObjectPart m_Part;
@@ -230,6 +232,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        [SuppressMessage("Gendarme.Rules.Design", "AvoidMultidimensionalIndexerRule")]
         public override ObjectPartInventoryItem Item 
         {
             get

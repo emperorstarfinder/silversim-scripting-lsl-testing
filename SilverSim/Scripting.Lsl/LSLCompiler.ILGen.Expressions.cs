@@ -6,6 +6,7 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
@@ -13,6 +14,9 @@ namespace SilverSim.Scripting.Lsl
     public partial class LSLCompiler
     {
         [Serializable]
+        [SuppressMessage("Gendarme.Rules.Exceptions", "MissingExceptionConstructorsRule")]
+        [SuppressMessage("Gendarme.Rules.Serialization", "ImplementISerializableCorrectlyRule")]
+        [SuppressMessage("Gendarme.Rules.Serialization", "MissingSerializationConstructorRule")]
         public class ReturnTypeException : Exception
         {
             public Type ReturnType;

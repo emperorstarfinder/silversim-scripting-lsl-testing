@@ -11,6 +11,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,6 +21,7 @@ using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl
 {
+    [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
     public sealed class LSLHTTP : IPlugin, IPluginShutdown
     {
         BaseHttpServer m_HttpServer;
@@ -43,6 +45,7 @@ namespace SilverSim.Scripting.Lsl
 
         readonly RwLockedDictionary<UUID, HttpRequestData> m_HttpRequests = new RwLockedDictionary<UUID, HttpRequestData>();
 
+        [SuppressMessage("Gendarme.Rules.Performance", "AvoidLargeStructureRule")]
         struct URLData
         {
             public UUID SceneID;
@@ -239,12 +242,13 @@ namespace SilverSim.Scripting.Lsl
                 byte[] b = UTF8NoBOM.GetBytes(body);
                 HttpStatusCode httpStatus = (HttpStatusCode)status;
                 reqdata.Request.SetConnectionClose();
-                HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType);
-                using(Stream s = res.GetOutputStream(b.LongLength))
+                using (HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType))
                 {
-                    s.Write(b, 0, b.Length);
+                    using (Stream s = res.GetOutputStream(b.LongLength))
+                    {
+                        s.Write(b, 0, b.Length);
+                    }
                 }
-                res.Close();
             }
         }
 

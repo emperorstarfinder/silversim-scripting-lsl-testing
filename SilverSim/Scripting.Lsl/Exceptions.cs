@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl
@@ -14,15 +15,51 @@ namespace SilverSim.Scripting.Lsl
         {
 
         }
+
+        public ResetScriptException(string message)
+            : base(message)
+        {
+
+        }
+
+        protected ResetScriptException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
+        }
+
+        public ResetScriptException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
     }
 
     [Serializable]
     public class ChangeStateException : Exception
     {
-        public string NewState { get; private set; }
-        public ChangeStateException(string newstate)
+        public string NewState { get { return Message; } }
+        public ChangeStateException(string message)
+            : base(message)
         {
-            NewState = newstate;
+        }
+
+        public ChangeStateException()
+            : base()
+        {
+
+        }
+
+        protected ChangeStateException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
+        }
+
+        public ChangeStateException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+
         }
     }
 }

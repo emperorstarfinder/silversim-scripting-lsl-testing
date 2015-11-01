@@ -33,3 +33,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Gendarme.Rules.Concurrency", "ReviewLockUsedOnlyForOperationsOnVariablesRule")]
 [assembly: SuppressMessage("Gendarme.Rules.Design", "PreferUriOverStringRule")]
 [assembly: SuppressMessage("Gendarme.Rules.Concurrency", "DoNotLockOnThisOrTypesRule")]
+[assembly: SuppressMessage("Gendarme.Rules.Exceptions", "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule")]

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Expression
@@ -13,8 +14,25 @@ namespace SilverSim.Scripting.Lsl.Expression
         [Serializable]
         public class ResolverException : Exception
         {
-            public ResolverException(string msg)
-                : base(msg)
+            public ResolverException()
+            {
+
+            }
+
+            public ResolverException(string message)
+                : base(message)
+            {
+
+            }
+
+            protected ResolverException(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            {
+
+            }
+
+            public ResolverException(string message, Exception innerException)
+                : base(message, innerException)
             {
 
             }
