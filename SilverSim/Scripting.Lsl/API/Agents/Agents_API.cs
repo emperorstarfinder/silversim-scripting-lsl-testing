@@ -1,6 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
@@ -11,8 +12,20 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
-    public partial class BaseApi
+    [ScriptApiName("Agents")]
+    [LSLImplementation]
+    public class Agents_API : IScriptApi, IPlugin
     {
+        public Agents_API()
+        {
+
+        }
+
+        public void Startup(ConfigurationLoader loader)
+        {
+
+        }
+
         [APILevel(APIFlags.LSL, "llGetRegionAgentCount")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal int GetRegionAgentCount(ScriptInstance instance)
