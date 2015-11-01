@@ -17,7 +17,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
     [LSLImplementation]
     public partial class AnimationApi : IScriptApi, IPlugin
     {
-        static Dictionary<string, UUID> m_InternalAnimations = new Dictionary<string,UUID>();
+        static readonly Dictionary<string, UUID> m_InternalAnimations = new Dictionary<string,UUID>();
 
         static AnimationApi()
         {
