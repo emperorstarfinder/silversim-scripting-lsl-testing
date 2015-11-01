@@ -71,18 +71,13 @@ namespace SilverSim.Scripting.Lsl
 
         private static readonly ILog m_Log = LogManager.GetLogger("LSL COMPILER");
         internal List<IScriptApi> m_Apis = new List<IScriptApi>();
-        //Dictionary<string, APIFlags> m_Constants = new Dictionary<string, APIFlags>();
-
-        //internal Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>> m_Methods = new Dictionary<string, List<KeyValuePair<IScriptApi, MethodInfo>>>();
 
         internal Dictionary<APIFlags, ApiInfo> m_ApiInfos = new Dictionary<APIFlags, ApiInfo>();
         internal Dictionary<string, ApiInfo> m_ApiExtensions = new Dictionary<string, ApiInfo>();
 
-        //Dictionary<string, MethodInfo> m_EventDelegates = new Dictionary<string, MethodInfo>();
         List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
         List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
         List<string> m_ReservedWords = new List<string>();
-        //internal Dictionary<string, APIFlags> m_MethodNames = new Dictionary<string, APIFlags>();
         List<char> m_SingleOps = new List<char>();
         List<char> m_MultiOps = new List<char>();
         List<char> m_NumericChars = new List<char>();
@@ -572,7 +567,7 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region Collect event definitions
-                foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
+                foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                 {
                     StateEventDelegate stateEventAttr = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
                     if (stateEventAttr != null)
