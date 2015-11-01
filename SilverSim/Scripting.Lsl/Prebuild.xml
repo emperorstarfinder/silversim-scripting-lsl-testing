@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Project frameworkVersion="v4_0" name="SilverSim.Scripting.Lsl" path="SilverSim/Scripting.LSL" type="Library">
+<Project frameworkVersion="v4_0" name="SilverSim.Scripting.Lsl" path="SilverSim/Scripting.Lsl" type="Library">
 	<Configuration name="Release">
 		<Options>
 			<OutputPath>../../bin/plugins/</OutputPath>
