@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.LSL
             }
         }
 
-        internal class ApiInfo
+        internal sealed class ApiInfo
         {
             public Dictionary<string, List<ApiMethodInfo>> Methods = new Dictionary<string, List<ApiMethodInfo>>();
             public Dictionary<string, FieldInfo> Constants = new Dictionary<string, FieldInfo>();
