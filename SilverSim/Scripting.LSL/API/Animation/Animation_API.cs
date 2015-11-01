@@ -332,9 +332,25 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.LSL, "llGetAnimationList")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string GetAnimationList(ScriptInstance instance, LSLKey agent)
+        internal AnArray GetAnimationList(ScriptInstance instance, LSLKey agentkey)
         {
-            throw new NotImplementedException();
+            List<UUID> playingAnimations;
+            lock(instance)
+            {
+                IAgent agent;
+                if(!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(agentkey, out agent))
+                {
+                    return new AnArray();
+                }
+                playingAnimations = agent.GetPlayingAnimations();
+            }
+
+            AnArray res = new AnArray();
+            foreach(UUID id in playingAnimations)
+            {
+                res.Add(id);
+            }
+            return res;
         }
     }
 }
