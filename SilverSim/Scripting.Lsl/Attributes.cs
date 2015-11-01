@@ -3,22 +3,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
     [Flags]
+    [SuppressMessage("Gendarme.Rules.Design", "EnumsShouldUseInt32Rule")]
     public enum APIFlags : uint
     {
         None = 0,
         LSL = 1 << 0,
         OSSL = 1 << 1,
         ASSL = 1 << 2,
-        //LightShare = 1 << 1,
-        //ASSL_Admin = 1 << 4,
-        //WindLight_Aurora = 1 << 5,
-        //WindLight_New = 1 << 6,
         Any = 0xFFFFFFFF
     }
 
@@ -29,6 +27,7 @@ namespace SilverSim.Scripting.Lsl
         public APIFlags Flags { get; private set; }
         public string Name { get; private set; }
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string KeepCsName = "";
 
         public APILevel(APIFlags flags, string name)
@@ -45,11 +44,16 @@ namespace SilverSim.Scripting.Lsl
         public string Extension { get; private set; }
         public string Name { get; private set; }
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string KeepCsName = "";
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string LightShare = "LightShare";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string WindLight_New = "WindLight";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string WindLight_Aurora = "WindLight_Aurora";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Admin = "Admin";
 
         public APIExtension(string extension, string name)

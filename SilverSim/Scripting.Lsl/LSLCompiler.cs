@@ -20,6 +20,8 @@ namespace SilverSim.Scripting.Lsl
 {
     [CompilerUsesRunAndCollectMode]
     [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
+    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
+    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory
     {
         internal struct ApiMethodInfo

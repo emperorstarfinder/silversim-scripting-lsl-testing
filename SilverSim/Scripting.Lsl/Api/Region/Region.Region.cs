@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         [APILevel(APIFlags.LSL, "llGetEnv")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string llGetEnv(ScriptInstance instance, string name)
+        internal string GetEnv(ScriptInstance instance, string name)
         {
             switch(name)
             {

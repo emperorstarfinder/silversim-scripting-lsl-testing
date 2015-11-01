@@ -6,9 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SilverSim.Scripting.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl
 {
+    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
+    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     public class Parser : ParserBase
     {
         public Parser()
