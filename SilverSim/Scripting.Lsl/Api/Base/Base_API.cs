@@ -16,131 +16,131 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "at_rot_target")]
         [StateEventDelegate]
-        internal delegate void State_at_rot_target(int handle, Quaternion targetrot, Quaternion ourrot);
+        public delegate void State_at_rot_target(int handle, Quaternion targetrot, Quaternion ourrot);
 
         [APILevel(APIFlags.LSL, "at_target")]
         [StateEventDelegate]
-        internal delegate void State_at_target(int tnum, Vector3 targetpos, Vector3 ourpos);
+        public delegate void State_at_target(int tnum, Vector3 targetpos, Vector3 ourpos);
 
         [APILevel(APIFlags.LSL, "attach")]
         [StateEventDelegate]
-        internal delegate void State_attach(LSLKey id);
+        public delegate void State_attach(LSLKey id);
 
         [APILevel(APIFlags.LSL, "changed")]
         [StateEventDelegate]
-        internal delegate void State_changed(int change);
+        public delegate void State_changed(int change);
 
         [APILevel(APIFlags.LSL, "collision")]
         [StateEventDelegate]
-        internal delegate void State_collision(int num_detected);
+        public delegate void State_collision(int num_detected);
 
         [APILevel(APIFlags.LSL, "collision_end")]
         [StateEventDelegate]
-        internal delegate void State_collision_end(int num_detected);
+        public delegate void State_collision_end(int num_detected);
 
         [APILevel(APIFlags.LSL, "collision_start")]
         [StateEventDelegate]
-        internal delegate void State_collision_start(int num_detected);
+        public delegate void State_collision_start(int num_detected);
 
         [APILevel(APIFlags.LSL, "dataserver")]
         [StateEventDelegate]
-        internal delegate void State_dataserver(LSLKey queryid, string data);
+        public delegate void State_dataserver(LSLKey queryid, string data);
 
         [APILevel(APIFlags.LSL, "email")]
         [StateEventDelegate]
-        internal delegate void State_email(string time, string address, string subject, string message, int num_left);
+        public delegate void State_email(string time, string address, string subject, string message, int num_left);
 
         [APILevel(APIFlags.LSL, "http_request")]
         [StateEventDelegate]
-        internal delegate void State_http_request(LSLKey request_id, string method, string body);
+        public delegate void State_http_request(LSLKey request_id, string method, string body);
 
         [APILevel(APIFlags.LSL, "http_response")]
         [StateEventDelegate]
-        internal delegate void State_http_response(LSLKey request_id, int status, AnArray metadata, string body);
+        public delegate void State_http_response(LSLKey request_id, int status, AnArray metadata, string body);
 
         [APILevel(APIFlags.LSL, "land_collision")]
         [StateEventDelegate]
-        internal delegate void State_land_collision(Vector3 pos);
+        public delegate void State_land_collision(Vector3 pos);
 
         [APILevel(APIFlags.LSL, "land_collision_end")]
         [StateEventDelegate]
-        internal delegate void State_land_collision_end(Vector3 pos);
+        public delegate void State_land_collision_end(Vector3 pos);
 
         [APILevel(APIFlags.LSL, "land_collision_start")]
         [StateEventDelegate]
-        internal delegate void State_land_collision_start(Vector3 pos);
+        public delegate void State_land_collision_start(Vector3 pos);
 
         [APILevel(APIFlags.LSL, "link_message")]
         [StateEventDelegate]
-        internal delegate void State_link_message(int sender_num, int num, string str, LSLKey id);
+        public delegate void State_link_message(int sender_num, int num, string str, LSLKey id);
 
         [APILevel(APIFlags.LSL, "listen")]
         [StateEventDelegate]
-        internal delegate void State_listen(int channel, string name, LSLKey id, string message);
+        public delegate void State_listen(int channel, string name, LSLKey id, string message);
 
         [APILevel(APIFlags.LSL, "money")]
         [StateEventDelegate]
-        internal delegate void State_money(LSLKey id, int amount);
+        public delegate void State_money(LSLKey id, int amount);
 
         [APILevel(APIFlags.LSL, "moving_end")]
         [StateEventDelegate]
-        internal delegate void State_moving_end();
+        public delegate void State_moving_end();
 
         [APILevel(APIFlags.LSL, "moving_start")]
         [StateEventDelegate]
-        internal delegate void State_moving_start();
+        public delegate void State_moving_start();
 
         [APILevel(APIFlags.LSL, "no_sensor")]
         [StateEventDelegate]
-        internal delegate void State_no_sensor();
+        public delegate void State_no_sensor();
 
         [APILevel(APIFlags.LSL, "not_at_rot_target")]
         [StateEventDelegate]
-        internal delegate void State_not_at_rot_target();
+        public delegate void State_not_at_rot_target();
 
         [APILevel(APIFlags.LSL, "not_at_target")]
         [StateEventDelegate]
-        internal delegate void State_not_at_target();
+        public delegate void State_not_at_target();
 
         [APILevel(APIFlags.LSL, "object_rez")]
         [StateEventDelegate]
-        internal delegate void State_object_rez(LSLKey id);
+        public delegate void State_object_rez(LSLKey id);
 
         [APILevel(APIFlags.LSL, "on_rez")]
         [StateEventDelegate]
-        internal delegate void State_on_rez(int start_param);
+        public delegate void State_on_rez(int start_param);
 
         [APILevel(APIFlags.LSL, "path_update")]
         [StateEventDelegate]
-        internal delegate void State_path_update(int type, AnArray reserved);
+        public delegate void State_path_update(int type, AnArray reserved);
 
         [APILevel(APIFlags.LSL, "sensor")]
         [StateEventDelegate]
-        internal delegate void State_sensor(int num_detected);
+        public delegate void State_sensor(int num_detected);
 
         [APILevel(APIFlags.LSL, "state_entry")]
         [StateEventDelegate]
-        internal delegate void State_state_entry();
+        public delegate void State_state_entry();
 
         [APILevel(APIFlags.LSL, "state_exit")]
         [StateEventDelegate]
-        internal delegate void State_state_exit();
+        public delegate void State_state_exit();
 
         [APILevel(APIFlags.LSL, "timer")]
         [StateEventDelegate]
-        internal delegate void State_timer();
+        public delegate void State_timer();
 
         [APILevel(APIFlags.LSL, "touch")]
         [StateEventDelegate]
-        internal delegate void State_touch(int num_detected);
+        public delegate void State_touch(int num_detected);
 
         [APILevel(APIFlags.LSL, "touch_end")]
         [StateEventDelegate]
-        internal delegate void State_touch_end(int num_detected);
+        public delegate void State_touch_end(int num_detected);
 
         [APILevel(APIFlags.LSL, "touch_start")]
         [StateEventDelegate]
-        internal delegate void State_touch_start(int num_detected);
+        public delegate void State_touch_start(int num_detected);
 
         public BaseApi()
         {

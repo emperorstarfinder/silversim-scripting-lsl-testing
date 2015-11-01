@@ -65,6 +65,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 
         [APILevel(APIFlags.LSL, "remote_data")]
         [StateEventDelegate]
-        internal delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
+        public delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
     }
 }

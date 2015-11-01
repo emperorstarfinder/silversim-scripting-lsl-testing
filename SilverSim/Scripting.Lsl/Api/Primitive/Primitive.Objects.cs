@@ -235,7 +235,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         #region osMessageObject
         [APILevel(APIFlags.ASSL, "object_message")]
         [StateEventDelegate]
-        internal delegate void State_object_message(LSLKey id, string data);
+        public delegate void State_object_message(LSLKey id, string data);
 
         [APILevel(APIFlags.OSSL, "osMessageObject")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

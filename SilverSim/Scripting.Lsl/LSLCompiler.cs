@@ -9,6 +9,7 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,6 +19,7 @@ using System.Text;
 namespace SilverSim.Scripting.Lsl
 {
     [CompilerUsesRunAndCollectMode]
+    [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory
     {
         internal struct ApiMethodInfo

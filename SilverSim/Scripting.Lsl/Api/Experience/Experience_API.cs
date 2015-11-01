@@ -61,11 +61,11 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
 
         [APILevel(APIFlags.LSL, "experience_permissions")]
         [StateEventDelegate]
-        internal delegate void State_experience_permissions(LSLKey agent_id);
+        public delegate void State_experience_permissions(LSLKey agent_id);
 
         [APILevel(APIFlags.LSL, "experience_permissions_denied")]
         [StateEventDelegate]
-        internal delegate void State_experience_permissions_denied(LSLKey agent_id, int reason);
+        public delegate void State_experience_permissions_denied(LSLKey agent_id, int reason);
 
         [APILevel(APIFlags.LSL, "llAgentInExperience")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

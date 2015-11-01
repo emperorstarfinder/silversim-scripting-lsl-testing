@@ -65,7 +65,7 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
 
         [APILevel(APIFlags.LSL, "run_time_permissions")]
         [StateEventDelegate]
-        internal delegate void State_run_time_permissions(int perm);
+        public delegate void State_run_time_permissions(int perm);
 
         [APILevel(APIFlags.LSL, "llGetPermissions")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]

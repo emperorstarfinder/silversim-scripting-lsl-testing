@@ -49,7 +49,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
 
         [APILevel(APIFlags.LSL, "control")]
         [StateEventDelegate]
-        internal delegate void State_control(LSLKey id, int level, int edge);
+        public delegate void State_control(LSLKey id, int level, int edge);
 
         [APILevel(APIFlags.LSL, "llTakeControls")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
