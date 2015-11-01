@@ -8,7 +8,7 @@ using SilverSim.Scripting.Common;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.LogListen
+namespace SilverSim.Scripting.Lsl.Api.LogListen
 {
     [ScriptApiName("LogListen")]
     [LSLImplementation]

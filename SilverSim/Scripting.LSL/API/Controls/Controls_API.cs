@@ -10,7 +10,7 @@ using System;
 using SilverSim.Scene.Types.Agent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Controls
+namespace SilverSim.Scripting.Lsl.Api.Controls
 {
     [ScriptApiName("Controls")]
     [LSLImplementation]

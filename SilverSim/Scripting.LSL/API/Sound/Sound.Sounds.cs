@@ -12,7 +12,7 @@ using SilverSim.Types.Asset;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Sound
+namespace SilverSim.Scripting.Lsl.Api.Sound
 {
     public partial class SoundApi
     {

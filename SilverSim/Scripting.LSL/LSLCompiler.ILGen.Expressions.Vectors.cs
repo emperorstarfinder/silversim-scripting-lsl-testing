@@ -1,13 +1,13 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using SilverSim.Scripting.LSL.Expression;
+using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {

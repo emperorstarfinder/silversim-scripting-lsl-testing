@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Threading;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {

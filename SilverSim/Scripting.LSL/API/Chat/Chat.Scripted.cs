@@ -8,7 +8,7 @@ using SilverSim.Types;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Chat
+namespace SilverSim.Scripting.Lsl.Api.Chat
 {
     public partial class ChatApi
     {

@@ -5,7 +5,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
 
-namespace SilverSim.Scripting.LSL.Api.Notecards
+namespace SilverSim.Scripting.Lsl.Api.Notecards
 {
     [ScriptApiName("Notecard")]
     [LSLImplementation]

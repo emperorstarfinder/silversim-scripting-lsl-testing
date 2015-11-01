@@ -10,7 +10,7 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Physics
+namespace SilverSim.Scripting.Lsl.Api.Physics
 {
     [ScriptApiName("Physics")]
     [LSLImplementation]

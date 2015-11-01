@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {

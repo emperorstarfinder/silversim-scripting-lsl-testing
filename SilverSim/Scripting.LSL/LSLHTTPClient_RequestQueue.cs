@@ -13,7 +13,7 @@ using System.Threading;
 using System.Web;
 using ThreadedClasses;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown
     {

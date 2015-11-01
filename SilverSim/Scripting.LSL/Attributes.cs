@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     [Flags]
     public enum APIFlags : uint

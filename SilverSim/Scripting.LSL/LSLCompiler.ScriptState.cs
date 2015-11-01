@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler 
     {

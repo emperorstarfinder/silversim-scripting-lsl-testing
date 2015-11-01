@@ -8,7 +8,7 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Http
+namespace SilverSim.Scripting.Lsl.Api.Http
 {
     [ScriptApiName("HTTP")]
     [LSLImplementation]

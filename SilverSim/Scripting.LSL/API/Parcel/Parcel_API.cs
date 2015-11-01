@@ -6,7 +6,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using System;
 
-namespace SilverSim.Scripting.LSL.Api.Parcel
+namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
     [ScriptApiName("Parcel")]
     [LSLImplementation]

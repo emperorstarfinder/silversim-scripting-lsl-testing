@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using SilverSim.Scripting.Common;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public class Parser : ParserBase
     {

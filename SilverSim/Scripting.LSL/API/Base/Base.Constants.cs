@@ -3,7 +3,7 @@
 
 using SilverSim.Types;
 
-namespace SilverSim.Scripting.LSL.Api.Base
+namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {

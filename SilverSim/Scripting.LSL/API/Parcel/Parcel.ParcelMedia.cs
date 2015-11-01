@@ -7,7 +7,7 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Parcel
+namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
     public partial class ParcelApi
     {

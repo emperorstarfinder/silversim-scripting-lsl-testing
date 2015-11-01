@@ -8,7 +8,7 @@ using SilverSim.Scripting.Common;
 using SilverSim.Main.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Region
+namespace SilverSim.Scripting.Lsl.Api.Region
 {
     public partial class RegionApi
     {

@@ -4,7 +4,7 @@
 using SilverSim.Types;
 using System;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public sealed class LSLKey : IEquatable<LSLKey>, IEquatable<string>, IValue
     {

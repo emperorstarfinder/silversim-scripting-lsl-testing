@@ -11,7 +11,7 @@ using SilverSim.Types.Script;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Permissions
+namespace SilverSim.Scripting.Lsl.Api.Permissions
 {
     [ScriptApiName("Permissions")]
     [LSLImplementation]

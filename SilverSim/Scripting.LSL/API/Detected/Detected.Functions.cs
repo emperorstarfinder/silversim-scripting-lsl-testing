@@ -8,7 +8,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Agent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Detected
+namespace SilverSim.Scripting.Lsl.Api.Detected
 {
     public partial class DetectedApi
     {

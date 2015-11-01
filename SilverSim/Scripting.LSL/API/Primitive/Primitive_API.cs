@@ -8,7 +8,7 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 
-namespace SilverSim.Scripting.LSL.Api.Primitive
+namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     [ScriptApiName("Primitive")]
     [LSLImplementation]

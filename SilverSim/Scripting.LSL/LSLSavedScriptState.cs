@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class Script
     {

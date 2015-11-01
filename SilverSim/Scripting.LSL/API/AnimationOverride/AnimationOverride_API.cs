@@ -10,7 +10,7 @@ using System;
 using SilverSim.Scene.Types.Object;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.AnimationOverride
+namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 {
     [ScriptApiName("AnimationOverride")]
     [LSLImplementation]

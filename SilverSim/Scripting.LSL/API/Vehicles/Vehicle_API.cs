@@ -10,7 +10,7 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Vehicles
+namespace SilverSim.Scripting.Lsl.Api.Vehicles
 {
     [ScriptApiName("Vehicle")]
     [LSLImplementation]

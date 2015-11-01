@@ -14,7 +14,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Http
+namespace SilverSim.Scripting.Lsl.Api.Http
 {
     public partial class HttpApi
     {

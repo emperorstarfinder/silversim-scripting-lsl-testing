@@ -10,7 +10,7 @@ using SilverSim.Types.Script;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Animation
+namespace SilverSim.Scripting.Lsl.Api.Animation
 {
     [ScriptApiName("Animation")]
     [LSLImplementation]

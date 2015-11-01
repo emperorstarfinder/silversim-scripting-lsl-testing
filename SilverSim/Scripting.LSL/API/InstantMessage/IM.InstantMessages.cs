@@ -9,7 +9,7 @@ using System.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.IM
+namespace SilverSim.Scripting.Lsl.Api.IM
 {
     public partial class InstantMessageApi
     {

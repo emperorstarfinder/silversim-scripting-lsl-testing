@@ -12,7 +12,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 
-namespace SilverSim.Scripting.LSL.Api.Money
+namespace SilverSim.Scripting.Lsl.Api.Money
 {
     [ScriptApiName("Money")]
     [LSLImplementation]

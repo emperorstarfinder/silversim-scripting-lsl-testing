@@ -15,7 +15,7 @@ using System.Timers;
 using System.Xml;
 using ThreadedClasses;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class Script : ScriptInstance, IScriptState
     {

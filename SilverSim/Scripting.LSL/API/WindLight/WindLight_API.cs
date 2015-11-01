@@ -11,7 +11,7 @@ using SilverSim.Scene.Types.WindLight;
 using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.WindLight
+namespace SilverSim.Scripting.Lsl.Api.WindLight
 {
     [ScriptApiName("WindLight")]
     [LSLImplementation]

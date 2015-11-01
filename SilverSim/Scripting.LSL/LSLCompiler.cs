@@ -5,7 +5,7 @@ using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
-using SilverSim.Scripting.LSL.Expression;
+using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     [CompilerUsesRunAndCollectMode]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory

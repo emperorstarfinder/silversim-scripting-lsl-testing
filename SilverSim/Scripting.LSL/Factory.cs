@@ -4,7 +4,7 @@
 using Nini.Config;
 using SilverSim.Main.Common;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     [PluginName("ScriptEngine")]
     public class Factory : IPluginFactory

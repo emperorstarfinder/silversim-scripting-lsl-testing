@@ -8,7 +8,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 
-namespace SilverSim.Scripting.LSL.Api.Chat
+namespace SilverSim.Scripting.Lsl.Api.Chat
 {
     [LSLImplementation]
     [ScriptApiName("Chat")]

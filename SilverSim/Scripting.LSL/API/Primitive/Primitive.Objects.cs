@@ -10,7 +10,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace SilverSim.Scripting.LSL.Api.Primitive
+namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {

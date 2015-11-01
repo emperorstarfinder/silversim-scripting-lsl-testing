@@ -9,7 +9,7 @@ using SilverSim.Types;
 using SilverSim.Types.Asset;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Primitive
+namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {

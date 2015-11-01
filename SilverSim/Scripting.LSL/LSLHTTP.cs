@@ -18,7 +18,7 @@ using System.Text;
 using System.Timers;
 using ThreadedClasses;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public sealed class LSLHTTP : IPlugin, IPluginShutdown
     {

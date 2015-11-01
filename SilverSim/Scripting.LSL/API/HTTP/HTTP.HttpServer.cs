@@ -10,7 +10,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Http
+namespace SilverSim.Scripting.Lsl.Api.Http
 {
     public partial class HttpApi
     {

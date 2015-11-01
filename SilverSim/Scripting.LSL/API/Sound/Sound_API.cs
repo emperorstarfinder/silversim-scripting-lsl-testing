@@ -7,7 +7,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 
-namespace SilverSim.Scripting.LSL.Api.Sound
+namespace SilverSim.Scripting.Lsl.Api.Sound
 {
     [ScriptApiName("Sound")]
     [LSLImplementation]

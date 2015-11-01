@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {

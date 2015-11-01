@@ -12,7 +12,7 @@ using SilverSim.Types.Inventory;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Notecards
+namespace SilverSim.Scripting.Lsl.Api.Notecards
 {
     public partial class NotecardApi
     {

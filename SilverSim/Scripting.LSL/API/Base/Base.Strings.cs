@@ -5,7 +5,7 @@ using SilverSim.Scene.Types.Script;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Base
+namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {

@@ -7,7 +7,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 
-namespace SilverSim.Scripting.LSL.Api.Detected
+namespace SilverSim.Scripting.Lsl.Api.Detected
 {
     [ScriptApiName("Detected")]
     [LSLImplementation]

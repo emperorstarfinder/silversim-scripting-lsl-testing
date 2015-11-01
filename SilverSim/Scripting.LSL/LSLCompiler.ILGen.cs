@@ -2,12 +2,12 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.LSL.Expression;
+using SilverSim.Scripting.Lsl.Expression;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
-namespace SilverSim.Scripting.LSL
+namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {

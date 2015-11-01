@@ -5,7 +5,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
 
-namespace SilverSim.Scripting.LSL.Api.Region
+namespace SilverSim.Scripting.Lsl.Api.Region
 {
     [ScriptApiName("Region")]
     [LSLImplementation]

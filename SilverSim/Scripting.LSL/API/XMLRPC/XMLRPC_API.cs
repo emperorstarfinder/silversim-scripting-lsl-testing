@@ -8,7 +8,7 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.XMLRPC
+namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
     [ScriptApiName("XMLRPC")]
     [LSLImplementation]

@@ -8,7 +8,7 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SilverSim.Scripting.LSL.Api.Experience
+namespace SilverSim.Scripting.Lsl.Api.Experience
 {
     [ScriptApiName("Experience")]
     [LSLImplementation]
