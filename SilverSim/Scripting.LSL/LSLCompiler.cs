@@ -559,7 +559,12 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
+                                APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
+                                APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
+                                if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
+                                {
+                                    m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
+                                }
                             }
                         }
                     }
