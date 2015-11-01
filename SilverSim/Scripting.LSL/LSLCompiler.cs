@@ -655,7 +655,7 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region Collect API functions, reset delegates and state change delegates
-                foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic))
+                foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(APILevel)) as APILevel[];
                     APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(m, typeof(APIExtension)) as APIExtension[];
@@ -671,7 +671,7 @@ namespace SilverSim.Scripting.Lsl
                                 if((m.Attributes & MethodAttributes.Static) != 0)
                                 {
                                     methodValid = false;
-                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Method is declared static.",
+                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Method is declared static.",
                                         m.Name,
                                         m.DeclaringType.FullName);
                                 }
@@ -680,7 +680,7 @@ namespace SilverSim.Scripting.Lsl
                                     if (!IsValidType(pi[i].ParameterType))
                                     {
                                         methodValid = false;
-                                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
+                                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
                                             m.Name,
                                             m.DeclaringType.FullName,
                                             pi[i].Name,
@@ -690,7 +690,7 @@ namespace SilverSim.Scripting.Lsl
                                 if (!IsValidType(m.ReturnType))
                                 {
                                     methodValid = false;
-                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel attribute. Return value does not have LSL compatible type '{2}'.",
+                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Return value does not have LSL compatible type '{2}'.",
                                         m.Name,
                                         m.DeclaringType.FullName,
                                         m.ReturnType.FullName);
