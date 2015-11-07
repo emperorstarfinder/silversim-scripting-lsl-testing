@@ -17,21 +17,21 @@ namespace SilverSim.Scripting.Lsl
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         sealed class BinaryOperatorExpression : IExpressionStackElement
         {
-            string m_Operator;
+            readonly string m_Operator;
             LocalBuilder m_LeftHandLocal;
             LocalBuilder m_RightHandLocal;
-            Tree m_LeftHand;
+            readonly Tree m_LeftHand;
             Type m_LeftHandType;
-            Tree m_RightHand;
+            readonly Tree m_RightHand;
             Type m_RightHandType;
-            int m_LineNumber;
+            readonly int m_LineNumber;
             enum State
             {
                 LeftHand,
                 RightHand
             }
 
-            List<State> m_ProcessOrder;
+            readonly List<State> m_ProcessOrder;
             bool m_HaveBeginScope;
 
             static readonly Dictionary<string, State[]> m_ProcessOrders = new Dictionary<string, State[]>();

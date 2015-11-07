@@ -33,7 +33,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         internal const int HTTP_PRAGMA_NO_CACHE = 6;
 
-        private string[] m_AllowedHttpHeaders =
+        private readonly string[] m_AllowedHttpHeaders =
         {
             "Accept", "Accept-Charset", "Accept-Encoding", "Accept-Language",
             "Accept-Ranges", "Age", "Allow", "Authorization", "Cache-Control",

@@ -13,8 +13,8 @@ namespace SilverSim.Scripting.Lsl
     {
         sealed class RotationExpression : IExpressionStackElement
         {
-            List<Tree> m_ListElements = new List<Tree>();
-            int m_LineNumber;
+            readonly List<Tree> m_ListElements = new List<Tree>();
+            readonly int m_LineNumber;
 
             public RotationExpression(
                 LSLCompiler lslCompiler,

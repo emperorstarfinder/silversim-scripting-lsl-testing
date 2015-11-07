@@ -14,9 +14,9 @@ namespace SilverSim.Scripting.Lsl
     {
         sealed class TypecastExpression : IExpressionStackElement
         {
-            Tree m_TypecastTree;
-            Type m_TargetType;
-            int m_LineNumber;
+            readonly Tree m_TypecastTree;
+            readonly Type m_TargetType;
+            readonly int m_LineNumber;
 
             public TypecastExpression(
                 LSLCompiler lslCompiler,

@@ -25,7 +25,7 @@ namespace SilverSim.Scripting.Lsl
     public sealed class LSLHTTP : IPlugin, IPluginShutdown
     {
         BaseHttpServer m_HttpServer;
-        Timer m_HttpTimer;
+        readonly Timer m_HttpTimer;
 
         struct HttpRequestData
         {

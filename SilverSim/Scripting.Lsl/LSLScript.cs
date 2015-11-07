@@ -23,10 +23,10 @@ namespace SilverSim.Scripting.Lsl
     public partial class Script : ScriptInstance, IScriptState
     {
         private ObjectPart m_Part;
-        private ObjectPartInventoryItem m_Item;
-        private NonblockingQueue<IScriptEvent> m_Events = new NonblockingQueue<IScriptEvent>();
+        readonly ObjectPartInventoryItem m_Item;
+        readonly NonblockingQueue<IScriptEvent> m_Events = new NonblockingQueue<IScriptEvent>();
         internal List<DetectInfo> m_Detected = new List<DetectInfo>();
-        private Dictionary<string, ILSLState> m_States = new Dictionary<string, ILSLState>();
+        readonly Dictionary<string, ILSLState> m_States = new Dictionary<string, ILSLState>();
         private ILSLState m_CurrentState;
         public int StartParameter;
         internal RwLockedDictionary<int, ChatServiceInterface.Listener> m_Listeners = new RwLockedDictionary<int, ChatServiceInterface.Listener>();
@@ -274,7 +274,7 @@ namespace SilverSim.Scripting.Lsl
             m_Part = null;
         }
 
-        private Dictionary<string, MethodInfo> m_CurrentStateMethods = new Dictionary<string, MethodInfo>();
+        readonly Dictionary<string, MethodInfo> m_CurrentStateMethods = new Dictionary<string, MethodInfo>();
 
         public override void RevokePermissions(UUID permissionsKey, ScriptPermissions permissions)
         {

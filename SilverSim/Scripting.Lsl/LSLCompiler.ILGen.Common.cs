@@ -19,9 +19,9 @@ namespace SilverSim.Scripting.Lsl
         public sealed class LSLScriptAssembly : IScriptAssembly
         {
             public readonly Assembly Assembly;
-            Type m_ScriptType;
-            Dictionary<string, Type> m_StateTypes;
-            bool m_ForcedSleep;
+            readonly Type m_ScriptType;
+            readonly Dictionary<string, Type> m_StateTypes;
+            readonly bool m_ForcedSleep;
 
             public LSLScriptAssembly(Assembly assembly, Type script, Dictionary<string, Type> stateTypes, bool forcedSleep)
             {

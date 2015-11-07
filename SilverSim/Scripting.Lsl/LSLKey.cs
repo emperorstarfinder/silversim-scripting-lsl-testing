@@ -10,7 +10,7 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Design", "EnsureSymmetryForOverloadedOperatorsRule")]
     public sealed class LSLKey : IEquatable<LSLKey>, IEquatable<string>, IValue
     {
-        private string m_Value;
+        readonly private string m_Value;
 
         #region Properties
         public SilverSim.Types.ValueType Type

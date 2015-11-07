@@ -14,9 +14,9 @@ namespace SilverSim.Scripting.Lsl
     {
         sealed class LeftUnaryOperators : IExpressionStackElement
         {
-            Tree m_ExpressionTree;
-            string m_Operator;
-            int m_LineNumber;
+            readonly Tree m_ExpressionTree;
+            readonly string m_Operator;
+            readonly int m_LineNumber;
 
             public LeftUnaryOperators(
                 LSLCompiler lslCompiler,

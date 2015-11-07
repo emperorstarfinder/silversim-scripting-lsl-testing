@@ -31,11 +31,11 @@ namespace SilverSim.Scripting.Lsl
                     Position = position;
                 }
             }
-            List<FunctionParameterInfo> m_Parameters = new List<FunctionParameterInfo>();
-            
-            string m_FunctionName;
-            Type m_FunctionReturnType;
-            int m_LineNumber;
+            readonly List<FunctionParameterInfo> m_Parameters = new List<FunctionParameterInfo>();
+
+            readonly string m_FunctionName;
+            readonly Type m_FunctionReturnType;
+            readonly int m_LineNumber;
 
             public FunctionExpression(
                 LSLCompiler lslCompiler,

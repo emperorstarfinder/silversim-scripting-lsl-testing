@@ -103,9 +103,9 @@ namespace SilverSim.Scripting.Lsl.Expression
             Binary
         }
 
-        List<string> m_ReservedWords;
-        List<Dictionary<string, OperatorType>> m_Operators;
-        Dictionary<string, string> m_BlockOps;
+        readonly List<string> m_ReservedWords;
+        readonly List<Dictionary<string, OperatorType>> m_Operators;
+        readonly Dictionary<string, string> m_BlockOps;
 
         public Resolver(List<string> reservedWords, List<Dictionary<string, OperatorType>> operators, Dictionary<string, string> blockOps)
         {

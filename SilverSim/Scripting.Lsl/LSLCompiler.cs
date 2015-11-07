@@ -79,13 +79,13 @@ namespace SilverSim.Scripting.Lsl
         internal Dictionary<APIFlags, ApiInfo> m_ApiInfos = new Dictionary<APIFlags, ApiInfo>();
         internal Dictionary<string, ApiInfo> m_ApiExtensions = new Dictionary<string, ApiInfo>();
 
-        List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
-        List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
-        List<string> m_ReservedWords = new List<string>();
-        List<char> m_SingleOps = new List<char>();
-        List<char> m_MultiOps = new List<char>();
-        List<char> m_NumericChars = new List<char>();
-        List<char> m_OpChars = new List<char>();
+        readonly List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
+        readonly List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
+        readonly List<string> m_ReservedWords = new List<string>();
+        readonly List<char> m_SingleOps = new List<char>();
+        readonly List<char> m_MultiOps = new List<char>();
+        readonly List<char> m_NumericChars = new List<char>();
+        readonly List<char> m_OpChars = new List<char>();
         Resolver m_Resolver;
 
         sealed class LineInfo
@@ -176,7 +176,7 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, Dictionary<string, List<LineInfo>>> m_States = new Dictionary<string, Dictionary<string, List<LineInfo>>>();
             public FieldBuilder InstanceField;
             public Dictionary<string, FieldBuilder> m_ApiFieldInfo = new Dictionary<string, FieldBuilder>();
-            List<ControlFlowElement> m_ControlFlowStack = new List<ControlFlowElement>();
+            readonly List<ControlFlowElement> m_ControlFlowStack = new List<ControlFlowElement>();
             public Dictionary<Label, KeyValuePair<int, string>> m_UnnamedLabels = new Dictionary<Label, KeyValuePair<int, string>>();
             public ControlFlowElement LastBlock;
 
@@ -719,7 +719,8 @@ namespace SilverSim.Scripting.Lsl
                                             List<ApiMethodInfo> methodList;
                                             if (!kvp.Value.Methods.TryGetValue(funcName, out methodList))
                                             {
-                                                kvp.Value.Methods.Add(funcName, methodList = new List<ApiMethodInfo>());
+                                                methodList = new List<ApiMethodInfo>();
+                                                kvp.Value.Methods.Add(funcName, methodList);
                                             }
                                             methodList.Add(new ApiMethodInfo(funcName, api, m));
                                         }
@@ -742,7 +743,8 @@ namespace SilverSim.Scripting.Lsl
                                         List<ApiMethodInfo> methodList;
                                         if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
                                         {
-                                            apiInfo.Methods.Add(funcName, methodList = new List<ApiMethodInfo>());
+                                            methodList = new List<ApiMethodInfo>();
+                                            apiInfo.Methods.Add(funcName, methodList);
                                         }
                                         methodList.Add(new ApiMethodInfo(funcName, api, m));
                                     }
@@ -816,7 +818,8 @@ namespace SilverSim.Scripting.Lsl
             blockOps.Add("[", "]");
 
             Dictionary<string, Resolver.OperatorType> plist;
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("(integer)", Resolver.OperatorType.LeftUnary);
             plist.Add("(float)", Resolver.OperatorType.LeftUnary);
             plist.Add("(string)", Resolver.OperatorType.LeftUnary);
@@ -826,15 +829,18 @@ namespace SilverSim.Scripting.Lsl
             plist.Add("(rotation)", Resolver.OperatorType.LeftUnary);
             plist.Add("(quaternion)", Resolver.OperatorType.LeftUnary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("@", Resolver.OperatorType.LeftUnary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("++", Resolver.OperatorType.RightUnary);
             plist.Add("--", Resolver.OperatorType.RightUnary);
             plist.Add(".", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("++", Resolver.OperatorType.LeftUnary);
             plist.Add("--", Resolver.OperatorType.LeftUnary);
             plist.Add("+", Resolver.OperatorType.LeftUnary);
@@ -842,43 +848,53 @@ namespace SilverSim.Scripting.Lsl
             plist.Add("!", Resolver.OperatorType.LeftUnary);
             plist.Add("~", Resolver.OperatorType.LeftUnary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("*", Resolver.OperatorType.Binary);
             plist.Add("/", Resolver.OperatorType.Binary);
             plist.Add("%", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("+", Resolver.OperatorType.Binary);
             plist.Add("-", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("<<", Resolver.OperatorType.Binary);
             plist.Add(">>", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("<", Resolver.OperatorType.Binary);
             plist.Add("<=", Resolver.OperatorType.Binary);
             plist.Add(">", Resolver.OperatorType.Binary);
             plist.Add(">=", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("==", Resolver.OperatorType.Binary);
             plist.Add("!=", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("&", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("^", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("|", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("&&", Resolver.OperatorType.Binary);
             plist.Add("||", Resolver.OperatorType.Binary);
 
-            operators.Add(plist = new Dictionary<string, Resolver.OperatorType>());
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
             plist.Add("=", Resolver.OperatorType.Binary);
             plist.Add("+=", Resolver.OperatorType.Binary);
             plist.Add("-=", Resolver.OperatorType.Binary);

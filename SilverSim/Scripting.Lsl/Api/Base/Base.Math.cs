@@ -355,7 +355,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return (int)Math.Round(f, MidpointRounding.AwayFromZero);
         }
 
-        private Random random = new Random();
+        private readonly Random random = new Random();
         [APILevel(APIFlags.LSL, "llFrand")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal double Frand(ScriptInstance instance, double mag)

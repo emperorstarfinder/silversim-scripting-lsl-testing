@@ -14,9 +14,9 @@ namespace SilverSim.Scripting.Lsl
     {
         sealed class ListExpression : IExpressionStackElement
         {
-            LocalBuilder m_NewList;
-            List<Tree> m_ListElements = new List<Tree>();
-            int m_LineNumber;
+            readonly LocalBuilder m_NewList;
+            readonly List<Tree> m_ListElements = new List<Tree>();
+            readonly int m_LineNumber;
 
             public ListExpression(
                 LSLCompiler lslCompiler,

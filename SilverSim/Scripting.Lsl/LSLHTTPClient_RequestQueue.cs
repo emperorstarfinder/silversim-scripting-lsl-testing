@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>> m_RequestQueues = new RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>>();
+        readonly RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>> m_RequestQueues = new RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>>();
 
         public LSLHTTPClient_RequestQueue()
         {
