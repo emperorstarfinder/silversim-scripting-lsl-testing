@@ -169,7 +169,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {   // compare the s-component to the v-component
                 return 2.0d * Math.Acos(Math.Sqrt(s2 / (s2 + v2))); // use arccos if the v-component is dominant
             }
-            if (v2 != 0)
+            if (Math.Abs(v2) >= Double.Epsilon)
             {   // make sure the v-component is non-zero
                 return 2.0d * Math.Asin(Math.Sqrt(v2 / (s2 + v2))); // use arcsin if the s-component is dominant
             }
