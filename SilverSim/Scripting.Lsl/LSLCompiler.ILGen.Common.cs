@@ -415,7 +415,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(LSLKey))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetProperty("IsLSLTrue").GetGetMethod());
+                    ilgen.Emit(OpCodes.Call, typeof(LSLKey).GetProperty("IsLSLTrue").GetGetMethod());
                 }
                 else if (fromType == typeof(double))
                 {
@@ -442,10 +442,6 @@ namespace SilverSim.Scripting.Lsl
                     ilgen.Emit(OpCodes.Ceq);
                     ilgen.Emit(OpCodes.Ldc_I4_0);
                     ilgen.Emit(OpCodes.Ceq);
-                }
-                else if (fromType == typeof(LSLKey))
-                {
-                    ilgen.Emit(OpCodes.Call, typeof(LSLKey).GetProperty("IsLSLTrue").GetGetMethod());
                 }
                 else
                 {

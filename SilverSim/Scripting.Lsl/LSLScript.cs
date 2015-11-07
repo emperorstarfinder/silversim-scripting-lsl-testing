@@ -539,7 +539,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     InvokeStateEvent("not_at_rot_target");
                 }
-                else if(evt == typeof(NotAtRotTargetEvent))
+                else if(evt == typeof(NotAtTargetEvent))
                 {
                     InvokeStateEvent("not_at_target");
                 }
