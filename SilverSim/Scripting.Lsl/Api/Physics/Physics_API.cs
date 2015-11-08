@@ -40,14 +40,9 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     return;
                 }
                 
-                if (local != 0)
-                {
-                    physobj.AppliedTorque = torque / instance.Part.ObjectGroup.GlobalRotation;
-                }
-                else
-                {
-                    physobj.AppliedTorque = torque;
-                }
+                physobj.AppliedTorque = (local != 0) ?
+                    torque / instance.Part.ObjectGroup.GlobalRotation :
+                    torque;
             }
         }
 
@@ -64,14 +59,9 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     return;
                 }
 
-                if (local != 0)
-                {
-                    physobj.AppliedForce = force / instance.Part.ObjectGroup.GlobalRotation;
-                }
-                else
-                {
-                    physobj.AppliedForce = force;
-                }
+                physobj.AppliedForce = (local != 0) ?
+                    force / instance.Part.ObjectGroup.GlobalRotation :
+                    force;
             }
         }
 
@@ -153,14 +143,9 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 /* we leave the physics check out here since it has an interesting use */
-                if (local != 0)
-                {
-                    thisGroup.Velocity = velocity / thisGroup.GlobalRotation;
-                }
-                else
-                {
-                    thisGroup.Velocity = velocity;
-                }
+                thisGroup.Velocity = (local != 0) ?
+                    velocity / thisGroup.GlobalRotation :
+                    velocity;
             }
         }
 
@@ -172,14 +157,9 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 /* we leave the physics check out here since it has an interesting use */
-                if (local != 0)
-                {
-                    thisGroup.AngularVelocity = initial_omega / thisGroup.GlobalRotation;
-                }
-                else
-                {
-                    thisGroup.AngularVelocity = initial_omega;
-                }
+                thisGroup.AngularVelocity = (local != 0) ?
+                    initial_omega / thisGroup.GlobalRotation :
+                    initial_omega;
             }
         }
 
