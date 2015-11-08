@@ -708,7 +708,6 @@ namespace SilverSim.Scripting.Lsl
             compileState.InitControlFlow();
             Type returnType = typeof(void);
             List<string> functionDeclaration = functionBody[0].Line;
-            string functionName = functionDeclaration[1];
             int functionStart = 2;
 
             switch (functionDeclaration[0])
@@ -747,7 +746,6 @@ namespace SilverSim.Scripting.Lsl
                     break;
 
                 default:
-                    functionName = functionDeclaration[0];
                     functionStart = 1;
                     break;
             }

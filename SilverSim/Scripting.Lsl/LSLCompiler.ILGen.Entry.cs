@@ -24,7 +24,7 @@ namespace SilverSim.Scripting.Lsl
 
             #region Create Script Container
             TypeBuilder scriptTypeBuilder = mb.DefineType(assetAssemblyName + ".Script", TypeAttributes.Public, typeof(Script));
-            Dictionary<string, object> typeLocals = new Dictionary<string, object>();
+            Dictionary<string, object> typeLocals;
             foreach (IScriptApi api in m_Apis)
             {
                 ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiName));

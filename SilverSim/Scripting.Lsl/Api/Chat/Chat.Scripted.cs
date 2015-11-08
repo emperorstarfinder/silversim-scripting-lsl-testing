@@ -113,9 +113,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
                 ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
 
-                int newhandle = 0;
                 ChatServiceInterface.Listener l;
-                for (newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
+                for (int newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
                 {
                     if (!script.m_Listeners.TryGetValue(newhandle, out l))
                     {
@@ -187,9 +186,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
                 ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
 
-                int newhandle = 0;
                 ChatServiceInterface.Listener l;
-                for (newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
+                for (int newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
                 {
                     if (!script.m_Listeners.TryGetValue(newhandle, out l))
                     {

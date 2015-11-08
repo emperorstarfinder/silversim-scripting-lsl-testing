@@ -247,7 +247,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                 instance.CheckThreatLevel("osAvatarPlayAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
                 UUID animID = GetAnimationAssetID(instance, animation);
                 IAgent agent;
-                ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 try
                 {
                     agent = instance.Part.ObjectGroup.Scene.Agents[avatar];
@@ -289,7 +288,10 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                     return;
                 }
 
-                agent.StopAnimation(animID, instance.Part.ID);
+                if (grantinfo.PermsGranter.EqualsGrid(agent.Owner) && (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) != 0)
+                {
+                    agent.StopAnimation(animID, instance.Part.ID);
+                }
             }
         }
 
@@ -308,7 +310,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                 instance.CheckThreatLevel("osAvatarStopAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
                 UUID animID = GetAnimationAssetID(instance, animation);
                 IAgent agent;
-                ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 try
                 {
                     agent = instance.Part.ObjectGroup.Scene.Agents[avatar];
