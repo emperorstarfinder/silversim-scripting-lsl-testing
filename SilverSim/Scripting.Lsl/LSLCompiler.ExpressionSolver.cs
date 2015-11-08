@@ -730,6 +730,32 @@ namespace SilverSim.Scripting.Lsl
                             }
                             break;
 
+                        case "&":
+                            if (st.SubTree[0].Value is Tree.ConstantValueInt && st.SubTree[1].Value is Tree.ConstantValueInt)
+                            {
+                                st.Value = new Tree.ConstantValueInt(
+                                    ((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value &
+                                    ((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value);
+                            }
+                            else
+                            {
+                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                            }
+                            break;
+
+                        case "|":
+                            if (st.SubTree[0].Value is Tree.ConstantValueInt && st.SubTree[1].Value is Tree.ConstantValueInt)
+                            {
+                                st.Value = new Tree.ConstantValueInt(
+                                    ((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value |
+                                    ((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value);
+                            }
+                            else
+                            {
+                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                            }
+                            break;
+
                         case "&&":
                             { 
                                 bool isLeftTrue = false;
