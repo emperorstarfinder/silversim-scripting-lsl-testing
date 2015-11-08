@@ -215,10 +215,6 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3":
-                        vardata = reader.ReadElementValueAsString();
-                        state.Variables[varname] = Vector3.Parse(vardata);
-                        break;
-
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector":
                         vardata = reader.ReadElementValueAsString();
                         state.Variables[varname] = Vector3.Parse(vardata);

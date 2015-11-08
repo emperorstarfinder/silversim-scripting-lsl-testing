@@ -285,11 +285,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             string[] parts = uri.PathAndQuery.Substring(1).Split(new char[] { '/' }, 3);
-            if(parts.Length < 2)
-            {
-                return;
-            }
-            else if(parts[0] != "lslhttp")
+            if(parts.Length < 2 || parts[0] != "lslhttp")
             {
                 return;
             }

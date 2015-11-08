@@ -57,7 +57,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (cs.ApiInfo.EventDelegates.ContainsKey(name))
             {
-                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined constant.", name, type));
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an event.", name, type));
             }
             else if (cs.m_VariableDeclarations.ContainsKey(name))
             {
@@ -605,7 +605,7 @@ namespace SilverSim.Scripting.Lsl
 
                         case "key":
                             CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(string);
+                            compileState.m_VariableDeclarations[args[1]] = typeof(LSLKey);
                             if (args[2] == "=")
                             {
                                 compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
