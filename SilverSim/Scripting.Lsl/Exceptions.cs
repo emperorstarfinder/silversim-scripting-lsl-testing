@@ -45,7 +45,6 @@ namespace SilverSim.Scripting.Lsl
         }
 
         public ChangeStateException()
-            : base()
         {
 
         }
