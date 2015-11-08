@@ -241,7 +241,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         (up.X + fwd.Z) * (0.5 / s),
                         (left.Z - up.Y) * (0.5 / s));
                 }
-                else if(m == left.Y)
+                else if(Math.Abs(m - left.Y) < Double.Epsilon)
                 {
                     s = Math.Sqrt(left.Y - (up.Z + fwd.X) + 1.0);
                     return new Quaternion(
@@ -268,7 +268,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             double x, y, z, sq;
             sq = r.LengthSquared;
-            if(Math.Abs(1.0 -sq)>0.000001)
+            if(Math.Abs(1.0 - sq) > Double.Epsilon)
             {
                 sq = 1.0 / Math.Sqrt(sq);
                 r.X *= sq;
@@ -290,7 +290,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             double x, y, z, sq;
 
             sq = r.LengthSquared;
-            if (Math.Abs(1.0 - sq) > 0.000001)
+            if (Math.Abs(1.0 - sq) > Double.Epsilon)
             {
                 sq = 1.0 / Math.Sqrt(sq);
                 r.X *= sq;
@@ -312,7 +312,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             double x, y, z, sq;
 
             sq = r.LengthSquared;
-            if (Math.Abs(1.0 - sq) > 0.000001)
+            if (Math.Abs(1.0 - sq) > Double.Epsilon)
             {
                 sq = 1.0 / Math.Sqrt(sq);
                 r.X *= sq;
