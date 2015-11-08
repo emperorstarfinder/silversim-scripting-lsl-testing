@@ -3,6 +3,7 @@
 
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -726,6 +727,122 @@ namespace SilverSim.Scripting.Lsl
                             else
                             {
                                 throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                            }
+                            break;
+
+                        case "&&":
+                            { 
+                                bool isLeftTrue = false;
+                                bool isRightTrue = false;
+                                if (st.SubTree[0].Value is Tree.ConstantValueInt)
+                                {
+                                    isLeftTrue = ((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value != 0;
+                                }
+                                else if(st.SubTree[0].Value is Tree.ConstantValueFloat)
+                                {
+                                    isLeftTrue = Math.Abs(((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value) > Double.Epsilon;
+                                }
+                                else if(st.SubTree[0].Value is Tree.ConstantValueString)
+                                {
+                                    isLeftTrue = ((Tree.ConstantValueString)(st.SubTree[0].Value)).Value.Length != 0;
+                                }
+                                else if(st.SubTree[0].Value is ConstantValueVector)
+                                {
+                                    isLeftTrue = ((ConstantValueVector)(st.SubTree[0].Value)).Value.Length > Double.Epsilon;
+                                }
+                                else if(st.SubTree[0].Value is ConstantValueRotation)
+                                {
+                                    isLeftTrue = ((ConstantValueRotation)(st.SubTree[0].Value)).Value.IsLSLTrue;
+                                }
+                                else
+                                {
+                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                }
+
+                                if (st.SubTree[1].Value is Tree.ConstantValueInt)
+                                {
+                                    isRightTrue = ((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value != 0;
+                                }
+                                else if(st.SubTree[1].Value is Tree.ConstantValueFloat)
+                                {
+                                    isRightTrue = Math.Abs(((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value) > Double.Epsilon;
+                                }
+                                else if(st.SubTree[1].Value is Tree.ConstantValueString)
+                                {
+                                    isRightTrue = ((Tree.ConstantValueString)(st.SubTree[1].Value)).Value.Length != 0;
+                                }
+                                else if(st.SubTree[1].Value is ConstantValueVector)
+                                {
+                                    isRightTrue = ((ConstantValueVector)(st.SubTree[1].Value)).Value.Length > Double.Epsilon;
+                                }
+                                else if(st.SubTree[1].Value is ConstantValueRotation)
+                                {
+                                    isRightTrue = ((ConstantValueRotation)(st.SubTree[1].Value)).Value.IsLSLTrue;
+                                }
+                                else
+                                {
+                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                }
+
+                                st.Value = new Tree.ConstantValueInt((isLeftTrue && isRightTrue).ToLSLBoolean());
+                            }
+                            break;
+
+                        case "||":
+                            { 
+                                bool isLeftTrue = false;
+                                bool isRightTrue = false;
+                                if (st.SubTree[0].Value is Tree.ConstantValueInt)
+                                {
+                                    isLeftTrue = ((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value != 0;
+                                }
+                                else if(st.SubTree[0].Value is Tree.ConstantValueFloat)
+                                {
+                                    isLeftTrue = Math.Abs(((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value) > Double.Epsilon;
+                                }
+                                else if(st.SubTree[0].Value is Tree.ConstantValueString)
+                                {
+                                    isLeftTrue = ((Tree.ConstantValueString)(st.SubTree[0].Value)).Value.Length != 0;
+                                }
+                                else if(st.SubTree[0].Value is ConstantValueVector)
+                                {
+                                    isLeftTrue = ((ConstantValueVector)(st.SubTree[0].Value)).Value.Length > Double.Epsilon;
+                                }
+                                else if(st.SubTree[0].Value is ConstantValueRotation)
+                                {
+                                    isLeftTrue = ((ConstantValueRotation)(st.SubTree[0].Value)).Value.IsLSLTrue;
+                                }
+                                else
+                                {
+                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                }
+
+                                if (st.SubTree[1].Value is Tree.ConstantValueInt)
+                                {
+                                    isRightTrue = ((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value != 0;
+                                }
+                                else if(st.SubTree[1].Value is Tree.ConstantValueFloat)
+                                {
+                                    isRightTrue = Math.Abs(((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value) > Double.Epsilon;
+                                }
+                                else if(st.SubTree[1].Value is Tree.ConstantValueString)
+                                {
+                                    isRightTrue = ((Tree.ConstantValueString)(st.SubTree[1].Value)).Value.Length != 0;
+                                }
+                                else if(st.SubTree[1].Value is ConstantValueVector)
+                                {
+                                    isRightTrue = ((ConstantValueVector)(st.SubTree[1].Value)).Value.Length > Double.Epsilon;
+                                }
+                                else if(st.SubTree[1].Value is ConstantValueRotation)
+                                {
+                                    isRightTrue = ((ConstantValueRotation)(st.SubTree[1].Value)).Value.IsLSLTrue;
+                                }
+                                else
+                                {
+                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                }
+
+                                st.Value = new Tree.ConstantValueInt((isLeftTrue || isRightTrue).ToLSLBoolean());
                             }
                             break;
 
