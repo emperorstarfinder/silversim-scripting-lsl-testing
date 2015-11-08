@@ -95,13 +95,13 @@ redo:
                         {
                             if (c == '\\')
                             {
-                                token += ((char)c).ToString();
+                                token += c.ToString();
                                 c = ReadC();
-                                token += ((char)c).ToString();
+                                token += c.ToString();
                             }
                             else
                             {
-                                token += ((char)c).ToString();
+                                token += c.ToString();
                             }
                             c = ReadC();
                         } while(c != '\"');
@@ -127,13 +127,13 @@ redo:
                         {
                             if (c == '\\')
                             {
-                                token += ((char)c).ToString();
+                                token += c.ToString();
                                 c = ReadC();
-                                token += ((char)c).ToString();
+                                token += c.ToString();
                             }
                             else
                             {
-                                token += ((char)c).ToString();
+                                token += c.ToString();
                             }
                             c = ReadC();
                         } while(c != '\'');
@@ -195,7 +195,7 @@ redo:
                                     c = '\"';
                                     do
                                     {
-                                        token += ((char)c).ToString();
+                                        token += c.ToString();
                                         c = ReadC();
                                     } while(c != '>');
                                     token += "\"";
@@ -231,7 +231,7 @@ redo:
                             }
                             while(!Char.IsWhiteSpace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
-                                token += ((char) c).ToString();
+                                token += c.ToString();
 
                                 if(token == "//")
                                 {
