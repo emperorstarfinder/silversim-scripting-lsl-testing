@@ -244,7 +244,9 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
                     ObjectGroup grp;
                     ObjectPart part;
                     IAgent agent;
-                    if(null != (agent = obj as IAgent))
+
+                    agent = obj as IAgent;
+                    if(null != agent)
                     {
                         if (agent.SittingOnObject != null)
                         {
@@ -255,7 +257,9 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
                             return AGENT | ACTIVE;
                         }
                     }
-                    else if(null != (grp = obj as ObjectGroup))
+
+                    grp = obj as ObjectGroup;
+                    if(null != grp)
                     {
                         int flags = 0;
                         if(obj.PhysicsActor.IsPhysicsActive)
@@ -276,7 +280,9 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
                         }
                         return flags;
                     }
-                    else if (null != (part = obj as ObjectPart))
+
+                    part = obj as ObjectPart;
+                    if (null != part)
                     {
                         int flags = 0;
                         if (part.ObjectGroup.PhysicsActor.IsPhysicsActive)

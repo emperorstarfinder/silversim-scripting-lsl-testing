@@ -562,26 +562,31 @@ namespace SilverSim.Scripting.Lsl
             FieldBuilder fb;
             FieldInfo fi;
 
-            if (null != (ilpi = v as ILParameterInfo))
+            ilpi = v as ILParameterInfo;
+            if (null != ilpi)
             {
                 return ilpi.ParameterType;
             }
-            else if (null != (lb = v as LocalBuilder))
+
+            lb = v as LocalBuilder;
+            if (null != lb)
             {
                 return lb.LocalType;
             }
-            else if (null != (fb = v as FieldBuilder))
+
+            fb = v as FieldBuilder;
+            if (null != fb)
             {
                 return fb.FieldType;
             }
-            else if (null != (fi = v as FieldInfo))
+
+            fi = v as FieldInfo;
+            if (null != fi)
             {
                 return fi.FieldType;
             }
-            else
-            {
-                throw new NotSupportedException();
-            }
+
+            throw new NotSupportedException();
         }
 
         internal static Type GetVarToStack(
@@ -654,34 +659,43 @@ namespace SilverSim.Scripting.Lsl
             FieldBuilder fb;
             FieldInfo fi;
 
-            if (null != (ilpi = v as ILParameterInfo))
+            ilpi = v as ILParameterInfo;
+            if (null != ilpi)
             {
                 ilgen.Emit(OpCodes.Starg, ilpi.Position);
+                return;
             }
-            else if (null != (lb = v as LocalBuilder))
+
+            lb = v as LocalBuilder;
+            if (null != lb)
             {
                 ilgen.Emit(OpCodes.Stloc, lb);
+                return;
             }
-            else if (null != (fb = v as FieldBuilder))
+
+            fb = v as FieldBuilder;
+            if (null != fb)
             {
                 if ((fb.Attributes & FieldAttributes.Static) != 0)
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
                 ilgen.Emit(OpCodes.Stfld, fb);
+                return;
             }
-            else if (null != (fi = v as FieldInfo))
+
+            fi = v as FieldInfo;
+            if (null != fi)
             {
                 if ((fi.Attributes & FieldAttributes.Static) != 0)
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
                 ilgen.Emit(OpCodes.Stfld, fi);
+                return;
             }
-            else
-            {
-                throw new NotSupportedException();
-            }
+
+            throw new NotSupportedException();
         }
         #endregion
 

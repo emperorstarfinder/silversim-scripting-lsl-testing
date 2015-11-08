@@ -406,10 +406,13 @@ namespace SilverSim.Scripting.Lsl
                         if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Sub);
+                            break;
                         }
-                        else if(null != (mi = m_LeftHandType.GetMethod("op_Addition", new Type[]{m_LeftHandType, m_RightHandType})))
+
+                        mi = m_LeftHandType.GetMethod("op_Addition", new Type[]{m_LeftHandType, m_RightHandType});
+                        if (null != mi)
                         {
-                            if(mi.ReturnType != m_LeftHandType)
+                            if (mi.ReturnType != m_LeftHandType)
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("operator '+=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
                             }
@@ -425,10 +428,13 @@ namespace SilverSim.Scripting.Lsl
                         if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Sub);
+                            break;
                         }
-                        else if(null != (mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[]{m_LeftHandType, m_RightHandType})))
+
+                        mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
+                        if (null != mi)
                         {
-                            if(mi.ReturnType != m_LeftHandType)
+                            if (mi.ReturnType != m_LeftHandType)
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("operator '-=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
                             }
@@ -444,12 +450,16 @@ namespace SilverSim.Scripting.Lsl
                         if(typeof(int) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerMultiply", new Type[] { m_LeftHandType, m_RightHandType}));
+                            break;
                         }
                         else if(typeof(double) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Mul);
+                            break;
                         }
-                        else if(null != (mi = m_LeftHandType.GetMethod("op_Multiply", new Type[]{m_LeftHandType, m_RightHandType})))
+
+                        mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
+                        if(null != mi)
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
@@ -467,12 +477,16 @@ namespace SilverSim.Scripting.Lsl
                         if(typeof(int) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerDivision", new Type[] { m_LeftHandType, m_RightHandType}));
+                            break;
                         }
                         else if(typeof(double) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Mul);
+                            break;
                         }
-                        else if(null != (mi = m_LeftHandType.GetMethod("op_Division", new Type[]{m_LeftHandType, m_RightHandType})))
+
+                        mi = m_LeftHandType.GetMethod("op_Division", new Type[]{m_LeftHandType, m_RightHandType});
+                        if(null != mi)
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
@@ -490,12 +504,16 @@ namespace SilverSim.Scripting.Lsl
                         if(typeof(int) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerModulus", new Type[] { m_LeftHandType, m_RightHandType}));
+                            break;
                         }
                         else if(typeof(double) == m_LeftHandType)
                         {
                             ilgen.Emit(OpCodes.Div);
+                            break;
                         }
-                        else if(null != (mi = m_LeftHandType.GetMethod("op_Modulus", new Type[]{m_LeftHandType, m_RightHandType})))
+
+                        mi = m_LeftHandType.GetMethod("op_Modulus", new Type[]{m_LeftHandType, m_RightHandType});
+                        if(null != mi)
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
@@ -643,8 +661,10 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("Concat", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(ilgen, m_LeftHandType);
                         }
-                        else if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
-                            null != (mi = m_LeftHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType })))
+
+                        mi = m_RightHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
+                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
+                            null != mi)
                         {
                             ilgen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
@@ -654,7 +674,7 @@ namespace SilverSim.Scripting.Lsl
                             throw Return(ilgen, mi.ReturnType);
                         }
                         else if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType && 
-                            null != (mi = m_RightHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType })))
+                            null != mi)
                         {
                             ilgen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
@@ -682,8 +702,10 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("ob_Subtraction", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(ilgen, typeof(string));
                         }
-                        else if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
-                            null != (mi = m_LeftHandType.GetMethod("ob_Subtraction", new Type[] { m_LeftHandType, m_RightHandType })))
+
+                        mi = m_LeftHandType.GetMethod("ob_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
+                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
+                            null != mi)
                         {
                             ilgen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
@@ -693,7 +715,7 @@ namespace SilverSim.Scripting.Lsl
                             throw Return(ilgen, mi.ReturnType);
                         }
                         else if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType && 
-                            null != (mi = m_RightHandType.GetMethod("ob_Subtraction", new Type[] { m_LeftHandType, m_RightHandType })))
+                            null != mi)
                         {
                             ilgen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
@@ -728,17 +750,9 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(ilgen, typeof(string));
                         }
-                        else if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
-                            null != (mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType })))
-                        {
-                            ilgen.Emit(OpCodes.Call, mi);
-                            if (!IsValidType(mi.ReturnType))
-                            {
-                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
-                            }
-                            throw Return(ilgen, mi.ReturnType);
-                        }
-                        else if (null != (mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType })))
+                        
+                        mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
+                        if (null != mi)
                         {
                             ilgen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
@@ -773,17 +787,9 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(ilgen, typeof(string));
                         }
-                        else if (typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
-                            null != (mi = m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_RightHandType })))
-                        {
-                            ilgen.Emit(OpCodes.Call, mi);
-                            if (!IsValidType(mi.ReturnType))
-                            {
-                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
-                            }
-                            throw Return(ilgen, mi.ReturnType);
-                        }
-                        else if (null != (mi = m_RightHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_RightHandType })))
+
+                        mi = m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_RightHandType });
+                        if (null != mi)
                         {
                             ilgen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
@@ -818,17 +824,9 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_Modulus", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(ilgen, typeof(string));
                         }
-                        else if (typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
-                            null != (mi = m_LeftHandType.GetMethod("op_Modulus", new Type[] { m_LeftHandType, m_RightHandType })))
-                        {
-                            ilgen.Emit(OpCodes.Call, mi);
-                            if (!IsValidType(mi.ReturnType))
-                            {
-                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
-                            }
-                            throw Return(ilgen, mi.ReturnType);
-                        }
-                        else if (null != (mi = m_RightHandType.GetMethod("op_Modulus", new Type[] { m_LeftHandType, m_RightHandType })))
+
+                        mi = m_RightHandType.GetMethod("op_Modulus", new Type[] { m_LeftHandType, m_RightHandType });
+                        if (null != mi)
                         {
                             ilgen.Emit(OpCodes.Call, mi);
                             if(!IsValidType(mi.ReturnType))
