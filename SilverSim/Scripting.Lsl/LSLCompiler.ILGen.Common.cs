@@ -324,6 +324,36 @@ namespace SilverSim.Scripting.Lsl
             ProcessCasts(ilgen, toType, fromType, lineNumber);
         }
 
+        static double ParseStringToDouble(string input)
+        {
+            double v;
+            if(!Double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out v))
+            {
+                v = 0;
+            }
+            return v;
+        }
+
+        static Vector3 ParseStringToVector(string input)
+        {
+            Vector3 v;
+            if(!Vector3.TryParse(input, out v))
+            {
+                v = Vector3.Zero;
+            }
+            return v;
+        }
+
+        static Quaternion ParseStringToQuaternion(string input)
+        {
+            Quaternion q;
+            if(!Quaternion.TryParse(input, out q))
+            {
+                q = Quaternion.Identity;
+            }
+            return q;
+        }
+
         internal static void ProcessCasts(ILGenerator ilgen, Type toType, Type fromType, int lineNumber)
         {
             /* value is on stack before */
@@ -400,7 +430,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(string).GetProperty("Length").GetGetMethod());
+                    ilgen.Emit(OpCodes.Call, typeof(string).GetProperty("Length").GetGetMethod());
                     ilgen.Emit(OpCodes.Ldc_I4_0);
                     ilgen.Emit(OpCodes.Ceq);
                     ilgen.Emit(OpCodes.Ldc_I4_0);
@@ -426,7 +456,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(AnArray))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetProperty("Count").GetGetMethod());
+                    ilgen.Emit(OpCodes.Call, typeof(AnArray).GetProperty("Count").GetGetMethod());
                     ilgen.Emit(OpCodes.Ceq);
                     ilgen.Emit(OpCodes.Ldc_I4_0);
                     ilgen.Emit(OpCodes.Ceq);
@@ -437,7 +467,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(Vector3))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(Vector3).GetProperty("Length").GetGetMethod());
+                    ilgen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
                     ilgen.Emit(OpCodes.Ldc_R8, 0f);
                     ilgen.Emit(OpCodes.Ceq);
                     ilgen.Emit(OpCodes.Ldc_I4_0);
@@ -452,8 +482,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(string).GetProperty("Length").GetGetMethod());
-                    ilgen.Emit(OpCodes.Conv_R8);
+                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToDouble", new Type[] { typeof(string) }));
                 }
                 else if (fromType == typeof(int))
                 {
@@ -468,7 +497,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(Vector3).GetMethod("Parse", new Type[] { typeof(string) }));
+                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToVector", new Type[] { typeof(string) }));
                 }
                 else
                 {
@@ -479,7 +508,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("Parse", new Type[] { typeof(string) }));
+                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToQuaternion", new Type[] { typeof(string) }));
                 }
                 else
                 {
