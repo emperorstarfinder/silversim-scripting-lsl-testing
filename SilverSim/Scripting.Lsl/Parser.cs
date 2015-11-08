@@ -700,7 +700,7 @@ redo:
                             else if (args[argi][1] == '<')
                             {
                                 /* compound literals <<, <<= */
-                                if (3 < curlength ? args[argi][2] == '=' : false)
+                                if (3 < curlength && args[argi][2] == '=')
                                 {
                                     args.Insert(argi++, "<<=");
                                     args[argi] = args[argi].Substring(3, curlength - 3);
@@ -759,7 +759,7 @@ redo:
                             else if (args[argi][1] == '>')
                             {
                                 /* compound literals << <<= */
-                                if (3 < curlength ? args[argi][2] == '=' : false)
+                                if (3 < curlength && args[argi][2] == '=')
                                 {
                                     args.Insert(argi++, ">>=");
                                     args[argi] = args[argi].Substring(3, curlength - 3);
