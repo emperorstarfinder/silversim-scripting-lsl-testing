@@ -248,28 +248,20 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
                     agent = obj as IAgent;
                     if(null != agent)
                     {
-                        if (agent.SittingOnObject != null)
-                        {
-                            return AGENT;
-                        }
-                        else
-                        {
-                            return AGENT | ACTIVE;
-                        }
+                        return (agent.SittingOnObject != null) ?
+                            AGENT :
+                            (AGENT | ACTIVE);
                     }
 
                     grp = obj as ObjectGroup;
                     if(null != grp)
                     {
-                        int flags = 0;
-                        if(obj.PhysicsActor.IsPhysicsActive)
-                        {
-                            flags |= ACTIVE;
-                        }
-                        else
-                        {
-                            flags |= PASSIVE;
-                        }
+                        int flags;
+                        
+                        flags = (obj.PhysicsActor.IsPhysicsActive) ?
+                            ACTIVE :
+                            PASSIVE;
+
                         foreach(ObjectPart p in grp.Values)
                         {
                             if(p.Inventory.CountScripts != 0)
@@ -284,15 +276,12 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
                     part = obj as ObjectPart;
                     if (null != part)
                     {
-                        int flags = 0;
-                        if (part.ObjectGroup.PhysicsActor.IsPhysicsActive)
-                        {
-                            flags |= ACTIVE;
-                        }
-                        else
-                        {
-                            flags |= PASSIVE;
-                        }
+                        int flags;
+
+                        flags = (part.ObjectGroup.PhysicsActor.IsPhysicsActive) ?
+                            ACTIVE :
+                            PASSIVE;
+
                         if(part.Inventory.CountScripts != 0)
                         {
                             flags |= SCRIPTED;
