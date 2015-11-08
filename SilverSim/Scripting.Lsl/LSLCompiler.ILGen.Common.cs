@@ -168,14 +168,8 @@ namespace SilverSim.Scripting.Lsl
                     }
                     catch
                     {
-                        if (v.StartsWith("-"))
-                        {
-                            return 1;
-                        }
-                        else
-                        {
-                            return -1;
-                        }
+                        /* LSL specifics here */
+                        return v.StartsWith("-") ? 1 : -1;
                     }
                 }
             }
@@ -205,26 +199,16 @@ namespace SilverSim.Scripting.Lsl
 
         public static int LSL_IntegerDivision(int a, int b)
         {
-            if (a == -2147483648 && b == -1)
-            {
-                return -2147483648;
-            }
-            else
-            {
-                return a / b;
-            }
+            return (a == -2147483648 && b == -1) ?
+                -2147483648 :
+                a / b;
         }
 
         public static int LSL_IntegerModulus(int a, int b)
         {
-            if (a == -2147483648 && b == -1)
-            {
-                return 0;
-            }
-            else
-            {
-                return a / b;
-            }
+            return (a == -2147483648 && b == -1) ?
+                0 :
+                a / b;
         }
         #endregion
 
@@ -619,6 +603,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
+                    ilgen.Emit(OpCodes.Ldarg_0);
                     ilgen.Emit(OpCodes.Ldfld, fb);
                 }
                 retType = fb.FieldType;
@@ -631,6 +616,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
+                    ilgen.Emit(OpCodes.Ldarg_0);
                     ilgen.Emit(OpCodes.Ldfld, fi);
                 }
                 retType = fi.FieldType;
@@ -680,7 +666,14 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
+                ilgen.BeginScope();
+                LocalBuilder swapLb = ilgen.DeclareLocal(fb.FieldType);
+                ilgen.Emit(OpCodes.Stloc, swapLb);
+                ilgen.Emit(OpCodes.Ldarg_0);
+                ilgen.Emit(OpCodes.Ldloc, swapLb);
+
                 ilgen.Emit(OpCodes.Stfld, fb);
+                ilgen.EndScope();
                 return;
             }
 
@@ -691,7 +684,14 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
+                ilgen.BeginScope();
+                LocalBuilder swapLb = ilgen.DeclareLocal(fi.FieldType);
+                ilgen.Emit(OpCodes.Stloc, swapLb);
+                ilgen.Emit(OpCodes.Ldarg_0);
+                ilgen.Emit(OpCodes.Ldloc, swapLb);
+
                 ilgen.Emit(OpCodes.Stfld, fi);
+                ilgen.EndScope();
                 return;
             }
 
