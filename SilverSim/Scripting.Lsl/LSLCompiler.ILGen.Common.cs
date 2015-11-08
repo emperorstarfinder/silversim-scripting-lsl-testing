@@ -324,7 +324,7 @@ namespace SilverSim.Scripting.Lsl
             ProcessCasts(ilgen, toType, fromType, lineNumber);
         }
 
-        static double ParseStringToDouble(string input)
+        public static double ParseStringToDouble(string input)
         {
             double v;
             if(!Double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out v))
@@ -334,7 +334,7 @@ namespace SilverSim.Scripting.Lsl
             return v;
         }
 
-        static Vector3 ParseStringToVector(string input)
+        public static Vector3 ParseStringToVector(string input)
         {
             Vector3 v;
             if(!Vector3.TryParse(input, out v))
@@ -344,7 +344,7 @@ namespace SilverSim.Scripting.Lsl
             return v;
         }
 
-        static Quaternion ParseStringToQuaternion(string input)
+        public static Quaternion ParseStringToQuaternion(string input)
         {
             Quaternion q;
             if(!Quaternion.TryParse(input, out q))
