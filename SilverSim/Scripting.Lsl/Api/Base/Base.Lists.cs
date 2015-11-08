@@ -544,11 +544,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 if(foundSeparator != null)
                 {
-                    if(value == null && keepNulls)
-                    {
-                        res.Add(value);
-                    }
-                    else if(value != null)
+                    if(value != null || keepNulls)
                     {
                         res.Add(value);
                     }
