@@ -331,6 +331,9 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return state;
+
+                        default:
+                            break;
                     }
                 }
             }
@@ -371,6 +374,9 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return state;
+
+                        default:
+                            break;
                     }
                 }
             }

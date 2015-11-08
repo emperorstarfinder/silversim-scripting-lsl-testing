@@ -103,6 +103,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 case STRING_TRIM:
                     src = src.Trim(trimchars);
                     break;
+
+                default:
+                    break;
             }
 
             return src;

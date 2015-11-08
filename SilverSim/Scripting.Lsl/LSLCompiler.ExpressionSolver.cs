@@ -729,6 +729,8 @@ namespace SilverSim.Scripting.Lsl
                             }
                             break;
 
+                        default:
+                            throw new Resolver.ResolverException(string.Format("Cannot process '{0}': operator is unknown", st.Entry));
                     }
                 }
                 #endregion

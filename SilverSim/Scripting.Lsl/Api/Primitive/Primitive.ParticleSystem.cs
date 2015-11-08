@@ -504,6 +504,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         ps.OuterAngle = tempf;
                         ps.PartFlags |= 0x02; // Set new angle format.
                         break;
+
+                    default:
+                        instance.ShoutError(string.Format("Error running rule #{0} - unknown rule {1}", i, psystype));
+                        return;
                 }
 
             }

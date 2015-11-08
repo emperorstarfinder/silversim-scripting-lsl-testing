@@ -678,6 +678,9 @@ namespace SilverSim.Scripting.Lsl.Expression
                                         }
                                     }
                                     break;
+
+                                default:
+                                    break;
                             }
                         }
                     }

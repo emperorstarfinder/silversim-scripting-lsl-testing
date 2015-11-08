@@ -294,6 +294,9 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                     case VEHICLE_LINEAR_MOTOR_OFFSET:
                         thisGroup[VehicleVectorParamId.LinearMotorOffset] = vec;
                         break;
+
+                    default:
+                        break;
                 }
             }
         }

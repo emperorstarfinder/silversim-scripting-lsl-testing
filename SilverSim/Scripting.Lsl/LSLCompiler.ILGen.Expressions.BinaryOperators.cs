@@ -181,6 +181,9 @@ namespace SilverSim.Scripting.Lsl
                             m_LeftHandType = innerExpressionReturn;
                             break;
 
+                        default:
+                            break;
+
                     }
                     m_ProcessOrder.RemoveAt(0);
                 }
@@ -526,6 +529,9 @@ namespace SilverSim.Scripting.Lsl
                             throw new CompilerException(m_LineNumber, string.Format("operator '%=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         break;
+
+                    default:
+                        throw new CompilerException(m_LineNumber, string.Format("operator '{0}' unknown", m_Operator));
                 }
 
                 ilgen.Emit(OpCodes.Dup);
