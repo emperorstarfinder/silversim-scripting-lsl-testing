@@ -132,16 +132,10 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 SceneInterface scene = thisPart.ObjectGroup.Scene;
 
                 ParcelInfo pInfo;
-                if (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo))
-                {
-                    return (pInfo.Owner.EqualsGrid(thisPart.Owner)) ?
-                        pInfo.MusicURI :
-                        string.Empty;
-                }
-                else
-                {
-                    return string.Empty;
-                }
+                return (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) && 
+                    pInfo.Owner.EqualsGrid(thisPart.Owner)) ?
+                    pInfo.MusicURI :
+                    string.Empty;
             }
         }
 
