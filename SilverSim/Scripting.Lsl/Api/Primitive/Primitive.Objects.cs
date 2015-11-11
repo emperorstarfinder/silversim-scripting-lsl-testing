@@ -194,14 +194,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                if (link == LINK_THIS)
-                {
-                    return instance.Part.ID;
-                }
-                else
-                {
-                    return instance.Part.ObjectGroup[link].ID;
-                }
+                return (link == LINK_THIS) ?
+                    instance.Part.ID :
+                    instance.Part.ObjectGroup[link].ID;
             }
         }
 
@@ -211,14 +206,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                if (link == LINK_THIS)
-                {
-                    return instance.Part.Name;
-                }
-                else
-                {
-                    return instance.Part.ObjectGroup[link].Name;
-                }
+                return (link == LINK_THIS) ?
+                    instance.Part.Name :
+                    instance.Part.ObjectGroup[link].Name;
             }
         }
 

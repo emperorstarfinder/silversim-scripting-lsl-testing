@@ -220,14 +220,9 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     }
                 }
 
-                if(m_LSLHTTPClient.Enqueue(req))
-                {
-                    return req.RequestID;
-                }
-                else
-                {
-                    return UUID.Zero;
-                }
+                return m_LSLHTTPClient.Enqueue(req) ?
+                    req.RequestID :
+                    UUID.Zero;
             }
         }
     }

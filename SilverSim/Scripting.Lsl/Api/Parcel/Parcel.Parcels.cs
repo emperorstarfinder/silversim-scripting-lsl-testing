@@ -134,14 +134,9 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ParcelInfo pInfo;
                 if (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo))
                 {
-                    if (pInfo.Owner.EqualsGrid(thisPart.Owner))
-                    {
-                        return pInfo.MusicURI;
-                    }
-                    else
-                    {
-                        return string.Empty;
-                    }
+                    return (pInfo.Owner.EqualsGrid(thisPart.Owner)) ?
+                        pInfo.MusicURI :
+                        string.Empty;
                 }
                 else
                 {
@@ -193,14 +188,9 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 ParcelInfo pInfo;
-                if(scene.Parcels.TryGetValue(pos, out pInfo))
-                {
-                    return pInfo.Owner.ID;
-                }
-                else
-                {
-                    return UUID.Zero;
-                }
+                return (scene.Parcels.TryGetValue(pos, out pInfo)) ?
+                    pInfo.Owner.ID :
+                    UUID.Zero;
             }
         }
 

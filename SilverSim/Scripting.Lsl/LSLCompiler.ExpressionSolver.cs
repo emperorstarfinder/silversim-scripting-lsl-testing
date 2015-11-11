@@ -987,14 +987,9 @@ namespace SilverSim.Scripting.Lsl
                                 else if (st.SubTree[0].Value is Tree.ConstantValueString)
                                 {
                                     Quaternion q;
-                                    if (Quaternion.TryParse(((Tree.ConstantValueString)st.SubTree[0].Value).Value, out q))
-                                    {
-                                        st.Value = new ConstantValueRotation(q);
-                                    }
-                                    else
-                                    {
-                                        st.Value = new ConstantValueRotation(Quaternion.Identity);
-                                    }
+                                    st.Value = (Quaternion.TryParse(((Tree.ConstantValueString)st.SubTree[0].Value).Value, out q)) ?
+                                        new ConstantValueRotation(q) :
+                                        new ConstantValueRotation(Quaternion.Identity);
                                 }
                                 break;
 

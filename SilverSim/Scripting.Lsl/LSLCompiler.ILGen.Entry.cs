@@ -44,14 +44,7 @@ namespace SilverSim.Scripting.Lsl
                 script_ilgen.Emit(OpCodes.Ldarg_0);
                 script_ilgen.Emit(OpCodes.Ldarg_1);
                 script_ilgen.Emit(OpCodes.Ldarg_2);
-                if (forcedSleepDefault)
-                {
-                    script_ilgen.Emit(OpCodes.Ldc_I4_1);
-                }
-                else
-                {
-                    script_ilgen.Emit(OpCodes.Ldc_I4_0);
-                }
+                script_ilgen.Emit(forcedSleepDefault ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
                 script_ilgen.Emit(OpCodes.Call, typeConstructor);
             }
             #endregion

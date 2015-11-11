@@ -290,14 +290,9 @@ namespace SilverSim.Scripting.Lsl
                 }
                 agent.RevokePermissions(thisPart.ID, thisItem.ID, (~permissions) & (grantinfo.PermsMask));
                 grantinfo.PermsMask &= (~permissions);
-                if (ScriptPermissions.None == grantinfo.PermsMask)
-                {
-                    thisItem.PermsGranter = null;
-                }
-                else
-                {
-                    thisItem.PermsGranter = grantinfo;
-                }
+                thisItem.PermsGranter = (ScriptPermissions.None == grantinfo.PermsMask) ?
+                    null :
+                    grantinfo;
             }
         }
 

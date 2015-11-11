@@ -66,14 +66,10 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
 
                 for (uint i = 0; i < 1000; ++i)
                 {
-                    if (i == 0)
-                    {
-                        item.Name = notecardName;
-                    }
-                    else
-                    {
-                        item.Name = string.Format("{0} {1}", notecardName, i);
-                    }
+                    item.Name = (i == 0) ?
+                        notecardName :
+                        string.Format("{0} {1}", notecardName, i);
+
                     try
                     {
                         thisPart.Inventory.Add(item.ID, item.Name, item);

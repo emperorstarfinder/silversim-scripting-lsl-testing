@@ -40,14 +40,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 end = src.Length;
             }
 
-            if (start > end)
-            {
-                return src.Substring(start, end - start + 1);
-            }
-            else
-            {
-                return src.Substring(0, start + 1) + src.Substring(end);
-            }
+            return (start > end) ?
+                src.Substring(start, end - start + 1) :
+                src.Substring(0, start + 1) + src.Substring(end);
         }
 
         [APILevel(APIFlags.LSL, "llToLower")]

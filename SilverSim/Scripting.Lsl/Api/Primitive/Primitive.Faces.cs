@@ -149,14 +149,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 else
                 {
                     TextureEntryFace teface;
-                    if (te.TryGetValue((uint)face, out teface))
-                    {
-                        return teface.TextureColor.AsVector3;
-                    }
-                    else
-                    {
-                        return Vector3.Zero;
-                    }
+                    return (te.TryGetValue((uint)face, out teface)) ?
+                        teface.TextureColor.AsVector3 :
+                        Vector3.Zero;
                 }
             }
         }

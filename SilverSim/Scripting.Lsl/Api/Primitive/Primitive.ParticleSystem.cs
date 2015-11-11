@@ -455,14 +455,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                     case PSYS_SRC_TARGET_KEY:
                         UUID key = UUID.Zero;
-                        if (UUID.TryParse(value.ToString(), out key))
-                        {
-                            ps.Target = key;
-                        }
-                        else
-                        {
-                            ps.Target = instance.Part.ID;
-                        }
+                        ps.Target = (UUID.TryParse(value.ToString(), out key)) ?
+                            key :
+                            instance.Part.ID;
                         break;
 
                     case PSYS_SRC_OMEGA:

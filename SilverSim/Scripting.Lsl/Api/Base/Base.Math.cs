@@ -31,14 +31,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         internal int Abs(ScriptInstance instance, int v)
         {
-            if(v < 0)
-            {
-                return -v;
-            }
-            else
-            {
-                return v;
-            }
+            return (v < 0) ? -v : v;
         }
 
         [APILevel(APIFlags.LSL, "llAcos")]
