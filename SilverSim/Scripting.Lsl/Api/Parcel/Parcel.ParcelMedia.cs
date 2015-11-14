@@ -2,10 +2,8 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
@@ -42,7 +40,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llParcelMediaCommandList")]
         [ForcedSleep(2)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ParcelMediaCommandList(ScriptInstance instance, AnArray commandList)
         {
             throw new NotImplementedException();
@@ -50,7 +47,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llParcelMediaQuery")]
         [ForcedSleep(2)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray ParcelMediaQuery(ScriptInstance instance, AnArray query)
         {
             throw new NotImplementedException();

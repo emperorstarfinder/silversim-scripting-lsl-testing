@@ -3,7 +3,6 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +12,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     public partial class PrimitiveApi
     {
         [APILevel(APIFlags.LSL, "llClearLinkMedia")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int ClearLinkMedia(ScriptInstance instance, int link, int face)
         {
             ObjectPart part;
@@ -54,7 +52,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llClearPrimMedia")]
         [ForcedSleep(1.0)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int ClearPrimMedia(ScriptInstance instance, int face)
         {
             return ClearLinkMedia(instance, LINK_THIS, face);
@@ -123,7 +120,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int LSL_STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL, "llGetLinkMedia")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
             ObjectPart part;
@@ -248,7 +244,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llGetPrimMediaParams")]
         [ForcedSleep(1.0)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
             return GetLinkMedia(instance, LINK_THIS, face, param);
@@ -272,7 +267,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL, "llSetLinkMedia")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
@@ -472,7 +466,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llSetPrimMediaParams")]
         [ForcedSleep(1.0)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int SetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
             return SetLinkMedia(instance, LINK_THIS, face, param);

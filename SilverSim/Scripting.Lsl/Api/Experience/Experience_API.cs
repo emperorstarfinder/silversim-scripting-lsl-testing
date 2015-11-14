@@ -2,11 +2,9 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Experience
 {
@@ -68,42 +66,36 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         public delegate void State_experience_permissions_denied(LSLKey agent_id, int reason);
 
         [APILevel(APIFlags.LSL, "llAgentInExperience")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int AgentInExperience(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llCreateKeyValue")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey CreateKeyValue(ScriptInstance instance, string k, string v)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llDataSizeKeyValue")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey DataSizeKeyValue(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llDeleteKeyValue")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey DeleteKeyValue(ScriptInstance instance, string k)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceDetails")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetExperienceDetails(ScriptInstance instance, LSLKey experience_id)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceErrorMessage")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetExperienceErrorMessage(ScriptInstance instance, int error)
         {
             switch(error)
@@ -130,35 +122,30 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         }
 
         [APILevel(APIFlags.LSL, "llKeyCountKeyValue")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey KeyCountKeyValue(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llKeysKeyValue")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey KeysKeyValue(ScriptInstance instance, int first, int count)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llReadKeyValue")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey ReadKeyValue(ScriptInstance instance, string k)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llRequestExperiencePermissions")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RequestExperiencePermissions(ScriptInstance instance, LSLKey agent, string name /* unused */)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llUpdateKeyValue")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey UpdateKeyValue(ScriptInstance instance, string k, string v, int checked_orig, string original_value)
         {
             throw new NotImplementedException();

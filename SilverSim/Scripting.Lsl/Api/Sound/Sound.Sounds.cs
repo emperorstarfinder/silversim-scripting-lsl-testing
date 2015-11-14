@@ -1,24 +1,17 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
-using SilverSim.Types.Asset;
-using SilverSim.Scripting.Common;
-using System.Diagnostics.CodeAnalysis;
 using SilverSim.Types.Primitive;
+using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Sound
 {
     public partial class SoundApi
     {
         [APILevel(APIFlags.LSL, "llCollisionSound")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume)
         {
             ObjectPart.CollisionSoundParam para = new ObjectPart.CollisionSoundParam();
@@ -42,21 +35,18 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llLoopSound")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void LoopSound(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundMaster")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void LoopSoundMaster(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundSlave")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void LoopSoundSlave(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
@@ -64,7 +54,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 
         [APILevel(APIFlags.LSL, "llPreloadSound")]
         [ForcedSleep(1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void PreloadSound(ScriptInstance instance, string sound)
         {
             lock(instance)
@@ -85,14 +74,12 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llStopSound")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void StopSound(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llPlaySound")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void PlaySound(ScriptInstance instance, string sound, double volume)
         {
             PrimitiveSoundFlags flags = 0;
@@ -118,14 +105,12 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llPlaySoundSlave")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void PlaySoundSlave(ScriptInstance instance, string sound, double volume)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llTriggerSound")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void TriggerSound(ScriptInstance instance, string sound, double volume)
         {
             lock (instance)
@@ -146,7 +131,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llTriggerSoundLimited")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void TriggerSoundLimited(ScriptInstance instance, string sound, double volume, Vector3 top_north_east, Vector3 bottom_south_west)
         {
             lock (instance)
@@ -168,7 +152,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 
         [APILevel(APIFlags.LSL, "llAdjustSoundVolume")]
         [ForcedSleep(0.1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void AdjustSoundVolume(ScriptInstance instance, double volume)
         {
             lock(instance)
@@ -179,7 +162,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llSetSoundQueueing")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetSoundQueueing(ScriptInstance instance, int queue)
         {
             lock (instance)
@@ -189,7 +171,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llSetSoundRadius")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetSoundRadius(ScriptInstance instance, double radius)
         {
             lock(instance)

@@ -2,13 +2,12 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
-using SilverSim.Scene.Types.Agent;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Controls
 {
@@ -52,7 +51,6 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
         public delegate void State_control(LSLKey id, int level, int edge);
 
         [APILevel(APIFlags.LSL, "llTakeControls")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void TakeControls(ScriptInstance instance, int controls, int accept, int pass_on)
         {
             lock (instance)
@@ -74,7 +72,6 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
         }
 
         [APILevel(APIFlags.LSL, "llReleaseControls")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ReleaseControls(ScriptInstance instance)
         {
             lock (instance)

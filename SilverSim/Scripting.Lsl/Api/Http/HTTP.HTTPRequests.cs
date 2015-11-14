@@ -1,18 +1,14 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Types;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using SilverSim.Types;
-using SilverSim.Scene.Types.Script;
-using SilverSim.Main.Common;
-using SilverSim.Scene.Types.Script.Events;
-using SilverSim.Scene.Types.Object;
-using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Http
 {
@@ -52,7 +48,6 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         static readonly Encoding UTF8NoBOM = new UTF8Encoding(false);
 
         [APILevel(APIFlags.LSL, "llHTTPRequest")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
         public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)

@@ -2,11 +2,9 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.LightShare
 {
@@ -100,28 +98,24 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
         public const int WL_SUN_MOON_POSITION = 36;
 
         [APIExtension(APIExtension.LightShare, "lsGetWindlightScene")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetWindlightScene(ScriptInstance instance, AnArray rules)
         {
             throw new NotImplementedException();
         }
 
         [APIExtension(APIExtension.LightShare, "lsSetWindlightScene")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int SetWindlightScene(ScriptInstance instance, AnArray rules)
         {
             throw new NotImplementedException();
         }
 
         [APIExtension(APIExtension.LightShare, "lsClearWindlightScene")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ClearWindlightScene(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }
 
         [APIExtension(APIExtension.LightShare, "lsSetWindlightSceneTargeted")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int SetWindlightSceneTargeted(ScriptInstance instance, AnArray rules, LSLKey target)
         {
             throw new NotImplementedException();

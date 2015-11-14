@@ -2,9 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Common;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
@@ -12,7 +10,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llIntegerToBase64")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string IntegerToBase64(ScriptInstance instance, int number)
         {
             byte[] b = BitConverter.GetBytes(number);
@@ -24,7 +21,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToInteger")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int Base64ToInteger(ScriptInstance instance, string s)
         {
             if (s.Length > 8)
@@ -41,7 +37,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringToBase64")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string StringToBase64(ScriptInstance instance, string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
@@ -49,7 +44,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToString")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string Base64ToString(ScriptInstance instance, string str)
         {
             byte[] b = System.Convert.FromBase64String(str);
@@ -58,7 +52,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llXorBase64")]
         [ForcedSleep(0.3)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string XorBase64(ScriptInstance instance, string str1, string str2)
         {
             byte[] a = System.Convert.FromBase64String(str1);

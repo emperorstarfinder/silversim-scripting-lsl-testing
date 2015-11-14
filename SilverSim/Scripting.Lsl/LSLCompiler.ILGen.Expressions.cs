@@ -178,6 +178,13 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }
+                                        else if(innerExpressionReturn == typeof(double))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
                                         else
                                         {
                                             throw new CompilerException(lineNumber, string.Format("operator '++' not supported for {0}", MapType(innerExpressionReturn)));
@@ -197,6 +204,13 @@ namespace SilverSim.Scripting.Lsl
                                         if (innerExpressionReturn == typeof(int))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(double))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, lineNumber);
@@ -256,6 +270,13 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }
+                                        else if (innerExpressionReturn == typeof(double))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
                                         else
                                         {
                                             throw new CompilerException(lineNumber, string.Format("operator '++' not supported for {0}", MapType(innerExpressionReturn)));
@@ -276,6 +297,13 @@ namespace SilverSim.Scripting.Lsl
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(double))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }

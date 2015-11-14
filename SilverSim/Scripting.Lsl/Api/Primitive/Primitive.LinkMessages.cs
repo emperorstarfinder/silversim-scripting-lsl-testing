@@ -4,10 +4,7 @@
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
-using SilverSim.Scripting.Common;
-using SilverSim.Types;
 using SilverSim.Types.Asset;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -30,7 +27,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llMessageLinked")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void MessageLinked(ScriptInstance instance, int link, int num, string str, LSLKey id)
         {
             lock (instance)

@@ -3,12 +3,11 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
-using SilverSim.Scene.Types.Object;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 {
@@ -27,7 +26,6 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
         }
 
         [APILevel(APIFlags.LSL, "llSetAnimationOverride")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetAnimationOverride(ScriptInstance instance, string anim_state, string anim)
         {
             lock (instance)
@@ -62,7 +60,6 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimationOverride")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetAnimationOverride(ScriptInstance instance, string anim_state)
         {
             lock (instance)
@@ -91,7 +88,6 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
         }
 
         [APILevel(APIFlags.LSL, "llResetAnimationOverride")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ResetAnimationOverride(ScriptInstance instance, string anim_state)
         {
             lock (instance)

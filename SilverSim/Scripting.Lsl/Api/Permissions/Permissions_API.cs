@@ -5,11 +5,8 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
-using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Script;
-using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Permissions
 {
@@ -68,7 +65,6 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
         public delegate void State_run_time_permissions(int perm);
 
         [APILevel(APIFlags.LSL, "llGetPermissions")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetPermissions(ScriptInstance instance)
         {
             lock (instance)
@@ -78,7 +74,6 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
         }
 
         [APILevel(APIFlags.LSL, "llGetPermissionsKey")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetPermissionsKey(ScriptInstance instance)
         {
             lock (instance)
@@ -88,7 +83,6 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
         }
 
         [APILevel(APIFlags.LSL, "llRequestPermissions")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RequestPermissions(ScriptInstance instance, LSLKey agentID, int permissions)
         {
             lock(instance)
@@ -122,7 +116,6 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
         }
 
         [ExecutedOnScriptReset]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public static void ResetPermissions(ScriptInstance instance)
         {
             lock (instance)

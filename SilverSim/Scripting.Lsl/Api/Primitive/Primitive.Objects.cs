@@ -4,10 +4,8 @@
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
-using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -64,14 +62,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int OBJECT_TEMP_ON_REZ = 23;
 
         [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 GetCenterOfMass(ScriptInstance instance)
         {
             throw new NotImplementedException("llGetCenterOfMass()");
         }
 
         [APILevel(APIFlags.LSL, "llGetCreator")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetCreator(ScriptInstance instance)
         {
             lock (instance)
@@ -81,7 +77,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectDesc")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetObjectDesc(ScriptInstance instance)
         {
             lock (instance)
@@ -91,7 +86,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectDetails")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetObjectDetails(ScriptInstance instance, AnArray param)
         {
             AnArray parout = new AnArray();
@@ -103,7 +97,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectName")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetObjectName(ScriptInstance instance)
         {
             lock (instance)
@@ -113,7 +106,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetObjectDesc")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetObjectDesc(ScriptInstance instance, string desc)
         {
             lock (instance)
@@ -123,7 +115,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetObjectName")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetObjectName(ScriptInstance instance, string name)
         {
             lock (instance)
@@ -133,14 +124,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetRegionPos")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int SetRegionPos(ScriptInstance instance, Vector3 pos)
         {
             throw new NotImplementedException("llSetRegionPos(vector)");
         }
 
         [APILevel(APIFlags.LSL, "llGetVel")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 GetVel(ScriptInstance instance)
         {
             lock (instance)
@@ -150,7 +139,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetOwner")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetOwner(ScriptInstance instance)
         {
             lock (instance)
@@ -160,7 +148,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetOwnerKey")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetOwnerKey(ScriptInstance instance, LSLKey id)
         {
             lock (instance)
@@ -179,7 +166,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetNumberOfPrims")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetNumberOfPrims(ScriptInstance instance)
         {
             lock (instance)
@@ -189,7 +175,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkKey")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetLinkKey(ScriptInstance instance, int link)
         {
             lock (instance)
@@ -201,7 +186,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkName")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetLinkName(ScriptInstance instance, int link)
         {
             lock (instance)
@@ -213,7 +197,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkNumber")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetLinkNumber(ScriptInstance instance)
         {
             lock (instance)
@@ -228,7 +211,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public delegate void State_object_message(LSLKey id, string data);
 
         [APILevel(APIFlags.OSSL, "osMessageObject")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void MessageObject(ScriptInstance instance, LSLKey objectUUID, string message)
         {
             lock (instance)

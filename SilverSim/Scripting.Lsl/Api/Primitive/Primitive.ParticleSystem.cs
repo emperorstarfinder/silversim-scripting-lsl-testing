@@ -2,11 +2,10 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
-using SilverSim.Scene.Types.Script;
 using System;
-using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -122,7 +121,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llLinkParticleSystem")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
         {
@@ -518,7 +516,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llParticleSystem")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ParticleSystem(ScriptInstance instance, AnArray rules)
         {
             LinkParticleSystem(instance, LINK_THIS, rules);

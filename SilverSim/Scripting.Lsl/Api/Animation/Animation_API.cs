@@ -9,7 +9,6 @@ using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Animation
 {
@@ -202,7 +201,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.LSL, "llStartAnimation")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void StartAnimation(
             ScriptInstance instance,
             [LSLTooltip("animation to be played")]
@@ -234,7 +232,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.OSSL, "osAvatarPlayAnimation")]
         [LSLTooltip("causes an animation to be played on the specified avatar.")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void AvatarPlayAnimation(
             ScriptInstance instance, 
             [LSLTooltip("UUID of the agent")]
@@ -262,7 +259,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.LSL, "llStopAnimation")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void StopAnimation(
             ScriptInstance instance, 
             [LSLTooltip("animation to be stopped")]
@@ -297,7 +293,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.OSSL, "osAvatarStopAnimation")]
         [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void AvatarStopAnimation(
             ScriptInstance instance,
             [LSLTooltip("UUID of the agent")]
@@ -325,14 +320,12 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimation")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetAnimation(ScriptInstance instance, LSLKey agent)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimationList")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetAnimationList(ScriptInstance instance, LSLKey agentkey)
         {
             List<UUID> playingAnimations;

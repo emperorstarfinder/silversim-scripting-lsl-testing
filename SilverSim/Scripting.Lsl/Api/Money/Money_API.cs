@@ -9,7 +9,6 @@ using SilverSim.ServiceInterfaces.Economy;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 
 namespace SilverSim.Scripting.Lsl.Api.Money
@@ -90,7 +89,6 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         }
 
         [APILevel(APIFlags.LSL, "llGiveMoney")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
@@ -103,7 +101,6 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         }
 
         [APILevel(APIFlags.LSL, "llTransferLindenDollars")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;

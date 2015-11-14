@@ -1,17 +1,13 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using SilverSim.Types;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Common;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llResetTime")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ResetTime(ScriptInstance instance)
         {
             lock(instance)
@@ -21,7 +17,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetTime")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public double GetTime(ScriptInstance instance)
         {
             double v;
@@ -33,7 +28,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetAndResetTime")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public double GetAndResetTime(ScriptInstance instance)
         {
             double old;

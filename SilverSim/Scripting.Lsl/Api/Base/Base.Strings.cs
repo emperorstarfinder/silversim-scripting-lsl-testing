@@ -3,14 +3,12 @@
 
 using SilverSim.Scene.Types.Script;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llDeleteSubString")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string DeleteSubString(ScriptInstance instance, string src, int start, int end)
         {
             if (start < 0)
@@ -46,28 +44,24 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llToLower")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string ToLower(ScriptInstance instance, string s)
         {
             return s.ToLower();
         }
 
         [APILevel(APIFlags.LSL, "llToUpper")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string ToUpper(ScriptInstance instance, string s)
         {
             return s.ToUpper();
         }
 
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string UnescapeURL(ScriptInstance instance, string url)
         {
             return Uri.UnescapeDataString(url);
         }
 
         [APILevel(APIFlags.LSL, "llEscapeURL")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string EscapeURL(ScriptInstance instance, string url)
         {
             return Uri.EscapeDataString(url);
@@ -83,7 +77,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
 
         [APILevel(APIFlags.LSL, "llStringTrim")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string StringTrim(ScriptInstance instance, string src, int type)
         {
             switch(type & STRING_TRIM)
@@ -107,21 +100,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int StringLength(ScriptInstance instance, string src)
         {
             return src.Length;
         }
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int SubStringIndex(ScriptInstance instance, string source, string pattern)
         {
             return source.IndexOf(pattern);
         }
 
-        [APILevel(APIFlags.LSL, "llGetSubstring")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
+        [APILevel(APIFlags.LSL, "llGetSubString")]
         public string GetSubstring(ScriptInstance instance, string src, int start, int end)
         {
             if(start < 0)

@@ -3,12 +3,11 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
-using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Scene;
+using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.WindLight;
 using SilverSim.Types;
 using System;
-using SilverSim.Scene.Types.WindLight;
-using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.WindLight
@@ -117,7 +116,6 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
         public const int REGION_WL_WATER_LITTLE_WAVE_DIRECTION = 33;
 
         [APIExtension(APIExtension.WindLight_New, "rwlWindlightGetWaterSettings")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray WindlightGetWaterSettings(ScriptInstance instance, AnArray rules)
         {
             AnArray res = new AnArray();
@@ -211,7 +209,6 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
         }
 
         [APIExtension(APIExtension.WindLight_New, "rwlWindlightSetWaterSettings")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public int WindlightSetWaterSettings(ScriptInstance instance, AnArray rules)
         {

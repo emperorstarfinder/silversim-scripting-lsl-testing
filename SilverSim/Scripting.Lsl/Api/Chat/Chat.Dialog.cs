@@ -8,7 +8,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Chat
 {
@@ -16,7 +15,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
     {
         [APILevel(APIFlags.LSL, "llDialog")]
         [ForcedSleep(1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void Dialog(ScriptInstance instance, LSLKey avatar, string message, AnArray buttons, int channel)
         {
             lock (instance)
@@ -56,7 +54,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     }
                     else if (buttontext.Length > 24)
                     {
-                        throw new ArgumentException("button label cannot be more than 24 characters");
+                        buttontext = buttontext.Substring(0, 24);
                     }
                     m.Buttons.Add(buttontext);
                 }
@@ -74,7 +72,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llTextBox")]
         [ForcedSleep(1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
         {
             AnArray buttons = new AnArray();
@@ -84,7 +81,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llLoadURL")]
         [ForcedSleep(10)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void LoadURL(ScriptInstance instance, LSLKey avatar, string message, string url)
         {
             lock (instance)
@@ -111,7 +107,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         [APILevel(APIFlags.LSL, "llMapDestination")]
         [ForcedSleep(1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void MapDestination(ScriptInstance instance, string simname, Vector3 pos, Vector3 look_at)
         {
             lock(instance)

@@ -1,17 +1,12 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SilverSim.Types;
-using SilverSim.Scene.Types.Script;
-using SilverSim.Scene.Types.Scene;
-using SilverSim.Types.Parcel;
-using SilverSim.Scripting.Common;
-using System.Diagnostics.CodeAnalysis;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
+using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
+using SilverSim.Types.Parcel;
+using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
@@ -50,7 +45,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         public const int PARCEL_DETAILS_CLAIMDATE = 10;
 
         [APILevel(APIFlags.LSL, "llGetParcelDetails")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
         {
             AnArray res = new AnArray();
@@ -101,7 +95,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelFlags")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetParcelFlags(ScriptInstance instance, Vector3 pos)
         {
             lock(instance)
@@ -116,14 +109,12 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelMusicURL")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetParcelMusicURL(ScriptInstance instance)
         {
             lock (instance)
@@ -141,7 +132,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llSetParcelMusicURL")]
         [ForcedSleep(2)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetParcelMusicURL(ScriptInstance instance, string url)
         {
             lock (instance)
@@ -161,21 +151,18 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         }
 
         [APILevel(APIFlags.LSL, "llReturnObjectsByID")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int ReturnObjectsByID(ScriptInstance instance, AnArray objects)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llReturnObjectsByOwner")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int ReturnObjectsByOwner(ScriptInstance instance, LSLKey owner, int scope)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetLandOwnerAt")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetLandOwnerAt(ScriptInstance instance, Vector3 pos)
         {
             lock (instance)
@@ -189,7 +176,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelPrimCount")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetParcelPrimCount(ScriptInstance instance, Vector3 pos, int category, int sim_wide)
         {
             throw new NotImplementedException();
@@ -197,7 +183,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llGetParcelPrimOwners")]
         [ForcedSleep(2)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
         {
             throw new NotImplementedException();

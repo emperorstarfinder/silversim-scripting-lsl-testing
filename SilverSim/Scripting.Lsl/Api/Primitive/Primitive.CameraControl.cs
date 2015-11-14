@@ -4,11 +4,9 @@
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -62,7 +60,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int CAMERA_FOCUS_LOCKED = 22;
 
         [APILevel(APIFlags.LSL, "llSetCameraAtOffset")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetCameraAtOffset(ScriptInstance instance, Vector3 offset)
         {
             lock(instance)
@@ -72,7 +69,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetLinkCamera")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetLinkCamera(ScriptInstance instance, int link, Vector3 eye, Vector3 at)
         {
             lock (instance)
@@ -84,7 +80,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetCameraEyeOffset")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetCameraEyeOffset(ScriptInstance instance, Vector3 offset)
         {
             lock (instance)
@@ -94,7 +89,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llClearCameraParams")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ClearCameraParams(ScriptInstance instance)
         {
             lock (instance)
@@ -108,7 +102,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetCameraParams")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetCameraParams(ScriptInstance instance, AnArray rules)
         {
             lock (instance)
@@ -123,7 +116,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetCameraPos")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 GetCameraPos(ScriptInstance instance)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
@@ -142,7 +134,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetCameraRot")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Quaternion GetCameraRot(ScriptInstance instance)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;

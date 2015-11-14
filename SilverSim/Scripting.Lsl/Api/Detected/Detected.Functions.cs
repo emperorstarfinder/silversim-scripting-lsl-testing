@@ -1,12 +1,10 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using SilverSim.Types;
-using SilverSim.Scene.Types.Script;
-using System;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Agent;
-using System.Diagnostics.CodeAnalysis;
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
 
 namespace SilverSim.Scripting.Lsl.Api.Detected
 {
@@ -16,7 +14,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
          * The other option of implementing this would have been to make it a namespace class of the Script class.
          */
         [APILevel(APIFlags.LSL, "llDetectedGrab")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedGrab(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -31,7 +28,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedGroup")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int DetectedGroup(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -46,7 +42,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedKey")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey DetectedKey(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -61,7 +56,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedLinkNumber")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int DetectedLinkNumber(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -76,7 +70,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedName")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string DetectedName(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -91,7 +84,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedOwner")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey DetectedOwner(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -106,7 +98,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedPos")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedPos(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -121,7 +112,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedRot")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Quaternion DetectedRot(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -136,7 +126,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchBinormal")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedTouchBinormal(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -151,7 +140,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchFace")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int DetectedTouchFace(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -166,7 +154,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchNormal")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedTouchNormal(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -181,7 +168,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchPos")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedTouchPos(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -196,7 +182,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchST")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedTouchST(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -211,7 +196,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedTouchUV")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedTouchUV(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -231,7 +215,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         const int SCRIPTED = 8;
 
         [APILevel(APIFlags.LSL, "llDetectedType")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int DetectedType(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;
@@ -294,7 +277,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL, "llDetectedVel")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 DetectedVel(ScriptInstance instance, int number)
         {
             Script script = (Script)instance;

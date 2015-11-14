@@ -5,12 +5,10 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
-using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using SilverSim.Types.Asset.Format;
 using SilverSim.Types.Inventory;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 
 namespace SilverSim.Scripting.Lsl.Api.Notecards
@@ -53,7 +51,6 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
 
         [APILevel(APIFlags.LSL, "llGetNotecardLine")]
         [ForcedSleep(0.1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetNotecardLine(ScriptInstance instance, string name, int line)
         {
             lock (instance)
@@ -113,7 +110,6 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
 
         [APILevel(APIFlags.LSL, "llGetNumberOfNotecardLines")]
         [ForcedSleep(0.1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetNumberOfNotecardLines(ScriptInstance instance, string name)
         {
             ObjectPartInventoryItem item;

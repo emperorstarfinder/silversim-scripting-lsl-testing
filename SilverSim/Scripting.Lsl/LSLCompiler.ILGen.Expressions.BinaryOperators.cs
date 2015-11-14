@@ -610,7 +610,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             throw Return(compileState, typeof(AnArray));
                         }
-                        else if(m_LeftHandType == typeof(int) || m_RightHandType == typeof(double))
+                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -668,7 +668,7 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '+' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "-":
-                        if(m_LeftHandType == typeof(int) || m_RightHandType == typeof(double))
+                        if(m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -676,35 +676,32 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Sub);
                             throw Return(compileState, m_LeftHandType);
                         }
-                        else if(m_LeftHandType == typeof(string))
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("ob_Subtraction", new Type[] { m_LeftHandType, m_LeftHandType }));
-                            throw Return(compileState, typeof(string));
-                        }
 
-                        mi = m_LeftHandType.GetMethod("ob_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
-                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
-                            null != mi)
+                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
                         {
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                            if (!IsValidType(mi.ReturnType))
+                            mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (null != mi)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                if (!IsValidType(mi.ReturnType))
+                                {
+                                    throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                }
+                                throw Return(compileState, mi.ReturnType);
                             }
-                            throw Return(compileState, mi.ReturnType);
                         }
-                        else if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType && 
-                            null != mi)
+                        if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType)
                         {
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                            if (!IsValidType(mi.ReturnType))
+                            mi = m_RightHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (null != mi)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                if (!IsValidType(mi.ReturnType))
+                                {
+                                    throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                }
+                                throw Return(compileState, mi.ReturnType);
                             }
-                            throw Return(compileState, mi.ReturnType);
                         }
                         throw new CompilerException(m_LineNumber, string.Format("operator '-' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
                         

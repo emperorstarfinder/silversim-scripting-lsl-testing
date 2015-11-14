@@ -1,15 +1,13 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using SilverSim.ServiceInterfaces.IM;
-using SilverSim.Scene.Types.Script;
-using SilverSim.Types;
-using SilverSim.Types.IM;
-using System.Text;
-using System;
-using System.Diagnostics.CodeAnalysis;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
+using SilverSim.Scene.Types.Script;
+using SilverSim.ServiceInterfaces.IM;
+using SilverSim.Types.IM;
+using System;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.IM
 {
@@ -17,7 +15,6 @@ namespace SilverSim.Scripting.Lsl.Api.IM
     {
         [APILevel(APIFlags.LSL, "llInstantMessage")]
         [ForcedSleep(2)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void InstantMessage(ScriptInstance instance, LSLKey user, string message)
         {
             lock(instance)

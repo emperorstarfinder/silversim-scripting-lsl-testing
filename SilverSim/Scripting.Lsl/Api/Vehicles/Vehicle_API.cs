@@ -3,12 +3,9 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
-using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Common;
 using SilverSim.Types;
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Vehicles
@@ -28,14 +25,12 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         }
 
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
             instance.Part.ObjectGroup.SetVehicleFlags = (VehicleFlags)flags;
         }
 
         [APILevel(APIFlags.LSL, "llRemoveVehicleFlags")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RemoveVehicleFlags(ScriptInstance instance, int flags)
         {
             instance.Part.ObjectGroup.ClearVehicleFlags = (VehicleFlags)flags;
@@ -77,7 +72,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
 
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
@@ -184,7 +178,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_REFERENCE_FRAME = 44;
 
         [APILevel(APIFlags.LSL, "llSetVehicleRotationParam")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
             lock (instance)
@@ -216,7 +209,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_TYPE_BALLOON = 5;
 
         [APILevel(APIFlags.LSL, "llSetVehicleType")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetVehicleType(ScriptInstance instance, int type)
         {
             lock (instance)
@@ -267,7 +259,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
 
         [APILevel(APIFlags.LSL, "llSetVehicleVectorParam")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
             lock (instance)

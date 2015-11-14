@@ -2,11 +2,8 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
-using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -153,14 +150,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llSleep")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void Sleep(ScriptInstance instance, double secs)
         {
             instance.Sleep(secs);
         }
 
         [APILevel(APIFlags.ASSL, "asSetForcedSleep")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetForcedSleep(ScriptInstance instance, int flag, double factor)
         {
             if(factor > 1)
@@ -180,7 +175,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.ASSL, "asSetForcedSleepEnable")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetForcedSleepEnable(ScriptInstance instance, int flag)
         {
             lock(instance)

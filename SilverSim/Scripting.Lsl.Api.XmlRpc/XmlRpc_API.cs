@@ -3,10 +3,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Common;
-using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
@@ -33,7 +30,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         public const int REMOTE_DATA_REPLY = 3;
 
         [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void CloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
         {
             throw new NotImplementedException();
@@ -41,7 +37,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 
         [APILevel(APIFlags.LSL, "llOpenRemoteDataChannel")]
         [ForcedSleep(1.0)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void OpenRemoteDataChannel(ScriptInstance instance)
         {
             throw new NotImplementedException();
@@ -49,7 +44,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 
         [APILevel(APIFlags.LSL, "llRemoteDataReply")]
         [ForcedSleep(3.0)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RemoteDataReply(ScriptInstance instance, LSLKey channel, LSLKey message_id, string sdata, int idata)
         {
             throw new NotImplementedException();
@@ -57,7 +51,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 
         [APILevel(APIFlags.LSL, "llSendRemoteData")]
         [ForcedSleep(3.0)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey SendRemoteData(ScriptInstance instance, LSLKey channel, string dest, int idata, string sdata)
         {
             throw new NotImplementedException();

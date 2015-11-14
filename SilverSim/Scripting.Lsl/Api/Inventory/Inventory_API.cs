@@ -5,10 +5,8 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
-using SilverSim.Types.Script;
 using SilverSim.Types.Inventory;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
@@ -75,7 +73,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         public const int PERM_ALL = 2147483647;
 
         [APILevel(APIFlags.LSL, "llGiveInventory")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void GiveInventory(ScriptInstance instance, LSLKey destination, string inventory)
         {
             throw new NotImplementedException();
@@ -83,14 +80,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         [APILevel(APIFlags.LSL, "llGiveInventoryList")]
         [ForcedSleep(3)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void GiveInventoryList(ScriptInstance instance, LSLKey target, string folder, AnArray inventory)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llRemoveInventory")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RemoveInventory(ScriptInstance instance, string item)
         {
             ObjectPartInventoryItem resitem;
@@ -119,7 +114,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryCreator")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetInventoryCreator(ScriptInstance instance, string item)
         {
             lock (instance)
@@ -136,7 +130,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryKey")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey GetInventoryKey(ScriptInstance instance, string item)
         {
             lock (instance)
@@ -153,7 +146,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryName")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetInventoryName(ScriptInstance instance, int type, int number)
         {
             lock(instance)
@@ -178,7 +170,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryNumber")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetInventoryNumber(ScriptInstance instance, int type)
         {
             lock (instance)
@@ -192,14 +183,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
 
         [APILevel(APIFlags.LSL, "llSetInventoryPermMask")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void SetInventoryPermMask(ScriptInstance instance, string name, int category, int mask)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryPermMask")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetInventoryPermMask(ScriptInstance instance, string name, int category)
         {
             lock(instance)
@@ -244,7 +233,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryType")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int GetInventoryType(ScriptInstance instance, string name)
         {
             lock (instance)
@@ -262,7 +250,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         [APILevel(APIFlags.LSL, "llRequestInventoryData")]
         [ForcedSleep(1.0)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey RequestInventoryData(ScriptInstance instance, string name)
         {
             throw new NotImplementedException();
@@ -270,7 +257,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         #region osGetInventoryDesc
         [APILevel(APIFlags.OSSL, "osGetInventoryDesc")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetInventoryDesc(ScriptInstance instance, string item)
         {
             lock (instance)
@@ -289,14 +275,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         #region Rez Inventory
         [APILevel(APIFlags.LSL, "llRezObject")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RezObject(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llRezAtRoot")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RezAtRoot(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
             throw new NotImplementedException();

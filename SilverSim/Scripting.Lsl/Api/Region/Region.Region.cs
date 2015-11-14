@@ -1,11 +1,10 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using SilverSim.Types;
-using SilverSim.Scene.Types.Script;
-using System;
-using SilverSim.Scripting.Common;
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Region
@@ -13,7 +12,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
     public partial class RegionApi
     {
         [APILevel(APIFlags.LSL, "llGetRegionName")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetRegionName(ScriptInstance instance)
         {
             lock (instance)
@@ -24,7 +22,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         [APILevel(APIFlags.LSL, "llGetSimulatorHostname")]
         [ForcedSleep(10)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public string GetSimulatorHostname(ScriptInstance instance)
         {
             lock(this)
@@ -36,7 +33,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.LSL, "llGetRegionCorner")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public Vector3 GetRegionCorner(ScriptInstance instance)
         {
             lock(this)
@@ -47,14 +43,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
         {
             throw new NotImplementedException("llRequestSimulatorData(string, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llGetEnv")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public string GetEnv(ScriptInstance instance, string name)
         {

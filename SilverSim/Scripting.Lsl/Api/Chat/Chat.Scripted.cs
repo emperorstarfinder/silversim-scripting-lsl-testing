@@ -6,7 +6,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Chat
 {
@@ -15,7 +14,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         public static int MaxListenerHandles = 64;
 
         [APILevel(APIFlags.LSL, "llShout")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void Shout(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -28,7 +26,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llSay")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void Say(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -41,7 +38,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llWhisper")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void Whisper(ScriptInstance instance, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -54,7 +50,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llOwnerSay")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void OwnerSay(ScriptInstance instance, string message)
         {
             lock (instance)
@@ -71,7 +66,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llRegionSay")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RegionSay(ScriptInstance instance, int channel, string message)
         {
             if (channel != PUBLIC_CHANNEL)
@@ -87,7 +81,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llRegionSayTo")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void RegionSayTo(ScriptInstance instance, LSLKey target, int channel, string message)
         {
             ListenEvent ev = new ListenEvent();
@@ -101,7 +94,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llListen")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg)
         {
             Script script = (Script)instance;
@@ -143,7 +135,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llListenRemove")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ListenRemove(ScriptInstance instance, int handle)
         {
             Script script = (Script)instance;
@@ -158,7 +149,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llListenControl")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void ListenControl(ScriptInstance instance, int handle, int active)
         {
             Script script = (Script)instance;
@@ -174,7 +164,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         #region osListenRegex
         [APILevel(APIFlags.OSSL, "osListenRegex")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public int ListenRegex(ScriptInstance instance, int channel, string name, LSLKey id, string msg, int regexBitfield)
         {
             Script script = (Script)instance;
@@ -218,7 +207,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         #endregion
 
         [ExecutedOnStateChange]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public static void ResetListeners(ScriptInstance instance)
         {
             Script script = (Script)instance;
