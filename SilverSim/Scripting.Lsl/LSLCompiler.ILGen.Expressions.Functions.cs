@@ -36,6 +36,7 @@ namespace SilverSim.Scripting.Lsl
             readonly string m_FunctionName;
             readonly Type m_FunctionReturnType;
             readonly int m_LineNumber;
+            readonly MethodInfo m_MethodInfo;
 
             public FunctionExpression(
                 LSLCompiler lslCompiler,
@@ -68,7 +69,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_Parameters.Add(new FunctionParameterInfo(pi[i].Key, pi[i].Value, functionTree.SubTree[i], i));
                     }
-
+                    m_MethodInfo = mb;
                     m_FunctionReturnType = signatureInfo.Key;
                 }
                 else if (compileState.ApiInfo.Methods.TryGetValue(functionTree.Entry, out methods))
@@ -84,6 +85,9 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(lineNumber, string.Format("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name));
                             }
+
+                            compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
+
                             if (null == compileState.StateTypeBuilder)
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldarg_0);
@@ -93,8 +97,6 @@ namespace SilverSim.Scripting.Lsl
                                 compileState.ILGen.Emit(OpCodes.Ldarg_0);
                                 compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                             }
-
-                            compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
 
                             for (int i = 0; i < functionTree.SubTree.Count; ++i)
                             {
@@ -107,6 +109,7 @@ namespace SilverSim.Scripting.Lsl
                                 m_Parameters.Add(new FunctionParameterInfo(pi[i + 1].Name, pi[i + 1].ParameterType, functionTree.SubTree[i], i));
                             }
 
+                            m_MethodInfo = method.Method;
                             m_FunctionReturnType = method.Method.ReturnType;
                             return;
                         }
@@ -146,6 +149,7 @@ namespace SilverSim.Scripting.Lsl
 
                 if(m_Parameters.Count == 0)
                 {
+                    compileState.ILGen.Emit(OpCodes.Call, m_MethodInfo);
                     throw new ReturnTypeException(m_FunctionReturnType, m_LineNumber);
                 }
                 else
