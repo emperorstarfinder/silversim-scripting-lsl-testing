@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// SilverSim is distributed under the terms of the
+// GNU Affero General Public License v3
+
+using System;
 using System.Diagnostics.SymbolStore;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
+#if DEBUG
     class ILGenDumpProxy
     {
         ILGenerator m_ILGen;
@@ -261,4 +262,5 @@ namespace SilverSim.Scripting.Lsl
             m_ILGen.UsingNamespace(usingNamespace);
         }
     }
+#endif
 }
