@@ -331,13 +331,6 @@ namespace SilverSim.Scripting.Lsl
                             }
                             break;
 
-                        case "state":
-                            if (!inState)
-                            {
-                                throw ParserException(p, "state change not allowed in global function");
-                            }
-                            break;
-
                         default:
                             break;
                     }

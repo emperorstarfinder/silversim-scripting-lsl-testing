@@ -137,10 +137,6 @@ namespace SilverSim.Scripting.Lsl
             else if (functionLine.Line[startAt] == "state")
             {
                 /* when same state, the state instruction compiles to nop according to wiki */
-                if (compileState.StateTypeBuilder == null)
-                {
-                    throw CompilerException(functionLine, "Global functions cannot change state");
-                }
                 compileState.ILGen.Emit(OpCodes.Ldstr, functionLine.Line[1]);
                 compileState.ILGen.Emit(OpCodes.Newobj, typeof(ChangeStateException).GetConstructor(new Type[1] { typeof(string) }));
                 compileState.ILGen.Emit(OpCodes.Throw);
