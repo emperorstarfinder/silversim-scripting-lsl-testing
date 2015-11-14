@@ -39,7 +39,7 @@ namespace SilverSim.Scripting.Lsl
 
                 foreach (KeyValuePair<string, Type> t in m_StateTypes)
                 {
-                    ConstructorInfo info = t.Value.GetConstructor(new Type[1] { typeof(Script) });
+                    ConstructorInfo info = t.Value.GetConstructor(new Type[1] { m_ScriptType });
                     object[] param = new object[1];
                     param[0] = m_Script;
                     m_Script.AddState(t.Key, (ILSLState)info.Invoke(param));

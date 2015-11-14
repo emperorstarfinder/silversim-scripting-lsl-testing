@@ -289,13 +289,13 @@ namespace SilverSim.Scripting.Lsl
                 ConstructorInfo typeConstructor = typeof(object).GetConstructor(Type.EmptyTypes);
                 state_ilgen.Emit(OpCodes.Ldarg_0);
                 state_ilgen.Emit(OpCodes.Call, typeConstructor);
+                state_ilgen.Emit(OpCodes.Ldarg_0);
                 state_ilgen.Emit(OpCodes.Ldarg_1);
                 state_ilgen.Emit(OpCodes.Stfld, fb);
                 typeLocals = AddConstants(compileState, state, state_ilgen);
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                 {
-                    FieldBuilder cfb = scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
-                    compileState.m_VariableFieldInfo[variableKvp.Key] = cfb;
+                    FieldInfo cfb = scriptTypeBuilder.GetField("var_" + variableKvp.Key);
                     typeLocals[variableKvp.Key] = cfb;
                 }
 
