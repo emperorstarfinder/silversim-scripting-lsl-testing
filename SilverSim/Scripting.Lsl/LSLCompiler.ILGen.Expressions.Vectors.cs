@@ -38,7 +38,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (null != innerExpressionReturn)
                 {
-                    ProcessImplicitCasts(compileState.ILGen, typeof(double), innerExpressionReturn, m_LineNumber);
+                    ProcessImplicitCasts(compileState, typeof(double), innerExpressionReturn, m_LineNumber);
                     m_ListElements.RemoveAt(0);
                 }
 

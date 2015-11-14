@@ -27,25 +27,25 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_FWD = 0x00000001;
+        public const int CONTROL_FWD = 0x00000001;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_BACK = 0x00000002;
+        public const int CONTROL_BACK = 0x00000002;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_LEFT = 0x00000004;
+        public const int CONTROL_LEFT = 0x00000004;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_RIGHT = 0x00000008;
+        public const int CONTROL_RIGHT = 0x00000008;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_ROT_LEFT = 0x00000100;
+        public const int CONTROL_ROT_LEFT = 0x00000100;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_ROT_RIGHT = 0x00000200;
+        public const int CONTROL_ROT_RIGHT = 0x00000200;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_UP = 0x00000010;
+        public const int CONTROL_UP = 0x00000010;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_DOWN = 0x00000020;
+        public const int CONTROL_DOWN = 0x00000020;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_LBUTTON = 0x10000000;
+        public const int CONTROL_LBUTTON = 0x10000000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int CONTROL_ML_LBUTTON = 0x40000000;
+        public const int CONTROL_ML_LBUTTON = 0x40000000;
 
         [APILevel(APIFlags.LSL, "control")]
         [StateEventDelegate]
@@ -53,7 +53,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
 
         [APILevel(APIFlags.LSL, "llTakeControls")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void TakeControls(ScriptInstance instance, int controls, int accept, int pass_on)
+        public void TakeControls(ScriptInstance instance, int controls, int accept, int pass_on)
         {
             lock (instance)
             {
@@ -75,7 +75,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
 
         [APILevel(APIFlags.LSL, "llReleaseControls")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void ReleaseControls(ScriptInstance instance)
+        public void ReleaseControls(ScriptInstance instance)
         {
             lock (instance)
             {

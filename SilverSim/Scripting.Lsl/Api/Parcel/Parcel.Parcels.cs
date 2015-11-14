@@ -18,40 +18,40 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
     public partial class ParcelApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_COUNT_TOTAL = 0;
+        public const int PARCEL_COUNT_TOTAL = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_COUNT_OWNER = 1;
+        public const int PARCEL_COUNT_OWNER = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_COUNT_GROUP = 2;
+        public const int PARCEL_COUNT_GROUP = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_COUNT_OTHER = 3;
+        public const int PARCEL_COUNT_OTHER = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_COUNT_SELECTED = 4;
+        public const int PARCEL_COUNT_SELECTED = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_COUNT_TEMP = 5;
+        public const int PARCEL_COUNT_TEMP = 5;
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_NAME = 0;
+        public const int PARCEL_DETAILS_NAME = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_DESC = 1;
+        public const int PARCEL_DETAILS_DESC = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_OWNER = 2;
+        public const int PARCEL_DETAILS_OWNER = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_GROUP = 3;
+        public const int PARCEL_DETAILS_GROUP = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_AREA = 4;
+        public const int PARCEL_DETAILS_AREA = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_ID = 5;
+        public const int PARCEL_DETAILS_ID = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_SEE_AVATARS = 6; // not implemented
+        public const int PARCEL_DETAILS_SEE_AVATARS = 6; // not implemented
 
         //osSetParcelDetails
         [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
-        internal const int PARCEL_DETAILS_CLAIMDATE = 10;
+        public const int PARCEL_DETAILS_CLAIMDATE = 10;
 
         [APILevel(APIFlags.LSL, "llGetParcelDetails")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
+        public AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
         {
             AnArray res = new AnArray();
             lock (instance)
@@ -102,7 +102,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llGetParcelFlags")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int GetParcelFlags(ScriptInstance instance, Vector3 pos)
+        public int GetParcelFlags(ScriptInstance instance, Vector3 pos)
         {
             lock(instance)
             {
@@ -117,14 +117,14 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
+        public int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelMusicURL")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string GetParcelMusicURL(ScriptInstance instance)
+        public string GetParcelMusicURL(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -142,7 +142,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llSetParcelMusicURL")]
         [ForcedSleep(2)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetParcelMusicURL(ScriptInstance instance, string url)
+        public void SetParcelMusicURL(ScriptInstance instance, string url)
         {
             lock (instance)
             {
@@ -162,21 +162,21 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llReturnObjectsByID")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int ReturnObjectsByID(ScriptInstance instance, AnArray objects)
+        public int ReturnObjectsByID(ScriptInstance instance, AnArray objects)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llReturnObjectsByOwner")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int ReturnObjectsByOwner(ScriptInstance instance, LSLKey owner, int scope)
+        public int ReturnObjectsByOwner(ScriptInstance instance, LSLKey owner, int scope)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetLandOwnerAt")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal LSLKey GetLandOwnerAt(ScriptInstance instance, Vector3 pos)
+        public LSLKey GetLandOwnerAt(ScriptInstance instance, Vector3 pos)
         {
             lock (instance)
             {
@@ -190,7 +190,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         [APILevel(APIFlags.LSL, "llGetParcelPrimCount")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int GetParcelPrimCount(ScriptInstance instance, Vector3 pos, int category, int sim_wide)
+        public int GetParcelPrimCount(ScriptInstance instance, Vector3 pos, int category, int sim_wide)
         {
             throw new NotImplementedException();
         }
@@ -198,7 +198,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelPrimOwners")]
         [ForcedSleep(2)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
+        public AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
         {
             throw new NotImplementedException();
         }

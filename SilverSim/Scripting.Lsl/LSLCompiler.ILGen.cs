@@ -62,7 +62,7 @@ namespace SilverSim.Scripting.Lsl
                 lineNumber,
                 localVars);
             ProcessImplicitCasts(
-                compileState.ILGen,
+                compileState,
                 expectedType,
                 retType,
                 lineNumber);

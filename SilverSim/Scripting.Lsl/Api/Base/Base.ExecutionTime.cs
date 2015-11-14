@@ -12,7 +12,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llResetTime")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void ResetTime(ScriptInstance instance)
+        public void ResetTime(ScriptInstance instance)
         {
             lock(instance)
             {
@@ -22,7 +22,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llGetTime")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double GetTime(ScriptInstance instance)
+        public double GetTime(ScriptInstance instance)
         {
             double v;
             lock (instance)
@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llGetAndResetTime")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        double GetAndResetTime(ScriptInstance instance)
+        public double GetAndResetTime(ScriptInstance instance)
         {
             double old;
             lock(instance)

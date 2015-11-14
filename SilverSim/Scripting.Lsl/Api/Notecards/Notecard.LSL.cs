@@ -18,7 +18,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
     public partial class NotecardApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const string EOF = "\n\n\n";
+        public const string EOF = "\n\n\n";
 
         #region llGetNotecardLine
         void GetNotecardLine(ObjectPart part, UUID queryID, UUID assetID, int line)
@@ -54,7 +54,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         [APILevel(APIFlags.LSL, "llGetNotecardLine")]
         [ForcedSleep(0.1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal LSLKey GetNotecardLine(ScriptInstance instance, string name, int line)
+        public LSLKey GetNotecardLine(ScriptInstance instance, string name, int line)
         {
             lock (instance)
             {
@@ -114,7 +114,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         [APILevel(APIFlags.LSL, "llGetNumberOfNotecardLines")]
         [ForcedSleep(0.1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal LSLKey GetNumberOfNotecardLines(ScriptInstance instance, string name)
+        public LSLKey GetNumberOfNotecardLines(ScriptInstance instance, string name)
         {
             ObjectPartInventoryItem item;
             lock (instance)

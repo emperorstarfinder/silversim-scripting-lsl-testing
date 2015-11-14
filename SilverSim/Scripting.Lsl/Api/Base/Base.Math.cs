@@ -15,119 +15,119 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const double PI = 3.14159274f;
+        public const double PI = 3.14159274f;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const double TWO_PI = 6.28318548f;
+        public const double TWO_PI = 6.28318548f;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const double PI_BY_TWO = 1.57079637f;
+        public const double PI_BY_TWO = 1.57079637f;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const double DEG_TO_RAD = 0.01745329238f;
+        public const double DEG_TO_RAD = 0.01745329238f;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const double RAD_TO_DEG = 57.29578f;
+        public const double RAD_TO_DEG = 57.29578f;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const double SQRT2 = 1.414213538f;
+        public const double SQRT2 = 1.414213538f;
 
         [APILevel(APIFlags.LSL, "llAbs")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int Abs(ScriptInstance instance, int v)
+        public int Abs(ScriptInstance instance, int v)
         {
             return (v < 0) ? -v : v;
         }
 
         [APILevel(APIFlags.LSL, "llAcos")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Acos(ScriptInstance instance, double v)
+        public double Acos(ScriptInstance instance, double v)
         {
             return Math.Acos(v);
         }
 
         [APILevel(APIFlags.LSL, "llAsin")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Asin(ScriptInstance instance, double v)
+        public double Asin(ScriptInstance instance, double v)
         {
             return Math.Asin(v);
         }
 
         [APILevel(APIFlags.LSL, "llAtan2")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Atan2(ScriptInstance instance, double y, double x)
+        public double Atan2(ScriptInstance instance, double y, double x)
         {
             return Math.Atan2(y, x);
         }
 
         [APILevel(APIFlags.LSL, "llCos")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Cos(ScriptInstance instance, double v)
+        public double Cos(ScriptInstance instance, double v)
         {
             return Math.Cos(v);
         }
 
         [APILevel(APIFlags.LSL, "llFabs")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Fabs(ScriptInstance instance, double v)
+        public double Fabs(ScriptInstance instance, double v)
         {
             return Math.Abs(v);
         }
 
         [APILevel(APIFlags.LSL, "llLog")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Log(ScriptInstance instance, double v)
+        public double Log(ScriptInstance instance, double v)
         {
             return Math.Log(v);
         }
 
         [APILevel(APIFlags.LSL, "llLog10")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Log10(ScriptInstance instance, double v)
+        public double Log10(ScriptInstance instance, double v)
         {
             return Math.Log10(v);
         }
 
         [APILevel(APIFlags.LSL, "llPow")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Pow(ScriptInstance instance, double bas, double exponent)
+        public double Pow(ScriptInstance instance, double bas, double exponent)
         {
             return Math.Pow(bas, exponent);
         }
 
         [APILevel(APIFlags.LSL, "llSin")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Sin(ScriptInstance instance, double v)
+        public double Sin(ScriptInstance instance, double v)
         {
             return Math.Sin(v);
         }
 
         [APILevel(APIFlags.LSL, "llSqrt")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Sqrt(ScriptInstance instance, double v)
+        public double Sqrt(ScriptInstance instance, double v)
         {
             return Math.Sqrt(v);
         }
 
         [APILevel(APIFlags.LSL, "llTan")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Tan(ScriptInstance instance, double v)
+        public double Tan(ScriptInstance instance, double v)
         {
             return Math.Tan(v);
         }
 
         [APILevel(APIFlags.LSL, "llVecDist")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double VecDist(ScriptInstance instance, Vector3 a, Vector3 b)
+        public double VecDist(ScriptInstance instance, Vector3 a, Vector3 b)
         {
             return (a - b).Length;
         }
 
         [APILevel(APIFlags.LSL, "llVecMag")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double VecMag(ScriptInstance instance, Vector3 v)
+        public double VecMag(ScriptInstance instance, Vector3 v)
         {
             return v.Length;
         }
 
         [APILevel(APIFlags.LSL, "llVecNorm")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Vector3 VecNorm(ScriptInstance instance, Vector3 v)
+        public Vector3 VecNorm(ScriptInstance instance, Vector3 v)
         {
             return v / v.Length;
         }
@@ -135,14 +135,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llModPow")]
         [ForcedSleep(1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int ModPow(ScriptInstance instance, int a, int b, int c)
+        public int ModPow(ScriptInstance instance, int a, int b, int c)
         {
             return ((int)Math.Pow(a, b)) % c;
         }
 
         [APILevel(APIFlags.LSL, "llRot2Euler")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Vector3 Rot2Euler(ScriptInstance instance, Quaternion q)
+        public Vector3 Rot2Euler(ScriptInstance instance, Quaternion q)
         {
             double roll, pitch, yaw;
 
@@ -152,7 +152,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llRot2Angle")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Rot2Angle(ScriptInstance instance, Quaternion r)
+        public double Rot2Angle(ScriptInstance instance, Quaternion r)
         {
             /* based on http://wiki.secondlife.com/wiki/LlRot2Angle */
             double s2 = r.Z * r.Z; // square of the s-element
@@ -172,28 +172,28 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llRot2Axis")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Vector3 Rot2Axis(ScriptInstance instance, Quaternion q)
+        public Vector3 Rot2Axis(ScriptInstance instance, Quaternion q)
         {
             return VecNorm(instance, new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
         }
 
         [APILevel(APIFlags.LSL, "llAxisAngle2Rot")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Quaternion AxisAngle2Rot(ScriptInstance instance, Vector3 axis, double angle)
+        public Quaternion AxisAngle2Rot(ScriptInstance instance, Vector3 axis, double angle)
         {
             return Quaternion.CreateFromAxisAngle(axis, angle);
         }
 
         [APILevel(APIFlags.LSL, "llEuler2Rot")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Quaternion Euler2Rot(ScriptInstance instance, Vector3 v)
+        public Quaternion Euler2Rot(ScriptInstance instance, Vector3 v)
         {
             return Quaternion.CreateFromEulers(v);
         }
 
         [APILevel(APIFlags.LSL, "llAngleBetween")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double AngleBetween(ScriptInstance instance, Quaternion a, Quaternion b)
+        public double AngleBetween(ScriptInstance instance, Quaternion a, Quaternion b)
         {   /* based on http://wiki.secondlife.com/wiki/LlAngleBetween */
             Quaternion r = b / a;
             double s2 = r.W * r.W;
@@ -211,7 +211,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llAxes2Rot")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up)
+        public Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up)
         {
             double s;
             double t = fwd.X + left.Y + up.Z + 1.0;
@@ -257,7 +257,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Vector3 Rot2Fwd(ScriptInstance instance, Quaternion r)
+        public Vector3 Rot2Fwd(ScriptInstance instance, Quaternion r)
         {
             double x, y, z, sq;
             sq = r.LengthSquared;
@@ -278,7 +278,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llRot2Left")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Vector3 Rot2Left(ScriptInstance instance, Quaternion r)
+        public Vector3 Rot2Left(ScriptInstance instance, Quaternion r)
         {
             double x, y, z, sq;
 
@@ -300,7 +300,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llRot2Up")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Vector3 Rot2Up(ScriptInstance instance, Quaternion r)
+        public Vector3 Rot2Up(ScriptInstance instance, Quaternion r)
         {
             double x, y, z, sq;
 
@@ -322,28 +322,28 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llRotBetween")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Quaternion RotBetween(ScriptInstance instance, Vector3 a, Vector3 b)
+        public Quaternion RotBetween(ScriptInstance instance, Vector3 a, Vector3 b)
         {
             return Quaternion.RotBetween(a, b);
         }
 
         [APILevel(APIFlags.LSL, "llFloor")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int Floor(ScriptInstance instance, double f)
+        public int Floor(ScriptInstance instance, double f)
         {
             return (int)Math.Floor(f);
         }
 
         [APILevel(APIFlags.LSL, "llCeil")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int Ceil(ScriptInstance instance, double f)
+        public int Ceil(ScriptInstance instance, double f)
         {
             return (int)Math.Ceiling(f);
         }
 
         [APILevel(APIFlags.LSL, "llRound")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int Round(ScriptInstance instance, double f)
+        public int Round(ScriptInstance instance, double f)
         {
             return (int)Math.Round(f, MidpointRounding.AwayFromZero);
         }
@@ -351,7 +351,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         private readonly Random random = new Random();
         [APILevel(APIFlags.LSL, "llFrand")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal double Frand(ScriptInstance instance, double mag)
+        public double Frand(ScriptInstance instance, double mag)
         {
             return random.NextDouble() * mag;
         }

@@ -10,7 +10,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llSetTimerEvent")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetTimerEvent(ScriptInstance instance, double sec)
+        public void SetTimerEvent(ScriptInstance instance, double sec)
         {
             Script script = (Script)instance;
             lock (script)

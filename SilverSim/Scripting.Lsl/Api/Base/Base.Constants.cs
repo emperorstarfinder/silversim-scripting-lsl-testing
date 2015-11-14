@@ -10,16 +10,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         #region LSL Constants
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int TRUE = 1;
+        public const int TRUE = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int FALSE = 0;
+        public const int FALSE = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const string NULL_KEY = "00000000-0000-0000-0000-000000000000";
+        public const string NULL_KEY = "00000000-0000-0000-0000-000000000000";
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal static readonly Vector3 ZERO_VECTOR = Vector3.Zero;
+        public static readonly Vector3 ZERO_VECTOR = Vector3.Zero;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal static readonly Quaternion ZERO_ROTATION = Quaternion.Identity;
+        public static readonly Quaternion ZERO_ROTATION = Quaternion.Identity;
         #endregion
     }
 }

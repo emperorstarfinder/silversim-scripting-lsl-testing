@@ -18,7 +18,7 @@ namespace SilverSim.Scripting.Lsl.Api.IM
         [APILevel(APIFlags.LSL, "llInstantMessage")]
         [ForcedSleep(2)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void InstantMessage(ScriptInstance instance, LSLKey user, string message)
+        public void InstantMessage(ScriptInstance instance, LSLKey user, string message)
         {
             lock(instance)
             {
@@ -47,6 +47,6 @@ namespace SilverSim.Scripting.Lsl.Api.IM
             }
         }
 
-        static UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
+        static readonly UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
     }
 }

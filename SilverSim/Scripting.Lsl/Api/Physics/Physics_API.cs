@@ -29,7 +29,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llSetTorque")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetTorque(ScriptInstance instance, Vector3 torque, int local)
+        public void SetTorque(ScriptInstance instance, Vector3 torque, int local)
         {
             lock (instance)
             {
@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llSetForce")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetForce(ScriptInstance instance, Vector3 force, int local)
+        public void SetForce(ScriptInstance instance, Vector3 force, int local)
         {
             lock (instance)
             {
@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llSetForceAndTorque")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetForceAndTorque(ScriptInstance instance, Vector3 force, Vector3 torque, int local)
+        public void SetForceAndTorque(ScriptInstance instance, Vector3 force, Vector3 torque, int local)
         {
             lock (instance)
             {
@@ -99,7 +99,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llSetBuoyancy")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetBuoyancy(ScriptInstance instance, double buoyancy)
+        public void SetBuoyancy(ScriptInstance instance, double buoyancy)
         {
             lock(instance)
             {
@@ -116,28 +116,28 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llPushObject")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void PushObject(ScriptInstance instance, LSLKey target, Vector3 impulse, Vector3 ang_impulse, int local)
+        public void PushObject(ScriptInstance instance, LSLKey target, Vector3 impulse, Vector3 ang_impulse, int local)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llApplyImpulse")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void ApplyImpulse(ScriptInstance instance, Vector3 momentum, int local)
+        public void ApplyImpulse(ScriptInstance instance, Vector3 momentum, int local)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llApplyRotationalImpulse")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void ApplyRotationalImpulse(ScriptInstance instance, Vector3 ang_impulse, int local)
+        public void ApplyRotationalImpulse(ScriptInstance instance, Vector3 ang_impulse, int local)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llSetVelocity")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetVelocity(ScriptInstance instance, Vector3 velocity, int local)
+        public void SetVelocity(ScriptInstance instance, Vector3 velocity, int local)
         {
             lock (instance)
             {
@@ -151,7 +151,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llSetAngularVelocity")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetAngularVelocity(ScriptInstance instance, Vector3 initial_omega, int local)
+        public void SetAngularVelocity(ScriptInstance instance, Vector3 initial_omega, int local)
         {
             lock (instance)
             {
@@ -165,7 +165,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llGetPhysicsMaterial")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal AnArray GetPhysicsMaterial(ScriptInstance instance)
+        public AnArray GetPhysicsMaterial(ScriptInstance instance)
         {
             AnArray array = new AnArray();
             lock (instance)
@@ -186,7 +186,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llSetPhysicsMaterial")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetPhysicsMaterial(ScriptInstance instance, int mask, double gravity_multiplier, double restitution, double friction, double density)
+        public void SetPhysicsMaterial(ScriptInstance instance, int mask, double gravity_multiplier, double restitution, double friction, double density)
         {
             lock (instance)
             {
@@ -244,14 +244,14 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         [APILevel(APIFlags.LSL, "llSetHoverHeight")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetHoverHeight(ScriptInstance instance, double height, int water, double tau)
+        public void SetHoverHeight(ScriptInstance instance, double height, int water, double tau)
         {
             throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llStopHover")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void StopHover(ScriptInstance instance)
+        public void StopHover(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }

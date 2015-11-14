@@ -256,7 +256,11 @@ namespace SilverSim.Scripting.Lsl
         #endregion
 
         #region Typecasting IL Generator
-        internal static void ProcessImplicitCasts(ILGenerator ilgen, Type toType, Type fromType, int lineNumber)
+        internal static void ProcessImplicitCasts(
+            CompileState compileState,
+            Type toType, 
+            Type fromType, 
+            int lineNumber)
         {
             if (fromType == toType)
             {
@@ -305,7 +309,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new CompilerException(lineNumber, string.Format("Unsupported implicit typecast from {0} to {1}", MapType(fromType), MapType(toType)));
             }
-            ProcessCasts(ilgen, toType, fromType, lineNumber);
+            ProcessCasts(compileState, toType, fromType, lineNumber);
         }
 
         public static double ParseStringToDouble(string input)
@@ -338,7 +342,11 @@ namespace SilverSim.Scripting.Lsl
             return q;
         }
 
-        internal static void ProcessCasts(ILGenerator ilgen, Type toType, Type fromType, int lineNumber)
+        internal static void ProcessCasts(
+            CompileState compileState,
+            Type toType,
+            Type fromType,
+            int lineNumber)
         {
             /* value is on stack before */
             if (toType == fromType)
@@ -346,7 +354,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (toType == typeof(void))
             {
-                ilgen.Emit(OpCodes.Pop);
+                compileState.ILGen.Emit(OpCodes.Pop);
             }
             else if (fromType == typeof(void))
             {
@@ -356,7 +364,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(new Type[] { fromType }));
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(new Type[] { fromType }));
                 }
                 else
                 {
@@ -367,27 +375,27 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(int))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(string).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(string).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(double))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(double).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(double).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(Vector3))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(Vector3).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(Vector3).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(Quaternion))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(Quaternion).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(Quaternion).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(AnArray))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(LSLKey))
                 {
-                    ilgen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else
                 {
@@ -399,11 +407,11 @@ namespace SilverSim.Scripting.Lsl
                 /* yes, we need special handling for conversion of string to integer or float to integer. (see section about Integer Overflow) */
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
                 }
                 else if (fromType == typeof(double))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
                 }
                 else
                 {
@@ -414,48 +422,48 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(string).GetProperty("Length").GetGetMethod());
-                    ilgen.Emit(OpCodes.Ldc_I4_0);
-                    ilgen.Emit(OpCodes.Ceq);
-                    ilgen.Emit(OpCodes.Ldc_I4_0);
-                    ilgen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetProperty("Length").GetGetMethod());
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
                 }
                 else if (fromType == typeof(int))
                 {
-                    ilgen.Emit(OpCodes.Ldc_I4_0);
-                    ilgen.Emit(OpCodes.Ceq);
-                    ilgen.Emit(OpCodes.Ldc_I4_0);
-                    ilgen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
                 }
                 else if (fromType == typeof(LSLKey))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(LSLKey).GetProperty("IsLSLTrue").GetGetMethod());
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLKey).GetProperty("IsLSLTrue").GetGetMethod());
                 }
                 else if (fromType == typeof(double))
                 {
-                    ilgen.Emit(OpCodes.Ldc_R8, 0f);
-                    ilgen.Emit(OpCodes.Ceq);
-                    ilgen.Emit(OpCodes.Ldc_I4_0);
-                    ilgen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_R8, 0f);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
                 }
                 else if (fromType == typeof(AnArray))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(AnArray).GetProperty("Count").GetGetMethod());
-                    ilgen.Emit(OpCodes.Ceq);
-                    ilgen.Emit(OpCodes.Ldc_I4_0);
-                    ilgen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetProperty("Count").GetGetMethod());
+                    compileState.ILGen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
                 }
                 else if (fromType == typeof(Quaternion))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetProperty("IsLSLTrue").GetGetMethod());
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(Quaternion).GetProperty("IsLSLTrue").GetGetMethod());
                 }
                 else if (fromType == typeof(Vector3))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
-                    ilgen.Emit(OpCodes.Ldc_R8, 0f);
-                    ilgen.Emit(OpCodes.Ceq);
-                    ilgen.Emit(OpCodes.Ldc_I4_0);
-                    ilgen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
+                    compileState.ILGen.Emit(OpCodes.Ldc_R8, 0f);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
                 }
                 else
                 {
@@ -466,11 +474,11 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToDouble", new Type[] { typeof(string) }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToDouble", new Type[] { typeof(string) }));
                 }
                 else if (fromType == typeof(int))
                 {
-                    ilgen.Emit(OpCodes.Conv_R8);
+                    compileState.ILGen.Emit(OpCodes.Conv_R8);
                 }
                 else
                 {
@@ -481,7 +489,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToVector", new Type[] { typeof(string) }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToVector", new Type[] { typeof(string) }));
                 }
                 else
                 {
@@ -492,7 +500,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToQuaternion", new Type[] { typeof(string) }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToQuaternion", new Type[] { typeof(string) }));
                 }
                 else
                 {
@@ -503,25 +511,25 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string) || fromType == typeof(int) || fromType == typeof(double))
                 {
-                    ilgen.BeginScope();
-                    LocalBuilder lb = ilgen.DeclareLocal(fromType);
-                    ilgen.Emit(OpCodes.Stloc, lb);
-                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                    ilgen.Emit(OpCodes.Ldloc, lb);
-                    ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { fromType }));
-                    ilgen.Emit(OpCodes.Ldloc, lb);
-                    ilgen.EndScope();
+                    compileState.ILGen.BeginScope();
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
+                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { fromType }));
+                    compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                    compileState.ILGen.EndScope();
                 }
                 else if (fromType == typeof(Vector3) || fromType == typeof(Quaternion) || fromType == typeof(LSLKey))
                 {
-                    ilgen.BeginScope();
-                    LocalBuilder lb = ilgen.DeclareLocal(fromType);
-                    ilgen.Emit(OpCodes.Stloc, lb);
-                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                    ilgen.Emit(OpCodes.Ldloc, lb);
-                    ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
-                    ilgen.Emit(OpCodes.Ldloc, lb);
-                    ilgen.EndScope();
+                    compileState.ILGen.BeginScope();
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
+                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
+                    compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                    compileState.ILGen.EndScope();
                 }
                 else
                 {

@@ -29,57 +29,57 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetVehicleFlags(ScriptInstance instance, int flags)
+        public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
             instance.Part.ObjectGroup.SetVehicleFlags = (VehicleFlags)flags;
         }
 
         [APILevel(APIFlags.LSL, "llRemoveVehicleFlags")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void RemoveVehicleFlags(ScriptInstance instance, int flags)
+        public void RemoveVehicleFlags(ScriptInstance instance, int flags)
         {
             instance.Part.ObjectGroup.ClearVehicleFlags = (VehicleFlags)flags;
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY = 32;
+        public const int VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY = 32;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_ANGULAR_DEFLECTION_TIMESCALE = 33;
+        public const int VEHICLE_ANGULAR_DEFLECTION_TIMESCALE = 33;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE = 35;
+        public const int VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE = 35;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_ANGULAR_MOTOR_TIMESCALE = 34;
+        public const int VEHICLE_ANGULAR_MOTOR_TIMESCALE = 34;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_BANKING_EFFICIENCY = 38;
+        public const int VEHICLE_BANKING_EFFICIENCY = 38;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_BANKING_MIX = 39;
+        public const int VEHICLE_BANKING_MIX = 39;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_BANKING_TIMESCALE = 40;
+        public const int VEHICLE_BANKING_TIMESCALE = 40;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_BUOYANCY = 27;
+        public const int VEHICLE_BUOYANCY = 27;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_HOVER_HEIGHT = 24;
+        public const int VEHICLE_HOVER_HEIGHT = 24;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_HOVER_EFFICIENCY = 25;
+        public const int VEHICLE_HOVER_EFFICIENCY = 25;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_HOVER_TIMESCALE = 26;
+        public const int VEHICLE_HOVER_TIMESCALE = 26;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_LINEAR_DEFLECTION_EFFICIENCY = 28;
+        public const int VEHICLE_LINEAR_DEFLECTION_EFFICIENCY = 28;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_LINEAR_DEFLECTION_TIMESCALE = 29;
+        public const int VEHICLE_LINEAR_DEFLECTION_TIMESCALE = 29;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE = 31;
+        public const int VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE = 31;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_LINEAR_MOTOR_TIMESCALE = 30;
+        public const int VEHICLE_LINEAR_MOTOR_TIMESCALE = 30;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY = 36;
+        public const int VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY = 36;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
+        public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
 
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
-        internal void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
+        public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
             lock (instance)
             {
@@ -181,11 +181,11 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_REFERENCE_FRAME = 44;
+        public const int VEHICLE_REFERENCE_FRAME = 44;
 
         [APILevel(APIFlags.LSL, "llSetVehicleRotationParam")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
+        public void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
             lock (instance)
             {
@@ -203,21 +203,21 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_TYPE_NONE = 0;
+        public const int VEHICLE_TYPE_NONE = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_TYPE_SLED = 1;
+        public const int VEHICLE_TYPE_SLED = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_TYPE_CAR = 2;
+        public const int VEHICLE_TYPE_CAR = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_TYPE_BOAT = 3;
+        public const int VEHICLE_TYPE_BOAT = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_TYPE_AIRPLANE = 4;
+        public const int VEHICLE_TYPE_AIRPLANE = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_TYPE_BALLOON = 5;
+        public const int VEHICLE_TYPE_BALLOON = 5;
 
         [APILevel(APIFlags.LSL, "llSetVehicleType")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetVehicleType(ScriptInstance instance, int type)
+        public void SetVehicleType(ScriptInstance instance, int type)
         {
             lock (instance)
             {
@@ -256,19 +256,19 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_ANGULAR_FRICTION_TIMESCALE = 17;
+        public const int VEHICLE_ANGULAR_FRICTION_TIMESCALE = 17;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_ANGULAR_MOTOR_DIRECTION = 19;
+        public const int VEHICLE_ANGULAR_MOTOR_DIRECTION = 19;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_LINEAR_FRICTION_TIMESCALE = 16;
+        public const int VEHICLE_LINEAR_FRICTION_TIMESCALE = 16;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_LINEAR_MOTOR_DIRECTION = 18;
+        public const int VEHICLE_LINEAR_MOTOR_DIRECTION = 18;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
+        public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
 
         [APILevel(APIFlags.LSL, "llSetVehicleVectorParam")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
+        public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
             lock (instance)
             {

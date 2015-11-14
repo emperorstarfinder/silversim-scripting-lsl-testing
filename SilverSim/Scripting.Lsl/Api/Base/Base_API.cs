@@ -154,14 +154,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llSleep")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void Sleep(ScriptInstance instance, double secs)
+        public void Sleep(ScriptInstance instance, double secs)
         {
             instance.Sleep(secs);
         }
 
         [APILevel(APIFlags.ASSL, "asSetForcedSleep")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetForcedSleep(ScriptInstance instance, int flag, double factor)
+        public void SetForcedSleep(ScriptInstance instance, int flag, double factor)
         {
             if(factor > 1)
             {
@@ -181,7 +181,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.ASSL, "asSetForcedSleepEnable")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetForcedSleepEnable(ScriptInstance instance, int flag)
+        public void SetForcedSleepEnable(ScriptInstance instance, int flag)
         {
             lock(instance)
             {

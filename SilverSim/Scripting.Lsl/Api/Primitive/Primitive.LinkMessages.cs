@@ -31,7 +31,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llMessageLinked")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void MessageLinked(ScriptInstance instance, int link, int num, string str, LSLKey id)
+        public void MessageLinked(ScriptInstance instance, int link, int num, string str, LSLKey id)
         {
             lock (instance)
             {

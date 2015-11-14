@@ -659,7 +659,11 @@ namespace SilverSim.Scripting.Lsl
             TypeBuilder scriptTypeBuilder,
             TypeBuilder stateTypeBuilder,
             MethodBuilder mb,
+#if DEBUG
+            ILGenDumpProxy ilgen,
+#else
             ILGenerator ilgen,
+#endif
             List<LineInfo> functionBody,
             Dictionary<string, object> localVars)
         {

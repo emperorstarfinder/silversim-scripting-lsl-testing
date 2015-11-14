@@ -182,7 +182,11 @@ namespace SilverSim.Scripting.Lsl
             public TypeBuilder ScriptTypeBuilder;
             public TypeBuilder StateTypeBuilder;
             public FieldBuilder InstanceField;
+#if DEBUG
+            public ILGenDumpProxy ILGen;
+#else
             public ILGenerator ILGen;
+#endif
 
             public void InitControlFlow()
             {
@@ -519,7 +523,7 @@ namespace SilverSim.Scripting.Lsl
             foreach (IScriptApi api in apis)
             {
                 #region Collect constants
-                foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+                foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.Static))
                 {
                     if ((f.Attributes & FieldAttributes.Static) != 0)
                     {
@@ -580,7 +584,7 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region Collect event definitions
-                foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
+                foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                 {
                     StateEventDelegate stateEventAttr = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
                     if (stateEventAttr != null)
@@ -668,7 +672,7 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region Collect API functions, reset delegates and state change delegates
-                foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
                 {
                     APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(APILevel)) as APILevel[];
                     APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(m, typeof(APIExtension)) as APIExtension[];

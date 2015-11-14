@@ -19,19 +19,19 @@ namespace SilverSim.Scripting.Lsl.Api.Http
     public partial class HttpApi
     {
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int HTTP_METHOD = 0;
+        public const int HTTP_METHOD = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int HTTP_MIMETYPE = 1;
+        public const int HTTP_MIMETYPE = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int HTTP_BODY_MAXLENGTH = 2;
+        public const int HTTP_BODY_MAXLENGTH = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int HTTP_VERIFY_CERT = 3;
+        public const int HTTP_VERIFY_CERT = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int HTTP_VERBOSE_THROTTLE = 4;
+        public const int HTTP_VERBOSE_THROTTLE = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int HTTP_CUSTOM_HEADER = 5;
+        public const int HTTP_CUSTOM_HEADER = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int HTTP_PRAGMA_NO_CACHE = 6;
+        public const int HTTP_PRAGMA_NO_CACHE = 6;
 
         private readonly string[] m_AllowedHttpHeaders =
         {
@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
-        internal LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
+        public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
         {
             LSLHTTPClient_RequestQueue.LSLHttpRequest req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();
             lock (instance)

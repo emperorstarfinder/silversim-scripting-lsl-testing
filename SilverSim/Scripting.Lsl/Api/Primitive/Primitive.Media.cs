@@ -14,7 +14,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     {
         [APILevel(APIFlags.LSL, "llClearLinkMedia")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int ClearLinkMedia(ScriptInstance instance, int link, int face)
+        public int ClearLinkMedia(ScriptInstance instance, int link, int face)
         {
             ObjectPart part;
             ObjectPart thisPart = instance.Part;
@@ -55,76 +55,76 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llClearPrimMedia")]
         [ForcedSleep(1.0)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int ClearPrimMedia(ScriptInstance instance, int face)
+        public int ClearPrimMedia(ScriptInstance instance, int face)
         {
             return ClearLinkMedia(instance, LINK_THIS, face);
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_ALT_IMAGE_ENABLE = 0;
+        public const int PRIM_MEDIA_ALT_IMAGE_ENABLE = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_CONTROLS = 1;
+        public const int PRIM_MEDIA_CONTROLS = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_CURRENT_URL = 2;
+        public const int PRIM_MEDIA_CURRENT_URL = 2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_HOME_URL = 3;
+        public const int PRIM_MEDIA_HOME_URL = 3;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_AUTO_LOOP = 4;
+        public const int PRIM_MEDIA_AUTO_LOOP = 4;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_AUTO_PLAY = 5;
+        public const int PRIM_MEDIA_AUTO_PLAY = 5;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_AUTO_SCALE = 6;
+        public const int PRIM_MEDIA_AUTO_SCALE = 6;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_AUTO_ZOOM = 7;
+        public const int PRIM_MEDIA_AUTO_ZOOM = 7;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_FIRST_CLICK_INTERACT = 8;
+        public const int PRIM_MEDIA_FIRST_CLICK_INTERACT = 8;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_WIDTH_PIXELS = 9;
+        public const int PRIM_MEDIA_WIDTH_PIXELS = 9;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_HEIGHT_PIXELS = 10;
+        public const int PRIM_MEDIA_HEIGHT_PIXELS = 10;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_WHITELIST_ENABLE = 11;
+        public const int PRIM_MEDIA_WHITELIST_ENABLE = 11;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_WHITELIST = 12;
+        public const int PRIM_MEDIA_WHITELIST = 12;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_PERMS_INTERACT = 13;
+        public const int PRIM_MEDIA_PERMS_INTERACT = 13;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_PERMS_CONTROL = 14;
+        public const int PRIM_MEDIA_PERMS_CONTROL = 14;
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_PERM_NONE = 0x0;
+        public const int PRIM_MEDIA_PERM_NONE = 0x0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_PERM_OWNER = 0x1;
+        public const int PRIM_MEDIA_PERM_OWNER = 0x1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_PERM_GROUP = 0x2;
+        public const int PRIM_MEDIA_PERM_GROUP = 0x2;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int PRIM_MEDIA_PERM_ANYONE = 0x4;
+        public const int PRIM_MEDIA_PERM_ANYONE = 0x4;
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PRIM_MEDIA_CONTROLS_STANDARD = 0;
+        public const int PRIM_MEDIA_CONTROLS_STANDARD = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        const int PRIM_MEDIA_CONTROLS_MINI = 1;
+        public const int PRIM_MEDIA_CONTROLS_MINI = 1;
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_OK = 0;
+        public const int LSL_STATUS_OK = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_MALFORMED_PARAMS = 1000;
+        public const int LSL_STATUS_MALFORMED_PARAMS = 1000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_TYPE_MISMATCH = 1001;
+        public const int LSL_STATUS_TYPE_MISMATCH = 1001;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_BOUNDS_ERROR = 1002;
+        public const int LSL_STATUS_BOUNDS_ERROR = 1002;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_NOT_FOUND = 1003;
+        public const int LSL_STATUS_NOT_FOUND = 1003;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_NOT_SUPPORTED = 1004;
+        public const int LSL_STATUS_NOT_SUPPORTED = 1004;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_INTERNAL_ERROR = 1999;
+        public const int LSL_STATUS_INTERNAL_ERROR = 1999;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int LSL_STATUS_WHITELIST_FAILED = 2001;
+        public const int LSL_STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL, "llGetLinkMedia")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal AnArray GetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
+        public AnArray GetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
             ObjectPart part;
             if(link == 0)
@@ -249,32 +249,32 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llGetPrimMediaParams")]
         [ForcedSleep(1.0)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
+        public AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
             return GetLinkMedia(instance, LINK_THIS, face, param);
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_OK = 0;
+        public const int STATUS_OK = 0;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_MALFORMED_PARAMS = 1000;
+        public const int STATUS_MALFORMED_PARAMS = 1000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_TYPE_MISMATCH = 1001;
+        public const int STATUS_TYPE_MISMATCH = 1001;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_BOUNDS_ERROR = 1002;
+        public const int STATUS_BOUNDS_ERROR = 1002;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_NOT_FOUND = 1003;
+        public const int STATUS_NOT_FOUND = 1003;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_NOT_SUPPORTED = 1004;
+        public const int STATUS_NOT_SUPPORTED = 1004;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_INTERNAL_ERROR = 1999;
+        public const int STATUS_INTERNAL_ERROR = 1999;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const int STATUS_WHITELIST_FAILED = 2001;
+        public const int STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL, "llSetLinkMedia")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
-        internal int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
+        public int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
             ObjectPart part;
             if (link == 0)
@@ -473,7 +473,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetPrimMediaParams")]
         [ForcedSleep(1.0)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int SetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
+        public int SetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
         {
             return SetLinkMedia(instance, LINK_THIS, face, param);
         }

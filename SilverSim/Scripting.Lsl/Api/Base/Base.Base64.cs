@@ -13,7 +13,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llIntegerToBase64")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string IntegerToBase64(ScriptInstance instance, int number)
+        public string IntegerToBase64(ScriptInstance instance, int number)
         {
             byte[] b = BitConverter.GetBytes(number);
             if (BitConverter.IsLittleEndian)
@@ -25,7 +25,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llBase64ToInteger")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal int Base64ToInteger(ScriptInstance instance, string s)
+        public int Base64ToInteger(ScriptInstance instance, string s)
         {
             if (s.Length > 8)
             {
@@ -42,7 +42,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llStringToBase64")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string StringToBase64(ScriptInstance instance, string str)
+        public string StringToBase64(ScriptInstance instance, string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
             return System.Convert.ToBase64String(b);
@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llBase64ToString")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        string Base64ToString(ScriptInstance instance, string str)
+        public string Base64ToString(ScriptInstance instance, string str)
         {
             byte[] b = System.Convert.FromBase64String(str);
             return Encoding.UTF8.GetString(b);
@@ -59,7 +59,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llXorBase64")]
         [ForcedSleep(0.3)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string XorBase64(ScriptInstance instance, string str1, string str2)
+        public string XorBase64(ScriptInstance instance, string str1, string str2)
         {
             byte[] a = System.Convert.FromBase64String(str1);
             byte[] b = System.Convert.FromBase64String(str2);

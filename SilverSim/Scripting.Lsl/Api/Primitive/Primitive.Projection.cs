@@ -22,14 +22,14 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         /// </summary>
         [APILevel(APIFlags.OSSL, "osSetProjectionParams")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetProjectionParams(ScriptInstance instance, int projection, LSLKey texture, double fov, double focus, double amb)
+        public void SetProjectionParams(ScriptInstance instance, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             SetLinkProjectionParams(instance, LINK_THIS, projection, texture, fov, focus, amb);
         }
 
         [APILevel(APIFlags.OSSL, "osSetLinkProjectionParams")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
+        public void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             ObjectPart.ProjectionParam p = new ObjectPart.ProjectionParam();
             p.IsProjecting = projection != 0;
@@ -49,7 +49,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         /// </summary>
         [APILevel(APIFlags.OSSL, "osSetProjectionParams")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void SetProjectionParams(ScriptInstance instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
+        public void SetProjectionParams(ScriptInstance instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             lock (instance)
             {

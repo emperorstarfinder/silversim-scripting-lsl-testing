@@ -23,10 +23,10 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const string URL_REQUEST_GRANTED = "URL_REQUEST_GRANTED";
+        public const string URL_REQUEST_GRANTED = "URL_REQUEST_GRANTED";
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        internal const string URL_REQUEST_DENIED = "URL_REQUEST_DENIED";
+        public const string URL_REQUEST_DENIED = "URL_REQUEST_DENIED";
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -36,7 +36,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 
         [ExecutedOnScriptReset]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal void RemoveURLs(ScriptInstance instance)
+        public void RemoveURLs(ScriptInstance instance)
         {
             lock (instance)
             {

@@ -75,7 +75,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    ProcessCasts(compileState.ILGen, m_TargetType, innerExpressionReturn, m_LineNumber);
+                    ProcessCasts(compileState, m_TargetType, innerExpressionReturn, m_LineNumber);
                     throw new ReturnTypeException(m_TargetType, m_LineNumber);
                 }
             }

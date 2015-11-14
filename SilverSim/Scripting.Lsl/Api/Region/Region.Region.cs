@@ -14,7 +14,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
     {
         [APILevel(APIFlags.LSL, "llGetRegionName")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string GetRegionName(ScriptInstance instance)
+        public string GetRegionName(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -25,7 +25,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetSimulatorHostname")]
         [ForcedSleep(10)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal string GetSimulatorHostname(ScriptInstance instance)
+        public string GetSimulatorHostname(ScriptInstance instance)
         {
             lock(this)
             {
@@ -37,7 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         [APILevel(APIFlags.LSL, "llGetRegionCorner")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal Vector3 GetRegionCorner(ScriptInstance instance)
+        public Vector3 GetRegionCorner(ScriptInstance instance)
         {
             lock(this)
             {
@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
-        internal LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
+        public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
         {
             throw new NotImplementedException("llRequestSimulatorData(string, integer)");
         }
@@ -56,7 +56,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetEnv")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
-        internal string GetEnv(ScriptInstance instance, string name)
+        public string GetEnv(ScriptInstance instance, string name)
         {
             switch (name)
             {

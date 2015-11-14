@@ -299,6 +299,24 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void LogInvokeException(string name, Exception e)
+        {
+            string state_name = m_CurrentState.GetType().FullName;
+            state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
+            if (e.InnerException != null)
+            {
+                m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                    state_name, name,
+                    e.InnerException.GetType().FullName, e.InnerException.Message, e.InnerException.StackTrace);
+            }
+            else
+            {
+                m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                    state_name, name,
+                    e.GetType().FullName, e.Message, e.StackTrace);
+            }
+        }
+
         private void InvokeStateEvent(string name, params object[] param)
         {
             MethodInfo mi;
@@ -316,38 +334,22 @@ namespace SilverSim.Scripting.Lsl
                 }
                 catch (TargetInvocationException e)
                 {
-                    string state_name = m_CurrentState.GetType().FullName;
-                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
-                    m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
-                        state_name, name,
-                        e.GetType().FullName, e.Message, e.StackTrace);
+                    LogInvokeException(name, e);
                     throw;
                 }
                 catch (InvalidProgramException e)
                 {
-                    string state_name = m_CurrentState.GetType().FullName;
-                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
-                    m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
-                        state_name, name,
-                        e.GetType().FullName, e.Message, e.StackTrace);
+                    LogInvokeException(name, e);
                     throw;
                 }
                 catch (TargetParameterCountException e)
                 {
-                    string state_name = m_CurrentState.GetType().FullName;
-                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
-                    m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
-                        state_name, name,
-                        e.GetType().FullName, e.Message, e.StackTrace);
+                    LogInvokeException(name, e);
                     throw;
                 }
                 catch (TargetException e)
                 {
-                    string state_name = m_CurrentState.GetType().FullName;
-                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
-                    m_Log.FatalFormat("Within state {0} event {1]:\nException {2} at script execution: {3}\n{4}",
-                        state_name, name,
-                        e.GetType().FullName, e.Message, e.StackTrace);
+                    LogInvokeException(name, e);
                     throw;
                 }
             }

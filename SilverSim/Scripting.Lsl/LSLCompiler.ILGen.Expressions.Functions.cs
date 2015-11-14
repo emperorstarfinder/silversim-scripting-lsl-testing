@@ -132,7 +132,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     try
                     {
-                        ProcessImplicitCasts(compileState.ILGen, m_Parameters[0].ParameterType, innerExpressionReturn, m_LineNumber);
+                        ProcessImplicitCasts(compileState, m_Parameters[0].ParameterType, innerExpressionReturn, m_LineNumber);
                     }
                     catch
                     {
