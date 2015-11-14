@@ -537,8 +537,6 @@ namespace SilverSim.Scripting.Lsl
 
         #region Variable Access IL Generator
         internal static Type GetVarType(
-            TypeBuilder scriptTypeBuilder,
-            TypeBuilder stateTypeBuilder,
             object v)
         {
             ILParameterInfo ilpi;
@@ -574,10 +572,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         internal static Type GetVarToStack(
-            TypeBuilder scriptTypeBuilder,
-            TypeBuilder stateTypeBuilder,
-            FieldBuilder stateTypeInstanceField,
-            ILGenerator ilgen,
+            CompileState compileState,
             object v)
         {
             Type retType;
@@ -588,28 +583,28 @@ namespace SilverSim.Scripting.Lsl
 
             if (null != (ilpi = v as ILParameterInfo))
             {
-                ilgen.Emit(OpCodes.Ldarg, ilpi.Position);
+                compileState.ILGen.Emit(OpCodes.Ldarg, ilpi.Position);
                 retType = ilpi.ParameterType;
             }
             else if (null != (lb = v as LocalBuilder))
             {
-                ilgen.Emit(OpCodes.Ldloc, lb);
+                compileState.ILGen.Emit(OpCodes.Ldloc, lb);
                 retType = lb.LocalType;
             }
             else if (null != (fb = v as FieldBuilder))
             {
                 if ((fb.Attributes & FieldAttributes.Static) != 0)
                 {
-                    ilgen.Emit(OpCodes.Ldsfld, fb);
+                    compileState.ILGen.Emit(OpCodes.Ldsfld, fb);
                 }
                 else
                 {
-                    ilgen.Emit(OpCodes.Ldarg_0);
-                    if(null != stateTypeBuilder)
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    if(null != compileState.StateTypeBuilder)
                     {
-                        ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     }
-                    ilgen.Emit(OpCodes.Ldfld, fb);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, fb);
                 }
                 retType = fb.FieldType;
             }
@@ -617,16 +612,16 @@ namespace SilverSim.Scripting.Lsl
             {
                 if ((fi.Attributes & FieldAttributes.Static) != 0)
                 {
-                    ilgen.Emit(OpCodes.Ldsfld, fi);
+                    compileState.ILGen.Emit(OpCodes.Ldsfld, fi);
                 }
                 else
                 {
-                    ilgen.Emit(OpCodes.Ldarg_0);
-                    if (null != stateTypeBuilder)
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    if (null != compileState.StateTypeBuilder)
                     {
-                        ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     }
-                    ilgen.Emit(OpCodes.Ldfld, fi);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                 }
                 retType = fi.FieldType;
             }
@@ -637,16 +632,13 @@ namespace SilverSim.Scripting.Lsl
             if (retType == typeof(AnArray))
             {
                 /* list has deep copying */
-                ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { retType }));
+                compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { retType }));
             }
             return retType;
         }
 
         internal static void SetVarFromStack(
-            TypeBuilder scriptTypeBuilder,
-            TypeBuilder stateTypeBuilder,
-            FieldBuilder stateTypeInstanceField,
-            ILGenerator ilgen,
+            CompileState compileState,
             object v,
             int lineNumber)
         {
@@ -658,14 +650,14 @@ namespace SilverSim.Scripting.Lsl
             ilpi = v as ILParameterInfo;
             if (null != ilpi)
             {
-                ilgen.Emit(OpCodes.Starg, ilpi.Position);
+                compileState.ILGen.Emit(OpCodes.Starg, ilpi.Position);
                 return;
             }
 
             lb = v as LocalBuilder;
             if (null != lb)
             {
-                ilgen.Emit(OpCodes.Stloc, lb);
+                compileState.ILGen.Emit(OpCodes.Stloc, lb);
                 return;
             }
 
@@ -676,18 +668,18 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
-                ilgen.BeginScope();
-                LocalBuilder swapLb = ilgen.DeclareLocal(fb.FieldType);
-                ilgen.Emit(OpCodes.Stloc, swapLb);
-                ilgen.Emit(OpCodes.Ldarg_0);
-                if (null != stateTypeBuilder)
+                compileState.ILGen.BeginScope();
+                LocalBuilder swapLb = compileState.ILGen.DeclareLocal(fb.FieldType);
+                compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
+                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                if (null != compileState.StateTypeBuilder)
                 {
-                    ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                 }
-                ilgen.Emit(OpCodes.Ldloc, swapLb);
+                compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
 
-                ilgen.Emit(OpCodes.Stfld, fb);
-                ilgen.EndScope();
+                compileState.ILGen.Emit(OpCodes.Stfld, fb);
+                compileState.ILGen.EndScope();
                 return;
             }
 
@@ -698,18 +690,18 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new CompilerException(lineNumber, "Setting constants is not allowed");
                 }
-                ilgen.BeginScope();
-                LocalBuilder swapLb = ilgen.DeclareLocal(fi.FieldType);
-                ilgen.Emit(OpCodes.Stloc, swapLb);
-                ilgen.Emit(OpCodes.Ldarg_0);
-                if (null != stateTypeBuilder)
+                compileState.ILGen.BeginScope();
+                LocalBuilder swapLb = compileState.ILGen.DeclareLocal(fi.FieldType);
+                compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
+                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                if (null != compileState.StateTypeBuilder)
                 {
-                    ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                 }
-                ilgen.Emit(OpCodes.Ldloc, swapLb);
+                compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
 
-                ilgen.Emit(OpCodes.Stfld, fi);
-                ilgen.EndScope();
+                compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                compileState.ILGen.EndScope();
                 return;
             }
 

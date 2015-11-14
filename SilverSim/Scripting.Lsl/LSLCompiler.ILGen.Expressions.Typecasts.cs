@@ -21,9 +21,6 @@ namespace SilverSim.Scripting.Lsl
             public TypecastExpression(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Tree functionTree,
                 int lineNumber,
                 Dictionary<string, object> localVars)
@@ -69,9 +66,6 @@ namespace SilverSim.Scripting.Lsl
             public Tree ProcessNextStep(
                 LSLCompiler lslCompiler, 
                 CompileState compileState, 
-                TypeBuilder scriptTypeBuilder, 
-                TypeBuilder stateTypeBuilder, 
-                ILGenerator ilgen, 
                 Dictionary<string, object> localVars, 
                 Type innerExpressionReturn)
             {
@@ -81,7 +75,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    ProcessCasts(ilgen, m_TargetType, innerExpressionReturn, m_LineNumber);
+                    ProcessCasts(compileState.ILGen, m_TargetType, innerExpressionReturn, m_LineNumber);
                     throw new ReturnTypeException(m_TargetType, m_LineNumber);
                 }
             }

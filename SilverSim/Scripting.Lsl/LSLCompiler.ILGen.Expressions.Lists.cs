@@ -21,18 +21,15 @@ namespace SilverSim.Scripting.Lsl
             public ListExpression(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Tree functionTree,
                 int lineNumber,
                 Dictionary<string, object> localVars)
             {
                 m_LineNumber = lineNumber;
-                ilgen.BeginScope();
-                m_NewList = ilgen.DeclareLocal(typeof(AnArray));
-                ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                ilgen.Emit(OpCodes.Stloc, m_NewList);
+                compileState.ILGen.BeginScope();
+                m_NewList = compileState.ILGen.DeclareLocal(typeof(AnArray));
+                compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                compileState.ILGen.Emit(OpCodes.Stloc, m_NewList);
                 for (int i = 0; i < functionTree.SubTree.Count; ++i)
                 {
                     Tree st = functionTree.SubTree[i++];
@@ -50,9 +47,6 @@ namespace SilverSim.Scripting.Lsl
             public Tree ProcessNextStep(
                 LSLCompiler lslCompiler, 
                 CompileState compileState, 
-                TypeBuilder scriptTypeBuilder, 
-                TypeBuilder stateTypeBuilder, 
-                ILGenerator ilgen, 
                 Dictionary<string, object> localVars, 
                 Type innerExpressionReturn)
             {
@@ -64,11 +58,11 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double) || innerExpressionReturn == typeof(string))
                     {
-                        ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { innerExpressionReturn }));
+                        compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { innerExpressionReturn }));
                     }
                     else if (innerExpressionReturn == typeof(LSLKey) || innerExpressionReturn == typeof(Vector3) || innerExpressionReturn == typeof(Quaternion))
                     {
-                        ilgen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
+                        compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                     }
                     else if (innerExpressionReturn == typeof(AnArray))
                     {
@@ -81,10 +75,10 @@ namespace SilverSim.Scripting.Lsl
                     m_ListElements.RemoveAt(0);
                 }
 
-                ilgen.Emit(OpCodes.Ldloc, m_NewList);
+                compileState.ILGen.Emit(OpCodes.Ldloc, m_NewList);
                 if (m_ListElements.Count == 0)
                 {
-                    ilgen.EndScope();
+                    compileState.ILGen.EndScope();
                     throw new ReturnTypeException(typeof(AnArray), m_LineNumber);
                 }
                 else

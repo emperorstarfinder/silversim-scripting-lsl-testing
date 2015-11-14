@@ -19,9 +19,6 @@ namespace SilverSim.Scripting.Lsl
             public RotationExpression(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Tree functionTree,
                 int lineNumber,
                 Dictionary<string, object> localVars)
@@ -36,21 +33,18 @@ namespace SilverSim.Scripting.Lsl
             public Tree ProcessNextStep(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
                 if (null != innerExpressionReturn)
                 {
-                    ProcessImplicitCasts(ilgen, typeof(double), innerExpressionReturn, m_LineNumber);
+                    ProcessImplicitCasts(compileState.ILGen, typeof(double), innerExpressionReturn, m_LineNumber);
                     m_ListElements.RemoveAt(0);
                 }
 
                 if (m_ListElements.Count == 0)
                 {
-                    ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
                     throw new ReturnTypeException(typeof(Quaternion), m_LineNumber);
                 }
                 else

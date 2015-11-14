@@ -18,9 +18,6 @@ namespace SilverSim.Scripting.Lsl
 
         void ProcessExpression(
             CompileState compileState,
-            TypeBuilder scriptTypeBuilder,
-            TypeBuilder stateTypeBuilder,
-            ILGenerator ilgen,
             Type expectedType,
             int startAt,
             int endAt,
@@ -46,9 +43,6 @@ namespace SilverSim.Scripting.Lsl
             }
             ProcessExpression(
                 compileState, 
-                scriptTypeBuilder, 
-                stateTypeBuilder, 
-                ilgen, 
                 expectedType, 
                 expressionTree,
                 functionLine.LineNumber,
@@ -57,9 +51,6 @@ namespace SilverSim.Scripting.Lsl
 
         void ProcessExpression(
             CompileState compileState,
-            TypeBuilder scriptTypeBuilder,
-            TypeBuilder stateTypeBuilder,
-            ILGenerator ilgen,
             Type expectedType,
             Tree functionTree,
             int lineNumber,
@@ -67,14 +58,11 @@ namespace SilverSim.Scripting.Lsl
         {
             Type retType = ProcessExpressionPart(
                 compileState,
-                scriptTypeBuilder,
-                stateTypeBuilder,
-                ilgen,
                 functionTree,
                 lineNumber,
                 localVars);
             ProcessImplicitCasts(
-                ilgen,
+                compileState.ILGen,
                 expectedType,
                 retType,
                 lineNumber);

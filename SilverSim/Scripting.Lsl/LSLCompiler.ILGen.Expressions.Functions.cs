@@ -40,9 +40,6 @@ namespace SilverSim.Scripting.Lsl
             public FunctionExpression(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Tree functionTree,
                 int lineNumber,
                 Dictionary<string, object> localVars)
@@ -55,14 +52,14 @@ namespace SilverSim.Scripting.Lsl
                     KeyValuePair<Type, KeyValuePair<string, Type>[]> signatureInfo = compileState.m_FunctionSignature[functionTree.Entry];
                     KeyValuePair<string, Type>[] pi = signatureInfo.Value;
 
-                    if (null == stateTypeBuilder)
+                    if (null == compileState.StateTypeBuilder)
                     {
-                        ilgen.Emit(OpCodes.Ldarg_0);
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
                     }
                     else
                     {
-                        ilgen.Emit(OpCodes.Ldarg_0);
-                        ilgen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     }
 
                     m_FunctionName = functionTree.Entry;
@@ -87,17 +84,17 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(lineNumber, string.Format("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name));
                             }
-                            if (null == stateTypeBuilder)
+                            if (null == compileState.StateTypeBuilder)
                             {
-                                ilgen.Emit(OpCodes.Ldarg_0);
+                                compileState.ILGen.Emit(OpCodes.Ldarg_0);
                             }
                             else
                             {
-                                ilgen.Emit(OpCodes.Ldarg_0);
-                                ilgen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                                compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                             }
 
-                            ilgen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
+                            compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
 
                             for (int i = 0; i < functionTree.SubTree.Count; ++i)
                             {
@@ -125,9 +122,6 @@ namespace SilverSim.Scripting.Lsl
             public Tree ProcessNextStep(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder, 
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen, 
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
@@ -135,7 +129,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     try
                     {
-                        ProcessImplicitCasts(ilgen, m_Parameters[0].ParameterType, innerExpressionReturn, m_LineNumber);
+                        ProcessImplicitCasts(compileState.ILGen, m_Parameters[0].ParameterType, innerExpressionReturn, m_LineNumber);
                     }
                     catch
                     {

@@ -65,6 +65,9 @@ namespace SilverSim.Scripting.Lsl
             List<string> varIsInited = new List<string>();
             List<string> varsToInit = new List<string>(compileState.m_VariableInitValues.Keys);
 
+            compileState.ScriptTypeBuilder = scriptTypeBuilder;
+            compileState.StateTypeBuilder = null;
+            compileState.ILGen = script_ilgen;
             while (varsToInit.Count != 0)
             {
                 string varName = varsToInit[0];
@@ -90,9 +93,6 @@ namespace SilverSim.Scripting.Lsl
                     {
                         ProcessExpression(
                             compileState,
-                            scriptTypeBuilder,
-                            null,
-                            script_ilgen,
                             fb.FieldType,
                             expressionTree,
                             initargs.LineNumber,

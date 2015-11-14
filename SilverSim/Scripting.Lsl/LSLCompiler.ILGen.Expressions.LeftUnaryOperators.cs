@@ -21,9 +21,6 @@ namespace SilverSim.Scripting.Lsl
             public LeftUnaryOperators(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Tree functionTree,
                 int lineNumber,
                 Dictionary<string, object> localVars)
@@ -36,9 +33,6 @@ namespace SilverSim.Scripting.Lsl
             public Tree ProcessNextStep(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
@@ -49,8 +43,8 @@ namespace SilverSim.Scripting.Lsl
                         case "!":
                             if (innerExpressionReturn == typeof(int))
                             {
-                                ilgen.Emit(OpCodes.Ldc_I4_0);
-                                ilgen.Emit(OpCodes.Ceq);
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                                compileState.ILGen.Emit(OpCodes.Ceq);
                             }
                             else
                             {
@@ -61,15 +55,15 @@ namespace SilverSim.Scripting.Lsl
                         case "-":
                             if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double))
                             {
-                                ilgen.Emit(OpCodes.Neg);
+                                compileState.ILGen.Emit(OpCodes.Neg);
                             }
                             else if (innerExpressionReturn == typeof(Vector3))
                             {
-                                ilgen.Emit(OpCodes.Call, typeof(Vector3).GetMethod("op_UnaryNegation"));
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(Vector3).GetMethod("op_UnaryNegation"));
                             }
                             else if (innerExpressionReturn == typeof(Quaternion))
                             {
-                                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("op_UnaryNegation"));
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("op_UnaryNegation"));
                             }
                             else
                             {
@@ -80,7 +74,7 @@ namespace SilverSim.Scripting.Lsl
                         case "~":
                             if (innerExpressionReturn == typeof(int))
                             {
-                                ilgen.Emit(OpCodes.Neg);
+                                compileState.ILGen.Emit(OpCodes.Neg);
                             }
                             else
                             {

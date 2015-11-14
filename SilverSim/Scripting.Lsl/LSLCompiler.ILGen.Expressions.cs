@@ -39,18 +39,12 @@ namespace SilverSim.Scripting.Lsl
             Tree ProcessNextStep(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
-                TypeBuilder scriptTypeBuilder,
-                TypeBuilder stateTypeBuilder,
-                ILGenerator ilgen,
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn);
         }
 
         Type ProcessExpressionPart(
             CompileState compileState,
-            TypeBuilder scriptTypeBuilder,
-            TypeBuilder stateTypeBuilder,
-            ILGenerator ilgen,
             Tree functionTree,
             int lineNumber,
             Dictionary<string, object> localVars)
@@ -68,9 +62,6 @@ namespace SilverSim.Scripting.Lsl
                         functionTree = expressionStack[0].ProcessNextStep(
                             this,
                             compileState,
-                            scriptTypeBuilder,
-                            stateTypeBuilder,
-                            ilgen,
                             localVars,
                             innerExpressionReturn);
                     }
@@ -111,36 +102,36 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (functionTree.Value is Tree.ConstantValueFloat)
                     {
-                        ilgen.Emit(OpCodes.Ldc_R8, ((Tree.ConstantValueFloat)functionTree.Value).Value);
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, ((Tree.ConstantValueFloat)functionTree.Value).Value);
                         innerExpressionReturn = typeof(double);
                     }
                     else if (functionTree.Value is Tree.ConstantValueInt)
                     {
-                        ilgen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
+                        compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
                         innerExpressionReturn = typeof(int);
                     }
                     else if (functionTree.Value is Tree.ConstantValueString)
                     {
-                        ilgen.Emit(OpCodes.Ldstr, ((Tree.ConstantValueString)functionTree.Value).Value);
+                        compileState.ILGen.Emit(OpCodes.Ldstr, ((Tree.ConstantValueString)functionTree.Value).Value);
                         innerExpressionReturn = typeof(string);
                     }
                     else if (functionTree.Value is ConstantValueRotation)
                     {
                         ConstantValueRotation val = (ConstantValueRotation)functionTree.Value;
-                        ilgen.Emit(OpCodes.Ldc_R8, val.Value.X);
-                        ilgen.Emit(OpCodes.Ldc_R8, val.Value.Y);
-                        ilgen.Emit(OpCodes.Ldc_R8, val.Value.Z);
-                        ilgen.Emit(OpCodes.Ldc_R8, val.Value.W);
-                        ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.W);
+                        compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
                         innerExpressionReturn = typeof(Quaternion);
                     }
                     else if (functionTree.Value is ConstantValueVector)
                     {
                         ConstantValueVector val = (ConstantValueVector)functionTree.Value;
-                        ilgen.Emit(OpCodes.Ldc_R8, val.Value.X);
-                        ilgen.Emit(OpCodes.Ldc_R8, val.Value.Y);
-                        ilgen.Emit(OpCodes.Ldc_R8, val.Value.Z);
-                        ilgen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double) }));
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);
+                        compileState.ILGen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double) }));
                         innerExpressionReturn = typeof(Vector3);
                     }
                     else
@@ -156,9 +147,6 @@ namespace SilverSim.Scripting.Lsl
                             expressionStack.Insert(0, new FunctionExpression(
                                 this,
                                 compileState,
-                                scriptTypeBuilder,
-                                stateTypeBuilder,
-                                ilgen,
                                 functionTree,
                                 lineNumber,
                                 localVars));
@@ -169,9 +157,6 @@ namespace SilverSim.Scripting.Lsl
                             expressionStack.Insert(0, new BinaryOperatorExpression(
                                 this,
                                 compileState,
-                                scriptTypeBuilder,
-                                stateTypeBuilder,
-                                ilgen,
                                 functionTree,
                                 lineNumber,
                                 localVars));
@@ -185,13 +170,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
-                                            ilgen.Emit(OpCodes.Ldc_I4_1);
-                                            ilgen.Emit(OpCodes.Add);
-                                            ilgen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, lineNumber);
                                         }
                                         else
                                         {
@@ -208,13 +193,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
-                                            ilgen.Emit(OpCodes.Ldc_I4_1);
-                                            ilgen.Emit(OpCodes.Sub);
-                                            ilgen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, lineNumber);
                                         }
                                         else
                                         {
@@ -238,9 +223,6 @@ namespace SilverSim.Scripting.Lsl
                                     expressionStack.Insert(0, new TypecastExpression(
                                         this,
                                         compileState,
-                                        scriptTypeBuilder,
-                                        stateTypeBuilder,
-                                        ilgen,
                                         functionTree,
                                         lineNumber,
                                         localVars));
@@ -251,9 +233,6 @@ namespace SilverSim.Scripting.Lsl
                                     expressionStack.Insert(0, new LeftUnaryOperators(
                                         this,
                                         compileState,
-                                        scriptTypeBuilder,
-                                        stateTypeBuilder,
-                                        ilgen,
                                         functionTree,
                                         lineNumber,
                                         localVars));
@@ -269,13 +248,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
-                                            ilgen.Emit(OpCodes.Dup);
-                                            ilgen.Emit(OpCodes.Ldc_I4_1);
-                                            ilgen.Emit(OpCodes.Add);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            SetVarFromStack(compileState, v, lineNumber);
                                         }
                                         else
                                         {
@@ -292,13 +271,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
-                                            ilgen.Emit(OpCodes.Dup);
-                                            ilgen.Emit(OpCodes.Ldc_I4_1);
-                                            ilgen.Emit(OpCodes.Sub);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            SetVarFromStack(compileState, v, lineNumber);
                                         }
                                         else
                                         {
@@ -324,7 +303,7 @@ namespace SilverSim.Scripting.Lsl
                             /* string value */
                             {
                                 Tree.ConstantValueString val = (Tree.ConstantValueString)functionTree.Value;
-                                ilgen.Emit(OpCodes.Ldstr, val.Value);
+                                compileState.ILGen.Emit(OpCodes.Ldstr, val.Value);
                                 innerExpressionReturn = typeof(string);
                             }
                             break;
@@ -335,11 +314,11 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 /* constants */
                                 ConstantValueRotation val = (ConstantValueRotation)functionTree.Value;
-                                ilgen.Emit(OpCodes.Ldc_R8, val.Value.X);
-                                ilgen.Emit(OpCodes.Ldc_R8, val.Value.Y);
-                                ilgen.Emit(OpCodes.Ldc_R8, val.Value.Z);
-                                ilgen.Emit(OpCodes.Ldc_R8, val.Value.W);
-                                ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.W);
+                                compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
                                 innerExpressionReturn = typeof(Quaternion);
                             }
                             else
@@ -347,9 +326,6 @@ namespace SilverSim.Scripting.Lsl
                                 expressionStack.Insert(0, new RotationExpression(
                                     this,
                                     compileState,
-                                    scriptTypeBuilder,
-                                    stateTypeBuilder,
-                                    ilgen,
                                     functionTree,
                                     lineNumber,
                                     localVars));
@@ -362,30 +338,30 @@ namespace SilverSim.Scripting.Lsl
                             if (functionTree.Value is ConstantValueRotation)
                             {
                                 ConstantValueRotation v = (ConstantValueRotation)functionTree.Value;
-                                ilgen.Emit(OpCodes.Ldc_R8, v.Value.X);
-                                ilgen.Emit(OpCodes.Ldc_R8, v.Value.Y);
-                                ilgen.Emit(OpCodes.Ldc_R8, v.Value.Z);
-                                ilgen.Emit(OpCodes.Ldc_R8, v.Value.W);
-                                ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.X);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Y);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Z);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.W);
+                                compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
                                 innerExpressionReturn = typeof(Quaternion);
                             }
                             else if (functionTree.Value is ConstantValueVector)
                             {
                                 ConstantValueVector v = (ConstantValueVector)functionTree.Value;
-                                ilgen.Emit(OpCodes.Ldc_R8, v.Value.X);
-                                ilgen.Emit(OpCodes.Ldc_R8, v.Value.Y);
-                                ilgen.Emit(OpCodes.Ldc_R8, v.Value.Z);
-                                ilgen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double) }));
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.X);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Y);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Z);
+                                compileState.ILGen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double) }));
                                 innerExpressionReturn = typeof(Vector3);
                             }
                             else if (functionTree.Value is Tree.ConstantValueFloat)
                             {
-                                ilgen.Emit(OpCodes.Ldc_R8, ((Tree.ConstantValueFloat)functionTree.Value).Value);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, ((Tree.ConstantValueFloat)functionTree.Value).Value);
                                 innerExpressionReturn = typeof(double);
                             }
                             else if (functionTree.Value is Tree.ConstantValueInt)
                             {
-                                ilgen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
                                 innerExpressionReturn = typeof(int);
                             }
                             else
@@ -400,10 +376,10 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 /* constants */
                                 ConstantValueVector val = (ConstantValueVector)functionTree.Value;
-                                ilgen.Emit(OpCodes.Ldc_R8, val.Value.X);
-                                ilgen.Emit(OpCodes.Ldc_R8, val.Value.Y);
-                                ilgen.Emit(OpCodes.Ldc_R8, val.Value.Z);
-                                ilgen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double) }));
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);
+                                compileState.ILGen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double) }));
                                 innerExpressionReturn = typeof(Vector3);
                             }
                             else
@@ -411,9 +387,6 @@ namespace SilverSim.Scripting.Lsl
                                 expressionStack.Insert(0, new VectorExpression(
                                     this,
                                     compileState,
-                                    scriptTypeBuilder,
-                                    stateTypeBuilder,
-                                    ilgen,
                                     functionTree,
                                     lineNumber,
                                     localVars));
@@ -427,7 +400,7 @@ namespace SilverSim.Scripting.Lsl
                             try
                             {
                                 object v = localVars[functionTree.Entry];
-                                innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
+                                innerExpressionReturn = GetVarToStack(compileState, v);
                             }
                             catch
 #if DEBUG
@@ -449,9 +422,6 @@ namespace SilverSim.Scripting.Lsl
                                     expressionStack.Insert(0, new ListExpression(
                                         this,
                                         compileState,
-                                        scriptTypeBuilder,
-                                        stateTypeBuilder,
-                                        ilgen,
                                         functionTree,
                                         lineNumber,
                                         localVars));

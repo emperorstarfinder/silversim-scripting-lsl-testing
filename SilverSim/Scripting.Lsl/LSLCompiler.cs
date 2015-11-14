@@ -88,7 +88,7 @@ namespace SilverSim.Scripting.Lsl
         readonly List<char> m_OpChars = new List<char>();
         Resolver m_Resolver;
 
-        sealed class LineInfo
+        sealed internal class LineInfo
         {
             public readonly List<string> Line;
             public readonly int LineNumber;
@@ -100,7 +100,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        enum ControlFlowType
+        internal enum ControlFlowType
         {
             Entry,
             UnconditionalBlock,
@@ -112,7 +112,7 @@ namespace SilverSim.Scripting.Lsl
             While
         }
 
-        sealed class ControlFlowElement
+        sealed internal class ControlFlowElement
         {
             public bool IsExplicitBlock;
             public bool PopNextImplicit;
@@ -161,7 +161,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        sealed class CompileState
+        sealed internal class CompileState
         {
             public ApiInfo ApiInfo = new ApiInfo();
             public bool ForcedSleepDefault;
@@ -174,11 +174,15 @@ namespace SilverSim.Scripting.Lsl
             public List<List<string>> m_LocalVariables = new List<List<string>>();
             public Dictionary<string, List<LineInfo>> m_Functions = new Dictionary<string, List<LineInfo>>();
             public Dictionary<string, Dictionary<string, List<LineInfo>>> m_States = new Dictionary<string, Dictionary<string, List<LineInfo>>>();
-            public FieldBuilder InstanceField;
             public Dictionary<string, FieldBuilder> m_ApiFieldInfo = new Dictionary<string, FieldBuilder>();
             readonly List<ControlFlowElement> m_ControlFlowStack = new List<ControlFlowElement>();
             public Dictionary<Label, KeyValuePair<int, string>> m_UnnamedLabels = new Dictionary<Label, KeyValuePair<int, string>>();
             public ControlFlowElement LastBlock;
+
+            public TypeBuilder ScriptTypeBuilder;
+            public TypeBuilder StateTypeBuilder;
+            public FieldBuilder InstanceField;
+            public ILGenerator ILGen;
 
             public void InitControlFlow()
             {
@@ -235,12 +239,12 @@ namespace SilverSim.Scripting.Lsl
                 return !m_ControlFlowStack[0].IsExplicitBlock;
             }
 
-            public void PopControlFlowImplicit(ILGenerator ilgen, int lineNumber)
+            public void PopControlFlowImplicit(int lineNumber)
             {
                 if (LastBlock != null && (LastBlock.Type == ControlFlowType.If || LastBlock.Type == ControlFlowType.ElseIf) && null != LastBlock.EndOfIfFlowLabel)
                 {
                     m_UnnamedLabels.Remove(LastBlock.EndOfIfFlowLabel.Value);
-                    ilgen.MarkLabel(LastBlock.EndOfIfFlowLabel.Value);
+                    ILGen.MarkLabel(LastBlock.EndOfIfFlowLabel.Value);
                     LastBlock = null;
                 }
 
@@ -264,11 +268,11 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(lineNumber, "Internal Error! Duplicate End Of If Label");
                             }
-                            ilgen.MarkLabel(elem.EndOfIfFlowLabel.Value);
+                            ILGen.MarkLabel(elem.EndOfIfFlowLabel.Value);
                         }
                         else
                         {
-                            ilgen.Emit(OpCodes.Br, elem.EndOfIfFlowLabel.Value);
+                            ILGen.Emit(OpCodes.Br, elem.EndOfIfFlowLabel.Value);
                         }
                     }
                     if (null != elem.EndOfControlFlowLabel)
@@ -277,12 +281,12 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw new CompilerException(lineNumber, string.Format("Internal Error! Duplicate End Of Flow ('{0}') Label", elem.Type.ToString()));
                         }
-                        ilgen.MarkLabel(elem.EndOfControlFlowLabel.Value);
+                        ILGen.MarkLabel(elem.EndOfControlFlowLabel.Value);
                     }
                 }
             }
 
-            public void PopControlFlowImplicits(ILGenerator ilgen, int lineNumber)
+            public void PopControlFlowImplicits(int lineNumber)
             {
                 if (LastBlock != null && (LastBlock.Type == ControlFlowType.If || LastBlock.Type == ControlFlowType.ElseIf) && null != LastBlock.EndOfIfFlowLabel)
                 {
@@ -290,7 +294,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw new CompilerException(lineNumber, "Internal Error! Duplicate End Of If Label");
                     }
-                    ilgen.MarkLabel(LastBlock.EndOfIfFlowLabel.Value);
+                    ILGen.MarkLabel(LastBlock.EndOfIfFlowLabel.Value);
                     LastBlock = null;
                 }
 
@@ -314,11 +318,11 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(lineNumber, "Internal Error! Duplicate End Of If Label");
                             }
-                            ilgen.MarkLabel(elem.EndOfIfFlowLabel.Value);
+                            ILGen.MarkLabel(elem.EndOfIfFlowLabel.Value);
                         }
                         else
                         {
-                            ilgen.Emit(OpCodes.Br, elem.EndOfIfFlowLabel.Value);
+                            ILGen.Emit(OpCodes.Br, elem.EndOfIfFlowLabel.Value);
                         }
                     }
                     if (null != elem.EndOfControlFlowLabel)
@@ -327,17 +331,17 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw new CompilerException(lineNumber, string.Format("Internal Error! Duplicate End Of Flow ('{0}') Label", LastBlock.Type.ToString()));
                         }
-                        ilgen.MarkLabel(elem.EndOfControlFlowLabel.Value);
+                        ILGen.MarkLabel(elem.EndOfControlFlowLabel.Value);
                     }
                 }
             }
 
-            public ControlFlowElement PopControlFlowExplicit(ILGenerator ilgen, int lineNumber)
+            public ControlFlowElement PopControlFlowExplicit(int lineNumber)
             {
                 if (LastBlock != null && (LastBlock.Type == ControlFlowType.If || LastBlock.Type == ControlFlowType.ElseIf) && null != LastBlock.EndOfIfFlowLabel)
                 {
                     m_UnnamedLabels.Remove(LastBlock.EndOfIfFlowLabel.Value);
-                    ilgen.MarkLabel(LastBlock.EndOfIfFlowLabel.Value);
+                    ILGen.MarkLabel(LastBlock.EndOfIfFlowLabel.Value);
                     LastBlock = null;
                 }
 
@@ -355,7 +359,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw new CompilerException(lineNumber, "Internal Error! Duplicate End Of If Label");
                         }
-                        ilgen.MarkLabel(elem.EndOfIfFlowLabel.Value);
+                        ILGen.MarkLabel(elem.EndOfIfFlowLabel.Value);
                     }
                     if (null != elem.EndOfControlFlowLabel)
                     {
@@ -363,7 +367,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw new CompilerException(lineNumber, string.Format("Internal Error! Duplicate End Of Flow ('{0}') Label", elem.Type.ToString()));
                         }
-                        ilgen.MarkLabel(elem.EndOfControlFlowLabel.Value);
+                        ILGen.MarkLabel(elem.EndOfControlFlowLabel.Value);
                     }
                 }
 
@@ -387,11 +391,11 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(lineNumber, "Internal Error! Duplicate End Of If Label");
                             }
-                            ilgen.MarkLabel(elem.EndOfIfFlowLabel.Value);
+                            ILGen.MarkLabel(elem.EndOfIfFlowLabel.Value);
                         }
                         else
                         {
-                            ilgen.Emit(OpCodes.Br, elem.EndOfIfFlowLabel.Value);
+                            ILGen.Emit(OpCodes.Br, elem.EndOfIfFlowLabel.Value);
                         }
                     }
                     if (null != elem.EndOfControlFlowLabel)
@@ -400,7 +404,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw new CompilerException(lineNumber, string.Format("Internal Error! Duplicate End Of Flow ('{0}') Label", elem.Type.ToString()));
                         }
-                        ilgen.MarkLabel(elem.EndOfControlFlowLabel.Value);
+                        ILGen.MarkLabel(elem.EndOfControlFlowLabel.Value);
                         elem.EndOfControlFlowLabel = null;
                     }
                     return elem;
