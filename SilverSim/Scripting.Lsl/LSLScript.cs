@@ -1,6 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using log4net;
 using SilverSim.Scene.ServiceInterfaces.Chat;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
@@ -22,6 +23,7 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
     public partial class Script : ScriptInstance, IScriptState
     {
+        private ILog m_Log = LogManager.GetLogger("LSLSCRIPT");
         private ObjectPart m_Part;
         readonly ObjectPartInventoryItem m_Item;
         readonly NonblockingQueue<IScriptEvent> m_Events = new NonblockingQueue<IScriptEvent>();
@@ -247,6 +249,7 @@ namespace SilverSim.Scripting.Lsl
             if (IsRunning && !IsAborting)
             {
                 m_Events.Enqueue(e);
+                Part.ObjectGroup.Scene.ScriptThreadPool.PostScript(this);
             }
         }
 
@@ -255,7 +258,7 @@ namespace SilverSim.Scripting.Lsl
             if (IsRunning && !IsAborting)
             {
                 m_Events.Enqueue(new ResetScriptEvent());
-                /* TODO: add to script thread pool */
+                Part.ObjectGroup.Scene.ScriptThreadPool.PostScript(this);
             }
         }
 
@@ -307,7 +310,46 @@ namespace SilverSim.Scripting.Lsl
 
             if (null != mi)
             {
-                mi.Invoke(m_CurrentState, param);
+                try
+                {
+                    mi.Invoke(m_CurrentState, param);
+                }
+                catch (TargetInvocationException e)
+                {
+                    string state_name = m_CurrentState.GetType().FullName;
+                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
+                    m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                        state_name, name,
+                        e.GetType().FullName, e.Message, e.StackTrace);
+                    throw;
+                }
+                catch (InvalidProgramException e)
+                {
+                    string state_name = m_CurrentState.GetType().FullName;
+                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
+                    m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                        state_name, name,
+                        e.GetType().FullName, e.Message, e.StackTrace);
+                    throw;
+                }
+                catch (TargetParameterCountException e)
+                {
+                    string state_name = m_CurrentState.GetType().FullName;
+                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
+                    m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                        state_name, name,
+                        e.GetType().FullName, e.Message, e.StackTrace);
+                    throw;
+                }
+                catch (TargetException e)
+                {
+                    string state_name = m_CurrentState.GetType().FullName;
+                    state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
+                    m_Log.FatalFormat("Within state {0} event {1]:\nException {2} at script execution: {3}\n{4}",
+                        state_name, name,
+                        e.GetType().FullName, e.Message, e.StackTrace);
+                    throw;
+                }
             }
         }
 
@@ -380,6 +422,9 @@ namespace SilverSim.Scripting.Lsl
         public override void ProcessEvent()
         {
             IScriptEvent ev;
+            int exectime;
+            float execfloat;
+            int startticks = Environment.TickCount;
             try
             {
                 ev = m_Events.Dequeue();
@@ -387,6 +432,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     m_CurrentState = m_States["default"];
                     InvokeStateEvent("state_entry");
+                    if (ev.GetType() == typeof(ResetScriptEvent))
+                    {
+                        return;
+                    }
                 }
             }
             catch(NotImplementedException e)
@@ -399,12 +448,22 @@ namespace SilverSim.Scripting.Lsl
                 ShoutError("Script error! llResetScript used in default.state_entry");
                 return;
             }
-            catch
+            catch (Exception e)
             {
+                ShoutError(e.Message);
                 return;
             }
+            finally
+            {
+                exectime = Environment.TickCount - startticks;
+                execfloat = exectime / 1000f;
+                lock (this)
+                {
+                    m_ExecutionTime += execfloat;
+                }
+            }
 
-            int startticks = Environment.TickCount;
+            startticks = Environment.TickCount;
             try
             {
                 Type evt = ev.GetType();
@@ -426,7 +485,7 @@ namespace SilverSim.Scripting.Lsl
                 else if(evt == typeof(ChangedEvent))
                 {
                     ChangedEvent e = (ChangedEvent)ev;
-                    m_CurrentState.GetType().GetMethod("changed").Invoke(m_CurrentState, new object[] { (int)e.Flags });
+                    InvokeStateEvent("changed", (int)e.Flags);
                 }
                 else if(evt == typeof(CollisionEvent))
                 {
@@ -656,8 +715,8 @@ namespace SilverSim.Scripting.Lsl
             {
                 ShoutError(e.Message);
             }
-            int exectime = Environment.TickCount - startticks;
-            float execfloat = exectime / 1000f;
+            exectime = Environment.TickCount - startticks;
+            execfloat = exectime / 1000f;
             lock(this)
             {
                 m_ExecutionTime += execfloat;

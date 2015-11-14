@@ -571,6 +571,45 @@ namespace SilverSim.Scripting.Lsl
             throw new NotSupportedException();
         }
 
+        static Type EmitFieldRead(
+            CompileState compileState,
+            FieldInfo fi)
+        {
+            if ((fi.Attributes & FieldAttributes.Literal) != 0)
+            {
+                if (fi.FieldType == typeof(int))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)fi.GetValue(null));
+                }
+                else if (fi.FieldType == typeof(double))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)fi.GetValue(null));
+                }
+                else if(fi.FieldType == typeof(string))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldstr, (string)fi.GetValue(null));
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else if ((fi.Attributes & FieldAttributes.Static) != 0)
+            {
+                compileState.ILGen.Emit(OpCodes.Ldsfld, fi);
+            }
+            else
+            {
+                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                if (null != compileState.StateTypeBuilder)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                }
+                compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+            }
+            return fi.FieldType;
+        }
+
         internal static Type GetVarToStack(
             CompileState compileState,
             object v)
@@ -593,37 +632,15 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (null != (fb = v as FieldBuilder))
             {
-                if ((fb.Attributes & FieldAttributes.Static) != 0)
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldsfld, fb);
-                }
-                else
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                    if(null != compileState.StateTypeBuilder)
-                    {
-                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                    }
-                    compileState.ILGen.Emit(OpCodes.Ldfld, fb);
-                }
-                retType = fb.FieldType;
+                retType = EmitFieldRead(
+                    compileState,
+                    fb);
             }
             else if (null != (fi = v as FieldInfo))
             {
-                if ((fi.Attributes & FieldAttributes.Static) != 0)
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldsfld, fi);
-                }
-                else
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                    if (null != compileState.StateTypeBuilder)
-                    {
-                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                    }
-                    compileState.ILGen.Emit(OpCodes.Ldfld, fi);
-                }
-                retType = fi.FieldType;
+                retType = EmitFieldRead(
+                    compileState,
+                    fi);
             }
             else
             {
