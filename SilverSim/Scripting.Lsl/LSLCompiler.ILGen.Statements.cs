@@ -191,7 +191,7 @@ namespace SilverSim.Scripting.Lsl
                     endAt,
                     functionLine,
                     localVars);
-                SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
+                SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, functionLine.LineNumber);
             }
             #endregion
             #region Component Access
@@ -209,7 +209,7 @@ namespace SilverSim.Scripting.Lsl
                     Type varType = GetVarType(scriptTypeBuilder, stateTypeBuilder, o);
                     ilgen.BeginScope();
                     LocalBuilder lb_struct = ilgen.DeclareLocal(varType);
-                    GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, o);
+                    GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, o);
                     ilgen.Emit(OpCodes.Stloc, lb_struct);
                     string fieldName;
                     if (varType == typeof(Vector3))
@@ -314,7 +314,7 @@ namespace SilverSim.Scripting.Lsl
                             throw CompilerException(functionLine, string.Format("invalid assignment operator '{0}'", functionLine.Line[startAt + 3]));
                     }
                     ilgen.Emit(OpCodes.Ldloc, lb_struct);
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, o, functionLine.LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, o, functionLine.LineNumber);
                     ilgen.EndScope();
                 }
             }
@@ -330,7 +330,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     string varName = functionLine.Line[startAt];
                     object v = localVars[varName];
-                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                     ProcessExpression(
                         compileState,
                         scriptTypeBuilder,
@@ -353,7 +353,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw CompilerException(functionLine, string.Format("operator '+=' is not supported for {0}", MapType(ret)));
                     }
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, functionLine.LineNumber);
                 }
             }
             else if (functionLine.Line[startAt + 1] == "-=")
@@ -366,7 +366,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     string varName = functionLine.Line[startAt];
                     object v = localVars[varName];
-                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                     ProcessExpression(
                         compileState,
                         scriptTypeBuilder,
@@ -389,7 +389,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw CompilerException(functionLine, string.Format("operator '-=' is not supported for {0}", MapType(ret)));
                     }
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, functionLine.LineNumber);
                 }
             }
             else if (functionLine.Line[startAt + 1] == "*=")
@@ -402,7 +402,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     string varName = functionLine.Line[startAt];
                     object v = localVars[varName];
-                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                     ProcessExpression(
                         compileState,
                         scriptTypeBuilder,
@@ -425,7 +425,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw CompilerException(functionLine, string.Format("operator '*=' is not supported for {0}", MapType(ret)));
                     }
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, functionLine.LineNumber);
                 }
             }
             else if (functionLine.Line[startAt + 1] == "/=")
@@ -438,7 +438,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     string varName = functionLine.Line[startAt];
                     object v = localVars[varName];
-                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                     ProcessExpression(
                         compileState,
                         scriptTypeBuilder,
@@ -461,7 +461,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw CompilerException(functionLine, string.Format("operator '/=' is not supported for {0}", MapType(ret)));
                     }
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, functionLine.LineNumber);
                 }
             }
             else if (functionLine.Line[startAt + 1] == "%=")
@@ -474,7 +474,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     string varName = functionLine.Line[startAt];
                     object v = localVars[varName];
-                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                    Type ret = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                     ProcessExpression(
                         compileState,
                         scriptTypeBuilder,
@@ -493,7 +493,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw CompilerException(functionLine, string.Format("operator '%=' is not supported for {0}", MapType(ret)));
                     }
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, functionLine.LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, functionLine.LineNumber);
                 }
             }
             #endregion

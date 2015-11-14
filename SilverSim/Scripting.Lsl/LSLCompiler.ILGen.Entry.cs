@@ -25,6 +25,7 @@ namespace SilverSim.Scripting.Lsl
             #region Create Script Container
             TypeBuilder scriptTypeBuilder = mb.DefineType(assetAssemblyName + ".Script", TypeAttributes.Public, typeof(Script));
             Dictionary<string, object> typeLocals;
+            Dictionary<string, object> typeLocalsInited;
             foreach (IScriptApi api in m_Apis)
             {
                 ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiName));
@@ -52,13 +53,14 @@ namespace SilverSim.Scripting.Lsl
             Dictionary<string, Type> stateTypes = new Dictionary<string, Type>();
 
             #region Globals generation
-            typeLocals = AddConstants(compileState, scriptTypeBuilder, script_ilgen);
+            typeLocalsInited = AddConstants(compileState, scriptTypeBuilder, script_ilgen);
             foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
             {
                 FieldBuilder fb = scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
                 compileState.m_VariableFieldInfo[variableKvp.Key] = fb;
-                typeLocals[variableKvp.Key] = fb;
+                typeLocalsInited[variableKvp.Key] = fb;
             }
+            typeLocals = new Dictionary<string, object>(typeLocalsInited);
 
             List<string> varIsInited = new List<string>();
             List<string> varsToInit = new List<string>(compileState.m_VariableInitValues.Keys);
@@ -89,7 +91,7 @@ namespace SilverSim.Scripting.Lsl
                         ProcessExpression(
                             compileState,
                             scriptTypeBuilder,
-                            scriptTypeBuilder,
+                            null,
                             script_ilgen,
                             fb.FieldType,
                             expressionTree,
@@ -267,6 +269,7 @@ namespace SilverSim.Scripting.Lsl
                 MethodBuilder method = compileState.m_FunctionInfo[functionName];
 
                 ILGenerator method_ilgen = method.GetILGenerator();
+                typeLocals = new Dictionary<string, object>(typeLocalsInited);
                 ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, functionKvp.Value, typeLocals);
                 method_ilgen.Emit(OpCodes.Ret);
             }
@@ -292,12 +295,6 @@ namespace SilverSim.Scripting.Lsl
                 state_ilgen.Emit(OpCodes.Ldarg_0);
                 state_ilgen.Emit(OpCodes.Ldarg_1);
                 state_ilgen.Emit(OpCodes.Stfld, fb);
-                typeLocals = AddConstants(compileState, state, state_ilgen);
-                foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
-                {
-                    FieldInfo cfb = scriptTypeBuilder.GetField("var_" + variableKvp.Key);
-                    typeLocals[variableKvp.Key] = cfb;
-                }
 
                 state_ilgen.Emit(OpCodes.Ret);
 
@@ -322,6 +319,7 @@ namespace SilverSim.Scripting.Lsl
                         typeof(void),
                         paramtypes);
                     ILGenerator event_ilgen = eventbuilder.GetILGenerator();
+                    typeLocals = new Dictionary<string, object>(typeLocalsInited);
                     ProcessFunction(compileState, scriptTypeBuilder, state, eventbuilder, event_ilgen, eventKvp.Value, typeLocals);
                 }
 

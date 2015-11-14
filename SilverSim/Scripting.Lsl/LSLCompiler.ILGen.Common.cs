@@ -576,6 +576,7 @@ namespace SilverSim.Scripting.Lsl
         internal static Type GetVarToStack(
             TypeBuilder scriptTypeBuilder,
             TypeBuilder stateTypeBuilder,
+            FieldBuilder stateTypeInstanceField,
             ILGenerator ilgen,
             object v)
         {
@@ -604,6 +605,10 @@ namespace SilverSim.Scripting.Lsl
                 else
                 {
                     ilgen.Emit(OpCodes.Ldarg_0);
+                    if(null != stateTypeBuilder)
+                    {
+                        ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                    }
                     ilgen.Emit(OpCodes.Ldfld, fb);
                 }
                 retType = fb.FieldType;
@@ -617,6 +622,10 @@ namespace SilverSim.Scripting.Lsl
                 else
                 {
                     ilgen.Emit(OpCodes.Ldarg_0);
+                    if (null != stateTypeBuilder)
+                    {
+                        ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                    }
                     ilgen.Emit(OpCodes.Ldfld, fi);
                 }
                 retType = fi.FieldType;
@@ -636,6 +645,7 @@ namespace SilverSim.Scripting.Lsl
         internal static void SetVarFromStack(
             TypeBuilder scriptTypeBuilder,
             TypeBuilder stateTypeBuilder,
+            FieldBuilder stateTypeInstanceField,
             ILGenerator ilgen,
             object v,
             int lineNumber)
@@ -670,6 +680,10 @@ namespace SilverSim.Scripting.Lsl
                 LocalBuilder swapLb = ilgen.DeclareLocal(fb.FieldType);
                 ilgen.Emit(OpCodes.Stloc, swapLb);
                 ilgen.Emit(OpCodes.Ldarg_0);
+                if (null != stateTypeBuilder)
+                {
+                    ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                }
                 ilgen.Emit(OpCodes.Ldloc, swapLb);
 
                 ilgen.Emit(OpCodes.Stfld, fb);
@@ -688,6 +702,10 @@ namespace SilverSim.Scripting.Lsl
                 LocalBuilder swapLb = ilgen.DeclareLocal(fi.FieldType);
                 ilgen.Emit(OpCodes.Stloc, swapLb);
                 ilgen.Emit(OpCodes.Ldarg_0);
+                if (null != stateTypeBuilder)
+                {
+                    ilgen.Emit(OpCodes.Ldfld, stateTypeInstanceField);
+                }
                 ilgen.Emit(OpCodes.Ldloc, swapLb);
 
                 ilgen.Emit(OpCodes.Stfld, fi);

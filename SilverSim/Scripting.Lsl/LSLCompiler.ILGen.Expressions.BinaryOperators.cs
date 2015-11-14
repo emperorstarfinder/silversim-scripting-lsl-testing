@@ -218,6 +218,7 @@ namespace SilverSim.Scripting.Lsl
                             ProcessOperator_Assignment(
                                 scriptTypeBuilder,
                                 stateTypeBuilder,
+                                compileState.InstanceField,
                                 ilgen,
                                 localVars);
                             break;
@@ -230,6 +231,7 @@ namespace SilverSim.Scripting.Lsl
                             ProcessOperator_ModifyAssignment(
                                 scriptTypeBuilder,
                                 stateTypeBuilder,
+                                compileState.InstanceField,
                                 ilgen,
                                 localVars);
                             break;
@@ -338,6 +340,7 @@ namespace SilverSim.Scripting.Lsl
             public void ProcessOperator_Assignment(
                 TypeBuilder scriptTypeBuilder,
                 TypeBuilder stateTypeBuilder,
+                FieldBuilder stateTypeInstanceField,
                 ILGenerator ilgen,
                 Dictionary<string, object> localVars)
             {
@@ -348,6 +351,7 @@ namespace SilverSim.Scripting.Lsl
                 SetVarFromStack(
                     scriptTypeBuilder, 
                     stateTypeBuilder, 
+                    stateTypeInstanceField,
                     ilgen, 
                     varInfo,
                     m_LineNumber);
@@ -357,6 +361,7 @@ namespace SilverSim.Scripting.Lsl
             public void ProcessOperator_ModifyAssignment(
                 TypeBuilder scriptTypeBuilder,
                 TypeBuilder stateTypeBuilder,
+                FieldBuilder stateTypeInstanceField,
                 ILGenerator ilgen,
                 Dictionary<string, object> localVars)
             {
@@ -366,7 +371,7 @@ namespace SilverSim.Scripting.Lsl
                 if(m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
                 {
                     m_LeftHandType = typeof(double);
-                    Type varType = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, varInfo);
+                    Type varType = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, stateTypeInstanceField, ilgen, varInfo);
                     componentLocal = DeclareLocal(ilgen, varType);
                     ilgen.Emit(OpCodes.Stloc, componentLocal);
                     isComponentAccess = true;
@@ -571,13 +576,13 @@ namespace SilverSim.Scripting.Lsl
 
                     ilgen.Emit(OpCodes.Stfld, varType.GetField(fieldName));
                     ilgen.Emit(OpCodes.Ldloc, componentLocal);
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, varInfo, m_LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, stateTypeInstanceField, ilgen, varInfo, m_LineNumber);
                     ilgen.Emit(OpCodes.Ldloc, resultLocal);
                     throw Return(ilgen, typeof(double));
                 }
                 else
                 {
-                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, varInfo, m_LineNumber);
+                    SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, stateTypeInstanceField, ilgen, varInfo, m_LineNumber);
                     throw Return(ilgen, m_LeftHandType);
                 }
             }

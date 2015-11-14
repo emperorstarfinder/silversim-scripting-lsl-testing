@@ -185,13 +185,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
                                             ilgen.Emit(OpCodes.Ldc_I4_1);
                                             ilgen.Emit(OpCodes.Add);
                                             ilgen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, lineNumber);
+                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
                                         }
                                         else
                                         {
@@ -208,13 +208,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
                                             ilgen.Emit(OpCodes.Ldc_I4_1);
                                             ilgen.Emit(OpCodes.Sub);
                                             ilgen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, lineNumber);
+                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
                                         }
                                         else
                                         {
@@ -269,13 +269,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
                                             ilgen.Emit(OpCodes.Dup);
                                             ilgen.Emit(OpCodes.Ldc_I4_1);
                                             ilgen.Emit(OpCodes.Add);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, lineNumber);
+                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
                                         }
                                         else
                                         {
@@ -292,13 +292,13 @@ namespace SilverSim.Scripting.Lsl
                                     if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
-                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                                        innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                                         if (innerExpressionReturn == typeof(int))
                                         {
                                             ilgen.Emit(OpCodes.Dup);
                                             ilgen.Emit(OpCodes.Ldc_I4_1);
                                             ilgen.Emit(OpCodes.Sub);
-                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v, lineNumber);
+                                            SetVarFromStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v, lineNumber);
                                         }
                                         else
                                         {
@@ -427,13 +427,16 @@ namespace SilverSim.Scripting.Lsl
                             try
                             {
                                 object v = localVars[functionTree.Entry];
-                                innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, ilgen, v);
+                                innerExpressionReturn = GetVarToStack(scriptTypeBuilder, stateTypeBuilder, compileState.InstanceField, ilgen, v);
                             }
                             catch
 #if DEBUG
                                 (Exception e)
 #endif
                             {
+#if DEBUG
+                                m_Log.DebugFormat("Exception {0} at {1}", e.Message, e.StackTrace);
+#endif
                                 throw new CompilerException(lineNumber, string.Format("Variable '{0}' not defined", functionTree.Entry));
                             }
                             break;
