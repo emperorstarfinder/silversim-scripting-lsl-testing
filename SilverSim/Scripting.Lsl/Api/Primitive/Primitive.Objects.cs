@@ -86,12 +86,17 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectDetails")]
-        public AnArray GetObjectDetails(ScriptInstance instance, AnArray param)
+        public AnArray GetObjectDetails(ScriptInstance instance, LSLKey key, AnArray param)
         {
             AnArray parout = new AnArray();
             lock (instance)
             {
-                instance.Part.ObjectGroup.GetObjectDetails(param.GetEnumerator(), ref parout);
+                IObject obj;
+                if(!instance.Part.ObjectGroup.Scene.Objects.TryGetValue(key.AsUUID, out obj))
+                {
+                    return parout;
+                }
+                ((ObjectGroup)obj).GetObjectDetails(param.GetEnumerator(), ref parout);
             }
             return parout;
         }

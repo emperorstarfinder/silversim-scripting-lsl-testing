@@ -114,7 +114,14 @@ namespace SilverSim.Scripting.Lsl
                             return;
                         }
                     }
-                    throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}", functionTree.Entry));
+                    if (functionTree.SubTree.Count == 1)
+                    {
+                        throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", functionTree.Entry, functionTree.SubTree.Count));
+                    }
+                    else
+                    {
+                        throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", functionTree.Entry, functionTree.SubTree.Count));
+                    }
                 }
                 else
                 {
