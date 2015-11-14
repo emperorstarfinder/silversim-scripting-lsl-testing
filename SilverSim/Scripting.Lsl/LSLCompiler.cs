@@ -513,10 +513,18 @@ namespace SilverSim.Scripting.Lsl
             List<IScriptApi> apis = loader.GetServicesByValue<IScriptApi>();
             foreach (IScriptApi api in apis)
             {
-                System.Attribute attr = System.Attribute.GetCustomAttribute(api.GetType(), typeof(LSLImplementation));
-                if(attr != null && !m_Apis.Contains(api))
+                Type apiType = api.GetType();
+                System.Attribute attr = System.Attribute.GetCustomAttribute(apiType, typeof(LSLImplementation));
+                if (attr != null && !m_Apis.Contains(api))
                 {
-                    m_Apis.Add(api);
+                    if ((apiType.Attributes & TypeAttributes.Public) == 0)
+                    {
+                        m_Log.FatalFormat("LSLImplementation derived {0} is not set to public", apiType.FullName);
+                    }
+                    else
+                    {
+                        m_Apis.Add(api);
+                    }
                 }
             }
 
