@@ -644,26 +644,31 @@ namespace SilverSim.Scripting.Lsl
                             throw Return(compileState, m_LeftHandType);
                         }
 
-                        mi = m_RightHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
-                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType &&
-                            null != mi)
+                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
                         {
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                            if (!IsValidType(mi.ReturnType))
+                            mi = m_LeftHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (null != mi)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                if (!IsValidType(mi.ReturnType))
+                                {
+                                    throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                }
+                                throw Return(compileState, mi.ReturnType);
                             }
-                            throw Return(compileState, mi.ReturnType);
                         }
-                        else if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType && 
-                            null != mi)
+                        else if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType)
                         {
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                            if (!IsValidType(mi.ReturnType))
+                            mi = m_RightHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (null != mi)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                if (!IsValidType(mi.ReturnType))
+                                {
+                                    throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                }
+                                throw Return(compileState, mi.ReturnType);
                             }
-                            throw Return(compileState, mi.ReturnType);
                         }
                         throw new CompilerException(m_LineNumber, string.Format("operator '+' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
 
