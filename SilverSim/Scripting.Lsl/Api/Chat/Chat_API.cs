@@ -34,6 +34,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 ev.ID = thisGroup.ID;
+                ev.GlobalPosition = instance.Part.GlobalPosition;
                 ev.Name = thisGroup.Name;
                 thisGroup.Scene.GetService<ChatServiceInterface>().Send(ev);
             }
