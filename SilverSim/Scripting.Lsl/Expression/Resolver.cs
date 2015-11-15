@@ -397,7 +397,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 for (start = 0; start < nt.SubTree.Count; ++start)
                 {
                     Tree startnode = nt.SubTree[start];
-                    if (startnode.Entry == "<")
+                    if (startnode.Entry == "<" && startnode.Type != Tree.EntryType.StringValue)
                     {
                         if (start == 0)
                         {
