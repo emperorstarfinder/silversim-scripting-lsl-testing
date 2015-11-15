@@ -13,6 +13,10 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
     {
         public static int MaxListenerHandles = 64;
 
+        [APILevel(APIFlags.LSL, "listen")]
+        [StateEventDelegate]
+        public delegate void State_listen(int channel, string name, LSLKey id, string message);
+
         [APILevel(APIFlags.LSL, "llShout")]
         public void Shout(ScriptInstance instance, int channel, string message)
         {

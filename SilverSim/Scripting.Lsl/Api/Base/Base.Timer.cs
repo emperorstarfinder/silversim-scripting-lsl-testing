@@ -7,6 +7,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {
+        [APILevel(APIFlags.LSL, "timer")]
+        [StateEventDelegate]
+        public delegate void State_timer();
+
         [APILevel(APIFlags.LSL, "llSetTimerEvent")]
         public void SetTimerEvent(ScriptInstance instance, double sec)
         {

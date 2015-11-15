@@ -54,6 +54,22 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             throw new NotImplementedException("llRequestSimulatorData(string, integer)");
         }
 
+        [APILevel(APIFlags.LSL, "llGetSunDirection")]
+        public Vector3 GetSunDirection(ScriptInstance instance)
+        {
+            throw new NotImplementedException("GetSunDirection");
+        }
+
+        [APILevel(APIFlags.LSL, "llGround")]
+        public double Ground(ScriptInstance instance, Vector3 offset)
+        {
+            lock(instance)
+            {
+                Vector3 regionPos = instance.Part.GlobalPosition + offset;
+                return instance.Part.ObjectGroup.Scene.Terrain[regionPos];
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetEnv")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public string GetEnv(ScriptInstance instance, string name)

@@ -209,10 +209,14 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             }
         }
 
-        const int AGENT = 1;
-        const int ACTIVE = 2;
-        const int PASSIVE = 4;
-        const int SCRIPTED = 8;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT = 1;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int ACTIVE = 2;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int PASSIVE = 4;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int SCRIPTED = 8;
 
         [APILevel(APIFlags.LSL, "llDetectedType")]
         public int DetectedType(ScriptInstance instance, int number)

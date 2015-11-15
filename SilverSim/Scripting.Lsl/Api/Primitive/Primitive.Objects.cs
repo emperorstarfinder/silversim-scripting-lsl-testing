@@ -61,6 +61,38 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int OBJECT_TEMP_ON_REZ = 23;
 
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_PHYSICS = 0x00000001;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_ROTATE_X = 0x00000002;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_ROTATE_Y = 0x00000004;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_ROTATE_Z = 0x00000008;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_PHANTOM = 0x00000010;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_SANDBOX = 0x00000020;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_BLOCK_GRAB = 0x00000040;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_DIE_AT_EDGE = 0x00000080;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_RETURN_AT_EDGE = 0x00000100;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_CAST_SHADOWS = 0x00000200;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int STATUS_BLOCK_GRAB_OBJECT = 0x00000400;
+
+        [APILevel(APIFlags.LSL, "llGetAttached")]
+        public int GetAttached(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return (int)instance.Part.ObjectGroup.AttachPoint;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
         public Vector3 GetCenterOfMass(ScriptInstance instance)
         {
@@ -208,6 +240,18 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 return instance.Part.LinkNumber;
             }
+        }
+
+        [APILevel(APIFlags.LSL, "llSetStatus")]
+        public void SetStatus(ScriptInstance instance, int status, int value)
+        {
+            throw new NotImplementedException("llSetStatus");
+        }
+
+        [APILevel(APIFlags.LSL, "llGetStatus")]
+        public int SetStatus(ScriptInstance instance, int status)
+        {
+            throw new NotImplementedException("llGetStatus");
         }
 
         #region osMessageObject

@@ -15,7 +15,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
 {
     [ScriptApiName("Money")]
     [LSLImplementation]
-    public partial class MoneyApi : IScriptApi, IPlugin
+    public class MoneyApi : IScriptApi, IPlugin
     {
         public MoneyApi()
         {
@@ -31,10 +31,10 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         [StateEventDelegate]
         public delegate void State_transaction_result(LSLKey id, int success, string data);
 
-        internal delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
+        delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
             UUI destinationid, int amount, ScriptInstance instance);
 
-        internal void TransferMoney(UUID transactionID, UUI sourceid,
+        void TransferMoney(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance)
         {
             EconomyServiceInterface sourceservice = null;
@@ -74,14 +74,14 @@ namespace SilverSim.Scripting.Lsl.Api.Money
             }
         }
 
-        internal void TransferMoneyEnd(IAsyncResult ar)
+        void TransferMoneyEnd(IAsyncResult ar)
         {
             AsyncResult result = (AsyncResult)ar;
             TransferMoneyDelegate caller = (TransferMoneyDelegate)result.AsyncDelegate;
             caller.EndInvoke(ar);
         }
 
-        internal void InvokeTransferMoney(UUID transactionID, UUI sourceid,
+        void InvokeTransferMoney(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance)
         {
             TransferMoneyDelegate d = TransferMoney;

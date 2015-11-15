@@ -32,6 +32,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APILevel(APIFlags.LSL, "llMinEventDelay")]
+        public void MinEventDelay(ScriptInstance instance, double delay)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetStartParameter")]
         public int GetStartParameter(ScriptInstance instance)
         {

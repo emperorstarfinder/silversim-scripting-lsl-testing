@@ -11,14 +11,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     [LSLImplementation]
     public partial class BaseApi : IScriptApi, IPlugin
     {
-        [APILevel(APIFlags.LSL, "at_rot_target")]
-        [StateEventDelegate]
-        public delegate void State_at_rot_target(int handle, Quaternion targetrot, Quaternion ourrot);
-
-        [APILevel(APIFlags.LSL, "at_target")]
-        [StateEventDelegate]
-        public delegate void State_at_target(int tnum, Vector3 targetpos, Vector3 ourpos);
-
         [APILevel(APIFlags.LSL, "attach")]
         [StateEventDelegate]
         public delegate void State_attach(LSLKey id);
@@ -42,10 +34,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "dataserver")]
         [StateEventDelegate]
         public delegate void State_dataserver(LSLKey queryid, string data);
-
-        [APILevel(APIFlags.LSL, "email")]
-        [StateEventDelegate]
-        public delegate void State_email(string time, string address, string subject, string message, int num_left);
 
         [APILevel(APIFlags.LSL, "http_request")]
         [StateEventDelegate]
@@ -71,10 +59,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [StateEventDelegate]
         public delegate void State_link_message(int sender_num, int num, string str, LSLKey id);
 
-        [APILevel(APIFlags.LSL, "listen")]
-        [StateEventDelegate]
-        public delegate void State_listen(int channel, string name, LSLKey id, string message);
-
         [APILevel(APIFlags.LSL, "money")]
         [StateEventDelegate]
         public delegate void State_money(LSLKey id, int amount);
@@ -86,18 +70,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "moving_start")]
         [StateEventDelegate]
         public delegate void State_moving_start();
-
-        [APILevel(APIFlags.LSL, "no_sensor")]
-        [StateEventDelegate]
-        public delegate void State_no_sensor();
-
-        [APILevel(APIFlags.LSL, "not_at_rot_target")]
-        [StateEventDelegate]
-        public delegate void State_not_at_rot_target();
-
-        [APILevel(APIFlags.LSL, "not_at_target")]
-        [StateEventDelegate]
-        public delegate void State_not_at_target();
 
         [APILevel(APIFlags.LSL, "object_rez")]
         [StateEventDelegate]
@@ -111,10 +83,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [StateEventDelegate]
         public delegate void State_path_update(int type, AnArray reserved);
 
-        [APILevel(APIFlags.LSL, "sensor")]
-        [StateEventDelegate]
-        public delegate void State_sensor(int num_detected);
-
         [APILevel(APIFlags.LSL, "state_entry")]
         [StateEventDelegate]
         public delegate void State_state_entry();
@@ -122,10 +90,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "state_exit")]
         [StateEventDelegate]
         public delegate void State_state_exit();
-
-        [APILevel(APIFlags.LSL, "timer")]
-        [StateEventDelegate]
-        public delegate void State_timer();
 
         [APILevel(APIFlags.LSL, "touch")]
         [StateEventDelegate]

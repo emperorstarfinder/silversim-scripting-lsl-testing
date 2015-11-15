@@ -1,10 +1,10 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
-[assembly: AssemblyTitle("LSL Scripting Implementation - XMLRPC")]
+[assembly: AssemblyTitle("LSL Scripting Implementation - Email")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 

@@ -231,13 +231,25 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llSetHoverHeight")]
         public void SetHoverHeight(ScriptInstance instance, double height, int water, double tau)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llSetHoverHeight");
         }
 
         [APILevel(APIFlags.LSL, "llStopHover")]
         public void StopHover(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llStopHover");
+        }
+
+        [APILevel(APIFlags.LSL, "llMoveToTarget")]
+        public void MoveToTarget(ScriptInstance instance, Vector3 target, double tau)
+        {
+            throw new NotImplementedException("llMoveToTarget");
+        }
+
+        [APILevel(APIFlags.LSL, "llStopMoveToTarget")]
+        public void llStopMoveToTarget(ScriptInstance instance)
+        {
+            throw new NotImplementedException("llStopMoveToTarget");
         }
     }
 }
