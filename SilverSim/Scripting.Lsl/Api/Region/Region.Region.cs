@@ -35,7 +35,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 Uri uri = new Uri(instance.Part.ObjectGroup.Scene.RegionData.ServerURI);
                 return uri.Host;
             }
-            throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetRegionCorner")]
