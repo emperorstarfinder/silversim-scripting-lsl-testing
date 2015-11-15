@@ -520,6 +520,7 @@ redo:
                         if (i > 0)
                         {
                             args.Insert(argi, args[argi].Substring(0, i));
+                            ++argi;
                             args[argi] = args[argi].Substring(i, curlength - i);
                             curlength -= i;
                         }

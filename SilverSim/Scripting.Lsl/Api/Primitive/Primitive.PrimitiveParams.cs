@@ -165,6 +165,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
+        [APILevel(APIFlags.LSL, "llSetRot")]
+        public void SetRot(ScriptInstance instance, Quaternion rot)
+        {
+            lock(instance)
+            {
+                instance.Part.Rotation = rot;
+            }
+        }
+
         [APILevel(APIFlags.OSSL, "osSetPrimitiveParams")]
         public void SetPrimitiveParams(ScriptInstance instance, LSLKey key, AnArray rules)
         {
