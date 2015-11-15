@@ -361,7 +361,11 @@ namespace SilverSim.Scripting.Lsl
                 {
 
                 }
-                else if(m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(double))
+                else if (m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(Quaternion))
+                {
+
+                }
+                else if (m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(double))
                 {
 
                 }
@@ -569,7 +573,18 @@ namespace SilverSim.Scripting.Lsl
                 switch(m_Operator)
                 {
                     case "+":
-                        if(m_LeftHandType == typeof(AnArray) && m_RightHandType == typeof(AnArray))
+                        if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
+                            (m_RightHandType == typeof(double) || m_RightHandType == typeof(int)) &&
+                            (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Add);
+                            throw Return(compileState, typeof(double));
+                        }
+                        else if(m_LeftHandType == typeof(AnArray) && m_RightHandType == typeof(AnArray))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
@@ -610,11 +625,10 @@ namespace SilverSim.Scripting.Lsl
                             }
                             throw Return(compileState, typeof(AnArray));
                         }
-                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        else if (m_LeftHandType == typeof(int) && m_RightHandType == typeof(int))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Add);
                             throw Return(compileState, m_LeftHandType);
                         }
@@ -673,16 +687,25 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '+' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "-":
-                        if(m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
+                            (m_RightHandType == typeof(double) || m_RightHandType == typeof(int)) &&
+                            (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Sub);
+                            throw Return(compileState, typeof(double));
+                        }
+                        else if(m_LeftHandType == typeof(int) && m_RightHandType == typeof(int))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Sub);
                             throw Return(compileState, m_LeftHandType);
                         }
-
-                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
+                        else if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
                         {
                             mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
                             if (null != mi)
@@ -711,7 +734,18 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '-' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
                         
                     case "*":
-                        if (m_LeftHandType == typeof(int))
+                        if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
+                            (m_RightHandType == typeof(double) || m_RightHandType == typeof(int)) &&
+                            (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Mul);
+                            throw Return(compileState, typeof(double));
+                        }
+                        else if (m_LeftHandType == typeof(int))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -720,11 +754,19 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (m_LeftHandType == typeof(double))
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Mul);
-                            throw Return(compileState, m_LeftHandType);
+                            if(m_RightHandType == typeof(Vector3) || m_RightHandType == typeof(Quaternion))
+                            {
+                                mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
+                                if (null != mi)
+                                {
+                                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                                    if (!IsValidType(mi.ReturnType))
+                                    {
+                                        throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                                    }
+                                    throw Return(compileState, mi.ReturnType);
+                                }
+                            }
                         }
                         else if(m_LeftHandType == typeof(string))
                         {
@@ -745,22 +787,36 @@ namespace SilverSim.Scripting.Lsl
                             }
                             throw Return(compileState, mi.ReturnType);
                         }
+                        mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
+                        if (null != mi)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            if (!IsValidType(mi.ReturnType))
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                            }
+                            throw Return(compileState, mi.ReturnType);
+                        }
                         throw new CompilerException(m_LineNumber, string.Format("operator '*' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "/":
-                        if (m_LeftHandType == typeof(int))
+                        if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
+                            (m_RightHandType == typeof(double) || m_RightHandType == typeof(int)) &&
+                            (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerDivision", new Type[] { typeof(int), typeof(int) }));
-                            throw Return(compileState, m_LeftHandType);
-                        }
-                        else if (m_LeftHandType == typeof(double))
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Div);
+                            throw Return(compileState, typeof(double));
+                        }
+                        else if (m_LeftHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerDivision", new Type[] { typeof(int), typeof(int) }));
                             throw Return(compileState, m_LeftHandType);
                         }
                         else if (m_LeftHandType == typeof(string))
@@ -785,19 +841,23 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '/' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "%":
-                        if (m_LeftHandType == typeof(int))
+                        if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
+                            (m_RightHandType == typeof(double) || m_RightHandType == typeof(int)) &&
+                            (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerModulus", new Type[] { typeof(int), typeof(int) }));
-                            throw Return(compileState, m_LeftHandType);
-                        }
-                        else if (m_LeftHandType == typeof(double))
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Rem);
+                            throw Return(compileState, typeof(double));
+                        }
+                        else if(m_LeftHandType == typeof(int) && m_RightHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerModulus", new Type[] { typeof(int), typeof(int) }));
                             throw Return(compileState, m_LeftHandType);
                         }
                         else if (m_LeftHandType == typeof(string))
@@ -848,14 +908,19 @@ namespace SilverSim.Scripting.Lsl
                         throw Return(compileState, m_LeftHandType);
 
                     case "==":
-                        if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            if (m_RightHandType == typeof(double))
-                            {
-                                ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                                m_LeftHandType = m_RightHandType;
-                            }
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+
+                            compileState.ILGen.Emit(OpCodes.Ceq);
+                            throw Return(compileState, typeof(int));
+                        }
+                        else if (m_LeftHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
 
@@ -898,16 +963,23 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '==' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "!=":
-                        if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            if (m_RightHandType == typeof(double))
-                            {
-                                ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                                m_LeftHandType = m_RightHandType;
-                            }
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+
+                            compileState.ILGen.Emit(OpCodes.Ceq);
+                            compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                            compileState.ILGen.Emit(OpCodes.Ceq);
+                            throw Return(compileState, typeof(int));
+                        }
+                        else if (m_LeftHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
 
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
@@ -955,16 +1027,23 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '!=' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "<=":
-                        if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            if (m_RightHandType == typeof(double))
-                            {
-                                ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                                m_LeftHandType = m_RightHandType;
-                            }
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+
+                            compileState.ILGen.Emit(OpCodes.Cgt);
+                            compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                            compileState.ILGen.Emit(OpCodes.Ceq);
+                            throw Return(compileState, typeof(int));
+                        }
+                        else if (m_LeftHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
 
                             compileState.ILGen.Emit(OpCodes.Cgt);
                             compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
@@ -986,16 +1065,22 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                     case "<":
-                        if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            if (m_RightHandType == typeof(double))
-                            {
-                                ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                                m_LeftHandType = m_RightHandType;
-                            }
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+
+                            compileState.ILGen.Emit(OpCodes.Clt);
+
+                            throw Return(compileState, typeof(int));
+                        }
+                        else if (m_LeftHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
 
                             compileState.ILGen.Emit(OpCodes.Clt);
 
@@ -1014,16 +1099,22 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '<' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_LeftHandType)));
 
                     case ">":
-                        if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            if (m_RightHandType == typeof(double))
-                            {
-                                ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                                m_LeftHandType = m_RightHandType;
-                            }
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+
+                            compileState.ILGen.Emit(OpCodes.Cgt);
+
+                            throw Return(compileState, typeof(int));
+                        }
+                        else if (m_LeftHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
 
                             compileState.ILGen.Emit(OpCodes.Cgt);
 
@@ -1042,16 +1133,24 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format("operator '>' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_LeftHandType)));
 
                     case ">=":
-                        if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(double))
+                        if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            if (m_RightHandType == typeof(double))
-                            {
-                                ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                                m_LeftHandType = m_RightHandType;
-                            }
+                            ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+
+                            compileState.ILGen.Emit(OpCodes.Clt);
+                            compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                            compileState.ILGen.Emit(OpCodes.Ceq);
+
+                            throw Return(compileState, typeof(int));
+                        }
+                        else if (m_LeftHandType == typeof(int))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
 
                             compileState.ILGen.Emit(OpCodes.Clt);
                             compileState.ILGen.Emit(OpCodes.Ldc_I4_0);

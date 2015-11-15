@@ -3,6 +3,8 @@
 
 using SilverSim.Scene.Types.Script;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -152,5 +154,37 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return b + a;
             }
         }
+
+        [APILevel(APIFlags.LSL, "llMD5String")]
+        public string MD5String(ScriptInstance instance, string src, int nonce)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] b = md5.ComputeHash(UTF8NoBOM.GetBytes(string.Format("{0}:{1}", src, nonce.ToString())));
+                string s = string.Empty;
+                for(int i = 0; i < b.Length; ++i)
+                {
+                    s += string.Format("{0:x2}", b[i]);
+                }
+                return s;
+            }
+        }
+
+        [APILevel(APIFlags.LSL, "llSHA1String")]
+        public string SHA1String(ScriptInstance instance, string src)
+        {
+            using (SHA1 sha1 = SHA1.Create())
+            {
+                byte[] b = sha1.ComputeHash(UTF8NoBOM.GetBytes(src));
+                string s = string.Empty;
+                for (int i = 0; i < b.Length; ++i)
+                {
+                    s += string.Format("{0:x2}", b[i]);
+                }
+                return s;
+            }
+        }
+
+        static readonly UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
     }
 }

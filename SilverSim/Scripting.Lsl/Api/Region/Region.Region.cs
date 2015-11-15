@@ -20,6 +20,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.LSL, "llGetRegionTimeDilation")]
+        public double GetRegionTimeDilation(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetSimulatorHostname")]
         [ForcedSleep(10)]
         public string GetSimulatorHostname(ScriptInstance instance)

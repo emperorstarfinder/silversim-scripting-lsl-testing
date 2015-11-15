@@ -406,7 +406,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (ret == typeof(Vector3) || ret == typeof(Quaternion))
                     {
-                        compileState.ILGen.Emit(OpCodes.Callvirt, ret.GetMethod("op_Division", new Type[] { ret, ret }));
+                        compileState.ILGen.Emit(OpCodes.Call, ret.GetMethod("op_Division", new Type[] { ret, ret }));
                     }
                     else
                     {
