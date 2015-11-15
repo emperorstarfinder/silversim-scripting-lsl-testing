@@ -405,7 +405,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                             /* definitely a declaration, search for end */
                             for (end = start + 1; end < nt.SubTree.Count; ++end)
                             {
-                                if (nt.SubTree[end].Entry == ">")
+                                if (nt.SubTree[end].Entry == ">" && nt.SubTree[end].Type != Tree.EntryType.StringValue)
                                 {
                                     if (end == nt.SubTree.Count - 1)
                                     {
@@ -433,13 +433,13 @@ namespace SilverSim.Scripting.Lsl.Expression
                         else if (nt.SubTree[start - 1].Type == Tree.EntryType.OperatorUnknown ||
                             nt.SubTree[start - 1].Type == Tree.EntryType.OperatorBinary ||
                             nt.SubTree[start - 1].Type == Tree.EntryType.Separator ||
-                            nt.SubTree[start - 1].Type == Tree.EntryType.Level)
+                            (nt.SubTree[start - 1].Type == Tree.EntryType.Level && nt.SubTree[start - 1].Entry != "("))
                         {
                             int end;
                             /* a declaration too */
                             for (end = start + 1; end < nt.SubTree.Count; ++end)
                             {
-                                if (nt.SubTree[end].Entry == ">")
+                                if (nt.SubTree[end].Entry == ">" && nt.SubTree[end].Type != Tree.EntryType.StringValue)
                                 {
                                     if (end == nt.SubTree.Count - 1)
                                     {
