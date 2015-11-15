@@ -22,6 +22,126 @@ namespace SilverSim.Scripting.Lsl
 #if DEBUG
             using (StreamWriter dumpILGen = new StreamWriter("../data/ILGendump_" + assetID.ToString() + ".txt", false, Encoding.UTF8))
             {
+
+                foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
+                {
+                    LineInfo initargs;
+
+                    if (compileState.m_VariableInitValues.TryGetValue(variableKvp.Key, out initargs))
+                    {
+                        dumpILGen.WriteLine(string.Format("{0} {1} = {2};", MapType(variableKvp.Value), variableKvp.Key, string.Join(" ", initargs.Line)));
+                    }
+                    else
+                    {
+                        dumpILGen.WriteLine(string.Format("{0} {1};", MapType(variableKvp.Value), variableKvp.Key));
+                    }
+                }
+
+                dumpILGen.WriteLine("");
+                int indent = 0;
+                bool closebrace = false;
+                string indent_header = string.Empty;
+
+                foreach (KeyValuePair<string, List<LineInfo>> functionKvp in compileState.m_Functions)
+                {
+                    foreach (LineInfo line in functionKvp.Value)
+                    {
+                        if (line.Line[0] == "}")
+                        {
+                            if (indent > 0)
+                            {
+                                --indent;
+                                indent_header = indent_header.Substring(0, indent_header.Length - 2);
+                            }
+                            closebrace = true;
+                        }
+                        else
+                        {
+                            if (closebrace)
+                            {
+                                dumpILGen.WriteLine();
+                            }
+                            closebrace = false;
+                        }
+                        if (line.Line[line.Line.Count - 1] == "{")
+                        {
+                            dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line.GetRange(0, line.Line.Count - 1)));
+                            dumpILGen.WriteLine(indent_header + "{");
+                            ++indent;
+                            indent_header += "  ";
+                        }
+                        else
+                        {
+                            dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line));
+                        }
+                    }
+
+                    dumpILGen.WriteLine("");
+                }
+
+                bool first = true;
+                foreach (KeyValuePair<string, Dictionary<string, List<LineInfo>>> stateKvp in compileState.m_States)
+                {
+                    if (stateKvp.Key == "default")
+                    {
+                        dumpILGen.WriteLine("default");
+                        dumpILGen.WriteLine("{");
+                    }
+                    else
+                    {
+                        dumpILGen.WriteLine(string.Format("state {0}", stateKvp.Key));
+                        dumpILGen.WriteLine("{");
+                    }
+
+                    foreach (KeyValuePair<string, List<LineInfo>> eventKvp in stateKvp.Value)
+                    {
+                        indent = 1;
+                        indent_header = "  ";
+                        if (!first)
+                        {
+                            dumpILGen.WriteLine("");
+                        }
+
+                        first = false;
+                        closebrace = false;
+
+                        foreach (LineInfo line in eventKvp.Value)
+                        {
+                            if (line.Line[0] == "}")
+                            {
+                                if (indent > 0)
+                                {
+                                    --indent;
+                                    indent_header = indent_header.Substring(0, indent_header.Length - 2);
+                                }
+                                closebrace = true;
+                            }
+                            else
+                            {
+                                if (closebrace)
+                                {
+                                    dumpILGen.WriteLine();
+                                }
+                                closebrace = false;
+                            }
+                            if (line.Line[line.Line.Count - 1] == "{")
+                            {
+                                dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line.GetRange(0, line.Line.Count - 1)));
+                                dumpILGen.WriteLine(indent_header + "{");
+                                ++indent;
+                                indent_header += "  ";
+                            }
+                            else
+                            {
+                                dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line));
+                            }
+                        }
+                    }
+                    dumpILGen.WriteLine("}");
+                }
+                dumpILGen.WriteLine("");
+
+                dumpILGen.WriteLine("********************************************************************************");
 #endif
                 string assetAssemblyName = "Script." + assetID.ToString().Replace('-', '_');
                 AssemblyName aName = new AssemblyName(assetAssemblyName);
