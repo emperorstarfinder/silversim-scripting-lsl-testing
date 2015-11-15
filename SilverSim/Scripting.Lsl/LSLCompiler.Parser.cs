@@ -282,6 +282,7 @@ namespace SilverSim.Scripting.Lsl
                     /* make it a block */
                     if(args[eocf + 1] == "{")
                     {
+                        block.Add(new LineInfo(args, lineNumber));
                         ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
