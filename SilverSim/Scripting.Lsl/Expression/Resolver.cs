@@ -598,7 +598,8 @@ namespace SilverSim.Scripting.Lsl.Expression
                                     }
                                     else if (pos > 0 && pos < nt.SubTree.Count - 1 &&
                                         (nt.SubTree[pos - 1].Type == Tree.EntryType.OperatorUnknown ||
-                                        nt.SubTree[pos - 1].Type == Tree.EntryType.OperatorBinary) &&
+                                        nt.SubTree[pos - 1].Type == Tree.EntryType.OperatorBinary ||
+                                        nt.SubTree[pos - 1].Type == Tree.EntryType.Separator) &&
                                         IsValidUnaryLeft(nt.SubTree[pos + 1]))
                                     {
                                         st.Type = Tree.EntryType.OperatorLeftUnary;

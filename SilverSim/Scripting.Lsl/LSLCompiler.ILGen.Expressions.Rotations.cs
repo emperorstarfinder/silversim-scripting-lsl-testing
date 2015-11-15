@@ -26,7 +26,14 @@ namespace SilverSim.Scripting.Lsl
                 m_LineNumber = lineNumber;
                 for (int i = 0; i < 4; ++i)
                 {
-                    m_ListElements.Add(functionTree.SubTree[i]);
+                    if (functionTree.SubTree[i].Type == Tree.EntryType.DeclarationArgument)
+                    {
+                        m_ListElements.Add(functionTree.SubTree[i].SubTree[0]);
+                    }
+                    else
+                    {
+                        m_ListElements.Add(functionTree.SubTree[i]);
+                    }
                 }
             }
 
