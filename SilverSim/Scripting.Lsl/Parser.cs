@@ -229,7 +229,7 @@ redo:
                             {
                                 is_preprocess = true;
                             }
-                            while(!Char.IsWhiteSpace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
+                            while(!Char.IsWhiteSpace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
                                 token += c.ToString();
 
