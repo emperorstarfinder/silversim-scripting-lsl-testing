@@ -693,36 +693,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     pref = List2List(instance, dest, 0, start - 1);
 
-                    if (end + 1 < dest.Count)
-                    {
-                        return pref + src + List2List(instance, dest, end + 1, -1);
-                    }
-                    else
-                    {
-                        return pref + src;
-                    }
+                    return (end + 1 < dest.Count) ?
+                        (pref + src + List2List(instance, dest, end + 1, -1)) :
+                        (pref + src);
                 }
                 else if (start == 0)
                 {
-                    if (end + 1 < dest.Count)
-                    {
-                        return src + List2List(instance, dest, end + 1, -1);
-                    }
-                    else
-                    {
-                        return src;
-                    }
+                    return (end + 1 < dest.Count) ?
+                        (src + List2List(instance, dest, end + 1, -1)) :
+                        src;
                 }
                 else 
                 {
-                    if (end + 1 < dest.Count)
-                    {
-                        return List2List(instance, dest, end + 1, -1);
-                    }
-                    else
-                    {
-                        return new AnArray();
-                    }
+                    return (end + 1 < dest.Count) ?
+                        List2List(instance, dest, end + 1, -1) :
+                        new AnArray();
                 }
             }
             else

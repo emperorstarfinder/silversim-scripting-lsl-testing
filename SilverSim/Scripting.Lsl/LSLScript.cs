@@ -23,7 +23,7 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
     public partial class Script : ScriptInstance, IScriptState
     {
-        private ILog m_Log = LogManager.GetLogger("LSLSCRIPT");
+        private readonly ILog m_Log = LogManager.GetLogger("LSLSCRIPT");
         private ObjectPart m_Part;
         readonly ObjectPartInventoryItem m_Item;
         readonly NonblockingQueue<IScriptEvent> m_Events = new NonblockingQueue<IScriptEvent>();
