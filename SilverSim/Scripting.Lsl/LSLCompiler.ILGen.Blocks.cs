@@ -38,6 +38,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     #region Label definition
                     case "@":
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         if (functionLine.Line.Count != 3 || functionLine.Line[2] != ";")
                         {
                             throw CompilerException(functionLine, "not a valid label definition");
@@ -72,6 +73,7 @@ namespace SilverSim.Scripting.Lsl
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         lb = compileState.ILGen.DeclareLocal(typeof(int));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -102,6 +104,7 @@ namespace SilverSim.Scripting.Lsl
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         lb = compileState.ILGen.DeclareLocal(typeof(Vector3));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -132,6 +135,7 @@ namespace SilverSim.Scripting.Lsl
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         lb = compileState.ILGen.DeclareLocal(typeof(AnArray));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -162,6 +166,7 @@ namespace SilverSim.Scripting.Lsl
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         lb = compileState.ILGen.DeclareLocal(typeof(double));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -191,6 +196,7 @@ namespace SilverSim.Scripting.Lsl
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         lb = compileState.ILGen.DeclareLocal(typeof(string));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -221,6 +227,7 @@ namespace SilverSim.Scripting.Lsl
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         lb = compileState.ILGen.DeclareLocal(typeof(LSLKey));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -252,6 +259,7 @@ namespace SilverSim.Scripting.Lsl
                                 string.Format("variable declaration cannot be a single statement within flow control '{0}'",
                                 compileState.GetControlFlowInfo(functionLine.LineNumber)));
                         }
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         lb = compileState.ILGen.DeclareLocal(typeof(Quaternion));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -582,6 +590,7 @@ namespace SilverSim.Scripting.Lsl
 
                     #region New unconditional block
                     case "{": /* new unconditional block */
+                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
                         compileState.PopControlFlowImplicits(functionLine.LineNumber);
                         {
                             ControlFlowElement elem = new ControlFlowElement(ControlFlowType.UnconditionalBlock, true);
