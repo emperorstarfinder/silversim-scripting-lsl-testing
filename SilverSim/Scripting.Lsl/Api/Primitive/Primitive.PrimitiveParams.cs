@@ -14,6 +14,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     {
         #region Primitives
 
+        [APILevel(APIFlags.LSL, "llGetLocalRot")]
+        public Quaternion GetLocalRot(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.LocalRotation;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetKey")]
         public LSLKey GetKey(ScriptInstance instance)
         {

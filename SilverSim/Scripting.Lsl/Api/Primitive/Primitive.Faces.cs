@@ -5,6 +5,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
+using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -32,6 +33,18 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     return 0f;
                 }
             }
+        }
+
+        [APILevel(APIFlags.LSL, "llOffsetTexture")]
+        public void OffsetTexture(ScriptInstance instance, double u, double v, int face)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llRotateTexture")]
+        public void RotateTexture(ScriptInstance instance, double angle, int face)
+        {
+            throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llSetAlpha")]

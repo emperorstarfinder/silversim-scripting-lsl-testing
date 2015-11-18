@@ -62,6 +62,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.LSL, "llGetUsername")]
+        public string GetUsername(ScriptInstance instance, LSLKey id)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llRequestUsername")]
         public LSLKey RequestUsername(ScriptInstance instance, LSLKey id)
         {

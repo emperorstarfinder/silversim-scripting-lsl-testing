@@ -24,6 +24,12 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         }
 
+        [APILevel(APIFlags.LSL, "llVolumeDetect")]
+        public void VolumeDetect(ScriptInstance instance, int enable)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llSetTorque")]
         public void SetTorque(ScriptInstance instance, Vector3 torque, int local)
         {
