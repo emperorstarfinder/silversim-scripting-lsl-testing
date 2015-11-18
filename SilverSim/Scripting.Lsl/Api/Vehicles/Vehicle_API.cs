@@ -24,6 +24,27 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         }
 
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_NO_DEFLECTION_UP = 0x001;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_LIMIT_ROLL_ONLY = 0x002;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_HOVER_WATER_ONLY = 0x004;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_HOVER_TERRAIN_ONLY = 0x008;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_HOVER_GLOBAL_HEIGHT = 0x010;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_HOVER_UP_ONLY = 0x020;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_LIMIT_MOTOR_UP = 0x040;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_MOUSELOOK_STEER = 0x080;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_MOUSELOOK_BANK = 0x100;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int VEHICLE_FLAG_CAMERA_DECOUPLED = 0x200;
+
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
