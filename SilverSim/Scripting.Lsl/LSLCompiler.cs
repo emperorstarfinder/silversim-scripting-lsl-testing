@@ -501,16 +501,6 @@ namespace SilverSim.Scripting.Lsl
             blockOps.Add("[", "]");
 
             Dictionary<string, Resolver.OperatorType> plist;
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("(integer)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(float)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(string)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(list)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(key)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(vector)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(rotation)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(quaternion)", Resolver.OperatorType.LeftUnary);
 
             plist = new Dictionary<string, Resolver.OperatorType>();
             operators.Add(plist);
@@ -528,6 +518,17 @@ namespace SilverSim.Scripting.Lsl
             plist.Add("--", Resolver.OperatorType.LeftUnary);
             plist.Add("+", Resolver.OperatorType.LeftUnary);
             plist.Add("-", Resolver.OperatorType.LeftUnary);
+
+            plist = new Dictionary<string, Resolver.OperatorType>();
+            operators.Add(plist);
+            plist.Add("(integer)", Resolver.OperatorType.LeftUnary);
+            plist.Add("(float)", Resolver.OperatorType.LeftUnary);
+            plist.Add("(string)", Resolver.OperatorType.LeftUnary);
+            plist.Add("(list)", Resolver.OperatorType.LeftUnary);
+            plist.Add("(key)", Resolver.OperatorType.LeftUnary);
+            plist.Add("(vector)", Resolver.OperatorType.LeftUnary);
+            plist.Add("(rotation)", Resolver.OperatorType.LeftUnary);
+            plist.Add("(quaternion)", Resolver.OperatorType.LeftUnary);
             plist.Add("!", Resolver.OperatorType.LeftUnary);
             plist.Add("~", Resolver.OperatorType.LeftUnary);
 

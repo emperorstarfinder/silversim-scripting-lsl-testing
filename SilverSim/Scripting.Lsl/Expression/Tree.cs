@@ -157,6 +157,25 @@ namespace SilverSim.Scripting.Lsl.Expression
                     SubTree.Add(nt);
                     continue;
                 }
+                if(arg.StartsWith("."))
+                {
+                    if(arg == ".")
+                    {
+                        nt = new Tree();
+                        nt.Type = EntryType.OperatorBinary;
+                        nt.Entry = arg;
+                        SubTree.Add(nt);
+                        continue;
+                    }
+                    else
+                    {
+                        nt = new Tree();
+                        nt.Type = EntryType.Value;
+                        nt.Entry = arg;
+                        SubTree.Add(nt);
+                        continue;
+                    }
+                }
                 for (int i = 0; i < arg.Length; ++i)
                 {
                     if (char.IsDigit(arg[0]))
