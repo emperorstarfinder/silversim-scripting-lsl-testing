@@ -69,6 +69,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.LSL, "llWater")]
+        public double Water(ScriptInstance instance, Vector3 offset)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetEnv")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public string GetEnv(ScriptInstance instance, string name)

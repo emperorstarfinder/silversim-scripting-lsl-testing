@@ -101,6 +101,28 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return src;
         }
 
+        [APILevel(APIFlags.LSL, "llInsertString")]
+        public string llInsertString(ScriptInstance instance, string dest, int index, string src)
+        {
+            if (index < 0)
+            {
+                index = dest.Length + index;
+
+                if (index < 0)
+                {
+                    return src + dest;
+                }
+
+            }
+
+            if (index >= dest.Length)
+            {
+                return dest + src;
+            }
+
+            return dest.Substring(0, index) + src + dest.Substring(index);
+        }
+
         [APILevel(APIFlags.LSL, "llStringLength")]
         public int StringLength(ScriptInstance instance, string src)
         {

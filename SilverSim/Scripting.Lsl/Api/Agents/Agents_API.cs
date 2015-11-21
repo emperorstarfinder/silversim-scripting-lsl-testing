@@ -25,6 +25,41 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         }
 
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_FLYING = 0x0001;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_ATTACHMENTS = 0x0002;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_SCRIPTED = 0x0004;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_MOUSELOOK = 0x0008;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_SITTING = 0x0010;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_ON_OBJECT = 0x0020;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_AWAY = 0x0040;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_WALKING = 0x0080;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_IN_AIR = 0x0100;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_TYPING = 0x0200;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_CROUCHING = 0x0400;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_BUSY = 0x0800;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_ALWAYS_RUN = 0x1000;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_AUTOPILOT = 0x2000;
+
+        [APILevel(APIFlags.LSL, "llGetAgentInfo")]
+        public int GetAgentInfo(ScriptInstance instance, LSLKey id)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetRegionAgentCount")]
         public int GetRegionAgentCount(ScriptInstance instance)
         {
