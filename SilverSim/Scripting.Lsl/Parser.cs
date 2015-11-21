@@ -346,12 +346,12 @@ redo:
                     {
                         break;
                     }
-                    else if ('e' == c && i + 1 < curlength && args[argi][i + 1] == '-')
+                    else if ('e' == c && i + 1 < curlength && args[argi][i + 1] == '-' && i > 0 && char.IsDigit(args[argi][i - 1]))
                     {
                         /* float component */
                         i += 2;
                     }
-                    else if ('e' == c && i + 1 < curlength && args[argi][i + 1] == '+')
+                    else if ('e' == c && i + 1 < curlength && args[argi][i + 1] == '+' && i > 0 && char.IsDigit(args[argi][i - 1]))
                     {
                         /* float component */
                         i += 2;
