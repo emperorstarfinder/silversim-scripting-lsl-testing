@@ -19,6 +19,19 @@ namespace SilverSim.Scripting.Lsl
 
         }
 
+        bool IsLSLWhitespace(char c)
+        {
+            if(char.IsWhiteSpace(c))
+            {
+                return true;
+            }
+            if(c == '\x01')
+            {
+                return true;
+            }
+            return false;
+        }
+
         public void ReadPass1(List<string> args)
         {
             char c;
@@ -211,7 +224,7 @@ redo:
 
                     default:        /* regular tokens */
                 defaultcase:
-                        if(Char.IsWhiteSpace(c))
+                        if (IsLSLWhitespace(c))
                         {
                             if(0 != token.Length)
                             {
@@ -229,7 +242,7 @@ redo:
                             {
                                 is_preprocess = true;
                             }
-                            while(!Char.IsWhiteSpace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
+                            while (!IsLSLWhitespace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
                                 token += c.ToString();
 
