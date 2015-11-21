@@ -46,6 +46,15 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.LSL, "llGetRegionAgentCount")]
+        public int GetRegionAgentCount(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.Agents.Count;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)

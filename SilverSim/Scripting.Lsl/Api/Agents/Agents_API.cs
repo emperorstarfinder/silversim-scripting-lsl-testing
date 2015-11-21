@@ -60,15 +60,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL, "llGetRegionAgentCount")]
-        public int GetRegionAgentCount(ScriptInstance instance)
-        {
-            lock (instance)
-            {
-                return instance.Part.ObjectGroup.Scene.Agents.Count;
-            }
-        }
-
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int DATA_ONLINE = 1;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
