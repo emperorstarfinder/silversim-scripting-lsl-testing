@@ -128,9 +128,23 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     return parout;
                 }
-                ((ObjectGroup)obj).GetObjectDetails(param.GetEnumerator(), ref parout);
+                obj.GetObjectDetails(param.GetEnumerator(), ref parout);
             }
             return parout;
+        }
+
+        [APILevel(APIFlags.LSL, "llSameGroup")]
+        public int SameGroup(ScriptInstance instance, LSLKey key)
+        {
+            lock(instance)
+            {
+                IObject obj;
+                if (!instance.Part.ObjectGroup.Scene.Objects.TryGetValue(key.AsUUID, out obj))
+                {
+                    return 0;
+                }
+                return obj.Group.Equals(instance.Part.ObjectGroup.Group) ? 1 : 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectName")]
