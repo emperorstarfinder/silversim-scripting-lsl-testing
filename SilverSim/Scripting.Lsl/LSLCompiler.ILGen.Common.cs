@@ -119,6 +119,12 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public static AnArray AddKeyToList(AnArray src, LSLKey key)
+        {
+            src.Add(key);
+            return src;
+        }
+
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public static int ConvToInt(string v)
         {

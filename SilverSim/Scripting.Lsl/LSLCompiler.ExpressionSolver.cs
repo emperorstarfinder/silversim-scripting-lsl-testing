@@ -1937,7 +1937,11 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 char c = ent[0];
-                if(m_OpChars.Contains(c))
+                if(c == '.' && ent != ".")
+                {
+                    /* ignore this */
+                }
+                else if(m_OpChars.Contains(c))
                 {
                     st.Type = c == ',' ? Tree.EntryType.Separator : Tree.EntryType.OperatorUnknown;
                 }
@@ -1945,7 +1949,6 @@ namespace SilverSim.Scripting.Lsl
                 {
                     switch (ent)
                     {
-                        case ".":
                         case "(list)":
                         case "(string)":
                         case "(key)":
@@ -2027,9 +2030,48 @@ namespace SilverSim.Scripting.Lsl
             IdentifyNumericValues(cs, expressionTree);
             IdentifyDeclarations(cs, expressionTree);
 
-            foreach (Tree st in expressionTree.SubTree)
+            int n = expressionTree.SubTree.Count;
+            string msg = string.Empty;
+            for(int i = 0; i < n; ++i)
             {
+                Tree st = expressionTree.SubTree[i];
+                if(st.Type == Tree.EntryType.Unknown &&
+                    st.Entry != "(" && st.Entry != "[" &&
+                    st.Entry != ")" && st.Entry != "]")
+                {
+                    string entry = st.Entry;
+                    /* there should be no unknowns anymore */
+                    if(i + 1 < n && 
+                        expressionTree.SubTree[i + 1].Type == Tree.EntryType.Unknown &&
+                        expressionTree.SubTree[i + 1].Entry == "(")
+                    {
+                        if(msg.Length != 0)
+                        {
+                            msg += "\n";
+                        }
+                        msg = string.Format("no function '{0}' defined", entry);
+                    }
+                    else if(i > 0 && 
+                        expressionTree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown &&
+                        expressionTree.SubTree[i - 1].Entry == ".")
+                    {
+                        /* element selector */
+                    }
+                    else
+                    {
+                        if (msg.Length != 0)
+                        {
+                            msg += "\n";
+                        }
+                        msg = string.Format("no variable '{0}' defined", entry);
+                    }
+                }
                 st.Process();
+            }
+
+            if(msg.Length != 0)
+            {
+                throw new Resolver.ResolverException(msg);
             }
 
             /* After OrderBrackets only deep-scanners can be used */

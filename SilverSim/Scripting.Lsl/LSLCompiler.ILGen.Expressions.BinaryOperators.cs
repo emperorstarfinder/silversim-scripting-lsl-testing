@@ -511,6 +511,12 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
                             break;
                         }
+                        if(typeof(AnArray) == m_LeftHandType && typeof(LSLKey) == m_RightHandType)
+                        {
+                            mi = typeof(LSLCompiler).GetMethod("AddKeyToList", new Type[] { m_LeftHandType, m_RightHandType });
+                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            break;
+                        }
 
                         mi = m_LeftHandType.GetMethod("op_Addition", new Type[]{m_LeftHandType, m_RightHandType});
                         if (null != mi)

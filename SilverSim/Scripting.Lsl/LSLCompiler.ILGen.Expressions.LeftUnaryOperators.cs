@@ -46,11 +46,31 @@ namespace SilverSim.Scripting.Lsl
                                 compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                                 compileState.ILGen.Emit(OpCodes.Ceq);
                             }
+                            else if(innerExpressionReturn == typeof(LSLKey) ||
+                                innerExpressionReturn == typeof(Quaternion))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, innerExpressionReturn.GetProperty("IsLSLTrue").GetGetMethod());
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                                compileState.ILGen.Emit(OpCodes.Ceq);
+                            }
+                            else if (innerExpressionReturn == typeof(string) ||
+                                innerExpressionReturn == typeof(AnArray))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, innerExpressionReturn.GetProperty("Length").GetGetMethod());
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                                compileState.ILGen.Emit(OpCodes.Ceq);
+                            }
+                            else if (innerExpressionReturn == typeof(Vector3))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, innerExpressionReturn.GetProperty("Length").GetGetMethod());
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, 0f);
+                                compileState.ILGen.Emit(OpCodes.Ceq);
+                            }
                             else
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("operator '!' not supported for {0}", MapType(innerExpressionReturn)));
                             }
-                            throw new ReturnTypeException(innerExpressionReturn, m_LineNumber);
+                            throw new ReturnTypeException(typeof(int), m_LineNumber);
 
                         case "-":
                             if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double))
