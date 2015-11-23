@@ -1309,6 +1309,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         case Tree.EntryType.Variable:
                         case Tree.EntryType.Value:
+                        case Tree.EntryType.StringValue:
                         case Tree.EntryType.Function:
                         case Tree.EntryType.Declaration:
                         case Tree.EntryType.Level:
@@ -1327,6 +1328,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         case Tree.EntryType.Variable:
                         case Tree.EntryType.Value:
+                        case Tree.EntryType.StringValue:
                         case Tree.EntryType.Function:
                         case Tree.EntryType.Declaration:
                         case Tree.EntryType.Level:
