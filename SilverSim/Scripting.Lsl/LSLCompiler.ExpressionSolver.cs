@@ -1897,31 +1897,6 @@ namespace SilverSim.Scripting.Lsl
                                 break;
                         }
                     }
-                    /* some folks like to be over-expressive on the terms so let's kill the superfluous unary left + straight away here */
-                    else if (i == 1 &&
-                        resolvetree.SubTree[i - 1].Entry == "+" &&
-                        resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown)
-                    {
-                        resolvetree.SubTree.RemoveAt(--i);
-                    }
-                    else if (i > 1 &&
-                        resolvetree.SubTree[i - 1].Entry == "+" &&
-                        resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown)
-                    {
-                        switch (resolvetree.SubTree[i - 2].Type)
-                        {
-                            case Tree.EntryType.Declaration:
-                            case Tree.EntryType.Level:
-                            case Tree.EntryType.OperatorBinary:
-                            case Tree.EntryType.OperatorUnknown:
-                                resolvetree.SubTree.RemoveAt(i - 1);
-                                --i;
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
                     ++i;
                 }
                 else
