@@ -1643,11 +1643,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             int startPos = parenStack[0].Value;
                             parenStack.RemoveAt(0);
-                            if(startPos + 1 == i)
-                            {
-                                resolvetree.SubTree.RemoveAt(i);
-                            }
-                            else
+                            if(startPos + 1 != i)
                             {
                                 resolvetree.SubTree[startPos].SubTree.AddRange(resolvetree.SubTree.GetRange(startPos + 1, i - startPos - 1));
                             }
@@ -1684,11 +1680,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             int startPos = parenStack[0].Value;
                             parenStack.RemoveAt(0);
-                            if (startPos + 1 == i)
-                            {
-                                resolvetree.SubTree.RemoveAt(i);
-                            }
-                            else
+                            if (startPos + 1 != i)
                             {
                                 resolvetree.SubTree[startPos].SubTree.AddRange(resolvetree.SubTree.GetRange(startPos + 1, i - startPos - 1));
                             }
@@ -1726,11 +1718,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             int startPos = parenStack[0].Value;
                             parenStack.RemoveAt(0);
-                            if (startPos + 1 == i)
-                            {
-                                resolvetree.SubTree.RemoveAt(i);
-                            }
-                            else
+                            if (startPos + 1 != i)
                             {
                                 resolvetree.SubTree[startPos].SubTree.AddRange(resolvetree.SubTree.GetRange(startPos + 1, i - startPos - 1));
                             }
