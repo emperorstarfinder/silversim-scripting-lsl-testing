@@ -1456,7 +1456,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     Tree elem = tree.SubTree[pos];
                     string ent = elem.Entry;
-                    if ((ent != "-" && ent != "!" && ent != "~" &&
+                    if ((ent != "-" && ent != "+" && ent != "!" && ent != "~" &&
                         !m_TypecastOperators.Contains(ent)) ||
                         elem.Type != Tree.EntryType.OperatorUnknown)
                     {
@@ -1501,12 +1501,17 @@ namespace SilverSim.Scripting.Lsl
                                 throw new CompilerException(lineNumber, "invalid right hand parameter to '" + ent + "'");
                         }
 
-                        if(pos > 0 && (ent == "-"))
+                        if(pos > 0 && (ent == "-" || ent == "+"))
                         {
                             if(tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorUnknown &&
                                 tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorBinary &&
                                 tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorLeftUnary &&
                                 tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorRightUnary)
+                            {
+                                continue;
+                            }
+                            else if(tree.SubTree[pos - 1].Type == Tree.EntryType.OperatorBinary &&
+                                tree.SubTree[pos - 1].Entry == ".")
                             {
                                 continue;
                             }
@@ -1765,7 +1770,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        #endregion
+#endregion
 
         void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames, int lineNumber)
         {
@@ -1774,7 +1779,7 @@ namespace SilverSim.Scripting.Lsl
             SolveConstantOperations(resolvetree, lineNumber);
         }
 
-        #region Pre-Tree identifiers
+#region Pre-Tree identifiers
         void IdentifyDeclarations(CompileState cs, Tree resolvetree)
         {
             int n = resolvetree.SubTree.Count;
@@ -1815,10 +1820,43 @@ namespace SilverSim.Scripting.Lsl
                         break;
                     case ">":
                         if (i + 1 == n ||
-                            resolvetree.SubTree[i + 1].Type == Tree.EntryType.OperatorUnknown ||
                             resolvetree.SubTree[i + 1].Type == Tree.EntryType.Separator)
                         {
                             st.Type = Tree.EntryType.Declaration;
+                        }
+                        else if(resolvetree.SubTree[i + 1].Type == Tree.EntryType.OperatorUnknown)
+                        {
+                            switch(resolvetree.SubTree[i + 1].Entry)
+                            {
+                                case "-":
+                                    if(i + 2 < n)
+                                    {
+                                        switch(resolvetree.SubTree[i + 2].Type)
+                                        {
+                                            case Tree.EntryType.Variable:
+                                            case Tree.EntryType.Value:
+                                            case Tree.EntryType.Function:
+                                                break;
+
+                                            default:
+                                                st.Type = Tree.EntryType.Declaration;
+                                                break;
+                                        }
+                                    }
+                                    break;
+
+                                case "+":
+                                case "*":
+                                case "/":
+                                case "%":
+                                case "==":
+                                case "!=":
+                                    st.Type = Tree.EntryType.Declaration;
+                                    break;
+
+                                default:
+                                    break;
+                            }
                         }
                         else 
                         {
@@ -2018,7 +2056,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
         }
-        #endregion
+#endregion
 
         Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames, int lineNumber)
         {
