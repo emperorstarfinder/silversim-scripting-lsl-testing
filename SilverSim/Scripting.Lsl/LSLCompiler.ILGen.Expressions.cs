@@ -7,6 +7,7 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
@@ -190,6 +191,94 @@ namespace SilverSim.Scripting.Lsl
                                             throw new CompilerException(lineNumber, string.Format("operator '++' not supported for {0}", MapType(innerExpressionReturn)));
                                         }
                                     }
+                                    else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
+                                    {
+                                        compileState.ILGen.BeginScope();
+                                        object v = localVars[functionTree.SubTree[0].SubTree[0].Entry];
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
+                                        if (innerExpressionReturn == typeof(Vector3))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch (functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Vector3).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Vector3).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Vector3).GetField("Z");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at vector is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(Quaternion))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch (functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Quaternion).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Quaternion).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Quaternion).GetField("Z");
+                                                    break;
+
+                                                case "s":
+                                                    fi = typeof(Quaternion).GetField("S");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at rotation is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else
+                                        {
+                                            throw new CompilerException(lineNumber, string.Format("operator '.' not supported for '{0}'", MapType(innerExpressionReturn)));
+                                        }
+
+                                        compileState.ILGen.EndScope();
+                                    }
                                     else
                                     {
                                         throw new CompilerException(lineNumber, string.Format("operator '++' not supported for '{0}'", functionTree.SubTree[0].Entry));
@@ -219,6 +308,94 @@ namespace SilverSim.Scripting.Lsl
                                         {
                                             throw new CompilerException(lineNumber, string.Format("operator '--' not supported for {0}", MapType(innerExpressionReturn)));
                                         }
+                                    }
+                                    else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
+                                    {
+                                        compileState.ILGen.BeginScope();
+                                        object v = localVars[functionTree.SubTree[0].SubTree[0].Entry];
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
+                                        if (innerExpressionReturn == typeof(Vector3))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch (functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Vector3).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Vector3).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Vector3).GetField("Z");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at vector is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(Quaternion))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch (functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Quaternion).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Quaternion).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Quaternion).GetField("Z");
+                                                    break;
+
+                                                case "s":
+                                                    fi = typeof(Quaternion).GetField("S");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at rotation is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else
+                                        {
+                                            throw new CompilerException(lineNumber, string.Format("operator '.' not supported for '{0}'", MapType(innerExpressionReturn)));
+                                        }
+
+                                        compileState.ILGen.EndScope();
                                     }
                                     else
                                     {
@@ -259,7 +436,7 @@ namespace SilverSim.Scripting.Lsl
                             switch (functionTree.Entry)
                             {
                                 case "++":
-                                    if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
+                                    if (functionTree.SubTree[0].Type == Tree.EntryType.Variable)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
                                         innerExpressionReturn = GetVarToStack(compileState, v);
@@ -282,6 +459,94 @@ namespace SilverSim.Scripting.Lsl
                                             throw new CompilerException(lineNumber, string.Format("operator '++' not supported for {0}", MapType(innerExpressionReturn)));
                                         }
                                     }
+                                    else if(functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
+                                    {
+                                        compileState.ILGen.BeginScope();
+                                        object v = localVars[functionTree.SubTree[0].SubTree[0].Entry];
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
+                                        if (innerExpressionReturn == typeof(Vector3))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch(functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Vector3).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Vector3).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Vector3).GetField("Z");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at vector is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if(innerExpressionReturn == typeof(Quaternion))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch (functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Quaternion).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Quaternion).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Quaternion).GetField("Z");
+                                                    break;
+
+                                                case "s":
+                                                    fi = typeof(Quaternion).GetField("S");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at rotation is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else
+                                        {
+                                            throw new CompilerException(lineNumber, string.Format("operator '.' not supported for '{0}'", MapType(innerExpressionReturn)));
+                                        }
+
+                                        compileState.ILGen.EndScope();
+                                    }
                                     else
                                     {
                                         throw new CompilerException(lineNumber, string.Format("operator '++' not supported for '{0}'", functionTree.SubTree[0].Entry));
@@ -289,7 +554,7 @@ namespace SilverSim.Scripting.Lsl
                                     break;
 
                                 case "--":
-                                    if (functionTree.SubTree[0].Type == Tree.EntryType.Variable || functionTree.SubTree[0].Type == Tree.EntryType.Unknown)
+                                    if (functionTree.SubTree[0].Type == Tree.EntryType.Variable)
                                     {
                                         object v = localVars[functionTree.SubTree[0].Entry];
                                         innerExpressionReturn = GetVarToStack(compileState, v);
@@ -311,6 +576,94 @@ namespace SilverSim.Scripting.Lsl
                                         {
                                             throw new CompilerException(lineNumber, string.Format("operator '--' not supported for {0}", MapType(innerExpressionReturn)));
                                         }
+                                    }
+                                    else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
+                                    {
+                                        compileState.ILGen.BeginScope();
+                                        object v = localVars[functionTree.SubTree[0].SubTree[0].Entry];
+                                        innerExpressionReturn = GetVarToStack(compileState, v);
+                                        if (innerExpressionReturn == typeof(Vector3))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch (functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Vector3).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Vector3).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Vector3).GetField("Z");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at vector is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(Quaternion))
+                                        {
+                                            LocalBuilder structLb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            FieldInfo fi;
+                                            switch (functionTree.SubTree[0].SubTree[1].Entry)
+                                            {
+                                                case "x":
+                                                    fi = typeof(Quaternion).GetField("X");
+                                                    break;
+
+                                                case "y":
+                                                    fi = typeof(Quaternion).GetField("Y");
+                                                    break;
+
+                                                case "z":
+                                                    fi = typeof(Quaternion).GetField("Z");
+                                                    break;
+
+                                                case "s":
+                                                    fi = typeof(Quaternion).GetField("S");
+                                                    break;
+
+                                                default:
+                                                    throw new CompilerException(lineNumber, string.Format("component access for '{0}' at rotation is not defined", functionTree.SubTree[0].SubTree[1].Entry));
+                                            }
+                                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                                            innerExpressionReturn = typeof(double);
+                                            LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else
+                                        {
+                                            throw new CompilerException(lineNumber, string.Format("operator '.' not supported for '{0}'", MapType(innerExpressionReturn)));
+                                        }
+
+                                        compileState.ILGen.EndScope();
                                     }
                                     else
                                     {

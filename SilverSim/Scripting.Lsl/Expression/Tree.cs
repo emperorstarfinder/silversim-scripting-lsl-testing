@@ -69,18 +69,8 @@ namespace SilverSim.Scripting.Lsl.Expression
             }
 
             public ConstantValueInt(string str)
-            {
-                if (str.StartsWith("0x"))
-                {
-                    Value = (int)uint.Parse(str.Substring(2), NumberStyles.HexNumber);
-                }
-                else if (str.StartsWith("0"))
-                {
-                }
-                else
-                {
-                    Value = int.Parse(str);
-                }
+            { 
+                Value = LSLCompiler.ConvToInt(str);
             }
 
             public override string ToString()
@@ -142,123 +132,25 @@ namespace SilverSim.Scripting.Lsl.Expression
         }
 
         /* pre-initializes an expression tree */
-        public Tree(List<string> args, List<char> opcharacters, List<char> singleopcharacters, List<char> numericchars)
+        public Tree(List<string> args)
         {
             Type = EntryType.ExpressionTree;
             Tree nt;
             foreach(string arg in args)
             {
-                nt = null;
                 if(arg.StartsWith("\""))
                 {
                     nt = new Tree();
                     nt.Type = EntryType.StringValue;
                     nt.Entry = arg.Substring(1, arg.Length - 2);
                     SubTree.Add(nt);
-                    continue;
                 }
-                if(arg.StartsWith("."))
+                else
                 {
-                    if(arg == ".")
-                    {
-                        nt = new Tree();
-                        nt.Type = EntryType.OperatorBinary;
-                        nt.Entry = arg;
-                        SubTree.Add(nt);
-                        continue;
-                    }
-                    else
-                    {
-                        nt = new Tree();
-                        nt.Type = EntryType.Value;
-                        nt.Entry = arg;
-                        SubTree.Add(nt);
-                        continue;
-                    }
-                }
-                for (int i = 0; i < arg.Length; ++i)
-                {
-                    if (char.IsDigit(arg[0]))
-                    {
-                        if(nt != null)
-                        {
-                            if(nt.Type != EntryType.Value && nt.Type != EntryType.Unknown)
-                            {
-                                nt = new Tree();
-                                nt.Type = EntryType.Value;
-                                SubTree.Add(nt);
-                            }
-                        }
-                        else
-                        {
-                            nt = new Tree();
-                            nt.Type = EntryType.Value;
-                            SubTree.Add(nt);
-                        }
-                        nt.Entry += arg[i].ToString();
-                    }
-                    else if(nt != null && nt.Type == EntryType.Value && numericchars.Contains(arg[i]))
-                    {
-                        nt.Entry += arg[i].ToString();
-                    }
-                    else if (singleopcharacters.Contains(arg[i]))
-                    {
-                        if (nt != null)
-                        {
-                            if (nt.Type != EntryType.OperatorUnknown)
-                            {
-                                nt = new Tree();
-                                nt.Type = EntryType.OperatorUnknown;
-                                SubTree.Add(nt);
-                            }
-                        }
-                        else
-                        {
-                            nt = new Tree();
-                            nt.Type = EntryType.OperatorUnknown;
-                            SubTree.Add(nt);
-                        }
-                        nt.Entry += arg[i].ToString();
-                        nt = null;
-                    }
-                    else if (opcharacters.Contains(arg[i]))
-                    {
-                        if(nt != null)
-                        {
-                            if(nt.Type != EntryType.OperatorUnknown)
-                            {
-                                nt = new Tree();
-                                nt.Type = EntryType.OperatorUnknown;
-                                SubTree.Add(nt);
-                            }
-                        }
-                        else
-                        {
-                            nt = new Tree();
-                            nt.Type = EntryType.OperatorUnknown;
-                            SubTree.Add(nt);
-                        }
-                        nt.Entry += arg[i].ToString();
-                    }
-                    else
-                    {
-                        if (nt != null)
-                        {
-                            if (nt.Type != EntryType.Unknown)
-                            {
-                                nt = new Tree();
-                                /* nt.Type = EntryType.Unknown;*/
-                                SubTree.Add(nt);
-                            }
-                        }
-                        else
-                        {
-                            nt = new Tree();
-                            /* nt.Type = EntryType.Unknown; */
-                            SubTree.Add(nt);
-                        }
-                        nt.Entry += arg[i].ToString();
-                    }
+                    nt = new Tree();
+                    nt.Type = EntryType.Unknown;
+                    nt.Entry = arg;
+                    SubTree.Add(nt);
                 }
             }
         }

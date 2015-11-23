@@ -33,14 +33,15 @@ namespace SilverSim.Scripting.Lsl
                 for (int i = 0; i < functionTree.SubTree.Count; ++i)
                 {
                     Tree st = functionTree.SubTree[i++];
-                    if (i + 1 < functionTree.SubTree.Count)
+                    if(st.SubTree.Count != 1)
                     {
-                        if (functionTree.SubTree[i].Entry != ",")
-                        {
-                            throw new CompilerException(lineNumber, "Wrong list declaration");
-                        }
+                        throw new CompilerException(lineNumber, "Wrong list declaration");
                     }
-                    m_ListElements.Add(st);
+                    if(st.Type != Tree.EntryType.DeclarationArgument)
+                    {
+                        throw new CompilerException(lineNumber, "Wrong list declaration");
+                    }
+                    m_ListElements.Add(st.SubTree[0]);
                 }
             }
 

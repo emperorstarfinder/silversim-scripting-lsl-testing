@@ -109,19 +109,46 @@ namespace SilverSim.Scripting.Lsl
                 m_ProcessOrder = new List<State>(m_ProcessOrders[m_Operator]);
                 if(m_Operator == "=")
                 {
-                    if(m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                    if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
                     {
-                        if(m_LeftHand.SubTree[0].Type != Tree.EntryType.Variable)
+                        if (m_LeftHand.SubTree[0].Type != Tree.EntryType.Variable)
                         {
                             throw new CompilerException(m_LineNumber, "l-value of operator '=' is not a variable");
                         }
+                        object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
+                        m_LeftHandType = GetVarType(varInfo);
+                        if(m_LeftHandType != typeof(Vector3) && m_LeftHandType != typeof(Quaternion))
+                        {
+                            throw new CompilerException(m_LineNumber, "operator '.' not supported for " + MapType(m_LeftHandType));
+                        }
+                        switch(m_LeftHand.SubTree[1].Entry)
+                        {
+                            case "x":
+                            case "y":
+                            case "z":
+                                break;
+
+                            case "s":
+                                if(m_LeftHandType != typeof(Quaternion))
+                                {
+                                    throw new CompilerException(m_LineNumber, "invalid member access 's' to vector");
+                                }
+                                break;
+
+                            default:
+                                throw new CompilerException(m_LineNumber, string.Format("invalid member access '{0}' to {1}", m_LeftHand.SubTree[1].Entry, MapType(m_LeftHandType)));
+                        }
+                        m_LeftHandType = typeof(double);
                     }
-                    else if(m_LeftHand.Type != Tree.EntryType.Variable)
+                    else if (m_LeftHand.Type != Tree.EntryType.Variable)
                     {
                         throw new CompilerException(m_LineNumber, "l-value of operator '=' is not a variable");
                     }
-                    object varInfo = localVars[m_LeftHand.Entry];
-                    m_LeftHandType = GetVarType(varInfo);
+                    else
+                    {
+                        object varInfo = localVars[m_LeftHand.Entry];
+                        m_LeftHandType = GetVarType(varInfo);
+                    }
                 }
                 else if(m_Operator != "=" && m_Operator != ".")
                 {
@@ -134,9 +161,45 @@ namespace SilverSim.Scripting.Lsl
                         case "*=":
                         case "/=":
                         case "%=":
-                            if(m_LeftHand.Type != Tree.EntryType.Variable)
+                            if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                            {
+                                if (m_LeftHand.SubTree[0].Type != Tree.EntryType.Variable)
+                                {
+                                    throw new CompilerException(m_LineNumber, "l-value of operator '=' is not a variable");
+                                }
+                                object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
+                                m_LeftHandType = GetVarType(varInfo);
+                                if (m_LeftHandType != typeof(Vector3) && m_LeftHandType != typeof(Quaternion))
+                                {
+                                    throw new CompilerException(m_LineNumber, "operator '.' not supported for " + MapType(m_LeftHandType));
+                                }
+                                switch (m_LeftHand.SubTree[1].Entry)
+                                {
+                                    case "x":
+                                    case "y":
+                                    case "z":
+                                        break;
+
+                                    case "s":
+                                        if (m_LeftHandType != typeof(Quaternion))
+                                        {
+                                            throw new CompilerException(m_LineNumber, "invalid member access 's' to vector");
+                                        }
+                                        break;
+
+                                    default:
+                                        throw new CompilerException(m_LineNumber, string.Format("invalid member access '{0}' to {1}", m_LeftHand.SubTree[1].Entry, MapType(m_LeftHandType)));
+                                }
+                                m_LeftHandType = typeof(double);
+                            }
+                            else if (m_LeftHand.Type != Tree.EntryType.Variable)
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("l-value of operator '{0}' is not a variable", m_Operator));
+                            }
+                            else
+                            {
+                                object varInfo = localVars[m_LeftHand.Entry];
+                                m_LeftHandType = GetVarType(varInfo);
                             }
                             break;
 
@@ -323,15 +386,64 @@ namespace SilverSim.Scripting.Lsl
                 CompileState compileState,
                 Dictionary<string, object> localVars)
             {
-                object varInfo = localVars[m_LeftHand.Entry];
-                m_LeftHandType = GetVarType(varInfo);
-                ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                compileState.ILGen.Emit(OpCodes.Dup);
-                SetVarFromStack(
-                    compileState,
-                    varInfo,
-                    m_LineNumber);
-                throw Return(compileState, m_LeftHandType);
+                if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                {
+                    object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
+                    Type varType = GetVarType(varInfo);
+                    ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                    compileState.ILGen.Emit(OpCodes.Dup);
+                    compileState.ILGen.BeginScope();
+                    LocalBuilder structLb = compileState.ILGen.DeclareLocal(varType);
+                    LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                    compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                    GetVarToStack(compileState, varInfo);
+                    compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                    compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                    compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                    FieldInfo fi;
+                    switch(m_LeftHand.SubTree[1].Entry)
+                    {
+                        case "x":
+                            fi = varType.GetField("X");
+                            break;
+
+                        case "y":
+                            fi = varType.GetField("Y");
+                            break;
+
+                        case "z":
+                            fi = varType.GetField("Z");
+                            break;
+
+                        case "s":
+                            fi = varType.GetField("W");
+                            break;
+
+                        default:
+                            fi = null;
+                            break;
+                    }
+                    compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                    compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                    SetVarFromStack(
+                        compileState,
+                        varInfo,
+                        m_LineNumber);
+                    compileState.ILGen.EndScope();
+                    throw Return(compileState, m_LeftHandType);
+                }
+                else
+                {
+                    object varInfo = localVars[m_LeftHand.Entry];
+                    m_LeftHandType = GetVarType(varInfo);
+                    ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                    compileState.ILGen.Emit(OpCodes.Dup);
+                    SetVarFromStack(
+                        compileState,
+                        varInfo,
+                        m_LineNumber);
+                    throw Return(compileState, m_LeftHandType);
+                }
             }
 
             public void ProcessOperator_ModifyAssignment(
@@ -339,10 +451,11 @@ namespace SilverSim.Scripting.Lsl
                 Dictionary<string, object> localVars)
             {
                 LocalBuilder componentLocal = null;
-                object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
+                object varInfo;
                 bool isComponentAccess = false;
-                if(m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
                 {
+                    varInfo = localVars[m_LeftHand.SubTree[0].Entry];
                     m_LeftHandType = typeof(double);
                     Type varType = GetVarToStack(compileState, varInfo);
                     componentLocal = DeclareLocal(compileState, varType);
@@ -351,7 +464,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    varInfo = localVars[m_LeftHand.SubTree[0].Entry];
+                    varInfo = localVars[m_LeftHand.Entry];
                 }
 
                 compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
@@ -391,6 +504,11 @@ namespace SilverSim.Scripting.Lsl
                         if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType)
                         {
                             compileState.ILGen.Emit(OpCodes.Sub);
+                            break;
+                        }
+                        if(typeof(string) == m_LeftHandType && typeof(string) == m_RightHandType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
                             break;
                         }
 

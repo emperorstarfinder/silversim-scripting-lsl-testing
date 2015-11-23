@@ -82,11 +82,19 @@ namespace SilverSim.Scripting.Lsl
         readonly List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
         readonly List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
         readonly List<string> m_ReservedWords = new List<string>();
+        readonly List<string> m_Typecasts = new List<string>();
         readonly List<char> m_SingleOps = new List<char>();
         readonly List<char> m_MultiOps = new List<char>();
         readonly List<char> m_NumericChars = new List<char>();
         readonly List<char> m_OpChars = new List<char>();
-        Resolver m_Resolver;
+
+        public enum OperatorType
+        {
+            Unknown,
+            RightUnary,
+            LeftUnary,
+            Binary
+        }
 
         public LSLCompiler()
         {
@@ -111,6 +119,15 @@ namespace SilverSim.Scripting.Lsl
             m_ReservedWords.Add("void");
             m_ReservedWords.Add("quaternion");
 
+            m_Typecasts.Add("integer");
+            m_Typecasts.Add("vector");
+            m_Typecasts.Add("list");
+            m_Typecasts.Add("float");
+            m_Typecasts.Add("string");
+            m_Typecasts.Add("key");
+            m_Typecasts.Add("rotation");
+            m_Typecasts.Add("quaternion");
+
             m_MultiOps.Add('+');
             m_MultiOps.Add('-');
             m_MultiOps.Add('*');
@@ -126,10 +143,6 @@ namespace SilverSim.Scripting.Lsl
 
             m_SingleOps.Add('~');
             m_SingleOps.Add('.');
-            m_SingleOps.Add('(');
-            m_SingleOps.Add(')');
-            m_SingleOps.Add('[');
-            m_SingleOps.Add(']');
             m_SingleOps.Add(',');
             m_SingleOps.Add('@');
 
@@ -195,6 +208,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            #region API Collection
             foreach (IScriptApi api in apis)
             {
                 #region Collect constants
@@ -494,100 +508,103 @@ namespace SilverSim.Scripting.Lsl
                 }
                 #endregion
             }
+            #endregion
 
-            List<Dictionary<string, Resolver.OperatorType>> operators = new List<Dictionary<string, Resolver.OperatorType>>();
+#if OLD_RESOLVER
+            List<Dictionary<string, OperatorType>> m_Operators = new List<Dictionary<string, OperatorType>>();
+
+            Dictionary<string, OperatorType> plist;
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("@", OperatorType.LeftUnary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("++", OperatorType.RightUnary);
+            plist.Add("--", OperatorType.RightUnary);
+            plist.Add(".", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("++", OperatorType.LeftUnary);
+            plist.Add("--", OperatorType.LeftUnary);
+            plist.Add("+", OperatorType.LeftUnary);
+            plist.Add("-", OperatorType.LeftUnary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("(integer)", OperatorType.LeftUnary);
+            plist.Add("(float)", OperatorType.LeftUnary);
+            plist.Add("(string)", OperatorType.LeftUnary);
+            plist.Add("(list)", OperatorType.LeftUnary);
+            plist.Add("(key)", OperatorType.LeftUnary);
+            plist.Add("(vector)", OperatorType.LeftUnary);
+            plist.Add("(rotation)", OperatorType.LeftUnary);
+            plist.Add("(quaternion)", OperatorType.LeftUnary);
+            plist.Add("!", OperatorType.LeftUnary);
+            plist.Add("~", OperatorType.LeftUnary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("*", OperatorType.Binary);
+            plist.Add("/", OperatorType.Binary);
+            plist.Add("%", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("+", OperatorType.Binary);
+            plist.Add("-", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("<<", OperatorType.Binary);
+            plist.Add(">>", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("<", OperatorType.Binary);
+            plist.Add("<=", OperatorType.Binary);
+            plist.Add(">", OperatorType.Binary);
+            plist.Add(">=", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("==", OperatorType.Binary);
+            plist.Add("!=", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("&", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("^", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("|", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("&&", OperatorType.Binary);
+            plist.Add("||", OperatorType.Binary);
+
+            plist = new Dictionary<string, OperatorType>();
+            m_Operators.Add(plist);
+            plist.Add("=", OperatorType.Binary);
+            plist.Add("+=", OperatorType.Binary);
+            plist.Add("-=", OperatorType.Binary);
+            plist.Add("*=", OperatorType.Binary);
+            plist.Add("/=", OperatorType.Binary);
+            plist.Add("%=", OperatorType.Binary);
+
             Dictionary<string, string> blockOps = new Dictionary<string, string>();
             blockOps.Add("(", ")");
             blockOps.Add("[", "]");
 
-            Dictionary<string, Resolver.OperatorType> plist;
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("@", Resolver.OperatorType.LeftUnary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("++", Resolver.OperatorType.RightUnary);
-            plist.Add("--", Resolver.OperatorType.RightUnary);
-            plist.Add(".", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("++", Resolver.OperatorType.LeftUnary);
-            plist.Add("--", Resolver.OperatorType.LeftUnary);
-            plist.Add("+", Resolver.OperatorType.LeftUnary);
-            plist.Add("-", Resolver.OperatorType.LeftUnary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("(integer)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(float)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(string)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(list)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(key)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(vector)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(rotation)", Resolver.OperatorType.LeftUnary);
-            plist.Add("(quaternion)", Resolver.OperatorType.LeftUnary);
-            plist.Add("!", Resolver.OperatorType.LeftUnary);
-            plist.Add("~", Resolver.OperatorType.LeftUnary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("*", Resolver.OperatorType.Binary);
-            plist.Add("/", Resolver.OperatorType.Binary);
-            plist.Add("%", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("+", Resolver.OperatorType.Binary);
-            plist.Add("-", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("<<", Resolver.OperatorType.Binary);
-            plist.Add(">>", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("<", Resolver.OperatorType.Binary);
-            plist.Add("<=", Resolver.OperatorType.Binary);
-            plist.Add(">", Resolver.OperatorType.Binary);
-            plist.Add(">=", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("==", Resolver.OperatorType.Binary);
-            plist.Add("!=", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("&", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("^", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("|", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("&&", Resolver.OperatorType.Binary);
-            plist.Add("||", Resolver.OperatorType.Binary);
-
-            plist = new Dictionary<string, Resolver.OperatorType>();
-            operators.Add(plist);
-            plist.Add("=", Resolver.OperatorType.Binary);
-            plist.Add("+=", Resolver.OperatorType.Binary);
-            plist.Add("-=", Resolver.OperatorType.Binary);
-            plist.Add("*=", Resolver.OperatorType.Binary);
-            plist.Add("/=", Resolver.OperatorType.Binary);
-            plist.Add("%=", Resolver.OperatorType.Binary);
-
             m_Resolver = new Resolver(m_ReservedWords, operators, blockOps);
-
+#endif
             GenerateLSLSyntaxFile();
 
             SilverSim.Scripting.Common.CompilerRegistry.ScriptCompilers["lsl"] = this;

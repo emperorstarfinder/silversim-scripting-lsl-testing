@@ -528,8 +528,8 @@ namespace SilverSim.Scripting.Lsl.Expression
                 case Tree.EntryType.Declaration:
                 case Tree.EntryType.Level:
                 case Tree.EntryType.Function:
+                case Tree.EntryType.OperatorBinary:
                     return true;
-
 
                 default:
                     return false;
@@ -838,7 +838,7 @@ namespace SilverSim.Scripting.Lsl.Expression
             int pos;
             for (pos = 0; pos < tree.SubTree.Count; ++pos)
             {
-                if (tree.SubTree[pos].Type == Tree.EntryType.OperatorUnknown && tree.SubTree[pos].Entry == "." && pos > 0 && pos + 1 < tree.SubTree.Count)
+                if (tree.SubTree[pos].Type == Tree.EntryType.OperatorBinary && tree.SubTree[pos].Entry == "." && pos > 0 && pos + 1 < tree.SubTree.Count)
                 {
                     if (IsValidLeftHand(tree.SubTree[pos - 1]) &&
                         (tree.SubTree[pos + 1].Type == Tree.EntryType.Variable ||

@@ -33,9 +33,7 @@ namespace SilverSim.Scripting.Lsl
             try
             {
                 List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
-                CollapseStringConstants(expressionLine);
-                expressionTree = new Tree(expressionLine, m_OpChars, m_SingleOps, m_NumericChars);
-                SolveTree(compileState, expressionTree, localVars.Keys);
+                expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys);
             }
             catch(Exception e)
             {

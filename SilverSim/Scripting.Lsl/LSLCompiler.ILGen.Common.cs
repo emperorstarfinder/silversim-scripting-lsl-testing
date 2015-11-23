@@ -228,6 +228,26 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
+        void CombineTypecastArguments(List<string> args)
+        {
+            for (int pos = 0; pos < args.Count - 2; ++pos)
+            {
+                if (args[pos] == "(" && m_Typecasts.Contains(args[pos + 1]) && args[pos + 2] == ")")
+                {
+                    args[pos] = "(" + args[pos + 1] + ")";
+                    args.RemoveAt(pos + 1);
+                    args.RemoveAt(pos + 1);
+                }
+            }
+        }
+
+        /*  Process important things before solving operators */
+        void PreprocessLine(List<string> args)
+        {
+            CombineTypecastArguments(args);
+            CollapseStringConstants(args);
+        }
+
         #region Type validation and string representation
         internal static bool IsValidType(Type t)
         {
