@@ -7,6 +7,7 @@ using System.Linq;
 using System.Globalization;
 using System.Text;
 using System.Diagnostics.CodeAnalysis;
+using SilverSim.Scene.Types.Script;
 
 namespace SilverSim.Scripting.Lsl.Expression
 {
@@ -155,7 +156,7 @@ namespace SilverSim.Scripting.Lsl.Expression
             }
         }
 
-        public void Process()
+        public void Process(int lineNumber)
         {
             if(Type == EntryType.StringValue)
             {
@@ -175,7 +176,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 }
                 else
                 {
-                    throw new Resolver.ResolverException(string.Format("'{0}' is not a value", Entry));
+                    throw new CompilerException(lineNumber, string.Format("'{0}' is not a value", Entry));
                 }
             }
         }

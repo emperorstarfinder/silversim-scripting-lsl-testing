@@ -1,6 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
@@ -12,6 +13,7 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
+        #region LSL specific constant types
         sealed class ConstantValueVector : Tree.ConstantValue
         {
             public Vector3 Value;
@@ -51,9 +53,10 @@ namespace SilverSim.Scripting.Lsl
                 return new ConstantValueRotation(-Value);
             }
         }
+        #endregion
 
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        void SolveConstantOperations(Tree tree)
+        void SolveConstantOperations(Tree tree, int lineNumber)
         {
             List<Tree> processNodes = new List<Tree>();
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
@@ -98,7 +101,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException("constant vector cannot contain other values than float or int");
+                                throw new CompilerException(lineNumber, "constant vector cannot contain other values than float or int");
                             }
                         }
 
@@ -125,7 +128,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException("constant rotation cannot contain other values than float or int");
+                                throw new CompilerException(lineNumber, "constant rotation cannot contain other values than float or int");
                             }
                         }
 
@@ -141,7 +144,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (ot.Type == Tree.EntryType.Value && null == ot.Value)
                         {
-                            ot.Process();
+                            ot.Process(lineNumber);
                         }
                     }
                 }
@@ -235,7 +238,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -278,7 +281,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -351,7 +354,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -406,7 +409,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -443,7 +446,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -456,7 +459,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -469,7 +472,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -482,7 +485,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -513,7 +516,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -544,7 +547,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -575,7 +578,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -606,7 +609,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -649,7 +652,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -692,7 +695,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -705,7 +708,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -718,7 +721,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                             }
                             break;
 
@@ -748,7 +751,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                    throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                                 }
 
                                 if (st.SubTree[1].Value is Tree.ConstantValueInt)
@@ -773,7 +776,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                    throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                                 }
 
                                 st.Value = new Tree.ConstantValueInt((isLeftTrue && isRightTrue).ToLSLBoolean());
@@ -806,7 +809,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                    throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                                 }
 
                                 if (st.SubTree[1].Value is Tree.ConstantValueInt)
@@ -831,7 +834,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new Resolver.ResolverException(string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
+                                    throw new CompilerException(lineNumber, string.Format("Cannot process '{0}' on parameters of mismatching type", st.Entry));
                                 }
 
                                 st.Value = new Tree.ConstantValueInt((isLeftTrue || isRightTrue).ToLSLBoolean());
@@ -839,7 +842,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new Resolver.ResolverException(string.Format("Cannot process '{0}': operator is unknown", st.Entry));
+                            throw new CompilerException(lineNumber, string.Format("Cannot process '{0}': operator is unknown", st.Entry));
                     }
                 }
                 #endregion
@@ -848,7 +851,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (st.Entry != "-" && st.SubTree[0].Type == Tree.EntryType.Value)
                     {
-                        st.Process();
+                        st.Process(lineNumber);
                     }
                     if (st.Entry == "+")
                     {
@@ -858,7 +861,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (st.SubTree[0].Value == null)
                         {
-                            st.SubTree[0].Process();
+                            st.SubTree[0].Process(lineNumber);
                         }
                         if (st.Value == null)
                         {
@@ -869,7 +872,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (st.Value is Tree.ConstantValueFloat)
                         {
-                            throw new Resolver.ResolverException("float cannot be binary-negated");
+                            throw new CompilerException(lineNumber, "float cannot be binary-negated");
                         }
                         else if (st.Value is Tree.ConstantValueInt)
                         {
@@ -877,14 +880,14 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (st.Value is Tree.ConstantValueString)
                         {
-                            throw new Resolver.ResolverException("string cannot be binary negated");
+                            throw new CompilerException(lineNumber, "string cannot be binary negated");
                         }
                     }
                     else if (st.Entry == "!")
                     {
                         if (st.Value is Tree.ConstantValueFloat)
                         {
-                            throw new Resolver.ResolverException("float cannot be logically negated");
+                            throw new CompilerException(lineNumber, "float cannot be logically negated");
                         }
                         else if (st.Value is Tree.ConstantValueInt)
                         {
@@ -892,7 +895,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (st.Value is Tree.ConstantValueString)
                         {
-                            throw new Resolver.ResolverException("string cannot be logically negated");
+                            throw new CompilerException(lineNumber, "string cannot be logically negated");
                         }
                     }
                     else if (st.SubTree[0].Value != null)
@@ -1106,7 +1109,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Order Tree according to definitions
-        void OrderOperators_ElementSelector(Tree tree)
+        void OrderOperators_ElementSelector(Tree tree, int lineNumber)
         {
             List<Tree> enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1140,11 +1143,11 @@ namespace SilverSim.Scripting.Lsl
                     }
                     if (pos == 0)
                     {
-                        throw new Resolver.ResolverException("element selector needs a vector or rotation to select something");
+                        throw new CompilerException(lineNumber, "element selector needs a vector or rotation to select something");
                     }
                     if (pos + 1 >= tree.SubTree.Count)
                     {
-                        throw new Resolver.ResolverException("element selector needs a selector");
+                        throw new CompilerException(lineNumber, "element selector needs a selector");
                     }
 
                     switch (tree.SubTree[pos - 1].Type)
@@ -1157,7 +1160,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new Resolver.ResolverException("element selector requires variable, declaration or a function with a return value");
+                            throw new CompilerException(lineNumber, "element selector requires variable, declaration or a function with a return value");
                     }
 
                     switch (tree.SubTree[pos + 1].Entry)
@@ -1169,7 +1172,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new Resolver.ResolverException("invalid element selector '" + tree.SubTree[pos + 1].Entry + "'");
+                            throw new CompilerException(lineNumber, "invalid element selector '" + tree.SubTree[pos + 1].Entry + "'");
                     }
 
                     enumeratorStack.Add(tree.SubTree[pos - 1]);
@@ -1182,7 +1185,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void OrderOperators_IncsDecs(Tree tree)
+        void OrderOperators_IncsDecs(Tree tree, int lineNumber)
         {
             List<Tree> enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1224,7 +1227,7 @@ namespace SilverSim.Scripting.Lsl
                         if (tree.SubTree[pos - 1].Type == Tree.EntryType.OperatorBinary &&
                             tree.SubTree[pos - 1].SubTree[0].Type != Tree.EntryType.Variable)
                         {
-                            throw new Resolver.ResolverException(string.Format("'{0}' needs a variable before '.'.", elem.Entry));
+                            throw new CompilerException(lineNumber, string.Format("'{0}' needs a variable before '.'.", elem.Entry));
                         }
 
                         /* right unary */
@@ -1241,7 +1244,7 @@ namespace SilverSim.Scripting.Lsl
                         if (tree.SubTree[pos + 1].Type == Tree.EntryType.OperatorBinary &&
                             tree.SubTree[pos + 1].SubTree[0].Type != Tree.EntryType.Variable)
                         {
-                            throw new Resolver.ResolverException(string.Format("'{0}' needs a variable before '.'.", elem.Entry));
+                            throw new CompilerException(lineNumber, string.Format("'{0}' needs a variable before '.'.", elem.Entry));
                         }
 
                         /* left unary */
@@ -1262,7 +1265,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void OrderOperators_Common(Tree tree, List<string> operators)
+        void OrderOperators_Common(Tree tree, List<string> operators, int lineNumber)
         {
             List<Tree> enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1298,11 +1301,11 @@ namespace SilverSim.Scripting.Lsl
 
                     if(pos == 0)
                     {
-                        throw new Resolver.ResolverException(string.Format("missing l-value to '{0}'", ent));
+                        throw new CompilerException(lineNumber, string.Format("missing l-value to '{0}'", ent));
                     }
                     else if(pos + 1 >= tree.SubTree.Count)
                     {
-                        throw new Resolver.ResolverException(string.Format("missing r-value to '{0}'", ent));
+                        throw new CompilerException(lineNumber, string.Format("missing r-value to '{0}'", ent));
                     }
 
                     switch(tree.SubTree[pos - 1].Type)
@@ -1321,7 +1324,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new Resolver.ResolverException(string.Format("invalid l-value to '{0}'", ent));
+                            throw new CompilerException(lineNumber, string.Format("invalid l-value to '{0}'", ent));
                     }
 
                     switch (tree.SubTree[pos + 1].Type)
@@ -1340,7 +1343,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new Resolver.ResolverException(string.Format("invalid r-value to '{0}'", ent));
+                            throw new CompilerException(lineNumber, string.Format("invalid r-value to '{0}'", ent));
                     }
 
                     enumeratorStack.Add(tree.SubTree[pos - 1]);
@@ -1355,7 +1358,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         readonly List<string> m_AssignmentOps = new List<string>(new string[] { "=", "+=", "-=", "/=", "%=", "*=" });
-        void OrderOperators_Assignments(Tree tree)
+        void OrderOperators_Assignments(Tree tree, int lineNumber)
         {
             List<Tree> enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1376,11 +1379,11 @@ namespace SilverSim.Scripting.Lsl
 
                     if (pos == 0)
                     {
-                        throw new Resolver.ResolverException(string.Format("missing l-value to '{0}'", ent));
+                        throw new CompilerException(lineNumber, string.Format("missing l-value to '{0}'", ent));
                     }
                     else if (pos + 1 >= tree.SubTree.Count)
                     {
-                        throw new Resolver.ResolverException(string.Format("missing r-value to '{0}'", ent));
+                        throw new CompilerException(lineNumber, string.Format("missing r-value to '{0}'", ent));
                     }
 
                     switch (tree.SubTree[pos - 1].Type)
@@ -1392,12 +1395,12 @@ namespace SilverSim.Scripting.Lsl
                             if(tree.SubTree[pos - 1].Entry != "." ||
                                 tree.SubTree[pos - 1].SubTree[0].Type != Tree.EntryType.Variable)
                             {
-                                throw new Resolver.ResolverException(string.Format("invalid l-value to '{0}'", ent));
+                                throw new CompilerException(lineNumber, string.Format("invalid l-value to '{0}'", ent));
                             }
                             break;
 
                         default:
-                            throw new Resolver.ResolverException(string.Format("invalid l-value to '{0}'", ent));
+                            throw new CompilerException(lineNumber, string.Format("invalid l-value to '{0}'", ent));
                     }
 
                     switch (tree.SubTree[pos + 1].Type)
@@ -1416,7 +1419,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new Resolver.ResolverException(string.Format("invalid r-value to '{0}'", ent));
+                            throw new CompilerException(lineNumber, string.Format("invalid r-value to '{0}'", ent));
                     }
 
                     enumeratorStack.Add(tree.SubTree[pos + 1]);
@@ -1440,7 +1443,7 @@ namespace SilverSim.Scripting.Lsl
             "(key)"
             });
 
-        void OrderOperators_UnaryPlusMinus(Tree tree)
+        void OrderOperators_UnaryPlusMinus(Tree tree, int lineNumber)
         {
             List<Tree> enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1495,7 +1498,7 @@ namespace SilverSim.Scripting.Lsl
                                 break;
 
                             default:
-                                throw new Resolver.ResolverException("invalid right hand parameter to '" + ent + "'");
+                                throw new CompilerException(lineNumber, "invalid right hand parameter to '" + ent + "'");
                         }
 
                         /* right unary */
@@ -1519,24 +1522,24 @@ namespace SilverSim.Scripting.Lsl
         readonly List<string> m_LogicalOps = new List<string>(new string[] { "&&", "||" });
 
 
-        void OrderOperators(Tree tree)
+        void OrderOperators(Tree tree, int lineNumber)
         {
-            OrderOperators_ElementSelector(tree);
-            OrderOperators_IncsDecs(tree);
-            OrderOperators_UnaryPlusMinus(tree);
-            OrderOperators_Common(tree, m_MulDivOps);
-            OrderOperators_Common(tree, m_AddSubOps);
-            OrderOperators_Common(tree, m_BitwiseShiftOps);
-            OrderOperators_Common(tree, m_CompareOps);
-            OrderOperators_Common(tree, m_CompareEqualityOps);
-            OrderOperators_Common(tree, m_BitwiseAndOps);
-            OrderOperators_Common(tree, m_BitwiseXorOps);
-            OrderOperators_Common(tree, m_BitwiseOrOps);
-            OrderOperators_Common(tree, m_LogicalOps);
-            OrderOperators_Assignments(tree);
+            OrderOperators_ElementSelector(tree, lineNumber);
+            OrderOperators_IncsDecs(tree, lineNumber);
+            OrderOperators_UnaryPlusMinus(tree, lineNumber);
+            OrderOperators_Common(tree, m_MulDivOps, lineNumber);
+            OrderOperators_Common(tree, m_AddSubOps, lineNumber);
+            OrderOperators_Common(tree, m_BitwiseShiftOps, lineNumber);
+            OrderOperators_Common(tree, m_CompareOps, lineNumber);
+            OrderOperators_Common(tree, m_CompareEqualityOps, lineNumber);
+            OrderOperators_Common(tree, m_BitwiseAndOps, lineNumber);
+            OrderOperators_Common(tree, m_BitwiseXorOps, lineNumber);
+            OrderOperators_Common(tree, m_BitwiseOrOps, lineNumber);
+            OrderOperators_Common(tree, m_LogicalOps, lineNumber);
+            OrderOperators_Assignments(tree, lineNumber);
         }
 
-        void OrderBrackets_SeparateArguments(Tree resolvetree, string elemname, Tree.EntryType type)
+        void OrderBrackets_SeparateArguments(Tree resolvetree, string elemname, Tree.EntryType type, int lineNumber)
         { 
             List<int> argBegin = new List<int>();
             List<int> argEnd = new List<int>();
@@ -1550,7 +1553,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if(!paraLast)
                     {
-                        throw new Resolver.ResolverException("Missing " + elemname + " before ','");
+                        throw new CompilerException(lineNumber, "Missing " + elemname + " before ','");
                     }
                     else
                     {
@@ -1569,7 +1572,7 @@ namespace SilverSim.Scripting.Lsl
             }
             if(!paraLast && n != 0)
             {
-                throw new Resolver.ResolverException("Missing " + elemname + " after ','");
+                throw new CompilerException(lineNumber, "Missing " + elemname + " after ','");
             }
 
             if (paraLast)
@@ -1579,7 +1582,7 @@ namespace SilverSim.Scripting.Lsl
 
             if (argBegin.Count != argEnd.Count)
             {
-                throw new Resolver.ResolverException(elemname + " invalid");
+                throw new CompilerException(lineNumber, elemname + " invalid");
             }
 
             List<Tree> arguments = new List<Tree>();
@@ -1595,7 +1598,7 @@ namespace SilverSim.Scripting.Lsl
             resolvetree.SubTree = arguments;
         }
 
-        void OrderBrackets(CompileState cs, Tree resolvetree)
+        void OrderBrackets(CompileState cs, Tree resolvetree, int lineNumber)
         {
 #if DEBUG
             cs.ILGen.Writer.WriteLine("  //** Tree Flat Begin");
@@ -1635,11 +1638,11 @@ namespace SilverSim.Scripting.Lsl
                     case ")":
                         if(parenStack.Count == 0)
                         {
-                            throw new Resolver.ResolverException("')' does not have preceeding '('");
+                            throw new CompilerException(lineNumber, "')' does not have preceeding '('");
                         }
                         else if(parenStack[0].Key != "(")
                         {
-                            throw new Resolver.ResolverException(string.Format("')' does not match preceeding '{0}'", parenStack[0].Key));
+                            throw new CompilerException(lineNumber, string.Format("')' does not match preceeding '{0}'", parenStack[0].Key));
                         }
                         else
                         {
@@ -1654,7 +1657,11 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 resolvetree.SubTree[startPos - 1].SubTree = resolvetree.SubTree[startPos].SubTree;
                                 resolvetree.SubTree.RemoveRange(startPos, i - startPos + 1);
-                                OrderBrackets_SeparateArguments(resolvetree.SubTree[startPos - 1], "parameter", Tree.EntryType.FunctionArgument);
+                                OrderBrackets_SeparateArguments(
+                                    resolvetree.SubTree[startPos - 1], 
+                                    "parameter", 
+                                    Tree.EntryType.FunctionArgument, 
+                                    lineNumber);
                                 i = startPos;
                             }
                             else
@@ -1672,11 +1679,11 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (parenStack.Count == 0)
                         {
-                            throw new Resolver.ResolverException("'>' does not have preceeding '<'");
+                            throw new CompilerException(lineNumber, "'>' does not have preceeding '<'");
                         }
                         else if (parenStack[0].Key != "<")
                         {
-                            throw new Resolver.ResolverException(string.Format("'>' does not match preceeding '{0}'", parenStack[0].Key));
+                            throw new CompilerException(lineNumber, string.Format("'>' does not match preceeding '{0}'", parenStack[0].Key));
                         }
                         else
                         {
@@ -1688,7 +1695,11 @@ namespace SilverSim.Scripting.Lsl
                             }
                             resolvetree.SubTree.RemoveRange(startPos + 1, i - startPos);
 
-                            OrderBrackets_SeparateArguments(resolvetree.SubTree[startPos], "vector/rotation element", Tree.EntryType.DeclarationArgument);
+                            OrderBrackets_SeparateArguments(
+                                resolvetree.SubTree[startPos], 
+                                "vector/rotation element", 
+                                Tree.EntryType.DeclarationArgument,
+                                lineNumber);
                             switch(resolvetree.SubTree[startPos].SubTree.Count)
                             {
                                 case 3:
@@ -1700,7 +1711,7 @@ namespace SilverSim.Scripting.Lsl
                                     break;
 
                                 default:
-                                    throw new Resolver.ResolverException("invalid number of elements in vector/rotation declaration");
+                                    throw new CompilerException(lineNumber, "invalid number of elements in vector/rotation declaration");
                             }
 
                             i = startPos + 1;
@@ -1710,11 +1721,11 @@ namespace SilverSim.Scripting.Lsl
                     case "]":
                         if (parenStack.Count == 0)
                         {
-                            throw new Resolver.ResolverException("']' does not have preceeding '['");
+                            throw new CompilerException(lineNumber, "']' does not have preceeding '['");
                         }
                         else if(parenStack[0].Key != "[")
                         {
-                            throw new Resolver.ResolverException(string.Format("']' does not match preceeding '{0}'", parenStack[0].Key));
+                            throw new CompilerException(lineNumber, string.Format("']' does not match preceeding '{0}'", parenStack[0].Key));
                         }
                         else
                         {
@@ -1726,7 +1737,11 @@ namespace SilverSim.Scripting.Lsl
                             }
                             resolvetree.SubTree.RemoveRange(startPos + 1, i - startPos);
 
-                            OrderBrackets_SeparateArguments(resolvetree.SubTree[startPos], "list element", Tree.EntryType.DeclarationArgument);
+                            OrderBrackets_SeparateArguments(
+                                resolvetree.SubTree[startPos], 
+                                "list element", 
+                                Tree.EntryType.DeclarationArgument,
+                                lineNumber);
 
                             i = startPos + 1;
                         }
@@ -1741,11 +1756,11 @@ namespace SilverSim.Scripting.Lsl
 
         #endregion
 
-        void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames)
+        void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames, int lineNumber)
         {
             //m_Resolver.Process(resolvetree, varNames);
             SolveMaxNegValues(cs, resolvetree);
-            SolveConstantOperations(resolvetree);
+            SolveConstantOperations(resolvetree, lineNumber);
         }
 
         #region Pre-Tree identifiers
@@ -1987,7 +2002,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void IdentifyFunctions(CompileState cs, Tree resolvetree)
+        void IdentifyFunctions(CompileState cs, Tree resolvetree, int lineNumber)
         {
             int n = resolvetree.SubTree.Count;
             for (int i = 0; i < n; ++i)
@@ -2004,11 +2019,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if(i + 1 >= n)
                     {
-                        throw new Resolver.ResolverException("Function '" + ent + "' is not followed by '('");
+                        throw new CompilerException(lineNumber, "Function '" + ent + "' is not followed by '('");
                     }
                     else if(resolvetree.SubTree[i + 1].Entry != "(")
                     {
-                        throw new Resolver.ResolverException("Invalid call to function '" + ent + "'");
+                        throw new CompilerException(lineNumber, "Invalid call to function '" + ent + "'");
                     }
                     else
                     {
@@ -2019,12 +2034,12 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames)
+        Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames, int lineNumber)
         {
             PreprocessLine(expressionLine);
             Tree expressionTree = new Tree(expressionLine);
             IdentifyReservedWords(cs, expressionTree);
-            IdentifyFunctions(cs, expressionTree);
+            IdentifyFunctions(cs, expressionTree, lineNumber);
             IdentifyVariables(cs, expressionTree, localVarNames);
             IdentifyOperators(cs, expressionTree);
             IdentifyNumericValues(cs, expressionTree);
@@ -2066,20 +2081,24 @@ namespace SilverSim.Scripting.Lsl
                         msg = string.Format("no variable '{0}' defined", entry);
                     }
                 }
-                st.Process();
+                st.Process(lineNumber);
             }
 
             if(msg.Length != 0)
             {
-                throw new Resolver.ResolverException(msg);
+                throw new CompilerException(lineNumber, msg);
             }
 
             /* After OrderBrackets only deep-scanners can be used */
-            OrderBrackets(cs, expressionTree);
+            OrderBrackets(cs, expressionTree, lineNumber);
 
-            OrderOperators(expressionTree);
+            OrderOperators(expressionTree, lineNumber);
 
-            SolveTree(cs, expressionTree, localVarNames);
+            SolveTree(cs, expressionTree, localVarNames, lineNumber);
+            if (expressionTree.SubTree.Count != 1)
+            {
+                throw new CompilerException(lineNumber, "Internal Error! Expression tree not solved");
+            }
             return expressionTree;
         }
     }

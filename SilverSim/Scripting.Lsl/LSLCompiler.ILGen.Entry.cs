@@ -220,7 +220,7 @@ namespace SilverSim.Scripting.Lsl
                         Tree expressionTree;
                         try
                         {
-                            expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys);
+                            expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber);
                         }
                         catch (Exception e)
                         {

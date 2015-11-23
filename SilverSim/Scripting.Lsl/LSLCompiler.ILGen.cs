@@ -29,16 +29,9 @@ namespace SilverSim.Scripting.Lsl
                 throw new NotSupportedException();
             }
 
-            Tree expressionTree;
-            try
-            {
-                List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
-                expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys);
-            }
-            catch(Exception e)
-            {
-                throw CompilerException(functionLine, e.Message);
-            }
+            List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
+            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber);
+
             ProcessExpression(
                 compileState, 
                 expectedType, 
