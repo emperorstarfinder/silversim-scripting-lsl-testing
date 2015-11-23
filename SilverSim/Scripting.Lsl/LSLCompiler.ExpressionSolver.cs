@@ -1456,7 +1456,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     Tree elem = tree.SubTree[pos];
                     string ent = elem.Entry;
-                    if ((ent != "+" && ent != "-" && ent != "!" && ent != "~" &&
+                    if ((ent != "-" && ent != "!" && ent != "~" &&
                         !m_TypecastOperators.Contains(ent)) ||
                         elem.Type != Tree.EntryType.OperatorUnknown)
                     {
@@ -1499,6 +1499,17 @@ namespace SilverSim.Scripting.Lsl
 
                             default:
                                 throw new CompilerException(lineNumber, "invalid right hand parameter to '" + ent + "'");
+                        }
+
+                        if(pos > 0 && (ent == "-"))
+                        {
+                            if(tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorUnknown &&
+                                tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorBinary &&
+                                tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorLeftUnary &&
+                                tree.SubTree[pos - 1].Type != Tree.EntryType.OperatorRightUnary)
+                            {
+                                continue;
+                            }
                         }
 
                         /* right unary */
