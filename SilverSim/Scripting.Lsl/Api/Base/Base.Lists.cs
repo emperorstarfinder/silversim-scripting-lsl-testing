@@ -3,6 +3,7 @@
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -716,5 +717,129 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        static int ElementCompare(IValue left, IValue right)
+        {
+            Type leftType = left.GetType();
+            if (left.GetType() != right.GetType())
+            {
+                /* as per LSL behaviour, unequal types are considered equal */
+                return 0;
+            }
+
+            if(leftType == typeof(LSLKey) || leftType == typeof(AString))
+            {
+                return string.CompareOrdinal(left.ToString(), right.ToString());
+            }
+            else if(leftType == typeof(Integer))
+            {
+                return Math.Sign(left.AsInt - right.AsInt);
+            }
+            else if(leftType == typeof(Real))
+            {
+                return Math.Sign(left.AsReal - right.AsReal);
+            }
+            else if(leftType == typeof(Vector3))
+            {
+                return Math.Sign(left.AsVector3.Length - right.AsVector3.Length);
+            }
+            else if(leftType == typeof(Quaternion))
+            {
+                return Math.Sign(left.AsQuaternion.Length - right.AsQuaternion.Length);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        static int ElementCompareDescending(IValue left, IValue right)
+        {
+            return 0 - ElementCompare(left, right);
+        }
+
+        [APILevel(APIFlags.LSL, "llListSort")]
+        [LSLTooltip("Returns a list that is src sorted by stride.")]
+        public AnArray ListSort(ScriptInstance instance, 
+            [LSLTooltip("List to be sorted")]
+            AnArray src,
+            [LSLTooltip("number of entries per stride. If it is less than 1, it is assumed to be 1.")]
+            int stride,
+            [LSLTooltip("If TRUE, the sort order is ascending. Otherwise, the order is descending.")]
+            int ascending)
+        {
+            AnArray res;
+
+            if (0 == src.Count)
+            {
+                return new AnArray();
+            }
+
+            IValue[] ret = src.ToArray();
+            if(stride < 2)
+            {
+                bool homogenousTypeEntries = true;
+                int index;
+                Type firstEntryType = ret[0].GetType();
+                for (index = 1; index < ret.Length; index++)
+                {
+                    if (firstEntryType != ret[index].GetType())
+                    {
+                        homogenousTypeEntries = false;
+                        break;
+                    }
+                }
+
+                if (homogenousTypeEntries)
+                {
+                    if (ascending == 1)
+                    {
+                        Array.Sort(ret, ElementCompare);
+                    }
+                    else
+                    {
+                        Array.Sort(ret, ElementCompareDescending);
+                    }
+                    res = new AnArray();
+                    res.AddRange(ret);
+                    return res;
+                }
+            }
+
+            int i;
+            int j;
+            int k;
+            int n = ret.Length;
+
+            Func<IValue, IValue, int> compare;
+            if (ascending == 1)
+            {
+                compare = ElementCompare;
+            }
+            else
+            {
+                compare = ElementCompareDescending;
+            }
+
+            /* a slow bubble-sort in unoptimized style see LSL wiki for the llSortList description */
+            for (i = 0; i < (n - stride); i += stride)
+            {
+                for (j = i + stride; j < n; j += stride)
+                {
+                    if (compare(ret[i], ret[j]) > 0)
+                    {
+                        for (k = 0; k < stride; k++)
+                        {
+                            IValue tmp = ret[i + k];
+                            ret[i + k] = ret[j + k];
+                            ret[j + k] = tmp;
+                        }
+                    }
+                }
+            }
+
+            res = new AnArray();
+            res.AddRange(ret);
+            return res;
+        }
     }
 }
