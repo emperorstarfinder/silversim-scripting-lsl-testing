@@ -1908,7 +1908,6 @@ namespace SilverSim.Scripting.Lsl
                 if(st.Type == Tree.EntryType.Value)
                 {
                     /* let us find negation signs beforehand */
-                    int j;
                     if (i == 1 && 
                         resolvetree.SubTree[i - 1].Entry == "-" &&
                         resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown)
