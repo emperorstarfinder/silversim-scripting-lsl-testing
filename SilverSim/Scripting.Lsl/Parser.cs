@@ -246,7 +246,7 @@ redo:
                             {
                                 token += c.ToString();
 
-                                if(token == "//")
+                                if(token.EndsWith("//"))
                                 {
                                     /* got C++-style comment */
                                     CurrentLineNumber = -1;
@@ -265,10 +265,11 @@ redo:
                                             throw;
                                         }
                                     }
-                                    token = string.Empty;
+                                    token = token.Substring(0, token.Length - 2);
+                                    c = ' ';
                                     goto redo;
                                 }
-                                if(token == "/*")
+                                if(token.EndsWith("/*"))
                                 {
                                     /* got C-style comment */
                                     CurrentLineNumber = -1;
@@ -312,7 +313,7 @@ redo:
                                         }
                                     }
 
-                                    token = string.Empty;
+                                    token = token.Substring(0, token.Length - 2);
                                     c = ' ';
                                     goto redo;
                                 }

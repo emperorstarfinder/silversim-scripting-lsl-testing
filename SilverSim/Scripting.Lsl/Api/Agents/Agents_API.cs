@@ -54,6 +54,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int AGENT_AUTOPILOT = 0x2000;
 
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_LIST_PARCEL = 1;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_LIST_PARCEL_OWNER = 2;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int AGENT_LIST_REGION = 4;
+
+        [APILevel(APIFlags.LSL, "llGetAgentList")]
+        public AnArray GetAgentList(ScriptInstance instance, int scope, AnArray options)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetAgentInfo")]
         public int GetAgentInfo(ScriptInstance instance, LSLKey id)
         {

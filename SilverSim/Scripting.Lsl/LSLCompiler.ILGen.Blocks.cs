@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (labels[labelName].IsDefined)
                             {
-                                throw CompilerException(functionLine, "label already defined");
+                                throw CompilerException(functionLine, string.Format("label '{0}' already defined", labelName));
                             }
                             else
                             {
@@ -378,7 +378,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    labels,
                                     false);
                                 //compileState.ILGen.EndScope();
                             }
@@ -459,7 +459,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    labels,
                                     false);
                                 //compileState.ILGen.EndScope();
                             }
@@ -496,7 +496,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    labels,
                                     false);
                                 //compileState.ILGen.EndScope();
                             }
@@ -607,7 +607,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    labels,
                                     false);
                                 //compileState.ILGen.EndScope();
                             }
@@ -673,7 +673,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    labels,
                                     false);
                                 //compileState.ILGen.EndScope();
                             }
@@ -699,7 +699,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    labels,
                                     false);
                                 //compileState.ILGen.EndScope();
                             }
@@ -731,7 +731,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState,
                             returnType,
                             new Dictionary<string, object>(localVars),
-                            new Dictionary<string, ILLabelInfo>(labels),
+                            labels,
                             false);
                         //compileState.ILGen.EndScope();
                         break;
@@ -882,11 +882,12 @@ namespace SilverSim.Scripting.Lsl
 
             compileState.FunctionBody = functionBody;
             compileState.FunctionLineIndex = 1;
+            Dictionary<string, ILLabelInfo> labels = new Dictionary<string, ILLabelInfo>();
             ProcessBlock(
                 compileState,
                 mb.ReturnType,
                 localVars,
-                new Dictionary<string, ILLabelInfo>());
+                labels);
 
             /* we have no missing return value check right now, so we simply emit default values in that case */
             if (returnType == typeof(int))
@@ -918,6 +919,23 @@ namespace SilverSim.Scripting.Lsl
                 ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
             }
             ilgen.Emit(OpCodes.Ret);
+
+            string message = string.Empty;
+            Dictionary<int, string> labelsUndefined = new Dictionary<int, string>();
+            foreach (KeyValuePair<string, ILLabelInfo> kvp in labels)
+            {
+                if(!kvp.Value.IsDefined)
+                {
+                    foreach (int i in kvp.Value.UsedInLines)
+                    {
+                        labelsUndefined.Add(i, string.Format("Undefined label '{0}' used", kvp.Key));
+                    }
+                }
+            }
+            if(labelsUndefined.Count != 0)
+            {
+                throw new CompilerException(labelsUndefined);
+            }
 
             if(compileState.HaveMoreLines)
             {

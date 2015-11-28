@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Reflection;
@@ -15,6 +16,7 @@ namespace SilverSim.Scripting.Lsl
     {
         ILGenerator m_ILGen;
         public readonly StreamWriter Writer;
+        List<Label> m_DefinedLabels = new List<Label>();
 
         public ILGenDumpProxy(ILGenerator ilgen, StreamWriter textWriter)
         {
@@ -84,6 +86,7 @@ namespace SilverSim.Scripting.Lsl
         {
             Label lb = m_ILGen.DefineLabel();
             Writer.WriteLine("DefineLabel() = {0}", lb.ToString());
+            m_DefinedLabels.Add(lb);
             return lb;
         }
 
@@ -241,6 +244,7 @@ namespace SilverSim.Scripting.Lsl
 
         public void MarkLabel(Label loc)
         {
+            m_DefinedLabels.Remove(loc);
             Writer.WriteLine("MarkLabel({0})", loc.ToString());
             m_ILGen.MarkLabel(loc);
         }
