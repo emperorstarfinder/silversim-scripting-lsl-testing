@@ -12,7 +12,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetTimestamp")]
         public string GetTimestamp(ScriptInstance instance)
         {
-            return DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+            return DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         }
 
         [APILevel(APIFlags.LSL, "llGetUnixTime")]
