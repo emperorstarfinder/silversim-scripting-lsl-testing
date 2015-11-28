@@ -432,7 +432,7 @@ redo:
                         if (i + 1 < curlength)
                         {
                             if (!Char.IsDigit(args[argi][i + 1]) &&
-                                (i == 0 || !Char.IsDigit(args[argi][i - 1])))
+                                (i == 0 || !Char.IsDigit(args[argi][0])))
                             {
                                 if (i > 0)
                                 {
