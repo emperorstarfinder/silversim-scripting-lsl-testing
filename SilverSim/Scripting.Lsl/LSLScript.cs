@@ -205,6 +205,14 @@ namespace SilverSim.Scripting.Lsl
 
         }
 
+        public void ForcedSleep(int forcedSleepMs)
+        {
+            if(UseForcedSleep)
+            {
+                System.Threading.Thread.Sleep(forcedSleepMs);
+            }
+        }
+
         private void OnPrimUpdate(ObjectPart part, UpdateChangedFlags flags)
         {
             ChangedEvent.ChangedFlags changedflags = (ChangedEvent.ChangedFlags)(uint)flags;

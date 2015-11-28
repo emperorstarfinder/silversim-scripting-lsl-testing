@@ -157,6 +157,21 @@ namespace SilverSim.Scripting.Lsl
                 if(m_Parameters.Count == 0)
                 {
                     compileState.ILGen.Emit(OpCodes.Call, m_MethodInfo);
+
+                    if (m_MethodInfo.GetType().Equals(typeof(MethodInfo)))
+                    {
+                        ForcedSleep forcedSleep = (ForcedSleep)Attribute.GetCustomAttribute(m_MethodInfo, typeof(ForcedSleep));
+                        if (forcedSleep != null)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                            if (compileState.StateTypeBuilder != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldfld, compileState.StateTypeBuilder.GetField("ScriptInstance"));
+                            }
+                            compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)(forcedSleep.Seconds * 1000));
+                            compileState.ILGen.Emit(OpCodes.Call, compileState.ScriptTypeBuilder.GetMethod("ForcedSleep", new Type[] { typeof(int) }));
+                        }
+                    }
                     throw new ReturnTypeException(m_FunctionReturnType, m_LineNumber);
                 }
                 else

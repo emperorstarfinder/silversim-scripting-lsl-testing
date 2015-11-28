@@ -24,6 +24,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.LSL, "llSetLocalRot")]
+        [ForcedSleep(0.2)]
         public void SetLocalRot(ScriptInstance instance, Quaternion rot)
         {
             lock(instance)
