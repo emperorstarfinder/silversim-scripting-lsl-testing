@@ -38,7 +38,6 @@ namespace SilverSim.Scripting.Lsl
                 labels[functionLine.Line[1]].UsedInLines.Add(functionLine.LineNumber);
 
                 compileState.ILGen.Emit(OpCodes.Br, labels[functionLine.Line[1]].Label);
-                compileState.PopControlFlowImplicit(functionLine.LineNumber);
                 return;
             }
             #endregion
@@ -129,7 +128,12 @@ namespace SilverSim.Scripting.Lsl
                         localVars);
                 }
                 compileState.ILGen.Emit(OpCodes.Ret);
-                compileState.PopControlFlowImplicit(functionLine.LineNumber);
+                return;
+            }
+            #endregion
+            #region Empty Statement
+            else if(functionLine.Line[startAt] == ";")
+            {
                 return;
             }
             #endregion
@@ -140,7 +144,6 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ILGen.Emit(OpCodes.Ldstr, functionLine.Line[1]);
                 compileState.ILGen.Emit(OpCodes.Newobj, typeof(ChangeStateException).GetConstructor(new Type[1] { typeof(string) }));
                 compileState.ILGen.Emit(OpCodes.Throw);
-                compileState.PopControlFlowImplicit(functionLine.LineNumber);
                 return;
             }
             #endregion

@@ -11,7 +11,7 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        CompilerException CompilerException(LineInfo p, string message)
+        static CompilerException CompilerException(LineInfo p, string message)
         {
             return new CompilerException(p.LineNumber, message);
         }

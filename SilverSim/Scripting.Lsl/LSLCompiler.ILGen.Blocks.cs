@@ -12,33 +12,28 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        
         void ProcessBlock(
             CompileState compileState,
             Type returnType,
-            List<LineInfo> functionBody,
             Dictionary<string, object> localVars,
-            ref int lineIndex)
+            Dictionary<string, ILLabelInfo> labels,
+            bool isImplicit = false)
         {
-            Dictionary<string, ILLabelInfo> labels;
-
-            List<Dictionary<string, object>> localVarsStack = new List<Dictionary<string, object>>();
-            List<Dictionary<string, ILLabelInfo>> labelsStack = new List<Dictionary<string, ILLabelInfo>>();
-            localVarsStack.Insert(0, localVars);
-            labelsStack.Insert(0, new Dictionary<string,ILLabelInfo>());
-            int blockLevel = 1;
-
-            for (; lineIndex < functionBody.Count; ++lineIndex)
+            Label? eoif_label = null;
+            do
             {
-                localVars = localVarsStack[0];
-                labels = labelsStack[0];
-                LineInfo functionLine = functionBody[lineIndex];
+                LineInfo functionLine = compileState.GetLine();
                 LocalBuilder lb;
                 switch (functionLine.Line[0])
                 {
                     #region Label definition
                     case "@":
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+                        if(eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         if (functionLine.Line.Count != 3 || functionLine.Line[2] != ";")
                         {
                             throw CompilerException(functionLine, "not a valid label definition");
@@ -67,13 +62,17 @@ namespace SilverSim.Scripting.Lsl
                     #region Variable declarations
                     /* type named things are variable declaration */
                     case "integer":
-                        if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
+                        if (isImplicit)
                         {
-                            throw CompilerException(functionLine,
-                                string.Format("variable declaration cannot be a single statement within flow control '{0}'",
-                                compileState.GetControlFlowInfo(functionLine.LineNumber)));
+                            throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         lb = compileState.ILGen.DeclareLocal(typeof(int));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -98,13 +97,17 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "vector":
-                        if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
+                        if (isImplicit)
                         {
-                            throw CompilerException(functionLine,
-                                string.Format("variable declaration cannot be a single statement within flow control '{0}'",
-                                compileState.GetControlFlowInfo(functionLine.LineNumber)));
+                            throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         lb = compileState.ILGen.DeclareLocal(typeof(Vector3));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -129,13 +132,17 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "list":
-                        if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
+                        if (isImplicit)
                         {
-                            throw CompilerException(functionLine,
-                                string.Format("variable declaration cannot be a single statement within flow control '{0}'",
-                                compileState.GetControlFlowInfo(functionLine.LineNumber)));
+                            throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         lb = compileState.ILGen.DeclareLocal(typeof(AnArray));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -160,13 +167,17 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "float":
-                        if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
+                        if (isImplicit)
                         {
-                            throw CompilerException(functionLine,
-                                string.Format("variable declaration cannot be a single statement within flow control '{0}'",
-                                compileState.GetControlFlowInfo(functionLine.LineNumber)));
+                            throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         lb = compileState.ILGen.DeclareLocal(typeof(double));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -190,13 +201,17 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "string":
-                        if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
+                        if (isImplicit)
                         {
-                            throw CompilerException(functionLine,
-                                string.Format("variable declaration cannot be a single statement within flow control '{0}'",
-                                compileState.GetControlFlowInfo(functionLine.LineNumber)));
+                            throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         lb = compileState.ILGen.DeclareLocal(typeof(string));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -221,13 +236,17 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "key":
-                        if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
+                        if (isImplicit)
                         {
-                            throw CompilerException(functionLine,
-                                string.Format("variable declaration cannot be a single statement within flow control '{0}'",
-                                compileState.GetControlFlowInfo(functionLine.LineNumber)));
+                            throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         lb = compileState.ILGen.DeclareLocal(typeof(LSLKey));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -253,13 +272,17 @@ namespace SilverSim.Scripting.Lsl
 
                     case "rotation":
                     case "quaternion":
-                        if (compileState.IsImplicitControlFlow(functionLine.LineNumber))
+                        if (isImplicit)
                         {
-                            throw CompilerException(functionLine,
-                                string.Format("variable declaration cannot be a single statement within flow control '{0}'",
-                                compileState.GetControlFlowInfo(functionLine.LineNumber)));
+                            throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         lb = compileState.ILGen.DeclareLocal(typeof(Quaternion));
                         if (compileState.EmitDebugSymbols)
                         {
@@ -285,8 +308,14 @@ namespace SilverSim.Scripting.Lsl
                     #endregion
 
                     #region Control Flow (Loops)
-                        /* Control Flow Statements are pre-splitted into own lines with same line number, so we do not have to care about here */
+                    /* Control Flow Statements are pre-splitted into own lines with same line number, so we do not have to care about here */
                     case "for":
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         {   /* for(a;b;c) */
                             int semicolon1, semicolon2;
                             int endoffor;
@@ -317,7 +346,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 ProcessStatement(
                                     compileState,
-                                    returnType,
+                                    typeof(void),
                                     2,
                                     semicolon1 - 1,
                                     functionLine,
@@ -326,14 +355,6 @@ namespace SilverSim.Scripting.Lsl
                             }
                             Label endlabel = compileState.ILGen.DefineLabel();
                             Label looplabel = compileState.ILGen.DefineLabel();
-                            compileState.m_UnnamedLabels.Add(endlabel, new KeyValuePair<int, string>(functionLine.LineNumber, "For End Label"));
-                            ControlFlowElement elem = new ControlFlowElement(
-                                ControlFlowType.For,
-                                functionLine.Line[functionLine.Line.Count - 1] == "{",
-                                looplabel,
-                                endlabel,
-                                compileState.IsImplicitControlFlow(functionLine.LineNumber));
-                            compileState.PushControlFlow(elem);
 
                             compileState.ILGen.MarkLabel(looplabel);
 
@@ -352,15 +373,49 @@ namespace SilverSim.Scripting.Lsl
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
                                 /* block */
-                                compileState.ILGen.BeginScope();
-                                ++blockLevel;
-                                localVarsStack.Insert(0, new Dictionary<string, object>(localVars));
-                                labelsStack.Insert(0, new Dictionary<string, ILLabelInfo>(labels));
+                                //compileState.ILGen.BeginScope();
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    new Dictionary<string, object>(localVars),
+                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    false);
+                                //compileState.ILGen.EndScope();
                             }
+                            else
+                            {
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    localVars,
+                                    labels,
+                                    true);
+                            }
+
+                            if (semicolon2 + 1 != endoffor)
+                            {
+                                ProcessExpression(
+                                    compileState,
+                                    typeof(void),
+                                    semicolon2 + 1,
+                                    endoffor - 1,
+                                    functionLine,
+                                    localVars);
+                            }
+
+
+                            compileState.ILGen.Emit(OpCodes.Br, looplabel);
+                            compileState.ILGen.MarkLabel(endlabel);
                         }
                         break;
 
                     case "while":
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         {
                             int endofwhile;
                             int countparens = 0;
@@ -386,16 +441,6 @@ namespace SilverSim.Scripting.Lsl
 
                             Label looplabel = compileState.ILGen.DefineLabel();
                             Label endlabel = compileState.ILGen.DefineLabel();
-                            compileState.m_UnnamedLabels.Add(endlabel, new KeyValuePair<int, string>(functionLine.LineNumber, "While End Label"));
-                            ControlFlowElement elem = new ControlFlowElement(
-                                ControlFlowType.While,
-                                functionLine.Line[functionLine.Line.Count - 1] == "{",
-                                looplabel,
-                                endlabel,
-                                compileState.IsImplicitControlFlow(functionLine.LineNumber));
-                            compileState.PushControlFlow(elem);
-
-                            compileState.ILGen.Emit(OpCodes.Br, endlabel);
 
                             compileState.ILGen.MarkLabel(looplabel);
                             ProcessExpression(
@@ -409,48 +454,120 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                compileState.ILGen.BeginScope();
-                                ++blockLevel;
-                                localVarsStack.Insert(0, new Dictionary<string, object>(localVars));
-                                labelsStack.Insert(0, new Dictionary<string, ILLabelInfo>(labels));
+                                //compileState.ILGen.BeginScope();
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    new Dictionary<string, object>(localVars),
+                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    false);
+                                //compileState.ILGen.EndScope();
                             }
+                            else
+                            {
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    localVars,
+                                    labels,
+                                    true);
+                            }
+
+                            compileState.ILGen.Emit(OpCodes.Br, looplabel);
+                            compileState.ILGen.MarkLabel(endlabel);
                         }
                         break;
 
                     case "do":
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         {
                             Label looplabel = compileState.ILGen.DefineLabel();
-                            Label endlabel = compileState.ILGen.DefineLabel();
-                            compileState.m_UnnamedLabels.Add(endlabel, new KeyValuePair<int, string>(functionLine.LineNumber, "Do While End Label"));
-                            ControlFlowElement elem = new ControlFlowElement(
-                                ControlFlowType.DoWhile,
-                                functionLine.Line[functionLine.Line.Count - 1] == "{",
-                                looplabel,
-                                endlabel,
-                                compileState.IsImplicitControlFlow(functionLine.LineNumber));
-                            compileState.PushControlFlow(elem);
 
                             compileState.ILGen.MarkLabel(looplabel);
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                compileState.ILGen.BeginScope();
-                                ++blockLevel;
-                                localVarsStack.Insert(0, new Dictionary<string, object>(localVars));
-                                labelsStack.Insert(0, new Dictionary<string, ILLabelInfo>(labels));
+                                //compileState.ILGen.BeginScope();
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    new Dictionary<string, object>(localVars),
+                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    false);
+                                //compileState.ILGen.EndScope();
                             }
+                            else
+                            {
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    localVars,
+                                    labels,
+                                    true);
+                            }
+
+                            functionLine = compileState.GetLine("Missing 'while' for 'do'");
+                            if(functionLine.Line[0] != "while")
+                            {
+                                throw CompilerException(functionLine, "Missing 'while' for 'do'");
+                            }
+
+                            if (compileState.GetLine("Invalid 'while' for 'do'").Line[0] != ";")
+                            {
+                                throw CompilerException(functionLine, "Invalid 'while' for 'do'");
+                            }
+
+                            int endofwhile;
+                            int countparens = 0;
+                            for (endofwhile = 0; endofwhile <= functionLine.Line.Count; ++endofwhile)
+                            {
+                                if (functionLine.Line[endofwhile] == ")")
+                                {
+                                    if (--countparens == 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                                else if (functionLine.Line[endofwhile] == "(")
+                                {
+                                    ++countparens;
+                                }
+                            }
+
+                            if ((endofwhile != functionLine.Line.Count - 1 && endofwhile != functionLine.Line.Count - 2) || endofwhile == 2)
+                            {
+                                throw CompilerException(functionLine, "Invalid 'while' encountered");
+                            }
+
+                            ProcessExpression(
+                                compileState,
+                                typeof(bool),
+                                2,
+                                endofwhile - 1,
+                                functionLine,
+                                localVars);
+                            compileState.ILGen.Emit(OpCodes.Brtrue, looplabel);
                         }
                         break;
+
                     #endregion
 
                     #region Control Flow (Conditions)
                     /* Control Flow Statements are pre-splitted into own lines with same line number, so we do not have to care about here */
                     case "if":
-                        compileState.PopControlFlowImplicit(functionLine.LineNumber);
+                        if (eoif_label.HasValue)
                         {
-                            Label eoiflabel = compileState.ILGen.DefineLabel();
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
+                        {
+                            eoif_label = compileState.ILGen.DefineLabel();
                             Label endlabel = compileState.ILGen.DefineLabel();
-                            compileState.m_UnnamedLabels.Add(eoiflabel, new KeyValuePair<int, string>(functionLine.LineNumber, "IfElse End Of All Label"));
-                            compileState.m_UnnamedLabels.Add(endlabel, new KeyValuePair<int, string>(functionLine.LineNumber, "IfElse End Label"));
 
                             int endofif;
                             int countparens = 0;
@@ -469,15 +586,6 @@ namespace SilverSim.Scripting.Lsl
                                 }
                             }
 
-                            ControlFlowElement elem = new ControlFlowElement(
-                                ControlFlowType.If,
-                                functionLine.Line[functionLine.Line.Count - 1] == "{",
-                                null,
-                                endlabel,
-                                eoiflabel,
-                                compileState.IsImplicitControlFlow(functionLine.LineNumber));
-                            compileState.PushControlFlow(elem);
-
                             if ((endofif != functionLine.Line.Count - 1 && endofif != functionLine.Line.Count - 2) || endofif == 2)
                             {
                                 throw CompilerException(functionLine, "Invalid 'if' encountered");
@@ -494,36 +602,41 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                compileState.ILGen.BeginScope();
-                                ++blockLevel;
-                                localVarsStack.Insert(0, new Dictionary<string, object>(localVars));
-                                labelsStack.Insert(0, new Dictionary<string, ILLabelInfo>(labels));
+                                //compileState.ILGen.BeginScope();
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    new Dictionary<string, object>(localVars),
+                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    false);
+                                //compileState.ILGen.EndScope();
                             }
+                            else
+                            {
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    localVars,
+                                    labels,
+                                    true);
+                            }
+
+                            compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
+                            compileState.ILGen.MarkLabel(endlabel);
                         }
                         break;
 
                     case "else":
-                        if (null == compileState.LastBlock)
+                        if(!eoif_label.HasValue)
                         {
                             throw CompilerException(functionLine, "No matching 'if' found for 'else'");
                         }
                         else if (functionLine.Line.Count > 1 && functionLine.Line[1] == "if")
                         { /* else if */
-                            Label eoiflabel = compileState.LastBlock.EndOfIfFlowLabel.Value;
-                            Label endlabel = compileState.ILGen.DefineLabel();
-                            compileState.m_UnnamedLabels.Add(endlabel, new KeyValuePair<int, string>(functionLine.LineNumber, "ElseIf End Label"));
-
-                            ControlFlowElement elem = new ControlFlowElement(
-                                ControlFlowType.ElseIf,
-                                functionLine.Line[functionLine.Line.Count - 1] == "{",
-                                null,
-                                endlabel,
-                                eoiflabel,
-                                compileState.IsImplicitControlFlow(functionLine.LineNumber));
-                            compileState.PushControlFlow(elem);
-
                             int endofif;
                             int countparens = 0;
+                            Label endlabel = compileState.ILGen.DefineLabel();
+
                             for (endofif = 0; endofif <= functionLine.Line.Count; ++endofif)
                             {
                                 if (functionLine.Line[endofif] == ")")
@@ -555,95 +668,94 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                compileState.ILGen.BeginScope();
-                                ++blockLevel;
-                                localVarsStack.Insert(0, new Dictionary<string, object>(localVars));
-                                labelsStack.Insert(0, new Dictionary<string, ILLabelInfo>(labels));
+                                //compileState.ILGen.BeginScope();
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    new Dictionary<string, object>(localVars),
+                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    false);
+                                //compileState.ILGen.EndScope();
                             }
+                            else
+                            {
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    localVars,
+                                    labels,
+                                    true);
+                            }
+                            compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
+                            compileState.ILGen.MarkLabel(endlabel);
                         }
                         else
                         {
                             /* else */
-                            Label eoiflabel = compileState.LastBlock.EndOfIfFlowLabel.Value;
-                            Label endlabel = compileState.ILGen.DefineLabel();
-                            compileState.m_UnnamedLabels.Add(endlabel, new KeyValuePair<int, string>(functionLine.LineNumber, "Else End Label"));
-
-                            ControlFlowElement elem = new ControlFlowElement(
-                                ControlFlowType.Else,
-                                functionLine.Line[functionLine.Line.Count - 1] == "{",
-                                null,
-                                endlabel,
-                                eoiflabel,
-                                compileState.IsImplicitControlFlow(functionLine.LineNumber));
-                            compileState.PushControlFlow(elem);
-
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                compileState.ILGen.BeginScope();
-                                ++blockLevel;
-                                localVarsStack.Insert(0, new Dictionary<string, object>(localVars));
-                                labelsStack.Insert(0, new Dictionary<string, ILLabelInfo>(labels));
+                                //compileState.ILGen.BeginScope();
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    new Dictionary<string, object>(localVars),
+                                    new Dictionary<string, ILLabelInfo>(labels),
+                                    false);
+                                //compileState.ILGen.EndScope();
                             }
+                            else
+                            {
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    localVars,
+                                    labels,
+                                    true);
+                            }
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
                         }
                         break;
                     #endregion
 
                     #region New unconditional block
                     case "{": /* new unconditional block */
-                        compileState.CloseOpenIfBlocks(functionLine.LineNumber);
-                        compileState.PopControlFlowImplicits(functionLine.LineNumber);
+                        if (eoif_label.HasValue)
                         {
-                            ControlFlowElement elem = new ControlFlowElement(ControlFlowType.UnconditionalBlock, true);
-                            compileState.PushControlFlow(elem);
-                            compileState.ILGen.BeginScope();
-                            ++blockLevel;
-                            localVarsStack.Insert(0, new Dictionary<string, object>(localVars));
-                            labelsStack.Insert(0, new Dictionary<string, ILLabelInfo>(labels));
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
                         }
+
+                        //compileState.ILGen.BeginScope();
+                        ProcessBlock(
+                            compileState,
+                            returnType,
+                            new Dictionary<string, object>(localVars),
+                            new Dictionary<string, ILLabelInfo>(labels),
+                            false);
+                        //compileState.ILGen.EndScope();
                         break;
                     #endregion
 
                     #region End of unconditional/conditional block
-                    case "}": /* end unconditional/conditional block */
+                    case "}": /* end unconditional/conditional block or do while */
+                        if (eoif_label.HasValue)
                         {
-                            Dictionary<int, string> messages = new Dictionary<int, string>();
-                            foreach (KeyValuePair<string, ILLabelInfo> kvp in labels)
-                            {
-                                if (!kvp.Value.IsDefined)
-                                {
-                                    foreach (int line in kvp.Value.UsedInLines)
-                                    {
-                                        messages[line] = string.Format("Label '{0}' not defined", kvp.Key);
-                                    }
-                                }
-                            }
-                            if (messages.Count != 0)
-                            {
-                                throw new CompilerException(messages);
-                            }
-                            ControlFlowElement elem = compileState.PopControlFlowExplicit(functionLine.LineNumber);
-                            if (elem.IsExplicitBlock && elem.Type != ControlFlowType.Entry)
-                            {
-                                compileState.ILGen.EndScope();
-                            }
-                            labelsStack.RemoveAt(0);
-                            localVarsStack.RemoveAt(0);
-                            switch(--blockLevel)
-                            {
-                                case 0:
-                                    return;
-                                    
-                                case -1:
-                                    throw CompilerException(functionLine, "Unmatched '}' found");
-
-                                default:
-                                    break;
-                            }
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
                         }
-                        break;
+
+                        return;
+
                     #endregion
 
                     default:
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
                         ProcessStatement(
                             compileState,
                             returnType,
@@ -652,14 +764,13 @@ namespace SilverSim.Scripting.Lsl
                             functionLine,
                             localVars,
                             labels);
-                        compileState.PopControlFlowImplicit(functionLine.LineNumber);
                         break;
                 }
-            }
-
-            if (blockLevel != 0)
+            } while (!isImplicit);
+            if (eoif_label.HasValue)
             {
-                throw CompilerException(functionBody[functionBody.Count - 1], "Missing '}'");
+                compileState.ILGen.MarkLabel(eoif_label.Value);
+                eoif_label = null;
             }
         }
 
@@ -676,7 +787,6 @@ namespace SilverSim.Scripting.Lsl
             List<LineInfo> functionBody,
             Dictionary<string, object> localVars)
         {
-            compileState.InitControlFlow();
             Type returnType = typeof(void);
             List<string> functionDeclaration = functionBody[0].Line;
             int functionStart = 2;
@@ -770,13 +880,13 @@ namespace SilverSim.Scripting.Lsl
                 localVars[functionDeclaration[functionStart]] = new ILParameterInfo(t, paramidx + 1);
             }
 
-            int lineIndex = 1;
+            compileState.FunctionBody = functionBody;
+            compileState.FunctionLineIndex = 1;
             ProcessBlock(
                 compileState,
                 mb.ReturnType,
-                functionBody,
                 localVars,
-                ref lineIndex);
+                new Dictionary<string, ILLabelInfo>());
 
             /* we have no missing return value check right now, so we simply emit default values in that case */
             if (returnType == typeof(int))
@@ -809,7 +919,10 @@ namespace SilverSim.Scripting.Lsl
             }
             ilgen.Emit(OpCodes.Ret);
 
-            compileState.FinishControlFlowChecks();
+            if(compileState.HaveMoreLines)
+            {
+                throw CompilerException(compileState.FunctionBody[compileState.FunctionBody.Count - 1], "Unexpected more lines following");
+            }
         }
     }
 }

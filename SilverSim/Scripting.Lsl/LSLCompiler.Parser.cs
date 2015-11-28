@@ -248,6 +248,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (args[1] == "{")
                     {
+                        block.Add(new LineInfo(args, lineNumber));
                         ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
@@ -301,7 +302,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (args[0] == ";")
                 {
-                    block.Add(new LineInfo(new List<string>(new string[] { "}" }), lineNumber));
+                    block.Add(new LineInfo(new List<string>(new string[] { ";" }), lineNumber));
                     return;
                 }
                 else if(args[args.Count - 1] == "{")

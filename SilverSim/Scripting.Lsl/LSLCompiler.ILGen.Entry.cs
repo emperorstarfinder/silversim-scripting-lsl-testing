@@ -16,11 +16,57 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
+#if DEBUG
+        void DumpFunctionLines(StreamWriter dumpILGen, List<LineInfo> lines, int indentinit = 0, string indentBase = "")
+        {
+            int indent = indentinit;
+            bool closebrace = false;
+            string indent_header = indentBase;
+
+            closebrace = false;
+
+            foreach (LineInfo line in lines)
+            {
+                if (line.Line[0] == "}")
+                {
+                    if (indent > 0)
+                    {
+                        --indent;
+                        indent_header = indent_header.Substring(0, indent_header.Length - 2);
+                    }
+                    closebrace = true;
+                }
+                else
+                {
+                    if (closebrace)
+                    {
+                        dumpILGen.WriteLine("_____: ");
+                    }
+                    closebrace = false;
+                }
+                if (line.Line[line.Line.Count - 1] == "{")
+                {
+                    if (line.Line.Count > 1)
+                    {
+                        dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.LineNumber) + indent_header + string.Join(" ", line.Line.GetRange(0, line.Line.Count - 1)));
+                    }
+                    dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.LineNumber) + indent_header + "{");
+                    ++indent;
+                    indent_header += "  ";
+                }
+                else
+                {
+                    dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.LineNumber) + indent_header + string.Join(" ", line.Line));
+                }
+            }
+        }
+#endif
 
         IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault)
         {
 #if DEBUG
-            using (StreamWriter dumpILGen = new StreamWriter("../data/ILGendump_" + assetID.ToString() + ".txt", false, Encoding.UTF8))
+            Directory.CreateDirectory("../data/dumps");
+            using (StreamWriter dumpILGen = new StreamWriter("../data/dumps/ILGendump_" + assetID.ToString() + ".txt", false, Encoding.UTF8))
             {
 
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
@@ -29,54 +75,21 @@ namespace SilverSim.Scripting.Lsl
 
                     if (compileState.m_VariableInitValues.TryGetValue(variableKvp.Key, out initargs))
                     {
-                        dumpILGen.WriteLine(string.Format("{0} {1} = {2};", MapType(variableKvp.Value), variableKvp.Key, string.Join(" ", initargs.Line)));
+                        dumpILGen.WriteLine(string.Format("_____: {0} {1} = {2};", MapType(variableKvp.Value), variableKvp.Key, string.Join(" ", initargs.Line)));
                     }
                     else
                     {
-                        dumpILGen.WriteLine(string.Format("{0} {1};", MapType(variableKvp.Value), variableKvp.Key));
+                        dumpILGen.WriteLine(string.Format("_____: {0} {1};", MapType(variableKvp.Value), variableKvp.Key));
                     }
                 }
 
-                dumpILGen.WriteLine("");
-                int indent = 0;
-                bool closebrace = false;
-                string indent_header = string.Empty;
+                dumpILGen.WriteLine("_____: ");
 
                 foreach (KeyValuePair<string, List<LineInfo>> functionKvp in compileState.m_Functions)
                 {
-                    foreach (LineInfo line in functionKvp.Value)
-                    {
-                        if (line.Line[0] == "}")
-                        {
-                            if (indent > 0)
-                            {
-                                --indent;
-                                indent_header = indent_header.Substring(0, indent_header.Length - 2);
-                            }
-                            closebrace = true;
-                        }
-                        else
-                        {
-                            if (closebrace)
-                            {
-                                dumpILGen.WriteLine();
-                            }
-                            closebrace = false;
-                        }
-                        if (line.Line[line.Line.Count - 1] == "{")
-                        {
-                            dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line.GetRange(0, line.Line.Count - 1)));
-                            dumpILGen.WriteLine(indent_header + "{");
-                            ++indent;
-                            indent_header += "  ";
-                        }
-                        else
-                        {
-                            dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line));
-                        }
-                    }
+                    DumpFunctionLines(dumpILGen, functionKvp.Value);
 
-                    dumpILGen.WriteLine("");
+                    dumpILGen.WriteLine("_____: ");
                 }
 
                 bool first = true;
@@ -84,60 +97,24 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (stateKvp.Key == "default")
                     {
-                        dumpILGen.WriteLine("default");
-                        dumpILGen.WriteLine("{");
+                        dumpILGen.WriteLine("_____: default");
+                        dumpILGen.WriteLine("_____: {");
                     }
                     else
                     {
-                        dumpILGen.WriteLine(string.Format("state {0}", stateKvp.Key));
-                        dumpILGen.WriteLine("{");
+                        dumpILGen.WriteLine(string.Format("_____: state {0}", stateKvp.Key));
+                        dumpILGen.WriteLine("_____: {");
                     }
 
                     foreach (KeyValuePair<string, List<LineInfo>> eventKvp in stateKvp.Value)
                     {
-                        indent = 1;
-                        indent_header = "  ";
                         if (!first)
                         {
-                            dumpILGen.WriteLine("");
+                            dumpILGen.WriteLine("_____: ");
                         }
-
-                        first = false;
-                        closebrace = false;
-
-                        foreach (LineInfo line in eventKvp.Value)
-                        {
-                            if (line.Line[0] == "}")
-                            {
-                                if (indent > 0)
-                                {
-                                    --indent;
-                                    indent_header = indent_header.Substring(0, indent_header.Length - 2);
-                                }
-                                closebrace = true;
-                            }
-                            else
-                            {
-                                if (closebrace)
-                                {
-                                    dumpILGen.WriteLine();
-                                }
-                                closebrace = false;
-                            }
-                            if (line.Line[line.Line.Count - 1] == "{")
-                            {
-                                dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line.GetRange(0, line.Line.Count - 1)));
-                                dumpILGen.WriteLine(indent_header + "{");
-                                ++indent;
-                                indent_header += "  ";
-                            }
-                            else
-                            {
-                                dumpILGen.WriteLine(indent_header + string.Join(" ", line.Line));
-                            }
-                        }
+                        DumpFunctionLines(dumpILGen, eventKvp.Value, 1, "  ");
                     }
-                    dumpILGen.WriteLine("}");
+                    dumpILGen.WriteLine("_____: }");
                 }
                 dumpILGen.WriteLine("");
 
@@ -148,7 +125,7 @@ namespace SilverSim.Scripting.Lsl
                 AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, AssemblyBuilderAccess.RunAndCollect);
                 ModuleBuilder mb = ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols);
 
-                #region Create Script Container
+#region Create Script Container
 #if DEBUG
                 dumpILGen.WriteLine("DefineType({0})", assetAssemblyName + ".Script");
 #endif
@@ -180,11 +157,11 @@ namespace SilverSim.Scripting.Lsl
                     script_ilgen.Emit(forcedSleepDefault ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
                     script_ilgen.Emit(OpCodes.Call, typeConstructor);
                 }
-                #endregion
+#endregion
 
                 Dictionary<string, Type> stateTypes = new Dictionary<string, Type>();
 
-                #region Globals generation
+#region Globals generation
                 typeLocalsInited = AddConstants(compileState, scriptTypeBuilder, script_ilgen);
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                 {
@@ -287,9 +264,9 @@ namespace SilverSim.Scripting.Lsl
                         varIsInited.Add(varName);
                     }
                 }
-                #endregion
+#endregion
 
-                #region Function compilation
+#region Function compilation
                 /* we have to process the function definition first */
                 foreach (KeyValuePair<string, List<LineInfo>> functionKvp in compileState.m_Functions)
                 {
@@ -418,9 +395,9 @@ namespace SilverSim.Scripting.Lsl
                     ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, functionKvp.Value, typeLocals);
                     method_ilgen.Emit(OpCodes.Ret);
                 }
-                #endregion
+#endregion
 
-                #region State compilation
+#region State compilation
                 foreach (KeyValuePair<string, Dictionary<string, List<LineInfo>>> stateKvp in compileState.m_States)
                 {
                     FieldBuilder fb;
@@ -480,21 +457,21 @@ namespace SilverSim.Scripting.Lsl
 
                     stateTypes.Add(stateKvp.Key, state.CreateType());
                 }
-                #endregion
+#endregion
 
                 script_ilgen.Emit(OpCodes.Ret);
 
-                #region Call type initializer
+#region Call type initializer
                 {
                     script_cb = scriptTypeBuilder.DefineTypeInitializer();
                     script_ilgen = script_cb.GetILGenerator();
                     script_ilgen.Emit(OpCodes.Ret);
                 }
-                #endregion
+#endregion
 
                 mb.CreateGlobalFunctions();
 
-                #region Initialize static fields
+#region Initialize static fields
                 Type t = scriptTypeBuilder.CreateType();
 
                 foreach (IScriptApi api in m_Apis)
@@ -503,7 +480,7 @@ namespace SilverSim.Scripting.Lsl
                     FieldInfo info = t.GetField(apiAttr.Name, BindingFlags.Static | BindingFlags.Public);
                     info.SetValue(null, api);
                 }
-                #endregion
+#endregion
 
                 return new LSLScriptAssembly(ab, t, stateTypes, forcedSleepDefault);
 #if DEBUG

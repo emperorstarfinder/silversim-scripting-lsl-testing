@@ -1617,7 +1617,7 @@ namespace SilverSim.Scripting.Lsl
         void OrderBrackets(CompileState cs, Tree resolvetree, int lineNumber)
         {
 #if DEBUG
-            cs.ILGen.Writer.WriteLine("  //** Tree Flat Begin");
+            cs.ILGen.Writer.WriteLine(string.Format("  //** Tree Flat Begin (Line {0})", lineNumber));
             foreach (Tree st in resolvetree.SubTree)
             {
                 cs.ILGen.Writer.WriteLine(string.Format("  //** {0}: {1}", st.Entry, st.Type.ToString()));
