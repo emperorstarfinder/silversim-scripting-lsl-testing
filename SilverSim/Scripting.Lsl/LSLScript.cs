@@ -21,7 +21,7 @@ namespace SilverSim.Scripting.Lsl
 {
     [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
-    public partial class Script : ScriptInstance, IScriptState
+    public abstract partial class Script : ScriptInstance, IScriptState
     {
         private readonly ILog m_Log = LogManager.GetLogger("LSLSCRIPT");
         private ObjectPart m_Part;
@@ -204,6 +204,8 @@ namespace SilverSim.Scripting.Lsl
         {
 
         }
+
+        public abstract void ResetVariables();
 
         public void ForcedSleep(int forcedSleepMs)
         {
@@ -697,6 +699,7 @@ namespace SilverSim.Scripting.Lsl
                 m_CurrentState = m_States["default"];
                 m_CurrentStateMethods.Clear();
                 StartParameter = 0;
+                ResetVariables();
                 startticks = Environment.TickCount;
                 InvokeStateEvent("state_entry");
             }

@@ -157,6 +157,9 @@ namespace SilverSim.Scripting.Lsl
                     script_ilgen.Emit(forcedSleepDefault ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
                     script_ilgen.Emit(OpCodes.Call, typeConstructor);
                 }
+
+                MethodBuilder reset_func = scriptTypeBuilder.DefineMethod("ResetVariables", MethodAttributes.Public | MethodAttributes.Virtual, typeof(void), Type.EmptyTypes);
+                ILGenerator reset_ilgen = reset_func.GetILGenerator();
 #endregion
 
                 Dictionary<string, Type> stateTypes = new Dictionary<string, Type>();
@@ -180,9 +183,13 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ScriptTypeBuilder = scriptTypeBuilder;
                 compileState.StateTypeBuilder = null;
 #if DEBUG
+                ILGenDumpProxy script_ILGen = new ILGenDumpProxy(script_ilgen, dumpILGen);
+                ILGenDumpProxy reset_ILGen = new ILGenDumpProxy(reset_ilgen, dumpILGen);
                 compileState.ILGen = new ILGenDumpProxy(script_ilgen, dumpILGen);
 #else
                 compileState.ILGen = script_ilgen;
+                ILGenerator script_ILGen = script_ilgen;
+                ILGenerator reset_ILGen = reset_ilgen;
 #endif
                 while (varsToInit.Count != 0)
                 {
@@ -206,13 +213,24 @@ namespace SilverSim.Scripting.Lsl
 
                         if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))
                         {
+                            compileState.ILGen = script_ILGen;
                             ProcessExpression(
                                 compileState,
                                 fb.FieldType,
                                 expressionTree,
                                 initargs.LineNumber,
                                 typeLocals);
-                            script_ilgen.Emit(OpCodes.Stfld, fb);
+                            compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                            compileState.ILGen = reset_ILGen;
+                            ProcessExpression(
+                                compileState,
+                                fb.FieldType,
+                                expressionTree,
+                                initargs.LineNumber,
+                                typeLocals);
+                            compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
                             varIsInited.Add(varName);
                         }
                         else
@@ -225,42 +243,70 @@ namespace SilverSim.Scripting.Lsl
                     {
                         script_ilgen.Emit(OpCodes.Ldc_I4_0);
                         script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Ldc_I4_0);
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
                         varIsInited.Add(varName);
                     }
                     else if (fb.FieldType == typeof(double))
                     {
                         script_ilgen.Emit(OpCodes.Ldc_R8, 0f);
                         script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Ldc_R8, 0f);
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
                         varIsInited.Add(varName);
                     }
                     else if (fb.FieldType == typeof(string))
                     {
                         script_ilgen.Emit(OpCodes.Ldstr, string.Empty);
                         script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Ldstr, string.Empty);
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
                         varIsInited.Add(varName);
                     }
                     else if (fb.FieldType == typeof(Vector3))
                     {
                         script_ilgen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(Type.EmptyTypes));
                         script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(Type.EmptyTypes));
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
                         varIsInited.Add(varName);
                     }
                     else if (fb.FieldType == typeof(Quaternion))
                     {
                         script_ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(Type.EmptyTypes));
                         script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(Type.EmptyTypes));
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
                         varIsInited.Add(varName);
                     }
                     else if (fb.FieldType == typeof(AnArray))
                     {
                         script_ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                         script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
                         varIsInited.Add(varName);
                     }
                     else if (fb.FieldType == typeof(LSLKey))
                     {
                         script_ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
                         script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
                         varIsInited.Add(varName);
                     }
                 }
@@ -467,6 +513,7 @@ namespace SilverSim.Scripting.Lsl
                     script_ilgen = script_cb.GetILGenerator();
                     script_ilgen.Emit(OpCodes.Ret);
                 }
+                reset_ilgen.Emit(OpCodes.Ret);
 #endregion
 
                 mb.CreateGlobalFunctions();
