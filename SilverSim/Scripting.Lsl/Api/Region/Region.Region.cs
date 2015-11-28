@@ -84,6 +84,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.LSL, "llWind")]
+        public Vector3 Wind(ScriptInstance instance, Vector3 offset)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetRegionFPS")]
         public double GetRegionFPS(ScriptInstance instance)
         {

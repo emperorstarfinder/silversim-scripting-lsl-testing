@@ -22,6 +22,7 @@ namespace SilverSim.Scripting.Lsl
             Label? eoif_label = null;
             do
             {
+            processnext:
                 LineInfo functionLine = compileState.GetLine();
                 LocalBuilder lb;
                 switch (functionLine.Line[0])
@@ -610,6 +611,9 @@ namespace SilverSim.Scripting.Lsl
                                     labels,
                                     false);
                                 //compileState.ILGen.EndScope();
+
+                                compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
+                                compileState.ILGen.MarkLabel(endlabel);
                             }
                             else
                             {
@@ -619,10 +623,17 @@ namespace SilverSim.Scripting.Lsl
                                     localVars,
                                     labels,
                                     true);
+
+                                compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
+                                compileState.ILGen.MarkLabel(endlabel);
+
+                                LineInfo li = compileState.PeekLine();
+                                if (li.Line[0] == "else")
+                                {
+                                    goto processnext;
+                                }
                             }
 
-                            compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
-                            compileState.ILGen.MarkLabel(endlabel);
                         }
                         break;
 
@@ -676,6 +687,9 @@ namespace SilverSim.Scripting.Lsl
                                     labels,
                                     false);
                                 //compileState.ILGen.EndScope();
+
+                                compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
+                                compileState.ILGen.MarkLabel(endlabel);
                             }
                             else
                             {
@@ -685,9 +699,16 @@ namespace SilverSim.Scripting.Lsl
                                     localVars,
                                     labels,
                                     true);
+
+                                compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
+                                compileState.ILGen.MarkLabel(endlabel);
+
+                                LineInfo li = compileState.PeekLine();
+                                if (li.Line[0] == "else")
+                                {
+                                    goto processnext;
+                                }
                             }
-                            compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
-                            compileState.ILGen.MarkLabel(endlabel);
                         }
                         else
                         {
