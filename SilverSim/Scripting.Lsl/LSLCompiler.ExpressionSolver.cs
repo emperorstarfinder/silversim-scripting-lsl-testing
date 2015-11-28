@@ -1512,11 +1512,7 @@ namespace SilverSim.Scripting.Lsl
                         bool hasValidLeftHand = false;
                         bool hasValidRightHand = false;
 
-                        if (pos == 0)
-                        {
-
-                        }
-                        else
+                        if (pos != 0)
                         {
                             switch (tree.SubTree[pos - 1].Type)
                             {
@@ -1545,11 +1541,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                         }
 
-                        if (pos + 1 == tree.SubTree.Count)
-                        {
-
-                        }
-                        else
+                        if (pos + 1 != tree.SubTree.Count)
                         {
                             switch (tree.SubTree[pos + 1].Type)
                             {
@@ -1598,131 +1590,6 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-
-        void OrderOperators_UnaryPlusMinus(Tree tree, int lineNumber)
-        {
-            List<Tree> enumeratorStack = new List<Tree>();
-            enumeratorStack.Insert(0, tree);
-            while (enumeratorStack.Count != 0)
-            {
-                tree = enumeratorStack[0];
-                enumeratorStack.RemoveAt(0);
-                int pos = tree.SubTree.Count;
-                while (pos-- > 0)
-                {
-                    Tree elem = tree.SubTree[pos];
-                    string ent = elem.Entry;
-                    if ((ent != "-" && ent != "+") ||
-                        elem.Type != Tree.EntryType.OperatorUnknown)
-                    {
-                        switch (elem.Type)
-                        {
-                            case Tree.EntryType.Level:
-                            case Tree.EntryType.FunctionArgument:
-                            case Tree.EntryType.Function:
-                            case Tree.EntryType.Declaration:
-                            case Tree.EntryType.DeclarationArgument:
-                            case Tree.EntryType.Vector:
-                            case Tree.EntryType.Rotation:
-                            case Tree.EntryType.OperatorLeftUnary:
-                                enumeratorStack.Add(elem);
-                                break;
-
-                            default:
-                                break;
-                        }
-                        continue;
-                    }
-
-                    bool hasValidLeftHand = false;
-                    bool hasValidRightHand = false;
-
-                    if(pos == 0)
-                    {
-
-                    }
-                    else
-                    {
-                        switch(tree.SubTree[pos - 1].Type)
-                        {
-                            case Tree.EntryType.OperatorBinary:
-                                if (tree.SubTree[pos - 1].Entry == ".")
-                                {
-                                    hasValidLeftHand = true;
-                                }
-                                break;
-
-                            case Tree.EntryType.Declaration:
-                            case Tree.EntryType.Function:
-                            case Tree.EntryType.Level:
-                            case Tree.EntryType.OperatorLeftUnary:
-                            case Tree.EntryType.OperatorRightUnary:
-                            case Tree.EntryType.Rotation:
-                            case Tree.EntryType.StringValue:
-                            case Tree.EntryType.Value:
-                            case Tree.EntryType.Variable:
-                            case Tree.EntryType.Vector:
-                                hasValidLeftHand = true;
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-
-                    if(pos + 1 == tree.SubTree.Count)
-                    {
-                        
-                    }
-                    else
-                    {
-                        switch (tree.SubTree[pos + 1].Type)
-                        {
-                            case Tree.EntryType.OperatorBinary:
-                                if(tree.SubTree[pos + 1].Entry == ".")
-                                {
-                                    hasValidRightHand = true;
-                                }
-                                break;
-
-                            case Tree.EntryType.OperatorLeftUnary:
-                            case Tree.EntryType.OperatorRightUnary:
-                            case Tree.EntryType.Function:
-                            case Tree.EntryType.Declaration:
-                            case Tree.EntryType.Level:
-                            case Tree.EntryType.Value:
-                            case Tree.EntryType.Variable:
-                            case Tree.EntryType.StringValue:
-                            case Tree.EntryType.Vector:
-                            case Tree.EntryType.Rotation:
-                                hasValidRightHand = true;
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-
-                    if(hasValidRightHand && hasValidLeftHand)
-                    {
-                        /* ignore */
-                    }
-                    else if(hasValidRightHand)
-                    {
-                        /* left unary */
-                        elem.Type = Tree.EntryType.OperatorLeftUnary;
-                        elem.SubTree.Add(tree.SubTree[pos + 1]);
-                        tree.SubTree.RemoveAt(pos + 1);
-                    }
-                    else
-                    {
-                        throw new CompilerException(lineNumber, "invalid right hand parameter to '" + ent + "'");
-                    }
-                }
-            }
-        }
-
-
         readonly List<string> m_MulDivOps = new List<string>(new string[] { "*", "/", "%" });
         readonly List<string> m_AddSubOps = new List<string>(new string[] { "+", "-" });
         readonly List<string> m_BitwiseShiftOps = new List<string>(new string[] { "<<", ">>" });
@@ -1739,7 +1606,6 @@ namespace SilverSim.Scripting.Lsl
             OrderOperators_ElementSelector(tree, lineNumber);
             OrderOperators_IncsDecs(tree, lineNumber);
             OrderOperators_UnaryLefts(tree, lineNumber);
-            //OrderOperators_UnaryPlusMinus(tree, lineNumber);
             OrderOperators_Common(tree, m_MulDivOps, lineNumber);
             OrderOperators_Common(tree, m_AddSubOps, lineNumber);
             OrderOperators_Common(tree, m_BitwiseShiftOps, lineNumber);
