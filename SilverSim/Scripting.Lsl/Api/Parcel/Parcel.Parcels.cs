@@ -44,6 +44,12 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int PARCEL_DETAILS_CLAIMDATE = 10;
 
+        [APILevel(APIFlags.LSL, "llOverMyLand")]
+        public int OverMyLand(ScriptInstance instance, LSLKey id)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetParcelDetails")]
         public AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
         {
@@ -184,6 +190,54 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelPrimOwners")]
         [ForcedSleep(2)]
         public AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llEjectFromLand")]
+        public void EjectFromLand(ScriptInstance instance, LSLKey avatar)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llAddToLandBanList")]
+        [ForcedSleep(0.1)]
+        public void AddToLandBanList(ScriptInstance instance, LSLKey avatar, double hours)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llAddToLandPassList")]
+        [ForcedSleep(0.1)]
+        public void AddToLandPassList(ScriptInstance instance, LSLKey avatar, double hours)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, " llRemoveFromLandBanList")]
+        [ForcedSleep(0.1)]
+        public void RemoveFromLandBanList(ScriptInstance instance, LSLKey avatar)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, " llRemoveFromLandPassList")]
+        [ForcedSleep(0.1)]
+        public void RemoveFromLandPassList(ScriptInstance instance, LSLKey avatar)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llResetLandBanList")]
+        [ForcedSleep(0.1)]
+        public void ResetLandBanList(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llResetLandPassList")]
+        [ForcedSleep(0.1)]
+        public void ResetLandPassList(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }

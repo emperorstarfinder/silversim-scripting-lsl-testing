@@ -9,6 +9,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 {
     public partial class HttpApi
     {
+        [APILevel(APIFlags.LSL, "llGetFreeURLs")]
+        public int GetFreeURLs(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                int freeurls = 1000 - m_HTTPHandler.GetUsedUrls();
+                if(freeurls < 0)
+                {
+                    freeurls = 0;
+                }
+
+                return freeurls;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llRequestURL")]
         public LSLKey RequestURL(ScriptInstance instance)
         {

@@ -147,6 +147,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APILevel(APIFlags.LSL, "llTeleportAgentHome")]
+        public void llTeleportAgentHome(ScriptInstance instance, LSLKey avatar)
+        {
+            throw new NotImplementedException();
+        }
+
         #region osGetAvatarList
         [APILevel(APIFlags.OSSL, "osGetAvatarList")]
         public AnArray GetAvatarList(ScriptInstance instance)

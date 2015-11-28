@@ -84,6 +84,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.LSL, "llGetRegionFPS")]
+        public double GetRegionFPS(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetEnv")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public string GetEnv(ScriptInstance instance, string name)

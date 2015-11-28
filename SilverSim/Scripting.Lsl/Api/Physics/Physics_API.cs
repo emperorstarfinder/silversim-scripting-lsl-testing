@@ -24,6 +24,12 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
         }
 
+        [APILevel(APIFlags.LSL, "llGetMass")]
+        public double GetMass(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llVolumeDetect")]
         public void VolumeDetect(ScriptInstance instance, int enable)
         {

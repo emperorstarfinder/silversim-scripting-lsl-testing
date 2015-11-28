@@ -121,6 +121,11 @@ namespace SilverSim.Scripting.Lsl
 
         }
 
+        public int GetUsedUrls()
+        {
+            return m_UrlMap.Count;
+        }
+
         public void LSLHttpRequestHandler(HttpRequest req)
         {
             string[] parts = req.RawUrl.Substring(1).Split(new char[] {'/'}, 3);
