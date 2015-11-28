@@ -20,5 +20,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             return (int)Date.GetUnixTime();
         }
+
+        [APILevel(APIFlags.LSL, "llGetGMTclock")]
+        public double GetGMTclock(ScriptInstance instance)
+        {
+            return Date.GetUnixTime();
+        }
     }
 }
