@@ -379,8 +379,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    labels,
-                                    false);
+                                    labels);
                                 //compileState.ILGen.EndScope();
                             }
                             else
@@ -460,8 +459,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    labels,
-                                    false);
+                                    labels);
                                 //compileState.ILGen.EndScope();
                             }
                             else
@@ -497,8 +495,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    labels,
-                                    false);
+                                    labels);
                                 //compileState.ILGen.EndScope();
                             }
                             else
@@ -608,8 +605,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    labels,
-                                    false);
+                                    labels);
                                 //compileState.ILGen.EndScope();
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
@@ -684,8 +680,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    labels,
-                                    false);
+                                    labels);
                                 //compileState.ILGen.EndScope();
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
@@ -720,8 +715,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
-                                    labels,
-                                    false);
+                                    labels);
                                 //compileState.ILGen.EndScope();
                             }
                             else
@@ -752,8 +746,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState,
                             returnType,
                             new Dictionary<string, object>(localVars),
-                            labels,
-                            false);
+                            labels);
                         //compileState.ILGen.EndScope();
                         break;
                     #endregion
