@@ -18,6 +18,38 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             return instance.Part.NumberOfSides;
         }
 
+        [APILevel(APIFlags.LSL, "llGetLinkNumberOfSides")]
+        public int GetLinkNumberOfSides(ScriptInstance instance, int link)
+        {
+            if (link == LINK_THIS)
+            {
+                return GetNumberOfSides(instance);
+            }
+            else if(link < 0)
+            {
+                return 0;
+            }
+            else
+            {
+                if(link == 0)
+                {
+                    link = LINK_ROOT;
+                }
+                lock(instance)
+                {
+                    ObjectPart part;
+                    if(instance.Part.ObjectGroup.TryGetValue(link, out part))
+                    {
+                        return part.NumberOfSides;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetAlpha")]
         public double GetAlpha(ScriptInstance instance, int face)
         {

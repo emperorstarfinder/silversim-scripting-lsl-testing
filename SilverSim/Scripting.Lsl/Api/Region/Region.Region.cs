@@ -55,6 +55,13 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int DATA_SIM_POS = 5;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int DATA_SIM_STATUS = 6;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int DATA_SIM_RATING = 7;
+
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
