@@ -26,7 +26,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
         public DynamicTextureApi()
         {
-            m_FontRequestContext = Graphics.FromImage(new Bitmap(256, 256, PixelFormat.Format32bppArgb));
+            m_FontRequestContext = Graphics.FromImage(new Bitmap(256, 256, PixelFormat.Format24bppRgb));
             m_Renderers.Add("image", RenderDynamicTexture.LoadImage);
             m_Renderers.Add("vector", RenderDynamicTexture.RenderTexture);
         }
