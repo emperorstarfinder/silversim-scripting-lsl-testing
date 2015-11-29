@@ -2146,8 +2146,8 @@ namespace SilverSim.Scripting.Lsl
             PreprocessLine(expressionLine);
             Tree expressionTree = new Tree(expressionLine);
             IdentifyReservedWords(cs, expressionTree);
-            IdentifyFunctions(cs, expressionTree, lineNumber);
             IdentifyVariables(cs, expressionTree, localVarNames);
+            IdentifyFunctions(cs, expressionTree, lineNumber);
             IdentifyOperators(cs, expressionTree);
             IdentifyNumericValues(cs, expressionTree);
             IdentifyDeclarations(cs, expressionTree);
