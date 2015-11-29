@@ -93,6 +93,20 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
+        [APILevel(APIFlags.LSL, "llGetObjectPrimCount")]
+        public int GetObjectPrimCount(ScriptInstance instance, LSLKey key)
+        {
+            lock (instance)
+            {
+                ObjectGroup obj;
+                if (!instance.Part.ObjectGroup.Scene.ObjectGroups.TryGetValue(key.AsUUID, out obj))
+                {
+                    return obj.Count;
+                }
+                return 0;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
         public Vector3 GetCenterOfMass(ScriptInstance instance)
         {
