@@ -49,7 +49,7 @@ namespace SilverSim.Scripting.Lsl.Expression
         {
             public ValueBase()
             {
-
+                /* intentionally left empty */
             }
 
             public abstract ValueBase Negate();
@@ -129,7 +129,7 @@ namespace SilverSim.Scripting.Lsl.Expression
 
         public Tree()
         {
-
+            /* intentionally left empty */
         }
 
         /* pre-initializes an expression tree */

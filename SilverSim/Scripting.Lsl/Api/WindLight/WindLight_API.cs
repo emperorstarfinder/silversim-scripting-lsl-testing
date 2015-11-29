@@ -18,12 +18,12 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
     {
         public WindLightApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         UUID GetTextureAssetID(ScriptInstance instance, string item)

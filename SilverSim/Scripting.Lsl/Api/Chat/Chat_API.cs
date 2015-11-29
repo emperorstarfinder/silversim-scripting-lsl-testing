@@ -47,12 +47,12 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         public ChatApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
     }
 }

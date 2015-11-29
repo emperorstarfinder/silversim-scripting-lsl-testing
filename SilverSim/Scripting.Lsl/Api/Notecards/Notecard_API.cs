@@ -13,12 +13,12 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
     {
         public NotecardApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
     }
 }

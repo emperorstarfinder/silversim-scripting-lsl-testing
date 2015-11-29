@@ -22,12 +22,12 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
 
         public DetectedApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
     }
 }

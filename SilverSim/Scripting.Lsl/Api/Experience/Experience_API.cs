@@ -14,12 +14,12 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
     {
         public ExperienceApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]

@@ -14,12 +14,12 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
     {
         public LightShareApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APIExtension(APIExtension.LightShare, APILevel.KeepCsName)]

@@ -16,7 +16,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 
         public HttpApi()
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]

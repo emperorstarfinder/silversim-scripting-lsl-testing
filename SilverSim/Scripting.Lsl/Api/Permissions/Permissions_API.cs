@@ -16,12 +16,12 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
     {
         public PermissionsApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]

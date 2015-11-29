@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 namespace SilverSim.Scripting.Lsl
 {
 #if DEBUG
-    class ILGenDumpProxy
+    public class ILGenDumpProxy
     {
         ILGenerator m_ILGen;
         public readonly StreamWriter Writer;

@@ -105,12 +105,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         public BaseApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, "llSleep")]

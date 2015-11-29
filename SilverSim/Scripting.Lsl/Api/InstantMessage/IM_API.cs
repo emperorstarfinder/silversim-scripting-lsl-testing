@@ -14,12 +14,12 @@ namespace SilverSim.Scripting.Lsl.Api.IM
     {
         public InstantMessageApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
     }
 }

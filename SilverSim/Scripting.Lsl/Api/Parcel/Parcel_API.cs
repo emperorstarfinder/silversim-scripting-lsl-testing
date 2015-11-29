@@ -47,12 +47,12 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
         public ParcelApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
     }
 }

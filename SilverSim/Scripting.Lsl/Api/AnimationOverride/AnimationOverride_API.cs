@@ -17,12 +17,12 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
     {
         public AnimationOverrideApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, "llSetAnimationOverride")]

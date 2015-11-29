@@ -16,12 +16,12 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
     {
         public PhysicsApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, "llGetMass")]

@@ -17,12 +17,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         public Agents_API()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]

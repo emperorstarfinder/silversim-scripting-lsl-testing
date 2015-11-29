@@ -159,12 +159,12 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         public AnimationApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         UUID GetAnimationAssetID(ScriptInstance instance, string item)
@@ -179,7 +179,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                     ObjectPartInventoryItem i;
                     if(!instance.Part.Inventory.TryGetValue(item, out i))
                     {
-
+                        /* intentionally left empty */
                     }
                     else if (i.InventoryType != Types.Inventory.InventoryType.Animation)
                     {

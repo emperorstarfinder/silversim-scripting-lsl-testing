@@ -16,12 +16,12 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
     {
         public VehicleApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]

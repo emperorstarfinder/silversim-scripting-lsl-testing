@@ -13,12 +13,12 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
     {
         public LogListenApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APIExtension(APIExtension.Admin, "asLogListen")]

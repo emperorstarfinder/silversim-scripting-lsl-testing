@@ -34,12 +34,12 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 
         public SoundApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
     }
 }

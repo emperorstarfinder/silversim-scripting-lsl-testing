@@ -32,12 +32,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
       
         public RegionApi()
         {
-
+            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
     }
 }
