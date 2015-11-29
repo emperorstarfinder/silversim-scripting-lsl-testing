@@ -103,7 +103,7 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         }
 
         [APILevel(APIFlags.OSSL, "osNpcSaveAppearance")]
-        public void NpcSaveAppearance(ScriptInstance instance, LSLKey npc, string notecard)
+        public LSLKey NpcSaveAppearance(ScriptInstance instance, LSLKey npc, string notecard)
         {
             throw new NotImplementedException();
         }
@@ -121,7 +121,19 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         }
 
         [APILevel(APIFlags.OSSL, "osNpcShout")]
+        public void NpcShout(ScriptInstance instance, LSLKey npc, string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osNpcShout")]
         public void NpcShout(ScriptInstance instance, LSLKey npc, int channel, string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osNpcWhisper")]
+        public void NpcWhisper(ScriptInstance instance, LSLKey npc, string message)
         {
             throw new NotImplementedException();
         }

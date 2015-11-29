@@ -291,8 +291,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         #region osMessageObject
         [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int OS_ATTACH_MSG_ALL = 0xFFFF;
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int OS_ATTACH_MSG_INVERT_POINTS = 1;
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int OS_ATTACH_MSG_OBJECT_CREATOR = 2;
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
         public const int OS_ATTACH_MSG_SCRIPT_CREATOR = 4;
 
         [APILevel(APIFlags.ASSL, "object_message")]
