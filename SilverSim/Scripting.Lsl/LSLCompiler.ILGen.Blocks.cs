@@ -374,13 +374,11 @@ namespace SilverSim.Scripting.Lsl
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
                                 /* block */
-                                //compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
-                                //compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -454,13 +452,11 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                //compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
-                                //compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -490,13 +486,11 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.MarkLabel(looplabel);
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                //compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
-                                //compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -600,13 +594,11 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                //compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
-                                //compileState.ILGen.EndScope();
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
                                 compileState.ILGen.MarkLabel(endlabel);
@@ -675,13 +667,11 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                //compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
-                                //compileState.ILGen.EndScope();
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
                                 compileState.ILGen.MarkLabel(endlabel);
@@ -710,13 +700,11 @@ namespace SilverSim.Scripting.Lsl
                             /* else */
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
-                                //compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
-                                //compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -741,13 +729,11 @@ namespace SilverSim.Scripting.Lsl
                             eoif_label = null;
                         }
 
-                        //compileState.ILGen.BeginScope();
                         ProcessBlock(
                             compileState,
                             returnType,
                             new Dictionary<string, object>(localVars),
                             labels);
-                        //compileState.ILGen.EndScope();
                         break;
                     #endregion
 
