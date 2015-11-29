@@ -95,6 +95,24 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.OSSL, "osSetSpeed")]
+        public void SetSpeed(ScriptInstance instance, LSLKey id, double speedfactor)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osInviteToGroup")]
+        public int OsInviteToGroup(ScriptInstance instance, LSLKey id)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osEjectFromGroup")]
+        public int OsEjectFromToGroup(ScriptInstance instance, LSLKey id)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llRequestDisplayName")]
         public LSLKey RequestDisplayName(ScriptInstance instance, LSLKey id)
         {
@@ -133,6 +151,38 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return string.Empty;
         }
 
+        [APILevel(APIFlags.LSL, "osKey2Name")]
+        public string OsKey2Name(ScriptInstance instance, LSLKey id)
+        {
+            lock (instance)
+            {
+                IAgent obj;
+                if (instance.Part.ObjectGroup.Scene.Agents.TryGetValue(id, out obj))
+                {
+                    return obj.Owner.FullName;
+                }
+            }
+            return string.Empty;
+        }
+
+        [APILevel(APIFlags.LSL, "osGetGender")]
+        public string OsGetGender(ScriptInstance instance, LSLKey id)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetHealth")]
+        public double GetHealth(ScriptInstance instance, LSLKey avatar)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "osAvatarName2Key")]
+        public string OsAvatarName2Key(ScriptInstance instance, string firstName, string lastName)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetAgentSize")]
         public Vector3 GetAgentSize(ScriptInstance instance, LSLKey id)
         {
@@ -147,8 +197,76 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APILevel(APIFlags.LSL, "osAgentSaveAppearance")]
+        public LSLKey AgentSaveAppearance(ScriptInstance instance, LSLKey agentId, string notecard)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osAgentSaveAppearance", ScriptInstance.ThreatLevelType.VeryHigh);
+            }
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "osOwnerSaveAppearance")]
+        public LSLKey OwnerSaveAppearance(ScriptInstance instance, string notecard)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osOwnerSaveAppearance", ScriptInstance.ThreatLevelType.High);
+            }
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llTeleportAgentHome")]
-        public void llTeleportAgentHome(ScriptInstance instance, LSLKey avatar)
+        public void TeleportAgentHome(ScriptInstance instance, LSLKey avatar)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osTeleportAgent")]
+        public void TeleportAgent(ScriptInstance instance, LSLKey agent, int regionX, int regionY, Vector3 position, Vector3 lookAt)
+        {
+            lock(instance)
+            {
+                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
+            }
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osTeleportAgent")]
+        public void TeleportAgent(ScriptInstance instance, LSLKey agent, string regionName, Vector3 position, Vector3 lookAt)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
+            }
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osTeleportAgent")]
+        public void TeleportAgent(ScriptInstance instance, LSLKey agent, Vector3 position, Vector3 lookAt)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
+            }
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osTeleportOwner")]
+        public void TeleportOwner(ScriptInstance instance, int regionX, int regionY, Vector3 position, Vector3 lookAt)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osTeleportOwner")]
+        public void TeleportOwner(ScriptInstance instance, string regionName, Vector3 position, Vector3 lookAt)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osTeleportOwner")]
+        public void TeleportOwner(ScriptInstance instance, Vector3 position, Vector3 lookAt)
         {
             throw new NotImplementedException();
         }
@@ -168,6 +286,110 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llDetachFromAvatar")]
         public void DetachFromAvatar(ScriptInstance instance)
         {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceAttachToAvatar")]
+        public void ForceAttachToAvatar(ScriptInstance instance, int attach_point)
+        {
+            lock(instance)
+            {
+                instance.CheckThreatLevel("osForceAttachToAvatar", ScriptInstance.ThreatLevelType.High);
+                throw new NotImplementedException();
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceAttachToAvatarFromInventory")]
+        public void ForceAttachToAvatarFromInventory(ScriptInstance instance, string item_name, int attach_point)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osForceAttachToAvatarFromInventory", ScriptInstance.ThreatLevelType.High);
+                throw new NotImplementedException();
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceAttachToOtherAvatarFromInventory")]
+        public void ForceAttachToOtherAvatarFromInventory(ScriptInstance instance, LSLKey id, string item_name, int attach_point)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osForceAttachToOtherAvatarFromInventory", ScriptInstance.ThreatLevelType.VeryHigh);
+                throw new NotImplementedException();
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osCauseDamage")]
+        public void CauseDamage(ScriptInstance instance, LSLKey id, double health)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osCauseHealing")]
+        public void CauseHealing(ScriptInstance instance, LSLKey id, double health)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceDetachFromAvatar")]
+        public void ForceDetachFromAvatar(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osDropAttachment")]
+        public void DropAttachment(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osDropAttachmentAt")]
+        public void DropAttachmentAt(ScriptInstance instance, Vector3 pos, Quaternion rot)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceDropAttachment")]
+        public void ForceDropAttachment(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceDropAttachmentAt")]
+        public void ForceDropAttachmentAt(ScriptInstance instance, Vector3 pos, Quaternion rot)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetNumberOfAttachments")]
+        public AnArray GetNumberOfAttachments(ScriptInstance instance, LSLKey avatar, AnArray attachmentPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osKickAvatar")]
+        public void KickAvatar(ScriptInstance instance, string firstName, string lastName, string alert)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceOtherSit")]
+        public void ForceOtherSit(ScriptInstance instance, LSLKey avatar)
+        {
+            lock(instance)
+            {
+                instance.CheckThreatLevel("osForceOtherSit", ScriptInstance.ThreatLevelType.VeryHigh);
+            }
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osForceOtherSit")]
+        public void ForceOtherSit(ScriptInstance instance, LSLKey avatar, LSLKey target)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osForceOtherSit", ScriptInstance.ThreatLevelType.VeryHigh);
+            }
             throw new NotImplementedException();
         }
 
@@ -228,5 +450,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return res;
         }
         #endregion
+
+        [APILevel(APIFlags.OSSL, "osGetAgentIP")]
+        public string GetAgentIP(ScriptInstance instance, LSLKey key)
+        {
+            lock(instance)
+            {
+                instance.CheckThreatLevel("osGetAgentIP", ScriptInstance.ThreatLevelType.High);
+
+                IAgent agent;
+                if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(key.AsUUID, out agent))
+                {
+                    throw new NotImplementedException();
+                }
+                return string.Empty;
+            }
+        }
     }
 }

@@ -147,5 +147,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 script.UseForcedSleep = flag != 0;
             }
         }
+
+        [APILevel(APIFlags.OSSL, "osGetScriptEngineName")]
+        public string GetScriptEngineName(ScriptInstance instance)
+        {
+            return "Porthos";
+        }
     }
 }

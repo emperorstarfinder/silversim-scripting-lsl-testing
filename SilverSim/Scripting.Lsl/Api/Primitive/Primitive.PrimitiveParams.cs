@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -72,6 +73,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, LINK_THIS, param.GetEnumerator(), ref parout);
             }
             return parout;
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetLinkPrimitiveParams")]
+        public AnArray OsGetLinkPrimitiveParams(ScriptInstance instance, int linknumber, AnArray param)
+        {
+            throw new NotImplementedException();
         }
 
         [APILevel(APIFlags.LSL, "llGetLocalPos")]

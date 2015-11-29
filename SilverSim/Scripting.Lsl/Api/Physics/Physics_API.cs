@@ -317,5 +317,14 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             throw new NotImplementedException("llCollisionSprite(string)");
         }
+
+        [APILevel(APIFlags.OSSL, "osGetPhysicsEngineType")]
+        public string GetPhysicsEngineType(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

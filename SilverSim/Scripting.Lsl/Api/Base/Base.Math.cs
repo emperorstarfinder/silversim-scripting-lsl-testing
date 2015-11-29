@@ -22,6 +22,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const double SQRT2 = 1.414213538f;
 
+        [APILevel(APIFlags.OSSL, "osMax")]
+        public double Max(ScriptInstance instance, double a, double b)
+        {
+            return (a > b) ? a : b;
+        }
+
+        [APILevel(APIFlags.OSSL, "osMin")]
+        public double Min(ScriptInstance instance, double a, double b)
+        {
+            return (a < b) ? a : b;
+        }
+
         [APILevel(APIFlags.LSL, "llAbs")]
         public int Abs(ScriptInstance instance, int v)
         {

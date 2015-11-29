@@ -209,6 +209,42 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osMatchString")]
+        public AnArray osMatchString(ScriptInstance instance, string src, string pattern, int start)
+        {
+            AnArray result = new AnArray();
+
+            /* Normalize indices (if negative). */
+            if (start < 0)
+            {
+                start = src.Length + start;
+            }
+
+            if (start < 0 || start >= src.Length)
+            {
+                return result;  // empty list
+            }
+
+            // Find matches beginning at start position
+            Regex matcher = new Regex(pattern);
+            Match match = matcher.Match(src, start);
+            while (match.Success)
+            {
+                foreach (Group g in match.Groups)
+                {
+                    if (g.Success)
+                    {
+                        result.Add(g.Value);
+                        result.Add(g.Index);
+                    }
+                }
+
+                match = match.NextMatch();
+            }
+
+            return result;
+        }
+
         [APILevel(APIFlags.OSSL, "osReplaceString")]
         public string OsReplaceString(ScriptInstance instance, string src, string pattern, string replace, int count, int start)
         {
@@ -231,6 +267,24 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             return string.Format(fmt, list.ToArray());
         }
+
+        [APILevel(APIFlags.OSSL, "osRegexIsMatch")]
+        public int RegexIsMatch(ScriptInstance instance, string input, string pattern)
+        {
+            lock(instance)
+            {
+                try
+                {
+                    return Regex.IsMatch(input, pattern) ? 1 : 0;
+                }
+                catch (Exception)
+                {
+                    instance.ShoutError("Possible invalid regular expression detected.");
+                    return 0;
+                }
+            }
+        }
+
 
         static readonly UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
     }

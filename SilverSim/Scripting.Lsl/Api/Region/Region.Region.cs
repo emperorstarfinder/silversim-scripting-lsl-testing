@@ -6,18 +6,127 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Region
 {
     public partial class RegionApi
     {
+        [APILevel(APIFlags.OSSL, "osGetGridName")]
+        public string GetGridName(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetGridNick")]
+        public string GetGridNick(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetGridLoginURI")]
+        public string GetGridLoginURI(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetGridHomeURI")]
+        public string GetGridHomeURI(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetGridGatekeeperURI")]
+        public string GetGridGatekeeperURI(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.RegionData.GridURI;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetGridCustom")]
+        public string GetGridCustom(ScriptInstance instance, string name)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetRegionName")]
         public string GetRegionName(ScriptInstance instance)
         {
             lock (instance)
             {
                 return instance.Part.ObjectGroup.Scene.Name;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetSimulatorVersion")]
+        public string GetSimulatorVersion(ScriptInstance instance)
+        {
+            return VersionInfo.SimulatorVersion;
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetRegionSize")]
+        public Vector3 GetRegionSize(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.RegionData.Size;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetMapTexture")]
+        public LSLKey GetMapTexture(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.RegionData.RegionMapTexture;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetRegionMapTexture")]
+        public LSLKey GetMapTexture(ScriptInstance instance, string regionName)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetRegionStats")]
+        public AnArray GetRegionStats(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osLoadedCreationDate")]
+        public string LoadedCreationDate(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osLoadedCreationTime")]
+        public string LoadedCreationTime(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osLoadedCreationID")]
+        public LSLKey LoadedCreationID(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetSimulatorMemory")]
+        public int GetSimulatorMemory(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                instance.CheckThreatLevel("osGetSimulatorMemory", ScriptInstance.ThreatLevelType.Moderate);
+                long pws = Process.GetCurrentProcess().WorkingSet64;
+                if(pws > Int32.MaxValue)
+                {
+                    return Int32.MaxValue;
+                }
+                return (int)pws;
             }
         }
 
@@ -76,7 +185,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetRegionTimeDilation")]
         public double GetRegionTimeDilation(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsDilationTime;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetSimulatorHostname")]
@@ -210,7 +322,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetRegionFPS")]
         public double GetRegionFPS(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsFPS;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetEnv")]

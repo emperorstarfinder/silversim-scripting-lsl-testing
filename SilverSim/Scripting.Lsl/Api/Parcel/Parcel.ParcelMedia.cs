@@ -51,5 +51,11 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         {
             throw new NotImplementedException();
         }
+
+        [APILevel(APIFlags.OSSL, "osSetParcelMediaURL")]
+        public void SetParcelMediaURL(ScriptInstance instance, string url)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
