@@ -4,9 +4,6 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {

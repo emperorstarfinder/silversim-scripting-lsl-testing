@@ -3,7 +3,6 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using System;
 using System.Collections.Generic;
 using System.Xml;
 

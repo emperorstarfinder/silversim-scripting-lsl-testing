@@ -5,7 +5,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
 {

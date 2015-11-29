@@ -1,11 +1,9 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scripting.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SilverSim.Scripting.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl

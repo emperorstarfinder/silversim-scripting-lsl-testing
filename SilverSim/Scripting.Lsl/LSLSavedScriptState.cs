@@ -3,14 +3,12 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
 {

@@ -1,6 +1,7 @@
-﻿using SilverSim.Http.Client;
-// SilverSim is distributed under the terms of the
+﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
+
+using SilverSim.Http.Client;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;

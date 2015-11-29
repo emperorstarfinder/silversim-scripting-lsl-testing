@@ -2,7 +2,6 @@
 // GNU Affero General Public License v3
 
 using CSJ2K;
-using SilverSim.Http.Client;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;

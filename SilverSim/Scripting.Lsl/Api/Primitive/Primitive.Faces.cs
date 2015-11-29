@@ -5,7 +5,6 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
-using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
