@@ -1290,6 +1290,9 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.DeclarationArgument:
                             case Tree.EntryType.Vector:
                             case Tree.EntryType.Rotation:
+                            case Tree.EntryType.OperatorBinary:
+                            case Tree.EntryType.OperatorLeftUnary:
+                            case Tree.EntryType.OperatorRightUnary:
                                 enumeratorStack.Add(elem);
                                 break;
 
@@ -1374,6 +1377,24 @@ namespace SilverSim.Scripting.Lsl
                     if (!m_AssignmentOps.Contains(ent) ||
                         elem.Type != Tree.EntryType.OperatorUnknown)
                     {
+                        switch (elem.Type)
+                        {
+                            case Tree.EntryType.Level:
+                            case Tree.EntryType.FunctionArgument:
+                            case Tree.EntryType.Function:
+                            case Tree.EntryType.Declaration:
+                            case Tree.EntryType.DeclarationArgument:
+                            case Tree.EntryType.Vector:
+                            case Tree.EntryType.Rotation:
+                            case Tree.EntryType.OperatorBinary:
+                            case Tree.EntryType.OperatorLeftUnary:
+                            case Tree.EntryType.OperatorRightUnary:
+                                enumeratorStack.Add(elem);
+                                break;
+
+                            default:
+                                break;
+                        }
                         continue;
                     }
 
