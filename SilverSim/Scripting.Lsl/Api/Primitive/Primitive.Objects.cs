@@ -5,6 +5,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
+using SilverSim.Types.Inventory;
 using System;
 using System.Reflection;
 
@@ -83,6 +84,30 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int STATUS_CAST_SHADOWS = 0x00000200;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int STATUS_BLOCK_GRAB_OBJECT = 0x00000400;
+
+        [APILevel(APIFlags.LSL, "llSetDamage")]
+        public void SetDamage(ScriptInstance instance, double damage)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llGetEnergy")]
+        public double GetEnergy(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llGetBoundingBox")]
+        public AnArray GetBoundingBox(ScriptInstance instance, LSLKey objectKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llGetGeometricCenter")]
+        public Vector3 GetGeometricCenter(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
 
         [APILevel(APIFlags.LSL, "llGetAttached")]
         public int GetAttached(ScriptInstance instance)
@@ -164,6 +189,77 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     return 0;
                 }
                 return obj.Group.Equals(instance.Part.ObjectGroup.Group) ? 1 : 0;
+            }
+        }
+
+        /* Private constants, exported once are in InventoryApi */
+        public const int MASK_BASE = 0;
+        public const int MASK_OWNER = 1;
+        public const int MASK_GROUP = 2;
+        public const int MASK_EVERYONE = 3;
+        public const int MASK_NEXT = 4;
+
+        [APILevel(APIFlags.LSL, "llGetObjectPermMask")]
+        public int GetObjectPermMask(ScriptInstance instance, int mask)
+        {
+            lock(instance)
+            {
+                switch (mask)
+                {
+                    case MASK_BASE:
+                        return (int)instance.Part.BaseMask;
+
+                    case MASK_OWNER:
+                        return (int)instance.Part.OwnerMask;
+
+                    case MASK_GROUP:
+                        return (int)instance.Part.GroupMask;
+
+                    case MASK_EVERYONE:
+                        return (int)instance.Part.EveryoneMask;
+
+                    case MASK_NEXT:
+                        return (int)instance.Part.NextOwnerMask;
+
+                    default:
+                        return 0;
+                }
+            }
+        }
+
+        [APILevel(APIFlags.LSL, "llSetObjectPermMask")]
+        public void SetObjectPermMask(ScriptInstance instance, int mask, int value)
+        {
+            lock(instance)
+            {
+                if(instance.Part.ObjectGroup.Scene.IsSimConsoleAllowed(instance.Part.Owner))
+                {
+                    switch(mask)
+                    {
+                        case MASK_BASE:
+                            instance.Part.BaseMask = (InventoryPermissionsMask)value;
+                            break;
+
+                        case MASK_OWNER:
+                            instance.Part.OwnerMask = (InventoryPermissionsMask)value;
+                            break;
+
+                        case MASK_GROUP:
+                            instance.Part.GroupMask = (InventoryPermissionsMask)value;
+                            break;
+
+                        case MASK_EVERYONE:
+                            instance.Part.EveryoneMask = (InventoryPermissionsMask)value;
+                            break;
+
+                        case MASK_NEXT:
+                            instance.Part.NextOwnerMask = (InventoryPermissionsMask)value;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
             }
         }
 

@@ -54,6 +54,36 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             }
         }
 
+        [APILevel(APIFlags.LSL, "llGetForce")]
+        public Vector3 GetForce(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llGetTorque")]
+        public Vector3 GetTorque(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llGetAccel")]
+        public Vector3 GetAccel(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Acceleration;
+            }
+        }
+
+        [APILevel(APIFlags.LSL, "llGetOmega")]
+        public Vector3 GetOmega(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.AngularVelocity;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llSetForce")]
         public void SetForce(ScriptInstance instance, Vector3 force, int local)
         {
@@ -265,9 +295,27 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         }
 
         [APILevel(APIFlags.LSL, "llStopMoveToTarget")]
-        public void llStopMoveToTarget(ScriptInstance instance)
+        public void StopMoveToTarget(ScriptInstance instance)
         {
             throw new NotImplementedException("llStopMoveToTarget");
+        }
+
+        [APILevel(APIFlags.LSL, "llGetObjectMass")]
+        public double GetObjectMass(ScriptInstance instance, LSLKey id)
+        {
+            throw new NotImplementedException("llGetObjectMass(key)");
+        }
+
+        [APILevel(APIFlags.LSL, "llCollisionFilter")]
+        public void CollisionFilter(ScriptInstance instance, string name, LSLKey id, int accept)
+        {
+            throw new NotImplementedException("llCollisionFilter(string, key, integer)");
+        }
+
+        [APILevel(APIFlags.LSL, "llCollisionSprite")]
+        public void CollisionSprite(ScriptInstance instance, string impact_sprite)
+        {
+            throw new NotImplementedException("llCollisionSprite(string)");
         }
     }
 }

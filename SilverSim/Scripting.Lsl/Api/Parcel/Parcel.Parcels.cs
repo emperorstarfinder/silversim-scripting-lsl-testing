@@ -214,14 +214,14 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL, " llRemoveFromLandBanList")]
+        [APILevel(APIFlags.LSL, "llRemoveFromLandBanList")]
         [ForcedSleep(0.1)]
         public void RemoveFromLandBanList(ScriptInstance instance, LSLKey avatar)
         {
             throw new NotImplementedException();
         }
 
-        [APILevel(APIFlags.LSL, " llRemoveFromLandPassList")]
+        [APILevel(APIFlags.LSL, "llRemoveFromLandPassList")]
         [ForcedSleep(0.1)]
         public void RemoveFromLandPassList(ScriptInstance instance, LSLKey avatar)
         {

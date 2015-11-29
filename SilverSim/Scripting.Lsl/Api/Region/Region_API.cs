@@ -28,8 +28,25 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int REGION_FLAG_ALLOW_DIRECT_TELEPORT = 0x100000;
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int REGION_FLAG_RESTRICT_PUSHOBJECT = 0x400000;   
-      
+        public const int REGION_FLAG_RESTRICT_PUSHOBJECT = 0x400000;
+
+        /* private constants not exported */
+        public const int REGION_FLAGS_ALLOW_LANDMARK = 0x00000002;
+        public const int REGION_FLAGS_ALLOW_SET_HOME = 0x00000004;
+        public const int REGION_FLAGS_RESET_HOME_ON_TELEPORT = 0x00000008;
+        public const int REGION_FLAGS_BLOCK_LAND_RESELL = 0x00000080;
+        public const int REGION_FLAGS_SKIP_SCRIPTS = 0x00002000;
+        public const int REGION_FLAGS_EXTERNALLY_VISIBLE = 0x00008000;
+        public const int REGION_FLAGS_ALLOW_RETURN_ENCROACHING_OBJECT = 0x00010000;
+        public const int REGION_FLAGS_ALLOW_RETURN_ENCROACHING_ESTATE_OBJECT = 0x00020000;
+        public const int REGION_FLAGS_BLOCK_DWELL = 0x00040000;
+        public const int REGION_FLAGS_ESTATE_SKIP_SCRIPTS = 0x00200000;
+        public const int REGION_FLAGS_DENY_ANONYMOUS = 0x00800000;
+        public const int REGION_FLAGS_ALLOW_PARCEL_CHANGES = 0x04000000;
+        public const int REGION_FLAGS_ALLOW_VOICE = 0x10000000;
+        public const int REGION_FLAGS_BLOCK_PARCEL_SEARCH = 0x20000000;
+        public const int REGION_FLAGS_DENY_AGEUNVERIFIED = 0x40000000;
+
         public RegionApi()
         {
             /* intentionally left empty */

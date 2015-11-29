@@ -56,6 +56,12 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.LSL, "llRemoteDataSetRegion")]
+        public void RemoteDataSetRegion(ScriptInstance instance)
+        {
+            OpenRemoteDataChannel(instance);
+        }
+
         [APILevel(APIFlags.LSL, "remote_data")]
         [StateEventDelegate]
         public delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);

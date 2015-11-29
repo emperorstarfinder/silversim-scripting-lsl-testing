@@ -470,5 +470,17 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             return SetLinkMedia(instance, LINK_THIS, face, param);
         }
+
+        [APILevel(APIFlags.LSL, "llSetPrimURL")]
+        public void SetPrimURL(ScriptInstance instance, string url)
+        {
+            /* noop function */
+        }
+
+        [APILevel(APIFlags.LSL, "llRefreshPrimURL")]
+        public void RefreshPrimURL(ScriptInstance instance)
+        {
+            /* noop function */
+        }
     }
 }

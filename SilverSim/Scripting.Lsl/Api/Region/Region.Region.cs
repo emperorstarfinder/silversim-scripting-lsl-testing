@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
@@ -18,6 +19,58 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             {
                 return instance.Part.ObjectGroup.Scene.Name;
             }
+        }
+
+        [APILevel(APIFlags.LSL, "llGetRegionFlags")]
+        public int GetRegionFlags(ScriptInstance instance)
+        {
+            int flags = 0;
+            lock(instance)
+            {
+                RegionSettings settings = instance.Part.ObjectGroup.Scene.RegionSettings;
+                if(settings.AllowDamage)
+                {
+                    flags |= REGION_FLAG_ALLOW_DAMAGE;
+                }
+                if(settings.BlockTerraform)
+                {
+                    flags |= REGION_FLAG_BLOCK_TERRAFORM;
+                }
+                if(settings.Sandbox)
+                {
+                    flags |= REGION_FLAG_SANDBOX;
+                }
+                if(settings.DisableCollisions)
+                {
+                    flags |= REGION_FLAG_DISABLE_COLLISIONS;
+                }
+                if(settings.DisablePhysics)
+                {
+                    flags |= REGION_FLAG_DISABLE_PHYSICS;
+                }
+                if(settings.BlockFly)
+                {
+                    flags |= REGION_FLAG_BLOCK_FLY;
+                }
+                if(settings.RestrictPushing)
+                {
+                    flags |= REGION_FLAG_RESTRICT_PUSHOBJECT;
+                }
+                if(!settings.AllowLandResell)
+                {
+                    flags |= REGION_FLAGS_BLOCK_LAND_RESELL;
+                }
+                if(settings.DisableScripts)
+                {
+                    flags |= REGION_FLAGS_SKIP_SCRIPTS;
+                }
+                if(settings.AllowLandJoinDivide)
+                {
+                    flags |= REGION_FLAGS_ALLOW_PARCEL_CHANGES;
+                }
+            }
+
+            return flags;
         }
 
         [APILevel(APIFlags.LSL, "llGetRegionTimeDilation")]
@@ -62,6 +115,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int DATA_SIM_RATING = 7;
 
+        [APILevel(APIFlags.LSL, "llScriptDanger")]
+        public int ScriptDanger(ScriptInstance instance, Vector3 pos)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
@@ -69,10 +128,22 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             throw new NotImplementedException("llRequestSimulatorData(string, integer)");
         }
 
+        [APILevel(APIFlags.LSL, "llEdgeOfWorld")]
+        public int EdgeOfWorld(ScriptInstance instance, Vector3 pos, Vector3 dir)
+        {
+            throw new NotImplementedException("llEdgeOfWorld(vector, vector)");
+        }
+
         [APILevel(APIFlags.LSL, "llGetSunDirection")]
         public Vector3 GetSunDirection(ScriptInstance instance)
         {
             throw new NotImplementedException("GetSunDirection");
+        }
+
+        [APILevel(APIFlags.LSL, "llCloud")]
+        public double Cloud(ScriptInstance instance, Vector3 offset)
+        {
+            return 0;
         }
 
         [APILevel(APIFlags.LSL, "llGround")]
@@ -199,6 +270,32 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 default:
                     return string.Empty;
             }
+        }
+
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_LEVEL = 0;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_RAISE = 1;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_LOWER = 2;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_SMOOTH = 3;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_NOISE = 4;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_REVERT = 5;
+
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_SMALL_BRUSH = 0;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_MEDIUM_BRUSH = 1;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LAND_LARGE_BRUSH = 2;
+
+        [APILevel(APIFlags.LSL, "llModifyLand")]
+        public void ModifyLand(ScriptInstance instance, int action, int brush)
+        {
+            throw new NotImplementedException();
         }
     }
 }

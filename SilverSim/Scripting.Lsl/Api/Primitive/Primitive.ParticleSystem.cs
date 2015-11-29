@@ -520,5 +520,33 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             LinkParticleSystem(instance, LINK_THIS, rules);
         }
+
+        [APILevel(APIFlags.LSL, "llMakeExplosion")]
+        [ForcedSleep(0.1)]
+        public void MakeExplosion(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llMakeFountain")]
+        [ForcedSleep(0.1)]
+        public void MakeFountain(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, int bounce, string texture, Vector3 offset, double bounce_offset)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llMakeSmoke")]
+        [ForcedSleep(0.1)]
+        public void MakeSmoke(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llMakeFire")]
+        [ForcedSleep(0.1)]
+        public void MakeFire(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

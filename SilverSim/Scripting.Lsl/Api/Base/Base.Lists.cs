@@ -4,6 +4,9 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -883,5 +886,352 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             res.AddRange(ret);
             return res;
         }
+
+        [APILevel(APIFlags.LSL, "llListRandomize")]
+        public AnArray ListRandomize(ScriptInstance instance, AnArray src, int stride)
+        {
+            /* From LSL wiki:
+             * When you want to randomize the position of every list element, specify a stride of 1. This is perhaps the setting most used.
+             * If the stride is not a factor of the list length, the src list is returned. In other words, llGetListLength(src) % stride must be 0.
+             * Conceptually, the algorithm selects llGetListLength(src) / stride buckets, and then for each bucket swaps in the contents with another b
+             */
+            AnArray result;
+            Random rand = new Random();
+
+            int chunkcount;
+            int[] chunks;
+
+            if (stride <= 0)
+            {
+                stride = 1;
+            }
+
+            if (src.Count != stride && src.Count % stride == 0)
+            {
+                chunkcount = src.Count / stride;
+
+                chunks = new int[chunkcount];
+
+                for (int i = 0; i < chunkcount; i++)
+                {
+                    chunks[i] = i;
+                }
+
+                /* Knuth shuffle the chunk index */
+                for (int i = chunkcount - 1; i >= 1; i--)
+                {
+                    /* Elect an unrandomized chunk to swap */
+                    int index = rand.Next(i + 1);
+                    int tmp;
+
+                    /* and swap position with first unrandomized chunk */
+                    tmp = chunks[i];
+                    chunks[i] = chunks[index];
+                    chunks[index] = tmp;
+                }
+
+                result = new AnArray();
+
+                /* Construct the randomized list */
+                for (int i = 0; i < chunkcount; i++)
+                {
+                    result.AddRange(src.GetRange(chunks[i] * stride, stride));
+                }
+            }
+            else
+            {
+                result = new AnArray(src);
+            }
+
+            return result;
+        }
+
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [Description("Calculates the range.")]
+        public const int LIST_STAT_RANGE = 0;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [Description("Calculates the smallest number.")]
+        public const int LIST_STAT_MIN = 1;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [Description("Calculates the largest number.")]
+        public const int LIST_STAT_MAX = 2;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_MEAN = 3;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_MEDIAN = 4;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_STD_DEV = 5;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_SUM = 6;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_SUM_SQUARES = 7;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_NUM_COUNT = 8;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_GEOMETRIC_MEAN = 9;
+        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        public const int LIST_STAT_HARMONIC_MEAN = 100;
+
+        [APILevel(APIFlags.LSL, "llListStatistics")]
+        public double ListStatistics(ScriptInstance instance, int operation, AnArray src)
+        {
+            switch(operation)
+            {
+                case LIST_STAT_RANGE: return ListRange(src);
+                case LIST_STAT_MIN: return ListMin(src);
+                case LIST_STAT_MAX: return ListMax(src);
+                case LIST_STAT_MEAN: return ListMean(src);
+                case LIST_STAT_MEDIAN: return ListMedian(src);
+                case LIST_STAT_NUM_COUNT: return ListNumericLength(src);
+                case LIST_STAT_STD_DEV: return ListStdDev(src);
+                case LIST_STAT_SUM: return ListSum(src);
+                case LIST_STAT_SUM_SQUARES: return ListSumSquares(src);
+                case LIST_STAT_GEOMETRIC_MEAN: return ListGeometricMean(src);
+                case LIST_STAT_HARMONIC_MEAN: return ListHarmonicMean(src);
+                default: return 0;
+            }
+        }
+
+        #region llListStatistics function implementation
+        bool IsValue(IValue iv, out double v)
+        {
+            switch (iv.LSL_Type)
+            {
+                case LSLValueType.Integer:
+                case LSLValueType.Float:
+                    v = iv.AsReal;
+                    return true;
+
+                case LSLValueType.String:
+                    return double.TryParse(iv.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out v);
+
+                default:
+                    v = 0;
+                    return false;
+            }
+        }
+
+        double ListMin(AnArray src)
+        {
+            double minimum = double.PositiveInfinity;
+            double entry;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if(IsValue(src[i], out entry))
+                {
+                    if(entry < minimum)
+                    {
+                        minimum = entry;
+                    }
+                }
+            }
+
+            return minimum;
+        }
+
+        double ListMax(AnArray src)
+        {
+            double maximum = double.NegativeInfinity;
+            double entry;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if(IsValue(src[i], out entry))
+                {
+                    if(entry > maximum)
+                    {
+                        maximum = entry;
+                    }
+                }
+            }
+
+            return maximum;
+        }
+
+        double ListRange(AnArray src)
+        {
+            double maximum = double.NegativeInfinity;
+            double minimum = double.PositiveInfinity;
+            double entry;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    if (entry > maximum)
+                    {
+                        maximum = entry;
+                    }
+                    if (entry > maximum)
+                    {
+                        maximum = entry;
+                    }
+                }
+            }
+
+            return maximum / minimum;
+        }
+
+        int ListNumericLength(AnArray src)
+        {
+            int count = 0;
+            double entry;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        double ListSum(AnArray src)
+        {
+            double sum = 0;
+            double entry;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    sum = sum + entry;
+                }
+            }
+
+            return sum;
+        }
+
+        double ListSumSquares(AnArray src)
+        {
+            double sum = 0;
+            double entry;
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    sum = sum + entry * entry;
+                }
+            }
+            return sum;
+        }
+
+        double ListMean(AnArray src)
+        {
+            double sum = 0;
+            double entry;
+            int count = 0;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    sum = sum + entry;
+                    ++count;
+                }
+            }
+
+            return sum / count;
+        }
+
+        double ListMedian(AnArray src)
+        {
+            return ListQi(src, 0.5);
+        }
+
+        double ListGeometricMean(AnArray src)
+        {
+            double ret = 1.0;
+            int count = 0;
+            double entry;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    ret *= entry;
+                    ++count;
+                }
+            }
+            return Math.Exp(Math.Log(ret) / count);
+        }
+
+        double ListHarmonicMean(AnArray src)
+        {
+            double ret = 0.0;
+            double entry;
+            int count = 0;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    ret += 1.0 / entry;
+                    ++count;
+                }
+            }
+
+            return ((double)count / ret);
+        }
+
+        double ListVariance(AnArray src)
+        {
+            double s = 0;
+            int count = 0;
+            double entry;
+            double sum = 0;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    s += Math.Pow(entry, 2);
+                    sum += entry;
+                    ++count;
+                }
+            }
+            return (s - count * Math.Pow(sum / count, 2)) / (count - 1);
+        }
+
+        double ListStdDev(AnArray src)
+        {
+            return Math.Sqrt(ListVariance(src));
+        }
+
+        double[] NumericSort(AnArray src)
+        {
+            List<double> resList = new List<double>();
+            double entry;
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                if (IsValue(src[i], out entry))
+                {
+                    resList.Add(entry);
+                }
+            }
+
+            double[] resArray = resList.ToArray();
+            Array.Sort(resArray);
+            return resArray;
+        }
+
+        double ListQi(AnArray src, double i)
+        {
+            double[] j = NumericSort(src);
+
+            if (Math.Ceiling(j.Length * i) == j.Length * i)
+            {
+                return (j[(int)(j.Length * i - 1)] + j[(int)(j.Length * i)]) / 2;
+            }
+            else
+            {
+                return j[(int)(Math.Ceiling(j.Length * i)) - 1];
+            }
+        }
+        #endregion
     }
 }

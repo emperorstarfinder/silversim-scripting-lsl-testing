@@ -52,6 +52,19 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.LSL, "llSound")]
+        public void Sound(ScriptInstance instance, string sound, double volume, int queue, int loop)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llSoundPreload")]
+        /* Even though LSL wiki considers this as deprecated, it will be support since it has no defined forced delay */
+        public void SoundPreload(ScriptInstance instance, string sound)
+        {
+            PreloadSound(instance, sound);
+        }
+
         [APILevel(APIFlags.LSL, "llPreloadSound")]
         [ForcedSleep(1)]
         public void PreloadSound(ScriptInstance instance, string sound)

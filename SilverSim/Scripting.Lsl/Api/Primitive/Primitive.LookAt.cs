@@ -15,8 +15,26 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.LSL, "llStopLookAt")]
+        public void StopLookAt(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llRotLookAt")]
         public void RotLookAt(ScriptInstance instance, Quaternion target_direction, double strength, double damping)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llPointAt")]
+        public void PointAt(ScriptInstance instance, Vector3 pos)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llStopPointAt")]
+        public void StopPointAt(ScriptInstance instance)
         {
             throw new NotImplementedException();
         }

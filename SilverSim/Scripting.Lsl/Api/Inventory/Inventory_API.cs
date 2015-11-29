@@ -185,7 +185,45 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.LSL, "llSetInventoryPermMask")]
         public void SetInventoryPermMask(ScriptInstance instance, string name, int category, int mask)
         {
-            throw new NotImplementedException();
+            lock (instance)
+            {
+                if (instance.Part.ObjectGroup.Scene.IsSimConsoleAllowed(instance.Part.Owner))
+                {
+                    try
+                    {
+                        ObjectPartInventoryItem item = instance.Part.Inventory[name];
+                        switch (category)
+                        {
+                            case MASK_BASE:
+                                item.Permissions.Base = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_EVERYONE:
+                                item.Permissions.EveryOne = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_GROUP:
+                                item.Permissions.Group = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_NEXT:
+                                item.Permissions.NextOwner = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_OWNER:
+                                item.Permissions.Current = (InventoryPermissionsMask)mask;
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    catch
+                    {
+                        throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryPermMask")]

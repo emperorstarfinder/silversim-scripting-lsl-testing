@@ -89,15 +89,16 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         }
 
         [APILevel(APIFlags.LSL, "llGiveMoney")]
-        public void GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
+        public int GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
                 grantinfo.PermsGranter != instance.Part.Owner ||
                 amount < 0)
             {
-                return;
+                return 0;
             }
+            return 0;
         }
 
         [APILevel(APIFlags.LSL, "llTransferLindenDollars")]

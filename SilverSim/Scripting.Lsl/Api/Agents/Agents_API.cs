@@ -153,6 +153,40 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             throw new NotImplementedException();
         }
 
+        [APILevel(APIFlags.LSL, "llAttachToAvatar")]
+        public void AttachToAvatar(ScriptInstance instance, int attach_point)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llAttachToAvatarTemp")]
+        public void AttachToAvatarTemp(ScriptInstance instance, int attach_point)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llDetachFromAvatar")]
+        public void DetachFromAvatar(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
+        [APILevel(APIFlags.LSL, "llGetAgentLanguage")]
+        public string GetAgentLanguage(ScriptInstance instance, LSLKey avatar)
+        {
+            /* Details from LSL wiki
+             *
+             * If the user has "Share language with objects" disabled then this function returns an empty string.
+             * During a 1-5 seconds period after which an agent is logging in, this function will return an empty string as well, until the viewer sends the data to the simulator.             
+             * Users may prefer to see the client interface in a language that is not their native language, and some may prefer to use objects in the native language of the creator, or dislike low-quality translations. Consider providing a manual language override when it is appropriate. 
+             * New language/variant values may be added later. Scripts may need to be prepared for unexpected values.
+             * If the viewer is set to "System Default" the possible return may be outside the list given above. see List of ISO 639-1 codes for reference.
+             * Viewers can specify other arbitrary language strings with the 'InstallLanguage' debug setting. For example, launching the viewer with "--set InstallLanguage american" results this function returning 'american' for the avatar. VWR-12222
+             *   If the viewer supplies a multiline value, the simulator will only accept the first line and ignore all others. SVC-5503
+             */
+            throw new NotImplementedException();
+        }
+
         #region osGetAvatarList
         [APILevel(APIFlags.OSSL, "osGetAvatarList")]
         public AnArray GetAvatarList(ScriptInstance instance)
