@@ -119,6 +119,12 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             }
         }
 
+        [APILevel(APIFlags.LSL, "llGroundRepel")]
+        public void GroundRepel(ScriptInstance instance, double height, int water, double tau)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llPushObject")]
         public void PushObject(ScriptInstance instance, LSLKey target, Vector3 impulse, Vector3 ang_impulse, int local)
         {

@@ -85,16 +85,55 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.LSL, "llGroundContour")]
+        public Vector3 GroundContour(ScriptInstance instance, Vector3 offset)
+        {
+            Vector3 v = GroundSlope(instance, offset);
+            return new Vector3(-v.Y, v.X, 0);
+        }
+
+        [APILevel(APIFlags.LSL, "llGroundNormal")]
+        public Vector3 GroundNormal(ScriptInstance instance, Vector3 offset)
+        {
+            lock (instance)
+            {
+                Vector3 regionPos = instance.Part.GlobalPosition + offset;
+                return instance.Part.ObjectGroup.Scene.Terrain.Normal((int)regionPos.X, (int)regionPos.Y);
+            }
+        }
+
+        [APILevel(APIFlags.LSL, "llGroundSlope")]
+        public Vector3 GroundSlope(ScriptInstance instance, Vector3 offset)
+        {
+            Vector3 vsn = GroundNormal(instance, offset);
+
+            /* Put the x,y coordinates of the slope normal into the plane equation to get
+             * the height of that point on the plane.  
+             * The resulting vector provides the slope.
+             */
+            Vector3 vsl = vsn;
+            vsl.Z = (((vsn.X * vsn.X) + (vsn.Y * vsn.Y)) / (-1 * vsn.Z));
+
+            return vsl.Normalize();
+        }
+
         [APILevel(APIFlags.LSL, "llWater")]
         public double Water(ScriptInstance instance, Vector3 offset)
         {
-            throw new NotImplementedException();
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.RegionSettings.WaterHeight;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llWind")]
         public Vector3 Wind(ScriptInstance instance, Vector3 offset)
         {
-            throw new NotImplementedException();
+            lock (instance)
+            {
+                Vector3 regionPos = instance.Part.GlobalPosition + offset;
+                return instance.Part.ObjectGroup.Scene.Environment.Wind[regionPos];
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetRegionFPS")]
