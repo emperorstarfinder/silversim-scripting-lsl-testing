@@ -107,6 +107,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osGetRezzingObject")]
+        public LSLKey OsGetRezzingObject(ScriptInstance instance)
+        {
+            throw new NotImplementedException();
+        }
+
         [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
         public Vector3 GetCenterOfMass(ScriptInstance instance)
         {
@@ -283,6 +289,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         #region osMessageObject
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        public const int OS_ATTACH_MSG_ALL = 0xFFFF;
+        public const int OS_ATTACH_MSG_INVERT_POINTS = 1;
+        public const int OS_ATTACH_MSG_OBJECT_CREATOR = 2;
+        public const int OS_ATTACH_MSG_SCRIPT_CREATOR = 4;
+
         [APILevel(APIFlags.ASSL, "object_message")]
         [StateEventDelegate]
         public delegate void State_object_message(LSLKey id, string data);
@@ -300,6 +312,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 ev.ObjectID = instance.Part.ObjectGroup.ID;
                 obj.PostEvent(ev);
             }
+        }
+
+        [APILevel(APIFlags.OSSL, "osMessageAttachments")]
+        public void MessageAttachments(ScriptInstance instance, LSLKey avatar, string message, AnArray attachmentPoints, int options)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

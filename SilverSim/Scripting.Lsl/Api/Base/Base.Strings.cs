@@ -2,9 +2,11 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -205,6 +207,29 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 return s;
             }
+        }
+
+        [APILevel(APIFlags.OSSL, "osReplaceString")]
+        public string OsReplaceString(ScriptInstance instance, string src, string pattern, string replace, int count, int start)
+        {
+            if (start < 0)
+            {
+                start = src.Length + start;
+            }
+
+            if (start < 0 || start >= src.Length)
+            {
+                return src;
+            }
+
+            Regex matcher = new Regex(pattern);
+            return matcher.Replace(src, replace, count, start);
+        }
+
+        [APILevel(APIFlags.OSSL, "osFormatString")]
+        public string OsFormatString(ScriptInstance instance, string fmt, AnArray list)
+        {
+            return string.Format(fmt, list.ToArray());
         }
 
         static readonly UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);

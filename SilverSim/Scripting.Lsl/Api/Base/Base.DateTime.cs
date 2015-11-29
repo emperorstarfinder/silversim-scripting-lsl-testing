@@ -44,5 +44,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             return DateTime.UtcNow.ToString("yyyy-MM-dd");
         }
+
+        [APILevel(APIFlags.OSSL, "osUnixTimeToTimestamp")]
+        public string OsUnixTimeToTimestamp(ScriptInstance instance, int time)
+        {
+            long baseTicks = 621355968000000000;
+            long tickResolution = 10000000;
+            long epochTicks = (time * tickResolution) + baseTicks;
+            DateTime date = new DateTime(epochTicks);
+
+            return date.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+        }
+
     }
 }

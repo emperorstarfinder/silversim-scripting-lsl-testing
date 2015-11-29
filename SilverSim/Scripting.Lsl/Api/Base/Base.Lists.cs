@@ -267,6 +267,48 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return src[index].AsReal;
         }
 
+        [APILevel(APIFlags.LSL, "llListInsertList")]
+        public AnArray ListInsertList(ScriptInstance instance, AnArray dest, AnArray src, int index)
+        {
+            AnArray pref;
+            AnArray suff;
+
+            if (index < 0)
+            {
+                index = index + dest.Count;
+                if (index < 0)
+                {
+                    index = 0;
+                }
+            }
+
+            if (index != 0)
+            {
+                pref = List2List(instance, dest, 0, index - 1);
+                if (index < dest.Count)
+                {
+                    suff = List2List(instance, dest, index, -1);
+                    return pref + src + suff;
+                }
+                else
+                {
+                    return pref + src;
+                }
+            }
+            else
+            {
+                if (index < dest.Count)
+                {
+                    suff = List2List(instance, dest, index, -1);
+                    return src + suff;
+                }
+                else
+                {
+                    return src;
+                }
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llListFindList")]
         [LSLTooltip("Returns the integer index of the first instance of test in src.")]
         public int ListFindList(ScriptInstance instance,
