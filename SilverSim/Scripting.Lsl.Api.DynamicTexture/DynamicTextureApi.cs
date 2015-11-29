@@ -373,6 +373,29 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 textureAsset.Temporary = (disp & DISP_TEMP) != 0;
                 instance.Part.ObjectGroup.Scene.AssetService.Store(textureAsset);
                 textureAssetID = textureAsset.ID;
+
+                if (face == ALL_SIDES)
+                {
+                    TextureEntry te = instance.Part.TextureEntry;
+                    for (face = 0; face < te.FaceTextures.Length; ++face)
+                    {
+                        te.FaceTextures[face].TextureID = textureAssetID;
+                    }
+                    instance.Part.TextureEntry = te;
+                }
+                else
+                {
+                    try
+                    {
+                        TextureEntry te = instance.Part.TextureEntry;
+                        te.FaceTextures[face].TextureID = textureAssetID;
+                        instance.Part.TextureEntry = te;
+                    }
+                    catch
+                    {
+                        /* intentionally left empty */
+                    }
+                }
             }
             finally
             {
