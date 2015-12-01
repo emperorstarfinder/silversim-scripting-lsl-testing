@@ -319,12 +319,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
         }
 
-        [APILevel(APIFlags.LSL, "llGetAnimation")]
-        public string GetAnimation(ScriptInstance instance, LSLKey agent)
-        {
-            throw new NotImplementedException();
-        }
-
         [APILevel(APIFlags.LSL, "llGetAnimationList")]
         public AnArray GetAnimationList(ScriptInstance instance, LSLKey agentkey)
         {

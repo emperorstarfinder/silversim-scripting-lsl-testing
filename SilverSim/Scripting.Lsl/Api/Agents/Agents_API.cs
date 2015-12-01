@@ -90,6 +90,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int PAYMENT_INFO_USED = 0x2;
 
         [APILevel(APIFlags.LSL, "llRequestAgentData")]
+        [ForcedSleep(0.1)]
         public LSLKey RequestAgentData(ScriptInstance instance, LSLKey id, int data)
         {
             throw new NotImplementedException();
@@ -122,7 +123,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetUsername")]
         public string GetUsername(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            /* only when child or root agent is in sim */
+            lock(instance)
+            {
+                IAgent agent;
+                if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(id.AsUUID, out agent))
+                {
+                    return agent.Owner.FullName.Replace(' ', '.');
+                }
+                return string.Empty;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llRequestUsername")]

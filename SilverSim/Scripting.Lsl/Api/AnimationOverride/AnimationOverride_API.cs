@@ -8,6 +8,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
+using System.Collections.Generic;
 
 namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 {
@@ -15,6 +16,33 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
     [LSLImplementation]
     public partial class AnimationOverrideApi : IScriptApi, IPlugin
     {
+        static readonly Dictionary<string, string> m_DefaultAnimationTranslate = new Dictionary<string, string>();
+        static AnimationOverrideApi()
+        {
+            m_DefaultAnimationTranslate["crouching"] = "Crouching";
+            m_DefaultAnimationTranslate["crouchwalking"] = "CrouchWalking";
+            m_DefaultAnimationTranslate["falling down"] = "Falling Down";
+            m_DefaultAnimationTranslate["flying"] = "Flying";
+            m_DefaultAnimationTranslate["flyingslow"] = "FlyingSlow";
+            m_DefaultAnimationTranslate["hovering"] = "Hovering";
+            m_DefaultAnimationTranslate["hovering down"] = "Hovering Down";
+            m_DefaultAnimationTranslate["hovering up"] = "Hovering Up";
+            m_DefaultAnimationTranslate["jumping"] = "Jumping";
+            m_DefaultAnimationTranslate["landing"] = "Landing";
+            m_DefaultAnimationTranslate["prejumping"] = "PreJumping";
+            m_DefaultAnimationTranslate["running"] = "Running";
+            m_DefaultAnimationTranslate["sitting"] = "Sitting";
+            m_DefaultAnimationTranslate["sitting on ground"] = "Sitting on Ground";
+            m_DefaultAnimationTranslate["standing"] = "Standing";
+            m_DefaultAnimationTranslate["standing up"] = "Standing Up";
+            m_DefaultAnimationTranslate["striding"] = "Striding";
+            m_DefaultAnimationTranslate["soft landing"] = "Soft Landing";
+            m_DefaultAnimationTranslate["taking off"] = "Taking Off";
+            m_DefaultAnimationTranslate["turning left"] = "Turning Left";
+            m_DefaultAnimationTranslate["turning right"] = "Turning Right";
+            m_DefaultAnimationTranslate["walking"] = "Walking";
+        }
+
         public AnimationOverrideApi()
         {
             /* intentionally left empty */
@@ -23,6 +51,33 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
+        }
+
+        [APILevel(APIFlags.LSL, "llGetAnimation")]
+        public string GetAnimation(ScriptInstance instance, LSLKey agentkey)
+        {
+            lock (instance)
+            {
+                IAgent agent;
+                if (!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(agentkey, out agent))
+                {
+                    return string.Empty;
+                }
+                string defaultanim = agent.GetDefaultAnimation();
+                if (defaultanim.Length > 0)
+                {
+                    string res;
+                    if(m_DefaultAnimationTranslate.TryGetValue(defaultanim, out res))
+                    {
+                        return res;
+                    }
+                    return char.ToUpper(defaultanim[0]).ToString() + defaultanim.Substring(1);
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSetAnimationOverride")]
