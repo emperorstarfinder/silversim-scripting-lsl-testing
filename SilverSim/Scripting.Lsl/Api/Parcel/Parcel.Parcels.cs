@@ -47,7 +47,20 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llOverMyLand")]
         public int OverMyLand(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            lock(instance)
+            {
+                IObject obj;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if(scene.Objects.TryGetValue(id, out obj))
+                {
+                    ParcelInfo pinfo;
+                    if(scene.Parcels.TryGetValue(obj.GlobalPosition, out pinfo))
+                    {
+                        return pinfo.Owner.EqualsGrid(instance.Item.Owner) ? 1 : 0;
+                    }
+                }
+                return 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelDetails")]

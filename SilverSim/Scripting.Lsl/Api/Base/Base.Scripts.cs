@@ -148,7 +148,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                instance.ShoutError("This function has been deprecated. Please use llRemoteLoadscriptPin instead");
+                instance.ShoutError("This function has been deprecated. Please use llRemoteLoadScriptPin instead");
             }
         }
 

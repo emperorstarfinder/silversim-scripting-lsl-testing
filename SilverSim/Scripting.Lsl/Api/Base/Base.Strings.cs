@@ -210,7 +210,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osMatchString")]
-        public AnArray osMatchString(ScriptInstance instance, string src, string pattern, int start)
+        public AnArray OsMatchString(ScriptInstance instance, string src, string pattern, int start)
         {
             AnArray result = new AnArray();
 

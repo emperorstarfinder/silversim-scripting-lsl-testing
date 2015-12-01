@@ -43,7 +43,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public int GetFreeMemory(ScriptInstance instance)
         {
             /* we have no resource tracking */
-            return 6556;
+            return 65536;
         }
     }
 }
