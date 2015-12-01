@@ -35,7 +35,6 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
         }
 
-        //Texture draw functions
         [APILevel(APIFlags.OSSL, "osMovePen")]
         public string MovePen(ScriptInstance instance, string drawList, int x, int y)
         {
