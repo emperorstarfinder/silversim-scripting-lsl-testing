@@ -350,7 +350,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     {
                         using (Image j2k = J2kImage.FromStream(js2k))
                         {
-                            backImage = new Bitmap(js2k);
+                            backImage = new Bitmap(j2k);
                         }
                     }
                 }
