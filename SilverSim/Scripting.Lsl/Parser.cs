@@ -191,31 +191,27 @@ redo:
                         {
                             CurrentLineNumber = GetFileInfo().LineNumber;
                         }
-                        if(is_preprocess)
-                        {
-                            if(args.Count != 0)
+                        if(is_preprocess &&
+                            args.Count != 0 &&
+                            (args[0] == "#include" || args[0] == "#include_once"))
+                        { 
+                            /* preprocessor literal */
+                            if (0 != token.Length)
                             {
-                                if(args[0] == "#include" || args[0] == "#include_once")
-                                {
-                                    /* preprocessor literal */
-                                    if (0 != token.Length)
-                                    {
-                                        args.Add(token);
-                                    }
-                                    token = string.Empty;
-                                    c = '\"';
-                                    do
-                                    {
-                                        token += c.ToString();
-                                        c = ReadC();
-                                    } while(c != '>');
-                                    token += "\"";
-                                    if(0 != token.Length)
-                                        args.Add(token);
-                                    token = string.Empty;
-                                    break;
-                                }
+                                args.Add(token);
                             }
+                            token = string.Empty;
+                            c = '\"';
+                            do
+                            {
+                                token += c.ToString();
+                                c = ReadC();
+                            } while(c != '>');
+                            token += "\"";
+                            if(0 != token.Length)
+                                args.Add(token);
+                            token = string.Empty;
+                            break;
                         }
                         /* fall-through since it is a special case only in preprocessor handling */
                         goto defaultcase;

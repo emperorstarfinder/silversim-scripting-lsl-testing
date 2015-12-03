@@ -225,12 +225,10 @@ namespace SilverSim.Scripting.Lsl
         public string GetHttpHeader(UUID requestId, string header)
         {
             HttpRequestData reqdata;
-            if (m_HttpRequests.TryGetValue(requestId, out reqdata))
+            if (m_HttpRequests.TryGetValue(requestId, out reqdata) &&
+                reqdata.Request.ContainsHeader(header))
             {
-                if(reqdata.Request.ContainsHeader(header))
-                {
-                    return reqdata.Request[header];
-                }
+                return reqdata.Request[header];
             }
             return string.Empty;
         }

@@ -543,13 +543,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     return false;
                 }
-                else if (st.Type == Tree.EntryType.Variable || st.Type == Tree.EntryType.Unknown)
+                else if ((st.Type == Tree.EntryType.Variable || st.Type == Tree.EntryType.Unknown) &&
+                    cs.m_VariableDeclarations.ContainsKey(st.Entry) &&
+                    !initedVars.Contains(st.Entry))
                 {
-                    if (cs.m_VariableDeclarations.ContainsKey(st.Entry) &&
-                        !initedVars.Contains(st.Entry))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
             return true;

@@ -580,13 +580,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     }
                     value = null;
                     src = src.Substring(foundSeparator.ToString().Length);
-                    if(src.Length == 0)
+                    if(src.Length == 0 && keepNulls)
                     {
                         /* special case we consumed all entries but a separator at end */
-                        if(keepNulls)
-                        {
-                            res.Add(string.Empty);
-                        }
+                        res.Add(string.Empty);
                     }
                 }
 
@@ -1018,12 +1015,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             for (int i = 0; i < src.Count; i++)
             {
-                if(IsValue(src[i], out entry))
+                if(IsValue(src[i], out entry) &&
+                    entry < minimum)
                 {
-                    if(entry < minimum)
-                    {
-                        minimum = entry;
-                    }
+                    minimum = entry;
                 }
             }
 
@@ -1037,12 +1032,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             for (int i = 0; i < src.Count; i++)
             {
-                if(IsValue(src[i], out entry))
+                if(IsValue(src[i], out entry) &&
+                    entry > maximum)
                 {
-                    if(entry > maximum)
-                    {
-                        maximum = entry;
-                    }
+                    maximum = entry;
                 }
             }
 

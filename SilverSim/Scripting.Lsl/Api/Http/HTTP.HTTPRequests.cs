@@ -205,14 +205,12 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 req.Headers.Add("X-SecondLife-Owner-Key", (string)instance.Part.ObjectGroup.Owner.ID);
 
                 Match authMatch = m_AuthRegex.Match(url);
-                if(authMatch.Success)
+                if(authMatch.Success &&
+                    authMatch.Groups.Count == 5)
                 {
-                    if(authMatch.Groups.Count == 5)
-                    {
-                        string authData = string.Format("{0}:{1}", authMatch.Groups[2].ToString(), authMatch.Groups[3].ToString());
-                        byte[] authDataBinary = UTF8NoBOM.GetBytes(authData);
-                        req.Headers.Add("Authorization", string.Format("Basic {0}", Convert.ToBase64String(authDataBinary)));
-                    }
+                    string authData = string.Format("{0}:{1}", authMatch.Groups[2].ToString(), authMatch.Groups[3].ToString());
+                    byte[] authDataBinary = UTF8NoBOM.GetBytes(authData);
+                    req.Headers.Add("Authorization", string.Format("Basic {0}", Convert.ToBase64String(authDataBinary)));
                 }
 
                 return m_LSLHTTPClient.Enqueue(req) ?

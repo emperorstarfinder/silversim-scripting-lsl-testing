@@ -214,58 +214,56 @@ namespace SilverSim.Scripting.Lsl
                 #region Collect constants
                 foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.Static))
                 {
-                    if ((f.Attributes & FieldAttributes.Static) != 0)
+                    if ((f.Attributes & FieldAttributes.Static) != 0 &&
+                        ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0))
                     {
-                        if ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0)
+                        if (IsValidType(f.FieldType))
                         {
-                            if (IsValidType(f.FieldType))
+                            APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
+                            APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
+                            if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                             {
-                                APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
-                                APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
-                                if(apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
+                                foreach (APILevel attr in apiLevelAttrs)
                                 {
-                                    foreach(APILevel attr in apiLevelAttrs)
+                                    string constName = attr.Name;
+                                    if (string.IsNullOrEmpty(constName))
                                     {
-                                        string constName = attr.Name;
-                                        if(string.IsNullOrEmpty(constName))
+                                        constName = f.Name;
+                                    }
+                                    foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+                                    {
+                                        if ((kvp.Key & attr.Flags) != 0)
                                         {
-                                            constName = f.Name;
-                                        }
-                                        foreach(KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                                        {
-                                            if((kvp.Key & attr.Flags) != 0)
-                                            {
-                                                kvp.Value.Constants.Add(constName, f);
-                                            }
+                                            kvp.Value.Constants.Add(constName, f);
                                         }
                                     }
-                                    foreach(APIExtension attr in apiExtensionAttrs)
+                                }
+                                foreach (APIExtension attr in apiExtensionAttrs)
+                                {
+                                    string constName = attr.Name;
+                                    if (string.IsNullOrEmpty(constName))
                                     {
-                                        string constName = attr.Name;
-                                        if (string.IsNullOrEmpty(constName))
-                                        {
-                                            constName = f.Name;
-                                        }
+                                        constName = f.Name;
+                                    }
 
-                                        ApiInfo apiInfo;
-                                        string extensionName = attr.Extension.ToLower();
-                                        if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
-                                        {
-                                            apiInfo = new ApiInfo();
-                                            m_ApiExtensions.Add(extensionName, apiInfo);
-                                        }
-                                        apiInfo.Constants.Add(constName, f);
+                                    ApiInfo apiInfo;
+                                    string extensionName = attr.Extension.ToLower();
+                                    if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                                    {
+                                        apiInfo = new ApiInfo();
+                                        m_ApiExtensions.Add(extensionName, apiInfo);
                                     }
+                                    apiInfo.Constants.Add(constName, f);
                                 }
                             }
-                            else
+                        }
+                        else
+                        {
+                            APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
+                            APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
+                            if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                             {
-                                APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
-                                APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
-                                if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
-                                {
-                                    m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
-                                }
+                                m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
                             }
                         }
                     }
@@ -368,83 +366,81 @@ namespace SilverSim.Scripting.Lsl
                     if (funcNameAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                     {
                         ParameterInfo[] pi = m.GetParameters();
-                        if (pi.Length >= 1)
+                        if (pi.Length >= 1 &&
+                            pi[0].ParameterType.Equals(typeof(ScriptInstance)))
                         {
-                            if (pi[0].ParameterType.Equals(typeof(ScriptInstance)))
+                            /* validate parameters */
+                            bool methodValid = true;
+                            if((m.Attributes & MethodAttributes.Static) != 0)
                             {
-                                /* validate parameters */
-                                bool methodValid = true;
-                                if((m.Attributes & MethodAttributes.Static) != 0)
+                                methodValid = false;
+                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Method is declared static.",
+                                    m.Name,
+                                    m.DeclaringType.FullName);
+                            }
+                            for (int i = 1; i < pi.Length; ++i)
+                            {
+                                if (!IsValidType(pi[i].ParameterType))
                                 {
                                     methodValid = false;
-                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Method is declared static.",
-                                        m.Name,
-                                        m.DeclaringType.FullName);
-                                }
-                                for (int i = 1; i < pi.Length; ++i)
-                                {
-                                    if (!IsValidType(pi[i].ParameterType))
-                                    {
-                                        methodValid = false;
-                                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
-                                            m.Name,
-                                            m.DeclaringType.FullName,
-                                            pi[i].Name,
-                                            pi[i].ParameterType.FullName);
-                                    }
-                                }
-                                if (!IsValidType(m.ReturnType))
-                                {
-                                    methodValid = false;
-                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Return value does not have LSL compatible type '{2}'.",
+                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
                                         m.Name,
                                         m.DeclaringType.FullName,
-                                        m.ReturnType.FullName);
+                                        pi[i].Name,
+                                        pi[i].ParameterType.FullName);
                                 }
+                            }
+                            if (!IsValidType(m.ReturnType))
+                            {
+                                methodValid = false;
+                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Return value does not have LSL compatible type '{2}'.",
+                                    m.Name,
+                                    m.DeclaringType.FullName,
+                                    m.ReturnType.FullName);
+                            }
 
-                                if (methodValid)
+                            if (methodValid)
+                            {
+                                foreach (APILevel funcNameAttr in funcNameAttrs)
                                 {
-                                    foreach (APILevel funcNameAttr in funcNameAttrs)
+                                    string funcName = funcNameAttr.Name;
+                                    if (string.IsNullOrEmpty(funcName))
                                     {
-                                        string funcName = funcNameAttr.Name;
-                                        if(string.IsNullOrEmpty(funcName))
-                                        {
-                                            funcName = m.Name;
-                                        }
-                                        foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                                        {
-                                            List<ApiMethodInfo> methodList;
-                                            if (!kvp.Value.Methods.TryGetValue(funcName, out methodList))
-                                            {
-                                                methodList = new List<ApiMethodInfo>();
-                                                kvp.Value.Methods.Add(funcName, methodList);
-                                            }
-                                            methodList.Add(new ApiMethodInfo(funcName, api, m));
-                                        }
+                                        funcName = m.Name;
                                     }
-                                    foreach(APIExtension funcNameAttr in apiExtensionAttrs)
+                                    foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                                     {
-                                        string funcName = funcNameAttr.Name;
-                                        if (string.IsNullOrEmpty(funcName))
-                                        {
-                                            funcName = m.Name;
-                                        }
-
-                                        ApiInfo apiInfo;
-                                        string extensionName = funcNameAttr.Extension.ToLower();
-                                        if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
-                                        {
-                                            apiInfo = new ApiInfo();
-                                            m_ApiExtensions.Add(extensionName, apiInfo);
-                                        }
                                         List<ApiMethodInfo> methodList;
-                                        if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
+                                        if (!kvp.Value.Methods.TryGetValue(funcName, out methodList))
                                         {
                                             methodList = new List<ApiMethodInfo>();
-                                            apiInfo.Methods.Add(funcName, methodList);
+                                            kvp.Value.Methods.Add(funcName, methodList);
                                         }
                                         methodList.Add(new ApiMethodInfo(funcName, api, m));
                                     }
+                                }
+                                foreach (APIExtension funcNameAttr in apiExtensionAttrs)
+                                {
+                                    string funcName = funcNameAttr.Name;
+                                    if (string.IsNullOrEmpty(funcName))
+                                    {
+                                        funcName = m.Name;
+                                    }
+
+                                    ApiInfo apiInfo;
+                                    string extensionName = funcNameAttr.Extension.ToLower();
+                                    if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                                    {
+                                        apiInfo = new ApiInfo();
+                                        m_ApiExtensions.Add(extensionName, apiInfo);
+                                    }
+                                    List<ApiMethodInfo> methodList;
+                                    if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
+                                    {
+                                        methodList = new List<ApiMethodInfo>();
+                                        apiInfo.Methods.Add(funcName, methodList);
+                                    }
+                                    methodList.Add(new ApiMethodInfo(funcName, api, m));
                                 }
                             }
                         }
