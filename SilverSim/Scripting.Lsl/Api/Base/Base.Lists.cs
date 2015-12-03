@@ -1223,7 +1223,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             double[] j = NumericSort(src);
 
-            return (Math.Ceiling(j.Length * i) == j.Length * i) ?
+            return Math.Abs((Math.Ceiling(j.Length * i) - (j.Length * i))) < Double.Epsilon ?
                 (j[(int)(j.Length * i - 1)] + j[(int)(j.Length * i)]) / 2 :
                 j[(int)(Math.Ceiling(j.Length * i)) - 1];
         }
