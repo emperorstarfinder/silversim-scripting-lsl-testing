@@ -769,7 +769,6 @@ namespace SilverSim.Scripting.Lsl
             if (eoif_label.HasValue)
             {
                 compileState.ILGen.MarkLabel(eoif_label.Value);
-                eoif_label = null;
             }
         }
 
@@ -919,7 +918,6 @@ namespace SilverSim.Scripting.Lsl
             }
             ilgen.Emit(OpCodes.Ret);
 
-            string message = string.Empty;
             Dictionary<int, string> labelsUndefined = new Dictionary<int, string>();
             foreach (KeyValuePair<string, ILLabelInfo> kvp in labels)
             {

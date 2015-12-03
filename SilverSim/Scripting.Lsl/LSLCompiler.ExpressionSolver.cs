@@ -1643,7 +1643,7 @@ namespace SilverSim.Scripting.Lsl
         { 
             List<int> argBegin = new List<int>();
             List<int> argEnd = new List<int>();
-            int i = 0;
+            int i;
             int n = resolvetree.SubTree.Count;
             bool paraLast = false;
             for(i = 0; i < n; ++i)
