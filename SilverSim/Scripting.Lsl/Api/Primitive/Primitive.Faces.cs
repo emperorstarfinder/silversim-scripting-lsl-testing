@@ -37,14 +37,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 lock(instance)
                 {
                     ObjectPart part;
-                    if(instance.Part.ObjectGroup.TryGetValue(link, out part))
-                    {
-                        return part.NumberOfSides;
-                    }
-                    else
-                    {
-                        return 0;
-                    }
+                    return (instance.Part.ObjectGroup.TryGetValue(link, out part)) ?
+                        part.NumberOfSides :
+                        0;
                 }
             }
         }

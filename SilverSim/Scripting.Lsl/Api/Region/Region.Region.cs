@@ -249,7 +249,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetSunDirection")]
         public Vector3 GetSunDirection(ScriptInstance instance)
         {
-            throw new NotImplementedException("GetSunDirection");
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.Environment.SunDirection;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llCloud")]

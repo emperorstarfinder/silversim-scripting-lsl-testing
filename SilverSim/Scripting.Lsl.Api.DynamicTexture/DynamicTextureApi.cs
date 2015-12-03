@@ -342,14 +342,10 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 {
                     UUID oldTexture;
                     TextureEntry te = instance.Part.TextureEntry;
-                    if (face == ALL_SIDES)
-                    {
-                        oldTexture = te.DefaultTexture.TextureID;
-                    }
-                    else
-                    {
-                        oldTexture = te[(uint)face].TextureID;
-                    }
+                    oldTexture =(face == ALL_SIDES) ?
+                        te.DefaultTexture.TextureID :
+                        te[(uint)face].TextureID;
+
                     using (Stream js2k = instance.Part.ObjectGroup.Scene.AssetService.Data[oldTexture])
                     {
                         using (Image j2k = J2kImage.FromStream(js2k))

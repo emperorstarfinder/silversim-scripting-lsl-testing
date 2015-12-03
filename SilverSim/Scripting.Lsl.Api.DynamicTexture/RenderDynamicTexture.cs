@@ -175,14 +175,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     case "bgcolor":
                     case "bgcolour":
                         int hex = 0;
-                        if (Int32.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hex))
-                        {
-                            backgroundColor = Color.FromArgb(hex);
-                        }
-                        else
-                        {
-                            backgroundColor = Color.FromName(value);
-                        }
+                        backgroundColor = (Int32.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hex)) ?
+                            Color.FromArgb(hex) : 
+                            Color.FromName(value);
                         break;
 
                     case "altdatadelim":
@@ -494,14 +489,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         int hex = 0;
 
                         Color newColor;
-                        if (Int32.TryParse(cmdLine, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hex))
-                        {
-                            newColor = Color.FromArgb(hex);
-                        }
-                        else
-                        {
-                            newColor = Color.FromName(cmdLine);
-                        }
+                        newColor = (Int32.TryParse(cmdLine, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hex)) ?
+                            Color.FromArgb(hex) :
+                            Color.FromName(cmdLine);
 
                         drawBrush.Color = newColor;
                         drawPen.Color = newColor;

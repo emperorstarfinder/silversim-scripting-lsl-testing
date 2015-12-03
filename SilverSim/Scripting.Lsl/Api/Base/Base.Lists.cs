@@ -1223,14 +1223,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             double[] j = NumericSort(src);
 
-            if (Math.Ceiling(j.Length * i) == j.Length * i)
-            {
-                return (j[(int)(j.Length * i - 1)] + j[(int)(j.Length * i)]) / 2;
-            }
-            else
-            {
-                return j[(int)(Math.Ceiling(j.Length * i)) - 1];
-            }
+            return (Math.Ceiling(j.Length * i) == j.Length * i) ?
+                (j[(int)(j.Length * i - 1)] + j[(int)(j.Length * i)]) / 2 :
+                j[(int)(Math.Ceiling(j.Length * i)) - 1];
         }
         #endregion
     }
