@@ -20,8 +20,8 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
     public class DynamicTextureApi : IScriptApi, IPlugin
     {
         /* graphics context specifically used for GetDrawStringSize */
-        Graphics m_FontRequestContext;
-        Dictionary<string, Func<string, string, Bitmap>> m_Renderers = new Dictionary<string, Func<string, string, Bitmap>>();
+        readonly Graphics m_FontRequestContext;
+        readonly Dictionary<string, Func<string, string, Bitmap>> m_Renderers = new Dictionary<string, Func<string, string, Bitmap>>();
 
         public DynamicTextureApi()
         {
