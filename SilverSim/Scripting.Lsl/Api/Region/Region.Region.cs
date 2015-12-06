@@ -90,7 +90,33 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetRegionMapTexture")]
         public LSLKey GetMapTexture(ScriptInstance instance, string regionName)
         {
-            throw new NotImplementedException("osGetRegionMapTexture(string)");
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if(scene.Name.ToLower() == regionName.ToLower() ||
+                    regionName.ToLower() == scene.ID.ToString().ToLower())
+                {
+                    return GetMapTexture(instance);
+                }
+
+                UUID regionid;
+                RegionInfo regionInfo;
+                if(UUID.TryParse(regionName, out regionid))
+                {
+                    if(!scene.GridService.TryGetValue(regionid, out regionInfo))
+                    {
+                        return UUID.Zero;
+                    }
+                }
+                else
+                {
+                    if(!scene.GridService.TryGetValue(regionName, out regionInfo))
+                    {
+                        return UUID.Zero;
+                    }
+                }
+                return regionInfo.RegionMapTexture;
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetRegionStats")]
@@ -256,7 +282,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
 
-                if(scene.Name == region)
+                if(scene.Name.ToLower() == region.ToLower())
                 {
                     UUID queryID = UUID.Random;
                     DataserverEvent e = new DataserverEvent();
