@@ -540,31 +540,5 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     return string.Empty;
             }
         }
-
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_LEVEL = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_RAISE = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_LOWER = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_SMOOTH = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_NOISE = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_REVERT = 5;
-
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_SMALL_BRUSH = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_MEDIUM_BRUSH = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
-        public const int LAND_LARGE_BRUSH = 2;
-
-        [APILevel(APIFlags.LSL, "llModifyLand")]
-        public void ModifyLand(ScriptInstance instance, int action, int brush)
-        {
-            throw new NotImplementedException("llModifyLand(integer, integer)");
-        }
     }
 }
