@@ -18,10 +18,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 
             lock (instance)
             {
-                if (impact_volume < 0f) impact_volume = 0f;
-                if (impact_volume > 1f) impact_volume = 1f;
-
-                para.ImpactVolume = impact_volume;
+                para.ImpactVolume = impact_volume.Clamp(0f, 1f);
                 try
                 {
                     para.ImpactSound = GetSoundAssetID(instance, impact_sound);
@@ -254,7 +251,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 
             ObjectPart.SoundParam soundparams = part.Sound;
             soundparams.SoundID = soundID;
-            soundparams.Gain = volume;
+            soundparams.Gain = volume.Clamp(0, 1);
             soundparams.Flags = flags;
             part.Sound = soundparams;
         }

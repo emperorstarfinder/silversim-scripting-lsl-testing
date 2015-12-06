@@ -39,7 +39,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetWallclock")]
         public double GetWallclock(ScriptInstance instance)
         {
-            throw new NotImplementedException("llGetWallclock()");
+            /* function is defined as returning PST, so we do that */
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "Pacific Standard Time").TimeOfDay.TotalMilliseconds / 1000;
         }
 
         [APILevel(APIFlags.LSL, "llGetDate")]
