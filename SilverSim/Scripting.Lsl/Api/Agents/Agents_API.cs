@@ -8,7 +8,9 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Agent;
+using SilverSim.Types.Parcel;
 using System;
+using System.Collections.Generic;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -65,7 +67,50 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetAgentList")]
         public AnArray GetAgentList(ScriptInstance instance, int scope, AnArray options)
         {
-            throw new NotImplementedException("llGetAgentList(int, list)");
+            AnArray res = new AnArray();
+            lock (instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                if (scope == AGENT_LIST_PARCEL)
+                {
+                    ParcelInfo thisParcel;
+                    if (scene.Parcels.TryGetValue(grp.GlobalPosition, out thisParcel))
+                    {
+                        foreach (IAgent agent in scene.RootAgents)
+                        {
+                            ParcelInfo pInfo;
+                            if(scene.Parcels.TryGetValue(agent.GlobalPosition, out pInfo) &&
+                                pInfo.ID == thisParcel.ID)
+                            {
+                                res.Add(agent.Owner.ID);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (IAgent agent in scene.RootAgents)
+                    {
+                        if (scope == AGENT_LIST_PARCEL_OWNER)
+                        {
+                            ParcelInfo pInfo;
+                            if (scene.Parcels.TryGetValue(agent.GlobalPosition, out pInfo))
+                            {
+                                if (agent.Owner.EqualsGrid(pInfo.Owner))
+                                {
+                                    res.Add(agent.Owner.ID);
+                                }
+                            }
+                        }
+                        else if (scope == AGENT_LIST_REGION)
+                        {
+                            res.Add(agent.Owner.ID);
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentInfo")]
