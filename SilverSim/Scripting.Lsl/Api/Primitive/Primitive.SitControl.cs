@@ -1,6 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -86,7 +87,30 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llAvatarOnLinkSitTarget")]
         public LSLKey AvatarOnLinkSitTarget(ScriptInstance instance, int link)
         {
-            throw new NotImplementedException("llAvatarOnLinkSitTarget(integer)");
+            lock(instance)
+            {
+                ObjectPart thisPart = instance.Part;
+                ObjectPart part;
+                ObjectGroup grp = thisPart.ObjectGroup;
+                if(link == 0)
+                {
+                    link = LINK_ROOT;
+                }
+                if(link == LINK_THIS)
+                {
+                    part = thisPart;
+                }
+                else if(!grp.TryGetValue(link, out part))
+                {
+                    return UUID.Zero;
+                }
+                IAgent agent;
+                if(grp.AgentSitting.TryGetValue(part, out agent))
+                {
+                    return agent.Owner.ID;
+                }
+                return UUID.Zero;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llForceMouselook")]
