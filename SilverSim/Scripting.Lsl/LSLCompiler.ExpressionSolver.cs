@@ -1858,7 +1858,6 @@ namespace SilverSim.Scripting.Lsl
 
         void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames, int lineNumber)
         {
-            //m_Resolver.Process(resolvetree, varNames);
             SolveMaxNegValues(cs, resolvetree);
             SolveConstantOperations(resolvetree, lineNumber);
         }
