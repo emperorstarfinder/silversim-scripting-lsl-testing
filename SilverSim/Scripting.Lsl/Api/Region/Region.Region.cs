@@ -4,7 +4,9 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
+using SilverSim.Types.Grid;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -227,6 +229,9 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int DATA_SIM_RATING = 7;
 
+        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        public const int DATA_SIM_RELEASE = 128;
+
         [APILevel(APIFlags.LSL, "llScriptDanger")]
         public int ScriptDanger(ScriptInstance instance, Vector3 pos)
         {
@@ -237,7 +242,68 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [ForcedSleep(1)]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)
         {
-            throw new NotImplementedException("llRequestSimulatorData(string, integer)");
+            if (DATA_SIM_RELEASE == data)
+            {
+                UUID queryID = UUID.Random;
+                DataserverEvent e = new DataserverEvent();
+                e.Data = VersionInfo.SimulatorVersion;
+                e.QueryID = queryID;
+                instance.PostEvent(e);
+                return queryID;
+            }
+
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+
+                if(scene.Name == region)
+                {
+                    UUID queryID = UUID.Random;
+                    DataserverEvent e = new DataserverEvent();
+                    e.QueryID = queryID;
+                    switch (data)
+                    {
+                        case DATA_SIM_POS:
+                            e.Data = new Vector3(scene.RegionData.Location).ToString();
+                            instance.PostEvent(e);
+                            return queryID;
+
+                        case DATA_SIM_STATUS:
+                            e.Data = "up"; /* no information yet available */
+                            instance.PostEvent(e);
+                            return queryID;
+
+                        case DATA_SIM_RATING:
+                            switch(scene.RegionData.Access)
+                            {
+                                case RegionAccess.Adult:
+                                    e.Data = "ADULT";
+                                    break;
+
+                                case RegionAccess.Mature:
+                                    e.Data = "MATURE";
+                                    break;
+
+                                case RegionAccess.PG:
+                                    e.Data = "PG";
+                                    break;
+
+                                default:
+                                    e.Data = "UNKNOWN";
+                                    break;
+                            }
+                            instance.PostEvent(e);
+                            return queryID;
+
+                        default:
+                            return UUID.Zero;
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException("llRequestSimulatorData(string, integer): Requesting region data of another region not yet supported");
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llEdgeOfWorld")]
