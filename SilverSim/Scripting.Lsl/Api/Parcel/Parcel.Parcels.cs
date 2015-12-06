@@ -130,7 +130,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
         public int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetParcelMaxPrims(vector, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelMusicURL")]
@@ -170,13 +170,13 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llReturnObjectsByID")]
         public int ReturnObjectsByID(ScriptInstance instance, AnArray objects)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llReturnObjectsByID(list)");
         }
 
         [APILevel(APIFlags.LSL, "llReturnObjectsByOwner")]
         public int ReturnObjectsByOwner(ScriptInstance instance, LSLKey owner, int scope)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llReturnObjectsByOwner(key, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llGetLandOwnerAt")]
@@ -195,62 +195,62 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelPrimCount")]
         public int GetParcelPrimCount(ScriptInstance instance, Vector3 pos, int category, int sim_wide)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetParcelPrimCount(vector, integer, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelPrimOwners")]
         [ForcedSleep(2)]
         public AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetParcelPrimOwners(vector)");
         }
 
         [APILevel(APIFlags.LSL, "llEjectFromLand")]
         public void EjectFromLand(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llEjectFromLand(key)");
         }
 
         [APILevel(APIFlags.LSL, "llAddToLandBanList")]
         [ForcedSleep(0.1)]
         public void AddToLandBanList(ScriptInstance instance, LSLKey avatar, double hours)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llAddToLandBanList(key, float)");
         }
 
         [APILevel(APIFlags.LSL, "llAddToLandPassList")]
         [ForcedSleep(0.1)]
         public void AddToLandPassList(ScriptInstance instance, LSLKey avatar, double hours)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llAddToLandPassList(key, float)");
         }
 
         [APILevel(APIFlags.LSL, "llRemoveFromLandBanList")]
         [ForcedSleep(0.1)]
         public void RemoveFromLandBanList(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRemoveFromLandBanList(key)");
         }
 
         [APILevel(APIFlags.LSL, "llRemoveFromLandPassList")]
         [ForcedSleep(0.1)]
         public void RemoveFromLandPassList(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRemoveFromLandPassList(key)");
         }
 
         [APILevel(APIFlags.LSL, "llResetLandBanList")]
         [ForcedSleep(0.1)]
         public void ResetLandBanList(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llResetLandBanList()");
         }
 
         [APILevel(APIFlags.LSL, "llResetLandPassList")]
         [ForcedSleep(0.1)]
         public void ResetLandPassList(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llResetLandPassList()");
         }
     }
 }

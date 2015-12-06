@@ -16,25 +16,25 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetGridName")]
         public string GetGridName(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetGridName()");
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridNick")]
         public string GetGridNick(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetGridNick()");
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridLoginURI")]
         public string GetGridLoginURI(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetgridLoginURI()");
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridHomeURI")]
         public string GetGridHomeURI(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetGridHomeURI()");
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridGatekeeperURI")]
@@ -49,7 +49,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetGridCustom")]
         public string GetGridCustom(ScriptInstance instance, string name)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetGridCustom(string)");
         }
 
         [APILevel(APIFlags.LSL, "llGetRegionName")]
@@ -88,31 +88,31 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetRegionMapTexture")]
         public LSLKey GetMapTexture(ScriptInstance instance, string regionName)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetRegionMapTexture(string)");
         }
 
         [APILevel(APIFlags.OSSL, "osGetRegionStats")]
         public AnArray GetRegionStats(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetRegionStats()");
         }
 
         [APILevel(APIFlags.OSSL, "osLoadedCreationDate")]
         public string LoadedCreationDate(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osLoadedCreationDate()");
         }
 
         [APILevel(APIFlags.OSSL, "osLoadedCreationTime")]
         public string LoadedCreationTime(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osLoadedCreationTime()");
         }
 
         [APILevel(APIFlags.OSSL, "osLoadedCreationID")]
         public LSLKey LoadedCreationID(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osLoadedCreationID()");
         }
 
         [APILevel(APIFlags.OSSL, "osGetSimulatorMemory")]
@@ -230,7 +230,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llScriptDanger")]
         public int ScriptDanger(ScriptInstance instance, Vector3 pos)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llScriptDanger(vector)");
         }
 
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
@@ -413,7 +413,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llModifyLand")]
         public void ModifyLand(ScriptInstance instance, int action, int brush)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llModifyLand(integer, integer)");
         }
     }
 }

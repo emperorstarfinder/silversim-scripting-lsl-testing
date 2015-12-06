@@ -32,28 +32,28 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]
         public void CloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llCloseRemoteDataChannel(key)");
         }
 
         [APILevel(APIFlags.LSL, "llOpenRemoteDataChannel")]
         [ForcedSleep(1.0)]
         public void OpenRemoteDataChannel(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llOpenRemoveDataChannel()");
         }
 
         [APILevel(APIFlags.LSL, "llRemoteDataReply")]
         [ForcedSleep(3.0)]
         public void RemoteDataReply(ScriptInstance instance, LSLKey channel, LSLKey message_id, string sdata, int idata)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRemoteDataReply(key, key, string, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llSendRemoteData")]
         [ForcedSleep(3.0)]
         public LSLKey SendRemoteData(ScriptInstance instance, LSLKey channel, string dest, int idata, string sdata)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llSendRemoteData(key, string, integer, string)");
         }
 
         [APILevel(APIFlags.LSL, "llRemoteDataSetRegion")]

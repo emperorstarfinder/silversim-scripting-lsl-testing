@@ -37,25 +37,25 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llLoopSound")]
         public void LoopSound(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llLoopSound(string, float)");
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundMaster")]
         public void LoopSoundMaster(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llLoopSoundMaster(string, float)");
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundSlave")]
         public void LoopSoundSlave(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llLoopSoundSlave(string, float)");
         }
 
         [APILevel(APIFlags.LSL, "llSound")]
         public void Sound(ScriptInstance instance, string sound, double volume, int queue, int loop)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llSound(string, float, integer, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llSoundPreload")]
@@ -89,7 +89,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llStopSound")]
         public void StopSound(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llStopSound()");
         }
 
         [APILevel(APIFlags.LSL, "llPlaySound")]
@@ -120,7 +120,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llPlaySoundSlave")]
         public void PlaySoundSlave(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llPlaySoundSlave(string, float)");
         }
 
         [APILevel(APIFlags.LSL, "llTriggerSound")]

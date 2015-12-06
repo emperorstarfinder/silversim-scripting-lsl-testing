@@ -27,13 +27,13 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llGetMass")]
         public double GetMass(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetMass()");
         }
 
         [APILevel(APIFlags.LSL, "llVolumeDetect")]
         public void VolumeDetect(ScriptInstance instance, int enable)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llVolumeDetect(integer)");
         }
 
         [APILevel(APIFlags.LSL, "llSetTorque")]
@@ -57,13 +57,13 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llGetForce")]
         public Vector3 GetForce(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetForce()");
         }
 
         [APILevel(APIFlags.LSL, "llGetTorque")]
         public Vector3 GetTorque(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetTorque()");
         }
 
         [APILevel(APIFlags.LSL, "llGetAccel")]
@@ -152,25 +152,25 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llGroundRepel")]
         public void GroundRepel(ScriptInstance instance, double height, int water, double tau)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGroundRepel(float, integer, float)");
         }
 
         [APILevel(APIFlags.LSL, "llPushObject")]
         public void PushObject(ScriptInstance instance, LSLKey target, Vector3 impulse, Vector3 ang_impulse, int local)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llPushObject(key, vector, vector, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llApplyImpulse")]
         public void ApplyImpulse(ScriptInstance instance, Vector3 momentum, int local)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llApplyImpulse(vector, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llApplyRotationalImpulse")]
         public void ApplyRotationalImpulse(ScriptInstance instance, Vector3 ang_impulse, int local)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llApplyRotationalImpulse(vector, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llSetVelocity")]
@@ -279,25 +279,25 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llSetHoverHeight")]
         public void SetHoverHeight(ScriptInstance instance, double height, int water, double tau)
         {
-            throw new NotImplementedException("llSetHoverHeight");
+            throw new NotImplementedException("llSetHoverHeight(float, integer, float)");
         }
 
         [APILevel(APIFlags.LSL, "llStopHover")]
         public void StopHover(ScriptInstance instance)
         {
-            throw new NotImplementedException("llStopHover");
+            throw new NotImplementedException("llStopHover()");
         }
 
         [APILevel(APIFlags.LSL, "llMoveToTarget")]
         public void MoveToTarget(ScriptInstance instance, Vector3 target, double tau)
         {
-            throw new NotImplementedException("llMoveToTarget");
+            throw new NotImplementedException("llMoveToTarget(vector, float)");
         }
 
         [APILevel(APIFlags.LSL, "llStopMoveToTarget")]
         public void StopMoveToTarget(ScriptInstance instance)
         {
-            throw new NotImplementedException("llStopMoveToTarget");
+            throw new NotImplementedException("llStopMoveToTarget()");
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectMass")]
@@ -323,7 +323,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             lock(instance)
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException("osGetPhysicsEngineType()");
             }
         }
     }

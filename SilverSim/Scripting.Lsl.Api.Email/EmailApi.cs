@@ -28,13 +28,13 @@ namespace SilverSim.Scripting.Lsl.Api.Email
         [APILevel(APIFlags.LSL, "llEmail")]
         public void Email(ScriptInstance instance, string address, string subject, string message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llEmail(string, string, string)");
         }
 
         [APILevel(APIFlags.LSL, "llGetNextEmail")]
         public void GetNextEmail(ScriptInstance instance, string address, string subject)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetNextEmail(string, string)");
         }
     }
 }

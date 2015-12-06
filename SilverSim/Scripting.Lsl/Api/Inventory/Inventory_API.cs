@@ -75,14 +75,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.LSL, "llGiveInventory")]
         public void GiveInventory(ScriptInstance instance, LSLKey destination, string inventory)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGiveInventory(key, string)");
         }
 
         [APILevel(APIFlags.LSL, "llGiveInventoryList")]
         [ForcedSleep(3)]
         public void GiveInventoryList(ScriptInstance instance, LSLKey target, string folder, AnArray inventory)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGiveInventoryList(key, string, list)");
         }
 
         [APILevel(APIFlags.LSL, "llRemoveInventory")]
@@ -290,7 +290,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [ForcedSleep(1.0)]
         public LSLKey RequestInventoryData(ScriptInstance instance, string name)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRequestInventoryData(string)");
         }
 
         #region osGetInventoryDesc
@@ -315,13 +315,13 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.LSL, "llRezObject")]
         public void RezObject(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRezObject(string, vector, vector, rotation, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llRezAtRoot")]
         public void RezAtRoot(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRezAtRoot(string, vector, vector, rotation, integer)");
         }
         #endregion
     }

@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
             {
                 instance.CheckThreatLevel("osNpcCreate", ScriptInstance.ThreatLevelType.High);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcCreate(string, string, vector, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcCreate")]
@@ -57,115 +57,115 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
             {
                 instance.CheckThreatLevel("osNpcCreate", ScriptInstance.ThreatLevelType.High);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcCreate(string, string, vector, string, integer)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcGetPos")]
         public Vector3 NpcGetPos(ScriptInstance instance, LSLKey npc)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcGetPos(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcGetRot")]
         public Quaternion NpcGetRot(ScriptInstance instance, LSLKey npc)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcGetRot(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcGetOwner")]
         public LSLKey NpcGetOwner(ScriptInstance instance, LSLKey npc)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcGetOwner(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcLoadAppearance")]
         public void NpcLoadAppearance(ScriptInstance instance, LSLKey npc, string notecard)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcLoadAppearance(key, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcMoveTo")]
         public void NpcMoveTo(ScriptInstance instance, LSLKey npc, Vector3 position)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcMoveTo(key, vector)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcMoveToTarget")]
         public void NpcMoveToTarget(ScriptInstance instance, LSLKey npc, Vector3 target, int options)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcMoveToTarget(key, vector, integer)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcRemove")]
         public void NpcRemove(ScriptInstance instance, LSLKey npc)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcRemove(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcSaveAppearance")]
         public LSLKey NpcSaveAppearance(ScriptInstance instance, LSLKey npc, string notecard)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcSaveAppearance(key, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcSay")]
         public void NpcSay(ScriptInstance instance, LSLKey npc, string message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcSay(key, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcSay")]
         public void NpcSay(ScriptInstance instance, LSLKey npc, int channel, string message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcSay(key, integer, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcShout")]
         public void NpcShout(ScriptInstance instance, LSLKey npc, string message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcShout(key, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcShout")]
         public void NpcShout(ScriptInstance instance, LSLKey npc, int channel, string message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcShout(key, integer, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcWhisper")]
         public void NpcWhisper(ScriptInstance instance, LSLKey npc, string message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcWhisper(key, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcWhisper")]
         public void NpcWhisper(ScriptInstance instance, LSLKey npc, int channel, string message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcWhisper(key, integer, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcSetRot")]
         public void NpcSetRot(ScriptInstance instance, LSLKey npc, Quaternion rot)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcSetRot(key, rotation)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcSit")]
         public void NpcSit(ScriptInstance instance, LSLKey npc, LSLKey target, int options)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcSit(key, key, integer)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcStand")]
         public void NpcStand(ScriptInstance instance, LSLKey npc)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcStand(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcStopMoveToTarget")]
         public void NpcStopMoveToTarget(ScriptInstance instance, LSLKey npc)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcStopMoveToTarget(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osIsNpc")]
@@ -177,19 +177,19 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         [APILevel(APIFlags.OSSL, "osNpcPlayAnimation")]
         public void NpcPlayAnimation(ScriptInstance instance, LSLKey npc, string animation)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcPlayAnimation(key, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcStopAnimation")]
         public void NpcStopAnimation(ScriptInstance instance, LSLKey npc, string animation)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcStopAnimation(key, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osNpcTouch")]
         public void NpcTouch(ScriptInstance instance, LSLKey npc, LSLKey objectKey, int linkNum)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osNpcTouch(key, key, integer)");
         }
     }
 }

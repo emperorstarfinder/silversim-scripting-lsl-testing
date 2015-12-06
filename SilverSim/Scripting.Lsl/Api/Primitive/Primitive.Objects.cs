@@ -88,25 +88,25 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetDamage")]
         public void SetDamage(ScriptInstance instance, double damage)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llSetDamage(float)");
         }
 
         [APILevel(APIFlags.LSL, "llGetEnergy")]
         public double GetEnergy(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetEnergy()");
         }
 
         [APILevel(APIFlags.LSL, "llGetBoundingBox")]
         public AnArray GetBoundingBox(ScriptInstance instance, LSLKey objectKey)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetBoundingBox(key)");
         }
 
         [APILevel(APIFlags.LSL, "llGetGeometricCenter")]
         public Vector3 GetGeometricCenter(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetGeometricCenter()");
         }
 
         [APILevel(APIFlags.LSL, "llGetAttached")]
@@ -135,7 +135,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osGetRezzingObject")]
         public LSLKey OsGetRezzingObject(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetRezzingObject()");
         }
 
         [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
@@ -375,13 +375,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetStatus")]
         public void SetStatus(ScriptInstance instance, int status, int value)
         {
-            throw new NotImplementedException("llSetStatus");
+            throw new NotImplementedException("llSetStatus(integer, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llGetStatus")]
         public int SetStatus(ScriptInstance instance, int status)
         {
-            throw new NotImplementedException("llGetStatus");
+            throw new NotImplementedException("llGetStatus(integer)");
         }
 
         #region osMessageObject
@@ -416,7 +416,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osMessageAttachments")]
         public void MessageAttachments(ScriptInstance instance, LSLKey avatar, string message, AnArray attachmentPoints, int options)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osMessageAttachments(key, string, list, integer)");
         }
         #endregion
     }

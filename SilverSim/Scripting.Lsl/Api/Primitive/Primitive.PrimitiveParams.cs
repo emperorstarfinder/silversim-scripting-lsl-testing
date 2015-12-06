@@ -78,7 +78,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osGetLinkPrimitiveParams")]
         public AnArray OsGetLinkPrimitiveParams(ScriptInstance instance, int linknumber, AnArray param)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetLinkPrimitiveParams(integer, list)");
         }
 
         [APILevel(APIFlags.LSL, "llGetLocalPos")]

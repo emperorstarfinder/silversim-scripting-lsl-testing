@@ -271,7 +271,7 @@ namespace SilverSim.Scripting.Lsl
 
         public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("LSLHTTP.RequestSecureURL()");
         }
 
         public void ReleaseURL(string url)

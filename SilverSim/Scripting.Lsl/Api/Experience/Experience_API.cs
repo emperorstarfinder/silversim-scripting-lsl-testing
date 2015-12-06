@@ -68,31 +68,31 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         [APILevel(APIFlags.LSL, "llAgentInExperience")]
         public int AgentInExperience(ScriptInstance instance, LSLKey agent)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llAgentInExperience(key)");
         }
 
         [APILevel(APIFlags.LSL, "llCreateKeyValue")]
         public LSLKey CreateKeyValue(ScriptInstance instance, string k, string v)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llCreateKeyValue(string, string)");
         }
 
         [APILevel(APIFlags.LSL, "llDataSizeKeyValue")]
         public LSLKey DataSizeKeyValue(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llDataSizeKeyValue()");
         }
 
         [APILevel(APIFlags.LSL, "llDeleteKeyValue")]
         public LSLKey DeleteKeyValue(ScriptInstance instance, string k)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llDeleteKeyValue(string)");
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceDetails")]
         public AnArray GetExperienceDetails(ScriptInstance instance, LSLKey experience_id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetExperienceDetails(key)");
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceErrorMessage")]
@@ -124,31 +124,31 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         [APILevel(APIFlags.LSL, "llKeyCountKeyValue")]
         public LSLKey KeyCountKeyValue(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llKeyCountKeyValue()");
         }
 
         [APILevel(APIFlags.LSL, "llKeysKeyValue")]
         public LSLKey KeysKeyValue(ScriptInstance instance, int first, int count)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llKeysKeyValue(integer, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llReadKeyValue")]
         public LSLKey ReadKeyValue(ScriptInstance instance, string k)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llReadKeyValue(string)");
         }
 
         [APILevel(APIFlags.LSL, "llRequestExperiencePermissions")]
         public void RequestExperiencePermissions(ScriptInstance instance, LSLKey agent, string name /* unused */)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRequestExperiencePermissions(key, string)");
         }
 
         [APILevel(APIFlags.LSL, "llUpdateKeyValue")]
         public LSLKey UpdateKeyValue(ScriptInstance instance, string k, string v, int checked_orig, string original_value)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llUpdateKeyValue(string, string, integer, string)");
         }
     }
 }

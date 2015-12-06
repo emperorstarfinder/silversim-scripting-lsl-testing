@@ -42,20 +42,20 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [ForcedSleep(2)]
         public void ParcelMediaCommandList(ScriptInstance instance, AnArray commandList)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llParcelMediaCommandList(list)");
         }
 
         [APILevel(APIFlags.LSL, "llParcelMediaQuery")]
         [ForcedSleep(2)]
         public AnArray ParcelMediaQuery(ScriptInstance instance, AnArray query)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llParcelMediaQuery(list)");
         }
 
         [APILevel(APIFlags.OSSL, "osSetParcelMediaURL")]
         public void SetParcelMediaURL(ScriptInstance instance, string url)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osSetParcelMediaURL(string)");
         }
     }
 }

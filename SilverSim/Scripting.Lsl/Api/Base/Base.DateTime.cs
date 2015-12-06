@@ -30,13 +30,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetTimeOfDay")]
         public double GetTimeOfDay(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetTimeOfDay()");
         }
 
         [APILevel(APIFlags.LSL, "llGetWallclock")]
         public double GetWallclock(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetWallclock()");
         }
 
         [APILevel(APIFlags.LSL, "llGetDate")]

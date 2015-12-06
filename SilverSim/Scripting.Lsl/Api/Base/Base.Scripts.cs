@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llMinEventDelay")]
         public void MinEventDelay(ScriptInstance instance, double delay)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llMinEventDelay(float)");
         }
 
         [APILevel(APIFlags.LSL, "llGetStartParameter")]

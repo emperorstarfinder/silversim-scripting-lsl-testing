@@ -32,20 +32,20 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         [APILevel(APIFlags.LSL, "llSensor")]
         public void Sensor(ScriptInstance instance, string name, LSLKey id, int type, double radius, double arc)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llSensor(string, key, integer, float, float)");
         }
 
         [APILevel(APIFlags.LSL, "llSensorRepeat")]
         public void SensorRepeat(ScriptInstance instance, string name, LSLKey id, int type, double range, double arc, double rate)
         {
             /* there is only one repeating sensor per script */
-            throw new NotImplementedException();
+            throw new NotImplementedException("llSensorRepeat(string, key, integer, float, float, float)");
         }
 
         [APILevel(APIFlags.LSL, "llSensorRemove")]
         public void SensorRemove(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llSensorRemove()");
         }
     }
 }

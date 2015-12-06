@@ -64,13 +64,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetAgentList")]
         public AnArray GetAgentList(ScriptInstance instance, int scope, AnArray options)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetAgentList(int, list)");
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentInfo")]
         public int GetAgentInfo(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetAgentInfo(key)");
         }
 
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
@@ -93,31 +93,31 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [ForcedSleep(0.1)]
         public LSLKey RequestAgentData(ScriptInstance instance, LSLKey id, int data)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRequestAgentData(key, integer)");
         }
 
         [APILevel(APIFlags.OSSL, "osSetSpeed")]
         public void SetSpeed(ScriptInstance instance, LSLKey id, double speedfactor)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osSetSpeed(key, float)");
         }
 
         [APILevel(APIFlags.OSSL, "osInviteToGroup")]
         public int OsInviteToGroup(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osInviteToGroup(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osEjectFromGroup")]
         public int OsEjectFromToGroup(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osEjectFromGroup(key)");
         }
 
         [APILevel(APIFlags.LSL, "llRequestDisplayName")]
         public LSLKey RequestDisplayName(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRequestDisplayName(key)");
         }
 
         [APILevel(APIFlags.LSL, "llGetUsername")]
@@ -138,13 +138,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRequestUsername")]
         public LSLKey RequestUsername(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRequestUsername(key)");
         }
 
         [APILevel(APIFlags.LSL, "llGetDisplayName")]
         public string GetDisplayName(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetDisplayName(key)");
         }
 
         [APILevel(APIFlags.LSL, "llKey2Name")]
@@ -178,19 +178,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "osGetGender")]
         public string OsGetGender(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetGender(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osGetHealth")]
         public double GetHealth(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetHealth(key)");
         }
 
         [APILevel(APIFlags.LSL, "osAvatarName2Key")]
         public string OsAvatarName2Key(ScriptInstance instance, string firstName, string lastName)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osAvatarName2Key(string, string)");
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentSize")]
@@ -214,7 +214,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 instance.CheckThreatLevel("osAgentSaveAppearance", ScriptInstance.ThreatLevelType.VeryHigh);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osAgentSaveAppearance(key, string)");
         }
 
         [APILevel(APIFlags.LSL, "osOwnerSaveAppearance")]
@@ -224,13 +224,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 instance.CheckThreatLevel("osOwnerSaveAppearance", ScriptInstance.ThreatLevelType.High);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osOwnerSaveAppearance(string)");
         }
 
         [APILevel(APIFlags.LSL, "llTeleportAgentHome")]
         public void TeleportAgentHome(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llTeleportAgentHome(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
@@ -240,7 +240,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osTeleportAgent(key, integer, integer, vector, vector)");
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
@@ -250,7 +250,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osTeleportAgent(key, string, vector, vector)");
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
@@ -260,43 +260,43 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osTeleportAgent(key, vector, vector)");
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportOwner")]
         public void TeleportOwner(ScriptInstance instance, int regionX, int regionY, Vector3 position, Vector3 lookAt)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osTeleportOwner(integer, integer, vector, vector)");
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportOwner")]
         public void TeleportOwner(ScriptInstance instance, string regionName, Vector3 position, Vector3 lookAt)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osTeleportOwner(string, vector, vector)");
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportOwner")]
         public void TeleportOwner(ScriptInstance instance, Vector3 position, Vector3 lookAt)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osTeleportOwner(vector, vector)");
         }
 
         [APILevel(APIFlags.LSL, "llAttachToAvatar")]
         public void AttachToAvatar(ScriptInstance instance, int attach_point)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llAttachToAvatar(integer)");
         }
 
         [APILevel(APIFlags.LSL, "llAttachToAvatarTemp")]
         public void AttachToAvatarTemp(ScriptInstance instance, int attach_point)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llAttachToAvatarTemp(integer)");
         }
 
         [APILevel(APIFlags.LSL, "llDetachFromAvatar")]
         public void DetachFromAvatar(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llDetachFromAvatar()");
         }
 
         [APILevel(APIFlags.OSSL, "osForceAttachToAvatar")]
@@ -305,7 +305,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock(instance)
             {
                 instance.CheckThreatLevel("osForceAttachToAvatar", ScriptInstance.ThreatLevelType.High);
-                throw new NotImplementedException();
+                throw new NotImplementedException("osForceAttachToAvatar(integer)");
             }
         }
 
@@ -315,7 +315,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock (instance)
             {
                 instance.CheckThreatLevel("osForceAttachToAvatarFromInventory", ScriptInstance.ThreatLevelType.High);
-                throw new NotImplementedException();
+                throw new NotImplementedException("osForceAttachToAvatarFromInventory(string, integer)");
             }
         }
 
@@ -325,62 +325,62 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock (instance)
             {
                 instance.CheckThreatLevel("osForceAttachToOtherAvatarFromInventory", ScriptInstance.ThreatLevelType.VeryHigh);
-                throw new NotImplementedException();
+                throw new NotImplementedException("osForceAttachToOtherAvatarFromInventory(key, string, integer)");
             }
         }
 
         [APILevel(APIFlags.OSSL, "osCauseDamage")]
         public void CauseDamage(ScriptInstance instance, LSLKey id, double health)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osCauseDamage(float)");
         }
 
         [APILevel(APIFlags.OSSL, "osCauseHealing")]
         public void CauseHealing(ScriptInstance instance, LSLKey id, double health)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osCauseHealing(float)");
         }
 
         [APILevel(APIFlags.OSSL, "osForceDetachFromAvatar")]
         public void ForceDetachFromAvatar(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osForceDetachFromAvatar()");
         }
 
         [APILevel(APIFlags.OSSL, "osDropAttachment")]
         public void DropAttachment(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osDropAttachment()");
         }
 
         [APILevel(APIFlags.OSSL, "osDropAttachmentAt")]
         public void DropAttachmentAt(ScriptInstance instance, Vector3 pos, Quaternion rot)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osDropAttachmentAt(vector, rotation)");
         }
 
         [APILevel(APIFlags.OSSL, "osForceDropAttachment")]
         public void ForceDropAttachment(ScriptInstance instance)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osForceDropAttachment()");
         }
 
         [APILevel(APIFlags.OSSL, "osForceDropAttachmentAt")]
         public void ForceDropAttachmentAt(ScriptInstance instance, Vector3 pos, Quaternion rot)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osForceDropAttachmentAt(vector, rotation)");
         }
 
         [APILevel(APIFlags.OSSL, "osGetNumberOfAttachments")]
         public AnArray GetNumberOfAttachments(ScriptInstance instance, LSLKey avatar, AnArray attachmentPoints)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osGetNumberOfAttachments(key, list)");
         }
 
         [APILevel(APIFlags.OSSL, "osKickAvatar")]
         public void KickAvatar(ScriptInstance instance, string firstName, string lastName, string alert)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("osKickAvatar(string, string, string)");
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
@@ -390,7 +390,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 instance.CheckThreatLevel("osForceOtherSit", ScriptInstance.ThreatLevelType.VeryHigh);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osForceOtherSit(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
@@ -400,7 +400,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 instance.CheckThreatLevel("osForceOtherSit", ScriptInstance.ThreatLevelType.VeryHigh);
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException("osForceOtherSit(key, key)");
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentLanguage")]
@@ -416,7 +416,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
              * Viewers can specify other arbitrary language strings with the 'InstallLanguage' debug setting. For example, launching the viewer with "--set InstallLanguage american" results this function returning 'american' for the avatar. VWR-12222
              *   If the viewer supplies a multiline value, the simulator will only accept the first line and ignore all others. SVC-5503
              */
-            throw new NotImplementedException();
+            throw new NotImplementedException("llGetAgentLanguage(key)");
         }
 
         #region osGetAvatarList

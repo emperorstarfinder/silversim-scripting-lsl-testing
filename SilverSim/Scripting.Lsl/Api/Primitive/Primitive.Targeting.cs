@@ -28,25 +28,25 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llTarget")]
         public int Target(ScriptInstance instance, Vector3 position, double range)
         {
-            throw new NotImplementedException("llTarget");
+            throw new NotImplementedException("llTarget(vector, float)");
         }
 
         [APILevel(APIFlags.LSL, "llTargetRemove")]
         public void TargetRemove(ScriptInstance instance, int handle)
         {
-            throw new NotImplementedException("llTargetRemove");
+            throw new NotImplementedException("llTargetRemove(integer)");
         }
 
         [APILevel(APIFlags.LSL, "llRotTarget")]
         public int RotTarget(ScriptInstance instance, Quaternion rot, double error)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRotTarget(rotation, float)");
         }
 
         [APILevel(APIFlags.LSL, "llRotTargetRemove")]
         public void RotTargetRemove(ScriptInstance instance, int handle)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("llRotTargetRemove(integer)");
         }
     }
 }
