@@ -19,14 +19,22 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             lock (instance)
             {
                 para.ImpactVolume = impact_volume.Clamp(0f, 1f);
-                try
+                if (impact_sound == string.Empty)
                 {
-                    para.ImpactSound = GetSoundAssetID(instance, impact_sound);
+                    para.ImpactSound = UUID.Zero;
                     instance.Part.CollisionSound = para;
                 }
-                catch
+                else
                 {
-                    instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", impact_sound));
+                    try
+                    {
+                        para.ImpactSound = GetSoundAssetID(instance, impact_sound);
+                        instance.Part.CollisionSound = para;
+                    }
+                    catch
+                    {
+                        instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", impact_sound));
+                    }
                 }
             }
         }
