@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
@@ -293,7 +294,23 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetRegionPos")]
         public int SetRegionPos(ScriptInstance instance, Vector3 pos)
         {
-            throw new NotImplementedException("llSetRegionPos(vector)");
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if(pos.X < 0 || pos.X >= scene.RegionData.Size.X)
+                {
+                    return 0;
+                }
+                if (pos.Y < 0 || pos.X >= scene.RegionData.Size.Y)
+                {
+                    return 0;
+                }
+
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                Vector3 oldPos = grp.GlobalPosition;
+                grp.GlobalPosition = pos;
+                return (oldPos - pos).Length < 0.1 ? 1 : 0; /* <= only returns 1 if object was 0.1m away at least */
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetVel")]
