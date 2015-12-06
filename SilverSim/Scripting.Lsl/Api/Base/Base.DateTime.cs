@@ -30,7 +30,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetTimeOfDay")]
         public double GetTimeOfDay(ScriptInstance instance)
         {
-            throw new NotImplementedException("llGetTimeOfDay()");
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.Environment.TimeOfDay;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetWallclock")]
