@@ -3,10 +3,13 @@
 
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Script;
+using SilverSim.Viewer.Messages.Camera;
 using System;
+using System.Collections.Generic;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -96,7 +99,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
-                    throw new NotImplementedException("llClearCameraParams()");
+                    ObjectGroup grp = instance.Part.ObjectGroup;
+                    ClearFollowCamProperties followcamprops = new ClearFollowCamProperties();
+                    followcamprops.ObjectID = grp.ID;
+                    SceneInterface scene = grp.Scene;
+                    IAgent agent;
+                    if (scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
+                    {
+                        agent.SendMessageIfRootAgent(followcamprops, scene.ID);
+                    }
                 }
             }
         }
@@ -109,10 +120,126 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
-                    throw new NotImplementedException("llSetCameraParams(list)");
+                    SortedDictionary<int, double> parameters = new SortedDictionary<int, double>();
+
+                    int type;
+                    int i = 0;
+                    #region Rules Decoder
+                    while(i < rules.Count)
+                    {
+                        try
+                        {
+                            type = rules[i++].AsInt;
+                        }
+                        catch
+                        {
+                            instance.ShoutError(string.Format("Invalid camera param type {0}", rules[i - 1].ToString()));
+                            return;
+                        }
+
+                        if(i >= rules.Count)
+                        {
+                            break;
+                        }
+
+                        switch(type)
+                        {
+                            case CAMERA_FOCUS:
+                            case CAMERA_FOCUS_OFFSET:
+                            case CAMERA_POSITION:
+                                {
+                                    Vector3 v;
+                                    try
+                                    {
+                                        v = rules[i++].AsVector3;
+                                    }
+                                    catch (InvalidCastException)
+                                    {
+                                        switch (type)
+                                        {
+                                            case CAMERA_FOCUS:
+                                                instance.ShoutError("llSetCameraParams: CAMERA_FOCUS: Expecting a vector parameter");
+                                                return;
+
+                                            case CAMERA_FOCUS_OFFSET:
+                                                instance.ShoutError("llSetCameraParams: CAMERA_FOCUS_OFFSET: Expecting a vector parameter");
+                                                return;
+
+                                            case CAMERA_POSITION:
+                                                instance.ShoutError("llSetCameraParams: CAMERA_POSITION: Expecting a vector parameter");
+                                                return;
+
+                                            default:
+                                                return;
+                                        }
+                                    }
+                                    parameters[type + 1] = v.X;
+                                    parameters[type + 2] = v.Y;
+                                    parameters[type + 3] = v.Z;
+                                }
+                                break;
+
+                            default:
+                                try
+                                {
+                                    parameters[type] = rules[i++].AsReal;
+                                }
+                                catch(InvalidCastException)
+                                {
+                                    string typeName;
+                                    switch (type)
+                                    {
+                                        case CAMERA_PITCH: typeName = "CAMERA_PITCH"; break;
+                                        case CAMERA_FOCUS_OFFSET_X: typeName = "CAMERA_FOCUS_OFFSET_X"; break;
+                                        case CAMERA_FOCUS_OFFSET_Y: typeName = "CAMERA_FOCUS_OFFSET_Y"; break;
+                                        case CAMERA_FOCUS_OFFSET_Z: typeName = "CAMERA_FOCUS_OFFSET_Z"; break;
+                                        case CAMERA_POSITION_LAG: typeName = "CAMERA_POSITION_LAG"; break;
+                                        case CAMERA_FOCUS_LAG: typeName = "CAMERA_FOCUS_LAG"; break;
+                                        case CAMERA_DISTANCE: typeName = "CAMERA_DISTANCE"; break;
+                                        case CAMERA_BEHINDNESS_ANGLE: typeName = "CAMERA_BEHINDNESS_ANGLE"; break;
+                                        case CAMERA_BEHINDNESS_LAG: typeName = "CAMERA_BEHINDNESS_LAG"; break;
+                                        case CAMERA_POSITION_THRESHOLD: typeName = "CAMERA_POSITION_THRESHOLD"; break;
+                                        case CAMERA_FOCUS_THRESHOLD: typeName = "CAMERA_FOCUS_THRESHOLD"; break;
+                                        case CAMERA_ACTIVE: typeName = "CAMERA_ACTIVE"; break;
+                                        case CAMERA_POSITION_X: typeName = "CAMERA_POSITION_X"; break;
+                                        case CAMERA_POSITION_Y: typeName = "CAMERA_POSITION_Y"; break;
+                                        case CAMERA_POSITION_Z: typeName = "CAMERA_POSITION_Z"; break;
+                                        case CAMERA_FOCUS_X: typeName = "CAMERA_FOCUS_X"; break;
+                                        case CAMERA_FOCUS_Y: typeName = "CAMERA_FOCUS_Y"; break;
+                                        case CAMERA_FOCUS_Z: typeName = "CAMERA_FOCUS_Z"; break;
+                                        case CAMERA_POSITION_LOCKED: typeName = "CAMERA_POSITION_LOCKED"; break;
+                                        case CAMERA_FOCUS_LOCKED: typeName = "CAMERA_FOCUS_LOCKED"; break;
+                                        default: typeName = string.Format("{0}", rules[i - 1].AsInt); break;
+                                    }
+                                    instance.ShoutError("llSetCameraParams: " + typeName + ": Parameter is invalid");
+                                    return;
+                                }
+                                break;
+                        }
+                    }
+                    #endregion
+
+                    if (parameters.Count > 0)
+                    {
+                        ObjectGroup grp = instance.Part.ObjectGroup;
+                        SetFollowCamProperties followcamprops = new SetFollowCamProperties();
+                        followcamprops.ObjectID = grp.ID;
+                        foreach(KeyValuePair<int, double> kvp in parameters)
+                        {
+                            SetFollowCamProperties.CameraProperty prop = new SetFollowCamProperties.CameraProperty();
+                            prop.Type = kvp.Key;
+                            prop.Value = kvp.Value;
+                            followcamprops.CameraProperties.Add(prop);
+                        }
+                        SceneInterface scene = grp.Scene;
+                        IAgent agent;
+                        if(scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
+                        {
+                            agent.SendMessageIfRootAgent(followcamprops, scene.ID);
+                        }
+                    }
                 }
             }
-
         }
 
         [APILevel(APIFlags.LSL, "llGetCameraPos")]
