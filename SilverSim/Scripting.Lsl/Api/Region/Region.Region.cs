@@ -590,6 +590,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                         case 3: scene.RegionSettings.TerrainTexture4 = textureID; break;
                         default: break;
                     }
+                    scene.TriggerRegionSettingsChanged();
                 }
             }
         }
@@ -632,6 +633,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                         default:
                             break;
                     }
+                    scene.TriggerRegionSettingsChanged();
                 }
             }
         }
