@@ -139,7 +139,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osGetRezzingObject")]
         public LSLKey OsGetRezzingObject(ScriptInstance instance)
         {
-            throw new NotImplementedException("osGetRezzingObject()");
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.RezzingObjectID;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetCenterOfMass")]
