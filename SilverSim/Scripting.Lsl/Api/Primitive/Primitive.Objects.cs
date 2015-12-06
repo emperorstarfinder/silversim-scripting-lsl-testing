@@ -470,33 +470,16 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             continue;
                         }
 
-                        if (invert)
+                        foreach (ObjectGroup grp in agent.Attachments[ap])
                         {
-                            foreach (ObjectGroup grp in agent.Attachments[ap])
+                            if (((options & OS_ATTACH_MSG_OBJECT_CREATOR) != 0 &&
+                                !grp.RootPart.Creator.EqualsGrid(thisPart.Creator)) ||
+                                ((options & OS_ATTACH_MSG_SCRIPT_CREATOR) != 0 &&
+                                !grp.RootPart.Creator.EqualsGrid(instance.Item.Creator)))
                             {
-                                if (((options & OS_ATTACH_MSG_OBJECT_CREATOR) != 0 &&
-                                        grp.RootPart.Creator.EqualsGrid(thisPart.Creator)) ||
-                                    ((options & OS_ATTACH_MSG_SCRIPT_CREATOR) != 0 &&
-                                    grp.RootPart.Creator.EqualsGrid(instance.Item.Creator)))
-                                {
-                                    continue;
-                                }
-                                grp.PostEvent(ev);
+                                continue;
                             }
-                        }
-                        else
-                        {
-                            foreach (ObjectGroup grp in agent.Attachments[ap])
-                            {
-                                if (((options & OS_ATTACH_MSG_OBJECT_CREATOR) != 0 &&
-                                    !grp.RootPart.Creator.EqualsGrid(thisPart.Creator)) ||
-                                    ((options & OS_ATTACH_MSG_SCRIPT_CREATOR) != 0 &&
-                                    !grp.RootPart.Creator.EqualsGrid(instance.Item.Creator)))
-                                {
-                                    continue;
-                                }
-                                grp.PostEvent(ev);
-                            }
+                            grp.PostEvent(ev);
                         }
                     }
                 }
