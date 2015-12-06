@@ -1,13 +1,16 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
+using SilverSim.Types.Agent;
 using SilverSim.Types.Inventory;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -433,7 +436,71 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osMessageAttachments")]
         public void MessageAttachments(ScriptInstance instance, LSLKey avatar, string message, AnArray attachmentPoints, int options)
         {
-            throw new NotImplementedException("osMessageAttachments(key, string, list, integer)");
+            lock(instance)
+            {
+                IAgent agent;
+                ObjectPart thisPart = instance.Part;
+                if(thisPart.ObjectGroup.Scene.RootAgents.TryGetValue(avatar.AsUUID, out agent))
+                {
+                    List<int> aps = new List<int>();
+
+                    foreach(IValue iv in attachmentPoints)
+                    {
+                        aps.Add(iv.AsInt);
+                    }
+
+                    bool msgAll = aps.Contains(OS_ATTACH_MSG_ALL);
+                    bool invert = (options & OS_ATTACH_MSG_INVERT_POINTS) != 0;
+
+                    MessageObjectEvent ev = new MessageObjectEvent();
+                    ev.Data = message;
+                    ev.ObjectID = instance.Part.ObjectGroup.ID;
+
+                    foreach (AttachmentPoint ap in typeof(AttachmentPoint).GetEnumValues())
+                    {
+                        if(msgAll)
+                        {
+                            if(invert)
+                            {
+                                break;
+                            }
+                        }
+                        else if(invert ? aps.Contains((int)ap) : !aps.Contains((int)ap))
+                        {
+                            continue;
+                        }
+
+                        if (invert)
+                        {
+                            foreach (ObjectGroup grp in agent.Attachments[ap])
+                            {
+                                if (((options & OS_ATTACH_MSG_OBJECT_CREATOR) != 0 &&
+                                        grp.RootPart.Creator.EqualsGrid(thisPart.Creator)) ||
+                                    ((options & OS_ATTACH_MSG_SCRIPT_CREATOR) != 0 &&
+                                    grp.RootPart.Creator.EqualsGrid(instance.Item.Creator)))
+                                {
+                                    continue;
+                                }
+                                grp.PostEvent(ev);
+                            }
+                        }
+                        else
+                        {
+                            foreach (ObjectGroup grp in agent.Attachments[ap])
+                            {
+                                if (((options & OS_ATTACH_MSG_OBJECT_CREATOR) != 0 &&
+                                    !grp.RootPart.Creator.EqualsGrid(thisPart.Creator)) ||
+                                    ((options & OS_ATTACH_MSG_SCRIPT_CREATOR) != 0 &&
+                                    !grp.RootPart.Creator.EqualsGrid(instance.Item.Creator)))
+                                {
+                                    continue;
+                                }
+                                grp.PostEvent(ev);
+                            }
+                        }
+                    }
+                }
+            }
         }
         #endregion
     }
