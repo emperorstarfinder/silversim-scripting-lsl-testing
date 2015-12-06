@@ -7,6 +7,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Agent;
 using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
@@ -374,7 +375,28 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.OSSL, "osGetNumberOfAttachments")]
         public AnArray GetNumberOfAttachments(ScriptInstance instance, LSLKey avatar, AnArray attachmentPoints)
         {
-            throw new NotImplementedException("osGetNumberOfAttachments(key, list)");
+            AnArray res = new AnArray();
+            lock (instance)
+            {
+                IAgent agent;
+                if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar.AsUUID, out agent))
+                {
+                    foreach(IValue iv in attachmentPoints)
+                    {
+                        int point = iv.AsInt;
+                        res.Add(point);
+                        if(0 == point)
+                        {
+                            res.Add(0);
+                        }
+                        else
+                        {
+                            res.Add(agent.Attachments[(AttachmentPoint)point].Count);
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         [APILevel(APIFlags.OSSL, "osKickAvatar")]
