@@ -395,13 +395,68 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetStatus")]
         public void SetStatus(ScriptInstance instance, int status, int value)
         {
-            throw new NotImplementedException("llSetStatus(integer, integer)");
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                bool boolval = value != 0;
+                if ((status & STATUS_PHYSICS) != 0)
+                {
+                    grp.IsPhysics = boolval;
+                }
+                if ((status & STATUS_PHANTOM) != 0)
+                {
+                    grp.IsPhantom = boolval;
+                }
+
+                /* TODO: more to implement see llGetStatus(integer) */
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetStatus")]
-        public int SetStatus(ScriptInstance instance, int status)
+        public int GetStatus(ScriptInstance instance, int status)
         {
-            throw new NotImplementedException("llGetStatus(integer)");
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                switch (status)
+                {
+                    case STATUS_PHYSICS:
+                        return grp.IsPhysics ? 1 : 0;
+
+                    case STATUS_ROTATE_X:
+                        throw new NotImplementedException("llGetStatus(STATUS_ROTATE_X)");
+
+                    case STATUS_ROTATE_Y:
+                        throw new NotImplementedException("llGetStatus(STATUS_ROTATE_Y)");
+
+                    case STATUS_ROTATE_Z:
+                        throw new NotImplementedException("llGetStatus(STATUS_ROTATE_Z)");
+
+                    case STATUS_PHANTOM:
+                        return grp.IsPhantom ? 1 : 0;
+
+                    case STATUS_SANDBOX:
+                        throw new NotImplementedException("llGetStatus(STATUS_SANDBOX)");
+
+                    case STATUS_BLOCK_GRAB:
+                        throw new NotImplementedException("llGetStatus(STATUS_BLOCK_GRAB)");
+
+                    case STATUS_DIE_AT_EDGE:
+                        throw new NotImplementedException("llGetStatus(STATUS_DIE_AT_EDGE)");
+
+                    case STATUS_RETURN_AT_EDGE:
+                        throw new NotImplementedException("llGetStatus(STATUS_DIE_AT_EDGE)");
+
+                    case STATUS_CAST_SHADOWS:
+                        return 0;
+
+                    case STATUS_BLOCK_GRAB_OBJECT:
+                        throw new NotImplementedException("llGetStatus(STATUS_BLOCK_GRAB_OBJECT)");
+
+                    default:
+                        return 0;
+                }
+            }
         }
 
         #region osMessageObject
