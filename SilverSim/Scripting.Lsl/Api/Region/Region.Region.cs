@@ -566,5 +566,74 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     return string.Empty;
             }
         }
+
+        [APILevel(APIFlags.OSSL, "osSetTerrainTexture")]
+        public void SetTerrainTexture(ScriptInstance instance, int level, LSLKey texture)
+        {
+            if (level < 0 || level > 3)
+            {
+                return;
+            }
+
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.IsEstateManager(instance.Part.Owner))
+                {
+                    UUID textureID = GetTextureAssetID(instance, texture.ToString());
+
+                    switch (level)
+                    {
+                        case 0: scene.RegionSettings.TerrainTexture1 = textureID; break;
+                        case 1: scene.RegionSettings.TerrainTexture2 = textureID; break;
+                        case 2: scene.RegionSettings.TerrainTexture3 = textureID; break;
+                        case 3: scene.RegionSettings.TerrainTexture4 = textureID; break;
+                        default: break;
+                    }
+                }
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osSetTerrainTextureHeight")]
+        public void SetTerrainTextureHeight(ScriptInstance instance, int corner, double low, double high)
+        {
+            if(corner < 0 || corner > 3)
+            {
+                return;
+            }
+
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if(scene.IsEstateManager(instance.Part.Owner))
+                {
+                    switch(corner)
+                    {
+                        case 0:
+                            scene.RegionSettings.Elevation1SW = low;
+                            scene.RegionSettings.Elevation2SW = high;
+                            break;
+
+                        case 1:
+                            scene.RegionSettings.Elevation1NW = low;
+                            scene.RegionSettings.Elevation2NW = high;
+                            break;
+
+                        case 2:
+                            scene.RegionSettings.Elevation1SE = low;
+                            scene.RegionSettings.Elevation2SE = high;
+                            break;
+
+                        case 3:
+                            scene.RegionSettings.Elevation1NE = low;
+                            scene.RegionSettings.Elevation2NE = high;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
 }

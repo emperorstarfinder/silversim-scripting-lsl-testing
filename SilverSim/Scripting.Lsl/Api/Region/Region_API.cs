@@ -2,7 +2,9 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
 using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Region
@@ -55,6 +57,25 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
+        }
+
+        UUID GetTextureAssetID(ScriptInstance instance, string item)
+        {
+            UUID assetID;
+            if (!UUID.TryParse(item, out assetID))
+            {
+                /* must be an inventory item */
+                lock (instance)
+                {
+                    ObjectPartInventoryItem i = instance.Part.Inventory[item];
+                    if (i.InventoryType != Types.Inventory.InventoryType.Texture)
+                    {
+                        throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
+                    }
+                    assetID = i.AssetID;
+                }
+            }
+            return assetID;
         }
     }
 }
