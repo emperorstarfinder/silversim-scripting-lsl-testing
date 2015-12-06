@@ -243,7 +243,92 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llEdgeOfWorld")]
         public int EdgeOfWorld(ScriptInstance instance, Vector3 pos, Vector3 dir)
         {
-            throw new NotImplementedException("llEdgeOfWorld(vector, vector)");
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                GridVector regionSize = scene.RegionData.Size;
+                Vector3 edgeOfWorld;
+
+                if(Math.Abs(dir.X) < double.Epsilon && Math.Abs(dir.Y) < double.Epsilon)
+                {
+                    return 1;
+                }
+
+                if (Math.Abs(dir.X) < double.Epsilon)
+                {
+                    /* special case: we cannot use slope-intercept formula here  */
+                    if(dir.Y >= 0)
+                    {
+                        edgeOfWorld = pos;
+                        edgeOfWorld.Y = regionSize.Y;
+                    }
+                    else
+                    {
+                        edgeOfWorld = pos;
+                        edgeOfWorld.Y = 0;
+                    }
+                }
+                else
+                {
+                    /* calculate slope-intercept line formula from point and direction */
+                    double m = dir.Y / dir.X;
+                    double b = pos.Y - m * pos.X;
+
+                    Vector3 e0 = new Vector3();
+                    Vector3 e1 = new Vector3();
+                    Vector3 e2 = new Vector3();
+                    Vector3 e3 = new Vector3();
+                    e0.X = 0;
+                    e0.Y = b;
+
+                    e1.X = regionSize.X;
+                    e1.Y = m * e1.X + b;
+
+                    e2.Y = 0;
+                    e2.X = (e2.Y - b) / m;
+
+                    e3.Y = regionSize.Y;
+                    e3.X = (e3.Y - b) / m;
+
+                    double magSquared = (e0 - pos).LengthSquared;
+                    edgeOfWorld = e0;
+                    /* we use squared length here, it makes no difference in checking for the minimum */
+                    if(magSquared > (e1 - pos).LengthSquared)
+                    {
+                        magSquared = (e1 - pos).LengthSquared;
+                        edgeOfWorld = e1;
+                    }
+                    if(magSquared > (e2 - pos).LengthSquared)
+                    {
+                        magSquared = (e2 - pos).LengthSquared;
+                        edgeOfWorld = e2;
+                    }
+                    if (magSquared > (e3 - pos).LengthSquared)
+                    {
+                        magSquared = (e3 - pos).LengthSquared;
+                        edgeOfWorld = e3;
+                    }
+                }
+
+                foreach(SceneInterface.NeighborEntry neighbor in scene.Neighbors.Values)
+                {
+                    Vector3 swCorner = neighbor.RemoteRegionData.Location;
+                    Vector3 neCorner = swCorner + neighbor.RemoteRegionData.Size;
+                    /* little safety margin */
+                    swCorner.X -= double.Epsilon;
+                    swCorner.Y -= double.Epsilon;
+                    neCorner.X += double.Epsilon;
+                    neCorner.Y += double.Epsilon;
+                    if(swCorner.X <= edgeOfWorld.X && 
+                        neCorner.X >= edgeOfWorld.X &&
+                        swCorner.Y <= edgeOfWorld.Y &&
+                        neCorner.Y >= edgeOfWorld.Y)
+                    {
+                        return 1;
+                    }
+                }
+            }
+            return 0;
         }
 
         [APILevel(APIFlags.LSL, "llGetSunDirection")]
