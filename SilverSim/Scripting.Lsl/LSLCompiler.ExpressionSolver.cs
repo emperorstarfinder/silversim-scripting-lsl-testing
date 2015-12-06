@@ -1979,11 +1979,7 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 char c = ent[0];
-                if (char.IsDigit(c))
-                {
-                    st.Type = Tree.EntryType.Value;
-                }
-                else if (c == '.' && ent != ".")
+                if (char.IsDigit(c) || (c == '.' && ent != "."))
                 {
                     st.Type = Tree.EntryType.Value;
                 }
