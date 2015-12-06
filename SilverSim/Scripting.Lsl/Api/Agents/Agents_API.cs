@@ -471,7 +471,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(key.AsUUID, out agent))
                 {
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("osGetAgentIP(key)");
                 }
                 return string.Empty;
             }
