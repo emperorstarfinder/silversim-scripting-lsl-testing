@@ -37,25 +37,45 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llLoopSound")]
         public void LoopSound(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException("llLoopSound(string, float)");
+            lock(instance)
+            {
+                LoopSound(instance, sound, volume, 0);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundMaster")]
         public void LoopSoundMaster(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException("llLoopSoundMaster(string, float)");
+            lock (instance)
+            {
+                LoopSound(instance, sound, volume, PrimitiveSoundFlags.SyncMaster);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundSlave")]
         public void LoopSoundSlave(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException("llLoopSoundSlave(string, float)");
+            lock (instance)
+            {
+                LoopSound(instance, sound, volume, PrimitiveSoundFlags.SyncSlave);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSound")]
         public void Sound(ScriptInstance instance, string sound, double volume, int queue, int loop)
         {
-            throw new NotImplementedException("llSound(string, float, integer, integer)");
+            lock(this)
+            {
+                instance.Part.IsSoundQueueing = queue != 0;
+                if (loop != 0)
+                {
+                    LoopSound(instance, sound, volume, 0);
+                }
+                else
+                {
+                    SendSound(instance, sound, volume, 0);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSoundPreload")]
@@ -89,38 +109,33 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llStopSound")]
         public void StopSound(ScriptInstance instance)
         {
-            throw new NotImplementedException("llStopSound()");
+            lock(instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectPart.SoundParam param = part.Sound;
+                param.SoundID = UUID.Zero;
+                param.Flags = PrimitiveSoundFlags.Stop;
+                param.Gain = 0;
+                part.Sound = param;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llPlaySound")]
         public void PlaySound(ScriptInstance instance, string sound, double volume)
         {
-            PrimitiveSoundFlags flags = 0;
-            lock (instance)
+            lock(instance)
             {
-                ObjectPart thisPart = instance.Part;
-                UUID soundID;
-                try
-                {
-                    soundID = GetSoundAssetID(instance, sound);
-                }
-                catch
-                {
-                    instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
-                    return;
-                }
-                if (thisPart.IsSoundQueueing)
-                {
-                    flags |= PrimitiveSoundFlags.Queue;
-                }
-                thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, 20, flags);
+                SendSound(instance, sound, volume, 0);
             }
         }
 
         [APILevel(APIFlags.LSL, "llPlaySoundSlave")]
         public void PlaySoundSlave(ScriptInstance instance, string sound, double volume)
         {
-            throw new NotImplementedException("llPlaySoundSlave(string, float)");
+            lock (instance)
+            {
+                SendSound(instance, sound, volume, PrimitiveSoundFlags.SyncSlave);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llTriggerSound")]
@@ -192,6 +207,56 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 sound.Radius = radius;
                 instance.Part.Sound = sound;
             }
+        }
+
+        void SendSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
+        {
+            PrimitiveSoundFlags flags = paraflags;
+            ObjectPart thisPart = instance.Part;
+            UUID soundID;
+            try
+            {
+                soundID = GetSoundAssetID(instance, sound);
+            }
+            catch
+            {
+                instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                return;
+            }
+            if (thisPart.IsSoundQueueing)
+            {
+                flags |= PrimitiveSoundFlags.Queue;
+            }
+            ObjectPart.SoundParam soundparams = thisPart.Sound;
+            thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, soundparams.Radius, flags);
+        }
+
+        void LoopSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
+        {
+            ObjectPart part = instance.Part;
+            PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;
+
+            UUID soundID;
+            try
+            {
+                soundID = GetSoundAssetID(instance, sound);
+            }
+            catch
+            {
+                instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                return;
+            }
+
+            if(part.IsSoundQueueing)
+            {
+                flags |= PrimitiveSoundFlags.Queue;
+            }
+
+            ObjectPart.SoundParam soundparams = part.Sound;
+            soundparams.SoundID = soundID;
+            soundparams.Gain = volume;
+            soundparams.Flags = flags;
+            part.Sound = soundparams;
         }
     }
 }
