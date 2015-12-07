@@ -8,6 +8,9 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Agent;
+using SilverSim.Types.Asset;
+using SilverSim.Types.Asset.Format;
+using SilverSim.Types.Inventory;
 using SilverSim.Types.Parcel;
 using System;
 using System.Collections.Generic;
@@ -253,14 +256,48 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        public LSLKey SaveAppearance(ScriptInstance instance, UUID agentId, string notecard)
+        {
+            IAgent agent;
+            ObjectPart part = instance.Part;
+            SceneInterface scene = part.ObjectGroup.Scene;
+            if (scene.RootAgents.TryGetValue(agentId.AsUUID, out agent))
+            {
+                Notecard nc = (Notecard)agent.Appearance;
+                AssetData asset = nc.Asset();
+                asset.Name = "Saved Appearance";
+                asset.ID = UUID.Random;
+                scene.AssetService.Store(asset);
+
+                ObjectPartInventoryItem item = new ObjectPartInventoryItem();
+                item.AssetID = asset.ID;
+                item.AssetType = AssetType.Notecard;
+                item.Creator = part.Owner;
+                item.ParentFolderID = part.ID;
+                item.InventoryType = InventoryType.Notecard;
+                item.LastOwner = part.Owner;
+                item.Permissions.Base = InventoryPermissionsMask.Every;
+                item.Permissions.Current = InventoryPermissionsMask.Every;
+                item.Permissions.Group = InventoryPermissionsMask.None;
+                item.Permissions.NextOwner = InventoryPermissionsMask.All;
+                item.Permissions.EveryOne = InventoryPermissionsMask.None;
+
+                item.Name = notecard;
+                item.Description = "Saved Appearance";
+                part.Inventory.Add(item);
+                return asset.ID;
+            }
+            return UUID.Zero;
+        }
+
         [APILevel(APIFlags.LSL, "osAgentSaveAppearance")]
         public LSLKey AgentSaveAppearance(ScriptInstance instance, LSLKey agentId, string notecard)
         {
             lock (instance)
             {
                 instance.CheckThreatLevel("osAgentSaveAppearance", ScriptInstance.ThreatLevelType.VeryHigh);
+                return SaveAppearance(instance, agentId.AsUUID, notecard);
             }
-            throw new NotImplementedException("osAgentSaveAppearance(key, string)");
         }
 
         [APILevel(APIFlags.LSL, "osOwnerSaveAppearance")]
@@ -269,8 +306,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock (instance)
             {
                 instance.CheckThreatLevel("osOwnerSaveAppearance", ScriptInstance.ThreatLevelType.High);
+                return SaveAppearance(instance, instance.Part.Owner.ID, notecard);
             }
-            throw new NotImplementedException("osOwnerSaveAppearance(string)");
         }
 
         [APILevel(APIFlags.LSL, "llTeleportAgentHome")]
@@ -538,7 +575,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(key.AsUUID, out agent))
                 {
-                    throw new NotImplementedException("osGetAgentIP(key)");
+                    return agent.Client.ClientIP;
                 }
                 return string.Empty;
             }
