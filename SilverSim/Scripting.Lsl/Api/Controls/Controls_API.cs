@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
                     instance.ShoutError("llTakeControls: permission granter not in region");
                     return;
                 }
-                throw new NotImplementedException("llTakeControls(integer, integer, integer)");
+                agent.TakeControls(instance, controls, accept, pass_on);
             }
         }
 
@@ -84,7 +84,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
                     instance.ShoutError("llReleaseControls: permission granter not in region");
                     return;
                 }
-                throw new NotImplementedException("llReleaseControls()");
+                agent.ReleaseControls(instance);
             }
         }
     }
