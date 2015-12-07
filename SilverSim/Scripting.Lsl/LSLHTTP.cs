@@ -1,6 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using Nini.Config;
 using SilverSim.Main.Common;
 using SilverSim.Main.Common.HttpServer;
 using SilverSim.Scene.Management.Scene;
@@ -24,7 +25,25 @@ namespace SilverSim.Scripting.Lsl
     public sealed class LSLHTTP : IPlugin, IPluginShutdown
     {
         BaseHttpServer m_HttpServer;
+        BaseHttpServer m_HttpsServer;
         readonly Timer m_HttpTimer;
+        int m_TotalUrls = 15000;
+
+        public int TotalUrls
+        {
+            get
+            {
+                return m_TotalUrls;
+            }
+            set
+            {
+                if(value > 0)
+                {
+                    m_TotalUrls = value;
+                }
+            }
+        }
+
 
         struct HttpRequestData
         {
@@ -50,12 +69,14 @@ namespace SilverSim.Scripting.Lsl
             public UUID SceneID;
             public UUID PrimID;
             public UUID ItemID;
+            public bool IsSSL;
 
-            public URLData(UUID sceneID, UUID primID, UUID itemID)
+            public URLData(UUID sceneID, UUID primID, UUID itemID, bool isSSL)
             {
                 SceneID = sceneID;
                 PrimID = primID;
                 ItemID = itemID;
+                IsSSL = isSSL;
             }
         }
         readonly RwLockedDictionary<UUID, URLData> m_UrlMap = new RwLockedDictionary<UUID, URLData>();
@@ -93,6 +114,24 @@ namespace SilverSim.Scripting.Lsl
         {
             m_HttpServer = loader.HttpServer;
             m_HttpServer.StartsWithUriHandlers.Add("/lslhttp/", LSLHttpRequestHandler);
+            try
+            {
+                m_HttpsServer = loader.HttpsServer;
+            }
+            catch(ConfigurationLoader.ServiceNotFoundException)
+            {
+            }
+
+            if(null != m_HttpsServer)
+            {
+                m_HttpsServer.StartsWithUriHandlers.Add("/lslhttps/", LSLHttpRequestHandler);
+            }
+
+            IConfig lslConfig = loader.Config.Configs["LSL"];
+            if(null != lslConfig)
+            {
+                m_TotalUrls = lslConfig.GetInt("MaxUrlsPerSimulator", 15000);
+            }
         }
 
         public ShutdownOrder ShutdownOrder
@@ -106,6 +145,10 @@ namespace SilverSim.Scripting.Lsl
         public void Shutdown()
         {
             m_HttpTimer.Stop();
+            if(null != m_HttpsServer)
+            {
+                m_HttpsServer.StartsWithUriHandlers.Remove("/lslhttps/");
+            }
             m_HttpServer.StartsWithUriHandlers.Remove("/lslhttp/");
 
             HttpRequestData reqdata;
@@ -120,9 +163,19 @@ namespace SilverSim.Scripting.Lsl
 
         }
 
-        public int GetUsedUrls()
+        public int FreeUrls
         {
-            return m_UrlMap.Count;
+            get
+            {
+                return m_TotalUrls - UsedUrls;
+            }
+        }
+        public int UsedUrls
+        {
+            get
+            {
+                return m_UrlMap.Count;
+            }
         }
 
         public void LSLHttpRequestHandler(HttpRequest req)
@@ -154,7 +207,27 @@ namespace SilverSim.Scripting.Lsl
                 return;
             }
 
-            req["x-script-url"] = m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + m_HttpServer.Port.ToString() + "/lslhttp/" + id.ToString();
+            BaseHttpServer httpServer;
+            if (parts[0] == "lslhttps")
+            {
+                if(!urlData.IsSSL)
+                {
+                    req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                    return;
+                }
+                httpServer = m_HttpsServer;
+                req["x-script-url"] = httpServer.Scheme + "://" + httpServer.ExternalHostName + httpServer.Port.ToString() + "/lslhttps/" + id.ToString();
+            }
+            else
+            {
+                if (urlData.IsSSL)
+                {
+                    req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                    return;
+                }
+                httpServer = m_HttpServer;
+                req["x-script-url"] = httpServer.Scheme + "://" + httpServer.ExternalHostName + httpServer.Port.ToString() + "/lslhttp/" + id.ToString();
+            }
             string pathinfo = req.RawUrl.Substring(45);
             int pos = pathinfo.IndexOf('?');
             if (pos >= 0)
@@ -262,16 +335,40 @@ namespace SilverSim.Scripting.Lsl
 
         static UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
 
+        object m_ReqUrlLock = new object();
+
         public string RequestURL(ObjectPart part, ObjectPartInventoryItem item)
         {
-            UUID newid = UUID.Random;
-            m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID));
+            UUID newid;
+            lock(m_ReqUrlLock)
+            {
+                if (m_UrlMap.Count >= m_TotalUrls)
+                {
+                    throw new InvalidOperationException("Too many URLs");
+                }
+                newid = UUID.Random;
+                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false));
+            }
             return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttp/" + newid.ToString();
         }
 
         public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item)
         {
-            throw new NotImplementedException("LSLHTTP.RequestSecureURL()");
+            if(null == m_HttpsServer)
+            {
+                throw new InvalidOperationException("No HTTPS support");
+            }
+            UUID newid;
+            lock(m_ReqUrlLock)
+            {
+                if (m_UrlMap.Count >= m_TotalUrls)
+                {
+                    throw new InvalidOperationException("Too many URLs");
+                }
+                newid = UUID.Random;
+                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false));
+            }
+            return m_HttpsServer.Scheme + "://" + m_HttpsServer.ExternalHostName + ":" + m_HttpsServer.Port.ToString() + "/lslhttps/" + newid.ToString();
         }
 
         public void ReleaseURL(string url)
@@ -287,7 +384,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             string[] parts = uri.PathAndQuery.Substring(1).Split(new char[] { '/' }, 3);
-            if(parts.Length < 2 || parts[0] != "lslhttp")
+            if(parts.Length < 2 || (parts[0] != "lslhttp" && parts[0] != "lslhttps"))
             {
                 return;
             }
@@ -298,6 +395,15 @@ namespace SilverSim.Scripting.Lsl
                 return;
             }
 
+            URLData urlData;
+            if(m_UrlMap.TryGetValue(urlid, out urlData))
+            {
+                if((!urlData.IsSSL && parts[0] != "lslhttp") ||
+                    (urlData.IsSSL && parts[0] != "lslhttps"))
+                {
+                    return;
+                }
+            }
             if(m_UrlMap.Remove(urlid))
             {
                 List<UUID> RemoveList = new List<UUID>();

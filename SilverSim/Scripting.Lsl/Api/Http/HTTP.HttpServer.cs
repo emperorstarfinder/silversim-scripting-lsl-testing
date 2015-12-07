@@ -14,7 +14,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         {
             lock(instance)
             {
-                int freeurls = 1000 - m_HTTPHandler.GetUsedUrls();
+                int freeurls = m_HTTPHandler.FreeUrls;
                 if(freeurls < 0)
                 {
                     freeurls = 0;
