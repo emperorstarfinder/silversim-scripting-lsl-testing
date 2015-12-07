@@ -87,5 +87,19 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
                 agent.ReleaseControls(instance);
             }
         }
+
+        [ExecutedOnStateChange]
+        public static void ResetControls(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                IAgent agent;
+                ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
+                {
+                    agent.ReleaseControls(instance);
+                }
+            }
+        }
     }
 }
