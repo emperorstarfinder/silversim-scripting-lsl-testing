@@ -314,7 +314,44 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.OSSL, "osSetParcelMediaURL")]
         public void SetParcelMediaURL(ScriptInstance instance, string url)
         {
-            throw new NotImplementedException("osSetParcelMediaURL(string)");
+            lock (instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo parcelInfo;
+                if (scene.Parcels.TryGetValue(grp.GlobalPosition, out parcelInfo))
+                {
+                    if (!scene.CanEditParcelDetails(grp.Owner, grp, parcelInfo))
+                    {
+                        return;
+                    }
+                    parcelInfo.MediaURI = new URI(url);
+                    ParcelMediaUpdate pmu = new ParcelMediaUpdate();
+                    pmu.MediaAutoScale = parcelInfo.MediaAutoScale;
+                    pmu.MediaDesc = parcelInfo.MediaDescription;
+                    pmu.MediaHeight = parcelInfo.MediaHeight;
+                    pmu.MediaID = parcelInfo.MediaID;
+                    pmu.MediaLoop = parcelInfo.MediaLoop;
+                    pmu.MediaType = parcelInfo.MediaType;
+                    pmu.MediaURL = url;
+                    pmu.MediaWidth = parcelInfo.MediaWidth;
+
+                    parcelInfo.MediaAutoScale = pmu.MediaAutoScale;
+                    parcelInfo.MediaDescription = pmu.MediaDesc;
+                    parcelInfo.MediaHeight = pmu.MediaHeight;
+                    parcelInfo.MediaID = pmu.MediaID;
+                    parcelInfo.MediaType = pmu.MediaType;
+                    parcelInfo.MediaLoop = pmu.MediaLoop;
+                    parcelInfo.MediaURI = new URI(pmu.MediaURL);
+                    parcelInfo.MediaWidth = pmu.MediaWidth;
+                    scene.Parcels.Store(parcelInfo.ID);
+
+                    foreach (IAgent rootAgent in scene.RootAgents)
+                    {
+                        rootAgent.SendMessageIfRootAgent(pmu, scene.ID);
+                    }
+                }
+            }
         }
     }
 }
