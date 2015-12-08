@@ -1,8 +1,13 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Agent;
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Parcel;
+using SilverSim.Viewer.Messages.Parcel;
 using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Parcel
@@ -42,14 +47,264 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [ForcedSleep(2)]
         public void ParcelMediaCommandList(ScriptInstance instance, AnArray commandList)
         {
-            throw new NotImplementedException("llParcelMediaCommandList(list)");
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo parcelInfo;
+                if (scene.Parcels.TryGetValue(grp.GlobalPosition, out parcelInfo))
+                {
+                    if (parcelInfo.Owner.EqualsGrid(grp.Owner))
+                    {
+
+                    }
+                    else
+#warning TODO: implement further permission checks for llParcelMediaCommandList()
+                    {
+                        return;
+                    }
+                    string mediaUrl = parcelInfo.MediaURI ?? string.Empty;
+                    UUID mediaTexture = parcelInfo.MediaID;
+                    bool mediaAutoAlign = parcelInfo.MediaAutoScale;
+                    string mediaType = parcelInfo.MediaType;
+                    string mediaDescription = parcelInfo.MediaDescription;
+                    int mediaWidth = parcelInfo.MediaWidth;
+                    int mediaHeight = parcelInfo.MediaHeight;
+
+                    int sendCommand = -1;
+                    double mediaStartTime = 0;
+                    double mediaLoopTime = -1;
+
+                    int i = 0;
+                    int numCommands = commandList.Count;
+                    IAgent agent = null;
+
+                    while (i < numCommands)
+                    {
+                        int cmd = commandList[i++].AsInt;
+                        switch (cmd)
+                        {
+                            case PARCEL_MEDIA_COMMAND_AGENT:
+                                if (i < numCommands)
+                                {
+                                    UUID agentID = commandList[i++].AsUUID;
+                                    if (!scene.RootAgents.TryGetValue(agentID, out agent))
+                                    {
+                                        return;
+                                    }
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_LOOP:
+                            case PARCEL_MEDIA_COMMAND_PAUSE:
+                            case PARCEL_MEDIA_COMMAND_PLAY:
+                            case PARCEL_MEDIA_COMMAND_UNLOAD:
+                                sendCommand = cmd;
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_URL:
+                                if (i < numCommands)
+                                {
+                                    mediaUrl = commandList[i++].ToString();
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_TEXTURE:
+                                if (i < numCommands)
+                                {
+                                    mediaTexture = commandList[i++].AsUUID;
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_TIME:
+                                if (i < numCommands)
+                                {
+                                    mediaStartTime = commandList[i++].AsReal;
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_LOOP_SET:
+                                if (i < numCommands)
+                                {
+                                    mediaLoopTime = commandList[i++].AsReal;
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_AUTO_ALIGN:
+                                if (i < numCommands)
+                                {
+                                    mediaAutoAlign = commandList[i++].AsBoolean;
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_TYPE:
+                                if (i < numCommands)
+                                {
+                                    mediaType = commandList[i++].ToString();
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_DESC:
+                                if (i < numCommands)
+                                {
+                                    mediaDescription = commandList[i++].ToString();
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_SIZE:
+                                if (i + 1 < numCommands)
+                                {
+                                    mediaWidth = commandList[i++].AsInt;
+                                    mediaHeight = commandList[i++].AsInt;
+                                }
+                                break;
+
+                            default:
+                                instance.ShoutError("llParcelMediaCommandList: Unknown parameter");
+                                break;
+                        }
+                    }
+
+                    if (0 > sendCommand)
+                    {
+                        /* ignore */
+                    }
+                    else
+                    {
+                        ParcelMediaUpdate pmu = new ParcelMediaUpdate();
+                        pmu.MediaAutoScale = mediaAutoAlign;
+                        pmu.MediaDesc = mediaDescription;
+                        pmu.MediaHeight = mediaHeight;
+                        pmu.MediaID = mediaTexture;
+                        pmu.MediaLoop = sendCommand == PARCEL_MEDIA_COMMAND_LOOP;
+                        pmu.MediaType = mediaType;
+                        pmu.MediaURL = mediaUrl;
+                        pmu.MediaWidth = mediaWidth;
+
+                        if (agent != null)
+                        {
+                            /* per agent */
+                            agent.SendMessageIfRootAgent(pmu, scene.ID);
+                        }
+                        else
+                        {
+                            parcelInfo.MediaAutoScale = pmu.MediaAutoScale;
+                            parcelInfo.MediaDescription = pmu.MediaDesc;
+                            parcelInfo.MediaHeight = pmu.MediaHeight;
+                            parcelInfo.MediaID = pmu.MediaID;
+                            parcelInfo.MediaType = pmu.MediaType;
+                            parcelInfo.MediaLoop = pmu.MediaLoop;
+                            parcelInfo.MediaURI = new URI(pmu.MediaURL);
+                            parcelInfo.MediaWidth = pmu.MediaWidth;
+
+#warning Missing functionality to update parcel data
+                            foreach(IAgent rootAgent in scene.RootAgents)
+                            {
+                                rootAgent.SendMessageIfRootAgent(pmu, scene.ID);
+                            }
+                        }
+
+                        if(mediaLoopTime >= 0)
+                        {
+                            ParcelMediaCommandMessage pmc = new ParcelMediaCommandMessage();
+#warning TODO: determine what this is
+                            pmc.Flags = 4;
+                            pmc.Command = (uint)PARCEL_MEDIA_COMMAND_LOOP_SET;
+                            pmc.Time = mediaLoopTime;
+
+                            if (agent != null)
+                            {
+                                agent.SendMessageIfRootAgent(pmc, scene.ID);
+                            }
+                            else
+                            {
+                                foreach (IAgent rootAgent in scene.RootAgents)
+                                {
+                                    rootAgent.SendMessageIfRootAgent(pmc, scene.ID);
+                                }
+                            }
+                        }
+
+                        if (sendCommand >= 0)
+                        {
+                            ParcelMediaCommandMessage pmc = new ParcelMediaCommandMessage();
+#warning TODO: determine what this is
+                            pmc.Flags = 4;
+                            pmc.Command = (uint)sendCommand;
+                            pmc.Time = mediaStartTime;
+
+                            if(agent != null)
+                            {
+                                agent.SendMessageIfRootAgent(pmc, scene.ID);
+                            }
+                            else
+                            {
+                                foreach (IAgent rootAgent in scene.RootAgents)
+                                {
+                                    rootAgent.SendMessageIfRootAgent(pmc, scene.ID);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llParcelMediaQuery")]
         [ForcedSleep(2)]
         public AnArray ParcelMediaQuery(ScriptInstance instance, AnArray query)
         {
-            throw new NotImplementedException("llParcelMediaQuery(list)");
+            AnArray res = new AnArray();
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo parcelInfo;
+                if(scene.Parcels.TryGetValue(grp.GlobalPosition, out parcelInfo))
+                {
+                    foreach(IValue iv in query)
+                    {
+                        switch(iv.AsInt)
+                        {
+                            case PARCEL_MEDIA_COMMAND_URL:
+                                if (null != parcelInfo.MediaURI)
+                                {
+                                    res.Add(parcelInfo.MediaURI.ToString());
+                                }
+                                else
+                                {
+                                    res.Add(string.Empty);
+                                }
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_DESC:
+                                res.Add(parcelInfo.MediaDescription);
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_TEXTURE:
+                                res.Add(parcelInfo.MediaID);
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_TYPE:
+                                res.Add(parcelInfo.MediaType);
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_SIZE:
+                                res.Add(parcelInfo.MediaWidth);
+                                res.Add(parcelInfo.MediaHeight);
+                                break;
+
+                            case PARCEL_MEDIA_COMMAND_AUTO_ALIGN:
+                                res.Add(parcelInfo.MediaAutoScale ? 1 : 0);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         [APILevel(APIFlags.OSSL, "osSetParcelMediaURL")]
