@@ -43,6 +43,25 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
         public const int PARCEL_MEDIA_COMMAND_LOOP_SET = 13;
 
+        UUID GetTextureAssetID(ScriptInstance instance, string item)
+        {
+            UUID assetID;
+            if (!UUID.TryParse(item, out assetID))
+            {
+                /* must be an inventory item */
+                lock (instance)
+                {
+                    ObjectPartInventoryItem i = instance.Part.Inventory[item];
+                    if (i.InventoryType != Types.Inventory.InventoryType.Texture)
+                    {
+                        throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
+                    }
+                    assetID = i.AssetID;
+                }
+            }
+            return assetID;
+        }
+
         [APILevel(APIFlags.LSL, "llParcelMediaCommandList")]
         [ForcedSleep(2)]
         public void ParcelMediaCommandList(ScriptInstance instance, AnArray commandList)
@@ -107,7 +126,8 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                             case PARCEL_MEDIA_COMMAND_TEXTURE:
                                 if (i < numCommands)
                                 {
-                                    mediaTexture = commandList[i++].AsUUID;
+                                    /* let us accept more than just UUIDs. Accepting prim inventory simplifies a lot. */
+                                    mediaTexture = GetTextureAssetID(instance, commandList[i++].ToString());
                                 }
                                 break;
 
