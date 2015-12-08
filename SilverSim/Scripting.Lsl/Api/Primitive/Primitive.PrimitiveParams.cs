@@ -58,7 +58,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             AnArray parout = new AnArray();
             lock (instance)
             {
-                instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, link, param.GetEnumerator(), ref parout);
+                instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, link, param.GetEnumerator(), parout);
             }
             return parout;
         }
@@ -70,7 +70,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             AnArray parout = new AnArray();
             lock (instance)
             {
-                instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, LINK_THIS, param.GetEnumerator(), ref parout);
+                instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, LINK_THIS, param.GetEnumerator(), parout);
             }
             return parout;
         }
@@ -78,6 +78,44 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osGetLinkPrimitiveParams")]
         public AnArray OsGetLinkPrimitiveParams(ScriptInstance instance, int linknumber, AnArray param)
         {
+            AnArray parout = new AnArray();
+            if (linknumber == LINK_SET)
+            {
+                lock(instance)
+                {
+                    foreach(ObjectPart part in instance.Part.ObjectGroup.ValuesByKey1)
+                    {
+                        part.GetPrimitiveParams(param.GetEnumerator(), parout);
+                    }
+                }
+            }
+            else if (linknumber == LINK_ALL_CHILDREN)
+            {
+                lock (instance)
+                {
+                    foreach (ObjectPart part in instance.Part.ObjectGroup.ValuesByKey1)
+                    {
+                        if (part.LinkNumber != LINK_ROOT)
+                        {
+                            part.GetPrimitiveParams(param.GetEnumerator(), parout);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (linknumber == 0)
+                {
+                    linknumber = LINK_ROOT;
+                }
+
+                lock (instance)
+                {
+                    instance.Part.ObjectGroup.GetPrimitiveParams(instance.Part.LinkNumber, linknumber, param.GetEnumerator(), parout);
+                }
+            }
+            return parout;
+
             throw new NotImplementedException("osGetLinkPrimitiveParams(integer, list)");
         }
 
@@ -243,7 +281,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                 using(AnArray.Enumerator enumerator = paramList.GetEnumerator())
                 {
-                    part.GetPrimitiveParams(enumerator, ref res);
+                    part.GetPrimitiveParams(enumerator, res);
                 }
                 return res;
             }

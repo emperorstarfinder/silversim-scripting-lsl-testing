@@ -180,7 +180,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     return parout;
                 }
-                obj.GetObjectDetails(param.GetEnumerator(), ref parout);
+                obj.GetObjectDetails(param.GetEnumerator(), parout);
             }
             return parout;
         }
