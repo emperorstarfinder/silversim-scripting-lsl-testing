@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ParcelInfo parcelInfo;
                 if (scene.Parcels.TryGetValue(grp.GlobalPosition, out parcelInfo))
                 {
-                    if(!scene.CanEditParcelDetails(grp.Owner, grp, parcelInfo))
+                    if(!scene.CanEditParcelDetails(grp.Owner, parcelInfo))
                     {
                         return;
                     }
@@ -321,7 +321,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ParcelInfo parcelInfo;
                 if (scene.Parcels.TryGetValue(grp.GlobalPosition, out parcelInfo))
                 {
-                    if (!scene.CanEditParcelDetails(grp.Owner, grp, parcelInfo))
+                    if (!scene.CanEditParcelDetails(grp.Owner, parcelInfo))
                     {
                         return;
                     }
