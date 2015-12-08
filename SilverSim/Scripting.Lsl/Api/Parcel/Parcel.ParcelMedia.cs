@@ -54,12 +54,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ParcelInfo parcelInfo;
                 if (scene.Parcels.TryGetValue(grp.GlobalPosition, out parcelInfo))
                 {
-                    if (parcelInfo.Owner.EqualsGrid(grp.Owner))
-                    {
-
-                    }
-                    else
-#warning TODO: implement further permission checks for llParcelMediaCommandList()
+                    if(!scene.CanEditParcelDetails(grp.Owner, grp, parcelInfo))
                     {
                         return;
                     }
@@ -72,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     int mediaHeight = parcelInfo.MediaHeight;
 
                     int sendCommand = -1;
-                    double mediaStartTime = 0;
+                    double mediaStartTime = -1;
                     double mediaLoopTime = -1;
 
                     int i = 0;
@@ -196,42 +191,24 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                             parcelInfo.MediaLoop = pmu.MediaLoop;
                             parcelInfo.MediaURI = new URI(pmu.MediaURL);
                             parcelInfo.MediaWidth = pmu.MediaWidth;
+                            scene.Parcels.Store(parcelInfo.ID);
 
-#warning Missing functionality to update parcel data
                             foreach(IAgent rootAgent in scene.RootAgents)
                             {
                                 rootAgent.SendMessageIfRootAgent(pmu, scene.ID);
                             }
                         }
 
-                        if(mediaLoopTime >= 0)
-                        {
-                            ParcelMediaCommandMessage pmc = new ParcelMediaCommandMessage();
-#warning TODO: determine what this is
-                            pmc.Flags = 4;
-                            pmc.Command = (uint)PARCEL_MEDIA_COMMAND_LOOP_SET;
-                            pmc.Time = mediaLoopTime;
-
-                            if (agent != null)
-                            {
-                                agent.SendMessageIfRootAgent(pmc, scene.ID);
-                            }
-                            else
-                            {
-                                foreach (IAgent rootAgent in scene.RootAgents)
-                                {
-                                    rootAgent.SendMessageIfRootAgent(pmc, scene.ID);
-                                }
-                            }
-                        }
-
                         if (sendCommand >= 0)
                         {
                             ParcelMediaCommandMessage pmc = new ParcelMediaCommandMessage();
-#warning TODO: determine what this is
-                            pmc.Flags = 4;
+                            pmc.Flags = (uint)1 << sendCommand; /* Flags is a bit set of the commands to do */
                             pmc.Command = (uint)sendCommand;
-                            pmc.Time = mediaStartTime;
+                            if (mediaStartTime >= 0)
+                            {
+                                pmc.Flags |= 1 << PARCEL_MEDIA_COMMAND_TIME;
+                                pmc.Time = mediaStartTime;
+                            }
 
                             if(agent != null)
                             {
