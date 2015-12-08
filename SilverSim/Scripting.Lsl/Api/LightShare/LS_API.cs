@@ -10,6 +10,7 @@ using EnvironmentController = SilverSim.Scene.Types.Scene.SceneInterface.Environ
 using WLVector4 = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WLVector4;
 using WindlightSkyData = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WindlightSkyData;
 using WindlightWaterData = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WindlightWaterData;
+using SilverSim.Scene.Types.Object;
 
 namespace SilverSim.Scripting.Lsl.Api.LightShare
 {
@@ -327,7 +328,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     WindlightWaterData waterData = envcontrol.WaterData;
                     try
                     {
-                        ModifyWindlightData(ref skyData, ref waterData, rules, "lsSetWindlightScene");
+                        ModifyWindlightData(instance, ref skyData, ref waterData, rules, "lsSetWindlightScene");
                     }
                     catch (InvalidCastException e)
                     {
@@ -368,7 +369,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     WindlightWaterData waterData = envcontrol.WaterData;
                     try
                     {
-                        ModifyWindlightData(ref skyData, ref waterData, rules, "lsSetWindlightSceneTargeted");
+                        ModifyWindlightData(instance, ref skyData, ref waterData, rules, "lsSetWindlightSceneTargeted");
                     }
                     catch(InvalidCastException e)
                     {
@@ -382,7 +383,33 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
             return 0;
         }
 
-        void ModifyWindlightData(ref WindlightSkyData skyData, ref WindlightWaterData waterData, AnArray rules, string functionName)
+        UUID GetTextureAssetID(ScriptInstance instance, string item)
+        {
+            UUID assetID;
+            if (!UUID.TryParse(item, out assetID))
+            {
+                /* must be an inventory item */
+                lock (instance)
+                {
+                    ObjectPartInventoryItem i;
+                    if (instance.Part.Inventory.TryGetValue(item, out i))
+                    {
+                        if (i.InventoryType != Types.Inventory.InventoryType.Texture)
+                        {
+                            throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
+                        }
+                        assetID = i.AssetID;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
+                    }
+                }
+            }
+            return assetID;
+        }
+
+        void ModifyWindlightData(ScriptInstance instance, ref WindlightSkyData skyData, ref WindlightWaterData waterData, AnArray rules, string functionName)
         {
             if(rules.Count % 2 != 0)
             {
@@ -518,7 +545,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_NORMAL_MAP_TEXTURE:
                         try
                         {
-                            waterData.NormalMapTexture = rules[idx++].AsUUID;
+                            waterData.NormalMapTexture = GetTextureAssetID(instance, rules[idx++].ToString());
                         }
                         catch (InvalidCastException)
                         {
