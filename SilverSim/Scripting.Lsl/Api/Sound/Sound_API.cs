@@ -21,10 +21,17 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 /* must be an inventory item */
                 lock (instance)
                 {
-                    ObjectPartInventoryItem i = instance.Part.Inventory[item];
-                    if (i.InventoryType != Types.Inventory.InventoryType.Sound)
+                    ObjectPartInventoryItem i;
+                    if (instance.Part.Inventory.TryGetValue(item, out i))
                     {
-                        throw new InvalidOperationException(string.Format("Inventory item {0} is not a sound", item));
+                        if (i.InventoryType != Types.Inventory.InventoryType.Sound)
+                        {
+                            throw new InvalidOperationException(string.Format("Inventory item {0} is not a sound", item));
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
                     }
                     assetID = i.AssetID;
                 }

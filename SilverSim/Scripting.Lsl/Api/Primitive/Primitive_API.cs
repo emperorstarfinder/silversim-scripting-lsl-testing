@@ -22,12 +22,19 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 /* must be an inventory item */
                 lock (instance)
                 {
-                    ObjectPartInventoryItem i = instance.Part.Inventory[item];
-                    if (i.InventoryType != Types.Inventory.InventoryType.Texture)
+                    ObjectPartInventoryItem i;
+                    if (instance.Part.Inventory.TryGetValue(item, out i))
                     {
-                        throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
+                        if (i.InventoryType != Types.Inventory.InventoryType.Texture)
+                        {
+                            throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
+                        }
+                        assetID = i.AssetID;
                     }
-                    assetID = i.AssetID;
+                    else
+                    {
+                        throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
+                    }
                 }
             }
             return assetID;
