@@ -519,8 +519,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
              * If the viewer is set to "System Default" the possible return may be outside the list given above. see List of ISO 639-1 codes for reference.
              * Viewers can specify other arbitrary language strings with the 'InstallLanguage' debug setting. For example, launching the viewer with "--set InstallLanguage american" results this function returning 'american' for the avatar. VWR-12222
              *   If the viewer supplies a multiline value, the simulator will only accept the first line and ignore all others. SVC-5503
+             * 
+             * Technically, viewer uses UpdateAgentLanguage to tell the simulator the language of the agent so that llGetAgentLanguage can do its
+             * job if allowed by the viewer.
              */
-            throw new NotImplementedException("llGetAgentLanguage(key)");
+            lock(instance)
+            {
+                IAgent agent;
+                if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar.AsUUID, out agent))
+                {
+                    return agent.AgentLanguage;
+                }
+                return string.Empty;
+            }
         }
 
         #region osGetAvatarList
