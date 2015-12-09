@@ -206,7 +206,12 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                         if (agent != null)
                         {
                             /* per agent */
-                            agent.SendMessageIfRootAgent(pmu, scene.ID);
+                            ParcelInfo parcelTest;
+                            if (scene.Parcels.TryGetValue(agent.GlobalPosition, out parcelTest) &&
+                                parcelInfo.ID == parcelTest.ID)
+                            {
+                                agent.SendMessageIfRootAgent(pmu, scene.ID);
+                            }
                         }
                         else
                         {
@@ -222,7 +227,12 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                             foreach(IAgent rootAgent in scene.RootAgents)
                             {
-                                rootAgent.SendMessageIfRootAgent(pmu, scene.ID);
+                                ParcelInfo parcelTest;
+                                if (scene.Parcels.TryGetValue(rootAgent.GlobalPosition, out parcelTest) &&
+                                    parcelInfo.ID == parcelTest.ID)
+                                {
+                                    rootAgent.SendMessageIfRootAgent(pmu, scene.ID);
+                                }
                             }
                         }
 
@@ -239,13 +249,23 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                             if(agent != null)
                             {
-                                agent.SendMessageIfRootAgent(pmc, scene.ID);
+                                ParcelInfo parcelTest;
+                                if (scene.Parcels.TryGetValue(agent.GlobalPosition, out parcelTest) &&
+                                    parcelInfo.ID == parcelTest.ID)
+                                {
+                                    agent.SendMessageIfRootAgent(pmc, scene.ID);
+                                }
                             }
                             else
                             {
                                 foreach (IAgent rootAgent in scene.RootAgents)
                                 {
-                                    rootAgent.SendMessageIfRootAgent(pmc, scene.ID);
+                                    ParcelInfo parcelTest;
+                                    if (scene.Parcels.TryGetValue(rootAgent.GlobalPosition, out parcelTest) &&
+                                        parcelInfo.ID == parcelTest.ID)
+                                    {
+                                        rootAgent.SendMessageIfRootAgent(pmc, scene.ID);
+                                    }
                                 }
                             }
                         }
@@ -348,7 +368,12 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                     foreach (IAgent rootAgent in scene.RootAgents)
                     {
-                        rootAgent.SendMessageIfRootAgent(pmu, scene.ID);
+                        ParcelInfo parcelTest;
+                        if (scene.Parcels.TryGetValue(rootAgent.GlobalPosition, out parcelTest) &&
+                            parcelInfo.ID == parcelTest.ID)
+                        {
+                            rootAgent.SendMessageIfRootAgent(pmu, scene.ID);
+                        }
                     }
                 }
             }
