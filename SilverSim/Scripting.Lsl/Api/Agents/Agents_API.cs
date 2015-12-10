@@ -215,10 +215,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                IAgent obj;
-                if (instance.Part.ObjectGroup.Scene.Agents.TryGetValue(id, out obj))
+                UUI uui;
+                if (instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(id, out uui))
                 {
-                    return obj.Owner.FullName;
+                    return uui.FullName;
                 }
             }
             return string.Empty;
