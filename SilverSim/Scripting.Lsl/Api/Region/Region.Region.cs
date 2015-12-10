@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.ServiceInterfaces.Grid;
 using SilverSim.Types;
 using SilverSim.Types.Grid;
 using System;
@@ -19,25 +20,57 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetGridName")]
         public string GetGridName(ScriptInstance instance)
         {
-            throw new NotImplementedException("osGetGridName()");
+            lock(instance)
+            {
+                GridInfoServiceInterface gridInfoService = instance.Part.ObjectGroup.Scene.GetService<GridInfoServiceInterface>();
+                if(gridInfoService == null)
+                {
+                    return "error";
+                }
+                return gridInfoService.GridName;
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridNick")]
         public string GetGridNick(ScriptInstance instance)
         {
-            throw new NotImplementedException("osGetGridNick()");
+            lock (instance)
+            {
+                GridInfoServiceInterface gridInfoService = instance.Part.ObjectGroup.Scene.GetService<GridInfoServiceInterface>();
+                if (gridInfoService == null)
+                {
+                    return "error";
+                }
+                return gridInfoService.GridNick;
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridLoginURI")]
         public string GetGridLoginURI(ScriptInstance instance)
         {
-            throw new NotImplementedException("osGetgridLoginURI()");
+            lock (instance)
+            {
+                GridInfoServiceInterface gridInfoService = instance.Part.ObjectGroup.Scene.GetService<GridInfoServiceInterface>();
+                if (gridInfoService == null)
+                {
+                    return "error";
+                }
+                return gridInfoService.LoginURI;
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridHomeURI")]
         public string GetGridHomeURI(ScriptInstance instance)
         {
-            throw new NotImplementedException("osGetGridHomeURI()");
+            lock (instance)
+            {
+                GridInfoServiceInterface gridInfoService = instance.Part.ObjectGroup.Scene.GetService<GridInfoServiceInterface>();
+                if (gridInfoService == null)
+                {
+                    return "error";
+                }
+                return gridInfoService.HomeURI;
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetGridGatekeeperURI")]
@@ -52,7 +85,20 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetGridCustom")]
         public string GetGridCustom(ScriptInstance instance, string name)
         {
-            throw new NotImplementedException("osGetGridCustom(string)");
+            lock (instance)
+            {
+                string value;
+                GridInfoServiceInterface gridInfoService = instance.Part.ObjectGroup.Scene.GetService<GridInfoServiceInterface>();
+                if (gridInfoService == null)
+                {
+                    return "error";
+                }
+                if (gridInfoService.TryGetValue(name, out value))
+                {
+                    return value;
+                }
+                return "error";
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetRegionName")]
