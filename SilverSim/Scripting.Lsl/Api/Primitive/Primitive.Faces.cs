@@ -221,7 +221,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                UUID textureID = GetTextureAssetID(instance, texture);
+                UUID textureID = instance.GetTextureAssetID(texture);
 
                 if (face == ALL_SIDES)
                 {

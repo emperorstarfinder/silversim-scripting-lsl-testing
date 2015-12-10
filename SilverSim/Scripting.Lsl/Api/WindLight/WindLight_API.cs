@@ -26,32 +26,6 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
             /* intentionally left empty */
         }
 
-        UUID GetTextureAssetID(ScriptInstance instance, string item)
-        {
-            UUID assetID;
-            if (!UUID.TryParse(item, out assetID))
-            {
-                /* must be an inventory item */
-                lock (instance)
-                {
-                    ObjectPartInventoryItem i;
-                    if (instance.Part.Inventory.TryGetValue(item, out i))
-                    {
-                        if (i.InventoryType != Types.Inventory.InventoryType.Texture)
-                        {
-                            throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
-                        }
-                        assetID = i.AssetID;
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
-                    }
-                }
-            }
-            return assetID;
-        }
-
         [APIExtension(APIExtension.WindLight_New, APILevel.KeepCsName)]
         public const int REGION_WL_AMBIENT = 0;
         [APIExtension(APIExtension.WindLight_New, APILevel.KeepCsName)]
@@ -283,7 +257,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                         {
                             try
                             {
-                                waterSettings.NormalMap = GetTextureAssetID(instance, ivvalue.ToString());
+                                waterSettings.NormalMap = instance.GetTextureAssetID(ivvalue.ToString());
                             }
                             catch(Exception e)
                             {

@@ -28,7 +28,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 {
                     try
                     {
-                        para.ImpactSound = GetSoundAssetID(instance, impact_sound);
+                        para.ImpactSound = instance.GetSoundAssetID(impact_sound);
                         instance.Part.CollisionSound = para;
                     }
                     catch
@@ -100,7 +100,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 UUID soundID;
                 try
                 {
-                    soundID = GetSoundAssetID(instance, sound);
+                    soundID = instance.GetSoundAssetID(sound);
                 }
                 catch
                 {
@@ -152,7 +152,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 UUID soundID;
                 try
                 {
-                    soundID = GetSoundAssetID(instance, sound);
+                    soundID = instance.GetSoundAssetID(sound);
                 }
                 catch
                 {
@@ -172,7 +172,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 UUID soundID;
                 try
                 {
-                    soundID = GetSoundAssetID(instance, sound);
+                    soundID = instance.GetSoundAssetID(sound);
                 }
                 catch
                 {
@@ -221,7 +221,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             UUID soundID;
             try
             {
-                soundID = GetSoundAssetID(instance, sound);
+                soundID = instance.GetSoundAssetID(sound);
             }
             catch
             {
@@ -244,7 +244,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             UUID soundID;
             try
             {
-                soundID = GetSoundAssetID(instance, sound);
+                soundID = instance.GetSoundAssetID(sound);
             }
             catch
             {

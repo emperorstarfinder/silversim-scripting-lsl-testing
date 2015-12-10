@@ -365,7 +365,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     case PSYS_SRC_TEXTURE:
                         try
                         {
-                            ps.Texture = GetTextureAssetID(instance, value.ToString());
+                            ps.Texture = instance.GetTextureAssetID(value.ToString());
                         }
                         catch(InvalidOperationException)
                         {

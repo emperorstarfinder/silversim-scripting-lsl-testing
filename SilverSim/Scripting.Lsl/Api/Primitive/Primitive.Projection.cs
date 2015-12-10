@@ -24,7 +24,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             ObjectPart.ProjectionParam p = new ObjectPart.ProjectionParam();
             p.IsProjecting = projection != 0;
-            p.ProjectionTextureID = GetTextureAssetID(instance, texture.ToString());
+            p.ProjectionTextureID = instance.GetTextureAssetID(texture.ToString());
             p.ProjectionFOV = fov;
             p.ProjectionFocus = focus;
             p.ProjectionAmbience = amb;
@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                 ObjectPart.ProjectionParam p = new ObjectPart.ProjectionParam();
                 p.IsProjecting = projection != 0;
-                p.ProjectionTextureID = GetTextureAssetID(instance, texture.ToString());
+                p.ProjectionTextureID = instance.GetTextureAssetID(texture.ToString());
                 p.ProjectionFOV = fov;
                 p.ProjectionFocus = focus;
                 p.ProjectionAmbience = amb;
