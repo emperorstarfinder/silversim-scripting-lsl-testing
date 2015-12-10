@@ -544,7 +544,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osGetAgentIP", ScriptInstance.ThreatLevelType.High);
+                instance.CheckThreatLevel("osGetAvatarHomeURI", ScriptInstance.ThreatLevelType.Low);
 
                 IAgent agent;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
