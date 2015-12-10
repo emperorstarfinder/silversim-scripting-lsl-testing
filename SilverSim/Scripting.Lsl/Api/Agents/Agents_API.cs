@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.ServiceInterfaces.Grid;
 using SilverSim.Types;
 using SilverSim.Types.Agent;
 using SilverSim.Types.Asset;
@@ -533,6 +534,31 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(key.AsUUID, out agent))
                 {
                     return agent.Client.ClientIP;
+                }
+                return string.Empty;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetAvatarHomeURI")]
+        public string GetAvatarHomeURI(ScriptInstance instance, LSLKey key)
+        {
+            lock (instance)
+            {
+                instance.CheckThreatLevel("osGetAgentIP", ScriptInstance.ThreatLevelType.High);
+
+                IAgent agent;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.Agents.TryGetValue(key.AsUUID, out agent))
+                {
+                    if (agent.Owner.HomeURI != null)
+                    {
+                        return agent.Owner.HomeURI.ToString();
+                    }
+                    GridInfoServiceInterface gridInfoService = scene.GetService<GridInfoServiceInterface>();
+                    if(null != gridInfoService)
+                    {
+                        return gridInfoService.HomeURI;
+                    }
                 }
                 return string.Empty;
             }
