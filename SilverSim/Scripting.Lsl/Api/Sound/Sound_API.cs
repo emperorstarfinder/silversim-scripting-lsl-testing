@@ -2,10 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Types;
-using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Sound
 {

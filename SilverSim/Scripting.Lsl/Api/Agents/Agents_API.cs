@@ -310,60 +310,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        [APILevel(APIFlags.LSL, "llTeleportAgentHome")]
-        public void TeleportAgentHome(ScriptInstance instance, LSLKey avatar)
-        {
-            throw new NotImplementedException("llTeleportAgentHome(key)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osTeleportAgent")]
-        public void TeleportAgent(ScriptInstance instance, LSLKey agent, int regionX, int regionY, Vector3 position, Vector3 lookAt)
-        {
-            lock(instance)
-            {
-                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
-            }
-            throw new NotImplementedException("osTeleportAgent(key, integer, integer, vector, vector)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osTeleportAgent")]
-        public void TeleportAgent(ScriptInstance instance, LSLKey agent, string regionName, Vector3 position, Vector3 lookAt)
-        {
-            lock (instance)
-            {
-                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
-            }
-            throw new NotImplementedException("osTeleportAgent(key, string, vector, vector)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osTeleportAgent")]
-        public void TeleportAgent(ScriptInstance instance, LSLKey agent, Vector3 position, Vector3 lookAt)
-        {
-            lock (instance)
-            {
-                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
-            }
-            throw new NotImplementedException("osTeleportAgent(key, vector, vector)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osTeleportOwner")]
-        public void TeleportOwner(ScriptInstance instance, int regionX, int regionY, Vector3 position, Vector3 lookAt)
-        {
-            throw new NotImplementedException("osTeleportOwner(integer, integer, vector, vector)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osTeleportOwner")]
-        public void TeleportOwner(ScriptInstance instance, string regionName, Vector3 position, Vector3 lookAt)
-        {
-            throw new NotImplementedException("osTeleportOwner(string, vector, vector)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osTeleportOwner")]
-        public void TeleportOwner(ScriptInstance instance, Vector3 position, Vector3 lookAt)
-        {
-            throw new NotImplementedException("osTeleportOwner(vector, vector)");
-        }
-
         [APILevel(APIFlags.LSL, "llAttachToAvatar")]
         public void AttachToAvatar(ScriptInstance instance, int attach_point)
         {
