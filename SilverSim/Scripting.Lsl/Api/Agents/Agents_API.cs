@@ -228,7 +228,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "osGetGender")]
         public string OsGetGender(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("osGetGender(key)");
+            lock (instance)
+            {
+                IAgent agent;
+                if (!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    byte[] vp = agent.VisualParams;
+                    if(vp.Length > 80)
+                    {
+                        return vp[80] > 128 ? "male" : "female";
+                    }
+                }
+                return "unknown";
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetHealth")]
