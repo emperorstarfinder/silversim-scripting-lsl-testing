@@ -190,6 +190,29 @@ namespace SilverSim.Scripting.Lsl
             return assetID;
         }
 
+        public static UUID GetLandmarkAssetID(this ScriptInstance instance, string item)
+        {
+            UUID assetID;
+            /* must be an inventory item */
+            lock (instance)
+            {
+                ObjectPartInventoryItem i;
+                if (instance.Part.Inventory.TryGetValue(item, out i))
+                {
+                    if (i.InventoryType != Types.Inventory.InventoryType.Landmark)
+                    {
+                        throw new InvalidOperationException(string.Format("Inventory item {0} is not a landmark", item));
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
+                }
+                assetID = i.AssetID;
+            }
+            return assetID;
+        }
+
         public static UUID GetNotecardAssetID(this ScriptInstance instance, string item)
         {
             UUID assetID;
