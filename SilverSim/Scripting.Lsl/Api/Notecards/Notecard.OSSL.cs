@@ -91,23 +91,9 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock (instance)
             {
-                ObjectPartInventoryItem item;
-                if (instance.Part.Inventory.TryGetValue(name, out item))
-                {
-                    if (item.InventoryType != InventoryType.Notecard)
-                    {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a notecard", name));
-                    }
-                    else
-                    {
-                        Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[item.AssetID];
-                        return nc.Text;
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
-                }
+                UUID assetID = instance.GetNotecardAssetID(name);
+                Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                return nc.Text;
             }
         }
         #endregion
@@ -122,31 +108,16 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             [LSLTooltip("line number (starting at 0)")]
             int line)
         {
-            ObjectPartInventoryItem item;
             lock (instance)
             {
-                ObjectPart thisPart = instance.Part;
-                if (thisPart.Inventory.TryGetValue(name, out item))
+                UUID assetID = instance.GetNotecardAssetID(name);
+                Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                string[] lines = nc.Text.Split('\n');
+                if (line >= lines.Length || line < 0)
                 {
-                    if (item.InventoryType != InventoryType.Notecard)
-                    {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a notecard", name));
-                    }
-                    else
-                    {
-                        Notecard nc = thisPart.ObjectGroup.Scene.GetService<NotecardCache>()[item.AssetID];
-                        string[] lines = nc.Text.Split('\n');
-                        if (line >= lines.Length || line < 0)
-                        {
-                            return EOF;
-                        }
-                        return lines[line];
-                    }
+                    return EOF;
                 }
-                else
-                {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
-                }
+                return lines[line];
             }
         }
         #endregion
@@ -159,26 +130,11 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             [LSLTooltip("name of notecard in inventory")]
             string name)
         {
-            ObjectPartInventoryItem item;
             lock (instance)
             {
-                ObjectPart thisPart = instance.Part;
-                if (thisPart.Inventory.TryGetValue(name, out item))
-                {
-                    if (item.InventoryType != InventoryType.Notecard)
-                    {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a notecard", name));
-                    }
-                    else
-                    {
-                        Notecard nc = thisPart.ObjectGroup.Scene.GetService<NotecardCache>()[item.AssetID];
-                        return nc.Text.Split('\n').Length;
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
-                }
+                UUID assetID = instance.GetNotecardAssetID(name);
+                Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                return nc.Text.Split('\n').Length;
             }
         }
         #endregion

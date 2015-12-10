@@ -55,24 +55,10 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock (instance)
             {
-                ObjectPartInventoryItem item;
-                if (instance.Part.Inventory.TryGetValue(name, out item))
-                {
-                    if (item.InventoryType != InventoryType.Notecard)
-                    {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a notecard", name));
-                    }
-                    else
-                    {
-                        UUID query = UUID.Random;
-                        GetNotecardLineAsync(instance, query, item.AssetID, line);
-                        return query;
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
-                }
+                UUID assetID = instance.GetNotecardAssetID(name);
+                UUID query = UUID.Random;
+                GetNotecardLineAsync(instance, query, assetID, line);
+                return query;
             }
         }
         #endregion
@@ -112,26 +98,12 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         [ForcedSleep(0.1)]
         public LSLKey GetNumberOfNotecardLines(ScriptInstance instance, string name)
         {
-            ObjectPartInventoryItem item;
             lock (instance)
             {
-                if (instance.Part.Inventory.TryGetValue(name, out item))
-                {
-                    if (item.InventoryType != InventoryType.Notecard)
-                    {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a notecard", name));
-                    }
-                    else
-                    {
-                        UUID query = UUID.Random;
-                        GetNumberOfNotecardLinesAsync(instance, query, item.AssetID);
-                        return query;
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
-                }
+                UUID assetID = instance.GetNotecardAssetID(name);
+                UUID query = UUID.Random;
+                GetNumberOfNotecardLinesAsync(instance, query, assetID);
+                return query;
             }
         }
         #endregion
