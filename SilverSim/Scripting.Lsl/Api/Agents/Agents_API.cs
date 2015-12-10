@@ -250,9 +250,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "osAvatarName2Key")]
-        public string OsAvatarName2Key(ScriptInstance instance, string firstName, string lastName)
+        public LSLKey OsAvatarName2Key(ScriptInstance instance, string firstName, string lastName)
         {
-            throw new NotImplementedException("osAvatarName2Key(string, string)");
+            lock(instance)
+            {
+                UUI uui;
+                if(instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(firstName, lastName, out uui))
+                {
+                    return uui.ID;
+                }
+                return string.Empty;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentSize")]
