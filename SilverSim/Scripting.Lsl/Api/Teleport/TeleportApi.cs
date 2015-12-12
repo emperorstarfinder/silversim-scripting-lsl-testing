@@ -54,13 +54,35 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     else
                     {
                         /* other region */
-                        throw new NotImplementedException("Landmark destination to other sim not yet implemented");
+                        if (agent.SittingOnObject != null)
+                        {
+                            if (!agent.UnSit())
+                            {
+                                return;
+                            }
+                        }
+
+                        if (!agent.TeleportTo(scene, agent, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
+                        {
+                            agent.SendAlertMessage("Landmark destination not found", scene.ID);
+                        }
                     }
                 }
                 else
                 {
                     /* other grid */
-                    throw new NotImplementedException("HG destination not yet implemented");
+                    if (agent.SittingOnObject != null)
+                    {
+                        if (!agent.UnSit())
+                        {
+                            return;
+                        }
+                    }
+
+                    if (!agent.TeleportTo(scene, agent, landmarkData.GatekeeperURI, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
+                    {
+                        agent.SendAlertMessage("Landmark destination not found", scene.ID);
+                    }
                 }
             }
             else
@@ -81,7 +103,17 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             }
             else
             {
-                throw new NotImplementedException("teleporting via grid coords not yet implemented");
+                if (agent.SittingOnObject != null)
+                {
+                    if (!agent.UnSit())
+                    {
+                        return;
+                    }
+                }
+                if (!agent.TeleportTo(scene, agent, location, position, lookAt, TeleportFlags.ViaLocation))
+                {
+                    agent.SendAlertMessage(string.Format("Location '{0}' not found.", location.ToString()), scene.ID);
+                }
             }
         }
 
@@ -96,7 +128,17 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             }
             else
             {
-                throw new NotImplementedException("teleporting via region name not yet implemented");
+                if (agent.SittingOnObject != null)
+                {
+                    if (!agent.UnSit())
+                    {
+                        return;
+                    }
+                }
+                if (!agent.TeleportTo(scene, agent, regionName, position, lookAt, TeleportFlags.ViaRegionID))
+                {
+                    agent.SendAlertMessage(string.Format("Region '{0}' not found.", regionName), scene.ID);
+                }
             }
         }
 
