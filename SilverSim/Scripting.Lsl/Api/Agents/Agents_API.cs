@@ -225,6 +225,29 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return string.Empty;
         }
 
+        [APILevel(APIFlags.ASSL, "asGetAppearanceParams")]
+        [APIExtension(APIExtension.InWorldz, "iwGetAppearanceParams")]
+        public int GetAppearanceParams(ScriptInstance instance, LSLKey id, int which)
+        {
+            lock (instance)
+            {
+                IAgent agent;
+                if (!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    byte[] vp = agent.VisualParams;
+                    if(which == -1)
+                    {
+                        return vp.Length;
+                    }
+                    if (vp.Length > which)
+                    {
+                        return vp[which];
+                    }
+                }
+                return -1;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "osGetGender")]
         public string OsGetGender(ScriptInstance instance, LSLKey id)
         {
