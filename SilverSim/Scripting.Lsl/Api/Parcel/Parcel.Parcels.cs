@@ -143,7 +143,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                 ParcelInfo pInfo;
                 return (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) && 
-                    pInfo.Owner.EqualsGrid(thisPart.Owner)) ?
+                    (pInfo.Owner.EqualsGrid(thisPart.Owner)) || !pInfo.ObscureMusic) ?
                     pInfo.MusicURI :
                     string.Empty;
             }
