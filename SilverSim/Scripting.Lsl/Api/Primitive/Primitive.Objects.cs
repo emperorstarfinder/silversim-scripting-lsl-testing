@@ -343,15 +343,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 ObjectPart part;
-                try
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if(scene.Primitives.TryGetValue(id, out part))
                 {
-                    part = instance.Part.ObjectGroup.Scene.Primitives[id];
+                    return part.Owner.ID;
                 }
-                catch
-                {
-                    return id;
-                }
-                return part.Owner.ID;
+                return id;
             }
         }
 
