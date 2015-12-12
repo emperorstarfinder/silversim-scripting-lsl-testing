@@ -8,6 +8,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using SilverSim.Types.Grid;
+using SilverSim.Viewer.Messages.Land;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -51,7 +52,34 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
         [APILevel(APIFlags.LSL, "llModifyLand")]
         public void ModifyLand(ScriptInstance instance, int action, int brush)
         {
-            throw new NotImplementedException("llModifyLand(integer, integer)");
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                Vector3 pos = instance.Part.ObjectGroup.GlobalPosition;
+                double duration = 0.25;
+                if (action == 0)
+                {
+                    duration = 4.0;
+                }
+                ModifyLand modLand = new ModifyLand();
+                modLand.Height = pos.Z;
+                modLand.Size = (byte)brush;
+                modLand.Seconds = duration;
+                ModifyLand.Data landData = new ModifyLand.Data();
+                landData.BrushSize = brush;
+                landData.East = pos.X;
+                landData.West = pos.X;
+                landData.North = pos.Y;
+                landData.South = pos.Y;
+                modLand.ParcelData.Add(landData);
+
+                Action<UUI, SceneInterface, ModifyLand, ModifyLand.Data> modifier;
+
+                if (Terraforming.PaintEffects.TryGetValue((Terraforming.StandardTerrainEffect)action, out modifier))
+                {
+                    modifier(grp.Owner, grp.Scene, modLand, landData);
+                }
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetTerrainHeight")]
