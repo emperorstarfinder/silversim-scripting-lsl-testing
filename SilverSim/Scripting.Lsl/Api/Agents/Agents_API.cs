@@ -254,7 +254,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock (instance)
             {
                 IAgent agent;
-                if (!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
                 {
                     byte[] vp = agent.VisualParams;
                     if(vp.Length > 31)
@@ -267,9 +267,65 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osGetHealth")]
-        public double GetHealth(ScriptInstance instance, LSLKey avatar)
+        public double GetHealth(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("osGetHealth(key)");
+            lock(instance)
+            {
+                IAgent agent;
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    return agent.Health;
+                }
+            }
+            return -1;
+        }
+
+        [APILevel(APIFlags.OSSL, "osCauseDamage")]
+        public void CauseDamage(ScriptInstance instance, LSLKey id, double damage)
+        {
+            if(damage < 0)
+            {
+                return;
+            }
+            lock(instance)
+            {
+                IAgent agent;
+                ObjectPart part = instance.Part;
+                SceneInterface scene = part.ObjectGroup.Scene;
+                if(scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    ParcelInfo agentParcel;
+                    ParcelInfo objectParcel;
+                    if(scene.Parcels.TryGetValue(agent.GlobalPosition, out agentParcel) &&
+                        scene.Parcels.TryGetValue(part.GlobalPosition, out objectParcel) &&
+                        (agentParcel.Flags & ParcelFlags.AllowDamage) != 0 &&
+                        (objectParcel.Flags & ParcelFlags.AllowDamage) != 0)
+                    {
+                        /* only allow damage to avatars when they are actually killed on allow damage land by object on allow damage land */
+                        agent.DecreaseHealth(damage);
+                    }
+                }
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osCauseHealing")]
+        public void CauseHealing(ScriptInstance instance, LSLKey id, double damage)
+        {
+            if(damage < 0)
+            {
+                return;
+            }
+            lock (instance)
+            {
+                IAgent agent;
+                ObjectPart part = instance.Part;
+                SceneInterface scene = part.ObjectGroup.Scene;
+                if (scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    /* allow healing from any parcel */
+                    agent.IncreaseHealth(damage);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "osAvatarName2Key")]
@@ -400,18 +456,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 instance.CheckThreatLevel("osForceAttachToOtherAvatarFromInventory", ScriptInstance.ThreatLevelType.VeryHigh);
                 throw new NotImplementedException("osForceAttachToOtherAvatarFromInventory(key, string, integer)");
             }
-        }
-
-        [APILevel(APIFlags.OSSL, "osCauseDamage")]
-        public void CauseDamage(ScriptInstance instance, LSLKey id, double health)
-        {
-            throw new NotImplementedException("osCauseDamage(float)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osCauseHealing")]
-        public void CauseHealing(ScriptInstance instance, LSLKey id, double health)
-        {
-            throw new NotImplementedException("osCauseHealing(float)");
         }
 
         [APILevel(APIFlags.OSSL, "osForceDetachFromAvatar")]
