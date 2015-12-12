@@ -21,23 +21,23 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         {
         }
 
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_CREATOR_OWNED = 1;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_NOT_OWNED = 2;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_SENSE_AS_AGENT = 4;
 
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_SIT_NOW = 0;
 
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_FLY = 0;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_NO_FLY = 1;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_LAND_AT_TARGET = 2;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_RUNNING = 4;
 
         [APILevel(APIFlags.OSSL, "osNpcCreate")]

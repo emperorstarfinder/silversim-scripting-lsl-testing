@@ -15,51 +15,51 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_PITCH = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_OFFSET = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_OFFSET_X = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_OFFSET_Y = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_OFFSET_Z = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_POSITION_LAG = 5;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_LAG = 6;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_DISTANCE = 7;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_BEHINDNESS_ANGLE = 8;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_BEHINDNESS_LAG = 9;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_POSITION_THRESHOLD = 10;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_THRESHOLD = 11;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_ACTIVE = 12;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_POSITION = 13;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_POSITION_X = 14;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_POSITION_Y = 15;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_POSITION_Z = 16;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS = 17;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_X = 18;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_Y = 19;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_Z = 20;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_POSITION_LOCKED = 21;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int CAMERA_FOCUS_LOCKED = 22;
 
         [APILevel(APIFlags.LSL, "llSetCameraAtOffset")]

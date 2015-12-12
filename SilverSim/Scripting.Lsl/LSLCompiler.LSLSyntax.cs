@@ -89,9 +89,9 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     if (IsValidType(fi.FieldType))
                                     {
-                                        APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(fi, typeof(APILevel)) as APILevel[];
-                                        APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(fi, typeof(APIExtension)) as APIExtension[];
-                                        foreach(APILevel level in apiLevelAttrs)
+                                        APILevelAttribute[] apiLevelAttrs = Attribute.GetCustomAttributes(fi, typeof(APILevelAttribute)) as APILevelAttribute[];
+                                        APIExtensionAttribute[] apiExtensionAttrs = Attribute.GetCustomAttributes(fi, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                                        foreach(APILevelAttribute level in apiLevelAttrs)
                                         {
                                             if (string.IsNullOrEmpty(level.Name))
                                             {
@@ -107,7 +107,7 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("string", MapType(fi.FieldType));
                                                 writer.WriteNamedValue("key", "value");
                                                 writer.WriteNamedValue("string", fi.GetValue(null).ToString());
-                                                LSLTooltip tooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(fi, typeof(LSLTooltip));
+                                                LSLTooltipAttribute tooltip = (LSLTooltipAttribute)System.Attribute.GetCustomAttribute(fi, typeof(LSLTooltipAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 string avail = "Supported for";
                                                 if ((level.Flags & APIFlags.LSL) != APIFlags.None)
@@ -147,7 +147,7 @@ namespace SilverSim.Scripting.Lsl
                                             writer.WriteEndElement();
                                         }
 
-                                        foreach (APIExtension level in apiExtensionAttrs)
+                                        foreach (APIExtensionAttribute level in apiExtensionAttrs)
                                         {
                                             if (string.IsNullOrEmpty(level.Name))
                                             {
@@ -163,7 +163,7 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("string", MapType(fi.FieldType));
                                                 writer.WriteNamedValue("key", "value");
                                                 writer.WriteNamedValue("string", fi.GetValue(null).ToString());
-                                                LSLTooltip tooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(fi, typeof(LSLTooltip));
+                                                LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(fi, typeof(LSLTooltipAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 string avail = "Supported for " + level.Extension;
 
@@ -193,13 +193,13 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                                 {
-                                    APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevel)) as APILevel[];
-                                    APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(t, typeof(APIExtension)) as APIExtension[];
-                                    StateEventDelegate stateEventDel = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
+                                    APILevelAttribute[] apiLevelAttrs = Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
+                                    APIExtensionAttribute[] apiExtensionAttrs = Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                                    StateEventDelegateAttribute stateEventDel = (StateEventDelegateAttribute)Attribute.GetCustomAttribute(t, typeof(StateEventDelegateAttribute));
                                     MethodInfo mi = t.GetMethod("Invoke");
                                     if ((apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0) && stateEventDel != null)
                                     {
-                                        foreach (APILevel level in apiLevelAttrs)
+                                        foreach (APILevelAttribute level in apiLevelAttrs)
                                         {
                                             if (string.IsNullOrEmpty(level.Name))
                                             {
@@ -217,7 +217,7 @@ namespace SilverSim.Scripting.Lsl
                                                 {
                                                     writer.WriteNamedValue("key", pi.Name);
                                                     writer.WriteNamedValue("string", MapType(pi.ParameterType));
-                                                    LSLTooltip ptooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(pi, typeof(LSLTooltip));
+                                                    LSLTooltipAttribute ptooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(pi, typeof(LSLTooltipAttribute));
                                                     writer.WriteNamedValue("key", "tooltip");
                                                     if (null != ptooltip)
                                                     {
@@ -231,7 +231,7 @@ namespace SilverSim.Scripting.Lsl
                                                 }
                                                 writer.WriteEndElement();
 
-                                                LSLTooltip tooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(mi, typeof(LSLTooltip));
+                                                LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(mi, typeof(LSLTooltipAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 string avail = "Supported for";
                                                 if ((level.Flags & APIFlags.LSL) != APIFlags.None)
@@ -246,7 +246,7 @@ namespace SilverSim.Scripting.Lsl
                                                 {
                                                     avail += " OSSL";
                                                 }
-                                                foreach(APIExtension ext in apiExtensionAttrs)
+                                                foreach(APIExtensionAttribute ext in apiExtensionAttrs)
                                                 {
                                                     avail += " " + ext.Extension;
                                                 }
@@ -277,7 +277,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 foreach (MethodInfo mi in api.GetType().GetMethods())
                                 {
-                                    foreach(APILevel level in (APILevel[])System.Attribute.GetCustomAttributes(mi, typeof(APILevel)))
+                                    foreach(APILevelAttribute level in (APILevelAttribute[])Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                                     {
                                         if (string.IsNullOrEmpty(level.Name))
                                         {
@@ -289,8 +289,8 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         writer.WriteStartElement("map");
                                         {
-                                            EnergyUsage energy = (EnergyUsage)System.Attribute.GetCustomAttribute(mi, typeof(EnergyUsage));
-                                            ForcedSleep forcedSleep = (ForcedSleep)System.Attribute.GetCustomAttribute(mi, typeof(ForcedSleep));
+                                            EnergyUsageAttribute energy = (EnergyUsageAttribute)Attribute.GetCustomAttribute(mi, typeof(EnergyUsageAttribute));
+                                            ForcedSleepAttribute forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(mi, typeof(ForcedSleepAttribute));
                                             writer.WriteNamedValue("key", "energy");
                                             if (null != energy)
                                             {
@@ -318,7 +318,7 @@ namespace SilverSim.Scripting.Lsl
                                             {
                                                 writer.WriteNamedValue("key", pi.Name);
                                                 writer.WriteNamedValue("string", MapType(pi.ParameterType));
-                                                LSLTooltip ptooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(pi, typeof(LSLTooltip));
+                                                LSLTooltipAttribute ptooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(pi, typeof(LSLTooltipAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 if (null != ptooltip)
                                                 {
@@ -332,7 +332,7 @@ namespace SilverSim.Scripting.Lsl
                                             }
                                             writer.WriteEndElement();
 
-                                            LSLTooltip tooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(mi, typeof(LSLTooltip));
+                                            LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(mi, typeof(LSLTooltipAttribute));
                                             writer.WriteNamedValue("key", "tooltip");
                                             string avail = "Supported for";
                                             if ((level.Flags & APIFlags.LSL) != APIFlags.None)
@@ -360,7 +360,7 @@ namespace SilverSim.Scripting.Lsl
                                         writer.WriteEndElement();
                                     }
 
-                                    foreach (APIExtension level in (APIExtension[])System.Attribute.GetCustomAttributes(mi, typeof(APIExtension)))
+                                    foreach (APIExtensionAttribute level in (APIExtensionAttribute[])Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                                     {
                                         if (string.IsNullOrEmpty(level.Name))
                                         {
@@ -372,8 +372,8 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         writer.WriteStartElement("map");
                                         {
-                                            EnergyUsage energy = (EnergyUsage)System.Attribute.GetCustomAttribute(mi, typeof(EnergyUsage));
-                                            ForcedSleep forcedSleep = (ForcedSleep)System.Attribute.GetCustomAttribute(mi, typeof(ForcedSleep));
+                                            EnergyUsageAttribute energy = (EnergyUsageAttribute)Attribute.GetCustomAttribute(mi, typeof(EnergyUsageAttribute));
+                                            ForcedSleepAttribute forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(mi, typeof(ForcedSleepAttribute));
                                             writer.WriteNamedValue("key", "energy");
                                             if (null != energy)
                                             {
@@ -401,7 +401,7 @@ namespace SilverSim.Scripting.Lsl
                                             {
                                                 writer.WriteNamedValue("key", pi.Name);
                                                 writer.WriteNamedValue("string", MapType(pi.ParameterType));
-                                                LSLTooltip ptooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(pi, typeof(LSLTooltip));
+                                                LSLTooltipAttribute ptooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(pi, typeof(LSLTooltipAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 if (null != ptooltip)
                                                 {
@@ -415,7 +415,7 @@ namespace SilverSim.Scripting.Lsl
                                             }
                                             writer.WriteEndElement();
 
-                                            LSLTooltip tooltip = (LSLTooltip)System.Attribute.GetCustomAttribute(mi, typeof(LSLTooltip));
+                                            LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(mi, typeof(LSLTooltipAttribute));
                                             writer.WriteNamedValue("key", "tooltip");
                                             string avail = "Supported for "+ level.Extension;
 

@@ -15,7 +15,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
 {
     public partial class NotecardApi
     {
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const string EOF = "\n\n\n";
 
         #region llGetNotecardLine

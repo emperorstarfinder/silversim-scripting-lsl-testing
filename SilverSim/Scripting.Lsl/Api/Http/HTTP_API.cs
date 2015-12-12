@@ -19,10 +19,10 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             /* intentionally left empty */
         }
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const string URL_REQUEST_GRANTED = "URL_REQUEST_GRANTED";
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const string URL_REQUEST_DENIED = "URL_REQUEST_DENIED";
 
         public void Startup(ConfigurationLoader loader)

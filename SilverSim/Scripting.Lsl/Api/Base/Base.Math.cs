@@ -9,17 +9,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const double PI = 3.14159274f;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const double TWO_PI = 6.28318548f;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const double PI_BY_TWO = 1.57079637f;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const double DEG_TO_RAD = 0.01745329238f;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const double RAD_TO_DEG = 57.29578f;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const double SQRT2 = 1.414213538f;
 
         [APILevel(APIFlags.OSSL, "osMax")]

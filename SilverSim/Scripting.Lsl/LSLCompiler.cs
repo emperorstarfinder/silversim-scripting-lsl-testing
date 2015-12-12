@@ -177,12 +177,12 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (typeof(IScriptApi).IsAssignableFrom(type))
                 {
-                    System.Attribute scriptApiAttr = System.Attribute.GetCustomAttribute(type, typeof(ScriptApiName));
-                    System.Attribute impTagAttr = System.Attribute.GetCustomAttribute(type, typeof(LSLImplementation));
+                    ScriptApiNameAttribute scriptApiAttr = Attribute.GetCustomAttribute(type, typeof(ScriptApiNameAttribute)) as ScriptApiNameAttribute;
+                    Attribute impTagAttr = Attribute.GetCustomAttribute(type, typeof(LSLImplementationAttribute));
                     if (null != impTagAttr && null != scriptApiAttr)
                     {
                         IPlugin factory = (IPlugin)Activator.CreateInstance(type);
-                        loader.AddPlugin("LSL_API_" + ((ScriptApiName)scriptApiAttr).Name, factory);
+                        loader.AddPlugin("LSL_API_" + scriptApiAttr.Name, factory);
                     }
                 }
             }
@@ -194,7 +194,7 @@ namespace SilverSim.Scripting.Lsl
             foreach (IScriptApi api in apis)
             {
                 Type apiType = api.GetType();
-                System.Attribute attr = System.Attribute.GetCustomAttribute(apiType, typeof(LSLImplementation));
+                Attribute attr = Attribute.GetCustomAttribute(apiType, typeof(LSLImplementationAttribute));
                 if (attr != null && !m_Apis.Contains(api))
                 {
                     if ((apiType.Attributes & TypeAttributes.Public) == 0)
@@ -219,11 +219,11 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (IsValidType(f.FieldType))
                         {
-                            APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
-                            APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
+                            APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                            APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                             if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                             {
-                                foreach (APILevel attr in apiLevelAttrs)
+                                foreach (APILevelAttribute attr in apiLevelAttrs)
                                 {
                                     string constName = attr.Name;
                                     if (string.IsNullOrEmpty(constName))
@@ -238,7 +238,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                     }
                                 }
-                                foreach (APIExtension attr in apiExtensionAttrs)
+                                foreach (APIExtensionAttribute attr in apiExtensionAttrs)
                                 {
                                     string constName = attr.Name;
                                     if (string.IsNullOrEmpty(constName))
@@ -259,8 +259,8 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevel)) as APILevel[];
-                            APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtension)) as APIExtension[];
+                            APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                            APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                             if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                             {
                                 m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
@@ -273,11 +273,11 @@ namespace SilverSim.Scripting.Lsl
                 #region Collect event definitions
                 foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
                 {
-                    StateEventDelegate stateEventAttr = (StateEventDelegate)System.Attribute.GetCustomAttribute(t, typeof(StateEventDelegate));
+                    StateEventDelegateAttribute stateEventAttr = (StateEventDelegateAttribute)Attribute.GetCustomAttribute(t, typeof(StateEventDelegateAttribute));
                     if (stateEventAttr != null)
                     {
-                        APILevel[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevel)) as APILevel[];
-                        APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(t, typeof(APIExtension)) as APIExtension[];
+                        APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
+                        APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                         MethodInfo mi = t.GetMethod("Invoke");
                         if (apiLevelAttrs.Length == 0 && apiExtensionAttrs.Length == 0)
                         {
@@ -313,7 +313,7 @@ namespace SilverSim.Scripting.Lsl
 
                         if (eventValid)
                         {
-                            foreach (APILevel apiLevelAttr in apiLevelAttrs)
+                            foreach (APILevelAttribute apiLevelAttr in apiLevelAttrs)
                             {
                                 string funcName = apiLevelAttr.Name;
                                 if(string.IsNullOrEmpty(funcName))
@@ -329,7 +329,7 @@ namespace SilverSim.Scripting.Lsl
                                     }
                                 }
                             }
-                            foreach(APIExtension apiExtensionAttr in apiExtensionAttrs)
+                            foreach(APIExtensionAttribute apiExtensionAttr in apiExtensionAttrs)
                             {
                                 string funcName = apiExtensionAttr.Name;
                                 if (string.IsNullOrEmpty(funcName))
@@ -361,8 +361,8 @@ namespace SilverSim.Scripting.Lsl
                 #region Collect API functions, reset delegates and state change delegates
                 foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
                 {
-                    APILevel[] funcNameAttrs = System.Attribute.GetCustomAttributes(m, typeof(APILevel)) as APILevel[];
-                    APIExtension[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(m, typeof(APIExtension)) as APIExtension[];
+                    APILevelAttribute[] funcNameAttrs = Attribute.GetCustomAttributes(m, typeof(APILevelAttribute)) as APILevelAttribute[];
+                    APIExtensionAttribute[] apiExtensionAttrs = Attribute.GetCustomAttributes(m, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                     if (funcNameAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                     {
                         ParameterInfo[] pi = m.GetParameters();
@@ -401,7 +401,7 @@ namespace SilverSim.Scripting.Lsl
 
                             if (methodValid)
                             {
-                                foreach (APILevel funcNameAttr in funcNameAttrs)
+                                foreach (APILevelAttribute funcNameAttr in funcNameAttrs)
                                 {
                                     string funcName = funcNameAttr.Name;
                                     if (string.IsNullOrEmpty(funcName))
@@ -419,7 +419,7 @@ namespace SilverSim.Scripting.Lsl
                                         methodList.Add(new ApiMethodInfo(funcName, api, m));
                                     }
                                 }
-                                foreach (APIExtension funcNameAttr in apiExtensionAttrs)
+                                foreach (APIExtensionAttribute funcNameAttr in apiExtensionAttrs)
                                 {
                                     string funcName = funcNameAttr.Name;
                                     if (string.IsNullOrEmpty(funcName))
@@ -446,7 +446,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
 
-                    Attribute attr = System.Attribute.GetCustomAttribute(m, typeof(ExecutedOnStateChange));
+                    Attribute attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnStateChangeAttribute));
                     if (attr != null && (m.Attributes & MethodAttributes.Static) != 0)
                     {
                         ParameterInfo[] pi = m.GetParameters();
@@ -474,7 +474,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
 
-                    attr = System.Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptReset));
+                    attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptResetAttribute));
                     if (attr != null && (m.Attributes & MethodAttributes.Static) != 0)
                     {
                         ParameterInfo[] pi = m.GetParameters();

@@ -71,11 +71,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return Uri.EscapeDataString(url);
         }
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STRING_TRIM_HEAD = 0x1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STRING_TRIM_TAIL = 0x2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STRING_TRIM = 0x3;
 
         static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };

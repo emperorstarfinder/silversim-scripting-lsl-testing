@@ -14,19 +14,19 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 {
     public partial class HttpApi
     {
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int HTTP_METHOD = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int HTTP_MIMETYPE = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int HTTP_BODY_MAXLENGTH = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int HTTP_VERIFY_CERT = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int HTTP_VERBOSE_THROTTLE = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int HTTP_CUSTOM_HEADER = 5;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int HTTP_PRAGMA_NO_CACHE = 6;
 
         private readonly string[] m_AllowedHttpHeaders =

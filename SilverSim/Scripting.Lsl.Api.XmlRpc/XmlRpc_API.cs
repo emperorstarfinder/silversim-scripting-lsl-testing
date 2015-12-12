@@ -22,11 +22,11 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 
         }
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int REMOTE_DATA_CHANNEL = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int REMOTE_DATA_REQUEST = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int REMOTE_DATA_REPLY = 3;
 
         [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]

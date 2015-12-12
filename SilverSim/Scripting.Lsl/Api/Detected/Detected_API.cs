@@ -11,11 +11,11 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
     [LSLImplementation]
     public partial class DetectedApi : IScriptApi, IPlugin
     {
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int TOUCH_INVALID_FACE = -1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public static readonly Vector3 TOUCH_INVALID_TEXCOORD = new Vector3(-1.0, -1.0, 0.0);
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public static readonly Vector3 TOUCH_INVALID_VECTOR = Vector3.Zero;
 
         public DetectedApi()

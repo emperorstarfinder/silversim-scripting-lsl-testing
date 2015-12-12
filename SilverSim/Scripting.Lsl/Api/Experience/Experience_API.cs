@@ -22,39 +22,39 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             /* intentionally left empty */
         }
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_NONE = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_THROTTLED = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_EXPERIENCES_DISABLED = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_INVALID_PARAMETERS = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_NOT_PERMITTED = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_NO_EXPERIENCE = 5;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_NOT_FOUND = 6;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_INVALID_EXPERIENCE = 7;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_EXPERIENCE_DISABLED = 8;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_EXPERIENCE_SUSPENDED = 9;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_UNKNOWN_ERROR = 10;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_QUOTA_EXCEEDED = 11;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_STORE_DISABLED = 12;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_STORAGE_EXCEPTION = 13;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_KEY_NOT_FOUND = 14;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_RETRY_UPDATE = 15;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_MATURITY_EXCEEDED = 16;
 
         [APILevel(APIFlags.LSL, "experience_permissions")]

@@ -134,7 +134,7 @@ namespace SilverSim.Scripting.Lsl
                 Dictionary<string, object> typeLocalsInited;
                 foreach (IScriptApi api in m_Apis)
                 {
-                    ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiName));
+                    ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiNameAttribute));
                     FieldBuilder fb = scriptTypeBuilder.DefineField(apiAttr.Name, api.GetType(), FieldAttributes.Static | FieldAttributes.Public);
                     compileState.m_ApiFieldInfo.Add(apiAttr.Name, fb);
                 }
@@ -523,7 +523,7 @@ namespace SilverSim.Scripting.Lsl
 
                 foreach (IScriptApi api in m_Apis)
                 {
-                    ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiName));
+                    ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiNameAttribute));
                     FieldInfo info = t.GetField(apiAttr.Name, BindingFlags.Static | BindingFlags.Public);
                     info.SetValue(null, api);
                 }

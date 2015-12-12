@@ -17,76 +17,76 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_UNKNOWN_DETAIL = -1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_NAME = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_DESC = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_POS = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_ROT = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_VELOCITY = 5;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_OWNER = 6;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_GROUP = 7;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_CREATOR = 8;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_RUNNING_SCRIPT_COUNT = 9;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_TOTAL_SCRIPT_COUNT = 10;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_SCRIPT_MEMORY = 11;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_SCRIPT_TIME = 12;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_PRIM_EQUIVALENCE = 13;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_SERVER_COST = 14;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_STREAMING_COST = 15;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_PHYSICS_COST = 16;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_CHARACTER_TIME = 17;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_ROOT = 18;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_ATTACHED_POINT = 19;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_PATHFINDING_TYPE = 20;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_PHYSICS = 21;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_PHANTOM = 22;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int OBJECT_TEMP_ON_REZ = 23;
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_PHYSICS = 0x00000001;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_ROTATE_X = 0x00000002;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_ROTATE_Y = 0x00000004;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_ROTATE_Z = 0x00000008;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_PHANTOM = 0x00000010;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_SANDBOX = 0x00000020;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_BLOCK_GRAB = 0x00000040;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_DIE_AT_EDGE = 0x00000080;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_RETURN_AT_EDGE = 0x00000100;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_CAST_SHADOWS = 0x00000200;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_BLOCK_GRAB_OBJECT = 0x00000400;
 
         [APILevel(APIFlags.LSL, "llSetDamage")]
@@ -463,13 +463,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         #region osMessageObject
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_ATTACH_MSG_ALL = 0xFFFF;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_ATTACH_MSG_INVERT_POINTS = 1;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_ATTACH_MSG_OBJECT_CREATOR = 2;
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int OS_ATTACH_MSG_SCRIPT_CREATOR = 4;
 
         [APILevel(APIFlags.ASSL, "object_message")]

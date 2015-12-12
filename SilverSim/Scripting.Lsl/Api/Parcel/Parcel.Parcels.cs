@@ -12,36 +12,36 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
     public partial class ParcelApi
     {
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_COUNT_TOTAL = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_COUNT_OWNER = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_COUNT_GROUP = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_COUNT_OTHER = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_COUNT_SELECTED = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_COUNT_TEMP = 5;
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_NAME = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_DESC = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_OWNER = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_GROUP = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_AREA = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_ID = 5;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_SEE_AVATARS = 6; // not implemented
 
         //osSetParcelDetails
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int PARCEL_DETAILS_CLAIMDATE = 10;
 
         [APILevel(APIFlags.LSL, "llOverMyLand")]

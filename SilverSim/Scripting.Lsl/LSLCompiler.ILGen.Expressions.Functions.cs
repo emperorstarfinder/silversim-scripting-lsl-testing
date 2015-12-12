@@ -79,7 +79,7 @@ namespace SilverSim.Scripting.Lsl
                         ParameterInfo[] pi = method.Method.GetParameters();
                         if (pi.Length - 1 == functionTree.SubTree.Count)
                         {
-                            ScriptApiName apiAttr = (ScriptApiName)System.Attribute.GetCustomAttribute(method.Api.GetType(), typeof(ScriptApiName));
+                            ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(method.Api.GetType(), typeof(ScriptApiNameAttribute));
 
                             if (!IsValidType(method.Method.ReturnType))
                             {
@@ -160,7 +160,7 @@ namespace SilverSim.Scripting.Lsl
 
                     if (m_MethodInfo.GetType().Equals(typeof(MethodInfo)))
                     {
-                        ForcedSleep forcedSleep = (ForcedSleep)Attribute.GetCustomAttribute(m_MethodInfo, typeof(ForcedSleep));
+                        ForcedSleepAttribute forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(m_MethodInfo, typeof(ForcedSleepAttribute));
                         if (forcedSleep != null)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldarg_0);

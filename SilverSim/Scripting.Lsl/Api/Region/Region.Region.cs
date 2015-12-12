@@ -295,14 +295,14 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int DATA_SIM_POS = 5;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int DATA_SIM_STATUS = 6;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int DATA_SIM_RATING = 7;
 
-        [APILevel(APIFlags.OSSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.OSSL)]
         public const int DATA_SIM_RELEASE = 128;
 
         [APILevel(APIFlags.LSL, "llScriptDanger")]

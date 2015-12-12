@@ -57,66 +57,66 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             return ClearLinkMedia(instance, LINK_THIS, face);
         }
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_ALT_IMAGE_ENABLE = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_CONTROLS = 1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_CURRENT_URL = 2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_HOME_URL = 3;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_AUTO_LOOP = 4;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_AUTO_PLAY = 5;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_AUTO_SCALE = 6;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_AUTO_ZOOM = 7;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_FIRST_CLICK_INTERACT = 8;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_WIDTH_PIXELS = 9;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_HEIGHT_PIXELS = 10;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_WHITELIST_ENABLE = 11;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_WHITELIST = 12;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_PERMS_INTERACT = 13;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_PERMS_CONTROL = 14;
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_PERM_NONE = 0x0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_PERM_OWNER = 0x1;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_PERM_GROUP = 0x2;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_PERM_ANYONE = 0x4;
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_CONTROLS_STANDARD = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MEDIA_CONTROLS_MINI = 1;
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_OK = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_MALFORMED_PARAMS = 1000;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_TYPE_MISMATCH = 1001;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_BOUNDS_ERROR = 1002;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_NOT_FOUND = 1003;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_NOT_SUPPORTED = 1004;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_INTERNAL_ERROR = 1999;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int LSL_STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL, "llGetLinkMedia")]
@@ -249,21 +249,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             return GetLinkMedia(instance, LINK_THIS, face, param);
         }
 
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_OK = 0;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_MALFORMED_PARAMS = 1000;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_TYPE_MISMATCH = 1001;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_BOUNDS_ERROR = 1002;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_NOT_FOUND = 1003;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_NOT_SUPPORTED = 1004;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_INTERNAL_ERROR = 1999;
-        [APILevel(APIFlags.LSL, APILevel.KeepCsName)]
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL, "llSetLinkMedia")]

@@ -19,31 +19,20 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
-    public sealed class APILevel : Attribute
+    public sealed class APILevelAttribute : Attribute
     {
         public APIFlags Flags { get; private set; }
         public string Name { get; private set; }
 
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
-        public const string KeepCsName = "";
-
-        public APILevel(APIFlags flags, string name)
+        public APILevelAttribute(APIFlags flags, string name = "")
         {
             Flags = flags;
             Name = name;
         }
     }
 
-    [Serializable]
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
-    public sealed class APIExtension : Attribute
+    public static class APIExtension
     {
-        public string Extension { get; private set; }
-        public string Name { get; private set; }
-
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
-        public const string KeepCsName = "";
-
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string LightShare = "LightShare";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
@@ -52,8 +41,16 @@ namespace SilverSim.Scripting.Lsl
         public const string WindLight_Aurora = "WindLight_Aurora";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Admin = "Admin";
+    }
 
-        public APIExtension(string extension, string name)
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
+    public sealed class APIExtensionAttribute : Attribute
+    {
+        public string Extension { get; private set; }
+        public string Name { get; private set; }
+
+        public APIExtensionAttribute(string extension, string name = "")
         {
             Extension = extension;
             Name = name;
@@ -62,10 +59,10 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public sealed class ForcedSleep : Attribute
+    public sealed class ForcedSleepAttribute : Attribute
     {
         public double Seconds { get; private set; }
-        public ForcedSleep(double seconds)
+        public ForcedSleepAttribute(double seconds)
         {
             Seconds = seconds;
         }
@@ -73,9 +70,9 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public sealed class ExecutedOnStateChange : Attribute
+    public sealed class ExecutedOnStateChangeAttribute : Attribute
     {
-        public ExecutedOnStateChange()
+        public ExecutedOnStateChangeAttribute()
         {
 
         }
@@ -83,9 +80,9 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public sealed class ExecutedOnScriptReset : Attribute
+    public sealed class ExecutedOnScriptResetAttribute : Attribute
     {
-        public ExecutedOnScriptReset()
+        public ExecutedOnScriptResetAttribute()
         {
 
         }
@@ -93,9 +90,9 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class LSLImplementation : Attribute
+    public sealed class LSLImplementationAttribute : Attribute
     {
-        public LSLImplementation()
+        public LSLImplementationAttribute()
         {
 
         }
@@ -103,20 +100,20 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Delegate, Inherited = false)]
-    public sealed class StateEventDelegate : Attribute
+    public sealed class StateEventDelegateAttribute : Attribute
     {
-        public StateEventDelegate()
+        public StateEventDelegateAttribute()
         {
         }
     }
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
-    public sealed class EnergyUsage : Attribute
+    public sealed class EnergyUsageAttribute : Attribute
     {
         public double Energy { get; private set; }
 
-        public EnergyUsage(double energy)
+        public EnergyUsageAttribute(double energy)
         {
             Energy = energy;
         }
@@ -124,11 +121,11 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter, Inherited = false)]
-    public sealed class LSLTooltip : Attribute
+    public sealed class LSLTooltipAttribute : Attribute
     {
         public string Tooltip { get; private set; }
 
-        public LSLTooltip(string tooltip)
+        public LSLTooltipAttribute(string tooltip)
         {
             Tooltip = tooltip.Replace("\n", "\\n");
         }

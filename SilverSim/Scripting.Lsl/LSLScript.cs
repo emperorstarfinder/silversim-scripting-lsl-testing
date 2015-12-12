@@ -404,7 +404,7 @@ namespace SilverSim.Scripting.Lsl
         void ShoutUnimplementedException(NotImplementedException e)
         {
             MethodBase mb = e.TargetSite;
-            APILevel apiLevel = (APILevel)System.Attribute.GetCustomAttribute(mb, typeof(APILevel));
+            APILevelAttribute apiLevel = (APILevelAttribute)Attribute.GetCustomAttribute(mb, typeof(APILevelAttribute));
             if (apiLevel != null)
             {
                 string methodName = mb.Name;
