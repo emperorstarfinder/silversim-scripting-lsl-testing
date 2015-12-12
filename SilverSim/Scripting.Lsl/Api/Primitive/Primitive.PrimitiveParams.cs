@@ -115,8 +115,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
             return parout;
-
-            throw new NotImplementedException("osGetLinkPrimitiveParams(integer, list)");
         }
 
         [APILevel(APIFlags.LSL, "llGetLocalPos")]
