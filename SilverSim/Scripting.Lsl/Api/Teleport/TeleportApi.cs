@@ -10,6 +10,8 @@ using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Asset.Format;
 using SilverSim.Types.Grid;
+using SilverSim.Types.Groups;
+using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
@@ -173,9 +175,42 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.LSL, "llTeleportAgentHome")]
+        /* we leave out the ForcedSleep(5.0) here */
         public void TeleportAgentHome(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException("llTeleportAgentHome(key)");
+            lock (instance)
+            {
+                IAgent agent;
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo agentParcel;
+                ParcelInfo objectParcel;
+                if (scene.RootAgents.TryGetValue(avatar, out agent) &&
+                    scene.Parcels.TryGetValue(agent.GlobalPosition, out agentParcel) &&
+                    scene.Parcels.TryGetValue(grp.GlobalPosition, out objectParcel))
+                {
+                    if(agentParcel.ID != objectParcel.ID)
+                    {
+                        return;
+                    }
+
+                    if(!objectParcel.Owner.EqualsGrid(grp.Owner))
+                    {
+                        if (!objectParcel.GroupOwned)
+                        {
+                            return;
+                        }
+                        else if(!scene.HasGroupPower(grp.Owner, objectParcel.Group, GroupPowers.LandEjectAndFreeze))
+                        {
+                            return;
+                        }
+                    }
+                    if(!agent.TeleportHome(scene, agent))
+                    {
+                        agent.SendAlertMessage("Teleport home failed", scene.ID);
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llTeleportAgentGlobalCoords")]
