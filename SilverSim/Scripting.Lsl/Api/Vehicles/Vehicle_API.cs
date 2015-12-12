@@ -228,6 +228,12 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_TYPE_AIRPLANE = 4;
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_TYPE_BALLOON = 5;
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_TYPE_SAILBOAT = 10001;
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_TYPE_MOTORCYCLE = 10002;
 
         [APILevel(APIFlags.LSL, "llSetVehicleType")]
         public void SetVehicleType(ScriptInstance instance, int type)
