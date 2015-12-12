@@ -39,6 +39,7 @@ namespace SilverSim.Scripting.Lsl
         public readonly Timer Timer = new Timer();
         public bool UseForcedSleep = true;
         public double ForcedSleepFactor = 1;
+        internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
         {
@@ -281,6 +282,14 @@ namespace SilverSim.Scripting.Lsl
             m_Part.OnPositionChange -= OnPrimPositionUpdate;
             m_Part.ObjectGroup.OnUpdate -= OnGroupUpdate;
             m_Part.ObjectGroup.OnPositionChange -= OnGroupPositionUpdate;
+            if(null != ScriptRemoveDelegates)
+            {
+                /* call remove delegates */
+                foreach(Action<ScriptInstance> del in ScriptRemoveDelegates)
+                {
+                    del(this);
+                }
+            }
             IsRunning = false;
             m_Events.Clear();
             m_States.Clear();

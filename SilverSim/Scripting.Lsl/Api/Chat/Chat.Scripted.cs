@@ -211,6 +211,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         #endregion
 
         [ExecutedOnStateChange]
+        [ExecutedOnScriptRemove]
         public static void ResetListeners(ScriptInstance instance)
         {
             Script script = (Script)instance;

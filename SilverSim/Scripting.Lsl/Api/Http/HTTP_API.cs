@@ -32,6 +32,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [ExecutedOnScriptReset]
+        [ExecutedOnScriptRemove]
         public void RemoveURLs(ScriptInstance instance)
         {
             lock (instance)

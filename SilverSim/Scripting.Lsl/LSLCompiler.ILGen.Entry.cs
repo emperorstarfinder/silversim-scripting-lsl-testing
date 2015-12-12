@@ -529,7 +529,7 @@ namespace SilverSim.Scripting.Lsl
                 }
 #endregion
 
-                return new LSLScriptAssembly(ab, t, stateTypes, forcedSleepDefault);
+                return new LSLScriptAssembly(ab, t, stateTypes, forcedSleepDefault, m_ScriptRemoveDelegates);
 #if DEBUG
             }
 #endif

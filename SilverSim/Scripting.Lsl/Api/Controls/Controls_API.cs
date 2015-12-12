@@ -89,6 +89,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
         }
 
         [ExecutedOnStateChange]
+        [ExecutedOnScriptRemove]
         public static void ResetControls(ScriptInstance instance)
         {
             lock (instance)

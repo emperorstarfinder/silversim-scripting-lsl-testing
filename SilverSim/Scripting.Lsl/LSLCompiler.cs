@@ -81,6 +81,7 @@ namespace SilverSim.Scripting.Lsl
 
         readonly List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
         readonly List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
+        readonly List<Action<ScriptInstance>> m_ScriptRemoveDelegates = new List<Action<ScriptInstance>>();
         readonly List<string> m_ReservedWords = new List<string>();
         readonly List<string> m_Typecasts = new List<string>();
         readonly List<char> m_SingleOps = new List<char>();
@@ -499,6 +500,34 @@ namespace SilverSim.Scripting.Lsl
                         else
                         {
                             m_ScriptResetDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m));
+                        }
+                    }
+
+                    attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptRemoveAttribute));
+                    if (attr != null && (m.Attributes & MethodAttributes.Static) != 0)
+                    {
+                        ParameterInfo[] pi = m.GetParameters();
+                        if (pi.Length != 1)
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Parameter count does not match.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else if (m.ReturnType != typeof(void))
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Return type is not void.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else if (pi[0].ParameterType != typeof(ScriptInstance))
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Parameter type is not ScriptInstance.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else
+                        {
+                            m_ScriptRemoveDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m));
                         }
                     }
                 }

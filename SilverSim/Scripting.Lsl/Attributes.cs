@@ -91,6 +91,16 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    public sealed class ExecutedOnScriptRemoveAttribute : Attribute
+    {
+        public ExecutedOnScriptRemoveAttribute()
+        {
+
+        }
+    }
+
+    [Serializable]
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class LSLImplementationAttribute : Attribute
     {
