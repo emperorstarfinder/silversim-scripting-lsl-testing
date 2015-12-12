@@ -4,6 +4,7 @@
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using System;
 using System.Collections.Generic;
 
@@ -155,6 +156,21 @@ namespace SilverSim.Scripting.Lsl
         public static int ToLSLBoolean(this bool v)
         {
             return v ? 1 : 0;
+        }
+
+        public static string FindInventoryName(this ScriptInstance instance, AssetType assetType, UUID assetID)
+        {
+            if (assetID != UUID.Zero)
+            {
+                foreach (ObjectPartInventoryItem item in instance.Part.Inventory.Values)
+                {
+                    if (item.AssetType == assetType && item.AssetID == assetID)
+                    {
+                        return item.Name;
+                    }
+                }
+            }
+            return assetID.ToString();
         }
 
         public static UUID GetAnimationAssetID(this ScriptInstance instance, string item)

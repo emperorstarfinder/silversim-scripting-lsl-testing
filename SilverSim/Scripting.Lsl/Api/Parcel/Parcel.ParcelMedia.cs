@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using SilverSim.Types.Parcel;
 using SilverSim.Viewer.Messages.Parcel;
 using System;
@@ -280,7 +281,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                                 break;
 
                             case PARCEL_MEDIA_COMMAND_TEXTURE:
-                                res.Add(parcelInfo.MediaID);
+                                res.Add(instance.FindInventoryName(AssetType.Texture, parcelInfo.MediaID));
                                 break;
 
                             case PARCEL_MEDIA_COMMAND_TYPE:
