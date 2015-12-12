@@ -41,6 +41,8 @@ namespace SilverSim.Scripting.Lsl
         public const string WindLight_Aurora = "WindLight_Aurora";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Admin = "Admin";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
+        public const string InWorldz = "InWorldz";
     }
 
     [Serializable]

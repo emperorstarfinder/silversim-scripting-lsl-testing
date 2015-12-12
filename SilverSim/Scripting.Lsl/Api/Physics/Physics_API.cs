@@ -214,14 +214,11 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             }
         }
 
-        [APILevel(APIFlags.LSL)]
-        public const int DENSITY = 1;
-        [APILevel(APIFlags.LSL)]
-        public const int FRICTION = 2;
-        [APILevel(APIFlags.LSL)]
-        public const int RESTITUTION = 4;
-        [APILevel(APIFlags.LSL)]
-        public const int GRAVITY_MULTIPLIER = 8;
+        /* private constants, public ones are in PrimitiveAPI */
+        const int DENSITY = 1;
+        const int FRICTION = 2;
+        const int RESTITUTION = 4;
+        const int GRAVITY_MULTIPLIER = 8;
 
         [APILevel(APIFlags.LSL, "llSetPhysicsMaterial")]
         public void SetPhysicsMaterial(ScriptInstance instance, int mask, double gravity_multiplier, double restitution, double friction, double density)
