@@ -1361,6 +1361,34 @@ namespace SilverSim.Scripting.Lsl
         }
 
         readonly List<string> m_AssignmentOps = new List<string>(new string[] { "=", "+=", "-=", "/=", "%=", "*=" });
+        bool Assignments_ExtractLeftUnaryOnLValue(Tree tree, out Tree start, out Tree end, out Tree variable)
+        {
+            variable = null;
+            end = null;
+            start = tree;
+            while(tree.Type == Tree.EntryType.OperatorLeftUnary &&
+                (tree.Entry == "~" || tree.Entry == "!"))
+            {
+                end = tree;
+                if(tree.SubTree.Count != 1)
+                {
+                    return false;
+                }
+                tree = tree.SubTree[0];
+            }
+
+            if(tree.Type == Tree.EntryType.Variable ||
+                (tree.Type == Tree.EntryType.OperatorBinary && tree.Entry == "."))
+            {
+                variable = tree;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         void OrderOperators_Assignments(Tree tree, int lineNumber)
         {
             List<Tree> enumeratorStack = new List<Tree>();
@@ -1372,6 +1400,9 @@ namespace SilverSim.Scripting.Lsl
                 int pos = tree.SubTree.Count;
                 while (pos-- > 0)
                 {
+                    Tree variable = null;
+                    Tree endlvalueunarytree = null;
+                    Tree startlvalueunarytree = null;
                     Tree elem = tree.SubTree[pos];
                     string ent = elem.Entry;
                     if (!m_AssignmentOps.Contains(ent) ||
@@ -1420,6 +1451,17 @@ namespace SilverSim.Scripting.Lsl
                             }
                             break;
 
+                        case Tree.EntryType.OperatorLeftUnary:
+                            if((tree.SubTree[pos - 1].Entry == "~" || tree.SubTree[pos - 1].Entry == "!") &&
+                                Assignments_ExtractLeftUnaryOnLValue(tree.SubTree[pos - 1], out startlvalueunarytree, out endlvalueunarytree, out variable))
+                            {
+                            }
+                            else
+                            {
+                                throw new CompilerException(lineNumber, string.Format("invalid l-value to '{0}'", ent));
+                            }
+                            break;
+
                         default:
                             throw new CompilerException(lineNumber, string.Format("invalid l-value to '{0}'", ent));
                     }
@@ -1443,12 +1485,28 @@ namespace SilverSim.Scripting.Lsl
                             throw new CompilerException(lineNumber, string.Format("invalid r-value to '{0}'", ent));
                     }
 
-                    enumeratorStack.Add(tree.SubTree[pos + 1]);
-                    elem.SubTree.Add(tree.SubTree[pos - 1]);
-                    elem.SubTree.Add(tree.SubTree[pos + 1]);
-                    elem.Type = Tree.EntryType.OperatorBinary;
-                    tree.SubTree.RemoveAt(pos + 1);
-                    tree.SubTree.RemoveAt(--pos);
+                    if (startlvalueunarytree != null)
+                    {
+                        enumeratorStack.Add(tree.SubTree[pos + 1]);
+                        elem.SubTree.Add(variable);
+                        elem.SubTree.Add(tree.SubTree[pos + 1]);
+                        elem.Type = Tree.EntryType.OperatorBinary;
+                        tree.SubTree.RemoveAt(pos + 1);
+                        tree.SubTree.RemoveAt(--pos);
+
+                        endlvalueunarytree.SubTree.Clear();
+                        endlvalueunarytree.SubTree.Add(elem);
+                        tree.SubTree[pos] = startlvalueunarytree;
+                    }
+                    else
+                    {
+                        enumeratorStack.Add(tree.SubTree[pos + 1]);
+                        elem.SubTree.Add(tree.SubTree[pos - 1]);
+                        elem.SubTree.Add(tree.SubTree[pos + 1]);
+                        elem.Type = Tree.EntryType.OperatorBinary;
+                        tree.SubTree.RemoveAt(pos + 1);
+                        tree.SubTree.RemoveAt(--pos);
+                    }
                 }
             }
         }
