@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.Lsl.Expression
             {
                 int val;
                 float fval;
-                if(int.TryParse(Entry, out val) || Entry.StartsWith("0x"))
+                if(int.TryParse(Entry, out val) || Entry.StartsWith("0x") || Entry.StartsWith("0X"))
                 {
                     Value = new ConstantValueInt(Entry);
                 }
