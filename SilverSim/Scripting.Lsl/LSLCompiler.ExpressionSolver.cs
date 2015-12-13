@@ -1452,11 +1452,8 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         case Tree.EntryType.OperatorLeftUnary:
-                            if((tree.SubTree[pos - 1].Entry == "~" || tree.SubTree[pos - 1].Entry == "!") &&
-                                Assignments_ExtractLeftUnaryOnLValue(tree.SubTree[pos - 1], out startlvalueunarytree, out endlvalueunarytree, out variable))
-                            {
-                            }
-                            else
+                            if(!((tree.SubTree[pos - 1].Entry == "~" || tree.SubTree[pos - 1].Entry == "!") &&
+                                Assignments_ExtractLeftUnaryOnLValue(tree.SubTree[pos - 1], out startlvalueunarytree, out endlvalueunarytree, out variable)))
                             {
                                 throw new CompilerException(lineNumber, string.Format("invalid l-value to '{0}'", ent));
                             }

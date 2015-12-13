@@ -120,6 +120,7 @@ namespace SilverSim.Scripting.Lsl
             }
             catch(ConfigurationLoader.ServiceNotFoundException)
             {
+                m_HttpsServer = null;
             }
 
             if(null != m_HttpsServer)
