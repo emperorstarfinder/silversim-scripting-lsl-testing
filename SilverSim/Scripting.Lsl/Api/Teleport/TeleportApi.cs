@@ -53,12 +53,9 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     else
                     {
                         /* other region */
-                        if (agent.SittingOnObject != null)
-                        {
-                            if (!agent.UnSit())
-                            {
-                                return;
-                            }
+                        if (agent.SittingOnObject != null && !agent.UnSit())
+                        { 
+                            return;
                         }
 
                         if (!agent.TeleportTo(scene, agent, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
@@ -70,12 +67,9 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 else
                 {
                     /* other grid */
-                    if (agent.SittingOnObject != null)
+                    if (agent.SittingOnObject != null && !agent.UnSit())
                     {
-                        if (!agent.UnSit())
-                        {
-                            return;
-                        }
+                        return;
                     }
 
                     if (!agent.TeleportTo(scene, agent, landmarkData.GatekeeperURI, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
@@ -102,12 +96,9 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             }
             else
             {
-                if (agent.SittingOnObject != null)
+                if (agent.SittingOnObject != null && !agent.UnSit())
                 {
-                    if (!agent.UnSit())
-                    {
-                        return;
-                    }
+                    return;
                 }
                 if (!agent.TeleportTo(scene, agent, location, position, lookAt, TeleportFlags.ViaLocation))
                 {
@@ -127,12 +118,9 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             }
             else
             {
-                if (agent.SittingOnObject != null)
+                if (agent.SittingOnObject != null && !agent.UnSit())
                 {
-                    if (!agent.UnSit())
-                    {
-                        return;
-                    }
+                    return;
                 }
                 if (!agent.TeleportTo(scene, agent, regionName, position, lookAt, TeleportFlags.ViaRegionID))
                 {
@@ -153,12 +141,9 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 /* refuse teleport, out of region */
                 return;
             }
-            if(agent.SittingOnObject != null)
+            if(agent.SittingOnObject != null && !agent.UnSit())
             {
-                if(!agent.UnSit())
-                {
-                    return;
-                }
+                return;
             }
 
             double minPos = scene.Terrain[position] + agent.Appearance.AvatarHeight / 2;

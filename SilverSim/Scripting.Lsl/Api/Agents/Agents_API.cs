@@ -99,12 +99,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         if (scope == AGENT_LIST_PARCEL_OWNER)
                         {
                             ParcelInfo pInfo;
-                            if (scene.Parcels.TryGetValue(agent.GlobalPosition, out pInfo))
+                            if (scene.Parcels.TryGetValue(agent.GlobalPosition, out pInfo) ||
+                                agent.Owner.EqualsGrid(pInfo.Owner))
                             {
-                                if (agent.Owner.EqualsGrid(pInfo.Owner))
-                                {
-                                    res.Add(agent.Owner.ID);
-                                }
+                                res.Add(agent.Owner.ID);
                             }
                         }
                         else if (scope == AGENT_LIST_REGION)
