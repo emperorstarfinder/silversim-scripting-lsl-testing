@@ -347,8 +347,8 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
         class LevelMapAssignment : LevelAssignment
         {
-            Map m_Map;
-            string m_Key;
+            readonly Map m_Map;
+            readonly string m_Key;
 
             public LevelMapAssignment(Map m, string key)
             {
@@ -376,8 +376,8 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
         class LevelArrayAssignment : LevelAssignment
         {
-            AnArray m_Array;
-            int m_Index;
+            readonly AnArray m_Array;
+            readonly int m_Index;
 
             public LevelArrayAssignment(AnArray array, int index)
             {

@@ -336,7 +336,7 @@ namespace SilverSim.Scripting.Lsl
 
         static UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
 
-        object m_ReqUrlLock = new object();
+        readonly object m_ReqUrlLock = new object();
 
         public string RequestURL(ObjectPart part, ObjectPartInventoryItem item)
         {
