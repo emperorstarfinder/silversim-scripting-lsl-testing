@@ -397,14 +397,13 @@ namespace SilverSim.Scripting.Lsl
             }
 
             URLData urlData;
-            if(m_UrlMap.TryGetValue(urlid, out urlData))
+            if(m_UrlMap.TryGetValue(urlid, out urlData) &&
+                ((!urlData.IsSSL && parts[0] != "lslhttp") ||
+                (urlData.IsSSL && parts[0] != "lslhttps")))
             {
-                if((!urlData.IsSSL && parts[0] != "lslhttp") ||
-                    (urlData.IsSSL && parts[0] != "lslhttps"))
-                {
-                    return;
-                }
+                return;
             }
+
             if(m_UrlMap.Remove(urlid))
             {
                 List<UUID> RemoveList = new List<UUID>();
