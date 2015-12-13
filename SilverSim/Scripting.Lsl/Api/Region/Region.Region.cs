@@ -444,7 +444,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     }
                     if (magSquared > (e3 - pos).LengthSquared)
                     {
-                        magSquared = (e3 - pos).LengthSquared;
                         edgeOfWorld = e3;
                     }
                 }
