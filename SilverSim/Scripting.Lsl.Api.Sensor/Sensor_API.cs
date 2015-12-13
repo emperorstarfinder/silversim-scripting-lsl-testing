@@ -47,5 +47,12 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         {
             throw new NotImplementedException("llSensorRemove()");
         }
+
+        [ExecutedOnScriptRemove]
+        [ExecutedOnScriptReset]
+        public static void RemoveSensors(ScriptInstance instance)
+        {
+            /* to be filled when implementing sensors */
+        }
     }
 }
