@@ -1879,7 +1879,9 @@ namespace SilverSim.Scripting.Lsl
                 {
                     case "<":
                         if (0 == i || 
-                            resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown ||
+                            (resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown &&
+                            resolvetree.SubTree[i - 1].Entry != "++" && 
+                            resolvetree.SubTree[i - 1].Entry != "--") ||
                             resolvetree.SubTree[i - 1].Type == Tree.EntryType.Separator)
                         {
                             st.Type = Tree.EntryType.Declaration;
