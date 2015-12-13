@@ -125,7 +125,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llUnSit")]
         public void UnSit(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("llUnSit(key)");
+            lock(instance)
+            {
+                ObjectGroup group = instance.Part.ObjectGroup;
+                IAgent agent;
+                if(group.AgentSitting.TryGetValue(id, out agent))
+                {
+                    agent.UnSit();
+                }
+            }
         }
         #endregion
     }
