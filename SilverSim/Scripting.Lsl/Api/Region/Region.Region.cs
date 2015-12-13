@@ -615,7 +615,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osRegionNotice")]
-        public void osRegionNotice(ScriptInstance instance, string msg)
+        public void RegionNotice(ScriptInstance instance, string msg)
         {
             lock(instance)
             {
