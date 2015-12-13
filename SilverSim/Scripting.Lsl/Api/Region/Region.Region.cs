@@ -3,6 +3,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
@@ -619,10 +620,11 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             lock(instance)
             {
                 instance.CheckThreatLevel("osRegionNotice", ScriptInstance.ThreatLevelType.VeryHigh);
-                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
                 foreach(IAgent agent in scene.RootAgents)
                 {
-                    agent.SendAlertMessage(msg, scene.ID);
+                    agent.SendRegionNotice(grp.Owner, msg, scene.ID);
                 }
             }
         }
