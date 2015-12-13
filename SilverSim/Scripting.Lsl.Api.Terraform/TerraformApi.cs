@@ -5,13 +5,9 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
-using SilverSim.Types.Grid;
 using SilverSim.Viewer.Messages.Land;
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Terraform
 {
@@ -19,6 +15,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
     [LSLImplementation]
     public class TerraformApi : IScriptApi, IPlugin
     {
+
         public TerraformApi()
         {
 
@@ -52,7 +49,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
         [APILevel(APIFlags.LSL, "llModifyLand")]
         public void ModifyLand(ScriptInstance instance, int action, int brush)
         {
-            lock(instance)
+            lock (instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 Vector3 pos = instance.Part.ObjectGroup.GlobalPosition;
@@ -85,10 +82,10 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
         [APILevel(APIFlags.OSSL, "osGetTerrainHeight")]
         public double GetTerrainHeight(ScriptInstance instance, int x, int y)
         {
-            lock(instance)
+            lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if(x < 0 || y < 0 || x >= scene.RegionData.Size.X || y >= scene.RegionData.Size.Y)
+                if (x < 0 || y < 0 || x >= scene.RegionData.Size.X || y >= scene.RegionData.Size.Y)
                 {
                     throw new ArgumentException("Coordinate out of bounds");
                 }

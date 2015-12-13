@@ -14,13 +14,10 @@ using SilverSim.Types.Groups;
 using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Teleport
 {
-    [ScriptApiName("Sound")]
+    [ScriptApiName("Teleport")]
     [LSLImplementation]
     public class TeleportApi : IScriptApi, IPlugin
     {
