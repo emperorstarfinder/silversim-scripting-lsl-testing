@@ -1936,6 +1936,8 @@ namespace SilverSim.Scripting.Lsl
                                 case "%":
                                 case "==":
                                 case "!=":
+                                case "||":
+                                case "&&":
                                     st.Type = Tree.EntryType.Declaration;
                                     break;
 
