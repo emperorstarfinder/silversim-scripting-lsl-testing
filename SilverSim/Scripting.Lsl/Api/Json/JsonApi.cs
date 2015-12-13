@@ -449,14 +449,10 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                             jsonLevel.Value = a;
                             jsonLevelData = a;
                         }
-                        if(index < 0 || index >= a.Count)
-                        {
-                            jsonLevel = new LevelArrayAssignment(a, a.Count);
-                        }
-                        else
-                        {
-                            jsonLevel = new LevelArrayAssignment(a, index);
-                        }
+
+                        jsonLevel = (index < 0 || index >= a.Count) ?
+                             new LevelArrayAssignment(a, a.Count) :
+                             new LevelArrayAssignment(a, index);
                     }
                 }
                 else if(spec is AString)
