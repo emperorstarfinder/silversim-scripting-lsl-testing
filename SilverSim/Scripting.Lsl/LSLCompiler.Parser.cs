@@ -59,7 +59,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an event.", name, type));
             }
-            else if (cs.m_Functions.ContainsKey(name) && type == "Function")
+            else if (cs.m_Functions.ContainsKey(name) && (type == "Function" || type == "Variable"))
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as user function.", name, type));
             }
