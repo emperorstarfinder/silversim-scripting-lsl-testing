@@ -210,6 +210,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         }
 
         [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "AGENT_BY_LEGACY_NAME")]
         public const int AGENT = 1;
         [APILevel(APIFlags.LSL)]
         public const int ACTIVE = 2;
@@ -217,6 +218,8 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         public const int PASSIVE = 4;
         [APILevel(APIFlags.LSL)]
         public const int SCRIPTED = 8;
+        [APILevel(APIFlags.LSL)]
+        public const int AGENT_BY_USERNAME = 0x10;
 
         [APILevel(APIFlags.LSL, "llDetectedType")]
         public int DetectedType(ScriptInstance instance, int number)
