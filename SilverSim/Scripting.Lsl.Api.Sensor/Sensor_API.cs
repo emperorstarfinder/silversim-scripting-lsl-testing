@@ -157,7 +157,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     {
                         info = m_ObjectUpdates.Dequeue(1000);
                     }
-                    catch(TimeoutException)
+                    catch
                     {
                         continue;
                     }
