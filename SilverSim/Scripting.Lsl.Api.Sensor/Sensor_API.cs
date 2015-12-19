@@ -61,10 +61,11 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             public double SearchArc;
             public Vector3 SensePoint;
             public Quaternion SenseRotation;
+            public UUID SearchKey;
 
             public readonly RwLockedDictionary<UUID, DetectInfo> SensorHits = new RwLockedDictionary<UUID, DetectInfo>();
 
-            public SensorInfo(ScriptInstance instance, bool isRepeating, double timeout, string sName, int sType, double sRadius, double sArc)
+            public SensorInfo(ScriptInstance instance, bool isRepeating, double timeout, string sName, LSLKey sKey, int sType, double sRadius, double sArc)
             {
                 Instance = instance;
                 OwnerID = instance.Part.Owner.ID;
@@ -76,6 +77,14 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SearchType = sType;
                 SearchRadius = sRadius;
                 SearchArc = sArc;
+                if (sKey.AsBoolean)
+                {
+                    SearchKey = sKey;
+                }
+                else
+                {
+                    SearchKey = UUID.Zero;
+                }
             }
 
             public void UpdateSenseLocation()
@@ -131,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 m_ObjectWorkerThread.Start();
             }
 
-            public void Clear()
+            public void Stop()
             {
                 m_StopThread = true;
                 m_Timer.Stop();
@@ -396,6 +405,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
             bool CheckIfSensed(SensorInfo sensor, IObject obj)
             {
+                if(sensor.SearchKey != UUID.Zero && sensor.SearchKey != obj.ID)
+                {
+                    return false;
+                }
                 if (obj.Owner.ID == sensor.OwnerID || obj.Owner.ID == sensor.OwnObjectID)
                 {
                     return false;
@@ -516,7 +529,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             SceneInfo sceneInfo;
             if(m_Scenes.Remove(obj.ID, out sceneInfo))
             {
-                sceneInfo.Clear();
+                sceneInfo.Stop();
             }
         }
 
@@ -531,6 +544,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         [APILevel(APIFlags.LSL, "llSensor")]
         public void Sensor(ScriptInstance instance, string name, LSLKey id, int type, double radius, double arc)
         {
+            if (type == 0)
+            {
+                return;
+            }
             lock (instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
@@ -539,7 +556,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SceneInfo sceneInfo;
                 if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
-                    sceneInfo.StartSensor(new SensorInfo(instance, true, 0, name, type, radius, arc));
+                    sceneInfo.StartSensor(new SensorInfo(instance, true, 0, name, id, type, radius, arc));
                 }
             }
         }
@@ -547,6 +564,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         [APILevel(APIFlags.LSL, "llSensorRepeat")]
         public void SensorRepeat(ScriptInstance instance, string name, LSLKey id, int type, double range, double arc, double rate)
         {
+            if (type == 0)
+            {
+                type = ~0;
+            }
             lock (instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
@@ -555,7 +576,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SceneInfo sceneInfo;
                 if(m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
-                    sceneInfo.StartSensor(new SensorInfo(instance, true, rate, name, type, range, arc));
+                    sceneInfo.StartSensor(new SensorInfo(instance, true, rate, name, id, type, range, arc));
                 }
             }
         }
