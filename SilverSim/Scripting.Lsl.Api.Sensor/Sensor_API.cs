@@ -150,6 +150,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
             void SensorUpdateThread()
             {
+                Thread.CurrentThread.Name = "Sensor Repeat Thread for " + Scene.ID.ToString();
                 while(!m_StopThread)
                 {
                     ObjectUpdateInfo info;
