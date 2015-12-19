@@ -1,6 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Agent;
@@ -21,6 +22,30 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
     [LSLImplementation]
     public class SensorApi : IScriptApi, IPlugin, IPluginShutdown
     {
+        /* excerpt from http://wiki.secondlife.com/wiki/LlSensor
+
+            * When searching for an avatar but not by name, it doesn't matter which AGENT flag is used.
+            * Objects do not detect themselves, and attachments cannot detect their wearers (this includes HUD attachments).
+            * Attachments cannot be detected by llSensor.
+            * For an object to be detected, the center of its root prim (the same point it would report with llGetRootPosition) 
+                must be within the sensor beam.
+            * For an agent to be detected, a point near the pelvis must be inside the sensor beam (the same as llGetRootPosition would 
+                report in a script attached to that avatar). This point is indicated by red crosshairs when Advanced>Character>Display Agent
+                    Target is turned on.
+                * If the agent is sitting on an object, the root prim of the sat upon object becomes a second sensor target for the agent 
+                    (but not if the avatar is outside the sensor arc, see SVC-5145).
+            * Sensors placed in the root prim of attachments will use the direction the avatar is facing as their forward vector. 
+                In mouselook, this means that it will be wherever the avatar is looking, while out of mouselook, this means whichever 
+                way the avatar is pointing. This does not include where the avatar's head is pointing, or what animation the avatar is 
+                doing, just the direction the avatar would move in if you walked forward. This is the case, regardless of where the object
+                is attached.
+            * Sensors placed in prims other than the root prim of an attachment will have their forward direction offset relative to the 
+                root prim's forward direction, e.g. a sensor in a prim whose +X direction is the reverse of the root +X will look backward.
+            * llSensor does not detect objects or agents across region boundaries
+            * If type is zero, the sensor will silently fail, neither sensor or no_sensor will be triggered.
+
+         */
+
         public class SensorInfo
         {
             public readonly ScriptInstance Instance;
@@ -62,7 +87,15 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 if (IsAttached && grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
                 {
                     SensePoint = agent.GlobalPosition;
-                    SenseRotation = agent.GlobalRotation;
+                    if (agent.IsInMouselook)
+                    {
+                        SenseRotation = agent.CameraRotation; /* according to SL docs in Mouselook we have to use this rotation */
+                    }
+                    else
+                    {
+                        SenseRotation = agent.BodyRotation;
+                    }
+                    SenseRotation *= part.LocalRotation;
                 }
                 else
                 {
@@ -74,6 +107,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
         public class SceneInfo : ISceneListener
         {
+            private static readonly ILog m_Log = LogManager.GetLogger("LSL_SENSORS");
+
             public SceneInterface Scene;
             public readonly RwLockedDictionary<UUID, ObjectGroup> KnownObjects = new RwLockedDictionary<UUID, ObjectGroup>();
             public readonly RwLockedDictionary<ScriptInstance, SensorInfo> SensorRepeats = new RwLockedDictionary<ScriptInstance, SensorInfo>();
@@ -154,15 +189,17 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                             }
                         }
                     }
-                    catch
+                    catch(Exception e)
                     {
                         /* never crash in this location */
+                        m_Log.Debug("Unexpected exception", e);
                     }
                 }
             }
 
             void SensorRepeatTimer(object o, EventArgs args)
             {
+                List<IAgent> rootAgents = new List<IAgent>(Scene.RootAgents);
                 int elapsedTimeInMsecs;
                 lock (m_TimerLock)
                 {
@@ -184,20 +221,37 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     kvp.Value.TimeoutToElapse -= elapsedTimeInSecs;
                     if(kvp.Value.TimeoutToElapse <= 0)
                     {
-                        kvp.Value.TimeoutToElapse += kvp.Value.Timeout;
-                        if (kvp.Value.SensorHits.Count != 0)
+                        try
                         {
-                            SensorEvent ev = new SensorEvent();
-                            ev.Data = new List<DetectInfo>(kvp.Value.SensorHits.Values);
-                            kvp.Value.Instance.PostEvent(ev);
+                            kvp.Value.TimeoutToElapse += kvp.Value.Timeout;
+                            if (kvp.Value.SensorHits.Count != 0)
+                            {
+                                SensorEvent ev = new SensorEvent();
+                                ev.Data = new List<DetectInfo>(kvp.Value.SensorHits.Values);
+                                kvp.Value.Instance.PostEvent(ev);
+                            }
+                            else
+                            {
+                                NoSensorEvent ev = new NoSensorEvent();
+                                kvp.Value.Instance.PostEvent(ev);
+                            }
+
+                            /* re-evaluate sensor data */
+                            kvp.Value.UpdateSenseLocation();
+                            CleanRepeatSensor(kvp.Value);
+                            if ((kvp.Value.SearchType & SENSE_AGENTS) != 0)
+                            {
+                                foreach (IAgent agent in rootAgents)
+                                {
+                                    AddIfSensed(kvp.Value, agent);
+                                }
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
-                            NoSensorEvent ev = new NoSensorEvent();
-                            kvp.Value.Instance.PostEvent(ev);
+                            /* do not loose sensors just of something happening in here */
+                            m_Log.Debug("Unexpected exception", e);
                         }
-                        /* re-evaluate sensor data */
-                        CleanRepeatSensor(kvp.Value);
                     }
                 }
             }
@@ -254,6 +308,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
             public void StartSensor(SensorInfo sensor)
             {
+                sensor.UpdateSenseLocation();
                 if(sensor.IsRepeating)
                 {
                     SensorRepeats[sensor.Instance] = sensor;
