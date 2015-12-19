@@ -448,10 +448,10 @@ namespace SilverSim.Scripting.Lsl
                     }
 
                     Attribute attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnStateChangeAttribute));
-                    if (attr != null && (m.Attributes & MethodAttributes.Static) != 0)
+                    if (attr != null)
                     {
                         ParameterInfo[] pi = m.GetParameters();
-                        if(pi.Length != 1)
+                        if (pi.Length != 1)
                         {
                             m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Parameter count does not match.",
                                 m.Name,
@@ -463,7 +463,7 @@ namespace SilverSim.Scripting.Lsl
                                 m.Name,
                                 m.DeclaringType.FullName);
                         }
-                        else if(pi[0].ParameterType != typeof(ScriptInstance))
+                        else if (pi[0].ParameterType != typeof(ScriptInstance))
                         {
                             m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Parameter type is not ScriptInstance.",
                                 m.Name,
@@ -471,12 +471,12 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            m_StateChangeDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m));
+                            m_StateChangeDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
                         }
                     }
 
                     attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptResetAttribute));
-                    if (attr != null && (m.Attributes & MethodAttributes.Static) != 0)
+                    if (attr != null)
                     {
                         ParameterInfo[] pi = m.GetParameters();
                         if(pi.Length != 1)
@@ -499,12 +499,12 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            m_ScriptResetDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m));
+                            m_ScriptResetDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
                         }
                     }
 
                     attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptRemoveAttribute));
-                    if (attr != null && (m.Attributes & MethodAttributes.Static) != 0)
+                    if (attr != null)
                     {
                         ParameterInfo[] pi = m.GetParameters();
                         if (pi.Length != 1)
@@ -527,7 +527,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            m_ScriptRemoveDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), null, m));
+                            m_ScriptRemoveDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
                         }
                     }
                 }
@@ -535,105 +535,10 @@ namespace SilverSim.Scripting.Lsl
             }
             #endregion
 
-#if OLD_RESOLVER
-            List<Dictionary<string, OperatorType>> m_Operators = new List<Dictionary<string, OperatorType>>();
-
-            Dictionary<string, OperatorType> plist;
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("@", OperatorType.LeftUnary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("++", OperatorType.RightUnary);
-            plist.Add("--", OperatorType.RightUnary);
-            plist.Add(".", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("++", OperatorType.LeftUnary);
-            plist.Add("--", OperatorType.LeftUnary);
-            plist.Add("+", OperatorType.LeftUnary);
-            plist.Add("-", OperatorType.LeftUnary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("(integer)", OperatorType.LeftUnary);
-            plist.Add("(float)", OperatorType.LeftUnary);
-            plist.Add("(string)", OperatorType.LeftUnary);
-            plist.Add("(list)", OperatorType.LeftUnary);
-            plist.Add("(key)", OperatorType.LeftUnary);
-            plist.Add("(vector)", OperatorType.LeftUnary);
-            plist.Add("(rotation)", OperatorType.LeftUnary);
-            plist.Add("(quaternion)", OperatorType.LeftUnary);
-            plist.Add("!", OperatorType.LeftUnary);
-            plist.Add("~", OperatorType.LeftUnary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("*", OperatorType.Binary);
-            plist.Add("/", OperatorType.Binary);
-            plist.Add("%", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("+", OperatorType.Binary);
-            plist.Add("-", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("<<", OperatorType.Binary);
-            plist.Add(">>", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("<", OperatorType.Binary);
-            plist.Add("<=", OperatorType.Binary);
-            plist.Add(">", OperatorType.Binary);
-            plist.Add(">=", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("==", OperatorType.Binary);
-            plist.Add("!=", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("&", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("^", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("|", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("&&", OperatorType.Binary);
-            plist.Add("||", OperatorType.Binary);
-
-            plist = new Dictionary<string, OperatorType>();
-            m_Operators.Add(plist);
-            plist.Add("=", OperatorType.Binary);
-            plist.Add("+=", OperatorType.Binary);
-            plist.Add("-=", OperatorType.Binary);
-            plist.Add("*=", OperatorType.Binary);
-            plist.Add("/=", OperatorType.Binary);
-            plist.Add("%=", OperatorType.Binary);
-
-            Dictionary<string, string> blockOps = new Dictionary<string, string>();
-            blockOps.Add("(", ")");
-            blockOps.Add("[", "]");
-
-            m_Resolver = new Resolver(m_ReservedWords, operators, blockOps);
-#endif
             GenerateLSLSyntaxFile();
 
-            SilverSim.Scripting.Common.CompilerRegistry.ScriptCompilers["lsl"] = this;
-            SilverSim.Scripting.Common.CompilerRegistry.ScriptCompilers["XEngine"] = this; /* we won't be supporting anything beyond LSL compatibility */
+            CompilerRegistry.ScriptCompilers["lsl"] = this;
+            CompilerRegistry.ScriptCompilers["XEngine"] = this; /* we won't be supporting anything beyond LSL compatibility */
         }
 
         public void SyntaxCheck(UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1)

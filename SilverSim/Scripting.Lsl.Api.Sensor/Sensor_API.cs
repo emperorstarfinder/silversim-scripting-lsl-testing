@@ -2,15 +2,65 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Management.Scene;
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
 using System;
+using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl.Api.Sensor
 {
     [ScriptApiName("Sensor")]
     [LSLImplementation]
-    public class SensorApi : IScriptApi, IPlugin
+    public class SensorApi : IScriptApi, IPlugin, IPluginShutdown
     {
+        public class SensorInfo
+        {
+            public readonly ScriptInstance Instance;
+            public double Timeout;
+            public bool IsRepeating;
+
+            public SensorInfo(ScriptInstance instance, bool isRepeating, double timeout)
+            {
+                Instance = instance;
+                Timeout = timeout;
+                IsRepeating = false;
+            }
+        }
+        public class SceneInfo : ISceneListener
+        {
+            public SceneInterface Scene;
+            public readonly RwLockedDictionary<UUID, ObjectGroup> KnownObjects = new RwLockedDictionary<UUID, ObjectGroup>();
+            public readonly RwLockedDictionary<ScriptInstance, SensorInfo> Sensors = new RwLockedDictionary<ScriptInstance, SensorInfo>();
+
+            public SceneInfo(SceneInterface scene)
+            {
+                Scene = scene;
+                Scene.SceneListeners.Add(this);
+            }
+
+            public void Remove()
+            {
+                Scene.SceneListeners.Remove(this);
+            }
+
+            public void ScheduleUpdate(ObjectUpdateInfo info, UUID fromSceneID)
+            {
+                if(info.IsKilled || info.Part.LinkNumber != ObjectGroup.LINK_ROOT)
+                {
+                    KnownObjects.Remove(info.Part.ID);
+                }
+                else if(info.Part.LinkNumber == ObjectGroup.LINK_ROOT)
+                {
+                    KnownObjects.Add(info.Part.ID, info.Part.ObjectGroup);
+                }
+            }
+        }
+
+        readonly RwLockedDictionary<UUID, SceneInfo> m_Scenes = new RwLockedDictionary<UUID, SceneInfo>();
+
         public SensorApi()
         {
 
@@ -18,7 +68,36 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
         public void Startup(ConfigurationLoader loader)
         {
+            SceneManager.Scenes.OnRegionAdd += Scenes_OnRegionAdd;
+            SceneManager.Scenes.OnRegionRemove += Scenes_OnRegionRemove;
+        }
 
+        public void Shutdown()
+        {
+            SceneManager.Scenes.OnRegionAdd -= Scenes_OnRegionAdd;
+            SceneManager.Scenes.OnRegionRemove -= Scenes_OnRegionRemove;
+        }
+
+        public ShutdownOrder ShutdownOrder
+        {
+            get
+            {
+                return ShutdownOrder.Any;
+            }
+        }
+
+        void Scenes_OnRegionAdd(SceneInterface obj)
+        {
+            m_Scenes.Add(obj.ID, new SceneInfo(obj));
+        }
+
+        void Scenes_OnRegionRemove(SceneInterface obj)
+        {
+            SceneInfo sceneInfo;
+            if(m_Scenes.Remove(obj.ID, out sceneInfo))
+            {
+                sceneInfo.KnownObjects.Clear();
+            }
         }
 
         [APILevel(APIFlags.LSL, "sensor")]
@@ -50,7 +129,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
         [ExecutedOnScriptRemove]
         [ExecutedOnScriptReset]
-        public static void RemoveSensors(ScriptInstance instance)
+        public void RemoveSensors(ScriptInstance instance)
         {
             /* to be filled when implementing sensors */
         }
