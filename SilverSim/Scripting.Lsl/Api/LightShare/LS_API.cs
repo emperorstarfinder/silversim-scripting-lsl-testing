@@ -122,7 +122,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         {
                             case WL_WATER_COLOR:
                                 res.Add(type);
-                                res.Add(waterData.Color.AsVector3);
+                                res.Add(waterData.Color.AsVector3 * 255f);
                                 break;
 
                             case WL_WATER_FOG_DENSITY_EXPONENT:
@@ -398,7 +398,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_WATER_COLOR:
                         try
                         {
-                            waterData.Color = new Color(rules[idx++].AsVector3);
+                            waterData.Color = new Color(rules[idx++].AsVector3 / 255f);
                         }
                         catch(InvalidCastException)
                         {
