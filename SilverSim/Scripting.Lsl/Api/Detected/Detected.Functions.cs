@@ -220,6 +220,8 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         public const int SCRIPTED = 8;
         [APILevel(APIFlags.LSL)]
         public const int AGENT_BY_USERNAME = 0x10;
+        [APILevel(APIFlags.LSL)]
+        public const int NPC = 0x20;
 
         [APILevel(APIFlags.LSL, "llDetectedType")]
         public int DetectedType(ScriptInstance instance, int number)
@@ -238,9 +240,18 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
                     agent = obj as IAgent;
                     if(null != agent)
                     {
-                        return (agent.SittingOnObject != null) ?
-                            AGENT :
-                            (AGENT | ACTIVE);
+                        if (agent.IsNpc)
+                        {
+                            return (agent.SittingOnObject == null) ?
+                                NPC :
+                                (NPC | ACTIVE);
+                        }
+                        else
+                        {
+                            return (agent.SittingOnObject == null) ?
+                                AGENT :
+                                (AGENT | ACTIVE);
+                        }
                     }
 
                     grp = obj as ObjectGroup;
