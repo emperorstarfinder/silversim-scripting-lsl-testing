@@ -114,22 +114,10 @@ namespace SilverSim.Scripting.Lsl
                                                 {
                                                     avail += " LSL";
                                                 }
-                                                /*if ((level.Flags & APIFlags.LightShare) != APIFlags.None)
-                                                {
-                                                    avail += " Lightshare";
-                                                }*/
                                                 if ((level.Flags & APIFlags.ASSL) != APIFlags.None)
                                                 {
                                                     avail += " ASSL";
                                                 }
-                                                /*if ((level.Flags & APIFlags.ASSL_Admin) != APIFlags.None)
-                                                {
-                                                    avail += " Admin";
-                                                }*/
-                                                /*if ((level.Flags & APIFlags.WindLight_New) != APIFlags.None)
-                                                {
-                                                    avail += " WindLight_New";
-                                                }*/
                                                 if ((level.Flags & APIFlags.OSSL) != APIFlags.None)
                                                 {
                                                     avail += " OSSL";
