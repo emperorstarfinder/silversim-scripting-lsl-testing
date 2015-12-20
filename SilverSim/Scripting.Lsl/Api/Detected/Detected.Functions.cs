@@ -240,18 +240,11 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
                     agent = obj as IAgent;
                     if(null != agent)
                     {
-                        if (agent.IsNpc)
-                        {
-                            return (agent.SittingOnObject == null) ?
-                                NPC :
-                                (NPC | ACTIVE);
-                        }
-                        else
-                        {
-                            return (agent.SittingOnObject == null) ?
-                                AGENT :
-                                (AGENT | ACTIVE);
-                        }
+                        return
+                            (agent.IsNpc ? NPC : AGENT) |
+                            (agent.SittingOnObject != null ?
+                            0 :
+                            ACTIVE);
                     }
 
                     grp = obj as ObjectGroup;

@@ -77,14 +77,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SearchType = sType;
                 SearchRadius = sRadius;
                 SearchArc = sArc;
-                if (sKey.AsBoolean)
-                {
-                    SearchKey = sKey;
-                }
-                else
-                {
-                    SearchKey = UUID.Zero;
-                }
+                SearchKey = (sKey.AsBoolean) ? sKey.AsUUID : UUID.Zero;
             }
 
             public void UpdateSenseLocation()
