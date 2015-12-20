@@ -539,7 +539,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
-                UUID ownObjectID = grp.ID;
                 SceneInfo sceneInfo;
                 if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
@@ -559,7 +558,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
-                UUID ownObjectID = grp.ID;
                 SceneInfo sceneInfo;
                 if(m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
