@@ -258,7 +258,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
 
                         foreach(ObjectPart p in grp.Values)
                         {
-                            if(p.Inventory.CountScripts != 0)
+                            if(p.IsScripted)
                             {
                                 flags |= SCRIPTED;
                                 break;
