@@ -435,7 +435,17 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     {
                         return false;
                     }
-                    if ((sensor.SearchType & AGENT) != 0 && sensor.SearchName.Length != 0)
+
+                    if(agent.IsNpc)
+                    {
+                        if ((sensor.SearchType & NPC) != 0 && sensor.SearchName.Length != 0 &&
+                            sensor.SearchName != agent.Owner.FullName ||
+                            (sensor.SearchName != agent.Owner.FirstName + " Resident" && agent.Owner.LastName.Length == 0))
+                        {
+                            return false;
+                        }
+                    }
+                    else if ((sensor.SearchType & AGENT) != 0 && sensor.SearchName.Length != 0)
                     {
                         if (sensor.SearchName != agent.Owner.FullName ||
                             (sensor.SearchName != agent.Owner.FirstName + " Resident" && agent.Owner.LastName.Length == 0))
@@ -447,14 +457,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     {
                         if ((sensor.SearchName != (agent.Owner.FirstName + ".resident").ToLower() && agent.Owner.LastName.Length == 0) ||
                             (sensor.SearchName != agent.Owner.FullName.Replace(' ', '.') && agent.Owner.LastName.Length != 0))
-                        {
-                            return false;
-                        }
-                    }
-                    else if ((sensor.SearchType & NPC) != 0 && sensor.SearchName.Length != 0)
-                    {
-                        if (sensor.SearchName != agent.Owner.FullName ||
-                            (sensor.SearchName != agent.Owner.FirstName + " Resident" && agent.Owner.LastName.Length == 0))
                         {
                             return false;
                         }
