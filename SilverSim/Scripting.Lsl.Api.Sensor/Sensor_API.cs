@@ -89,14 +89,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 if (IsAttached && grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
                 {
                     SensePoint = agent.GlobalPosition;
-                    if (agent.IsInMouselook)
-                    {
-                        SenseRotation = agent.CameraRotation; /* according to SL docs in Mouselook we have to use this rotation */
-                    }
-                    else
-                    {
-                        SenseRotation = agent.BodyRotation;
-                    }
+                    SenseRotation = agent.IsInMouselook ?
+                        agent.CameraRotation : /* according to SL docs in Mouselook we have to use this rotation */
+                        agent.BodyRotation;
+
                     SenseRotation *= part.LocalRotation;
                 }
                 else
