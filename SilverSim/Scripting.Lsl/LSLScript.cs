@@ -336,6 +336,14 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public override bool IsLinkMessageReceiver
+        {
+            get
+            {
+                return m_CurrentStateMethods.ContainsKey("link_message");
+            }
+        }
+
         private void InvokeStateEvent(string name, params object[] param)
         {
             MethodInfo mi;

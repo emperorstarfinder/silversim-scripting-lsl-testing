@@ -12,15 +12,19 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     {
         void EnqueueToScripts(ObjectPart part, LinkMessageEvent ev)
         {
-            foreach(ObjectPartInventoryItem item in part.Inventory.Values)
+            /* check whether we actually have scripts in prim */
+            if (part.IsScripted)
             {
-                if(item.AssetType == AssetType.LSLText || item.AssetType == AssetType.LSLBytecode)
+                foreach (ObjectPartInventoryItem item in part.Inventory.Values)
                 {
-                    ScriptInstance si = item.ScriptInstance;
-
-                    if(si != null)
+                    if (item.AssetType == AssetType.LSLText || item.AssetType == AssetType.LSLBytecode)
                     {
-                        si.PostEvent(ev);
+                        ScriptInstance si = item.ScriptInstance;
+
+                        if (si != null && si.IsLinkMessageReceiver)
+                        {
+                            si.PostEvent(ev);
+                        }
                     }
                 }
             }
