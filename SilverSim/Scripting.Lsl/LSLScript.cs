@@ -296,7 +296,7 @@ namespace SilverSim.Scripting.Lsl
             m_Part = null;
         }
 
-        readonly Dictionary<string, MethodInfo> m_CurrentStateMethods = new Dictionary<string, MethodInfo>();
+        readonly RwLockedDictionary<string, MethodInfo> m_CurrentStateMethods = new RwLockedDictionary<string, MethodInfo>();
 
         public override void RevokePermissions(UUID permissionsKey, ScriptPermissions permissions)
         {
