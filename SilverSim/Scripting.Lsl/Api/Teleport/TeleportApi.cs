@@ -58,7 +58,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                             return;
                         }
 
-                        if (!agent.TeleportTo(scene, agent, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
+                        if (!agent.TeleportTo(scene, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
                         {
                             agent.SendAlertMessage("Landmark destination not found", scene.ID);
                         }
@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
 
-                    if (!agent.TeleportTo(scene, agent, landmarkData.GatekeeperURI, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
+                    if (!agent.TeleportTo(scene, landmarkData.GatekeeperURI, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
                     {
                         agent.SendAlertMessage("Landmark destination not found", scene.ID);
                     }
@@ -100,7 +100,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 {
                     return;
                 }
-                if (!agent.TeleportTo(scene, agent, location, position, lookAt, TeleportFlags.ViaLocation))
+                if (!agent.TeleportTo(scene, location, position, lookAt, TeleportFlags.ViaLocation))
                 {
                     agent.SendAlertMessage(string.Format("Location '{0}' not found.", location.ToString()), scene.ID);
                 }
@@ -122,7 +122,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 {
                     return;
                 }
-                if (!agent.TeleportTo(scene, agent, regionName, position, lookAt, TeleportFlags.ViaRegionID))
+                if (!agent.TeleportTo(scene, regionName, position, lookAt, TeleportFlags.ViaRegionID))
                 {
                     agent.SendAlertMessage(string.Format("Region '{0}' not found.", regionName), scene.ID);
                 }
@@ -187,7 +187,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                             return;
                         }
                     }
-                    if(!agent.TeleportHome(scene, agent))
+                    if(!agent.TeleportHome(scene))
                     {
                         agent.SendAlertMessage("Teleport home failed", scene.ID);
                     }
