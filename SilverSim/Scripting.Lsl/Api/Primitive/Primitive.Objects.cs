@@ -187,12 +187,20 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             AnArray parout = new AnArray();
             lock (instance)
             {
-                IObject obj;
-                if(!instance.Part.ObjectGroup.Scene.Objects.TryGetValue(key.AsUUID, out obj))
+                ObjectPart obj;
+                IAgent agent;
+                UUID id = key.AsUUID;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+
+                if(scene.Primitives.TryGetValue(key.AsUUID, out obj))
                 {
-                    return parout;
+                    obj.GetObjectDetails(param.GetEnumerator(), parout);
                 }
-                obj.GetObjectDetails(param.GetEnumerator(), parout);
+                else if(scene.RootAgents.TryGetValue(key.AsUUID, out agent))
+                {
+                    obj.GetObjectDetails(param.GetEnumerator(), parout);
+                }
+                return parout;
             }
             return parout;
         }
