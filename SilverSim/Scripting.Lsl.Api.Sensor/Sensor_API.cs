@@ -103,12 +103,13 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             }
         }
 
-        public class SceneInfo : ISceneListener
+        public class SceneInfo : ISceneListener, IAgentListener
         {
             private static readonly ILog m_Log = LogManager.GetLogger("LSL_SENSORS");
 
             public SceneInterface Scene;
             public readonly RwLockedDictionary<UUID, ObjectGroup> KnownObjects = new RwLockedDictionary<UUID, ObjectGroup>();
+            public readonly RwLockedDictionary<UUID, IAgent> KnownAgents = new RwLockedDictionary<UUID, IAgent>();
             public readonly RwLockedDictionary<ScriptInstance, SensorInfo> SensorRepeats = new RwLockedDictionary<ScriptInstance, SensorInfo>();
             public readonly System.Timers.Timer m_Timer = new System.Timers.Timer(1);
             public readonly object m_TimerLock = new object();
@@ -137,6 +138,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 m_Timer.Dispose();
                 Scene.SceneListeners.Remove(this);
                 SensorRepeats.Clear();
+                KnownAgents.Clear();
                 KnownObjects.Clear();
                 Scene = null;
             }
@@ -198,7 +200,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
             void SensorRepeatTimer(object o, EventArgs args)
             {
-                List<IAgent> rootAgents = new List<IAgent>(Scene.RootAgents);
                 int elapsedTimeInMsecs;
                 lock (m_TimerLock)
                 {
@@ -240,7 +241,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                             CleanRepeatSensor(kvp.Value);
                             if ((kvp.Value.SearchType & SENSE_AGENTS) != 0)
                             {
-                                foreach (IAgent agent in rootAgents)
+                                foreach (IAgent agent in KnownAgents.Values)
                                 {
                                     AddIfSensed(kvp.Value, agent);
                                 }
@@ -476,6 +477,31 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     return CheckArcAndRange(sensor, obj);
                 }
                 return false;
+            }
+
+            public void AddedAgent(IAgent agent)
+            {
+                if(agent.IsInScene(Scene))
+                {
+                    KnownAgents[agent.ID]= agent;
+                }
+            }
+
+            public void AgentChangedScene(IAgent agent)
+            {
+                if (agent.IsInScene(Scene))
+                {
+                    KnownAgents[agent.ID] = agent;
+                }
+                else
+                {
+                    KnownAgents.Remove(agent.ID);
+                }
+            }
+
+            public void RemovedAgent(IAgent agent)
+            {
+                KnownAgents.Remove(agent.ID);
             }
         }
 
