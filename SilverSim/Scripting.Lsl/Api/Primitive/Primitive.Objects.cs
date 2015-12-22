@@ -445,7 +445,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         throw new NotImplementedException("llGetStatus(STATUS_DIE_AT_EDGE)");
 
                     case STATUS_RETURN_AT_EDGE:
-                        throw new NotImplementedException("llGetStatus(STATUS_DIE_AT_EDGE)");
+                        throw new NotImplementedException("llGetStatus(STATUS_RETURN_AT_EDGE)");
 
                     case STATUS_CAST_SHADOWS:
                         return 0;
