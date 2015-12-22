@@ -192,11 +192,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 UUID id = key.AsUUID;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
 
-                if(scene.Primitives.TryGetValue(key.AsUUID, out obj))
+                if(scene.Primitives.TryGetValue(id, out obj))
                 {
                     obj.GetObjectDetails(param.GetEnumerator(), parout);
                 }
-                else if(scene.RootAgents.TryGetValue(key.AsUUID, out agent))
+                else if(scene.RootAgents.TryGetValue(id, out agent))
                 {
                     agent.GetObjectDetails(param.GetEnumerator(), parout);
                 }
