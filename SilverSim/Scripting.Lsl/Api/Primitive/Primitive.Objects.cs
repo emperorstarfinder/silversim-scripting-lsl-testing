@@ -198,7 +198,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 else if(scene.RootAgents.TryGetValue(key.AsUUID, out agent))
                 {
-                    obj.GetObjectDetails(param.GetEnumerator(), parout);
+                    agent.GetObjectDetails(param.GetEnumerator(), parout);
                 }
                 return parout;
             }
