@@ -200,7 +200,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     agent.GetObjectDetails(param.GetEnumerator(), parout);
                 }
-                return parout;
             }
             return parout;
         }
