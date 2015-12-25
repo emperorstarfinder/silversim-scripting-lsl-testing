@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Main.Common.CmdIO;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
@@ -11,6 +12,7 @@ using SilverSim.ServiceInterfaces.Grid;
 using SilverSim.Types;
 using SilverSim.Types.Grid;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -18,6 +20,40 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 {
     public partial class RegionApi
     {
+        sealed class ConsoleCommandTTY : TTY
+        {
+            public string OutputBuffer { get; private set; }
+            public ConsoleCommandTTY()
+            {
+                OutputBuffer = string.Empty;
+            }
+
+            public override void Write(string text)
+            {
+                OutputBuffer += text;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osConsoleCommand")]
+        public string ConsoleCommand(ScriptInstance instance, string cmd)
+        {
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.IsSimConsoleAllowed(instance.Part.Owner))
+                {
+                    ConsoleCommandTTY tty = new ConsoleCommandTTY();
+                    List<string> args = tty.GetCmdLine(cmd);
+                    CommandRegistry.ExecuteCommand(args, tty, scene.ID);
+                    return tty.OutputBuffer;
+                }
+                else
+                {
+                    return "NOT ALLOWED";
+                }
+            }
+        }
+
         [APILevel(APIFlags.OSSL, "osGetGridName")]
         public string GetGridName(ScriptInstance instance)
         {
