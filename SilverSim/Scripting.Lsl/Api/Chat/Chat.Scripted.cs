@@ -266,34 +266,23 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     string name = (string)args[lstart++];
                     UUID key = (UUID)args[lstart++];
                     string message = (string)args[lstart++];
-                    int regexBitfield = 0;
-
-                    if (lstart == argsCount || args[lstart] is bool)
-                    {
-                        regexBitfield = 0;
-                    }
-                    else
-                    {
-                        regexBitfield = (int)args[lstart++];
-                    }
+                    int regexBitfield = (lstart == argsCount || args[lstart] is bool) ?
+                        0 :
+                        (int)args[lstart++];
 
                     if(!script.m_Listeners.ContainsKey(handle))
                     {
                         ChatServiceInterface.Listener l;
-                        if(regexBitfield == 0)
-                        {
-                            l = chatservice.AddListen(
+                        l = regexBitfield == 0 ?
+                            chatservice.AddListen(
                                 channel,
                                 name,
                                 key,
                                 message,
                                 delegate () { return instance.Part.ID; },
                                 delegate () { return instance.Part.GlobalPosition; },
-                                script.OnListen);
-                        }
-                        else
-                        {
-                            l = chatservice.AddListenRegex(
+                                script.OnListen) :
+                            chatservice.AddListenRegex(
                                 channel,
                                 name,
                                 key,
@@ -303,7 +292,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                                 delegate () { return instance.Part.GlobalPosition; },
                                 script.OnListen);
 
-                        }
                         script.m_Listeners.Add(handle, l);
                     }
                 }

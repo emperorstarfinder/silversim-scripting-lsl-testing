@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl
         public int LastTimerEventTick;
         public bool UseForcedSleep = true;
         public double ForcedSleepFactor = 1;
-        public double CurrentTimerInterval = 0f;
+        public double CurrentTimerInterval;
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
         internal List<Action<ScriptInstance, List<object>>> SerializationDelegates;
         internal Dictionary<string, Action<ScriptInstance, List<object>>> DeserializationDelegates;
