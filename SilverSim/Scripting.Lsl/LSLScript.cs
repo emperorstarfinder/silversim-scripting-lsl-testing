@@ -170,6 +170,57 @@ namespace SilverSim.Scripting.Lsl
             m_Part.ObjectGroup.OnPositionChange += OnGroupPositionUpdate;
         }
 
+        public void LoadScriptState(SavedScriptState state, Dictionary<string, Action<ScriptInstance, List<object>>> deserializationDelegates)
+        {
+            /* we have to integrate the loaded script state */
+            Type scriptType = GetType();
+
+            /* initialize variables */
+            foreach (KeyValuePair<string, object> kvp in state.Variables)
+            {
+                FieldInfo fi = scriptType.GetField(kvp.Key);
+                if(fi == null)
+                {
+                    m_Log.ErrorFormat("Restoring variable {0} failed", kvp.Key);
+                }
+                else if(fi.IsLiteral || fi.IsInitOnly || fi.FieldType != kvp.Value.GetType())
+                {
+                    continue;
+                }
+                fi.SetValue(this, kvp.Value);
+            }
+
+            /* initialize state */
+            ILSLState script_state;
+            if (m_States.TryGetValue(state.CurrentState, out script_state))
+            {
+                m_CurrentState = script_state;
+                m_CurrentStateMethods.Clear();
+            }
+
+#warning Implement queue deserialization
+
+            /* initialize plugin data */
+            int pluginpos = 0;
+            int pluginlen = state.PluginData.Count;
+            while(pluginpos + 1 < pluginlen)
+            {
+                int len = (int)state.PluginData[pluginpos + 1];
+                if (len + 2 + pluginpos > pluginlen)
+                {
+                    break;
+                }
+                string type = (string)state.PluginData[0];
+                Action<ScriptInstance, List<object>> del;
+                if(deserializationDelegates.TryGetValue(type, out del))
+                {
+                    del(this, state.PluginData.GetRange(pluginpos + 2, len));
+                }
+                pluginpos += 2 + len;
+            }
+            IsRunning = state.IsRunning;
+        }
+
         private void OnPrimPositionUpdate(IObject part)
         {
 
