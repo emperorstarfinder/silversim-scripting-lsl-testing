@@ -17,6 +17,7 @@ namespace SilverSim.Scripting.Lsl
         public class SavedScriptState : IScriptState
         {
             public Dictionary<string, object> Variables = new Dictionary<string, object>();
+            public List<object> PluginData = new List<object>();
             public bool IsRunning;
             public string CurrentState = "default";
 
@@ -271,6 +272,49 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            static List<object> PluginsFromXml(XmlTextReader reader)
+            {
+                List<object> res = new List<object>();
+                for (;;)
+                {
+                    if (!reader.Read())
+                    {
+                        throw new InvalidObjectXmlException();
+                    }
+
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (reader.IsEmptyElement)
+                            {
+                                break;
+                            }
+
+                            switch(reader.Name)
+                            {
+                                case "ListItem":
+                                    res.Add(reader.ReadTypedValue());
+                                    break;
+
+                                default:
+                                    reader.Skip();
+                                    break;
+                            }
+                            break;
+
+                        case XmlNodeType.EndElement:
+                            if (reader.Name != "Plugins")
+                            {
+                                throw new InvalidObjectXmlException();
+                            }
+                            return res;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
             static SavedScriptState ScriptStateFromXML(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item)
             {
                 SavedScriptState state = new SavedScriptState();
@@ -309,8 +353,7 @@ namespace SilverSim.Scripting.Lsl
                                     break;
 
                                 case "Plugins":
-#warning TODO: Implement Plugins deserialization for LSL
-                                    reader.ReadToEndElement();
+                                    state.PluginData = PluginsFromXml(reader);
                                     break;
 
                                 case "Permissions":

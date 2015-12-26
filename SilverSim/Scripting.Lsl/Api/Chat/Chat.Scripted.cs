@@ -244,7 +244,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             }
         }
 
-        [ExecutedOnDeserialization("listen")]
+        [ExecutedOnDeserialization("listener")]
         public void Deserialize(ScriptInstance instance, List<object> args)
         {
             Script script = (Script)instance;
@@ -310,7 +310,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             }
         }
 
-        [ExecutedOnSerialization("listen")]
+        [ExecutedOnSerialization("listener")]
         public void Serialize(ScriptInstance instance, List<object> res)
         {
             Script script = (Script)instance;

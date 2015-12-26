@@ -7,6 +7,8 @@ using SilverSim.Types;
 using SilverSim.Types.Asset;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -156,6 +158,94 @@ namespace SilverSim.Scripting.Lsl
         public static int ToLSLBoolean(this bool v)
         {
             return v ? 1 : 0;
+        }
+
+        public static object ReadTypedValue(this XmlTextReader reader)
+        {
+            string type = string.Empty;
+            bool isEmptyElement = reader.IsEmptyElement;
+            if (reader.MoveToFirstAttribute())
+            {
+                do
+                {
+                    switch (reader.Name)
+                    {
+                        case "type":
+                            type = reader.Value;
+                            break;
+
+                        default:
+                            break;
+                    }
+                } while (reader.MoveToNextAttribute());
+            }
+
+            string data = string.Empty;
+            if (!isEmptyElement)
+            {
+                data = reader.ReadElementValueAsString("ListItem");
+            }
+            switch(type)
+            {
+                case "System.Boolean":
+                    return bool.Parse(data);
+
+                case "System.Single":
+                    return double.Parse(data, NumberStyles.Float, CultureInfo.InvariantCulture);
+
+                case "System.String":
+                    return data;
+
+                case "System.Int32":
+                    return int.Parse(data);
+
+                case "OpenMetaverse.UUID":
+                    return UUID.Parse(data);
+
+                default:
+                    throw new ArgumentException("Unknown type in serialization");
+            }
+        }
+        public static void WriteTypedValue(this XmlTextWriter writer, string tagname, object o)
+        {
+            if(o is bool)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "System.Boolean");
+                writer.WriteValue(o.ToString());
+            }
+            else if(o is double)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "System.Single");
+                writer.WriteValue(((float)(double)o).ToString(CultureInfo.InvariantCulture));
+            }
+            else if(o is string)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "System.String");
+                writer.WriteValue(o.ToString());
+            }
+            else if(o is int)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "System.Int32");
+                writer.WriteValue(o.ToString());
+            }
+            else if(o is UUID)
+            {
+                writer.WriteStartElement(tagname);
+                /* people want compatibility with their creations so we have to understand to what
+                 * these types map in the OpenSim serialization.
+                 */
+                writer.WriteAttributeString("type", "OpenMetaverse.UUID");
+                writer.WriteValue(o.ToString());
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("o");
+            }
+            writer.WriteEndElement();
         }
 
         public static string FindInventoryName(this ScriptInstance instance, AssetType assetType, UUID assetID)
