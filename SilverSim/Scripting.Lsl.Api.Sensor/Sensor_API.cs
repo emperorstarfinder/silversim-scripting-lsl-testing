@@ -621,7 +621,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         }
 
         [ExecutedOnDeserialization("sensor")]
-        public void Deserialize(ScriptInstance instance, List<string> args)
+        public void Deserialize(ScriptInstance instance, List<object> args)
         {
             if(args.Count < 6)
             {
@@ -636,12 +636,12 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
                     SensorInfo info = new SensorInfo(instance, true,
-                        double.Parse(args[0], CultureInfo.InvariantCulture),
-                        args[1],
-                        UUID.Parse(args[2]),
-                        int.Parse(args[3]),
-                        double.Parse(args[4], CultureInfo.InvariantCulture),
-                        double.Parse(args[5], CultureInfo.InvariantCulture));
+                        (double)args[0],
+                        (string)args[1],
+                        (UUID)args[2],
+                        (int)args[3],
+                        (double)args[4],
+                        (double)args[5]);
                     sceneInfo.StartSensor(info);
                 }
             }

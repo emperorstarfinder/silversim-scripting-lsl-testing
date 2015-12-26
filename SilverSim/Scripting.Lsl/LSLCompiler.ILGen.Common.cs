@@ -23,14 +23,25 @@ namespace SilverSim.Scripting.Lsl
             readonly Dictionary<string, Type> m_StateTypes;
             readonly bool m_ForcedSleep;
             readonly List<Action<ScriptInstance>> m_ScriptRemoveDelegates;
+            readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates;
+            readonly Dictionary<string, Action<ScriptInstance, List<object>>> m_ScriptDeserializeDelegates;
 
-            public LSLScriptAssembly(Assembly assembly, Type script, Dictionary<string, Type> stateTypes, bool forcedSleep, List<Action<ScriptInstance>> scriptRemoveDelegates)
+            public LSLScriptAssembly(
+                Assembly assembly, 
+                Type script, 
+                Dictionary<string, Type> stateTypes, 
+                bool forcedSleep, 
+                List<Action<ScriptInstance>> scriptRemoveDelegates,
+                List<Action<ScriptInstance, List<object>>> scriptSerializeDelegates,
+                Dictionary<string, Action<ScriptInstance, List<object>>> scriptDeserializeDelegates)
             {
                 Assembly = assembly;
                 m_ScriptType = script;
                 m_StateTypes = stateTypes;
                 m_ForcedSleep = forcedSleep;
                 m_ScriptRemoveDelegates = scriptRemoveDelegates;
+                m_ScriptSerializeDelegates = scriptSerializeDelegates;
+                m_ScriptDeserializeDelegates = scriptDeserializeDelegates;
             }
 
             public ScriptInstance Instantiate(ObjectPart objpart, ObjectPartInventoryItem item)
@@ -47,6 +58,8 @@ namespace SilverSim.Scripting.Lsl
                     m_Script.AddState(t.Key, (ILSLState)info.Invoke(param));
                 }
                 m_Script.ScriptRemoveDelegates = m_ScriptRemoveDelegates;
+                m_Script.SerializationDelegates = m_ScriptSerializeDelegates;
+                m_Script.DeserializationDelegates = m_ScriptDeserializeDelegates;
                 return m_Script;
             }
         }

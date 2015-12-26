@@ -43,6 +43,7 @@ namespace SilverSim.Scripting.Lsl
         public double CurrentTimerInterval = 0f;
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
         internal List<Action<ScriptInstance, List<object>>> SerializationDelegates;
+        internal Dictionary<string, Action<ScriptInstance, List<object>>> DeserializationDelegates;
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
         {
@@ -170,7 +171,7 @@ namespace SilverSim.Scripting.Lsl
             m_Part.ObjectGroup.OnPositionChange += OnGroupPositionUpdate;
         }
 
-        public void LoadScriptState(SavedScriptState state, Dictionary<string, Action<ScriptInstance, List<object>>> deserializationDelegates)
+        public void LoadScriptState(SavedScriptState state)
         {
             /* we have to integrate the loaded script state */
             Type scriptType = GetType();
@@ -212,7 +213,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 string type = (string)state.PluginData[0];
                 Action<ScriptInstance, List<object>> del;
-                if(deserializationDelegates.TryGetValue(type, out del))
+                if(DeserializationDelegates.TryGetValue(type, out del))
                 {
                     del(this, state.PluginData.GetRange(pluginpos + 2, len));
                 }

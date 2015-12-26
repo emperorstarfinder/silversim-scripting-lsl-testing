@@ -8,6 +8,7 @@ using SilverSim.Types.Asset;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
 using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
@@ -393,6 +394,5 @@ namespace SilverSim.Scripting.Lsl
             }
             return assetID;
         }
-
     }
 }

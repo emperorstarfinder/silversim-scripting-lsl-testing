@@ -82,6 +82,9 @@ namespace SilverSim.Scripting.Lsl
         readonly List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
         readonly List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
         readonly List<Action<ScriptInstance>> m_ScriptRemoveDelegates = new List<Action<ScriptInstance>>();
+        readonly Dictionary<string, Action<ScriptInstance, List<object>>> m_ScriptDeserializeDelegates = new Dictionary<string, Action<ScriptInstance, List<object>>>();
+        readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates = new 
+            List<Action<ScriptInstance, List<object>>>();
         readonly List<string> m_ReservedWords = new List<string>();
         readonly List<string> m_Typecasts = new List<string>();
         readonly List<char> m_SingleOps = new List<char>();
@@ -527,7 +530,77 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            m_ScriptRemoveDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
+                            m_ScriptRemoveDelegates.Add(
+                                (Action<ScriptInstance>)Delegate.CreateDelegate(
+                                    typeof(Action<ScriptInstance>), 
+                                    (m.Attributes & MethodAttributes.Static) != 0 ? null : api, 
+                                    m));
+                        }
+                    }
+
+                    attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnSerializationAttribute));
+                    if (attr != null)
+                    {
+                        ParameterInfo[] pi = m.GetParameters();
+                        if (pi.Length != 2)
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Parameter count does not match.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else if (m.ReturnType != typeof(void))
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Return type is not void.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else if (pi[0].ParameterType != typeof(ScriptInstance) ||
+                            pi[1].ParameterType != typeof(List<object>))
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Wrong parameter types.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else
+                        {
+                            m_ScriptSerializeDelegates.Add(
+                                (Action<ScriptInstance, List<object>>)Delegate.CreateDelegate(
+                                    typeof(Action<ScriptInstance, List<object>>), 
+                                    (m.Attributes & MethodAttributes.Static) != 0 ? null : api, 
+                                    m));
+                        }
+                    }
+
+                    ExecutedOnDeserializationAttribute deserializeattr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnDeserializationAttribute)) as ExecutedOnDeserializationAttribute;
+                    if (deserializeattr != null)
+                    {
+                        ParameterInfo[] pi = m.GetParameters();
+                        if (pi.Length != 2)
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Parameter count does not match.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else if (m.ReturnType != typeof(void))
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Return type is not void.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else if (pi[0].ParameterType != typeof(ScriptInstance) ||
+                            pi[1].ParameterType != typeof(List<object>))
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Wrong parameter types.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        else
+                        {
+                            m_ScriptDeserializeDelegates.Add(deserializeattr.Name, 
+                                (Action<ScriptInstance, List<object>>)Delegate.CreateDelegate(
+                                    typeof(Action<ScriptInstance, List<object>>), 
+                                    (m.Attributes & MethodAttributes.Static) != 0 ? null : api, 
+                                    m));
                         }
                     }
                 }
