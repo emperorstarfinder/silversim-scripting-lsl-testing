@@ -323,7 +323,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 {
                     kvp.Value.Serialize(res, kvp.Key);
                 }
-                res[idx] = (res.Count - idx - 1).ToString();
+                res[idx] = (res.Count - idx - 1);
             }
         }
     }

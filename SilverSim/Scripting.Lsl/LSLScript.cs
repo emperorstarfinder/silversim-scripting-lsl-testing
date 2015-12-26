@@ -42,6 +42,7 @@ namespace SilverSim.Scripting.Lsl
         public double ForcedSleepFactor = 1;
         public double CurrentTimerInterval = 0f;
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
+        internal List<Action<ScriptInstance, List<object>>> SerializationDelegates;
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
         {
@@ -95,16 +96,6 @@ namespace SilverSim.Scripting.Lsl
             m_States.Add(name, state);
         }
 
-        void WriteListItem(XmlTextWriter writer, object o)
-        {
-            writer.WriteStartElement("ListItem");
-            writer.WriteStartAttribute("type");
-            writer.WriteValue(o.GetType().FullName);
-            writer.WriteEndAttribute();
-            writer.WriteValue(o.ToString());
-            writer.WriteEndElement();
-        }
-
         public void ToXml(XmlTextWriter writer)
         {
             writer.WriteStartElement("State");
@@ -149,51 +140,14 @@ namespace SilverSim.Scripting.Lsl
                     }
                     writer.WriteEndElement();
                     writer.WriteStartElement("Plugins");
+                    List<object> serializationData = new List<object>();
+                    foreach(Action<ScriptInstance, List<object>> serializer in SerializationDelegates)
                     {
-                        /*
-                        List<object> listeners = new List<object>();
-                        m_Listeners.ForEach(delegate(KeyValuePair<int, ChatServiceInterface.Listener> kvp)
-                        {
-                            listeners.Add(kvp.Value.IsActive);
-                            listeners.Add(kvp.Key);
-                            listeners.Add(kvp.Value.Channel);
-                            listeners.Add(kvp.Value.Name);
-                            listeners.Add(kvp.Value.ID);
-                            listeners.Add(kvp.Value.Message);
-                            listeners.Add(kvp.Value.RegexBitfield);
-                        });
-                         * if(listeners.Count != 0)
-                         * {
-                         * WriteListitem(writer, "listener");
-                         * WriteListItem(writer, listeners.Count);
-                         * foreach(object o in listeners)
-                         * {
-                         * WriteListItem(writer, o);
-                         * }
-                         * }
-                        */
-
-                        if(Timer.Enabled)
-                        {
-                            WriteListItem(writer, "timer");
-                            WriteListItem(writer, 2);
-                            WriteListItem(writer, Timer.Interval);
-                            WriteListItem(writer, 0);
-                        }
-
-                        /* sensor, <element count> 
-                         * foreach(sensor)
-                         * {
-                        data.Add(ts.interval);
-                        data.Add(ts.name);
-                        data.Add(ts.keyID);
-                        data.Add(ts.type);
-                        data.Add(ts.range);
-                        data.Add(ts.arc);
-                         * }
-                         
-                         */
-
+                        serializer(this, serializationData);
+                    }
+                    foreach(object o in serializationData)
+                    {
+                        writer.WriteTypedValue("ListItem", o);
                     }
                     writer.WriteEndElement();
                 }
