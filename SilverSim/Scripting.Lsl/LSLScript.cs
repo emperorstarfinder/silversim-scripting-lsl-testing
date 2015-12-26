@@ -37,8 +37,10 @@ namespace SilverSim.Scripting.Lsl
         internal RwLockedList<UUID> m_RequestedURLs = new RwLockedList<UUID>();
 
         public readonly Timer Timer = new Timer();
+        public int LastTimerEventTick;
         public bool UseForcedSleep = true;
         public double ForcedSleepFactor = 1;
+        public double CurrentTimerInterval = 0f;
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
@@ -46,9 +48,27 @@ namespace SilverSim.Scripting.Lsl
             lock (this)
             {
                 PostEvent(new TimerEvent());
+                LastTimerEventTick = Environment.TickCount;
+                Timer.Interval = CurrentTimerInterval;
             }
         }
 
+        public void SetTimerEvent(double interval, double elapsed = 0f)
+        {
+            CurrentTimerInterval = interval;
+            if(interval < 0.01)
+            {
+                Timer.Enabled = false;
+            }
+            else
+            {
+                Timer.Enabled = false;
+                LastTimerEventTick = Environment.TickCount;
+                Timer.Interval = interval - elapsed;
+                CurrentTimerInterval = interval;
+                Timer.Enabled = true;
+            }
+        }
 
         public override double ExecutionTime
         {

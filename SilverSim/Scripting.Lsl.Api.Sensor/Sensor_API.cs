@@ -12,8 +12,10 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Timers;
+using System.Xml;
 using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl.Api.Sensor
@@ -615,6 +617,61 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             if(m_Scenes.TryGetValue(scene.ID, out sceneInfo))
             {
                 sceneInfo.SensorRepeats.Remove(instance);
+            }
+        }
+
+        [ExecutedOnDeserialization("sensor")]
+        public void Deserialize(ScriptInstance instance, List<string> args)
+        {
+            if(args.Count < 6)
+            {
+                return;
+            }
+            Script script = (Script)instance;
+            lock (script)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                SceneInfo sceneInfo;
+                if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
+                {
+                    SensorInfo info = new SensorInfo(instance, true,
+                        double.Parse(args[0], CultureInfo.InvariantCulture),
+                        args[1],
+                        UUID.Parse(args[2]),
+                        int.Parse(args[3]),
+                        double.Parse(args[4], CultureInfo.InvariantCulture),
+                        double.Parse(args[5], CultureInfo.InvariantCulture));
+                    sceneInfo.StartSensor(info);
+                }
+            }
+
+        }
+
+        [ExecutedOnSerialization("sensor")]
+        public void Serialize(ScriptInstance instance, List<object> res)
+        {
+            Script script = (Script)instance;
+            lock(script)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                SceneInfo sceneInfo;
+                if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
+                {
+                    SensorInfo info;
+                    if (sceneInfo.SensorRepeats.TryGetValue(instance, out info))
+                    {
+                        res.Add("sensor");
+                        res.Add(6);
+
+                        res.Add(info.Timeout);
+                        res.Add(info.SearchName);
+                        res.Add(info.SearchKey);
+                        res.Add(info.SearchType);
+                        res.Add(info.SearchRadius);
+                        res.Add(info.SearchArc);
+                    }
+                }
             }
         }
     }

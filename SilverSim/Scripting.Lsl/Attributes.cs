@@ -101,6 +101,28 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    public sealed class ExecutedOnSerializationAttribute : Attribute
+    {
+        public string Name { get; set; }
+        public ExecutedOnSerializationAttribute(string name)
+        {
+            Name = name;
+        }
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    public sealed class ExecutedOnDeserializationAttribute : Attribute
+    {
+        public string Name { get; set; }
+        public ExecutedOnDeserializationAttribute(string name)
+        {
+            Name = name;
+        }
+    }
+
+    [Serializable]
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class LSLImplementationAttribute : Attribute
     {

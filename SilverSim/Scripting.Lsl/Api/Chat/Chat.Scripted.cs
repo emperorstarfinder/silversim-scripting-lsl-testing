@@ -109,6 +109,15 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
                 ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
 
+                /* LSL matches on repeating llListen with the already created listen */
+                foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
+                {
+                    if (kvp.Value.IsMatching(name, id.AsUUID, msg, 0))
+                    {
+                        return kvp.Key;
+                    }
+                }
+
                 ChatServiceInterface.Listener l;
                 for (int newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
                 {
@@ -179,6 +188,15 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
                 ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
 
+                /* LSL matches on repeating llListen with the already created listen */
+                foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
+                {
+                    if (kvp.Value.IsMatching(name, id.AsUUID, msg, regexBitfield))
+                    {
+                        return kvp.Key;
+                    }
+                }
+
                 ChatServiceInterface.Listener l;
                 for (int newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
                 {
@@ -223,6 +241,89 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 {
                     l.Remove();
                 }
+            }
+        }
+
+        [ExecutedOnDeserialization("listen")]
+        public void Deserialize(ScriptInstance instance, List<object> args)
+        {
+            Script script = (Script)instance;
+            lock(script)
+            {
+                ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
+                int lstart = 0;
+                int argsCount = args.Count;
+                while(lstart < argsCount)
+                {
+                    if(lstart < 6)
+                    {
+                        break;
+                    }
+
+                    bool isActive = (bool)args[lstart++];
+                    int handle = (int)args[lstart++];
+                    int channel = (int)args[lstart++];
+                    string name = (string)args[lstart++];
+                    UUID key = (UUID)args[lstart++];
+                    string message = (string)args[lstart++];
+                    int regexBitfield = 0;
+
+                    if (lstart == argsCount || args[lstart] is bool)
+                    {
+                        regexBitfield = 0;
+                    }
+                    else
+                    {
+                        regexBitfield = (int)args[lstart++];
+                    }
+
+                    if(!script.m_Listeners.ContainsKey(handle))
+                    {
+                        ChatServiceInterface.Listener l;
+                        if(regexBitfield == 0)
+                        {
+                            l = chatservice.AddListen(
+                                channel,
+                                name,
+                                key,
+                                message,
+                                delegate () { return instance.Part.ID; },
+                                delegate () { return instance.Part.GlobalPosition; },
+                                script.OnListen);
+                        }
+                        else
+                        {
+                            l = chatservice.AddListenRegex(
+                                channel,
+                                name,
+                                key,
+                                message,
+                                regexBitfield,
+                                delegate () { return instance.Part.ID; },
+                                delegate () { return instance.Part.GlobalPosition; },
+                                script.OnListen);
+
+                        }
+                        script.m_Listeners.Add(handle, l);
+                    }
+                }
+            }
+        }
+
+        [ExecutedOnSerialization("listen")]
+        public void Serialize(ScriptInstance instance, List<object> res)
+        {
+            Script script = (Script)instance;
+            lock(script)
+            {
+                res.Add("listen");
+                int idx = res.Count;
+                res.Add("0");
+                foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
+                {
+                    kvp.Value.Serialize(res, kvp.Key);
+                }
+                res[idx] = (res.Count - idx - 1).ToString();
             }
         }
     }
