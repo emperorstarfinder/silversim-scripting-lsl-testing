@@ -176,16 +176,10 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
 
-                    if(!objectParcel.Owner.EqualsGrid(grp.Owner))
-                    {
-                        if (!objectParcel.GroupOwned)
-                        {
-                            return;
-                        }
-                        else if(!scene.HasGroupPower(grp.Owner, objectParcel.Group, GroupPowers.LandEjectAndFreeze))
-                        {
-                            return;
-                        }
+                    if(!objectParcel.Owner.EqualsGrid(grp.Owner) &&
+                        (!objectParcel.GroupOwned || !scene.HasGroupPower(grp.Owner, objectParcel.Group, GroupPowers.LandEjectAndFreeze)))
+                    { 
+                        return;
                     }
                     if(!agent.TeleportHome(scene))
                     {
@@ -210,12 +204,8 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         instance.ShoutError("Sitting avatars cannot be teleported");
                         return;
                     }
-                    else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter))
-                    {
-                        instance.ShoutError("Teleport permission is not granted by avatar");
-                        return;
-                    }
-                    else if ((grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
+                    else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
+                        (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
                     {
                         instance.ShoutError("Teleport permission is not granted by avatar");
                         return;
@@ -244,12 +234,8 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         instance.ShoutError("Sitting avatars cannot be teleported");
                         return;
                     }
-                    else if(!agent.Owner.EqualsGrid(grantinfo.PermsGranter))
-                    {
-                        instance.ShoutError("Teleport permission is not granted by avatar");
-                        return;
-                    }
-                    else if ((grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
+                    else if(!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
+                        (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
                     {
                         instance.ShoutError("Teleport permission is not granted by avatar");
                         return;
@@ -283,12 +269,8 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         instance.ShoutError("Sitting avatars cannot be teleported");
                         return;
                     }
-                    else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter))
-                    {
-                        instance.ShoutError("Teleport permission is not granted by avatar");
-                        return;
-                    }
-                    else if ((grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
+                    else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
+                        (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
                     {
                         instance.ShoutError("Teleport permission is not granted by avatar");
                         return;
