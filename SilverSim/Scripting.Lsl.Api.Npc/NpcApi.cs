@@ -176,18 +176,6 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
             return 0;
         }
 
-        [APILevel(APIFlags.OSSL, "osNpcPlayAnimation")]
-        public void NpcPlayAnimation(ScriptInstance instance, LSLKey npc, string animation)
-        {
-            throw new NotImplementedException("osNpcPlayAnimation(key, string)");
-        }
-
-        [APILevel(APIFlags.OSSL, "osNpcStopAnimation")]
-        public void NpcStopAnimation(ScriptInstance instance, LSLKey npc, string animation)
-        {
-            throw new NotImplementedException("osNpcStopAnimation(key, string)");
-        }
-
         [APILevel(APIFlags.OSSL, "osNpcTouch")]
         public void NpcTouch(ScriptInstance instance, LSLKey npc, LSLKey objectKey, int linkNum)
         {

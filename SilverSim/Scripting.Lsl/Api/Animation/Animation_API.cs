@@ -59,6 +59,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.OSSL, "osAvatarPlayAnimation")]
+        [APILevel(APIFlags.OSSL, "osNpcPlayAnimation")]
         [LSLTooltip("causes an animation to be played on the specified avatar.")]
         public void AvatarPlayAnimation(
             ScriptInstance instance, 
@@ -120,6 +121,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.OSSL, "osAvatarStopAnimation")]
+        [APILevel(APIFlags.OSSL, "osNpcStopAnimation")]
         [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
         public void AvatarStopAnimation(
             ScriptInstance instance,
