@@ -275,17 +275,35 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 /* it is a lot faster to re-check the detect list than going through the big object list.
                  * The nice improvement of that is that our repeat sensor does not need an initial scan after every interval.
                  */
+                List<DetectInfo> newSensorHits = new List<DetectInfo>();
                 foreach (KeyValuePair<UUID, DetectInfo> kvp in sensor.SensorHits)
                 {
-                    if(!CheckIfSensed(sensor, kvp.Value.Object))
+                    IAgent agent;
+                    ObjectGroup objgrp;
+
+                    if (KnownAgents.TryGetValue(kvp.Key, out agent))
                     {
-                        removeList.Add(kvp.Key);
+                        DetectInfo di = kvp.Value;
+                        di.FillDetectInfoFromObject(agent);
+                        if (CheckIfSensed(sensor, agent))
+                        {
+                            newSensorHits.Add(di);
+                        }
+                    }
+                    else if (KnownObjects.TryGetValue(kvp.Key, out objgrp))
+                    {
+                        DetectInfo di = kvp.Value;
+                        di.FillDetectInfoFromObject(objgrp);
+                        if (CheckIfSensed(sensor, objgrp))
+                        {
+                            newSensorHits.Add(di);
+                        }
                     }
                 }
                 
-                foreach(UUID id in removeList)
+                foreach(DetectInfo di in newSensorHits)
                 {
-                    sensor.SensorHits.Remove(id);
+                    sensor.SensorHits[di.Key] = di;
                 }
             }
 
@@ -367,7 +385,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 if(CheckIfSensed(sensor, obj))
                 {
                     DetectInfo detInfo = new DetectInfo();
-                    detInfo.Object = obj;
+                    detInfo.FillDetectInfoFromObject(obj);
                     sensor.SensorHits[obj.ID] = detInfo;
                 }
             }

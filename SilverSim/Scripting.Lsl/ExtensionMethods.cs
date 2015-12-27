@@ -1,8 +1,10 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
 using System;
@@ -154,6 +156,81 @@ namespace SilverSim.Scripting.Lsl
             m_InternalAnimations.Add("yes_head", "15dd911d-be82-2856-26db-27659b142875");
             m_InternalAnimations.Add("yes_happy", "b8c8b2a3-9008-1771-3bfc-90924955ab2d");
             m_InternalAnimations.Add("yoga_float", "42ecd00b-9947-a97c-400a-bbc9174c7aeb");
+        }
+
+        const int AGENT = 1;
+        const int ACTIVE = 2;
+        const int PASSIVE = 4;
+        const int SCRIPTED = 8;
+        const int NPC = 0x20;
+
+        public static bool FillDetectInfoFromObject(this DetectInfo detectInfo, IObject obj)
+        {
+            ObjectGroup grp;
+            ObjectPart part;
+            IAgent agent;
+
+            agent = obj as IAgent;
+            if (null != agent)
+            {
+                detectInfo.ObjType =
+                    (agent.IsNpc ? NPC : AGENT) |
+                    (agent.SittingOnObject != null ?
+                    0 :
+                    ACTIVE);
+                detectInfo.Name = agent.Name;
+                detectInfo.Key = agent.ID;
+                detectInfo.Position = agent.GlobalPosition;
+                detectInfo.Rotation = agent.GlobalRotation;
+                detectInfo.Group = agent.Group;
+                detectInfo.Velocity = agent.Velocity;
+                return true;
+            }
+
+            grp = obj as ObjectGroup;
+            if (null != grp)
+            {
+                detectInfo.ObjType = (obj.PhysicsActor.IsPhysicsActive) ?
+                    ACTIVE :
+                    PASSIVE;
+
+                foreach (ObjectPart p in grp.Values)
+                {
+                    if (p.IsScripted)
+                    {
+                        detectInfo.ObjType |= SCRIPTED;
+                        break;
+                    }
+                }
+                detectInfo.Name = agent.Name;
+                detectInfo.Key = agent.ID;
+                detectInfo.Position = agent.GlobalPosition;
+                detectInfo.Rotation = agent.GlobalRotation;
+                detectInfo.Group = agent.Group;
+                detectInfo.Velocity = agent.Velocity;
+                return true;
+            }
+
+            part = obj as ObjectPart;
+            if (null != part)
+            {
+                detectInfo.ObjType = (part.ObjectGroup.PhysicsActor.IsPhysicsActive) ?
+                    ACTIVE :
+                    PASSIVE;
+
+                if (part.Inventory.CountScripts != 0)
+                {
+                    detectInfo.ObjType |= SCRIPTED;
+                }
+                detectInfo.Name = agent.Name;
+                detectInfo.Key = agent.ID;
+                detectInfo.Position = agent.GlobalPosition;
+                detectInfo.Rotation = agent.GlobalRotation;
+                detectInfo.Group = agent.Group;
+                detectInfo.Velocity = agent.Velocity;
+                return true;
+            }
+            return false;
         }
 
         public static int ToLSLBoolean(this bool v)

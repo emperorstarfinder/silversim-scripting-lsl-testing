@@ -119,13 +119,13 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 {
                     try
                     {
-                        SilverSim.Viewer.Messages.Script.ScriptTeleportRequest m = new Viewer.Messages.Script.ScriptTeleportRequest();
+                        Viewer.Messages.Script.ScriptTeleportRequest m = new Viewer.Messages.Script.ScriptTeleportRequest();
                         m.ObjectName = thisGroup.Name;
                         m.SimName = simname;
                         m.SimPosition = pos;
                         m.LookAt = look_at;
 
-                        thisScene.Agents[detinfo.Object.ID].SendMessageAlways(m, thisScene.ID);
+                        thisScene.Agents[detinfo.Key].SendMessageAlways(m, thisScene.ID);
                     }
                     catch
                     {

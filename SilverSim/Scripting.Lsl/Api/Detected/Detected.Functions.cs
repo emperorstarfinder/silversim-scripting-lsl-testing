@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].Object.Group.Equals(instance.Part.Group).ToLSLBoolean();
+                    return script.m_Detected[number].Group.Equals(instance.Part.Group).ToLSLBoolean();
                 }
                 return 0;
             }
@@ -49,7 +49,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].Object.ID;
+                    return script.m_Detected[number].Key;
                 }
                 return UUID.Zero;
             }
@@ -77,7 +77,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].Object.Name;
+                    return script.m_Detected[number].Name;
                 }
                 return string.Empty;
             }
@@ -91,7 +91,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].Object.Owner.ID;
+                    return script.m_Detected[number].Owner.ID;
                 }
                 return UUID.Zero;
             }
@@ -105,7 +105,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].Object.GlobalPosition;
+                    return script.m_Detected[number].Position;
                 }
                 return Vector3.Zero;
             }
@@ -119,7 +119,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].Object.GlobalRotation;
+                    return script.m_Detected[number].Rotation;
                 }
                 return Quaternion.Identity;
             }
@@ -231,57 +231,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    IObject obj = script.m_Detected[number].Object;
-
-                    ObjectGroup grp;
-                    ObjectPart part;
-                    IAgent agent;
-
-                    agent = obj as IAgent;
-                    if(null != agent)
-                    {
-                        return
-                            (agent.IsNpc ? NPC : AGENT) |
-                            (agent.SittingOnObject != null ?
-                            0 :
-                            ACTIVE);
-                    }
-
-                    grp = obj as ObjectGroup;
-                    if(null != grp)
-                    {
-                        int flags;
-                        
-                        flags = (obj.PhysicsActor.IsPhysicsActive) ?
-                            ACTIVE :
-                            PASSIVE;
-
-                        foreach(ObjectPart p in grp.Values)
-                        {
-                            if(p.IsScripted)
-                            {
-                                flags |= SCRIPTED;
-                                break;
-                            }
-                        }
-                        return flags;
-                    }
-
-                    part = obj as ObjectPart;
-                    if (null != part)
-                    {
-                        int flags;
-
-                        flags = (part.ObjectGroup.PhysicsActor.IsPhysicsActive) ?
-                            ACTIVE :
-                            PASSIVE;
-
-                        if(part.Inventory.CountScripts != 0)
-                        {
-                            flags |= SCRIPTED;
-                        }
-                        return flags;
-                    }
+                    return script.m_Detected[number].ObjType;
                 }
                 return 0;
             }
@@ -295,7 +245,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].Object.Velocity;
+                    return script.m_Detected[number].Velocity;
                 }
                 return Vector3.Zero;
             }
