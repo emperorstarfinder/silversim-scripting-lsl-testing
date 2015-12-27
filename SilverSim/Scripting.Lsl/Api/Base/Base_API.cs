@@ -4,11 +4,13 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
     [ScriptApiName("Base")]
     [LSLImplementation]
+    [Description("LSL/OSSL Base API")]
     public partial class BaseApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL, "attach")]

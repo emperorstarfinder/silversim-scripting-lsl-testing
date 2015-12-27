@@ -8,12 +8,14 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Controls
 {
     [ScriptApiName("Controls")]
     [LSLImplementation]
-    public partial class ControlsApi : IScriptApi, IPlugin
+    [Description("LSL/OSSL Controls API")]
+    public class ControlsApi : IScriptApi, IPlugin
     {
         public ControlsApi()
         {

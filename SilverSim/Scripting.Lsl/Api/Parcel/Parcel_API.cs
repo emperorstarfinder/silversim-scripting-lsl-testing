@@ -3,11 +3,13 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
     [ScriptApiName("Parcel")]
     [LSLImplementation]
+    [Description("LSL/OSSL Parcel API")]
     public partial class ParcelApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]

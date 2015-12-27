@@ -7,11 +7,13 @@ using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Physics
 {
     [ScriptApiName("Physics")]
     [LSLImplementation]
+    [Description("LSL/OSSL Physics API")]
     public class PhysicsApi : IScriptApi, IPlugin
     {
         public PhysicsApi()

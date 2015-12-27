@@ -9,11 +9,13 @@ using SilverSim.ServiceInterfaces.Economy;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
+using System.ComponentModel;
 using System.Runtime.Remoting.Messaging;
 
 namespace SilverSim.Scripting.Lsl.Api.Money
 {
     [ScriptApiName("Money")]
+    [Description("LSL Money API")]
     [LSLImplementation]
     public class MoneyApi : IScriptApi, IPlugin
     {

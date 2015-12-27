@@ -4,11 +4,13 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Detected
 {
     [ScriptApiName("Detected")]
     [LSLImplementation]
+    [Description("LSL/OSSL Detected API for touch/sensor/collision events")]
     public partial class DetectedApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]

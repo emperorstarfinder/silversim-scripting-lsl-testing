@@ -4,11 +4,13 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Http
 {
     [ScriptApiName("HTTP")]
     [LSLImplementation]
+    [Description("LSL/OSSL HTTP API")]
     public partial class HttpApi : IScriptApi, IPlugin
     {
         LSLHTTP m_HTTPHandler;

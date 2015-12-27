@@ -9,6 +9,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using System.Threading;
 using System.Web;
@@ -16,6 +17,7 @@ using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl
 {
+    [Description("LSL HTTP Client Support")]
     public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown
     {
         public class LSLHttpRequest

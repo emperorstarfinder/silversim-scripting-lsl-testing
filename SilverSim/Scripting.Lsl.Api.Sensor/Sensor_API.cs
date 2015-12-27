@@ -12,6 +12,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using ThreadedClasses;
 
@@ -19,6 +20,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 {
     [ScriptApiName("Sensor")]
     [LSLImplementation]
+    [Description("LSL Sensor API")]
     public class SensorApi : IScriptApi, IPlugin, IPluginShutdown
     {
         /* excerpt from http://wiki.secondlife.com/wiki/LlSensor

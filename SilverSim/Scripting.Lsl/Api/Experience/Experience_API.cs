@@ -5,11 +5,13 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Experience
 {
     [ScriptApiName("Experience")]
     [LSLImplementation]
+    [Description("LSL Experience API")]
     public partial class ExperienceApi : IScriptApi, IPlugin
     {
         public ExperienceApi()

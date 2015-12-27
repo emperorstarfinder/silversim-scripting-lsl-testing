@@ -14,11 +14,13 @@ using SilverSim.Types.Groups;
 using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Teleport
 {
     [ScriptApiName("Teleport")]
     [LSLImplementation]
+    [Description("LSL/OSSL Teleport API")]
     public class TeleportApi : IScriptApi, IPlugin
     {
         public TeleportApi()

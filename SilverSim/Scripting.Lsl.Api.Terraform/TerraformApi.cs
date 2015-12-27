@@ -8,11 +8,13 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Viewer.Messages.Land;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Terraform
 {
     [ScriptApiName("Terraform")]
     [LSLImplementation]
+    [Description("OSSL/LSL Terraforming API")]
     public class TerraformApi : IScriptApi, IPlugin
     {
 

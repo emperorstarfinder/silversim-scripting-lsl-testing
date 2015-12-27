@@ -6,16 +6,17 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.ComponentModel;
 using EnvironmentController = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController;
-using WLVector4 = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WLVector4;
 using WindlightSkyData = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WindlightSkyData;
 using WindlightWaterData = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WindlightWaterData;
-using SilverSim.Scene.Types.Object;
+using WLVector4 = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WLVector4;
 
 namespace SilverSim.Scripting.Lsl.Api.LightShare
 {
     [ScriptApiName("LightShare")]
     [LSLImplementation]
+    [Description("OSSL LightShare API")]
     public class LightShareApi : IScriptApi, IPlugin
     {
         public LightShareApi()

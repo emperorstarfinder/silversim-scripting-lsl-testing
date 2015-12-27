@@ -8,12 +8,14 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.WindLight;
 using SilverSim.Types;
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.WindLight
 {
     [ScriptApiName("WindLight")]
     [LSLImplementation]
+    [Description("ASSL Agents API")]
     public class WindLightApi : IScriptApi, IPlugin
     {
         public WindLightApi()

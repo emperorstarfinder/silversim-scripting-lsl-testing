@@ -9,11 +9,13 @@ using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Animation
 {
     [ScriptApiName("Animation")]
     [LSLImplementation]
+    [Description("LSL/OSSL Animation API")]
     public partial class AnimationApi : IScriptApi, IPlugin
     {
         public AnimationApi()

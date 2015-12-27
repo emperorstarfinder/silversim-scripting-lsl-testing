@@ -5,11 +5,13 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Npc
 {
     [ScriptApiName("Npc")]
     [LSLImplementation]
+    [Description("OSSL Npc API")]
     public class NpcApi : IScriptApi, IPlugin
     {
         public NpcApi()

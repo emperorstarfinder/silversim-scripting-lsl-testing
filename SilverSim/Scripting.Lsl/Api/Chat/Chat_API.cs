@@ -7,11 +7,13 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Chat
 {
     [LSLImplementation]
     [ScriptApiName("Chat")]
+    [Description("LSL/OSSL Chat API")]
     public partial class ChatApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]

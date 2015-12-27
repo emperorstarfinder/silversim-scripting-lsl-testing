@@ -12,6 +12,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
@@ -21,6 +22,7 @@ using ThreadedClasses;
 namespace SilverSim.Scripting.Lsl
 {
     [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
+    [Description("LSL HTTP Server Support")]
     public sealed class LSLHTTP : IPlugin, IPluginShutdown
     {
         BaseHttpServer m_HttpServer;

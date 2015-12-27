@@ -2,15 +2,14 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Types;
-using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Region
 {
     [ScriptApiName("Region")]
     [LSLImplementation]
+    [Description("LSL/OSSL Region API")]
     public partial class RegionApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]

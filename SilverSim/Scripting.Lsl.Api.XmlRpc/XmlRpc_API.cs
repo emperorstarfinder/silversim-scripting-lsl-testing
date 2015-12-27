@@ -4,11 +4,13 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
     [ScriptApiName("XMLRPC")]
     [LSLImplementation]
+    [Description("LSL XMLRPC API")]
     public class XmlRpcApi : IScriptApi, IPlugin
     {
 

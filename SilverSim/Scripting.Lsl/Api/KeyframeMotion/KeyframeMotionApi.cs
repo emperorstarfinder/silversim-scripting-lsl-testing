@@ -5,9 +5,13 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.KeyframeMotion
 {
+    [ScriptApiName("Keyframe")]
+    [LSLImplementation]
+    [Description("LSL KeyframeMotion API")]
     public class KeyframeMotionApi : IScriptApi, IPlugin
     {
         public KeyframeMotionApi()

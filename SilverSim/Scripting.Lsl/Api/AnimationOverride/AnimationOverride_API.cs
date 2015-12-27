@@ -9,11 +9,13 @@ using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 {
     [ScriptApiName("AnimationOverride")]
     [LSLImplementation]
+    [Description("LSL/OSSL AnimationOverride API")]
     public partial class AnimationOverrideApi : IScriptApi, IPlugin
     {
         static readonly Dictionary<string, string> m_DefaultAnimationTranslate = new Dictionary<string, string>();

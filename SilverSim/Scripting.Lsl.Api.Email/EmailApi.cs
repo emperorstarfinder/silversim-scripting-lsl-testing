@@ -4,11 +4,13 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Email
 {
     [ScriptApiName("Email")]
     [LSLImplementation]
+    [Description("LSL Email API")]
     public class EmailApi : IScriptApi, IPlugin
     {
         public EmailApi()

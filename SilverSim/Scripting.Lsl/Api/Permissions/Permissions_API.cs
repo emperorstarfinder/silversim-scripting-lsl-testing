@@ -7,11 +7,13 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using SilverSim.Types.Script;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Permissions
 {
     [ScriptApiName("Permissions")]
     [LSLImplementation]
+    [Description("LSL Permissions API")]
     public partial class PermissionsApi : IScriptApi, IPlugin
     {
         public PermissionsApi()

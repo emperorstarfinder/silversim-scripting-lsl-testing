@@ -5,6 +5,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -14,6 +15,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 {
     [ScriptApiName("JSON")]
     [LSLImplementation]
+    [Description("LSL/OSSL JSON API")]
     public class JsonApi : IScriptApi, IPlugin
     { 
         /* 

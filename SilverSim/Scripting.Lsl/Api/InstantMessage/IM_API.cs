@@ -3,11 +3,13 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.IM
 {
     [ScriptApiName("InstantMessage")]
     [LSLImplementation]
+    [Description("LSL/OSSL InstantMessage API")]
     public partial class InstantMessageApi : IScriptApi, IPlugin
     {
         public InstantMessageApi()

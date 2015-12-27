@@ -7,11 +7,13 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Inventory;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
     [ScriptApiName("Inventory")]
     [LSLImplementation]
+    [Description("LSL/OSSL Inventory API")]
     public class InventoryApi : IScriptApi, IPlugin
     {
         public InventoryApi()

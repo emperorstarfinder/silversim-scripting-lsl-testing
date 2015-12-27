@@ -15,11 +15,13 @@ using SilverSim.Types.Inventory;
 using SilverSim.Types.Parcel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
     [ScriptApiName("Agents")]
     [LSLImplementation]
+    [Description("LSL/OSSL Agents API")]
     public class Agents_API : IScriptApi, IPlugin
     {
         public Agents_API()

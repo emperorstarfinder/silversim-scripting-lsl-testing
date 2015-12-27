@@ -5,11 +5,13 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     [ScriptApiName("Primitive")]
     [LSLImplementation]
+    [Description("LSL/OSSL Primitive API")]
     public partial class PrimitiveApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]

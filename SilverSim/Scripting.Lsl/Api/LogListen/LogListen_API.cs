@@ -4,11 +4,13 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.LogListen
 {
     [ScriptApiName("LogListen")]
     [LSLImplementation]
+    [Description("ASSL LogListen API")]
     public class LogListenApi : IScriptApi, IPlugin
     {
         public LogListenApi()
