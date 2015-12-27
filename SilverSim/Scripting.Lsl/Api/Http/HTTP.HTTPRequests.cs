@@ -208,7 +208,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     authMatch.Groups.Count == 5)
                 {
                     string authData = string.Format("{0}:{1}", authMatch.Groups[2].ToString(), authMatch.Groups[3].ToString());
-                    byte[] authDataBinary = authData.ToUTF8String();
+                    byte[] authDataBinary = authData.ToUTF8Bytes();
                     req.Headers.Add("Authorization", string.Format("Basic {0}", Convert.ToBase64String(authDataBinary)));
                 }
 

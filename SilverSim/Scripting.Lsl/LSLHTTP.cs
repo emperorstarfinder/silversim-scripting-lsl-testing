@@ -256,7 +256,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 byte[] buf = new byte[length];
                 data.Request.Body.Read(buf, 0, length);
-                body = buf.FromUTF8String();
+                body = buf.FromUTF8Bytes();
             }
 
             try
@@ -320,7 +320,7 @@ namespace SilverSim.Scripting.Lsl
             HttpRequestData reqdata;
             if(m_HttpRequests.Remove(requestID, out reqdata))
             {
-                byte[] b = body.ToUTF8String();
+                byte[] b = body.ToUTF8Bytes();
                 HttpStatusCode httpStatus = (HttpStatusCode)status;
                 reqdata.Request.SetConnectionClose();
                 using (HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType))

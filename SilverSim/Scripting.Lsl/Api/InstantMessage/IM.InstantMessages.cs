@@ -37,7 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                     (int)Math.Floor(im.Position.X),
                     (int)Math.Floor(im.Position.Y),
                     (int)Math.Floor(im.Position.Z));
-                im.BinaryBucket = binBuck.ToUTF8String();
+                im.BinaryBucket = binBuck.ToUTF8Bytes();
                 im.OnResult = delegate(GridInstantMessage imret, bool success) { };
 
                 imservice.Send(im);
