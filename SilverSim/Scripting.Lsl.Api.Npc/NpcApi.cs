@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
@@ -173,6 +174,14 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         [APILevel(APIFlags.OSSL, "osIsNpc")]
         public int IsNpc(ScriptInstance instance, LSLKey npc)
         {
+            lock(instance)
+            {
+                IAgent agent;
+                if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(npc.AsUUID, out agent))
+                {
+                    return agent.IsNpc.ToLSLBoolean();
+                }
+            }
             return 0;
         }
 
