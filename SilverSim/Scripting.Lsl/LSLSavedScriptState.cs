@@ -2,7 +2,9 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
@@ -18,6 +20,7 @@ namespace SilverSim.Scripting.Lsl
         {
             public Dictionary<string, object> Variables = new Dictionary<string, object>();
             public List<object> PluginData = new List<object>();
+            public List<EventParams> EventData = new List<EventParams>();
             public bool IsRunning;
             public string CurrentState = "default";
 
@@ -272,6 +275,299 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            public class EventParams
+            {
+                public string EventName = string.Empty;
+                public List<object> Params = new List<object>();
+                public List<DetectInfo> Detected = new List<DetectInfo>();
+
+                public EventParams()
+                {
+
+                }
+            }
+
+            static EventParams EventFromXml(XmlTextReader reader)
+            {
+                if(reader.IsEmptyElement)
+                {
+                    throw new InvalidObjectXmlException();
+                }
+                string eventName = string.Empty;
+                if (reader.MoveToFirstAttribute())
+                {
+                    do
+                    {
+                        switch (reader.Name)
+                        {
+                            case "event":
+                                eventName = reader.Value;
+                                break;
+
+                            default:
+                                break;
+                        }
+                    } while (reader.MoveToNextAttribute());
+                }
+
+                if (eventName.Length == 0)
+                {
+                    throw new InvalidObjectXmlException();
+                }
+                EventParams ev = new EventParams();
+
+                for (;;)
+                {
+                    if (!reader.Read())
+                    {
+                        throw new InvalidObjectXmlException();
+                    }
+
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            switch (reader.Name)
+                            {
+                                case "Params":
+                                    if (reader.IsEmptyElement)
+                                    {
+                                        throw new InvalidObjectXmlException();
+                                    }
+                                    ev.Params = ParamsFromXml(reader);
+                                    break;
+
+                                case "Detected":
+                                    if (reader.IsEmptyElement)
+                                    {
+                                        break;
+                                    }
+                                    ev.Detected = DetectedFromXml(reader);
+                                    break;
+
+                                default:
+                                    reader.ReadToEndElement();
+                                    break;
+                            }
+                            break;
+
+                        case XmlNodeType.EndElement:
+                            if (reader.Name != "Item")
+                            {
+                                throw new InvalidObjectXmlException();
+                            }
+                            return ev;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            static DetectInfo DetectedObjectFromXml(XmlTextReader reader)
+            {
+                DetectInfo di = new DetectInfo();
+                if (reader.MoveToFirstAttribute())
+                {
+                    do
+                    {
+                        switch (reader.Name)
+                        {
+                            case "pos":
+                                di.GrabOffset = Vector3.Parse(reader.Value);
+                                break;
+
+                            case "linkNum":
+                                di.LinkNumber = int.Parse(reader.Value);
+                                break;
+
+                            case "group":
+                                di.Group = new UGI(reader.Value);
+                                break;
+
+                            case "name":
+                                di.Name = reader.Value;
+                                break;
+
+                            case "owner":
+                                di.Owner = new UUI(reader.Value);
+                                break;
+
+                            case "position":
+                                di.Position = Vector3.Parse(reader.Value);
+                                break;
+
+                            case "rotation":
+                                di.Rotation = Quaternion.Parse(reader.Value);
+                                break;
+
+                            case "type":
+                                di.ObjType = int.Parse(reader.Value);
+                                break;
+
+                            case "velocity":
+                                di.Velocity = Vector3.Parse(reader.Value);
+                                break;
+
+                                /* for whatever reason, OpenSim does not serialize the following */
+                            case "touchst":
+                                di.TouchST = Vector3.Parse(reader.Value);
+                                break;
+
+                            case "touchuv":
+                                di.TouchUV = Vector3.Parse(reader.Value);
+                                break;
+
+                            case "touchbinormal":
+                                di.TouchBinormal = Vector3.Parse(reader.Value);
+                                break;
+
+                            case "touchpos":
+                                di.TouchPosition = Vector3.Parse(reader.Value);
+                                break;
+
+                            case "touchface":
+                                di.TouchFace = int.Parse(reader.Value);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    } while (reader.MoveToNextAttribute());
+                }
+
+                di.Key = UUID.Parse(reader.ReadElementValueAsString("Object"));
+                return di;
+            }
+
+            static List<DetectInfo> DetectedFromXml(XmlTextReader reader)
+            {
+                List<DetectInfo> res = new List<DetectInfo>();
+                for (;;)
+                {
+                    if (!reader.Read())
+                    {
+                        throw new InvalidObjectXmlException();
+                    }
+
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (reader.IsEmptyElement)
+                            {
+                                break;
+                            }
+
+                            switch (reader.Name)
+                            {
+                                case "Object":
+                                    res.Add(DetectedObjectFromXml(reader));
+                                    break;
+
+                                default:
+                                    reader.Skip();
+                                    break;
+                            }
+                            break;
+
+                        case XmlNodeType.EndElement:
+                            if (reader.Name != "Detected")
+                            {
+                                throw new InvalidObjectXmlException();
+                            }
+                            return res;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            static List<object> ParamsFromXml(XmlTextReader reader)
+            {
+                List<object> res = new List<object>();
+                for (;;)
+                {
+                    if (!reader.Read())
+                    {
+                        throw new InvalidObjectXmlException();
+                    }
+
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (reader.IsEmptyElement)
+                            {
+                                break;
+                            }
+
+                            switch (reader.Name)
+                            {
+                                case "Param":
+                                    res.Add(reader.ReadTypedValue());
+                                    break;
+
+                                default:
+                                    reader.Skip();
+                                    break;
+                            }
+                            break;
+
+                        case XmlNodeType.EndElement:
+                            if (reader.Name != "Params")
+                            {
+                                throw new InvalidObjectXmlException();
+                            }
+                            return res;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            static List<EventParams> EventsFromXml(XmlTextReader reader)
+            {
+                List<EventParams> events = new List<EventParams>();
+                for (;;)
+                {
+                    if (!reader.Read())
+                    {
+                        throw new InvalidObjectXmlException();
+                    }
+
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (reader.IsEmptyElement)
+                            {
+                                break;
+                            }
+
+                            switch (reader.Name)
+                            {
+                                case "Item":
+                                    events.Add(EventFromXml(reader));
+                                    break;
+
+                                default:
+                                    reader.ReadToEndElement();
+                                    break;
+                            }
+                            break;
+
+                        case XmlNodeType.EndElement:
+                            if (reader.Name != "Queue")
+                            {
+                                throw new InvalidObjectXmlException();
+                            }
+                            return events;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
             static List<object> PluginsFromXml(XmlTextReader reader)
             {
                 List<object> res = new List<object>();
@@ -348,8 +644,7 @@ namespace SilverSim.Scripting.Lsl
                                     break;
 
                                 case "Queue":
-#warning TODO: Implement queue deserialization for LSL
-                                    reader.ReadToEndElement();
+                                    state.EventData = EventsFromXml(reader);
                                     break;
 
                                 case "Plugins":
