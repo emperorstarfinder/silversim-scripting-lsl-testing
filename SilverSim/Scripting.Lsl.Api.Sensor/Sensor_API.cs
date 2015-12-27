@@ -12,10 +12,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading;
-using System.Timers;
-using System.Xml;
 using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl.Api.Sensor
@@ -270,8 +267,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
             void CleanRepeatSensor(SensorInfo sensor)
             {
-                List<UUID> removeList = new List<UUID>();
-
                 /* it is a lot faster to re-check the detect list than going through the big object list.
                  * The nice improvement of that is that our repeat sensor does not need an initial scan after every interval.
                  */
