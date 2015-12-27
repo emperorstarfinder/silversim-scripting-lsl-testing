@@ -481,6 +481,9 @@ namespace SilverSim.Scripting.Lsl
                 case "moving_end":
                     res = new MovingEndEvent();
                     return true;
+
+                default:
+                    break;
             }
 
             res = null;
