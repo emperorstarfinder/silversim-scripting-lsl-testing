@@ -171,6 +171,322 @@ namespace SilverSim.Scripting.Lsl
             m_Part.ObjectGroup.OnPositionChange += OnGroupPositionUpdate;
         }
 
+        static bool TryTranslateEventParams(SavedScriptState.EventParams ep, out IScriptEvent res)
+        {
+            switch(ep.EventName)
+            {
+                case "object_rez":
+                    if(ep.Params.Count >= 1)
+                    {
+                        ObjectRezEvent ev = new ObjectRezEvent();
+                        ev.ObjectID = new UUID(ep.Params[0].ToString());
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "email":
+                    if(ep.Params.Count >= 5)
+                    {
+                        EmailEvent ev = new EmailEvent();
+                        ev.Time = ep.Params[0].ToString();
+                        ev.Address = ep.Params[1].ToString();
+                        ev.Subject = ep.Params[2].ToString();
+                        ev.Message = ep.Params[3].ToString();
+                        ev.NumberLeft = (int)ep.Params[4];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "run_time_permissions":
+                    if(ep.Params.Count >= 1)
+                    {
+                        RuntimePermissionsEvent ev = new RuntimePermissionsEvent();
+                        ev.Permissions = (ScriptPermissions)(int)ep.Params[0];
+                        if(ep.Params.Count > 1)
+                        {
+                            ev.PermissionsKey = new UUI(ep.Params[1].ToString());
+                        }
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "link_message":
+                    if(ep.Params.Count >= 4)
+                    {
+                        LinkMessageEvent ev = new LinkMessageEvent();
+                        ev.SenderNumber = (int)ep.Params[0];
+                        ev.Number = (int)ep.Params[1];
+                        ev.Data = ep.Params[2].ToString();
+                        ev.Id = ep.Params[3].ToString();
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "remote_data":
+                    if(ep.Params.Count >= 6)
+                    {
+                        RemoteDataEvent ev = new RemoteDataEvent();
+                        ev.Type = (int)ep.Params[0];
+                        ev.Channel = new UUID(ep.Params[1].ToString());
+                        ev.MessageID = new UUID(ep.Params[2].ToString());
+                        ev.Sender = ep.Params[3].ToString();
+                        ev.IData = (int)ep.Params[4];
+                        ev.SData = ep.Params[5].ToString();
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "transaction_result":
+                    if(ep.Params.Count >= 3)
+                    {
+                        TransactionResultEvent ev = new TransactionResultEvent();
+                        ev.TransactionID = ep.Params[0].ToString();
+                        ev.Success = (int)ep.Params[1] != 0;
+                        ev.ReplyData = ep.Params[2].ToString();
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "dataserver":
+                    if(ep.Params.Count >= 2)
+                    {
+                        DataserverEvent ev = new DataserverEvent();
+                        ev.QueryID = new UUID(ep.Params[0].ToString());
+                        ev.Data = ep.Params[1].ToString();
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "http_response":
+                    if(ep.Params.Count >= 4)
+                    {
+                        HttpResponseEvent ev = new HttpResponseEvent();
+                        ev.RequestID = new UUID(ep.Params[0].ToString());
+                        ev.Status = (int)ep.Params[1];
+                        ev.Metadata = (AnArray)ep.Params[2];
+                        ev.Body = ep.Params[3].ToString();
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "listen":
+                    if(ep.Params.Count >= 4)
+                    {
+                        ListenEvent ev = new ListenEvent();
+                        ev.Channel = (int)ep.Params[0];
+                        ev.Name = ep.Params[1].ToString();
+                        ev.ID = new UUID(ep.Params[2].ToString());
+                        ev.Message = ep.Params[3].ToString();
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "no_sensor":
+                    res = new NoSensorEvent();
+                    return true;
+
+                case "sensor":
+                    {
+                        SensorEvent ev = new SensorEvent();
+                        ev.Data = ep.Detected;
+                        res = ev;
+                        return true;
+                    }
+
+                case "timer":
+                    res = new TimerEvent();
+                    return true;
+
+                case "on_rez":
+                    if(ep.Params.Count >= 1)
+                    {
+                        OnRezEvent ev = new OnRezEvent();
+                        ev.StartParam = (int)ep.Params[0];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "attach":
+                    if(ep.Params.Count >= 1)
+                    {
+                        AttachEvent ev = new AttachEvent();
+                        ev.ObjectID = new UUID(ep.Params[0].ToString());
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "changed":
+                    if(ep.Params.Count >= 1)
+                    {
+                        ChangedEvent ev = new ChangedEvent();
+                        ev.Flags = (ChangedEvent.ChangedFlags)(int)ep.Params[0];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "touch_start":
+                    {
+                        TouchEvent ev = new TouchEvent();
+                        ev.Type = TouchEvent.TouchType.Start;
+                        ev.Detected = ep.Detected;
+                        res = ev;
+                        return true;
+                    }
+
+                case "touch":
+                    {
+                        TouchEvent ev = new TouchEvent();
+                        ev.Type = TouchEvent.TouchType.Continuous;
+                        ev.Detected = ep.Detected;
+                        res = ev;
+                        return true;
+                    }
+
+                case "touch_end":
+                    {
+                        TouchEvent ev = new TouchEvent();
+                        ev.Type = TouchEvent.TouchType.End;
+                        ev.Detected = ep.Detected;
+                        res = ev;
+                        return true;
+                    }
+
+                case "money":
+                    if(ep.Params.Count >= 2)
+                    {
+                        MoneyEvent ev = new MoneyEvent();
+                        ev.ID = new UUID(ep.Params[0].ToString());
+                        ev.Amount = (int)ep.Params[1];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "collision_start":
+                    {
+                        CollisionEvent ev = new CollisionEvent();
+                        ev.Type = CollisionEvent.CollisionType.Start;
+                        ev.Detected = ep.Detected;
+                        res = ev;
+                        return true;
+                    }
+
+                case "collision":
+                    {
+                        CollisionEvent ev = new CollisionEvent();
+                        ev.Type = CollisionEvent.CollisionType.Continuous;
+                        ev.Detected = ep.Detected;
+                        res = ev;
+                        return true;
+                    }
+
+                case "collision_end":
+                    {
+                        CollisionEvent ev = new CollisionEvent();
+                        ev.Type = CollisionEvent.CollisionType.End;
+                        ev.Detected = ep.Detected;
+                        res = ev;
+                        return true;
+                    }
+
+                case "land_collision_start":
+                    if(ep.Params.Count >= 1)
+                    {
+                        LandCollisionEvent ev = new LandCollisionEvent();
+                        ev.Type = LandCollisionEvent.CollisionType.Start;
+                        ev.Position = (Vector3)ep.Params[0];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "land_collision":
+                    if (ep.Params.Count >= 1)
+                    {
+                        LandCollisionEvent ev = new LandCollisionEvent();
+                        ev.Type = LandCollisionEvent.CollisionType.Continuous;
+                        ev.Position = (Vector3)ep.Params[0];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "land_collision_end":
+                    if (ep.Params.Count >= 1)
+                    {
+                        LandCollisionEvent ev = new LandCollisionEvent();
+                        ev.Type = LandCollisionEvent.CollisionType.End;
+                        ev.Position = (Vector3)ep.Params[0];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "control":
+                    if (ep.Params.Count >= 3)
+                    {
+                        ControlEvent ev = new ControlEvent();
+                        ev.AgentID = new UUID(ep.Params[0].ToString());
+                        ev.Level = (int)ep.Params[1];
+                        ev.Flags = (int)ep.Params[2];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "at_target":
+                    if(ep.Params.Count >= 3)
+                    {
+                        AtTargetEvent ev = new AtTargetEvent();
+                        ev.Handle = (int)ep.Params[0];
+                        ev.TargetPosition = (Vector3)ep.Params[1];
+                        ev.OurPosition = (Vector3)ep.Params[2];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "not_at_target":
+                    res = new NotAtTargetEvent();
+                    return true;
+
+                case "at_rot_target":
+                    if(ep.Params.Count >= 3)
+                    {
+                        AtRotTargetEvent ev = new AtRotTargetEvent();
+                        ev.Handle = (int)ep.Params[0];
+                        ev.TargetRotation = (Quaternion)ep.Params[1];
+                        ev.OurRotation = (Quaternion)ep.Params[2];
+                        res = ev;
+                        return true;
+                    }
+                    break;
+
+                case "moving_start":
+                    res = new MovingStartEvent();
+                    return true;
+
+                case "moving_end":
+                    res = new MovingEndEvent();
+                    return true;
+            }
+
+            res = null;
+            return false;
+        }
+
         public void LoadScriptState(SavedScriptState state)
         {
             /* we have to integrate the loaded script state */
@@ -199,7 +515,15 @@ namespace SilverSim.Scripting.Lsl
                 m_CurrentStateMethods.Clear();
             }
 
-#warning Implement queue deserialization
+            /* queue deserialization */
+            foreach(SavedScriptState.EventParams ep in state.EventData)
+            {
+                IScriptEvent ev;
+                if(TryTranslateEventParams(ep, out ev))
+                {
+                    m_Events.Enqueue(ev);
+                }
+            }
 
             /* initialize plugin data */
             int pluginpos = 0;
