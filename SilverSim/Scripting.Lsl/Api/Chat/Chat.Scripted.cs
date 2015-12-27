@@ -291,6 +291,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                                 delegate () { return instance.Part.ID; },
                                 delegate () { return instance.Part.GlobalPosition; },
                                 script.OnListen);
+                        l.IsActive = isActive;
 
                         script.m_Listeners.Add(handle, l);
                     }
