@@ -184,7 +184,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             using (MD5 md5 = MD5.Create())
             {
-                byte[] b = md5.ComputeHash(UTF8NoBOM.GetBytes(string.Format("{0}:{1}", src, nonce.ToString())));
+                byte[] b = md5.ComputeHash(string.Format("{0}:{1}", src, nonce.ToString()).ToUTF8String());
                 string s = string.Empty;
                 for(int i = 0; i < b.Length; ++i)
                 {
@@ -199,7 +199,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             using (SHA1 sha1 = SHA1.Create())
             {
-                byte[] b = sha1.ComputeHash(UTF8NoBOM.GetBytes(src));
+                byte[] b = sha1.ComputeHash(src.ToUTF8String());
                 string s = string.Empty;
                 for (int i = 0; i < b.Length; ++i)
                 {
@@ -284,8 +284,5 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
         }
-
-
-        static readonly UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
     }
 }

@@ -45,7 +45,6 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         };
 
         static readonly Regex m_AuthRegex = new Regex(@"^(https?:\/\/)(\w+):(\w+)@(.*)$");
-        static readonly Encoding UTF8NoBOM = new UTF8Encoding(false);
 
         [APILevel(APIFlags.LSL, "llHTTPRequest")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
@@ -209,7 +208,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     authMatch.Groups.Count == 5)
                 {
                     string authData = string.Format("{0}:{1}", authMatch.Groups[2].ToString(), authMatch.Groups[3].ToString());
-                    byte[] authDataBinary = UTF8NoBOM.GetBytes(authData);
+                    byte[] authDataBinary = authData.ToUTF8String();
                     req.Headers.Add("Authorization", string.Format("Basic {0}", Convert.ToBase64String(authDataBinary)));
                 }
 

@@ -173,7 +173,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         [APILevel(APIFlags.LSL, "llJsonGetValue")]
         public string JsonGetValue(ScriptInstance instance, string json, AnArray specifiers)
         {
-            using (MemoryStream ms = new MemoryStream(UTF8NoBOM.GetBytes(json)))
+            using (MemoryStream ms = new MemoryStream(json.ToUTF8String()))
             {
                 IValue val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
                 if(val == null)
@@ -200,7 +200,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         [APILevel(APIFlags.LSL, "llJsonValueType")]
         public string JsonValueType(ScriptInstance instance, string json, AnArray specifiers)
         {
-            using (MemoryStream ms = new MemoryStream(UTF8NoBOM.GetBytes(json)))
+            using (MemoryStream ms = new MemoryStream(json.ToUTF8String()))
             {
                 IValue val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
 
@@ -269,7 +269,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         {
             IValue jsonData;
             AnArray res = new AnArray();
-            using (MemoryStream ms = new MemoryStream(UTF8NoBOM.GetBytes(src)))
+            using (MemoryStream ms = new MemoryStream(src.ToUTF8String()))
             {
                 jsonData = JsonSerializer.Deserialize(ms);
             }
@@ -416,7 +416,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             LevelAssignment jsonLevel = null;
             IValue jsonLevelData = null;
 
-            using (MemoryStream ms = new MemoryStream(UTF8NoBOM.GetBytes(json)))
+            using (MemoryStream ms = new MemoryStream(json.ToUTF8String()))
             {
                 jsonData = JsonSerializer.Deserialize(ms);
             }
@@ -499,7 +499,5 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             }
             return JsonSerializer.Serialize(jsonData);
         }
-
-        static readonly UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
     }
 }

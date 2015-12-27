@@ -5,9 +5,9 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.IM;
+using SilverSim.Types;
 using SilverSim.Types.IM;
 using System;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.IM
 {
@@ -37,13 +37,11 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                     (int)Math.Floor(im.Position.X),
                     (int)Math.Floor(im.Position.Y),
                     (int)Math.Floor(im.Position.Z));
-                im.BinaryBucket = UTF8NoBOM.GetBytes(binBuck);
+                im.BinaryBucket = binBuck.ToUTF8String();
                 im.OnResult = delegate(GridInstantMessage imret, bool success) { };
 
                 imservice.Send(im);
             }
         }
-
-        static readonly UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
     }
 }

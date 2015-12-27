@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Timers;
 using ThreadedClasses;
 
@@ -257,7 +256,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 byte[] buf = new byte[length];
                 data.Request.Body.Read(buf, 0, length);
-                body = UTF8NoBOM.GetString(buf);
+                body = buf.FromUTF8String();
             }
 
             try
@@ -321,7 +320,7 @@ namespace SilverSim.Scripting.Lsl
             HttpRequestData reqdata;
             if(m_HttpRequests.Remove(requestID, out reqdata))
             {
-                byte[] b = UTF8NoBOM.GetBytes(body);
+                byte[] b = body.ToUTF8String();
                 HttpStatusCode httpStatus = (HttpStatusCode)status;
                 reqdata.Request.SetConnectionClose();
                 using (HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType))
@@ -333,8 +332,6 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
         }
-
-        static UTF8Encoding UTF8NoBOM = new UTF8Encoding(false);
 
         readonly object m_ReqUrlLock = new object();
 
