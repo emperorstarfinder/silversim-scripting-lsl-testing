@@ -79,6 +79,24 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 		public const int OBJECT_OMEGA = 29;
 
         [APILevel(APIFlags.LSL)]
+        public const int OPT_OTHER = -1;
+        [APILevel(APIFlags.LSL)]
+        public const int OPT_LEGACY_LINKSET = 0;
+        [APILevel(APIFlags.LSL)]
+        public const int OPT_AVATAR = 1;
+        [APILevel(APIFlags.LSL)]
+        public const int OPT_CHARACTER = 2;
+        [APILevel(APIFlags.LSL)]
+        public const int OPT_WALKABLE = 3;
+        [APILevel(APIFlags.LSL)]
+        public const int OPT_STATIC_OBSTACLE = 4;
+        [APILevel(APIFlags.LSL)]
+        public const int OPT_MATERIAL_VOLUME = 5;
+        [APILevel(APIFlags.LSL)]
+        public const int OPT_EXCLUSION_VOLUME = 6;
+
+
+        [APILevel(APIFlags.LSL)]
         public const int STATUS_PHYSICS = 0x00000001;
         [APILevel(APIFlags.LSL)]
         public const int STATUS_ROTATE_X = 0x00000002;
