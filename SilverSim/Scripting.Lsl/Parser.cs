@@ -337,12 +337,12 @@ redo:
 
         public void EvalCompounds(List<string> args)
         {
-            for(int argi = 0; argi < args.Count; ++argi)
+            for (int argi = 0; argi < args.Count; ++argi)
             {
-                int i;
+                int i = 0;
                 char c;
                 int curlength = args[argi].Length;
-                for(i = 0; i < curlength;)
+                while (i < curlength)
                 {
                     c = args[argi][i];
                     /* ignore strings first */
