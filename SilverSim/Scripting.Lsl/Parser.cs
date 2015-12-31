@@ -337,7 +337,8 @@ redo:
 
         public void EvalCompounds(List<string> args)
         {
-            for (int argi = 0; argi < args.Count; ++argi)
+            int argi = -1;
+            while (++argi < args.Count)
             {
                 int i = 0;
                 char c;
