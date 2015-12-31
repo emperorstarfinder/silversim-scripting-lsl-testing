@@ -165,7 +165,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 catch
                 {
-
+                    /* no action required */
                 }
             }
             return string.Empty;
