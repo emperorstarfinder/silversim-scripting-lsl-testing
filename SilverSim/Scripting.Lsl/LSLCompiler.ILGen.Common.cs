@@ -236,7 +236,8 @@ namespace SilverSim.Scripting.Lsl
         #region Preprocessor for concatenated string constants
         void CollapseStringConstants(List<string> args)
         {
-            for (int pos = 1; pos < args.Count - 2; ++pos)
+            int pos = 0;
+            while(++pos < args.Count - 2)
             {
                 if (args[pos] == "+" && args[pos - 1].StartsWith("\"") && args[pos + 1].StartsWith("\""))
                 {

@@ -71,7 +71,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 }
             }
 
-            for (int i = 0; i < parameters.Count; ++i)
+            int i = -1;
+            while(++i < parameters.Count)
             {
                 switch(parameters[i].AsInt)
                 {
