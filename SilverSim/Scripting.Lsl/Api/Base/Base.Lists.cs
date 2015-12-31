@@ -816,6 +816,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return new AnArray();
             }
 
+            Comparison<IValue> compare;
+            compare = (ascending == 1) ?
+                (Comparison<IValue>)ElementCompare :
+                (Comparison<IValue>)ElementCompareDescending;
+
             IValue[] ret = src.ToArray();
             if(stride < 2)
             {
@@ -833,14 +838,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 if (homogenousTypeEntries)
                 {
-                    if (ascending == 1)
-                    {
-                        Array.Sort(ret, ElementCompare);
-                    }
-                    else
-                    {
-                        Array.Sort(ret, ElementCompareDescending);
-                    }
+                    Array.Sort(ret, compare);
                     res = new AnArray();
                     res.AddRange(ret);
                     return res;
@@ -851,16 +849,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             int j;
             int k;
             int n = ret.Length;
-
-            Func<IValue, IValue, int> compare;
-            if (ascending == 1)
-            {
-                compare = ElementCompare;
-            }
-            else
-            {
-                compare = ElementCompareDescending;
-            }
 
             /* a slow bubble-sort in unoptimized style see LSL wiki for the llSortList description */
             for (i = 0; i < (n - stride); i += stride)
