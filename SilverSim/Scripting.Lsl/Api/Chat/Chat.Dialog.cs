@@ -94,13 +94,10 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 m.Message = message;
                 m.URL = url;
 
-                try
-                {
-                    thisScene.Agents[avatar].SendMessageAlways(m, thisScene.ID);
-                }
-                catch
-                {
-
+                IAgent agent;
+                if(thisScene.Agents.TryGetValue(avatar, out agent))
+                { 
+                    agent.SendMessageAlways(m, thisScene.ID);
                 }
             }
         }
@@ -117,7 +114,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
                 foreach (DetectInfo detinfo in script.m_Detected)
                 {
-                    try
+                    IAgent agent;
+                    if (thisScene.Agents.TryGetValue(detinfo.Key, out agent))
                     {
                         Viewer.Messages.Script.ScriptTeleportRequest m = new Viewer.Messages.Script.ScriptTeleportRequest();
                         m.ObjectName = thisGroup.Name;
@@ -125,11 +123,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                         m.SimPosition = pos;
                         m.LookAt = look_at;
 
-                        thisScene.Agents[detinfo.Key].SendMessageAlways(m, thisScene.ID);
-                    }
-                    catch
-                    {
-
+                        agent.SendMessageAlways(m, thisScene.ID);
                     }
                 }
             }
