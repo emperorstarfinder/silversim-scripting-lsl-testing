@@ -32,7 +32,7 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ILGen.Emit(OpCodes.Stloc, m_NewList);
                 for (int i = 0; i < functionTree.SubTree.Count; ++i)
                 {
-                    Tree st = functionTree.SubTree[i++];
+                    Tree st = functionTree.SubTree[i];
                     if(st.SubTree.Count != 1)
                     {
                         throw new CompilerException(lineNumber, "Wrong list declaration");
