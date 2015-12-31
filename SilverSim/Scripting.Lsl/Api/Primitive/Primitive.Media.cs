@@ -291,11 +291,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 Types.Primitive.PrimitiveMedia mediaList = part.Media;
                 Types.Primitive.PrimitiveMedia.Entry entry;
-                if (mediaList == null)
-                {
-                    entry = new Types.Primitive.PrimitiveMedia.Entry();
-                }
-                else if (mediaList.Count <= face)
+                if (mediaList == null || mediaList.Count <= face)
                 {
                     entry = new Types.Primitive.PrimitiveMedia.Entry();
                 }

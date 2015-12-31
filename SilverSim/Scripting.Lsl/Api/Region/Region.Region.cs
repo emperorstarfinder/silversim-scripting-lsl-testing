@@ -630,12 +630,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 case "region_product_name":
                     return instance.Part.ObjectGroup.Scene.RegionData.ProductName;
 
-                case "region_product_sku":
-                    return VersionInfo.ProductName;
-
                 case "region_start_time":
                     return "0";
 
+                case "region_product_sku":
                 case "sim_channel":
                     return VersionInfo.ProductName;
 

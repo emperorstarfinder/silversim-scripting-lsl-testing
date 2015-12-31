@@ -131,16 +131,34 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             {
                 switch(contenttype)
                 {
-                    case CONTENT_TYPE_TEXT: m_HTTPHandler.SetContentType(requestID, "text/plain"); break;
-                    case CONTENT_TYPE_HTML: m_HTTPHandler.SetContentType(requestID, "text/html"); break;
-                    case CONTENT_TYPE_XML: m_HTTPHandler.SetContentType(requestID, "application/xml"); break;
-                    case CONTENT_TYPE_XHTML: m_HTTPHandler.SetContentType(requestID, "application/xhtml+xml"); break;
-                    case CONTENT_TYPE_ATOM: m_HTTPHandler.SetContentType(requestID, "application/atom+xml"); break;
-                    case CONTENT_TYPE_JSON: m_HTTPHandler.SetContentType(requestID, "application/json"); break;
-                    case CONTENT_TYPE_LLSD: m_HTTPHandler.SetContentType(requestID, "application/llsd+xml"); break;
-                    case CONTENT_TYPE_FORM: m_HTTPHandler.SetContentType(requestID, "application/x-www-form-urlencoded "); break;
-                    case CONTENT_TYPE_RSS: m_HTTPHandler.SetContentType(requestID, "application/rss+xml "); break;
-                    default: m_HTTPHandler.SetContentType(requestID, "text/plain"); break;
+                    default:
+                    case CONTENT_TYPE_TEXT:
+                        m_HTTPHandler.SetContentType(requestID, "text/plain");
+                        break;
+                    case CONTENT_TYPE_HTML:
+                        m_HTTPHandler.SetContentType(requestID, "text/html");
+                        break;
+                    case CONTENT_TYPE_XML:
+                        m_HTTPHandler.SetContentType(requestID, "application/xml");
+                        break;
+                    case CONTENT_TYPE_XHTML:
+                        m_HTTPHandler.SetContentType(requestID, "application/xhtml+xml");
+                        break;
+                    case CONTENT_TYPE_ATOM:
+                        m_HTTPHandler.SetContentType(requestID, "application/atom+xml");
+                        break;
+                    case CONTENT_TYPE_JSON:
+                        m_HTTPHandler.SetContentType(requestID, "application/json");
+                        break;
+                    case CONTENT_TYPE_LLSD:
+                        m_HTTPHandler.SetContentType(requestID, "application/llsd+xml");
+                        break;
+                    case CONTENT_TYPE_FORM:
+                        m_HTTPHandler.SetContentType(requestID, "application/x-www-form-urlencoded ");
+                        break;
+                    case CONTENT_TYPE_RSS:
+                        m_HTTPHandler.SetContentType(requestID, "application/rss+xml ");
+                        break;
                 }
             }
         }

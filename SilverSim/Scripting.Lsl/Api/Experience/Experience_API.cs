@@ -119,7 +119,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 case XP_ERROR_KEY_NOT_FOUND: return "key doesn't exist";
                 case XP_ERROR_RETRY_UPDATE: return "retry update";
                 case XP_ERROR_MATURITY_EXCEEDED: return "experience content rating too high";
-                default: return "unknown error";
+                default: return "unknown error code";
             }
         }
 
