@@ -631,7 +631,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     return instance.Part.ObjectGroup.Scene.RegionData.ProductName;
 
                 case "region_start_time":
-                    return "0";
+                    return instance.Part.ObjectGroup.Scene.RegionStartTime.AsULong.ToString();
 
                 case "region_product_sku":
                 case "sim_channel":
