@@ -619,7 +619,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     }
 
                 case "frame_number":
-                    return "0";
+                    return instance.Part.ObjectGroup.Scene.FrameNumber.ToString();
 
                 case "region_cpu_ratio":
                     return "1";
