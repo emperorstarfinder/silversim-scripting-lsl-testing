@@ -518,7 +518,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.OSSL, "osKickAvatar")]
         public void KickAvatar(ScriptInstance instance, string firstName, string lastName, string alert)
         {
-            throw new NotImplementedException("osKickAvatar(string, string, string)");
+            lock(instance)
+            {
+                foreach(IAgent agent in instance.Part.ObjectGroup.Scene.RootAgents)
+                {
+                    if(agent.Owner.FullName == firstName + " " + lastName)
+                    {
+                        agent.KickUser(alert);
+                        break;
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
