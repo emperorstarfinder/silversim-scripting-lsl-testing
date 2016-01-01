@@ -163,6 +163,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     pInfo.Owner.EqualsGrid(thisPart.Owner))
                 {
                     pInfo.MusicURI = new URI(url);
+                    scene.TriggerParcelUpdate(pInfo);
                 }
             }
         }
@@ -251,6 +252,69 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         public void ResetLandPassList(ScriptInstance instance)
         {
             throw new NotImplementedException("llResetLandPassList()");
+        }
+
+        [APILevel(APIFlags.OSSL, "osSetParcelDetails")]
+        public void SetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray rules)
+        {
+            lock(instance)
+            {
+                instance.CheckThreatLevel("osSetParcelDetails", ScriptInstance.ThreatLevelType.High);
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ParcelInfo pInfo;
+
+                if (scene.Parcels.TryGetValue(pos, out pInfo))
+                {
+                    int idx = 0;
+                    bool parcelDataChanged = false;
+                    while (idx + 1 < rules.Count)
+                    {
+                        UUI agentId;
+                        UGI groupId;
+                        int type = rules[idx++].AsInt;
+
+                        switch (type)
+                        {
+                            case PARCEL_DETAILS_NAME:
+                                parcelDataChanged = true;
+                                pInfo.Name = rules[idx++].ToString();
+                                break;
+
+                            case PARCEL_DETAILS_DESC:
+                                parcelDataChanged = true;
+                                pInfo.Description = rules[idx++].ToString();
+                                break;
+
+                            case PARCEL_DETAILS_OWNER:
+                                if(!scene.AvatarNameService.TryGetValue(rules[idx++].AsUUID, out agentId))
+                                {
+                                    throw new ArgumentException("PARCEL_DETAILS_OWNER parameter does not resolve to an agent");
+                                }
+                                pInfo.Owner = agentId;
+                                break;
+
+                            case PARCEL_DETAILS_GROUP:
+                                if(!scene.GroupsNameService.TryGetValue(rules[idx++].AsUUID, out groupId))
+                                {
+                                    throw new ArgumentException("PARCEL_DETAILS_GROUP parameter does not resolve to a group");
+                                }
+                                pInfo.Group = groupId;
+                                break;
+
+                            case PARCEL_DETAILS_CLAIMDATE:
+                                pInfo.ClaimDate = Date.UnixTimeToDateTime(rules[idx++].AsULong);
+                                break;
+
+                            default:
+                                throw new ArgumentException(string.Format("osSetParcelDetails: Unknown parameter type {0}", type));
+                        }
+                    }
+                    if(parcelDataChanged)
+                    {
+                        scene.TriggerParcelUpdate(pInfo);
+                    }
+                }
+            }
         }
     }
 }

@@ -198,7 +198,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                             parcelInfo.MediaLoop = pmu.MediaLoop;
                             parcelInfo.MediaURI = new URI(pmu.MediaURL);
                             parcelInfo.MediaWidth = pmu.MediaWidth;
-                            scene.Parcels.Store(parcelInfo.ID);
+                            scene.TriggerParcelUpdate(parcelInfo);
 
                             foreach(IAgent rootAgent in scene.RootAgents)
                             {
@@ -339,7 +339,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     parcelInfo.MediaLoop = pmu.MediaLoop;
                     parcelInfo.MediaURI = new URI(pmu.MediaURL);
                     parcelInfo.MediaWidth = pmu.MediaWidth;
-                    scene.Parcels.Store(parcelInfo.ID);
+                    scene.TriggerParcelUpdate(parcelInfo);
 
                     foreach (IAgent rootAgent in scene.RootAgents)
                     {
