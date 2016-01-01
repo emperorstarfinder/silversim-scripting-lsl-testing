@@ -484,12 +484,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     case STATUS_RETURN_AT_EDGE:
                         throw new NotImplementedException("llGetStatus(STATUS_RETURN_AT_EDGE)");
 
-                    case STATUS_CAST_SHADOWS:
-                        return 0;
-
                     case STATUS_BLOCK_GRAB_OBJECT:
                         throw new NotImplementedException("llGetStatus(STATUS_BLOCK_GRAB_OBJECT)");
 
+                    case STATUS_CAST_SHADOWS:
                     default:
                         return 0;
                 }
