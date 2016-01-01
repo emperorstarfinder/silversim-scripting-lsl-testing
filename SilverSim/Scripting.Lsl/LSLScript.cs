@@ -44,7 +44,7 @@ namespace SilverSim.Scripting.Lsl
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
         internal List<Action<ScriptInstance, List<object>>> SerializationDelegates;
         internal Dictionary<string, Action<ScriptInstance, List<object>>> DeserializationDelegates;
-        static internal Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
+        static internal readonly Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
         {
