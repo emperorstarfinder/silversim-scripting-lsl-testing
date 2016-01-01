@@ -648,6 +648,15 @@ namespace SilverSim.Scripting.Lsl
                                     notUsable = true;
                                     break;
                                 }
+                                else if (!IsValidType(fi.FieldType))
+                                {
+                                    m_Log.DebugFormat("Invalid ScriptEvent type {0} encountered field {1} having unsupported type {2}",
+                                        evt.FullName,
+                                        fi.Name,
+                                        fi.FieldType.FullName);
+                                    notUsable = true;
+                                    break;
+                                }
                                 parameters.Add(paramAttr.ParameterNumber, fi);
                             }
                         }
@@ -664,6 +673,15 @@ namespace SilverSim.Scripting.Lsl
                                         evt.FullName,
                                         paramAttr.ParameterNumber,
                                         pi.Name);
+                                    notUsable = true;
+                                    break;
+                                }
+                                else if(!IsValidType(pi.PropertyType))
+                                {
+                                    m_Log.DebugFormat("Invalid ScriptEvent type {0} encountered property {1} having unsupported type {2}",
+                                        evt.FullName,
+                                        pi.Name,
+                                        pi.PropertyType.FullName);
                                     notUsable = true;
                                     break;
                                 }
@@ -715,14 +733,14 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
                             ilgen.Emit(OpCodes.Ldarg_1);
                             Type pt = kvp.Value.GetType();
-                            if(pt == typeof(FieldInfo))
+                            if (typeof(FieldInfo).IsAssignableFrom(pt))
                             {
                                 FieldInfo fi = (FieldInfo)kvp.Value;
                                 ilgen.Emit(OpCodes.Ldloc, eventlb);
                                 ilgen.Emit(OpCodes.Ldfld, fi);
                                 ilgen.Emit(OpCodes.Stelem, fi.FieldType);
                             }
-                            else if(pt == typeof(PropertyInfo))
+                            else if (typeof(PropertyInfo).IsAssignableFrom(pt))
                             {
                                 PropertyInfo pi = (PropertyInfo)kvp.Value;
                                 ilgen.Emit(OpCodes.Ldloc, eventlb);
@@ -736,10 +754,7 @@ namespace SilverSim.Scripting.Lsl
                         ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
                         ilgen.Emit(OpCodes.Ldloc, lb);
 
-                        ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("InvokeStateEvent", new Type[] {
-                            typeof(Script),
-                            typeof(string),
-                            typeof(object[])}));
+                        ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("InvokeStateEvent", BindingFlags.Static | BindingFlags.NonPublic));
                         ilgen.Emit(OpCodes.Ret);
 
                         Script.StateEventHandlers.Add(evt, dynMethod.CreateDelegate(typeof(Action<Script, IScriptEvent>)) as Action<Script, IScriptEvent>);
