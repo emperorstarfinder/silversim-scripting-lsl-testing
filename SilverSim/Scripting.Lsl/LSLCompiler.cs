@@ -4,6 +4,7 @@
 using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Common;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
@@ -194,7 +195,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public void Startup(ConfigurationLoader loader)
+        void CollectApis(ConfigurationLoader loader)
         {
             List<IScriptApi> apis = loader.GetServicesByValue<IScriptApi>();
             foreach (IScriptApi api in apis)
@@ -213,400 +214,551 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
             }
+        }
 
-            #region API Collection
-            foreach (IScriptApi api in apis)
+        void CollectApiConstants(IScriptApi api)
+        {
+            foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.Static))
             {
-                #region Collect constants
-                foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.Static))
+                if ((f.Attributes & FieldAttributes.Static) != 0 &&
+                    ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0))
                 {
-                    if ((f.Attributes & FieldAttributes.Static) != 0 &&
-                        ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0))
+                    if (IsValidType(f.FieldType))
                     {
-                        if (IsValidType(f.FieldType))
+                        APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                        APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                        if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                         {
-                            APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
-                            APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
-                            if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
+                            foreach (APILevelAttribute attr in apiLevelAttrs)
                             {
-                                foreach (APILevelAttribute attr in apiLevelAttrs)
+                                string constName = attr.Name;
+                                if (string.IsNullOrEmpty(constName))
                                 {
-                                    string constName = attr.Name;
-                                    if (string.IsNullOrEmpty(constName))
-                                    {
-                                        constName = f.Name;
-                                    }
-                                    foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                                    {
-                                        if ((kvp.Key & attr.Flags) != 0)
-                                        {
-                                            kvp.Value.Constants.Add(constName, f);
-                                        }
-                                    }
+                                    constName = f.Name;
                                 }
-                                foreach (APIExtensionAttribute attr in apiExtensionAttrs)
-                                {
-                                    string constName = attr.Name;
-                                    if (string.IsNullOrEmpty(constName))
-                                    {
-                                        constName = f.Name;
-                                    }
-
-                                    ApiInfo apiInfo;
-                                    string extensionName = attr.Extension.ToLower();
-                                    if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
-                                    {
-                                        apiInfo = new ApiInfo();
-                                        m_ApiExtensions.Add(extensionName, apiInfo);
-                                    }
-                                    apiInfo.Constants.Add(constName, f);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
-                            APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
-                            if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
-                            {
-                                m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
-                            }
-                        }
-                    }
-                }
-                #endregion
-
-                #region Collect event definitions
-                foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
-                {
-                    StateEventDelegateAttribute stateEventAttr = (StateEventDelegateAttribute)Attribute.GetCustomAttribute(t, typeof(StateEventDelegateAttribute));
-                    if (stateEventAttr != null)
-                    {
-                        APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
-                        APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
-                        MethodInfo mi = t.GetMethod("Invoke");
-                        if (apiLevelAttrs.Length == 0 && apiExtensionAttrs.Length == 0)
-                        {
-                            m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has StateEventDelegate attribute. APILevel or APIExtension attribute missing.",
-                                mi.Name,
-                                mi.DeclaringType.FullName);
-                        }
-
-                        /* validate parameters */
-                        ParameterInfo[] pi = mi.GetParameters();
-                        bool eventValid = true;
-
-                        for (int i = 0; i < pi.Length; ++i)
-                        {
-                            if (!IsValidType(pi[i].ParameterType))
-                            {
-                                eventValid = false;
-                                m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
-                                    mi.Name,
-                                    mi.DeclaringType.FullName,
-                                    pi[i].Name,
-                                    pi[i].ParameterType.FullName);
-                            }
-                        }
-                        if (mi.ReturnType != typeof(void))
-                        {
-                            eventValid = false;
-                            m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. Return value is not void. Found: '{2}'",
-                                mi.Name,
-                                mi.DeclaringType.FullName,
-                                mi.ReturnType.FullName);
-                        }
-
-                        if (eventValid)
-                        {
-                            foreach (APILevelAttribute apiLevelAttr in apiLevelAttrs)
-                            {
-                                string funcName = apiLevelAttr.Name;
-                                if(string.IsNullOrEmpty(funcName))
-                                {
-                                    funcName = mi.Name;
-                                }
-
                                 foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                                 {
-                                    if ((kvp.Key & apiLevelAttr.Flags) != 0)
+                                    if ((kvp.Key & attr.Flags) != 0)
                                     {
-                                        kvp.Value.EventDelegates.Add(funcName, mi);
+                                        kvp.Value.Constants.Add(constName, f);
                                     }
                                 }
                             }
-                            foreach(APIExtensionAttribute apiExtensionAttr in apiExtensionAttrs)
+                            foreach (APIExtensionAttribute attr in apiExtensionAttrs)
                             {
-                                string funcName = apiExtensionAttr.Name;
-                                if (string.IsNullOrEmpty(funcName))
+                                string constName = attr.Name;
+                                if (string.IsNullOrEmpty(constName))
                                 {
-                                    funcName = mi.Name;
+                                    constName = f.Name;
                                 }
 
                                 ApiInfo apiInfo;
-                                string extensionName = apiExtensionAttr.Extension.ToLower();
+                                string extensionName = attr.Extension.ToLower();
                                 if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
                                 {
                                     apiInfo = new ApiInfo();
                                     m_ApiExtensions.Add(extensionName, apiInfo);
                                 }
-                                apiInfo.EventDelegates.Add(funcName, mi);
+                                apiInfo.Constants.Add(constName, f);
                             }
                         }
                     }
-                    else if (null != stateEventAttr)
+                    else
                     {
-                        MethodInfo mi = t.GetMethod("Invoke");
-                        m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. APILevel attribute missing.",
+                        APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                        APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                        if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
+                        {
+                            m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
+                        }
+                    }
+                }
+            }
+        }
+
+        void CollectApiEvents(IScriptApi api)
+        {
+            foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
+            {
+                StateEventDelegateAttribute stateEventAttr = (StateEventDelegateAttribute)Attribute.GetCustomAttribute(t, typeof(StateEventDelegateAttribute));
+                if (stateEventAttr != null)
+                {
+                    APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
+                    APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                    MethodInfo mi = t.GetMethod("Invoke");
+                    if (apiLevelAttrs.Length == 0 && apiExtensionAttrs.Length == 0)
+                    {
+                        m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has StateEventDelegate attribute. APILevel or APIExtension attribute missing.",
                             mi.Name,
                             mi.DeclaringType.FullName);
                     }
-                }
-                #endregion
 
-                #region Collect API functions, reset delegates and state change delegates
-                foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
-                {
-                    APILevelAttribute[] funcNameAttrs = Attribute.GetCustomAttributes(m, typeof(APILevelAttribute)) as APILevelAttribute[];
-                    APIExtensionAttribute[] apiExtensionAttrs = Attribute.GetCustomAttributes(m, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
-                    if (funcNameAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
+                    /* validate parameters */
+                    ParameterInfo[] pi = mi.GetParameters();
+                    bool eventValid = true;
+
+                    for (int i = 0; i < pi.Length; ++i)
                     {
-                        ParameterInfo[] pi = m.GetParameters();
-                        if (pi.Length >= 1 &&
-                            pi[0].ParameterType.Equals(typeof(ScriptInstance)))
+                        if (!IsValidType(pi[i].ParameterType))
                         {
-                            /* validate parameters */
-                            bool methodValid = true;
-                            if((m.Attributes & MethodAttributes.Static) != 0)
+                            eventValid = false;
+                            m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
+                                mi.Name,
+                                mi.DeclaringType.FullName,
+                                pi[i].Name,
+                                pi[i].ParameterType.FullName);
+                        }
+                    }
+                    if (mi.ReturnType != typeof(void))
+                    {
+                        eventValid = false;
+                        m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. Return value is not void. Found: '{2}'",
+                            mi.Name,
+                            mi.DeclaringType.FullName,
+                            mi.ReturnType.FullName);
+                    }
+
+                    if (eventValid)
+                    {
+                        foreach (APILevelAttribute apiLevelAttr in apiLevelAttrs)
+                        {
+                            string funcName = apiLevelAttr.Name;
+                            if (string.IsNullOrEmpty(funcName))
                             {
-                                methodValid = false;
-                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Method is declared static.",
-                                    m.Name,
-                                    m.DeclaringType.FullName);
+                                funcName = mi.Name;
                             }
-                            for (int i = 1; i < pi.Length; ++i)
+
+                            foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                             {
-                                if (!IsValidType(pi[i].ParameterType))
+                                if ((kvp.Key & apiLevelAttr.Flags) != 0)
                                 {
-                                    methodValid = false;
-                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
-                                        m.Name,
-                                        m.DeclaringType.FullName,
-                                        pi[i].Name,
-                                        pi[i].ParameterType.FullName);
+                                    kvp.Value.EventDelegates.Add(funcName, mi);
                                 }
                             }
-                            if (!IsValidType(m.ReturnType))
+                        }
+                        foreach (APIExtensionAttribute apiExtensionAttr in apiExtensionAttrs)
+                        {
+                            string funcName = apiExtensionAttr.Name;
+                            if (string.IsNullOrEmpty(funcName))
+                            {
+                                funcName = mi.Name;
+                            }
+
+                            ApiInfo apiInfo;
+                            string extensionName = apiExtensionAttr.Extension.ToLower();
+                            if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                            {
+                                apiInfo = new ApiInfo();
+                                m_ApiExtensions.Add(extensionName, apiInfo);
+                            }
+                            apiInfo.EventDelegates.Add(funcName, mi);
+                        }
+                    }
+                }
+                else if (null != stateEventAttr)
+                {
+                    MethodInfo mi = t.GetMethod("Invoke");
+                    m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. APILevel attribute missing.",
+                        mi.Name,
+                        mi.DeclaringType.FullName);
+                }
+            }
+        }
+
+        void CollectApiFunctionsAndDelegates(IScriptApi api)
+        {
+            foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
+            {
+                APILevelAttribute[] funcNameAttrs = Attribute.GetCustomAttributes(m, typeof(APILevelAttribute)) as APILevelAttribute[];
+                APIExtensionAttribute[] apiExtensionAttrs = Attribute.GetCustomAttributes(m, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                if (funcNameAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
+                {
+                    ParameterInfo[] pi = m.GetParameters();
+                    if (pi.Length >= 1 &&
+                        pi[0].ParameterType.Equals(typeof(ScriptInstance)))
+                    {
+                        /* validate parameters */
+                        bool methodValid = true;
+                        if ((m.Attributes & MethodAttributes.Static) != 0)
+                        {
+                            methodValid = false;
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Method is declared static.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        for (int i = 1; i < pi.Length; ++i)
+                        {
+                            if (!IsValidType(pi[i].ParameterType))
                             {
                                 methodValid = false;
-                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Return value does not have LSL compatible type '{2}'.",
+                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
                                     m.Name,
                                     m.DeclaringType.FullName,
-                                    m.ReturnType.FullName);
+                                    pi[i].Name,
+                                    pi[i].ParameterType.FullName);
                             }
+                        }
+                        if (!IsValidType(m.ReturnType))
+                        {
+                            methodValid = false;
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Return value does not have LSL compatible type '{2}'.",
+                                m.Name,
+                                m.DeclaringType.FullName,
+                                m.ReturnType.FullName);
+                        }
 
-                            if (methodValid)
+                        if (methodValid)
+                        {
+                            foreach (APILevelAttribute funcNameAttr in funcNameAttrs)
                             {
-                                foreach (APILevelAttribute funcNameAttr in funcNameAttrs)
+                                string funcName = funcNameAttr.Name;
+                                if (string.IsNullOrEmpty(funcName))
                                 {
-                                    string funcName = funcNameAttr.Name;
-                                    if (string.IsNullOrEmpty(funcName))
-                                    {
-                                        funcName = m.Name;
-                                    }
-                                    foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                                    {
-                                        List<ApiMethodInfo> methodList;
-                                        if (!kvp.Value.Methods.TryGetValue(funcName, out methodList))
-                                        {
-                                            methodList = new List<ApiMethodInfo>();
-                                            kvp.Value.Methods.Add(funcName, methodList);
-                                        }
-                                        methodList.Add(new ApiMethodInfo(funcName, api, m));
-                                    }
+                                    funcName = m.Name;
                                 }
-                                foreach (APIExtensionAttribute funcNameAttr in apiExtensionAttrs)
+                                foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                                 {
-                                    string funcName = funcNameAttr.Name;
-                                    if (string.IsNullOrEmpty(funcName))
-                                    {
-                                        funcName = m.Name;
-                                    }
-
-                                    ApiInfo apiInfo;
-                                    string extensionName = funcNameAttr.Extension.ToLower();
-                                    if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
-                                    {
-                                        apiInfo = new ApiInfo();
-                                        m_ApiExtensions.Add(extensionName, apiInfo);
-                                    }
                                     List<ApiMethodInfo> methodList;
-                                    if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
+                                    if (!kvp.Value.Methods.TryGetValue(funcName, out methodList))
                                     {
                                         methodList = new List<ApiMethodInfo>();
-                                        apiInfo.Methods.Add(funcName, methodList);
+                                        kvp.Value.Methods.Add(funcName, methodList);
                                     }
                                     methodList.Add(new ApiMethodInfo(funcName, api, m));
                                 }
                             }
-                        }
-                    }
+                            foreach (APIExtensionAttribute funcNameAttr in apiExtensionAttrs)
+                            {
+                                string funcName = funcNameAttr.Name;
+                                if (string.IsNullOrEmpty(funcName))
+                                {
+                                    funcName = m.Name;
+                                }
 
-                    Attribute attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnStateChangeAttribute));
-                    if (attr != null)
-                    {
-                        ParameterInfo[] pi = m.GetParameters();
-                        if (pi.Length != 1)
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Parameter count does not match.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (m.ReturnType != typeof(void))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Return type is not void.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (pi[0].ParameterType != typeof(ScriptInstance))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Parameter type is not ScriptInstance.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else
-                        {
-                            m_StateChangeDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
-                        }
-                    }
-
-                    attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptResetAttribute));
-                    if (attr != null)
-                    {
-                        ParameterInfo[] pi = m.GetParameters();
-                        if(pi.Length != 1)
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptReset. Parameter count does not match.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (m.ReturnType != typeof(void))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptReset. Return type is not void.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if(pi[0].ParameterType != typeof(ScriptInstance))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptReset. Parameter type is not ScriptInstance.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else
-                        {
-                            m_ScriptResetDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
-                        }
-                    }
-
-                    attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptRemoveAttribute));
-                    if (attr != null)
-                    {
-                        ParameterInfo[] pi = m.GetParameters();
-                        if (pi.Length != 1)
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Parameter count does not match.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (m.ReturnType != typeof(void))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Return type is not void.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (pi[0].ParameterType != typeof(ScriptInstance))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Parameter type is not ScriptInstance.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else
-                        {
-                            m_ScriptRemoveDelegates.Add(
-                                (Action<ScriptInstance>)Delegate.CreateDelegate(
-                                    typeof(Action<ScriptInstance>), 
-                                    (m.Attributes & MethodAttributes.Static) != 0 ? null : api, 
-                                    m));
-                        }
-                    }
-
-                    attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnSerializationAttribute));
-                    if (attr != null)
-                    {
-                        ParameterInfo[] pi = m.GetParameters();
-                        if (pi.Length != 2)
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Parameter count does not match.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (m.ReturnType != typeof(void))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Return type is not void.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (pi[0].ParameterType != typeof(ScriptInstance) ||
-                            pi[1].ParameterType != typeof(List<object>))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Wrong parameter types.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else
-                        {
-                            m_ScriptSerializeDelegates.Add(
-                                (Action<ScriptInstance, List<object>>)Delegate.CreateDelegate(
-                                    typeof(Action<ScriptInstance, List<object>>), 
-                                    (m.Attributes & MethodAttributes.Static) != 0 ? null : api, 
-                                    m));
-                        }
-                    }
-
-                    ExecutedOnDeserializationAttribute deserializeattr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnDeserializationAttribute)) as ExecutedOnDeserializationAttribute;
-                    if (deserializeattr != null)
-                    {
-                        ParameterInfo[] pi = m.GetParameters();
-                        if (pi.Length != 2)
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Parameter count does not match.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (m.ReturnType != typeof(void))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Return type is not void.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else if (pi[0].ParameterType != typeof(ScriptInstance) ||
-                            pi[1].ParameterType != typeof(List<object>))
-                        {
-                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Wrong parameter types.",
-                                m.Name,
-                                m.DeclaringType.FullName);
-                        }
-                        else
-                        {
-                            m_ScriptDeserializeDelegates.Add(deserializeattr.Name, 
-                                (Action<ScriptInstance, List<object>>)Delegate.CreateDelegate(
-                                    typeof(Action<ScriptInstance, List<object>>), 
-                                    (m.Attributes & MethodAttributes.Static) != 0 ? null : api, 
-                                    m));
+                                ApiInfo apiInfo;
+                                string extensionName = funcNameAttr.Extension.ToLower();
+                                if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                                {
+                                    apiInfo = new ApiInfo();
+                                    m_ApiExtensions.Add(extensionName, apiInfo);
+                                }
+                                List<ApiMethodInfo> methodList;
+                                if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
+                                {
+                                    methodList = new List<ApiMethodInfo>();
+                                    apiInfo.Methods.Add(funcName, methodList);
+                                }
+                                methodList.Add(new ApiMethodInfo(funcName, api, m));
+                            }
                         }
                     }
                 }
-                #endregion
+
+                Attribute attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnStateChangeAttribute));
+                if (attr != null)
+                {
+                    ParameterInfo[] pi = m.GetParameters();
+                    if (pi.Length != 1)
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Parameter count does not match.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (m.ReturnType != typeof(void))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Return type is not void.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (pi[0].ParameterType != typeof(ScriptInstance))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnStateChange. Parameter type is not ScriptInstance.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else
+                    {
+                        m_StateChangeDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
+                    }
+                }
+
+                attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptResetAttribute));
+                if (attr != null)
+                {
+                    ParameterInfo[] pi = m.GetParameters();
+                    if (pi.Length != 1)
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptReset. Parameter count does not match.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (m.ReturnType != typeof(void))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptReset. Return type is not void.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (pi[0].ParameterType != typeof(ScriptInstance))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptReset. Parameter type is not ScriptInstance.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else
+                    {
+                        m_ScriptResetDelegates.Add((Action<ScriptInstance>)Delegate.CreateDelegate(typeof(Action<ScriptInstance>), (m.Attributes & MethodAttributes.Static) != 0 ? null : api, m));
+                    }
+                }
+
+                attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnScriptRemoveAttribute));
+                if (attr != null)
+                {
+                    ParameterInfo[] pi = m.GetParameters();
+                    if (pi.Length != 1)
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Parameter count does not match.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (m.ReturnType != typeof(void))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Return type is not void.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (pi[0].ParameterType != typeof(ScriptInstance))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnScriptRemove. Parameter type is not ScriptInstance.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else
+                    {
+                        m_ScriptRemoveDelegates.Add(
+                            (Action<ScriptInstance>)Delegate.CreateDelegate(
+                                typeof(Action<ScriptInstance>),
+                                (m.Attributes & MethodAttributes.Static) != 0 ? null : api,
+                                m));
+                    }
+                }
+
+                attr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnSerializationAttribute));
+                if (attr != null)
+                {
+                    ParameterInfo[] pi = m.GetParameters();
+                    if (pi.Length != 2)
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Parameter count does not match.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (m.ReturnType != typeof(void))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Return type is not void.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (pi[0].ParameterType != typeof(ScriptInstance) ||
+                        pi[1].ParameterType != typeof(List<object>))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnSerialization. Wrong parameter types.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else
+                    {
+                        m_ScriptSerializeDelegates.Add(
+                            (Action<ScriptInstance, List<object>>)Delegate.CreateDelegate(
+                                typeof(Action<ScriptInstance, List<object>>),
+                                (m.Attributes & MethodAttributes.Static) != 0 ? null : api,
+                                m));
+                    }
+                }
+
+                ExecutedOnDeserializationAttribute deserializeattr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnDeserializationAttribute)) as ExecutedOnDeserializationAttribute;
+                if (deserializeattr != null)
+                {
+                    ParameterInfo[] pi = m.GetParameters();
+                    if (pi.Length != 2)
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Parameter count does not match.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (m.ReturnType != typeof(void))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Return type is not void.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else if (pi[0].ParameterType != typeof(ScriptInstance) ||
+                        pi[1].ParameterType != typeof(List<object>))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has attribute ExecutedOnDeserialization. Wrong parameter types.",
+                            m.Name,
+                            m.DeclaringType.FullName);
+                    }
+                    else
+                    {
+                        m_ScriptDeserializeDelegates.Add(deserializeattr.Name,
+                            (Action<ScriptInstance, List<object>>)Delegate.CreateDelegate(
+                                typeof(Action<ScriptInstance, List<object>>),
+                                (m.Attributes & MethodAttributes.Static) != 0 ? null : api,
+                                m));
+                    }
+                }
+            }
+        }
+
+        void CollectApiEventTranslations(IScriptApi api)
+        {
+            foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
+            {
+                TranslatedScriptEventsInfoAttribute listattr = Attribute.GetCustomAttribute(f, typeof(TranslatedScriptEventsInfoAttribute)) as TranslatedScriptEventsInfoAttribute;
+                if (listattr == null ||
+                    f.FieldType != typeof(Type[]))
+                {
+                    continue;
+                }
+                Type[] typeList;
+                typeList = (f.Attributes & FieldAttributes.Static) != 0 ?
+                    (Type[])f.GetValue(null) :
+                    (Type[])f.GetValue(api);
+                foreach (Type evt in typeList)
+                {
+                    TranslatedScriptEventAttribute eventAttr = Attribute.GetCustomAttribute(evt, typeof(TranslatedScriptEventAttribute)) as TranslatedScriptEventAttribute;
+                    if (eventAttr != null && evt.GetInterfaces().Contains(typeof(IScriptEvent)))
+                    {
+                        /* translatable parameters */
+                        SortedDictionary<int, object> parameters = new SortedDictionary<int, object>();
+                        bool notUsable = false;
+
+                        foreach(FieldInfo fi in evt.GetFields(BindingFlags.Instance | BindingFlags.Public))
+                        {
+                            TranslatedScriptEventParameterAttribute paramAttr = Attribute.GetCustomAttribute(fi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
+
+                            if (paramAttr != null)
+                            {
+                                if (parameters.ContainsKey(paramAttr.ParameterNumber))
+                                {
+                                    m_Log.DebugFormat("Invalid ScriptEvent type {0} encountered with duplicate parameter definitions {1} for field {2}",
+                                        evt.FullName,
+                                        paramAttr.ParameterNumber,
+                                        fi.Name);
+                                    notUsable = true;
+                                    break;
+                                }
+                                parameters.Add(paramAttr.ParameterNumber, fi);
+                            }
+                        }
+
+                        foreach(PropertyInfo pi in evt.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                        {
+                            TranslatedScriptEventParameterAttribute paramAttr = Attribute.GetCustomAttribute(pi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
+
+                            if (paramAttr != null)
+                            {
+                                if (parameters.ContainsKey(paramAttr.ParameterNumber))
+                                {
+                                    m_Log.DebugFormat("Invalid ScriptEvent type {0} encountered with duplicate parameter definitions {1} for property {2}",
+                                        evt.FullName,
+                                        paramAttr.ParameterNumber,
+                                        pi.Name);
+                                    notUsable = true;
+                                    break;
+                                }
+                                parameters.Add(paramAttr.ParameterNumber, pi);
+                            }
+                        }
+
+                        int paramcount = 0;
+                        foreach(int key in parameters.Keys)
+                        {
+                            if(key != paramcount)
+                            {
+                                m_Log.DebugFormat("Invalid ScriptEvent type {0} encountered with duplicate parameter number definition is not valid (missing {1})",
+                                    evt.FullName,
+                                    paramcount);
+                                notUsable = true;
+                                break;
+                            }
+                            ++paramcount;
+                        }
+
+                        if(notUsable)
+                        {
+                            continue;
+                        }
+
+                        DynamicMethod dynMethod = new DynamicMethod("Translate_" + eventAttr.EventName,
+                            typeof(void),
+                            new Type[2] { typeof(Script), typeof(IScriptEvent) },
+                            typeof(Script).Module);
+                        ILGenerator ilgen = dynMethod.GetILGenerator();
+
+                        /* cast IScriptEvent to actual type */
+                        ilgen.Emit(OpCodes.Ldarg_1);
+                        ilgen.Emit(OpCodes.Castclass, evt);
+                        LocalBuilder eventlb = ilgen.DeclareLocal(evt);
+                        ilgen.Emit(OpCodes.Stloc, eventlb);
+
+                        /* create object[] array */
+                        LocalBuilder lb = ilgen.DeclareLocal(typeof(object[]));
+                        ilgen.Emit(OpCodes.Ldc_I4, paramcount);
+                        ilgen.Emit(OpCodes.Newarr, typeof(object[]));
+                        ilgen.Emit(OpCodes.Stloc, lb);
+
+                        /* collect parameters into object[] array */
+                        foreach(KeyValuePair<int, object> kvp in parameters)
+                        {
+                            ilgen.Emit(OpCodes.Ldloc, lb);
+                            ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
+                            ilgen.Emit(OpCodes.Ldarg_1);
+                            Type pt = kvp.Value.GetType();
+                            if(pt == typeof(FieldInfo))
+                            {
+                                FieldInfo fi = (FieldInfo)kvp.Value;
+                                ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                ilgen.Emit(OpCodes.Ldfld, fi);
+                                ilgen.Emit(OpCodes.Stelem, fi.FieldType);
+                            }
+                            else if(pt == typeof(PropertyInfo))
+                            {
+                                PropertyInfo pi = (PropertyInfo)kvp.Value;
+                                ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                ilgen.Emit(OpCodes.Call, pi.GetGetMethod());
+                                ilgen.Emit(OpCodes.Stelem, pi.PropertyType);
+                            }
+                        }
+
+                        /* parameters for function */
+                        ilgen.Emit(OpCodes.Ldarg_0);
+                        ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
+                        ilgen.Emit(OpCodes.Ldloc, lb);
+
+                        ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("InvokeStateEvent", new Type[] {
+                            typeof(Script),
+                            typeof(string),
+                            typeof(object[])}));
+                        ilgen.Emit(OpCodes.Ret);
+
+                        Script.StateEventHandlers.Add(evt, dynMethod.CreateDelegate(typeof(Action<Script, IScriptEvent>)) as Action<Script, IScriptEvent>);
+                    }
+                }
+            }
+        }
+
+        public void Startup(ConfigurationLoader loader)
+        {
+            CollectApis(loader);
+
+            #region API Collection
+            foreach (IScriptApi api in m_Apis)
+            {
+                CollectApiConstants(api);
+                CollectApiEvents(api);
+                CollectApiEventTranslations(api);
+                CollectApiFunctionsAndDelegates(api);
             }
             #endregion
 

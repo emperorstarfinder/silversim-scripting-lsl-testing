@@ -44,6 +44,7 @@ namespace SilverSim.Scripting.Lsl
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
         internal List<Action<ScriptInstance, List<object>>> SerializationDelegates;
         internal Dictionary<string, Action<ScriptInstance, List<object>>> DeserializationDelegates;
+        static internal Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
         {
@@ -697,7 +698,17 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private void InvokeStateEvent(string name, params object[] param)
+        static internal void InvokeStateEvent(Script script, string name, object[] param)
+        {
+            script.InvokeStateEventReal(name, param);
+        }
+
+        void InvokeStateEvent(string name, params object[] param)
+        {
+            InvokeStateEventReal(name, param);
+        }
+
+        internal void InvokeStateEventReal(string name, object[] param)
         {
             MethodInfo mi;
             if (!m_CurrentStateMethods.TryGetValue(name, out mi))
@@ -849,212 +860,10 @@ namespace SilverSim.Scripting.Lsl
             try
             {
                 Type evt = ev.GetType();
-                if(evt == typeof(AtRotTargetEvent))
+                Action<Script, IScriptEvent> evtDelegate;
+                if(StateEventHandlers.TryGetValue(evt, out evtDelegate))
                 {
-                    AtRotTargetEvent e = (AtRotTargetEvent)ev;
-                    InvokeStateEvent("at_rot_target", e.TargetRotation, e.OurRotation);
-                }
-                else if(evt == typeof(AttachEvent))
-                {
-                    AttachEvent e = (AttachEvent)ev;
-                    InvokeStateEvent("attach", new LSLKey(e.ObjectID));
-                }
-                else if(evt == typeof(AtTargetEvent))
-                {
-                    AtTargetEvent e = (AtTargetEvent)ev;
-                    InvokeStateEvent("at_target", e.Handle, e.TargetPosition, e.OurPosition);
-                }
-                else if(evt == typeof(ChangedEvent))
-                {
-                    ChangedEvent e = (ChangedEvent)ev;
-                    InvokeStateEvent("changed", (int)e.Flags);
-                }
-                else if(evt == typeof(CollisionEvent))
-                {
-                        m_Detected = ((CollisionEvent)ev).Detected;
-                        switch (((CollisionEvent)ev).Type)
-                        {
-                            case CollisionEvent.CollisionType.Start:
-                                InvokeStateEvent("collision_start", m_Detected.Count);
-                                break;
-
-                            case CollisionEvent.CollisionType.End:
-                                InvokeStateEvent("collision_end", m_Detected.Count);
-                                break;
-
-                            case CollisionEvent.CollisionType.Continuous:
-                                InvokeStateEvent("collision", m_Detected.Count);
-                                break;
-
-                            default:
-                                break;
-                        }
-                }
-                else if(evt == typeof(DataserverEvent))
-                {
-                    DataserverEvent e = (DataserverEvent)ev;
-                    InvokeStateEvent("dataserver", new LSLKey(e.QueryID), e.Data);
-                }
-                else if(evt == typeof(MessageObjectEvent))
-                {
-                    MessageObjectEvent e = (MessageObjectEvent)ev;
-                    if (UseMessageObjectEvent)
-                    {
-                        InvokeStateEvent("object_message", new LSLKey(e.ObjectID), e.Data);
-                    }
-                    else
-                    {
-                        InvokeStateEvent("dataserver", new LSLKey(e.ObjectID), e.Data);
-                    }
-                }
-                else if(evt == typeof(EmailEvent))
-                {
-                    EmailEvent e = (EmailEvent)ev;
-                    InvokeStateEvent("email", e.Time, e.Address, e.Subject, e.Message, e.NumberLeft);
-                }
-                else if(evt == typeof(HttpRequestEvent))
-                {
-                    HttpRequestEvent e = (HttpRequestEvent)ev;
-                    InvokeStateEvent("http_request", new LSLKey(e.RequestID), e.Method, e.Body);
-                }
-
-                else if(evt == typeof(HttpResponseEvent))
-                {
-                    HttpResponseEvent e = (HttpResponseEvent)ev;
-                    InvokeStateEvent("http_response", new LSLKey(e.RequestID), e.Status, e.Metadata, e.Body);
-                }
-                else if(evt == typeof(LandCollisionEvent))
-                {
-                    LandCollisionEvent e = (LandCollisionEvent)ev;
-                    switch (e.Type)
-                    {
-                        case LandCollisionEvent.CollisionType.Start:
-                            InvokeStateEvent("land_collision_start", e.Position);
-                            break;
-
-                        case LandCollisionEvent.CollisionType.End:
-                            InvokeStateEvent("land_collision_end", e.Position);
-                            break;
-
-                        case LandCollisionEvent.CollisionType.Continuous:
-                            InvokeStateEvent("land_collision", e.Position);
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-                else if(evt == typeof(LinkMessageEvent))
-                {
-                    LinkMessageEvent e = (LinkMessageEvent)ev;
-                    InvokeStateEvent("link_message", e.SenderNumber, e.Number, e.Data, new LSLKey(e.Id));
-                }
-                else if(evt == typeof(ListenEvent))
-                {
-                    ListenEvent e = (ListenEvent)ev;
-                    InvokeStateEvent("listen", e.Channel, e.Name, new LSLKey(e.ID), e.Message);
-                }
-                else if(evt == typeof(MoneyEvent))
-                {
-                    MoneyEvent e = (MoneyEvent)ev;
-                    InvokeStateEvent("money", e.ID, e.Amount);
-                }
-                else if(evt == typeof(MovingEndEvent))
-                {
-                    InvokeStateEvent("moving_end");
-                }
-                else if(evt == typeof(MovingStartEvent))
-                {
-                    InvokeStateEvent("moving_start");
-                }
-                else if(evt == typeof(NoSensorEvent))
-                {
-                    InvokeStateEvent("no_sensor");
-                }
-                else if(evt == typeof(NotAtRotTargetEvent))
-                {
-                    InvokeStateEvent("not_at_rot_target");
-                }
-                else if(evt == typeof(NotAtTargetEvent))
-                {
-                    InvokeStateEvent("not_at_target");
-                }
-                else if(evt == typeof(ObjectRezEvent))
-                {
-                    ObjectRezEvent e = (ObjectRezEvent)ev;
-                    InvokeStateEvent("object_rez", new LSLKey(e.ObjectID));
-                }
-                else if(evt == typeof(OnRezEvent))
-                {
-                    OnRezEvent e = (OnRezEvent)ev;
-                    StartParameter = new Integer(e.StartParam);
-                    InvokeStateEvent("on_rez", e.StartParam);
-                }
-                else if(evt == typeof(PathUpdateEvent))
-                {
-                    PathUpdateEvent e = (PathUpdateEvent)ev;
-                    InvokeStateEvent("path_update", e.Type, e.Reserved);
-                }
-                else if(evt == typeof(RemoteDataEvent))
-                {
-                    RemoteDataEvent e = (RemoteDataEvent)ev;
-                    InvokeStateEvent("remote_data", e.Type, new LSLKey(e.Channel), new LSLKey(e.MessageID), e.Sender, e.IData, e.SData);
-                }
-                else if(evt == typeof(ResetScriptEvent))
-                {
-                    throw new ResetScriptException();
-                }
-
-                else if(evt == typeof(RuntimePermissionsEvent))
-                {
-                    RuntimePermissionsEvent e = (RuntimePermissionsEvent)ev;
-                    if (e.PermissionsKey != Item.Owner)
-                    {
-                        e.Permissions &= ~(ScriptPermissions.Debit | ScriptPermissions.SilentEstateManagement | ScriptPermissions.ChangeLinks);
-                    }
-                    if (e.PermissionsKey != Item.Owner)
-                    {
-#warning Add group support here (also allowed are group owners)
-                        e.Permissions &= ~ScriptPermissions.ReturnObjects;
-                    }
-                    if (Item.IsGroupOwned)
-                    {
-                        e.Permissions &= ~ScriptPermissions.Debit;
-                    }
-
-                    ObjectPartInventoryItem.PermsGranterInfo grantinfo = new ObjectPartInventoryItem.PermsGranterInfo();
-                    grantinfo.PermsGranter = e.PermissionsKey;
-                    grantinfo.PermsMask = (ScriptPermissions)e.Permissions;
-                    Item.PermsGranter = grantinfo;
-                    InvokeStateEvent("run_time_permissions", (ScriptPermissions)e.Permissions);
-                }
-                else if(evt == typeof(SensorEvent))
-                {
-                    SensorEvent e = (SensorEvent)ev;
-                    m_Detected = e.Data;
-                    InvokeStateEvent("sensor", m_Detected.Count);
-                }
-                else if(evt == typeof(TouchEvent))
-                {
-                    TouchEvent e = (TouchEvent)ev;
-                    m_Detected = e.Detected;
-                    switch (e.Type)
-                    {
-                        case TouchEvent.TouchType.Start:
-                            InvokeStateEvent("touch_start", m_Detected.Count);
-                            break;
-
-                        case TouchEvent.TouchType.End:
-                            InvokeStateEvent("touch_end", m_Detected.Count);
-                            break;
-
-                        case TouchEvent.TouchType.Continuous:
-                            InvokeStateEvent("touch", m_Detected.Count);
-                            break;
-
-                        default:
-                            break;
-                    }
+                    evtDelegate(this, ev);
                 }
             }
             catch (ResetScriptException)
@@ -1143,5 +952,247 @@ namespace SilverSim.Scripting.Lsl
                 chatService.Send(ev);
             }
         }
+
+        #region Event to function handlers
+
+        static Script()
+        {
+            StateEventHandlers.Add(typeof(AtRotTargetEvent), delegate(Script script, IScriptEvent ev)
+            {
+                AtRotTargetEvent e = (AtRotTargetEvent)ev;
+                script.InvokeStateEvent("at_rot_target", e.TargetRotation, e.OurRotation);
+            });
+
+            StateEventHandlers.Add(typeof(AttachEvent), delegate(Script script, IScriptEvent ev)
+            {
+                AttachEvent e = (AttachEvent)ev;
+                script.InvokeStateEvent("attach", new LSLKey(e.ObjectID));
+            });
+
+            StateEventHandlers.Add(typeof(AtTargetEvent), delegate(Script script, IScriptEvent ev)
+            {
+                AtTargetEvent e = (AtTargetEvent)ev;
+                script.InvokeStateEvent("at_target", e.Handle, e.TargetPosition, e.OurPosition);
+            });
+
+            StateEventHandlers.Add(typeof(ChangedEvent), delegate(Script script, IScriptEvent ev)
+            {
+                ChangedEvent e = (ChangedEvent)ev;
+                script.InvokeStateEvent("changed", (int)e.Flags);
+            });
+
+            StateEventHandlers.Add(typeof(CollisionEvent), HandleCollision);
+
+            StateEventHandlers.Add(typeof(DataserverEvent), delegate(Script script, IScriptEvent ev)
+            {
+                DataserverEvent e = (DataserverEvent)ev;
+                script.InvokeStateEvent("dataserver", new LSLKey(e.QueryID), e.Data);
+            });
+
+            StateEventHandlers.Add(typeof(MessageObjectEvent), HandleMessageObject);
+
+            StateEventHandlers.Add(typeof(EmailEvent), delegate(Script script, IScriptEvent ev)
+            {
+                EmailEvent e = (EmailEvent)ev;
+                script.InvokeStateEvent("email", e.Time, e.Address, e.Subject, e.Message, e.NumberLeft);
+            });
+
+            StateEventHandlers.Add(typeof(HttpResponseEvent), delegate(Script script, IScriptEvent ev)
+            {
+                HttpResponseEvent e = (HttpResponseEvent)ev;
+                script.InvokeStateEvent("http_response", new LSLKey(e.RequestID), e.Status, e.Metadata, e.Body);
+            });
+
+            StateEventHandlers.Add(typeof(LandCollisionEvent), HandleLandCollision);
+
+            StateEventHandlers.Add(typeof(LinkMessageEvent), delegate(Script script, IScriptEvent ev)
+            {
+                LinkMessageEvent e = (LinkMessageEvent)ev;
+                script.InvokeStateEvent("link_message", e.SenderNumber, e.Number, e.Data, new LSLKey(e.Id));
+            });
+
+            StateEventHandlers.Add(typeof(ListenEvent), delegate(Script script, IScriptEvent ev)
+            {
+                ListenEvent e = (ListenEvent)ev;
+                script.InvokeStateEvent("listen", e.Channel, e.Name, new LSLKey(e.ID), e.Message);
+            });
+
+            StateEventHandlers.Add(typeof(MoneyEvent), delegate(Script script, IScriptEvent ev)
+            {
+                MoneyEvent e = (MoneyEvent)ev;
+                script.InvokeStateEvent("money", e.ID, e.Amount);
+            });
+
+            StateEventHandlers.Add(typeof(MovingStartEvent), delegate(Script script, IScriptEvent ev)
+            {
+                script.InvokeStateEvent("moving_start");
+            });
+
+            StateEventHandlers.Add(typeof(MovingEndEvent), delegate(Script script, IScriptEvent ev)
+            {
+                script.InvokeStateEvent("moving_end");
+            });
+
+            StateEventHandlers.Add(typeof(NoSensorEvent), delegate(Script script, IScriptEvent ev)
+            {
+                script.InvokeStateEvent("no_sensor");
+            });
+
+            StateEventHandlers.Add(typeof(NotAtRotTargetEvent), delegate(Script script, IScriptEvent ev)
+            {
+                script.InvokeStateEvent("not_at_rot_target");
+            });
+
+            StateEventHandlers.Add(typeof(NotAtTargetEvent), delegate (Script script, IScriptEvent ev)
+            {
+                script.InvokeStateEvent("not_at_target");
+            });
+
+            StateEventHandlers.Add(typeof(ObjectRezEvent), delegate (Script script, IScriptEvent ev)
+            {
+                ObjectRezEvent e = (ObjectRezEvent)ev;
+                script.InvokeStateEvent("object_rez", new LSLKey(e.ObjectID));
+            });
+
+            StateEventHandlers.Add(typeof(OnRezEvent), delegate (Script script, IScriptEvent ev)
+            {
+                OnRezEvent e = (OnRezEvent)ev;
+                script.StartParameter = new Integer(e.StartParam);
+                script.InvokeStateEvent("on_rez", e.StartParam);
+            });
+
+            StateEventHandlers.Add(typeof(PathUpdateEvent), delegate (Script script, IScriptEvent ev)
+            {
+                PathUpdateEvent e = (PathUpdateEvent)ev;
+                script.InvokeStateEvent("path_update", e.Type, e.Reserved);
+            });
+
+            StateEventHandlers.Add(typeof(RemoteDataEvent), delegate (Script script, IScriptEvent ev)
+            {
+                RemoteDataEvent e = (RemoteDataEvent)ev;
+                script.InvokeStateEvent("remote_data", e.Type, new LSLKey(e.Channel), new LSLKey(e.MessageID), e.Sender, e.IData, e.SData);
+            });
+
+            StateEventHandlers.Add(typeof(ResetScriptEvent), delegate (Script script, IScriptEvent ev)
+            {
+                throw new ResetScriptException();
+            });
+
+            StateEventHandlers.Add(typeof(SensorEvent), HandleSensor);
+            StateEventHandlers.Add(typeof(RuntimePermissionsEvent), HandleRuntimePermissions);
+            StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
+        }
+
+        static void HandleCollision(Script script, IScriptEvent ev)
+        {
+            script.m_Detected = ((CollisionEvent)ev).Detected;
+            switch (((CollisionEvent)ev).Type)
+            {
+                case CollisionEvent.CollisionType.Start:
+                    script.InvokeStateEvent("collision_start", script.m_Detected.Count);
+                    break;
+
+                case CollisionEvent.CollisionType.End:
+                    script.InvokeStateEvent("collision_end", script.m_Detected.Count);
+                    break;
+
+                case CollisionEvent.CollisionType.Continuous:
+                    script.InvokeStateEvent("collision", script.m_Detected.Count);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        static void HandleMessageObject(Script script, IScriptEvent ev)
+        {
+            MessageObjectEvent e = (MessageObjectEvent)ev;
+            if (script.UseMessageObjectEvent)
+            {
+                script.InvokeStateEvent("object_message", new LSLKey(e.ObjectID), e.Data);
+            }
+            else
+            {
+                script.InvokeStateEvent("dataserver", new LSLKey(e.ObjectID), e.Data);
+            }
+        }
+
+        static void HandleLandCollision(Script script, IScriptEvent ev)
+        {
+            LandCollisionEvent e = (LandCollisionEvent)ev;
+            switch (e.Type)
+            {
+                case LandCollisionEvent.CollisionType.Start:
+                    script.InvokeStateEvent("land_collision_start", e.Position);
+                    break;
+
+                case LandCollisionEvent.CollisionType.End:
+                    script.InvokeStateEvent("land_collision_end", e.Position);
+                    break;
+
+                case LandCollisionEvent.CollisionType.Continuous:
+                    script.InvokeStateEvent("land_collision", e.Position);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        static void HandleSensor(Script script, IScriptEvent ev)
+        {
+            SensorEvent e = (SensorEvent)ev;
+            script.m_Detected = e.Data;
+            script.InvokeStateEvent("sensor", script.m_Detected.Count);
+        }
+
+        static void HandleRuntimePermissions(Script script, IScriptEvent ev)
+        {
+            RuntimePermissionsEvent e = (RuntimePermissionsEvent)ev;
+            if (e.PermissionsKey != script.Item.Owner)
+            {
+                e.Permissions &= ~(ScriptPermissions.Debit | ScriptPermissions.SilentEstateManagement | ScriptPermissions.ChangeLinks);
+            }
+            if (e.PermissionsKey != script.Item.Owner)
+            {
+#warning Add group support here (also allowed are group owners)
+                e.Permissions &= ~ScriptPermissions.ReturnObjects;
+            }
+            if (script.Item.IsGroupOwned)
+            {
+                e.Permissions &= ~ScriptPermissions.Debit;
+            }
+
+            ObjectPartInventoryItem.PermsGranterInfo grantinfo = new ObjectPartInventoryItem.PermsGranterInfo();
+            grantinfo.PermsGranter = e.PermissionsKey;
+            grantinfo.PermsMask = (ScriptPermissions)e.Permissions;
+            script.Item.PermsGranter = grantinfo;
+            script.InvokeStateEvent("run_time_permissions", (ScriptPermissions)e.Permissions);
+        }
+
+        static void HandleTouch(Script script, IScriptEvent ev)
+        {
+            TouchEvent e = (TouchEvent)ev;
+            script.m_Detected = e.Detected;
+            switch (e.Type)
+            {
+                case TouchEvent.TouchType.Start:
+                    script.InvokeStateEvent("touch_start", script.m_Detected.Count);
+                    break;
+
+                case TouchEvent.TouchType.End:
+                    script.InvokeStateEvent("touch_end", script.m_Detected.Count);
+                    break;
+
+                case TouchEvent.TouchType.Continuous:
+                    script.InvokeStateEvent("touch", script.m_Detected.Count);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        #endregion
     }
 }

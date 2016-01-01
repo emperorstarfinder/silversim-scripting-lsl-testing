@@ -164,4 +164,38 @@ namespace SilverSim.Scripting.Lsl
             Tooltip = tooltip.Replace("\n", "\\n");
         }
     }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Field, Inherited = false)]
+    public sealed class TranslatedScriptEventsInfoAttribute : Attribute
+    {
+        public TranslatedScriptEventsInfoAttribute()
+        {
+
+        }
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public sealed class TranslatedScriptEventAttribute : Attribute
+    {
+        public string EventName { get; private set; }
+
+        public TranslatedScriptEventAttribute(string eventName)
+        {
+            EventName = eventName;
+        }
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+    public sealed class TranslatedScriptEventParameterAttribute : Attribute
+    {
+        public int ParameterNumber { get; private set; }
+        
+        public TranslatedScriptEventParameterAttribute(int parameterNumber)
+        {
+            ParameterNumber = parameterNumber;
+        }
+    }
 }
