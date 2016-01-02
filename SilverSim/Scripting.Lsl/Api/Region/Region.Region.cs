@@ -115,7 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(instance)
             {
-                return instance.Part.ObjectGroup.Scene.GridURI;
+                return instance.Part.ObjectGroup.Scene.GatekeeperURI;
             }
         }
 
