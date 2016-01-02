@@ -2,7 +2,6 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.Types.Object;
-using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
@@ -241,9 +240,6 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
-                        state.Variables[varname] = new LSLKey(reader.ReadElementValueAsString());
-                        break;
-
                     case "OpenMetaverse.UUID":
                         state.Variables[varname] = new LSLKey(reader.ReadElementValueAsString());
                         break;
