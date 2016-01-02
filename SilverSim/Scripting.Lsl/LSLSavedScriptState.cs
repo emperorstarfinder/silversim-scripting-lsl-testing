@@ -132,9 +132,6 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
-                        array.Add(new LSLKey(reader.ReadElementValueAsString()));
-                        break;
-
                     case "OpenMetaverse.UUID":
                         array.Add(new LSLKey(reader.ReadElementValueAsString()));
                         break;
