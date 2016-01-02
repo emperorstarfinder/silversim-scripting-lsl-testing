@@ -114,6 +114,7 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector":
+                    case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3":
                         vardata = reader.ReadElementValueAsString();
                         array.Add(Vector3.Parse(vardata));
                         break;
@@ -128,6 +129,14 @@ namespace SilverSim.Scripting.Lsl
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
                         array.Add(reader.ReadElementValueAsString());
+                        break;
+
+                    case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
+                        array.Add(new LSLKey(reader.ReadElementValueAsString()));
+                        break;
+
+                    case "OpenMetaverse.UUID":
+                        array.Add(new LSLKey(reader.ReadElementValueAsString()));
                         break;
 
                     default:
@@ -234,6 +243,14 @@ namespace SilverSim.Scripting.Lsl
                         state.Variables[varname] = reader.ReadElementValueAsString();
                         break;
 
+                    case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
+                        state.Variables[varname] = new LSLKey(reader.ReadElementValueAsString());
+                        break;
+
+                    case "OpenMetaverse.UUID":
+                        state.Variables[varname] = new LSLKey(reader.ReadElementValueAsString());
+                        break;
+
                     case "list":
                         state.Variables[varname] = ListFromXml(reader);
                         break;
@@ -259,7 +276,14 @@ namespace SilverSim.Scripting.Lsl
                                 break;
                             }
 
-                            VariableFromXml(reader, state);
+                            if (reader.Name == "Variable")
+                            {
+                                VariableFromXml(reader, state);
+                            }
+                            else
+                            {
+                                reader.ReadToEndElement();
+                            }
                             break;
 
                         case XmlNodeType.EndElement:

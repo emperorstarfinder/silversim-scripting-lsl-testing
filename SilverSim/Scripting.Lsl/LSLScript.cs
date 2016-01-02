@@ -98,6 +98,61 @@ namespace SilverSim.Scripting.Lsl
             m_States.Add(name, state);
         }
 
+        void ListToXml(XmlTextWriter writer, string name, AnArray array)
+        {
+            writer.WriteStartElement("Variable");
+            writer.WriteAttributeString("name", name);
+            writer.WriteAttributeString("type", "list");
+            foreach(IValue val in array)
+            {
+                Type valtype = val.GetType();
+                if(valtype == typeof(Integer))
+                {
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
+                    writer.WriteValue(val.AsInt);
+                    writer.WriteEndElement();
+                }
+                else if(valtype == typeof(Real))
+                {
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
+                    double v = (Real)val;
+                    writer.WriteValue(v);
+                    writer.WriteEndElement();
+                }
+                else if(valtype == typeof(Quaternion))
+                {
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
+                    writer.WriteValue(val.ToString());
+                    writer.WriteEndElement();
+                }
+                else if(valtype == typeof(Vector3))
+                {
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
+                    writer.WriteValue(val.ToString());
+                    writer.WriteEndElement();
+                }
+                else if (valtype == typeof(AString))
+                {
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
+                    writer.WriteValue(val.ToString());
+                    writer.WriteEndElement();
+                }
+                else if (valtype == typeof(UUID) || valtype == typeof(LSLKey))
+                {
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
+                    writer.WriteValue(val.ToString());
+                    writer.WriteEndElement();
+                }
+            }
+            writer.WriteEndElement();
+        }
+
         public void ToXml(XmlTextWriter writer)
         {
             writer.WriteStartElement("State");
@@ -132,8 +187,59 @@ namespace SilverSim.Scripting.Lsl
                     }
                     writer.WriteEndElement();
                     writer.WriteStartElement("Variables");
-                    {
-                        
+                    foreach(FieldInfo fi in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                    { 
+                        if(!fi.Name.StartsWith("var_"))
+                        {
+                            continue;
+                        }
+                        if(fi.FieldType == typeof(int))
+                        {
+                            writer.WriteStartElement("Variable");
+                            writer.WriteAttributeString("name", fi.Name.Substring(4));
+                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
+                        }
+                        else if(fi.FieldType == typeof(double))
+                        {
+                            writer.WriteStartElement("Variable");
+                            writer.WriteAttributeString("name", fi.Name.Substring(4));
+                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
+                        }
+                        else if (fi.FieldType == typeof(Vector3))
+                        {
+                            writer.WriteStartElement("Variable");
+                            writer.WriteAttributeString("name", fi.Name.Substring(4));
+                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
+                        }
+                        else if (fi.FieldType == typeof(Quaternion))
+                        {
+                            writer.WriteStartElement("Variable");
+                            writer.WriteAttributeString("name", fi.Name.Substring(4));
+                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
+                        }
+                        else if (fi.FieldType == typeof(UUID) || fi.FieldType == typeof(LSLKey))
+                        {
+                            writer.WriteStartElement("Variable");
+                            writer.WriteAttributeString("name", fi.Name.Substring(4));
+                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
+                        }
+                        else if(fi.FieldType == typeof(string))
+                        {
+                            writer.WriteStartElement("Variable");
+                            writer.WriteAttributeString("name", fi.Name.Substring(4));
+                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
+                        }
+                        else if(fi.FieldType == typeof(AnArray))
+                        {
+                            ListToXml(writer, fi.Name, (AnArray)fi.GetValue(this));
+                            continue;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                        writer.WriteValue(fi.GetValue(this).ToString());
+                        writer.WriteEndElement();
                     }
                     writer.WriteEndElement();
                     writer.WriteStartElement("Queue");
