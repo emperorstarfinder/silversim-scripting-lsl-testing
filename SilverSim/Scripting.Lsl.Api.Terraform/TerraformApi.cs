@@ -87,7 +87,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
             lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if (x < 0 || y < 0 || x >= scene.RegionData.Size.X || y >= scene.RegionData.Size.Y)
+                if (x < 0 || y < 0 || x >= scene.SizeX || y >= scene.SizeY)
                 {
                     throw new ArgumentException("Coordinate out of bounds");
                 }
@@ -102,7 +102,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
-                if (x < 0 || y < 0 || x >= scene.RegionData.Size.X || y >= scene.RegionData.Size.Y)
+                if (x < 0 || y < 0 || x >= scene.SizeX || y >= scene.SizeY)
                 {
                     throw new ArgumentException("Coordinate out of bounds");
                 }

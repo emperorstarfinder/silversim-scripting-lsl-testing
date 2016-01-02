@@ -340,11 +340,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock(instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if(pos.X < 0 || pos.X >= scene.RegionData.Size.X)
+                if(pos.X < 0 || pos.X >= scene.SizeX)
                 {
                     return 0;
                 }
-                if (pos.Y < 0 || pos.X >= scene.RegionData.Size.Y)
+                if (pos.Y < 0 || pos.X >= scene.SizeY)
                 {
                     return 0;
                 }

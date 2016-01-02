@@ -115,7 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(instance)
             {
-                return instance.Part.ObjectGroup.Scene.RegionData.GridURI;
+                return instance.Part.ObjectGroup.Scene.GridURI;
             }
         }
 
@@ -158,7 +158,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(instance)
             {
-                return instance.Part.ObjectGroup.Scene.RegionData.Size;
+                return new Vector3(
+                    instance.Part.ObjectGroup.Scene.SizeX,
+                    instance.Part.ObjectGroup.Scene.SizeY,
+                    0);
             }
         }
 
@@ -167,7 +170,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock (instance)
             {
-                return instance.Part.ObjectGroup.Scene.RegionData.RegionMapTexture;
+                return instance.Part.ObjectGroup.Scene.RegionMapTexture;
             }
         }
 
@@ -309,7 +312,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(this)
             {
-                Uri uri = new Uri(instance.Part.ObjectGroup.Scene.RegionData.ServerURI);
+                Uri uri = new Uri(instance.Part.ObjectGroup.Scene.ServerURI);
                 return uri.Host;
             }
         }
@@ -319,7 +322,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(this)
             {
-                return instance.Part.ObjectGroup.Scene.RegionData.Location;
+                return instance.Part.ObjectGroup.Scene.GridPosition;
             }
         }
 
@@ -374,7 +377,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     switch (data)
                     {
                         case DATA_SIM_POS:
-                            e.Data = new Vector3(scene.RegionData.Location).ToString();
+                            e.Data = new Vector3(scene.GridPosition).ToString();
                             instance.PostEvent(e);
                             return queryID;
 
@@ -384,7 +387,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                             return queryID;
 
                         case DATA_SIM_RATING:
-                            switch(scene.RegionData.Access)
+                            switch(scene.Access)
                             {
                                 case RegionAccess.Adult:
                                     e.Data = "ADULT";
@@ -422,7 +425,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             lock(instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                GridVector regionSize = scene.RegionData.Size;
                 Vector3 edgeOfWorld;
 
                 if(Math.Abs(dir.X) < double.Epsilon && Math.Abs(dir.Y) < double.Epsilon)
@@ -436,7 +438,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     if(dir.Y >= 0)
                     {
                         edgeOfWorld = pos;
-                        edgeOfWorld.Y = regionSize.Y;
+                        edgeOfWorld.Y = scene.SizeY;
                     }
                     else
                     {
@@ -457,13 +459,13 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     e0.X = 0;
                     e0.Y = b;
 
-                    e1.X = regionSize.X;
+                    e1.X = scene.SizeX;
                     e1.Y = m * e1.X + b;
 
                     e2.Y = 0;
                     e2.X = (e2.Y - b) / m;
 
-                    e3.Y = regionSize.Y;
+                    e3.Y = scene.SizeY;
                     e3.X = (e3.Y - b) / m;
 
                     double magSquared = (e0 - pos).LengthSquared;
@@ -628,7 +630,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     return "0";
 
                 case "region_product_name":
-                    return instance.Part.ObjectGroup.Scene.RegionData.ProductName;
+                    return instance.Part.ObjectGroup.Scene.ProductName;
 
                 case "region_start_time":
                     return instance.Part.ObjectGroup.Scene.RegionStartTime.AsULong.ToString();

@@ -46,8 +46,8 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 if(landmarkData.GatekeeperURI == scene.GatekeeperURI)
                 {
                     /* same grid */
-                    if (landmarkData.Location.GridX == scene.RegionData.Location.GridX &&
-                        landmarkData.Location.GridY == scene.RegionData.Location.GridY)
+                    if (landmarkData.Location.GridX == scene.GridPosition.GridX &&
+                        landmarkData.Location.GridY == scene.GridPosition.GridY)
                     {
                         /* same region, skip the teleport protocol */
                         TeleportAgentInRegion(instance, agent, landmarkData.LocalPos, lookAt);
@@ -90,8 +90,8 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         {
             /* instance already locked */
             SceneInterface scene = instance.Part.ObjectGroup.Scene;
-            if (location.GridX == scene.RegionData.Location.GridX &&
-                location.GridY == scene.RegionData.Location.GridY)
+            if (location.GridX == scene.GridPosition.GridX &&
+                location.GridY == scene.GridPosition.GridY)
             {
                 /* same region, skip the teleport protocol */
                 TeleportAgentInRegion(instance, agent, position, lookAt);
@@ -137,8 +137,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
 
             /* Remarks: teleporting in same region does not need teleport protocol */
             SceneInterface scene = instance.Part.ObjectGroup.Scene;
-            GridVector size = scene.RegionData.Size;
-            if(position.X >= size.X || position.Y >= size.Y || position.X < 0 || position.Y < 0)
+            if(position.X >= scene.SizeX || position.Y >= scene.SizeY || position.X < 0 || position.Y < 0)
             {
                 /* refuse teleport, out of region */
                 return;
