@@ -212,24 +212,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             throw new NotImplementedException("osGetRegionStats()");
         }
 
-        [APILevel(APIFlags.OSSL, "osLoadedCreationDate")]
-        public string LoadedCreationDate(ScriptInstance instance)
-        {
-            throw new NotImplementedException("osLoadedCreationDate()");
-        }
-
-        [APILevel(APIFlags.OSSL, "osLoadedCreationTime")]
-        public string LoadedCreationTime(ScriptInstance instance)
-        {
-            throw new NotImplementedException("osLoadedCreationTime()");
-        }
-
-        [APILevel(APIFlags.OSSL, "osLoadedCreationID")]
-        public LSLKey LoadedCreationID(ScriptInstance instance)
-        {
-            throw new NotImplementedException("osLoadedCreationID()");
-        }
-
         [APILevel(APIFlags.OSSL, "osGetSimulatorMemory")]
         public int GetSimulatorMemory(ScriptInstance instance)
         {
