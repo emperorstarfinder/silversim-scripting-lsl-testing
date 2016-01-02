@@ -30,6 +30,8 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         public const int OS_NPC_NOT_OWNED = 2;
         [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_SENSE_AS_AGENT = 4;
+        [APILevel(APIFlags.OSSL)]
+        public const int OS_NPC_OBJECT_GROUP = 8;
 
         [APILevel(APIFlags.OSSL)]
         public const int OS_NPC_SIT_NOW = 0;
