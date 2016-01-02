@@ -135,7 +135,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
             lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if (scene.IsEstateManager(instance.Part.Owner))
+                if (scene.IsEstateManager(instance.Part.Owner) || scene.IsRegionOwner(instance.Part.Owner))
                 {
                     UUID textureID = instance.GetTextureAssetID(texture.ToString());
 
@@ -163,7 +163,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
             lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if (scene.IsEstateManager(instance.Part.Owner))
+                if (scene.IsEstateManager(instance.Part.Owner) || scene.IsRegionOwner(instance.Part.Owner))
                 {
                     switch (corner)
                     {
@@ -190,6 +190,20 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                         default:
                             break;
                     }
+                    scene.TriggerRegionSettingsChanged();
+                }
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osSetRegionWaterHeight")]
+        public void SetRegionWaterHeight(ScriptInstance instance, double waterheight)
+        {
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.IsEstateManager(instance.Part.Owner) || scene.IsRegionOwner(instance.Part.Owner))
+                {
+                    scene.RegionSettings.WaterHeight = waterheight;
                     scene.TriggerRegionSettingsChanged();
                 }
             }
