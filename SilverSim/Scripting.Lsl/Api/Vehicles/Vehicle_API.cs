@@ -47,6 +47,19 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_FLAG_CAMERA_DECOUPLED = 0x200;
 
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_FLAG_REACT_TO_CURRENTS = 0x10000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_FLAG_REACT_TO_WIND = 0x20000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_FLAG_LIMIT_MOTOR_DOWN = 0x40000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_FLAG_TORQUE_WORLD_Z = 0x80000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_FLAG_MOUSE_POINT_STEER = 0x100000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_FLAG_MOUSE_POINT_BANK = 0x200000;
+
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
