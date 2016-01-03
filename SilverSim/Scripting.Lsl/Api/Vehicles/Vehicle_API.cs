@@ -93,17 +93,17 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY = 36;
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_MOUSELOOK_AZIMUTH = 11001;
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_MOUSELOOK_ALTITUDE = 11002;
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_BANKING_AZIMUTH = 11003;
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_DISABLE_MOTORS_ABOVE = 11004;
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_DISABLE_MOTORS_AFTER = 11005;
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_INVERTED_BANKING_MODIFIER = 11006;
 
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
@@ -267,10 +267,10 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_TYPE_BALLOON = 5;
         [APILevel(APIFlags.ASSL)]
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_TYPE_SAILBOAT = 10001;
         [APILevel(APIFlags.ASSL)]
-        [APIExtension(APIExtension.InWorldz)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_TYPE_MOTORCYCLE = 10002;
 
         [APILevel(APIFlags.LSL, "llSetVehicleType")]

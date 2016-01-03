@@ -43,6 +43,8 @@ namespace SilverSim.Scripting.Lsl
         public const string Admin = "Admin";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string InWorldz = "InWorldz";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
+        public const string ExtendedVehicle = "ExtendedVehicle";
     }
 
     [Serializable]
