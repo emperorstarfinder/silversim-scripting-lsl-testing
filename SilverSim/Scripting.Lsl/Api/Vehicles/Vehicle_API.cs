@@ -315,6 +315,22 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         thisGroup[VehicleVectorParamId.LinearMotorOffset] = vec;
                         break;
 
+                    case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorDecayTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorDecayTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorTimescale] = vec;
+                        break;
+
                     default:
                         break;
                 }
