@@ -93,6 +93,18 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY = 36;
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_MOUSELOOK_AZIMUTH = 11001;
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_MOUSELOOK_ALTITUDE = 11002;
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_BANKING_AZIMUTH = 11003;
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_DISABLE_MOTORS_ABOVE = 11004;
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_DISABLE_MOTORS_AFTER = 11005;
+        [APIExtension(APIExtension.InWorldz)]
+        public const int VEHICLE_INVERTED_BANKING_MODIFIER = 11006;
 
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
@@ -132,11 +144,11 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         break;
 
                     case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
-                        thisGroup[VehicleFloatParamId.AngularMotorDecayTimescale] = value;
+                        thisGroup[VehicleVectorParamId.AngularMotorDecayTimescale] = new Vector3(value, value, value);
                         break;
 
                     case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
-                        thisGroup[VehicleFloatParamId.AngularMotorTimescale] = value;
+                        thisGroup[VehicleVectorParamId.AngularMotorTimescale] = new Vector3(value, value, value);
                         break;
 
                     case VEHICLE_BANKING_EFFICIENCY:
@@ -176,11 +188,11 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         break;
 
                     case VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE:
-                        thisGroup[VehicleFloatParamId.LinearMotorDecayTimescale] = value;
+                        thisGroup[VehicleVectorParamId.LinearMotorDecayTimescale] = new Vector3(value, value, value);
                         break;
 
                     case VEHICLE_LINEAR_MOTOR_TIMESCALE:
-                        thisGroup[VehicleFloatParamId.LinearMotorTimescale] = value;
+                        thisGroup[VehicleVectorParamId.LinearMotorTimescale] = new Vector3(value, value, value);
                         break;
 
                     case VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY:
@@ -189,6 +201,30 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
                     case VEHICLE_VERTICAL_ATTRACTION_TIMESCALE:
                         thisGroup[VehicleFloatParamId.VerticalAttractionTimescale] = value;
+                        break;
+
+                    case VEHICLE_MOUSELOOK_AZIMUTH:
+                        thisGroup[VehicleFloatParamId.MouselookAzimuth] = value;
+                        break;
+
+                    case VEHICLE_MOUSELOOK_ALTITUDE:
+                        thisGroup[VehicleFloatParamId.MouselookAltitude] = value;
+                        break;
+
+                    case VEHICLE_BANKING_AZIMUTH:
+                        thisGroup[VehicleFloatParamId.BankingAzimuth] = value;
+                        break;
+
+                    case VEHICLE_DISABLE_MOTORS_ABOVE:
+                        thisGroup[VehicleFloatParamId.DisableMotorsAbove] = value;
+                        break;
+
+                    case VEHICLE_DISABLE_MOTORS_AFTER:
+                        thisGroup[VehicleFloatParamId.DisableMotorsAfter] = value;
+                        break;
+
+                    case VEHICLE_INVERTED_BANKING_MODIFIER:
+                        thisGroup[VehicleFloatParamId.InvertedBankingModifier] = value;
                         break;
 
                     default:
@@ -267,6 +303,14 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
                     case VEHICLE_TYPE_BALLOON:
                         thisGroup.VehicleType = VehicleType.Balloon;
+                        break;
+
+                    case VEHICLE_TYPE_MOTORCYCLE:
+                        thisGroup.VehicleType = VehicleType.Motorcycle;
+                        break;
+
+                    case VEHICLE_TYPE_SAILBOAT:
+                        thisGroup.VehicleType = VehicleType.Sailboat;
                         break;
 
                     default:
