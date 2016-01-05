@@ -216,42 +216,158 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [ForcedSleep(0.1)]
         public void AddToLandBanList(ScriptInstance instance, LSLKey avatar, double hours)
         {
-            throw new NotImplementedException("llAddToLandBanList(key, float)");
+            lock (instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo pInfo;
+                ParcelAccessEntry entry = new ParcelAccessEntry();
+                if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out entry.Accessor))
+                {
+                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                }
+                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
+                {
+                    entry.ParcelID = pInfo.ID;
+                    if (hours < double.Epsilon)
+                    {
+                        entry.ExpiresAt = null;
+                    }
+                    else
+                    {
+                        entry.ExpiresAt = Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
+                    }
+
+                    if (pInfo.Owner.EqualsGrid(part.Owner) ||
+                        (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned)))
+                    {
+                        scene.Parcels.BlackList.Store(entry);
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llAddToLandPassList")]
         [ForcedSleep(0.1)]
         public void AddToLandPassList(ScriptInstance instance, LSLKey avatar, double hours)
         {
-            throw new NotImplementedException("llAddToLandPassList(key, float)");
+            lock (instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo pInfo;
+                ParcelAccessEntry entry = new ParcelAccessEntry();
+                if(!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out entry.Accessor))
+                {
+                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                }
+                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
+                {
+                    entry.ParcelID = pInfo.ID;
+                    if (hours < double.Epsilon)
+                    {
+                        entry.ExpiresAt = null;
+                    }
+                    else
+                    {
+                        entry.ExpiresAt = Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
+                    }
+
+                    if (pInfo.Owner.EqualsGrid(part.Owner) ||
+                        (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed)))
+                    {
+                        scene.Parcels.WhiteList.Store(entry);
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llRemoveFromLandBanList")]
         [ForcedSleep(0.1)]
         public void RemoveFromLandBanList(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException("llRemoveFromLandBanList(key)");
+            lock (instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo pInfo;
+                UUI accessor;
+                if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out accessor))
+                {
+                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                }
+                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
+                    (pInfo.Owner.EqualsGrid(part.Owner) ||
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned))))
+                {
+                    scene.Parcels.BlackList.Remove(pInfo.ID, accessor);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llRemoveFromLandPassList")]
         [ForcedSleep(0.1)]
         public void RemoveFromLandPassList(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException("llRemoveFromLandPassList(key)");
+            lock (instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo pInfo;
+                UUI accessor;
+                if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out accessor))
+                {
+                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                }
+                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
+                    (pInfo.Owner.EqualsGrid(part.Owner) ||
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed))))
+                {
+                    scene.Parcels.WhiteList.Remove(pInfo.ID, accessor);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llResetLandBanList")]
         [ForcedSleep(0.1)]
         public void ResetLandBanList(ScriptInstance instance)
         {
-            throw new NotImplementedException("llResetLandBanList()");
+            lock (instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo pInfo;
+                if (scene.Parcels.TryGetValue(grp.Position, out pInfo) && 
+                    (pInfo.Owner.EqualsGrid(part.Owner) ||
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned))))
+                {
+                    scene.Parcels.BlackList.RemoveAll(pInfo.ID);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llResetLandPassList")]
         [ForcedSleep(0.1)]
         public void ResetLandPassList(ScriptInstance instance)
         {
-            throw new NotImplementedException("llResetLandPassList()");
+            lock(instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                ParcelInfo pInfo;
+                if(scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
+                    (pInfo.Owner.EqualsGrid(part.Owner) ||
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed))))
+                {
+                    scene.Parcels.WhiteList.RemoveAll(pInfo.ID);
+                }
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osSetParcelDetails")]
