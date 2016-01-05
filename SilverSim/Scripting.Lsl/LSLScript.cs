@@ -107,14 +107,7 @@ namespace SilverSim.Scripting.Lsl
             }
             set
             {
-                if(value < 0)
-                {
-                    value = 0;
-                }
-                else
-                {
-                    value = m_MinEventDelay;
-                }
+                m_MinEventDelay = (value < 0) ? 0 : value;
             }
         }
 

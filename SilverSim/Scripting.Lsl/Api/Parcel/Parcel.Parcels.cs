@@ -230,14 +230,9 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
                 {
                     entry.ParcelID = pInfo.ID;
-                    if (hours < double.Epsilon)
-                    {
-                        entry.ExpiresAt = null;
-                    }
-                    else
-                    {
-                        entry.ExpiresAt = Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
-                    }
+                    entry.ExpiresAt = (hours < double.Epsilon) ? 
+                        null :
+                        Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
 
                     if (pInfo.Owner.EqualsGrid(part.Owner) ||
                         (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned)))
@@ -266,14 +261,9 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
                 {
                     entry.ParcelID = pInfo.ID;
-                    if (hours < double.Epsilon)
-                    {
-                        entry.ExpiresAt = null;
-                    }
-                    else
-                    {
-                        entry.ExpiresAt = Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
-                    }
+                    entry.ExpiresAt = (hours < double.Epsilon) ?
+                        null :
+                        Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
 
                     if (pInfo.Owner.EqualsGrid(part.Owner) ||
                         (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed)))
