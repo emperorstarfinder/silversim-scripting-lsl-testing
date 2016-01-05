@@ -51,7 +51,12 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
         }
 
         [APILevel(APIFlags.LSL, "llManageEstateAccess")]
-        public int ManageEstateAccess(ScriptInstance instance, int action, LSLKey avatar)
+        [LSLTooltip("Add or remove agents from the estate's agent access or ban lists or groups from the estate's group access list.")]
+        public int ManageEstateAccess(ScriptInstance instance, 
+            [LSLTooltip("ESTATE_ACCESS_* flag")]
+            int action, 
+            [LSLTooltip("avatar or group UUID")]
+            LSLKey avatar)
         {
             lock(instance)
             {
