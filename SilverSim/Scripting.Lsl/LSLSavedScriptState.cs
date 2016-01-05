@@ -22,6 +22,7 @@ namespace SilverSim.Scripting.Lsl
             public List<EventParams> EventData = new List<EventParams>();
             public bool IsRunning;
             public string CurrentState = "default";
+            public double MinEventDelay;
 
             static void ScriptPermissionsFromXML(XmlTextReader reader, ObjectPartInventoryItem item)
             {
@@ -670,6 +671,10 @@ namespace SilverSim.Scripting.Lsl
 
                                 case "Permissions":
                                     ScriptPermissionsFromXML(reader, item);
+                                    break;
+
+                                case "MinEventDelay":
+                                    state.MinEventDelay = reader.ReadElementValueAsDouble();
                                     break;
 
                                 default:

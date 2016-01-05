@@ -98,6 +98,26 @@ namespace SilverSim.Scripting.Lsl
             m_States.Add(name, state);
         }
 
+        double m_MinEventDelay;
+        public double MinEventDelay
+        {
+            get
+            {
+                return m_MinEventDelay;
+            }
+            set
+            {
+                if(value < 0)
+                {
+                    value = 0;
+                }
+                else
+                {
+                    value = m_MinEventDelay;
+                }
+            }
+        }
+
         void ListToXml(XmlTextWriter writer, string name, AnArray array)
         {
             writer.WriteStartElement("Variable");
@@ -247,6 +267,13 @@ namespace SilverSim.Scripting.Lsl
 
                     }
                     writer.WriteEndElement();
+                    writer.WriteStartElement("Permissions");
+                    {
+                        ObjectPartInventoryItem.PermsGranterInfo grantInfo = Item.PermsGranter;
+                        writer.WriteNamedValue("mask", (uint)grantInfo.PermsMask);
+                        writer.WriteNamedValue("granter", grantInfo.PermsGranter.ID);
+                    }
+                    writer.WriteEndElement();
                     writer.WriteStartElement("Plugins");
                     List<object> serializationData = new List<object>();
                     foreach(Action<ScriptInstance, List<object>> serializer in SerializationDelegates)
@@ -258,6 +285,7 @@ namespace SilverSim.Scripting.Lsl
                         writer.WriteTypedValue("ListItem", o);
                     }
                     writer.WriteEndElement();
+                    writer.WriteNamedValue("MinEventDelay", MinEventDelay);
                 }
                 writer.WriteEndElement();
             }
@@ -634,6 +662,9 @@ namespace SilverSim.Scripting.Lsl
                     m_Events.Enqueue(ev);
                 }
             }
+
+            /* min event delay */
+            MinEventDelay = state.MinEventDelay;
 
             /* initialize plugin data */
             int pluginpos = 0;

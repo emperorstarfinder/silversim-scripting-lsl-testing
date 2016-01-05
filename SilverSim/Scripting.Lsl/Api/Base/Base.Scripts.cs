@@ -5,12 +5,10 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Common;
-using SilverSim.Types;
 using SilverSim.Types.Agent;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Inventory;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -35,7 +33,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llMinEventDelay")]
         public void MinEventDelay(ScriptInstance instance, double delay)
         {
-            throw new NotImplementedException("llMinEventDelay(float)");
+            Script script = (Script)instance;
+            lock(script)
+            {
+                script.MinEventDelay = delay;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetStartParameter")]
