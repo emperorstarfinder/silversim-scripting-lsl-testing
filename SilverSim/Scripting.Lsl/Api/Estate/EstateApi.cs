@@ -15,9 +15,9 @@ using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Estate
 {
-    [ScriptApiName("Agents")]
+    [ScriptApiName("Estates")]
     [LSLImplementation]
-    [Description("LSL/OSSL Agents API")]
+    [Description("LSL/OSSL Estate API")]
     public class EstateApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]
