@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.Estate;
+using SilverSim.ServiceInterfaces.Groups;
 using SilverSim.ServiceInterfaces.IM;
 using SilverSim.Types;
 using SilverSim.Types.Estate;
@@ -64,6 +65,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
                 UUI uui = UUI.Unknown;
                 UGI ugi = UGI.Unknown;
+                GroupsNameServiceInterface groupsNameService = scene.GroupsNameService;
                 switch(action)
                 {
                     case ESTATE_ACCESS_ALLOWED_AGENT_ADD:
@@ -78,11 +80,8 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
                     case ESTATE_ACCESS_ALLOWED_GROUP_ADD:
                     case ESTATE_ACCESS_ALLOWED_GROUP_REMOVE:
-                        if(null == scene.GroupsNameService)
-                        {
-                            return 0;
-                        }
-                        else if (!scene.GroupsNameService.TryGetValue(avatar.AsUUID, out ugi))
+                        if(null == groupsNameService ||
+                            !groupsNameService.TryGetValue(avatar.AsUUID, out ugi))
                         {
                             return 0;
                         }
@@ -141,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                     default:
                         break;
                 }
-                Script script = (Script)instance;
+
                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = instance.Item.PermsGranter;
                 if (!grantInfo.PermsGranter.EqualsGrid(thisGroup.Owner) ||
                     (grantInfo.PermsMask & Types.Script.ScriptPermissions.SilentEstateManagement) == 0)
