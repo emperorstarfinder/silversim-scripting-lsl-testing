@@ -115,6 +115,10 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                         break;
 
                     case ESTATE_ACCESS_BANNED_AGENT_ADD:
+                        if(scene.IsEstateManager(uui))
+                        {
+                            return 0;
+                        }
                         estateService.EstateBans[estateID, uui] = true;
                         message = string.Format("Added agent {0} to banned list for estate {1}", uui.FullName, estate.Name);
                         break;
@@ -163,8 +167,8 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                     IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
                     imservice.Send(im);
                 }
+                return 1;
             }
-            return 0;
         }
     }
 }
