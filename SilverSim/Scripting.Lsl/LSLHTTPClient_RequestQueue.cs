@@ -7,13 +7,13 @@ using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Threading;
 using SilverSim.Types;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Threading;
 using System.Web;
-using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl
 {

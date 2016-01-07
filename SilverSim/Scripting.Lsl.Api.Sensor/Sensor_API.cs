@@ -9,12 +9,12 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Threading;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
-using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl.Api.Sensor
 {

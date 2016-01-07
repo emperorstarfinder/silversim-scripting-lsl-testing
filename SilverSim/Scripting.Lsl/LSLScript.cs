@@ -7,6 +7,7 @@ using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Threading;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
@@ -15,7 +16,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Timers;
 using System.Xml;
-using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl
 {

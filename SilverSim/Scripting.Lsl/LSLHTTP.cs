@@ -9,6 +9,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Threading;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Timers;
-using ThreadedClasses;
 
 namespace SilverSim.Scripting.Lsl
 {
