@@ -699,6 +699,10 @@ namespace SilverSim.Scripting.Lsl
                                 break;
 
                             default:
+                                if(args.Count < 3)
+                                {
+                                    throw ParserException(p, "Invalid state declaration");
+                                }
                                 CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
                                 args.Insert(0, "void");
                                 funcList.Add(new LineInfo(args, lineNumber));
