@@ -9,6 +9,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Threading;
 using SilverSim.Types;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
@@ -104,7 +105,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     req = reqqueue.Dequeue(1000);
                 }
-                catch(BlockingQueue<LSLHttpRequest>.TimeoutException)
+                catch(TimeoutException)
                 {
                     continue;
                 }
