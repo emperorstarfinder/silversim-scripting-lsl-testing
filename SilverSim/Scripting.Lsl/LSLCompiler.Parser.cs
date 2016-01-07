@@ -17,7 +17,7 @@ namespace SilverSim.Scripting.Lsl
         {
             string fname;
             int lineno;
-            p.GetFileInfo(out fname, out lineno);
+            p.GetBeginFileInfo(out fname, out lineno);
             return new CompilerException(lineno, message);
         }
 
@@ -347,20 +347,29 @@ namespace SilverSim.Scripting.Lsl
             for (; ; )
             {
                 int lineNumber;
+                string fname;
                 List<string> args = new List<string>();
                 try
                 {
                     p.Read(args);
                 }
+                catch (ArgumentException e)
+                {
+                    throw ParserException(p, e.Message);
+                }
                 catch (ParserBase.EndOfStringException)
                 {
                     throw ParserException(p, "Missing '\"' at the end of string");
+                }
+                catch(ParserBase.StackEmptyException)
+                {
+                    throw ParserException(p, "Premature end of script");
                 }
                 catch (ParserBase.EndOfFileException)
                 {
                     throw ParserException(p, "Premature end of script");
                 }
-                lineNumber = p.CurrentLineNumber;
+                p.GetBeginFileInfo(out fname, out lineNumber);
 
                 if (args.Count == 0)
                 {
@@ -390,6 +399,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     p.Read(args);
                 }
+                catch(ArgumentException e)
+                {
+                    throw ParserException(p, e.Message);
+                }
                 catch (ParserBase.EndOfStringException)
                 {
                     throw ParserException(p, "Missing '\"' at the end of string");
@@ -397,6 +410,10 @@ namespace SilverSim.Scripting.Lsl
                 catch (ParserBase.EndOfFileException)
                 {
                     throw ParserException(p, "Missing '}' at end of script");
+                }
+                catch (ParserBase.StackEmptyException)
+                {
+                    throw ParserException(p, "Premature end of script");
                 }
                 lineNumber = p.CurrentLineNumber;
 
@@ -527,9 +544,17 @@ namespace SilverSim.Scripting.Lsl
                 {
                     p.Read(args);
                 }
+                catch (ArgumentException e)
+                {
+                    throw ParserException(p, e.Message);
+                }
                 catch (ParserBase.EndOfStringException)
                 {
                     throw ParserException(p, "Missing '\"' at the end of string");
+                }
+                catch (ParserBase.StackEmptyException)
+                {
+                    throw ParserException(p, "Premature end of script");
                 }
                 catch (ParserBase.EndOfFileException)
                 {

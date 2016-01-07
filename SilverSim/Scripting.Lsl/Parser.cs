@@ -65,8 +65,14 @@ redo:
                         {
                             CurrentLineNumber = GetFileInfo().LineNumber;
                         }
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
+                        }
+                        if(args.Count == 0)
+                        {
+                            MarkBeginOfLine();
+                        }
                         args.Add(";");
                         if (args.Count != 0 && parencount == 0)
                             return;
@@ -77,8 +83,14 @@ redo:
                         {
                             CurrentLineNumber = GetFileInfo().LineNumber;
                         }
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
+                        }
+                        if (args.Count == 0)
+                        {
+                            MarkBeginOfLine();
+                        }
                         args.Add("{");
                         return;
 
@@ -87,9 +99,19 @@ redo:
                         {
                             CurrentLineNumber = GetFileInfo().LineNumber;
                         }
-                        if(0 != token.Length)
+                        if (0 != token.Length)
+                        {
                             args.Add(token);
+                        }
+                        if (args.Count == 0)
+                        {
+                            MarkBeginOfLine();
+                        }
                         args.Add("}");
+                        if(args.Count > 1)
+                        {
+                            throw new ArgumentException("incomplete statement before '}'");
+                        }
                         return;
                 
                     case '\"':      /* string literal */
@@ -101,6 +123,7 @@ redo:
                         {
                             args.Add(token);
                         }
+                        MarkBeginOfLine();
                         token = string.Empty;
                         do
                         {
@@ -133,6 +156,7 @@ redo:
                         {
                             args.Add(token);
                         }
+                        MarkBeginOfLine();
                         token = string.Empty;
                         do
                         {
@@ -174,6 +198,10 @@ redo:
                             args.Add(token);
                         }
                         token = string.Empty;
+                        if (args.Count == 0)
+                        {
+                            MarkBeginOfLine();
+                        }
                         args.Add(new string(new char[] {c}));
                         if (c == '(') ++parencount;
                         if( c == ')')
@@ -199,6 +227,10 @@ redo:
                             if (0 != token.Length)
                             {
                                 args.Add(token);
+                            }
+                            if (args.Count == 0)
+                            {
+                                MarkBeginOfLine();
                             }
                             token = string.Empty;
                             c = '\"';
@@ -236,6 +268,7 @@ redo:
                             {
                                 is_preprocess = true;
                             }
+                            MarkBeginOfLine();
                             while (!IsLSLWhitespace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
                                 token += c.ToString();
@@ -1132,6 +1165,7 @@ redo:
 
         public override void Read(List<string> args)
         {
+            MarkBeginOfLine();
             ReadPass1(args);
             EvalCompounds(args);
             ReadPass2(args);
