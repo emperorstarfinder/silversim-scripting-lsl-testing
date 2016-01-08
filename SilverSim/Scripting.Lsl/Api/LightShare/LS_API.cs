@@ -338,6 +338,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     }
                     envcontrol.SkyData = skyData;
                     envcontrol.WaterData = waterData;
+                    scene.TriggerLightShareSettingsChanged(); /* only called on non-targeted changes */
                     return 1;
                 }
             }
@@ -353,6 +354,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                 if (scene.IsEstateManager(instance.Item.Owner))
                 {
                     instance.Part.ObjectGroup.Scene.Environment.ResetLightShare();
+                    scene.TriggerLightShareSettingsChanged(); /* only called on non-targeted changes */
                 }
             }
         }
@@ -630,7 +632,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_EAST_ANGLE:
                         try
                         {
-                            skyData.EastAngle = rules[idx++].AsReal;
+                            skyData.EastAngle = rules[idx++].AsReal.Clamp(0, 2 * Math.PI);
                         }
                         catch (InvalidCastException)
                         {
@@ -795,7 +797,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_SUN_MOON_POSITION:
                         try
                         {
-                            skyData.SunMoonPosition = rules[idx++].AsReal;
+                            skyData.SunMoonPosition = rules[idx++].AsReal.Clamp(0, 2 * Math.PI);
                         }
                         catch (InvalidCastException)
                         {
