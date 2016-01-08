@@ -7,10 +7,10 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 using System.ComponentModel;
-using EnvironmentController = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController;
-using WindlightSkyData = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WindlightSkyData;
-using WindlightWaterData = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WindlightWaterData;
-using WLVector4 = SilverSim.Scene.Types.Scene.SceneInterface.EnvironmentController.WLVector4;
+using EnvironmentController = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController;
+using WindlightSkyData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightSkyData;
+using WindlightWaterData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightWaterData;
+using WLVector4 = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WLVector4;
 
 namespace SilverSim.Scripting.Lsl.Api.LightShare
 {
