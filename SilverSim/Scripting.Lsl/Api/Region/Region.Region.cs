@@ -34,6 +34,26 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osSetRegionSunSettings")]
+        public void SetRegionSunSettings(ScriptInstance instance, int useEstateSun, int isFixed, double sunhour)
+        {
+            lock (instance)
+            {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                SceneInterface scene = thisGroup.Scene;
+                if (!scene.IsEstateManager(thisGroup.Owner) && !scene.Owner.EqualsGrid(thisGroup.Owner))
+                {
+                    instance.ShoutError("osSetRegionSunSettings object owner must manage region.");
+                    return;
+                }
+
+                scene.RegionSettings.IsSunFixed = isFixed != 0;
+                scene.RegionSettings.UseEstateSun = useEstateSun != 0;
+                scene.RegionSettings.SunPosition = sunhour.Clamp(0, 24);
+                scene.TriggerRegionSettingsChanged();
+            }
+        }
+
         [APILevel(APIFlags.OSSL, "osConsoleCommand")]
         public string ConsoleCommand(ScriptInstance instance, string cmd)
         {

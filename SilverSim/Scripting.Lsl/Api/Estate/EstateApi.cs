@@ -50,6 +50,32 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
             /* intentionally left empty */
         }
 
+        [APILevel(APIFlags.OSSL, "osSetEstateSunSettings")]
+        public void SetEstateSunSettings(ScriptInstance instance, int isFixed, double sunhour)
+        {
+            lock (instance)
+            {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                SceneInterface scene = thisGroup.Scene;
+                if (!scene.IsEstateManager(thisGroup.Owner))
+                {
+                    instance.ShoutError("osSetEstateSunSettings object owner must manage estate.");
+                    return;
+                }
+
+                EstateInfo estate;
+                uint estateID;
+                EstateServiceInterface estateService = scene.EstateService;
+                if(estateService.RegionMap.TryGetValue(scene.ID, out estateID) &&
+                    estateService.TryGetValue(estateID, out estate))
+                {
+                    estate.UseGlobalTime = isFixed != 0;
+                    estate.SunPosition = sunhour.Clamp(0, 24);
+                    scene.TriggerEstateUpdate();
+                }
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llManageEstateAccess")]
         [LSLTooltip("Add or remove agents from the estate's agent access or ban lists or groups from the estate's group access list.")]
         public int ManageEstateAccess(ScriptInstance instance, 
