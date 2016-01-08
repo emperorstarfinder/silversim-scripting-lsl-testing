@@ -227,6 +227,14 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osGetCurrentSunHour")]
+        public double GetCurrentSunHour(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.Environment.ActualSunPosition;
+            }
+        }
         [APILevel(APIFlags.LSL, "llGetRegionFlags")]
         public int GetRegionFlags(ScriptInstance instance)
         {
