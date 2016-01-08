@@ -235,6 +235,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 return instance.Part.ObjectGroup.Scene.Environment.ActualSunPosition;
             }
         }
+
         [APILevel(APIFlags.LSL, "llGetRegionFlags")]
         public int GetRegionFlags(ScriptInstance instance)
         {
