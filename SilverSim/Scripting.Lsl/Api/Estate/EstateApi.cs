@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
@@ -51,7 +52,12 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
         }
 
         [APILevel(APIFlags.OSSL, "osSetEstateSunSettings")]
-        public void SetEstateSunSettings(ScriptInstance instance, int isFixed, double sunhour)
+        [LSLTooltip("set new estate sun settings (EM or EO only)")]
+        public void SetEstateSunSettings(ScriptInstance instance,
+            [LSLTooltip("set to TRUE if sun position is fixed see sunHour")]
+            int isFixed,
+            [LSLTooltip("position of sun when set to be fixed (0-24, 0 => sunrise, 6 => midday, 12 => dusk, 18 => midnight)")]
+            double sunHour)
         {
             lock (instance)
             {
@@ -70,8 +76,16 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                     estateService.TryGetValue(estateID, out estate))
                 {
                     estate.UseGlobalTime = isFixed != 0;
-                    estate.SunPosition = sunhour.Clamp(0, 24);
-                    scene.TriggerEstateUpdate();
+                    estate.SunPosition = sunHour.Clamp(0, 24);
+                    estateService[estateID] = estate;
+                    foreach(UUID regionID in estateService.RegionMap[estateID])
+                    {
+                        SceneInterface estateScene;
+                        if(SceneManager.Scenes.TryGetValue(regionID, out estateScene))
+                        {
+                            estateScene.TriggerEstateUpdate();
+                        }
+                    }
                 }
             }
         }
