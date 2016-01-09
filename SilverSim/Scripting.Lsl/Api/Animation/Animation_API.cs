@@ -49,7 +49,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         [APILevel(APIFlags.LSL, "llStartAnimation")]
         public void StartAnimation(
             ScriptInstance instance,
-            [LSLTooltip("animation to be played")]
+            [Description("animation to be played")]
             string anim)
         {
             lock (instance)
@@ -65,12 +65,12 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.OSSL, "osAvatarPlayAnimation")]
-        [LSLTooltip("causes an animation to be played on the specified avatar.")]
+        [Description("causes an animation to be played on the specified avatar.")]
         public void AvatarPlayAnimation(
             ScriptInstance instance, 
-            [LSLTooltip("UUID of the agent")]
+            [Description("UUID of the agent")]
             LSLKey avatar, 
-            [LSLTooltip("animation to be played")]
+            [Description("animation to be played")]
             string animation)
         {
             lock (instance)
@@ -81,12 +81,12 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.OSSL, "osNpcPlayAnimation")]
-        [LSLTooltip("causes an animation to be played on the specified avatar.")]
+        [Description("causes an animation to be played on the specified avatar.")]
         public void NpcPlayAnimation(
             ScriptInstance instance,
-            [LSLTooltip("UUID of the agent")]
+            [Description("UUID of the agent")]
             LSLKey avatar,
-            [LSLTooltip("animation to be played")]
+            [Description("animation to be played")]
             string animation)
         {
             lock (instance)
@@ -117,7 +117,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         [APILevel(APIFlags.LSL, "llStopAnimation")]
         public void StopAnimation(
             ScriptInstance instance, 
-            [LSLTooltip("animation to be stopped")]
+            [Description("animation to be stopped")]
             string anim)
         {
             lock (instance)
@@ -133,12 +133,12 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.OSSL, "osAvatarStopAnimation")]
-        [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
+        [Description("stops the specified animation if it is playing on the avatar given.")]
         public void AvatarStopAnimation(
             ScriptInstance instance,
-            [LSLTooltip("UUID of the agent")]
+            [Description("UUID of the agent")]
             LSLKey avatar,
-            [LSLTooltip("animation to be stopped")]
+            [Description("animation to be stopped")]
             string animation)
         {
             lock (instance)
@@ -149,12 +149,12 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.OSSL, "osNpcStopAnimation")]
-        [LSLTooltip("stops the specified animation if it is playing on the avatar given.")]
+        [Description("stops the specified animation if it is playing on the avatar given.")]
         public void NpcStopAnimation(
             ScriptInstance instance,
-            [LSLTooltip("UUID of the agent")]
+            [Description("UUID of the agent")]
             LSLKey avatar,
-            [LSLTooltip("animation to be stopped")]
+            [Description("animation to be stopped")]
             string animation)
         {
             lock (instance)

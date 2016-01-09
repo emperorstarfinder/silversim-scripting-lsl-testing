@@ -23,22 +23,22 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
     public class EstateApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]
-        [LSLTooltip("Add the agent to this estate's Allowed Residents list.")]
+        [Description("Add the agent to this estate's Allowed Residents list.")]
         public const int ESTATE_ACCESS_ALLOWED_AGENT_ADD = 0x4;
         [APILevel(APIFlags.LSL)]
-        [LSLTooltip("Remove the agent from this estate's Allowed Residents list.")]
+        [Description("Remove the agent from this estate's Allowed Residents list.")]
         public const int ESTATE_ACCESS_ALLOWED_AGENT_REMOVE = 0x8;
         [APILevel(APIFlags.LSL)]
-        [LSLTooltip("Add the group to this estate's Allowed groups list.")]
+        [Description("Add the group to this estate's Allowed groups list.")]
         public const int ESTATE_ACCESS_ALLOWED_GROUP_ADD = 0x10;
         [APILevel(APIFlags.LSL)]
-        [LSLTooltip("Remove the group from this estate's Allowed groups list.")]
+        [Description("Remove the group from this estate's Allowed groups list.")]
         public const int ESTATE_ACCESS_ALLOWED_GROUP_REMOVE = 0x20;
         [APILevel(APIFlags.LSL)]
-        [LSLTooltip("Add the agent to this estate's Banned residents list.")]
+        [Description("Add the agent to this estate's Banned residents list.")]
         public const int ESTATE_ACCESS_BANNED_AGENT_ADD = 0x40;
         [APILevel(APIFlags.LSL)]
-        [LSLTooltip("Remove the agent from this estate's Banned residents list.")]
+        [Description("Remove the agent from this estate's Banned residents list.")]
         public const int ESTATE_ACCESS_BANNED_AGENT_REMOVE = 0x80;
 
         public EstateApi()
@@ -52,11 +52,11 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
         }
 
         [APILevel(APIFlags.OSSL, "osSetEstateSunSettings")]
-        [LSLTooltip("set new estate sun settings (EM or EO only)")]
+        [Description("set new estate sun settings (EM or EO only)")]
         public void SetEstateSunSettings(ScriptInstance instance,
-            [LSLTooltip("set to TRUE if sun position is fixed see sunHour")]
+            [Description("set to TRUE if sun position is fixed see sunHour")]
             int isFixed,
-            [LSLTooltip("position of sun when set to be fixed (0-24, 0 => sunrise, 6 => midday, 12 => dusk, 18 => midnight)")]
+            [Description("position of sun when set to be fixed (0-24, 0 => sunrise, 6 => midday, 12 => dusk, 18 => midnight)")]
             double sunHour)
         {
             lock (instance)
@@ -91,11 +91,11 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
         }
 
         [APILevel(APIFlags.LSL, "llManageEstateAccess")]
-        [LSLTooltip("Add or remove agents from the estate's agent access or ban lists or groups from the estate's group access list.")]
+        [Description("Add or remove agents from the estate's agent access or ban lists or groups from the estate's group access list.")]
         public int ManageEstateAccess(ScriptInstance instance, 
-            [LSLTooltip("ESTATE_ACCESS_* flag")]
+            [Description("ESTATE_ACCESS_* flag")]
             int action, 
-            [LSLTooltip("avatar or group UUID")]
+            [Description("avatar or group UUID")]
             LSLKey avatar)
         {
             lock(instance)

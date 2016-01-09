@@ -4,6 +4,7 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -107,7 +108,7 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("string", MapType(fi.FieldType));
                                                 writer.WriteNamedValue("key", "value");
                                                 writer.WriteNamedValue("string", fi.GetValue(null).ToString());
-                                                LSLTooltipAttribute tooltip = (LSLTooltipAttribute)System.Attribute.GetCustomAttribute(fi, typeof(LSLTooltipAttribute));
+                                                DescriptionAttribute tooltip = (DescriptionAttribute)System.Attribute.GetCustomAttribute(fi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 string avail = "Supported for";
                                                 if ((level.Flags & APIFlags.LSL) != APIFlags.None)
@@ -125,7 +126,7 @@ namespace SilverSim.Scripting.Lsl
 
                                                 if (tooltip != null)
                                                 {
-                                                    writer.WriteNamedValue("string", tooltip.Tooltip + "\\n" + avail);
+                                                    writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
                                                 }
                                                 else
                                                 {
@@ -151,13 +152,13 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("string", MapType(fi.FieldType));
                                                 writer.WriteNamedValue("key", "value");
                                                 writer.WriteNamedValue("string", fi.GetValue(null).ToString());
-                                                LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(fi, typeof(LSLTooltipAttribute));
+                                                DescriptionAttribute tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(fi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 string avail = "Supported for " + level.Extension;
 
                                                 if (tooltip != null)
                                                 {
-                                                    writer.WriteNamedValue("string", tooltip.Tooltip + "\\n" + avail);
+                                                    writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
                                                 }
                                                 else
                                                 {
@@ -205,11 +206,11 @@ namespace SilverSim.Scripting.Lsl
                                                 {
                                                     writer.WriteNamedValue("key", pi.Name);
                                                     writer.WriteNamedValue("string", MapType(pi.ParameterType));
-                                                    LSLTooltipAttribute ptooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(pi, typeof(LSLTooltipAttribute));
+                                                    DescriptionAttribute ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                     writer.WriteNamedValue("key", "tooltip");
                                                     if (null != ptooltip)
                                                     {
-                                                        writer.WriteNamedValue("string", ptooltip.Tooltip);
+                                                        writer.WriteNamedValue("string", ptooltip.Description.Replace("\n", "\\n"));
                                                     }
                                                     else
                                                     {
@@ -219,7 +220,7 @@ namespace SilverSim.Scripting.Lsl
                                                 }
                                                 writer.WriteEndElement();
 
-                                                LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(mi, typeof(LSLTooltipAttribute));
+                                                DescriptionAttribute tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(mi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 string avail = "Supported for";
                                                 if ((level.Flags & APIFlags.LSL) != APIFlags.None)
@@ -241,7 +242,7 @@ namespace SilverSim.Scripting.Lsl
 
                                                 if (tooltip != null)
                                                 {
-                                                    writer.WriteNamedValue("string", tooltip.Tooltip + "\\n" + avail);
+                                                    writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
                                                 }
                                                 else
                                                 {
@@ -306,11 +307,11 @@ namespace SilverSim.Scripting.Lsl
                                             {
                                                 writer.WriteNamedValue("key", pi.Name);
                                                 writer.WriteNamedValue("string", MapType(pi.ParameterType));
-                                                LSLTooltipAttribute ptooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(pi, typeof(LSLTooltipAttribute));
+                                                DescriptionAttribute ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 if (null != ptooltip)
                                                 {
-                                                    writer.WriteNamedValue("string", ptooltip.Tooltip);
+                                                    writer.WriteNamedValue("string", ptooltip.Description.Replace("\n", "\\n"));
                                                 }
                                                 else
                                                 {
@@ -320,7 +321,7 @@ namespace SilverSim.Scripting.Lsl
                                             }
                                             writer.WriteEndElement();
 
-                                            LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(mi, typeof(LSLTooltipAttribute));
+                                            DescriptionAttribute tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(mi, typeof(DescriptionAttribute));
                                             writer.WriteNamedValue("key", "tooltip");
                                             string avail = "Supported for";
                                             if ((level.Flags & APIFlags.LSL) != APIFlags.None)
@@ -338,7 +339,7 @@ namespace SilverSim.Scripting.Lsl
 
                                             if (tooltip != null)
                                             {
-                                                writer.WriteNamedValue("string", tooltip.Tooltip + "\\n" + avail);
+                                                writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
                                             }
                                             else
                                             {
@@ -389,11 +390,11 @@ namespace SilverSim.Scripting.Lsl
                                             {
                                                 writer.WriteNamedValue("key", pi.Name);
                                                 writer.WriteNamedValue("string", MapType(pi.ParameterType));
-                                                LSLTooltipAttribute ptooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(pi, typeof(LSLTooltipAttribute));
+                                                DescriptionAttribute ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 if (null != ptooltip)
                                                 {
-                                                    writer.WriteNamedValue("string", ptooltip.Tooltip);
+                                                    writer.WriteNamedValue("string", ptooltip.Description.Replace("\n", "\\n"));
                                                 }
                                                 else
                                                 {
@@ -403,13 +404,13 @@ namespace SilverSim.Scripting.Lsl
                                             }
                                             writer.WriteEndElement();
 
-                                            LSLTooltipAttribute tooltip = (LSLTooltipAttribute)Attribute.GetCustomAttribute(mi, typeof(LSLTooltipAttribute));
+                                            DescriptionAttribute tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(mi, typeof(DescriptionAttribute));
                                             writer.WriteNamedValue("key", "tooltip");
                                             string avail = "Supported for "+ level.Extension;
 
                                             if (tooltip != null)
                                             {
-                                                writer.WriteNamedValue("string", tooltip.Tooltip + "\\n" + avail);
+                                                writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
                                             }
                                             else
                                             {

@@ -168,12 +168,12 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
 
                             case WL_BIG_WAVE_DIRECTION:
                                 res.Add(type);
-                                res.Add(waterData.BigWaveDirection);
+                                res.Add((Vector3)waterData.BigWaveDirection);
                                 break;
 
                             case WL_LITTLE_WAVE_DIRECTION:
                                 res.Add(type);
-                                res.Add(waterData.LittleWaveDirection);
+                                res.Add((Vector3)waterData.LittleWaveDirection);
                                 break;
 
                             case WL_NORMAL_MAP_TEXTURE:
@@ -278,12 +278,12 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
 
                             case WL_CLOUD_SCROLL_X:
                                 res.Add(type);
-                                res.Add(skyData.CloudScrollX);
+                                res.Add(skyData.CloudScroll.X);
                                 break;
 
                             case WL_CLOUD_SCROLL_Y:
                                 res.Add(type);
-                                res.Add(skyData.CloudScrollY);
+                                res.Add(skyData.CloudScroll.Y);
                                 break;
 
                             case WL_CLOUD_SCROLL_X_LOCK:
@@ -500,7 +500,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_BIG_WAVE_DIRECTION:
                         try
                         {
-                            waterData.BigWaveDirection = rules[idx++].AsVector3;
+                            waterData.BigWaveDirection = new EnvironmentController.WLVector2(rules[idx++].AsVector3);
                         }
                         catch (InvalidCastException)
                         {
@@ -511,7 +511,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_LITTLE_WAVE_DIRECTION:
                         try
                         {
-                            waterData.LittleWaveDirection = rules[idx++].AsVector3;
+                            waterData.LittleWaveDirection = new EnvironmentController.WLVector2(rules[idx++].AsVector3);
                         }
                         catch (InvalidCastException)
                         {
@@ -742,7 +742,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_CLOUD_SCROLL_X:
                         try
                         {
-                            skyData.CloudScrollX = rules[idx++].AsReal;
+                            skyData.CloudScroll.X = rules[idx++].AsReal;
                         }
                         catch (InvalidCastException)
                         {
@@ -753,7 +753,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                     case WL_CLOUD_SCROLL_Y:
                         try
                         {
-                            skyData.CloudScrollY = rules[idx++].AsReal;
+                            skyData.CloudScroll.Y = rules[idx++].AsReal;
                         }
                         catch (InvalidCastException)
                         {

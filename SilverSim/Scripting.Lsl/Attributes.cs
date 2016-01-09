@@ -156,18 +156,6 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
-    [AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter, Inherited = false)]
-    public sealed class LSLTooltipAttribute : Attribute
-    {
-        public string Tooltip { get; private set; }
-
-        public LSLTooltipAttribute(string tooltip)
-        {
-            Tooltip = tooltip.Replace("\n", "\\n");
-        }
-    }
-
-    [Serializable]
     [AttributeUsage(AttributeTargets.Field, Inherited = false)]
     public sealed class TranslatedScriptEventsInfoAttribute : Attribute
     {

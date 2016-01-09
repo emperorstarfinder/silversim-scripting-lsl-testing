@@ -13,6 +13,7 @@ using SilverSim.Types;
 using SilverSim.Types.Grid;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -35,13 +36,13 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osSetRegionSunSettings")]
-        [LSLTooltip("set new region sun settings (EM, EO or RO only)")]
+        [Description("set new region sun settings (EM, EO or RO only)")]
         public void SetRegionSunSettings(ScriptInstance instance, 
-            [LSLTooltip("set to TRUE if region uses estate sun parameters")]
+            [Description("set to TRUE if region uses estate sun parameters")]
             int useEstateSun, 
-            [LSLTooltip("set to TRUE if sun position is fixed see sunHour")]
+            [Description("set to TRUE if sun position is fixed see sunHour")]
             int isFixed, 
-            [LSLTooltip("position of sun when set to be fixed (0-24, 0 => sunrise, 6 => midday, 12 => dusk, 18 => midnight)")]
+            [Description("position of sun when set to be fixed (0-24, 0 => sunrise, 6 => midday, 12 => dusk, 18 => midnight)")]
             double sunHour)
         {
             lock (instance)

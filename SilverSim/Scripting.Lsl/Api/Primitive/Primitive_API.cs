@@ -87,32 +87,32 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_ALPHA")]
-        [LSLTooltip("Get/set alpha value of texture [integer face, float alpha]")]
+        [Description("Get/set alpha value of texture [integer face, float alpha]")]
         public const int PRIM_ALPHA = 11001;
 
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR")]
-        [LSLTooltip("Get/set projection params [integer enable, string texture, float fov, float focus, float ambience]")]
+        [Description("Get/set projection params [integer enable, string texture, float fov, float focus, float ambience]")]
         public const int PRIM_PROJECTOR = 11100;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR_ENABLED")]
-        [LSLTooltip("Get/set projection enable [integer enable]")]
+        [Description("Get/set projection enable [integer enable]")]
         public const int PRIM_PROJECTOR_ENABLED = 11101;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR_TEXTURE")]
-        [LSLTooltip("Get/set projection texture [string texture]")]
+        [Description("Get/set projection texture [string texture]")]
         public const int PRIM_PROJECTOR_TEXTURE = 11102;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR_FOV")]
-        [LSLTooltip("Get/set projection fov [float fov]")]
+        [Description("Get/set projection fov [float fov]")]
         public const int PRIM_PROJECTOR_FOV = 11103;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR_FOCUS")]
-        [LSLTooltip("Get/set projection focus [float focus]")]
+        [Description("Get/set projection focus [float focus]")]
         public const int PRIM_PROJECTOR_FOCUS = 11104;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR_AMBIENCE")]
-        [LSLTooltip("Get/set projection ambience [float ambience]")]
+        [Description("Get/set projection ambience [float ambience]")]
         public const int PRIM_PROJECTOR_AMBIENCE = 11105;
 
         [APILevel(APIFlags.LSL)]
