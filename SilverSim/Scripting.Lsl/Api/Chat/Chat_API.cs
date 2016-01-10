@@ -9,13 +9,16 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Types;
 using System.ComponentModel;
+using System;
+using SilverSim.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Chat
 {
     [LSLImplementation]
     [ScriptApiName("Chat")]
     [Description("LSL/OSSL Chat API")]
-    public partial class ChatApi : IScriptApi, IPlugin
+    [ServerParam("LSL.MaxListenersPerScript")]
+    public partial class ChatApi : IScriptApi, IPlugin, IServerParamListener
     {
         [APILevel(APIFlags.LSL)]
         public const int PUBLIC_CHANNEL = 0;
@@ -47,8 +50,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.OSSL)]
         public const int OS_LISTEN_REGEX_MESSAGE = 0x2;
 
-        ServerParamServiceInterface m_ServerParams;
-
         public ChatApi()
         {
             /* intentionally left empty */
@@ -56,13 +57,35 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         public void Startup(ConfigurationLoader loader)
         {
-            try
+            /* nothing to do */
+        }
+
+        int GetMaxListenerHandles(UUID regionID)
+        {
+            int value;
+            if(m_MaxListenerHandleParams.TryGetValue(regionID, out value) ||
+                m_MaxListenerHandleParams.TryGetValue(UUID.Zero, out value))
             {
-                m_ServerParams = loader.GetServerParamStorage();
+                return value;
             }
-            catch(ConfigurationLoader.ServiceNotFoundException)
+            return 1000;
+        }
+
+        readonly RwLockedDictionary<UUID, int> m_MaxListenerHandleParams = new RwLockedDictionary<UUID, int>();
+
+        public void TriggerParameterUpdated(UUID regionID, string parametername, string value)
+        {
+            if (parametername == "LSL.MaxListenersPerScript")
             {
-                m_ServerParams = null;
+                int intval;
+                if (value.Length == 0)
+                {
+                    m_MaxListenerHandleParams.Remove(regionID);
+                }
+                else if (int.TryParse(value, out intval))
+                {
+                    m_MaxListenerHandleParams[regionID] = intval;
+                }
             }
         }
     }

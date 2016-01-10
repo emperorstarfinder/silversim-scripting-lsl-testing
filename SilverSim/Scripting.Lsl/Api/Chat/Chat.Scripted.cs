@@ -12,15 +12,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 {
     public partial class ChatApi
     {
-        int GetMaxListenerHandles(UUID regionID)
-        {
-            if (null != m_ServerParams)
-            {
-                return m_ServerParams.GetInteger(regionID, "llListen.MaxListenerHandles", 1000);
-            }
-            return 1000;
-        }
-
         [APILevel(APIFlags.LSL, "listen")]
         [StateEventDelegate]
         public delegate void State_listen(int channel, string name, LSLKey id, string message);
