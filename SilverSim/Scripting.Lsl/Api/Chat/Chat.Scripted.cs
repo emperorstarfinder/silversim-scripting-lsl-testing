@@ -14,7 +14,11 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
     {
         int GetMaxListenerHandles(UUID regionID)
         {
-            return m_ServerParams.GetInteger(regionID, "llListen.MaxListenerHandles", 1000);
+            if (null != m_ServerParams)
+            {
+                return m_ServerParams.GetInteger(regionID, "llListen.MaxListenerHandles", 1000);
+            }
+            return 1000;
         }
 
         [APILevel(APIFlags.LSL, "listen")]

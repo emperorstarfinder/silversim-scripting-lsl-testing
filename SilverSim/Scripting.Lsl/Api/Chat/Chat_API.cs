@@ -56,7 +56,14 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         public void Startup(ConfigurationLoader loader)
         {
-            m_ServerParams = loader.GetServerParamStorage();
+            try
+            {
+                m_ServerParams = loader.GetServerParamStorage();
+            }
+            catch(ConfigurationLoader.ServiceNotFoundException)
+            {
+                m_ServerParams = null;
+            }
         }
     }
 }
