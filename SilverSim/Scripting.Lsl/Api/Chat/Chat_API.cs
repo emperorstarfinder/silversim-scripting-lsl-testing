@@ -6,6 +6,7 @@ using SilverSim.Scene.ServiceInterfaces.Chat;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Types;
 using System.ComponentModel;
 
@@ -46,6 +47,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.OSSL)]
         public const int OS_LISTEN_REGEX_MESSAGE = 0x2;
 
+        ServerParamServiceInterface m_ServerParams;
+
         public ChatApi()
         {
             /* intentionally left empty */
@@ -53,7 +56,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         public void Startup(ConfigurationLoader loader)
         {
-            /* intentionally left empty */
+            m_ServerParams = loader.GetServerParamStorage();
         }
     }
 }

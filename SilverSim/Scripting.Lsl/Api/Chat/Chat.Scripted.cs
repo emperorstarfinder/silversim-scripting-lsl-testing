@@ -2,6 +2,7 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scene.ServiceInterfaces.Chat;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
@@ -11,7 +12,10 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 {
     public partial class ChatApi
     {
-        public static int MaxListenerHandles = 64;
+        int GetMaxListenerHandles(UUID regionID)
+        {
+            return m_ServerParams.GetInteger(regionID, "llListen.MaxListenerHandles", 1000);
+        }
 
         [APILevel(APIFlags.LSL, "listen")]
         [StateEventDelegate]
@@ -103,11 +107,12 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             Script script = (Script)instance;
             lock (script)
             {
-                if (script.m_Listeners.Count >= MaxListenerHandles)
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (script.m_Listeners.Count >= GetMaxListenerHandles(scene.ID))
                 {
                     return new Integer(-1);
                 }
-                ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
+                ChatServiceInterface chatservice = scene.GetService<ChatServiceInterface>();
 
                 /* LSL matches on repeating llListen with the already created listen */
                 foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
@@ -119,7 +124,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
 
                 ChatServiceInterface.Listener l;
-                for (int newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
+                for (int newhandle = 0; newhandle < GetMaxListenerHandles(scene.ID); ++newhandle)
                 {
                     if (!script.m_Listeners.TryGetValue(newhandle, out l))
                     {
@@ -182,11 +187,12 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             Script script = (Script)instance;
             lock (script)
             {
-                if (script.m_Listeners.Count >= MaxListenerHandles)
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (script.m_Listeners.Count >= GetMaxListenerHandles(scene.ID))
                 {
                     return -1;
                 }
-                ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
+                ChatServiceInterface chatservice = scene.GetService<ChatServiceInterface>();
 
                 /* LSL matches on repeating llListen with the already created listen */
                 foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
@@ -198,7 +204,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
 
                 ChatServiceInterface.Listener l;
-                for (int newhandle = 0; newhandle < MaxListenerHandles; ++newhandle)
+                for (int newhandle = 0; newhandle < GetMaxListenerHandles(scene.ID); ++newhandle)
                 {
                     if (!script.m_Listeners.TryGetValue(newhandle, out l))
                     {
