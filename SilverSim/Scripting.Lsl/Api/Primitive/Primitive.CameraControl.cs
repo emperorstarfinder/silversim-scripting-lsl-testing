@@ -248,7 +248,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
-                lock(this)
+                lock(instance)
                 {
                     IAgent agent;
                     if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
@@ -266,7 +266,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
             if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
-                lock(this)
+                lock(instance)
                 {
                     IAgent agent;
                     if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))

@@ -329,7 +329,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [ForcedSleep(10)]
         public string GetSimulatorHostname(ScriptInstance instance)
         {
-            lock(this)
+            lock(instance)
             {
                 Uri uri = new Uri(instance.Part.ObjectGroup.Scene.ServerURI);
                 return uri.Host;
@@ -339,7 +339,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetRegionCorner")]
         public Vector3 GetRegionCorner(ScriptInstance instance)
         {
-            lock(this)
+            lock(instance)
             {
                 return instance.Part.ObjectGroup.Scene.GridPosition;
             }
