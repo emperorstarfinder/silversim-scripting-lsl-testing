@@ -45,10 +45,11 @@ namespace SilverSim.Scripting.Lsl
         internal List<Action<ScriptInstance, List<object>>> SerializationDelegates;
         internal Dictionary<string, Action<ScriptInstance, List<object>>> DeserializationDelegates;
         static internal readonly Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
+        readonly object m_Lock = new object();
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
         {
-            lock (this)
+            lock (m_Lock)
             {
                 PostEvent(new TimerEvent());
                 LastTimerEventTick = Environment.TickCount;
@@ -77,11 +78,17 @@ namespace SilverSim.Scripting.Lsl
         {
             get
             {
-                lock(this) return m_ExecutionTime;
+                lock(m_Lock)
+                {
+                    return m_ExecutionTime;
+                }
             }
             set
             {
-                lock(this) m_ExecutionTime = value;
+                lock(m_Lock)
+                {
+                    m_ExecutionTime = value;
+                }
             }
         }
 
@@ -980,7 +987,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 exectime = Environment.TickCount - startticks;
                 execfloat = exectime / 1000f;
-                lock (this)
+                lock (m_Lock)
                 {
                     m_ExecutionTime += execfloat;
                 }
@@ -1001,7 +1008,7 @@ namespace SilverSim.Scripting.Lsl
                 TriggerOnStateChange();
                 TriggerOnScriptReset();
                 m_Events.Clear();
-                lock(this)
+                lock(m_Lock)
                 {
                     m_ExecutionTime = 0f;
                 }
@@ -1039,7 +1046,7 @@ namespace SilverSim.Scripting.Lsl
             }
             exectime = Environment.TickCount - startticks;
             execfloat = exectime / 1000f;
-            lock(this)
+            lock(m_Lock)
             {
                 m_ExecutionTime += execfloat;
             }
@@ -1065,7 +1072,7 @@ namespace SilverSim.Scripting.Lsl
             ev.Channel = 0x7FFFFFFF; /* DEBUG_CHANNEL */
             ev.Type = ListenEvent.ChatType.Shout;
             ChatServiceInterface chatService;
-            lock (this)
+            lock (m_Lock)
             {
                 ObjectPart part = Part;
                 ObjectGroup objGroup = part.ObjectGroup;

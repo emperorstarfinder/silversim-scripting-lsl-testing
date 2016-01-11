@@ -69,7 +69,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llSound")]
         public void Sound(ScriptInstance instance, string sound, double volume, int queue, int loop)
         {
-            lock(this)
+            lock(instance)
             {
                 instance.Part.IsSoundQueueing = queue != 0;
                 if (loop != 0)
