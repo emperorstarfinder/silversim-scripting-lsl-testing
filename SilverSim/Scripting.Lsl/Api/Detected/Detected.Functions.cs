@@ -231,7 +231,7 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 if (script.m_Detected.Count > number && number >= 0)
                 {
-                    return script.m_Detected[number].ObjType;
+                    return (int)script.m_Detected[number].ObjType;
                 }
                 return 0;
             }

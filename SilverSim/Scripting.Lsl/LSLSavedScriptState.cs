@@ -419,7 +419,7 @@ namespace SilverSim.Scripting.Lsl
                                 break;
 
                             case "type":
-                                di.ObjType = int.Parse(reader.Value);
+                                di.ObjType = (DetectedTypeFlags)int.Parse(reader.Value);
                                 break;
 
                             case "velocity":

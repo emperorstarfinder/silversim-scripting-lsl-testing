@@ -173,11 +173,7 @@ namespace SilverSim.Scripting.Lsl
             agent = obj as IAgent;
             if (null != agent)
             {
-                detectInfo.ObjType =
-                    (agent.IsNpc ? NPC : AGENT) |
-                    (agent.SittingOnObject != null ?
-                    0 :
-                    ACTIVE);
+                detectInfo.ObjType = agent.DetectedType;
                 detectInfo.Name = agent.Name;
                 detectInfo.Key = agent.ID;
                 detectInfo.Position = agent.GlobalPosition;
@@ -190,44 +186,26 @@ namespace SilverSim.Scripting.Lsl
             grp = obj as ObjectGroup;
             if (null != grp)
             {
-                detectInfo.ObjType = (obj.PhysicsActor.IsPhysicsActive) ?
-                    ACTIVE :
-                    PASSIVE;
-
-                foreach (ObjectPart p in grp.Values)
-                {
-                    if (p.IsScripted)
-                    {
-                        detectInfo.ObjType |= SCRIPTED;
-                        break;
-                    }
-                }
-                detectInfo.Name = agent.Name;
-                detectInfo.Key = agent.ID;
-                detectInfo.Position = agent.GlobalPosition;
-                detectInfo.Rotation = agent.GlobalRotation;
-                detectInfo.Group = agent.Group;
-                detectInfo.Velocity = agent.Velocity;
+                detectInfo.ObjType = obj.DetectedType;
+                detectInfo.Name = grp.Name;
+                detectInfo.Key = grp.ID;
+                detectInfo.Position = grp.GlobalPosition;
+                detectInfo.Rotation = grp.GlobalRotation;
+                detectInfo.Group = grp.Group;
+                detectInfo.Velocity = grp.Velocity;
                 return true;
             }
 
             part = obj as ObjectPart;
             if (null != part)
             {
-                detectInfo.ObjType = (part.ObjectGroup.PhysicsActor.IsPhysicsActive) ?
-                    ACTIVE :
-                    PASSIVE;
-
-                if (part.Inventory.CountScripts != 0)
-                {
-                    detectInfo.ObjType |= SCRIPTED;
-                }
-                detectInfo.Name = agent.Name;
-                detectInfo.Key = agent.ID;
-                detectInfo.Position = agent.GlobalPosition;
-                detectInfo.Rotation = agent.GlobalRotation;
-                detectInfo.Group = agent.Group;
-                detectInfo.Velocity = agent.Velocity;
+                detectInfo.ObjType = part.DetectedType;
+                detectInfo.Name = part.Name;
+                detectInfo.Key = part.ID;
+                detectInfo.Position = part.GlobalPosition;
+                detectInfo.Rotation = part.GlobalRotation;
+                detectInfo.Group = part.Group;
+                detectInfo.Velocity = part.Velocity;
                 return true;
             }
             return false;
