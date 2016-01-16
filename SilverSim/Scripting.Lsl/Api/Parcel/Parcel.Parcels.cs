@@ -338,7 +338,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
                     (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned))))
                 {
-                    scene.Parcels.BlackList.RemoveAll(pInfo.ID);
+                    scene.Parcels.BlackList.Remove(scene.ID, pInfo.ID);
                 }
             }
         }
@@ -357,7 +357,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
                     (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed))))
                 {
-                    scene.Parcels.WhiteList.RemoveAll(pInfo.ID);
+                    scene.Parcels.WhiteList.Remove(scene.ID, pInfo.ID);
                 }
             }
         }
