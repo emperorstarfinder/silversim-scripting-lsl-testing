@@ -62,7 +62,10 @@ namespace SilverSim.Scripting.Lsl.Api.KeyframedMotion
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 if(options.Count == 0)
                 {
-                    /* nothing to do */
+                    if(keyframes.Count == 0)
+                    {
+                        grp.KeyframedMotion = null;
+                    }
                 }
                 else if(options[0].AsInt == KFM_COMMAND)
                 {
