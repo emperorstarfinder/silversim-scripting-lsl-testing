@@ -60,6 +60,10 @@ namespace SilverSim.Scripting.Lsl.Api.KeyframedMotion
             lock(instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
+                if(grp.IsAttached)
+                {
+                    return;
+                }
                 if(options.Count == 0)
                 {
                     if(keyframes.Count == 0)
