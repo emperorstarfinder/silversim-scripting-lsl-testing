@@ -118,178 +118,244 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void ListToXml(XmlTextWriter writer, string name, AnArray array)
+
+        TransactionedState m_TransactionedState = new TransactionedState();
+
+        class TransactionedState
         {
-            writer.WriteStartElement("Variable");
-            writer.WriteAttributeString("name", name);
-            writer.WriteAttributeString("type", "list");
-            foreach(IValue val in array)
+            Dictionary<string, object> Variables = new Dictionary<string, object>();
+            string CurrentState = string.Empty;
+            ObjectPartInventoryItem.PermsGranterInfo PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo();
+            List<object> PluginSerialization = new List<object>();
+            double MinEventDelay = 0;
+            public UUID AssetID = UUID.Zero;
+            public UUID ItemID = UUID.Zero;
+            readonly object m_TransactionLock = new object();
+
+            public TransactionedState()
             {
-                Type valtype = val.GetType();
-                if(valtype == typeof(Integer))
+
+            }
+
+            public void UpdateFromScript(Script script)
+            {
+                lock(m_TransactionLock)
                 {
-                    writer.WriteStartElement("ListItem");
-                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
-                    writer.WriteValue(val.AsInt);
-                    writer.WriteEndElement();
+                    AssetID = script.Item.AssetID;
+                    ItemID = script.Item.ID;
+                    MinEventDelay = script.MinEventDelay;
+                    CurrentState = "default";
+                    foreach (KeyValuePair<string, ILSLState> kvp in script.m_States)
+                    {
+                        if (kvp.Value == script.m_CurrentState)
+                        {
+                            CurrentState = kvp.Key;
+                        }
+                    }
+                    PermsGranter = script.Item.PermsGranter;
+                    foreach (FieldInfo fi in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                    {
+                        if (!fi.Name.StartsWith("var_"))
+                        {
+                            continue;
+                        }
+                        if (fi.FieldType == typeof(int) ||
+                            fi.FieldType == typeof(Vector3) ||
+                            fi.FieldType == typeof(double) ||
+                            fi.FieldType == typeof(Quaternion) ||
+                            fi.FieldType == typeof(UUID))
+                        {
+                            Variables[fi.Name.Substring(4)] = fi.GetValue(this);
+                        }
+                        else if (fi.FieldType == typeof(LSLKey))
+                        {
+                            Variables[fi.Name.Substring(4)] = new LSLKey(fi.GetValue(this).ToString());
+                        }
+                        else if (fi.FieldType == typeof(string))
+                        {
+                            Variables[fi.Name.Substring(4)] = (string)fi.GetValue(this);
+                        }
+                        else if (fi.FieldType == typeof(AnArray))
+                        {
+                            Variables[fi.Name.Substring(4)] = new AnArray((AnArray)fi.GetValue(this));
+                        }
+                    }
+
+                    PluginSerialization.Clear();
+                    foreach (Action<ScriptInstance, List<object>> serializer in script.SerializationDelegates)
+                    {
+                        serializer(script, PluginSerialization);
+                    }
                 }
-                else if(valtype == typeof(Real))
+            }
+
+            void ListToXml(XmlTextWriter writer, string name, AnArray array)
+            {
+                writer.WriteStartElement("Variable");
+                writer.WriteAttributeString("name", name);
+                writer.WriteAttributeString("type", "list");
+                foreach (IValue val in array)
                 {
-                    writer.WriteStartElement("ListItem");
-                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
-                    double v = (Real)val;
-                    writer.WriteValue(v);
-                    writer.WriteEndElement();
+                    Type valtype = val.GetType();
+                    if (valtype == typeof(Integer))
+                    {
+                        writer.WriteStartElement("ListItem");
+                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
+                        writer.WriteValue(val.AsInt);
+                        writer.WriteEndElement();
+                    }
+                    else if (valtype == typeof(Real))
+                    {
+                        writer.WriteStartElement("ListItem");
+                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
+                        double v = (Real)val;
+                        writer.WriteValue(v);
+                        writer.WriteEndElement();
+                    }
+                    else if (valtype == typeof(Quaternion))
+                    {
+                        writer.WriteStartElement("ListItem");
+                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
+                        writer.WriteValue(val.ToString());
+                        writer.WriteEndElement();
+                    }
+                    else if (valtype == typeof(Vector3))
+                    {
+                        writer.WriteStartElement("ListItem");
+                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
+                        writer.WriteValue(val.ToString());
+                        writer.WriteEndElement();
+                    }
+                    else if (valtype == typeof(AString))
+                    {
+                        writer.WriteStartElement("ListItem");
+                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
+                        writer.WriteValue(val.ToString());
+                        writer.WriteEndElement();
+                    }
+                    else if (valtype == typeof(UUID) || valtype == typeof(LSLKey))
+                    {
+                        writer.WriteStartElement("ListItem");
+                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
+                        writer.WriteValue(val.ToString());
+                        writer.WriteEndElement();
+                    }
                 }
-                else if(valtype == typeof(Quaternion))
+                writer.WriteEndElement();
+            }
+
+            public void ToXml(XmlTextWriter writer, Script script)
+            {
+                lock (m_TransactionLock)
                 {
-                    writer.WriteStartElement("ListItem");
-                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
-                    writer.WriteValue(val.ToString());
-                    writer.WriteEndElement();
-                }
-                else if(valtype == typeof(Vector3))
-                {
-                    writer.WriteStartElement("ListItem");
-                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
-                    writer.WriteValue(val.ToString());
-                    writer.WriteEndElement();
-                }
-                else if (valtype == typeof(AString))
-                {
-                    writer.WriteStartElement("ListItem");
-                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
-                    writer.WriteValue(val.ToString());
-                    writer.WriteEndElement();
-                }
-                else if (valtype == typeof(UUID) || valtype == typeof(LSLKey))
-                {
-                    writer.WriteStartElement("ListItem");
-                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
-                    writer.WriteValue(val.ToString());
+                    writer.WriteStartElement("State");
+                    writer.WriteStartAttribute("UUID");
+                    writer.WriteValue(ItemID);
+                    writer.WriteEndAttribute();
+                    writer.WriteStartAttribute("Asset");
+                    writer.WriteValue(AssetID);
+                    writer.WriteEndAttribute();
+                    writer.WriteStartAttribute("Engine");
+                    writer.WriteValue("XEngine");
+                    writer.WriteEndAttribute();
+                    {
+                        writer.WriteStartElement("ScriptState");
+                        {
+                            writer.WriteStartElement("State");
+                            {
+                                writer.WriteValue(CurrentState);
+                            }
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("Running");
+                            {
+                                writer.WriteValue(script.IsRunning);
+                            }
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("Variables");
+                            foreach (KeyValuePair<string, object> kvp in Variables)
+                            {
+                                string varName = kvp.Key;
+                                object varValue = kvp.Value;
+                                Type varType = varValue.GetType();
+                                if (varType == typeof(int))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
+                                }
+                                else if (varType == typeof(double))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
+                                }
+                                else if (varType == typeof(Vector3))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
+                                }
+                                else if (varType == typeof(Quaternion))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
+                                }
+                                else if (varType == typeof(UUID) || varType == typeof(LSLKey))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
+                                }
+                                else if (varType == typeof(string))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
+                                }
+                                else if (varType == typeof(AnArray))
+                                {
+                                    ListToXml(writer, varName, (AnArray)varValue);
+                                    continue;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                                writer.WriteValue(varValue.ToString());
+                                writer.WriteEndElement();
+                            }
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("Queue");
+                            {
+
+                            }
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("Permissions");
+                            {
+                                ObjectPartInventoryItem.PermsGranterInfo grantInfo = PermsGranter;
+                                writer.WriteNamedValue("mask", (uint)grantInfo.PermsMask);
+                                writer.WriteNamedValue("granter", grantInfo.PermsGranter.ID);
+                            }
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("Plugins");
+                            foreach (object o in PluginSerialization)
+                            {
+                                writer.WriteTypedValue("ListItem", o);
+                            }
+                            writer.WriteEndElement();
+                            writer.WriteNamedValue("MinEventDelay", MinEventDelay);
+                        }
+                        writer.WriteEndElement();
+                    }
                     writer.WriteEndElement();
                 }
             }
-            writer.WriteEndElement();
         }
 
         public void ToXml(XmlTextWriter writer)
         {
-            writer.WriteStartElement("State");
-            writer.WriteStartAttribute("UUID");
-            writer.WriteValue(Item.ID);
-            writer.WriteEndAttribute();
-            writer.WriteStartAttribute("Asset");
-            writer.WriteValue(Item.AssetID);
-            writer.WriteEndAttribute();
-            writer.WriteStartAttribute("Engine");
-            writer.WriteValue("XEngine");
-            writer.WriteEndAttribute();
-            {
-                writer.WriteStartElement("ScriptState");
-                {
-                    string current_state = "default";
-                    foreach (KeyValuePair<string, ILSLState> kvp in m_States)
-                    {
-                        if (kvp.Value == m_CurrentState)
-                        {
-                            current_state = kvp.Key;
-                        }
-                    }
-                    writer.WriteStartElement("State");
-                    {
-                        writer.WriteValue(current_state);
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("Running");
-                    {
-                        writer.WriteValue(IsRunning);
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("Variables");
-                    foreach(FieldInfo fi in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-                    { 
-                        if(!fi.Name.StartsWith("var_"))
-                        {
-                            continue;
-                        }
-                        if(fi.FieldType == typeof(int))
-                        {
-                            writer.WriteStartElement("Variable");
-                            writer.WriteAttributeString("name", fi.Name.Substring(4));
-                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
-                        }
-                        else if(fi.FieldType == typeof(double))
-                        {
-                            writer.WriteStartElement("Variable");
-                            writer.WriteAttributeString("name", fi.Name.Substring(4));
-                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
-                        }
-                        else if (fi.FieldType == typeof(Vector3))
-                        {
-                            writer.WriteStartElement("Variable");
-                            writer.WriteAttributeString("name", fi.Name.Substring(4));
-                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
-                        }
-                        else if (fi.FieldType == typeof(Quaternion))
-                        {
-                            writer.WriteStartElement("Variable");
-                            writer.WriteAttributeString("name", fi.Name.Substring(4));
-                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
-                        }
-                        else if (fi.FieldType == typeof(UUID) || fi.FieldType == typeof(LSLKey))
-                        {
-                            writer.WriteStartElement("Variable");
-                            writer.WriteAttributeString("name", fi.Name.Substring(4));
-                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
-                        }
-                        else if(fi.FieldType == typeof(string))
-                        {
-                            writer.WriteStartElement("Variable");
-                            writer.WriteAttributeString("name", fi.Name.Substring(4));
-                            writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
-                        }
-                        else if(fi.FieldType == typeof(AnArray))
-                        {
-                            ListToXml(writer, fi.Name, (AnArray)fi.GetValue(this));
-                            continue;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                        writer.WriteValue(fi.GetValue(this).ToString());
-                        writer.WriteEndElement();
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("Queue");
-                    {
-
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("Permissions");
-                    {
-                        ObjectPartInventoryItem.PermsGranterInfo grantInfo = Item.PermsGranter;
-                        writer.WriteNamedValue("mask", (uint)grantInfo.PermsMask);
-                        writer.WriteNamedValue("granter", grantInfo.PermsGranter.ID);
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("Plugins");
-                    List<object> serializationData = new List<object>();
-                    foreach(Action<ScriptInstance, List<object>> serializer in SerializationDelegates)
-                    {
-                        serializer(this, serializationData);
-                    }
-                    foreach(object o in serializationData)
-                    {
-                        writer.WriteTypedValue("ListItem", o);
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteNamedValue("MinEventDelay", MinEventDelay);
-                }
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            m_TransactionedState.ToXml(writer, this);
         }
 
         public Script(ObjectPart part, ObjectPartInventoryItem item, bool forcedSleepDefault)
@@ -297,6 +363,8 @@ namespace SilverSim.Scripting.Lsl
             UseForcedSleep = forcedSleepDefault;
             m_Part = part;
             m_Item = item;
+            m_TransactionedState.ItemID = item.ID;
+            m_TransactionedState.AssetID = item.AssetID;
             Timer.Elapsed += OnTimerEvent;
             /* we replace the loaded script state with ours */
             m_Item.ScriptState = this;
@@ -684,7 +752,13 @@ namespace SilverSim.Scripting.Lsl
                 }
                 pluginpos += 2 + len;
             }
+
             IsRunning = state.IsRunning;
+
+            lock(this) /* really needed to prevent aborting here */
+            {
+                m_TransactionedState.UpdateFromScript(this);
+            }
         }
 
         private void OnPrimPositionUpdate(IObject part)
@@ -1049,6 +1123,10 @@ namespace SilverSim.Scripting.Lsl
             lock(m_Lock)
             {
                 m_ExecutionTime += execfloat;
+            }
+            lock (this) /* really needed to prevent aborting here */
+            {
+                m_TransactionedState.UpdateFromScript(this);
             }
         }
 
