@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -44,7 +46,7 @@ namespace SilverSim.Scripting.Lsl
                 m_ScriptDeserializeDelegates = scriptDeserializeDelegates;
             }
 
-            public ScriptInstance Instantiate(ObjectPart objpart, ObjectPartInventoryItem item)
+            public ScriptInstance Instantiate(ObjectPart objpart, ObjectPartInventoryItem item, byte[] serializedState = null)
             {
                 ConstructorInfo scriptconstructor = m_ScriptType.
                     GetConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) });
@@ -56,6 +58,17 @@ namespace SilverSim.Scripting.Lsl
                     object[] param = new object[1];
                     param[0] = m_Script;
                     m_Script.AddState(t.Key, (ILSLState)info.Invoke(param));
+                }
+
+                if (null != serializedState)
+                {
+                    using (MemoryStream ms = new MemoryStream(serializedState))
+                    {
+                        using (XmlTextReader reader = new XmlTextReader(ms))
+                        {
+                            m_Script.LoadScriptState(Script.SavedScriptState.FromXML(reader, item));
+                        }
+                    }
                 }
                 m_Script.ScriptRemoveDelegates = m_ScriptRemoveDelegates;
                 m_Script.SerializationDelegates = m_ScriptSerializeDelegates;

@@ -739,6 +739,55 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            public static SavedScriptState FromXML(XmlTextReader reader, ObjectPartInventoryItem item)
+            {
+                SavedScriptState state = new SavedScriptState();
+                for (;;)
+                {
+                    if (!reader.Read())
+                    {
+                        throw new InvalidObjectXmlException();
+                    }
+
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (reader.IsEmptyElement)
+                            {
+                                break;
+                            }
+
+                            switch (reader.Name)
+                            {
+                                case "State":
+                                    Dictionary<string, string> attrs = new Dictionary<string, string>();
+                                    if (reader.MoveToFirstAttribute())
+                                    {
+                                        do
+                                        {
+                                            attrs[reader.Name] = reader.Value;
+                                        } while (reader.MoveToNextAttribute());
+                                    }
+                                    if(reader.IsEmptyElement)
+                                    {
+                                        break;
+                                    }
+
+                                    state = ScriptStateFromXML(reader, attrs, item);
+                                    break;
+
+                                default:
+                                    reader.ReadToEndElement();
+                                    break;
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
             public void ToXml(XmlTextWriter writer)
             {
                 throw new InvalidOperationException();
