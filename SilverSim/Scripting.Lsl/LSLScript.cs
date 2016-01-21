@@ -13,6 +13,7 @@ using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Timers;
 using System.Xml;
@@ -356,6 +357,18 @@ namespace SilverSim.Scripting.Lsl
         public void ToXml(XmlTextWriter writer)
         {
             m_TransactionedState.ToXml(writer, this);
+        }
+
+        public byte[] ToDbSerializedState()
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (XmlTextWriter writer = ms.UTF8XmlTextWriter())
+                {
+                    ToXml(writer);
+                }
+                return ms.GetBuffer();
+            }
         }
 
         public Script(ObjectPart part, ObjectPartInventoryItem item, bool forcedSleepDefault)

@@ -792,6 +792,11 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new InvalidOperationException();
             }
+
+            public byte[] ToDbSerializedState()
+            {
+                throw new InvalidOperationException();
+            }
         }
     }
 }
