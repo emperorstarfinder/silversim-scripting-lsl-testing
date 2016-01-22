@@ -990,6 +990,13 @@ namespace SilverSim.Scripting.Lsl
                     LogInvokeException(name, e);
                     ShoutError(e.Message);
                 }
+                catch(ArgumentException e)
+                {
+#if DEBUG
+                    LogInvokeException(name, e);
+#endif
+                    ShoutError(e.Message);
+                }
                 catch (Exception e)
                 {
                     LogInvokeException(name, e);
