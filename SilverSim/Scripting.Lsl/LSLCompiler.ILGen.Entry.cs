@@ -214,6 +214,7 @@ namespace SilverSim.Scripting.Lsl
                         if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))
                         {
                             compileState.ILGen = script_ILGen;
+                            compileState.ILGen.Emit(OpCodes.Ldarg_0);
                             ProcessExpression(
                                 compileState,
                                 fb.FieldType,
@@ -223,6 +224,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
                             compileState.ILGen = reset_ILGen;
+                            compileState.ILGen.Emit(OpCodes.Ldarg_0);
                             ProcessExpression(
                                 compileState,
                                 fb.FieldType,
