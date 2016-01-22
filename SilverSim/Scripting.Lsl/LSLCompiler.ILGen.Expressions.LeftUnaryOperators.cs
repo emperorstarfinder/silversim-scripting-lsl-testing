@@ -63,7 +63,7 @@ namespace SilverSim.Scripting.Lsl
                             else if (innerExpressionReturn == typeof(Vector3))
                             {
                                 compileState.ILGen.Emit(OpCodes.Call, innerExpressionReturn.GetProperty("Length").GetGetMethod());
-                                compileState.ILGen.Emit(OpCodes.Ldc_R8, 0f);
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                                 compileState.ILGen.Emit(OpCodes.Ceq);
                             }
                             else

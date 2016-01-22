@@ -195,7 +195,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 0f);
+                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                         }
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                         break;
@@ -894,7 +894,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (returnType == typeof(double))
             {
-                ilgen.Emit(OpCodes.Ldc_R8, 0f);
+                ilgen.Emit(OpCodes.Ldc_R8, (double)0);
             }
             else if (returnType == typeof(string))
             {

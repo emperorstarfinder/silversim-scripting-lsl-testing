@@ -181,7 +181,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else if(innerExpressionReturn == typeof(double))
                                         {
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, lineNumber);
@@ -222,7 +222,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
                                             LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
@@ -262,7 +262,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
                                             LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
@@ -299,7 +299,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else if (innerExpressionReturn == typeof(double))
                                         {
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, lineNumber);
@@ -340,7 +340,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
                                             LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
@@ -380,7 +380,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
                                             LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
@@ -450,7 +450,7 @@ namespace SilverSim.Scripting.Lsl
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }
@@ -494,7 +494,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
@@ -534,7 +534,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
@@ -568,7 +568,7 @@ namespace SilverSim.Scripting.Lsl
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }
@@ -612,7 +612,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
@@ -652,7 +652,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
-                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, 1f);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);

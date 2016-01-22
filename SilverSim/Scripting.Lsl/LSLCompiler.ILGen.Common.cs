@@ -506,7 +506,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(double))
                 {
-                    compileState.ILGen.Emit(OpCodes.Ldc_R8, 0f);
+                    compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
@@ -525,7 +525,7 @@ namespace SilverSim.Scripting.Lsl
                 else if (fromType == typeof(Vector3))
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
-                    compileState.ILGen.Emit(OpCodes.Ldc_R8, 0f);
+                    compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
