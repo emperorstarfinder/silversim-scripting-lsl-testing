@@ -947,25 +947,47 @@ namespace SilverSim.Scripting.Lsl
                 {
                     mi.Invoke(m_CurrentState, param);
                 }
+                catch (ChangeStateException)
+                {
+                    throw;
+                }
+                catch (ResetScriptException)
+                {
+                    throw;
+                }
+                catch (NotImplementedException e)
+                {
+                    ShoutUnimplementedException(e);
+                }
                 catch (TargetInvocationException e)
                 {
                     LogInvokeException(name, e);
-                    throw;
+                    ShoutError(e.Message);
                 }
                 catch (InvalidProgramException e)
                 {
                     LogInvokeException(name, e);
-                    throw;
+                    ShoutError(e.Message);
                 }
                 catch (TargetParameterCountException e)
                 {
                     LogInvokeException(name, e);
-                    throw;
+                    ShoutError(e.Message);
                 }
                 catch (TargetException e)
                 {
                     LogInvokeException(name, e);
-                    throw;
+                    ShoutError(e.Message);
+                }
+                catch (NullReferenceException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (Exception e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
                 }
             }
         }
@@ -1038,109 +1060,180 @@ namespace SilverSim.Scripting.Lsl
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public override void ProcessEvent()
         {
-            IScriptEvent ev;
+            IScriptEvent evgot = m_Events.Dequeue();
             int exectime;
             float execfloat;
             int startticks = Environment.TickCount;
-            try
+            bool executeStateEntry = false;
+            bool executeStateExit = false;
+            bool executeScriptReset = false;
+            ILSLState newState = m_CurrentState;
+
+            if(newState == null)
             {
-                ev = m_Events.Dequeue();
-                if(m_CurrentState == null)
-                {
-                    m_CurrentState = m_States["default"];
-                    InvokeStateEvent("state_entry");
-                    if (ev.GetType() == typeof(ResetScriptEvent))
-                    {
-                        return;
-                    }
-                }
+                newState = m_States["default"];
+                executeStateEntry = true;
             }
-            catch(NotImplementedException e)
+            else if(newState != m_CurrentState)
             {
-                ShoutUnimplementedException(e);
-                return;
-            }
-            catch (ResetScriptException)
-            {
-                ShoutError("Script error! llResetScript used in default.state_entry");
-                return;
-            }
-            catch (Exception e)
-            {
-                ShoutError(e.Message);
-                return;
-            }
-            finally
-            {
-                exectime = Environment.TickCount - startticks;
-                execfloat = exectime / 1000f;
-                lock (m_Lock)
-                {
-                    m_ExecutionTime += execfloat;
-                }
+                executeStateExit = true;
+                executeStateEntry = true;
             }
 
-            startticks = Environment.TickCount;
-            try
+            do
             {
-                Type evt = ev.GetType();
-                Action<Script, IScriptEvent> evtDelegate;
-                if(StateEventHandlers.TryGetValue(evt, out evtDelegate))
+                if (executeScriptReset)
                 {
-                    evtDelegate(this, ev);
-                }
-            }
-            catch (ResetScriptException)
-            {
-                TriggerOnStateChange();
-                TriggerOnScriptReset();
-                m_Events.Clear();
-                lock(m_Lock)
-                {
-                    m_ExecutionTime = 0f;
-                }
-                m_CurrentState = m_States["default"];
-                m_CurrentStateMethods.Clear();
-                StartParameter = 0;
-                ResetVariables();
-                startticks = Environment.TickCount;
-                InvokeStateEvent("state_entry");
-            }
-            catch(System.Threading.ThreadAbortException)
-            {
-                throw;
-            }
-            catch(ChangeStateException e)
-            {
-                if (m_CurrentState != m_States[e.NewState])
-                {
-                    /* if state is equal, it simply aborts the event execution */
+                    executeScriptReset = false;
+                    executeStateExit = false;
+                    executeStateEntry = true;
                     TriggerOnStateChange();
+                    TriggerOnScriptReset();
                     m_Events.Clear();
-                    InvokeStateEvent("state_exit");
-                    m_CurrentState = m_States[e.NewState];
+                    lock (m_Lock)
+                    {
+                        m_ExecutionTime = 0f;
+                    }
+                    m_CurrentState = null;
                     m_CurrentStateMethods.Clear();
-                    InvokeStateEvent("state_entry");
+                    StartParameter = 0;
+                    ResetVariables();
+                    startticks = Environment.TickCount;
                 }
-            }
-            catch (NotImplementedException e)
-            {
-                ShoutUnimplementedException(e);
-            }
-            catch (Exception e)
-            {
-                ShoutError(e.Message);
-            }
-            exectime = Environment.TickCount - startticks;
-            execfloat = exectime / 1000f;
-            lock(m_Lock)
-            {
-                m_ExecutionTime += execfloat;
-            }
-            lock (this) /* really needed to prevent aborting here */
-            {
-                m_TransactionedState.UpdateFromScript(this);
-            }
+
+                bool executedStateExit = executeStateExit;
+                try
+                {
+                    if (executeStateExit)
+                    {
+                        executeStateExit = false;
+                        startticks = Environment.TickCount;
+                        InvokeStateEvent("state_exit");
+                    }
+                }
+                catch (ResetScriptException)
+                {
+                    executeStateEntry = true;
+                    m_CurrentState = m_States["default"];
+                    continue;
+                }
+                finally
+                {
+                    if (executedStateExit)
+                    {
+                        exectime = Environment.TickCount - startticks;
+                        execfloat = exectime / 1000f;
+                        lock (m_Lock)
+                        {
+                            m_ExecutionTime += execfloat;
+                        }
+                    }
+                }
+
+                bool executedStateEntry = executeStateEntry;
+                try
+                {
+                    if (executeStateEntry)
+                    {
+                        executeStateEntry = false;
+                        startticks = Environment.TickCount;
+                        m_CurrentState = newState;
+                        InvokeStateEvent("state_entry");
+                        if (evgot != null && evgot.GetType() == typeof(ResetScriptEvent))
+                        {
+                            return;
+                        }
+                    }
+                }
+                catch (ResetScriptException)
+                {
+                    if (m_States["default"] == m_CurrentState)
+                    {
+                        ShoutError("Script error! llResetScript used in default.state_entry");
+                        return;
+                    }
+                    else
+                    {
+                        executeScriptReset = true;
+                        continue;
+                    }
+                }
+                catch(ChangeStateException e)
+                {
+                    if (m_CurrentState != m_States[e.NewState])
+                    {
+                        /* if state is equal, it simply aborts the event execution */
+                        newState = m_States[e.NewState];
+                        executeStateExit = true;
+                        executeStateEntry = true;
+                    }
+                }
+                finally
+                {
+                    if (executedStateEntry)
+                    {
+                        exectime = Environment.TickCount - startticks;
+                        execfloat = exectime / 1000f;
+                        lock (m_Lock)
+                        {
+                            m_ExecutionTime += execfloat;
+                        }
+                    }
+                }
+
+                bool eventExecuted = false;
+                try
+                {
+                    IScriptEvent ev = evgot;
+                    evgot = null;
+                    if (null != ev)
+                    {
+                        eventExecuted = true;
+                        startticks = Environment.TickCount;
+                        Type evt = ev.GetType();
+                        Action<Script, IScriptEvent> evtDelegate;
+                        if (StateEventHandlers.TryGetValue(evt, out evtDelegate))
+                        {
+                            evtDelegate(this, ev);
+                        }
+                    }
+                }
+                catch (ResetScriptException)
+                {
+                    executeScriptReset = true;
+                    continue;
+                }
+                catch (System.Threading.ThreadAbortException)
+                {
+                    throw;
+                }
+                catch (ChangeStateException e)
+                {
+                    if (m_CurrentState != m_States[e.NewState])
+                    {
+                        /* if state is equal, it simply aborts the event execution */
+                        newState = m_States[e.NewState];
+                        executeStateExit = true;
+                        executeStateEntry = true;
+                    }
+                }
+                finally
+                {
+                    if (eventExecuted)
+                    {
+                        exectime = Environment.TickCount - startticks;
+                        execfloat = exectime / 1000f;
+                        lock (m_Lock)
+                        {
+                            m_ExecutionTime += execfloat;
+                        }
+                    }
+                }
+                lock (this) /* really needed to prevent aborting here */
+                {
+                    m_TransactionedState.UpdateFromScript(this);
+                }
+            } while (executeStateEntry || executeStateExit || executeScriptReset);
         }
 
         public override bool HasEventsPending
