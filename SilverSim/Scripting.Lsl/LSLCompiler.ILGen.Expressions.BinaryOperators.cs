@@ -710,9 +710,10 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if(m_LeftHandType == typeof(AnArray) && m_RightHandType == typeof(AnArray))
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
                             compileState.ILGen.Emit(OpCodes.Dup);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddRange", new Type[] { typeof(AnArray) }));
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddRange", new Type[] { typeof(AnArray) }));
                             throw Return(compileState, typeof(AnArray));
