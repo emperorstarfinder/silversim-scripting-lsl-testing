@@ -1082,6 +1082,7 @@ namespace SilverSim.Scripting.Lsl
 
             do
             {
+                #region Script Reset
                 if (executeScriptReset)
                 {
                     executeScriptReset = false;
@@ -1100,7 +1101,9 @@ namespace SilverSim.Scripting.Lsl
                     ResetVariables();
                     startticks = Environment.TickCount;
                 }
+                #endregion
 
+                #region State Exit
                 bool executedStateExit = executeStateExit;
                 try
                 {
@@ -1129,7 +1132,16 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
+                if (executedStateExit)
+                {
+                    lock (this) /* really needed to prevent aborting here */
+                    {
+                        m_TransactionedState.UpdateFromScript(this);
+                    }
+                }
+                #endregion
 
+                #region State Entry
                 bool executedStateEntry = executeStateEntry;
                 try
                 {
@@ -1181,6 +1193,16 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
+                if(executedStateEntry)
+                {
+                    lock (this) /* really needed to prevent aborting here */
+                    {
+                        m_TransactionedState.UpdateFromScript(this);
+                    }
+                }
+                #endregion
+
+                #region Event Logic
                 bool eventExecuted = false;
                 try
                 {
@@ -1229,6 +1251,8 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
+                #endregion
+
                 lock (this) /* really needed to prevent aborting here */
                 {
                     m_TransactionedState.UpdateFromScript(this);
