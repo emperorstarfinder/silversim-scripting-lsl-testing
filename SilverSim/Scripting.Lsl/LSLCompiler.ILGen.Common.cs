@@ -102,6 +102,16 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public static void AddToList(AnArray array, Vector3 v)
+        {
+            array.Add(v);
+        }
+
+        public static void AddToList(AnArray array, Quaternion q)
+        {
+            array.Add(q);
+        }
+
         #region LSL Integer Overflow
         /* special functions for converts
          * 

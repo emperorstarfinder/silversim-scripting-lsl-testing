@@ -59,11 +59,15 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double) || innerExpressionReturn == typeof(string))
                     {
-                        compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { innerExpressionReturn }));
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { innerExpressionReturn }));
                     }
-                    else if (innerExpressionReturn == typeof(LSLKey) || innerExpressionReturn == typeof(Vector3) || innerExpressionReturn == typeof(Quaternion))
+                    else if (innerExpressionReturn == typeof(LSLKey))
                     {
-                        compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
+                    }
+                    else if( innerExpressionReturn == typeof(Vector3) || innerExpressionReturn == typeof(Quaternion))
+                    {
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddToList", new Type[] { typeof(AnArray), innerExpressionReturn }));
                     }
                     else if (innerExpressionReturn == typeof(AnArray))
                     {

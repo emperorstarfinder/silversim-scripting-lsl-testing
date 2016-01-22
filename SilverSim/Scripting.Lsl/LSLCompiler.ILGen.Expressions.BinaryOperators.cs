@@ -714,7 +714,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
                             compileState.ILGen.Emit(OpCodes.Dup);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("AddRange", new Type[] { typeof(AnArray) }));
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddRange", new Type[] { typeof(AnArray) }));
                             throw Return(compileState, typeof(AnArray));
                         }
                         if(m_LeftHandType == typeof(AnArray))
@@ -725,11 +725,15 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             if (typeof(int) == m_RightHandType || typeof(double) == m_RightHandType || typeof(string) == m_RightHandType)
                             {
-                                compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { m_RightHandType }));
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { m_RightHandType }));
+                            }
+                            else if(typeof(LSLKey) == m_RightHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                             }
                             else
                             {
-                                compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddToList", new Type[] { typeof(AnArray), m_RightHandType }));
                             }
                             throw Return(compileState, typeof(AnArray));
                         }
@@ -739,14 +743,7 @@ namespace SilverSim.Scripting.Lsl
                             ProcessCasts(compileState, typeof(AnArray), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Dup);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            if (typeof(int) == m_RightHandType || typeof(double) == m_RightHandType || typeof(string) == m_RightHandType)
-                            {
-                                compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { m_RightHandType }));
-                            }
-                            else
-                            {
-                                compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
-                            }
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddRange", new Type[] { m_RightHandType }));
                             throw Return(compileState, typeof(AnArray));
                         }
                         else if (m_LeftHandType == typeof(int) && m_RightHandType == typeof(int))
