@@ -4,12 +4,18 @@
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
+        public static void RequestStateChange(string newState)
+        {
+            throw new ChangeStateException(newState);
+        }
+
         void ProcessStatement(
             CompileState compileState,
             Type returnType,
@@ -141,10 +147,9 @@ namespace SilverSim.Scripting.Lsl
             else if (functionLine.Line[startAt] == "state")
             {
                 /* when same state, the state instruction compiles to nop according to wiki */
-                compileState.ILGen.Emit(OpCodes.Ldstr, functionLine.Line[1]);
-                compileState.ILGen.Emit(OpCodes.Newobj, typeof(ChangeStateException).GetConstructor(new Type[1] { typeof(string) }));
-                compileState.ILGen.Emit(OpCodes.Throw);
-                return;
+                compileState.ILGen.Emit(OpCodes.Ldstr, functionLine.Line[startAt + 1]);
+                MethodInfo mi = typeof(LSLCompiler).GetMethod("RequestStateChange", BindingFlags.Public | BindingFlags.Static);
+                compileState.ILGen.Emit(OpCodes.Call, mi);
             }
             #endregion
             else

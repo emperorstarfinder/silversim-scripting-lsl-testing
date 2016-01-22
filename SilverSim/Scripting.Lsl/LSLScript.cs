@@ -955,14 +955,20 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw;
                 }
+                catch (TargetInvocationException e)
+                {
+                    Type innerType = e.InnerException.GetType();
+                    if (innerType == typeof(ChangeStateException) ||
+                        innerType == typeof(ResetScriptException))
+                    {
+                        throw;
+                    }
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
                 catch (NotImplementedException e)
                 {
                     ShoutUnimplementedException(e);
-                }
-                catch (TargetInvocationException e)
-                {
-                    LogInvokeException(name, e);
-                    ShoutError(e.Message);
                 }
                 catch (InvalidProgramException e)
                 {
@@ -1097,7 +1103,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_ExecutionTime = 0f;
                     }
-                    m_CurrentState = null;
+                    m_CurrentState = m_States["default"];
                     m_CurrentStateMethods.Clear();
                     StartParameter = 0;
                     ResetVariables();
@@ -1118,9 +1124,27 @@ namespace SilverSim.Scripting.Lsl
                 }
                 catch (ResetScriptException)
                 {
-                    executeStateEntry = true;
-                    m_CurrentState = m_States["default"];
+                    executeScriptReset = true;
                     continue;
+                }
+                catch(ChangeStateException e)
+                {
+                    ShoutError("Script error! state change used in state_exit");
+                    LogInvokeException("state_exit", e);
+                }
+                catch (TargetInvocationException e)
+                {
+                    Type eType = e.InnerException.GetType();
+                    if (eType == typeof(ResetScriptEvent))
+                    {
+                        executeScriptReset = true;
+                        continue;
+                    }
+                    else if (eType == typeof(ChangeStateException))
+                    {
+                        ShoutError("Script error! state change used in state_exit");
+                        LogInvokeException("state_exit", e);
+                    }
                 }
                 finally
                 {
@@ -1140,6 +1164,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_TransactionedState.UpdateFromScript(this);
                     }
+                    m_CurrentStateMethods.Clear();
                 }
                 #endregion
 
@@ -1152,11 +1177,11 @@ namespace SilverSim.Scripting.Lsl
                         executeStateEntry = false;
                         startticks = Environment.TickCount;
                         m_CurrentState = newState;
-                        InvokeStateEvent("state_entry");
                         if (evgot != null && evgot.GetType() == typeof(ResetScriptEvent))
                         {
-                            return;
+                            evgot = null;
                         }
+                        InvokeStateEvent("state_entry");
                     }
                 }
                 catch (ResetScriptException)
@@ -1186,6 +1211,32 @@ namespace SilverSim.Scripting.Lsl
                             m_TransactionedState.UpdateFromScript(this);
                         }
                         continue;
+                    }
+                }
+                catch(TargetInvocationException e)
+                {
+                    Type eType = e.InnerException.GetType();
+                    if (eType == typeof(ResetScriptEvent))
+                    {
+                        executeScriptReset = true;
+                        continue;
+                    }
+                    else if (eType == typeof(ChangeStateException))
+                    {
+                        ChangeStateException innerException = (ChangeStateException)e.InnerException;
+                        if (m_CurrentState != m_States[innerException.NewState])
+                        {
+                            /* if state is equal, it simply aborts the event execution */
+                            newState = m_States[innerException.NewState];
+                            executeStateExit = true;
+                            executeStateEntry = true;
+
+                            lock (this) /* really needed to prevent aborting here */
+                            {
+                                m_TransactionedState.UpdateFromScript(this);
+                            }
+                            continue;
+                        }
                     }
                 }
                 finally
@@ -1233,10 +1284,6 @@ namespace SilverSim.Scripting.Lsl
                     executeScriptReset = true;
                     continue;
                 }
-                catch (System.Threading.ThreadAbortException)
-                {
-                    throw;
-                }
                 catch (ChangeStateException e)
                 {
                     if (m_CurrentState != m_States[e.NewState])
@@ -1245,6 +1292,32 @@ namespace SilverSim.Scripting.Lsl
                         newState = m_States[e.NewState];
                         executeStateExit = true;
                         executeStateEntry = true;
+                    }
+                }
+                catch (TargetInvocationException e)
+                {
+                    Type eType = e.InnerException.GetType();
+                    if (eType == typeof(ResetScriptEvent))
+                    {
+                        executeScriptReset = true;
+                        continue;
+                    }
+                    else if (eType == typeof(ChangeStateException))
+                    {
+                        ChangeStateException innerException = (ChangeStateException)e.InnerException;
+                        if (m_CurrentState != m_States[innerException.NewState])
+                        {
+                            /* if state is equal, it simply aborts the event execution */
+                            newState = m_States[innerException.NewState];
+                            executeStateExit = true;
+                            executeStateEntry = true;
+
+                            lock (this) /* really needed to prevent aborting here */
+                            {
+                                m_TransactionedState.UpdateFromScript(this);
+                            }
+                            continue;
+                        }
                     }
                 }
                 finally
