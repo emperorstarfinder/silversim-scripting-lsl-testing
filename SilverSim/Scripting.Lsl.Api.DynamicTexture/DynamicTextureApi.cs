@@ -373,9 +373,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 if (face == ALL_SIDES)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
-                    for (face = 0; face < te.FaceTextures.Length; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                     {
-                        te.FaceTextures[face].TextureID = textureAssetID;
+                        te[(uint)face].TextureID = textureAssetID;
                     }
                     instance.Part.TextureEntry = te;
                 }
@@ -384,7 +384,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     try
                     {
                         TextureEntry te = instance.Part.TextureEntry;
-                        te.FaceTextures[face].TextureID = textureAssetID;
+                        te[(uint)face].TextureID = textureAssetID;
                         instance.Part.TextureEntry = te;
                     }
                     catch

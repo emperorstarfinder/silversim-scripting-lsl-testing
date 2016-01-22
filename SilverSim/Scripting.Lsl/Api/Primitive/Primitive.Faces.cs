@@ -72,10 +72,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 if (face == ALL_SIDES)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
-                    for (face = 0; face < te.FaceTextures.Length; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                     {
-                        te.FaceTextures[face].OffsetU = uf;
-                        te.FaceTextures[face].OffsetV = vf;
+                        te[(uint)face].OffsetU = uf;
+                        te[(uint)face].OffsetV = vf;
                     }
                     instance.Part.TextureEntry = te;
                 }
@@ -84,8 +84,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     try
                     {
                         TextureEntry te = instance.Part.TextureEntry;
-                        te.FaceTextures[face].OffsetU = uf;
-                        te.FaceTextures[face].OffsetV = vf;
+                        te[(uint)face].OffsetU = uf;
+                        te[(uint)face].OffsetV = vf;
                         instance.Part.TextureEntry = te;
                     }
                     catch
@@ -107,10 +107,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 if (face == ALL_SIDES)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
-                    for (face = 0; face < te.FaceTextures.Length; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                     {
-                        te.FaceTextures[face].RepeatU = uf;
-                        te.FaceTextures[face].RepeatV = vf;
+                        te[(uint)face].RepeatU = uf;
+                        te[(uint)face].RepeatV = vf;
                     }
                     instance.Part.TextureEntry = te;
                 }
@@ -119,8 +119,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     try
                     {
                         TextureEntry te = instance.Part.TextureEntry;
-                        te.FaceTextures[face].RepeatU = uf;
-                        te.FaceTextures[face].RepeatV = vf;
+                        te[(uint)face].RepeatU = uf;
+                        te[(uint)face].RepeatV = vf;
                         instance.Part.TextureEntry = te;
                     }
                     catch
@@ -141,9 +141,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 if (face == ALL_SIDES)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
-                    for (face = 0; face < te.FaceTextures.Length; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                     {
-                        te.FaceTextures[face].Rotation = anglef;
+                        te[(uint)face].Rotation = anglef;
                     }
                     instance.Part.TextureEntry = te;
                 }
@@ -152,7 +152,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     try
                     {
                         TextureEntry te = instance.Part.TextureEntry;
-                        te.FaceTextures[face].Rotation = anglef;
+                        te[(uint)face].Rotation = anglef;
                         instance.Part.TextureEntry = te;
                     }
                     catch
@@ -182,9 +182,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     foreach (ObjectPart part in GetLinkTargets(instance, link))
                     {
                         TextureEntry te = part.TextureEntry;
-                        for (face = 0; face < te.FaceTextures.Length; ++face)
+                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                         {
-                            te.FaceTextures[face].TextureColor.A = alpha;
+                            te[(uint)face].TextureColor.A = alpha;
                         }
                         part.TextureEntry = te;
                     }
@@ -196,7 +196,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         try
                         {
                             TextureEntry te = part.TextureEntry;
-                            te.FaceTextures[face].TextureColor.A = alpha;
+                            te[(uint)face].TextureColor.A = alpha;
                             part.TextureEntry = te;
                         }
                         catch
@@ -228,9 +228,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     foreach (ObjectPart part in GetLinkTargets(instance, link))
                     {
                         TextureEntry te = part.TextureEntry;
-                        for (face = 0; face < te.FaceTextures.Length; ++face)
+                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                         {
-                            te.FaceTextures[face].TextureID = textureID;
+                            te[(uint)face].TextureID = textureID;
                         }
                         part.TextureEntry = te;
                     }
@@ -242,7 +242,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         try
                         {
                             TextureEntry te = part.TextureEntry;
-                            te.FaceTextures[face].TextureID = textureID;
+                            te[(uint)face].TextureID = textureID;
                             part.TextureEntry = te;
                         }
                         catch
@@ -333,9 +333,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     Vector3 v = Vector3.Zero;
                     int n = 0;
 
-                    for (face = 0; face < te.FaceTextures.Length && face < instance.Part.NumberOfSides; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                     {
-                        v += te.FaceTextures[face].TextureColor.AsVector3;
+                        v += te[(uint)face].TextureColor.AsVector3;
                     }
                     v /= n;
                     return v;
@@ -373,13 +373,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     foreach (ObjectPart part in GetLinkTargets(instance, link))
                     {
                         TextureEntry te = part.TextureEntry;
-                        for (face = 0; face < te.FaceTextures.Length; ++face)
+                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                         {
-                            ColorAlpha col = te.FaceTextures[face].TextureColor;
+                            ColorAlpha col = te[(uint)face].TextureColor;
                             col.R = color.X;
                             col.G = color.Y;
                             col.B = color.Z;
-                            te.FaceTextures[face].TextureColor = col;
+                            te[(uint)face].TextureColor = col;
                         }
                         part.TextureEntry = te;
                     }
@@ -391,11 +391,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         try
                         {
                             TextureEntry te = part.TextureEntry;
-                            ColorAlpha col = te.FaceTextures[face].TextureColor;
+                            ColorAlpha col = te[(uint)face].TextureColor;
                             col.R = color.X;
                             col.G = color.Y;
                             col.B = color.Z;
-                            te.FaceTextures[face].TextureColor = col;
+                            te[(uint)face].TextureColor = col;
                             part.TextureEntry = te;
                         }
                         catch

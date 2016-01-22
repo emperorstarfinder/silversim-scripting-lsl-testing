@@ -1069,19 +1069,21 @@ namespace SilverSim.Scripting.Lsl
             bool executeScriptReset = false;
             ILSLState newState = m_CurrentState;
 
-            if(newState == null)
-            {
-                newState = m_States["default"];
-                executeStateEntry = true;
-            }
-            else if(newState != m_CurrentState)
-            {
-                executeStateExit = true;
-                executeStateEntry = true;
-            }
 
             do
             {
+                if (newState == null)
+                {
+                    newState = m_States["default"];
+                    executeStateEntry = true;
+                    executeStateExit = false;
+                }
+                else if (newState != m_CurrentState)
+                {
+                    executeStateExit = true;
+                    executeStateEntry = true;
+                }
+
                 #region Script Reset
                 if (executeScriptReset)
                 {
@@ -1178,6 +1180,12 @@ namespace SilverSim.Scripting.Lsl
                         newState = m_States[e.NewState];
                         executeStateExit = true;
                         executeStateEntry = true;
+
+                        lock (this) /* really needed to prevent aborting here */
+                        {
+                            m_TransactionedState.UpdateFromScript(this);
+                        }
+                        continue;
                     }
                 }
                 finally
