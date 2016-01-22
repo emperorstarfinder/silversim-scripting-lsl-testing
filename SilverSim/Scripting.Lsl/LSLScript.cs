@@ -54,7 +54,6 @@ namespace SilverSim.Scripting.Lsl
             {
                 PostEvent(new TimerEvent());
                 LastTimerEventTick = Environment.TickCount;
-                Timer.Interval = CurrentTimerInterval;
             }
         }
 
@@ -1514,6 +1513,10 @@ namespace SilverSim.Scripting.Lsl
             StateEventHandlers.Add(typeof(SensorEvent), HandleSensor);
             StateEventHandlers.Add(typeof(RuntimePermissionsEvent), HandleRuntimePermissions);
             StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
+            StateEventHandlers.Add(typeof(TimerEvent), delegate (Script script, IScriptEvent ev)
+            {
+                script.InvokeStateEvent("timer");
+            });
         }
 
         static void HandleCollision(Script script, IScriptEvent ev)

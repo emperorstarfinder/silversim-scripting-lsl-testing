@@ -329,7 +329,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llFrand")]
         public double Frand(ScriptInstance instance, double mag)
         {
-            return random.NextDouble() * mag;
+            lock(instance)
+            {
+                lock(random)
+                {
+                    return random.NextDouble() * mag;
+                }
+            }
         }
     }
 }
