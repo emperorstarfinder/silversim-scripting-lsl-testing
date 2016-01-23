@@ -407,26 +407,6 @@ namespace SilverSim.Scripting.Lsl
             return q;
         }
 
-        public static string StructToString(int v)
-        {
-            return v.ToString();
-        }
-
-        public static string StructToString(double v)
-        {
-            return v.ToString(CultureInfo.InvariantCulture);
-        }
-
-        public static string StructToString(Vector3 v)
-        {
-            return v.ToString();
-        }
-
-        public static string StructToString(Quaternion q)
-        {
-            return q.ToString();
-        }
-
         internal static void ProcessCasts(
             CompileState compileState,
             Type toType,
@@ -458,9 +438,16 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (toType == typeof(string))
             {
-                if (fromType == typeof(int) || fromType == typeof(double) || fromType == typeof(Vector3) || fromType == typeof(Quaternion))
+                if (fromType == typeof(int) || fromType == typeof(Vector3) || fromType == typeof(Quaternion))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("StructToString", new Type[] { fromType }));
+                    compileState.ILGen.Emit(OpCodes.Box, fromType);
+                    compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
+                }
+                else if (fromType == typeof(double))
+                {
+                    compileState.ILGen.Emit(OpCodes.Box, fromType);
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(CultureInfo).GetProperty("InvariantCulture").GetGetMethod());
+                    compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", new Type[] { typeof(CultureInfo) }));
                 }
                 else if (fromType == typeof(AnArray))
                 {
@@ -528,10 +515,12 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(Quaternion))
                 {
+                    compileState.ILGen.Emit(OpCodes.Box, typeof(Quaternion));
                     compileState.ILGen.Emit(OpCodes.Call, typeof(Quaternion).GetProperty("IsLSLTrue").GetGetMethod());
                 }
                 else if (fromType == typeof(Vector3))
                 {
+                    compileState.ILGen.Emit(OpCodes.Box, typeof(Vector3));
                     compileState.ILGen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
                     compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
