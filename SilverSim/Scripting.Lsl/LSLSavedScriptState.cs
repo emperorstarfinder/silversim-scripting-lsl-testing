@@ -44,7 +44,7 @@ namespace SilverSim.Scripting.Lsl
                             switch (reader.Name)
                             {
                                 case "mask":
-                                    uint mask = (uint)reader.ReadContentAsLong();
+                                    uint mask = (uint)reader.ReadElementValueAsLong();
                                     item.PermsGranter.PermsMask = (ScriptPermissions)mask;
                                     break;
 
@@ -761,6 +761,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 case "State":
                                     Dictionary<string, string> attrs = new Dictionary<string, string>();
+                                    bool isEmptyElement = reader.IsEmptyElement;
                                     if (reader.MoveToFirstAttribute())
                                     {
                                         do
@@ -768,13 +769,12 @@ namespace SilverSim.Scripting.Lsl
                                             attrs[reader.Name] = reader.Value;
                                         } while (reader.MoveToNextAttribute());
                                     }
-                                    if(reader.IsEmptyElement)
+                                    if(isEmptyElement)
                                     {
                                         break;
                                     }
 
-                                    state = ScriptStateFromXML(reader, attrs, item);
-                                    break;
+                                    return FromXML(reader, attrs, item);
 
                                 default:
                                     reader.ReadToEndElement();

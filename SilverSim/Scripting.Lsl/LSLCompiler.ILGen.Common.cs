@@ -60,19 +60,28 @@ namespace SilverSim.Scripting.Lsl
                     m_Script.AddState(t.Key, (ILSLState)info.Invoke(param));
                 }
 
-                if (null != serializedState)
-                {
-                    using (MemoryStream ms = new MemoryStream(serializedState))
-                    {
-                        using (XmlTextReader reader = new XmlTextReader(ms))
-                        {
-                            m_Script.LoadScriptState(Script.SavedScriptState.FromXML(reader, item));
-                        }
-                    }
-                }
                 m_Script.ScriptRemoveDelegates = m_ScriptRemoveDelegates;
                 m_Script.SerializationDelegates = m_ScriptSerializeDelegates;
                 m_Script.DeserializationDelegates = m_ScriptDeserializeDelegates;
+                if (null != serializedState)
+                {
+                    try
+                    {
+                        using (MemoryStream ms = new MemoryStream(serializedState))
+                        {
+                            using (XmlTextReader reader = new XmlTextReader(ms))
+                            {
+                                m_Script.LoadScriptState(Script.SavedScriptState.FromXML(reader, item));
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        m_Log.WarnFormat("Failed to restore script state for {0} ({1}): {2} ({3}): {4}: {5}\n{6}", objpart.Name, objpart.ID, item.Name, item.ID,
+                            e.GetType().FullName, e.Message, e.StackTrace);
+                        m_Script.IsResetRequired = true;
+                    }
+                }
                 return m_Script;
             }
         }

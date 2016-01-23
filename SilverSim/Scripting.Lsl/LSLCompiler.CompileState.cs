@@ -3,11 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Reflection.Emit;
-using SilverSim.Scene.Types.Script;
 
 namespace SilverSim.Scripting.Lsl
 {
