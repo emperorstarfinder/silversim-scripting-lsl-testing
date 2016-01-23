@@ -176,7 +176,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                instance.Part.IsPassCollisions = pass != 0;
+                switch(pass)
+                {
+                    case PASS_ALWAYS:
+                        instance.Part.PassCollisionMode = PassEventMode.Always;
+                        break;
+
+                    case PASS_NEVER:
+                        instance.Part.PassCollisionMode = PassEventMode.Never;
+                        break;
+
+                    case PASS_IF_NOT_HANDLED:
+                    default:
+                        instance.Part.PassCollisionMode = PassEventMode.IfNotHandled;
+                        break;
+                }
             }
         }
 
@@ -185,7 +199,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                instance.Part.IsPassTouches = pass != 0;
+                switch (pass)
+                {
+                    case PASS_ALWAYS:
+                    default:
+                        instance.Part.PassCollisionMode = PassEventMode.Always;
+                        break;
+
+                    case PASS_NEVER:
+                        instance.Part.PassCollisionMode = PassEventMode.Never;
+                        break;
+
+                    case PASS_IF_NOT_HANDLED:
+                        instance.Part.PassCollisionMode = PassEventMode.IfNotHandled;
+                        break;
+                }
             }
         }
 

@@ -283,6 +283,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL)]
         public const string TEXTURE_MEDIA = "8b5fec65-8d8d-9dc5-cda8-8fdf2716e361";
 
+        [APILevel(APIFlags.LSL)]
+        public const int PASS_IF_NOT_HANDLED = 0;
+        [APILevel(APIFlags.LSL)]
+        public const int PASS_ALWAYS = 1;
+        [APILevel(APIFlags.LSL)]
+        public const int PASS_NEVER = 2;
+
         List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
         {
             List<ObjectPart> list = new List<ObjectPart>();
