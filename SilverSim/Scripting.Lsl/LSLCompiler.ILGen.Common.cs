@@ -449,13 +449,9 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Call, typeof(CultureInfo).GetProperty("InvariantCulture").GetGetMethod());
                     compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", new Type[] { typeof(CultureInfo) }));
                 }
-                else if (fromType == typeof(AnArray))
+                else if (fromType == typeof(AnArray) || fromType == typeof(LSLKey))
                 {
-                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(AnArray).GetMethod("ToString", Type.EmptyTypes));
-                }
-                else if (fromType == typeof(LSLKey))
-                {
-                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
                 }
                 else
                 {
