@@ -48,6 +48,12 @@ namespace SilverSim.Scripting.Lsl
         static internal readonly Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
         readonly object m_Lock = new object();
 
+        bool m_HasTouchEvent;
+        bool m_HasMoneyEvent;
+
+        public override bool HasTouchEvent { get { return m_HasTouchEvent; } }
+        public override bool HasMoneyEvent { get { return m_HasMoneyEvent; } }
+
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
         {
             lock (m_Lock)
@@ -723,8 +729,7 @@ namespace SilverSim.Scripting.Lsl
             ILSLState script_state;
             if (m_States.TryGetValue(state.CurrentState, out script_state))
             {
-                m_CurrentState = script_state;
-                m_CurrentStateMethods.Clear();
+                SetCurrentState(script_state);
             }
 
             /* queue deserialization */
@@ -925,6 +930,26 @@ namespace SilverSim.Scripting.Lsl
             InvokeStateEventReal(name, param);
         }
 
+        void SetCurrentState(ILSLState state)
+        {
+            Type stateType = state.GetType();
+            m_CurrentState = state;
+            m_CurrentStateMethods.Clear();
+            m_HasTouchEvent = HasStateEvent("touch") || HasStateEvent("touch_start") || HasStateEvent("touch_end");
+            m_HasMoneyEvent = HasStateEvent("money");
+        }
+
+        bool HasStateEvent(string name)
+        {
+            MethodInfo mi;
+            if (!m_CurrentStateMethods.TryGetValue(name, out mi))
+            {
+                mi = m_CurrentState.GetType().GetMethod(name);
+                m_CurrentStateMethods.Add(name, mi);
+            }
+            return mi != null;
+        }
+
         internal void InvokeStateEventReal(string name, object[] param)
         {
             MethodInfo mi;
@@ -1111,8 +1136,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_ExecutionTime = 0f;
                     }
-                    m_CurrentState = m_States["default"];
-                    m_CurrentStateMethods.Clear();
+                    SetCurrentState(m_States["default"]);
                     StartParameter = 0;
                     ResetVariables();
                     startticks = Environment.TickCount;
@@ -1182,8 +1206,7 @@ namespace SilverSim.Scripting.Lsl
                     if (executeStateEntry)
                     {
                         executeStateEntry = false;
-                        m_CurrentStateMethods.Clear();
-                        m_CurrentState = newState;
+                        SetCurrentState(newState);
                         startticks = Environment.TickCount;
                         if (evgot != null && evgot.GetType() == typeof(ResetScriptEvent))
                         {
