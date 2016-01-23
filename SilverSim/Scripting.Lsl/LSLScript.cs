@@ -127,7 +127,7 @@ namespace SilverSim.Scripting.Lsl
             string CurrentState = string.Empty;
             ObjectPartInventoryItem.PermsGranterInfo PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo();
             readonly List<object> PluginSerialization = new List<object>();
-            double MinEventDelay = 0;
+            double MinEventDelay;
             public UUID AssetID = UUID.Zero;
             public UUID ItemID = UUID.Zero;
             readonly object m_TransactionLock = new object();
