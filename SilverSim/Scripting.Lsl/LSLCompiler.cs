@@ -125,6 +125,7 @@ namespace SilverSim.Scripting.Lsl
             m_ReservedWords.Add("state");
             m_ReservedWords.Add("void");
             m_ReservedWords.Add("quaternion");
+            m_ReservedWords.Add("event");
 
             m_Typecasts.Add("integer");
             m_Typecasts.Add("vector");
