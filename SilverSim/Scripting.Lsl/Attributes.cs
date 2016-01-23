@@ -45,6 +45,8 @@ namespace SilverSim.Scripting.Lsl
         public const string InWorldz = "InWorldz";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string ExtendedVehicle = "ExtendedVehicle";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
+        public const string AdvancedPhysics = "AdvancedPhysics";
     }
 
     [Serializable]
