@@ -111,16 +111,6 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public static void AddToList(AnArray array, Vector3 v)
-        {
-            array.Add(v);
-        }
-
-        public static void AddToList(AnArray array, Quaternion q)
-        {
-            array.Add(q);
-        }
-
         #region LSL Integer Overflow
         /* special functions for converts
          * 
@@ -606,7 +596,8 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Dup);
                     compileState.ILGen.Emit(OpCodes.Ldloc, lb);
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddToList", new Type[] { typeof(AnArray), fromType }));
+                    compileState.ILGen.Emit(OpCodes.Box, fromType);
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] {typeof(IValue) }));
                     compileState.ILGen.EndScope();
                 }
                 else

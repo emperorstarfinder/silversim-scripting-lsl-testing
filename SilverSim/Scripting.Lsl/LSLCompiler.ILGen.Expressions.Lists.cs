@@ -67,7 +67,8 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if( innerExpressionReturn == typeof(Vector3) || innerExpressionReturn == typeof(Quaternion))
                     {
-                        compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddToList", new Type[] { typeof(AnArray), innerExpressionReturn }));
+                        compileState.ILGen.Emit(OpCodes.Box, innerExpressionReturn);
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                     }
                     else if (innerExpressionReturn == typeof(AnArray))
                     {

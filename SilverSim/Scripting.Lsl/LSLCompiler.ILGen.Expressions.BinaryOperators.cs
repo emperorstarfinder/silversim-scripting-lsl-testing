@@ -734,7 +734,8 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddToList", new Type[] { typeof(AnArray), m_RightHandType }));
+                                compileState.ILGen.Emit(OpCodes.Box, m_RightHandType);
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                             }
                             throw Return(compileState, typeof(AnArray));
                         }
