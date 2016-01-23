@@ -1170,7 +1170,6 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_TransactionedState.UpdateFromScript(this);
                     }
-                    m_CurrentStateMethods.Clear();
                 }
                 #endregion
 
@@ -1181,8 +1180,9 @@ namespace SilverSim.Scripting.Lsl
                     if (executeStateEntry)
                     {
                         executeStateEntry = false;
-                        startticks = Environment.TickCount;
+                        m_CurrentStateMethods.Clear();
                         m_CurrentState = newState;
+                        startticks = Environment.TickCount;
                         if (evgot != null && evgot.GetType() == typeof(ResetScriptEvent))
                         {
                             evgot = null;
