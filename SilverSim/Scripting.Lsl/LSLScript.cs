@@ -119,14 +119,14 @@ namespace SilverSim.Scripting.Lsl
         }
 
 
-        TransactionedState m_TransactionedState = new TransactionedState();
+        readonly TransactionedState m_TransactionedState = new TransactionedState();
 
         class TransactionedState
         {
-            Dictionary<string, object> Variables = new Dictionary<string, object>();
+            readonly Dictionary<string, object> Variables = new Dictionary<string, object>();
             string CurrentState = string.Empty;
             ObjectPartInventoryItem.PermsGranterInfo PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo();
-            List<object> PluginSerialization = new List<object>();
+            readonly List<object> PluginSerialization = new List<object>();
             double MinEventDelay = 0;
             public UUID AssetID = UUID.Zero;
             public UUID ItemID = UUID.Zero;
