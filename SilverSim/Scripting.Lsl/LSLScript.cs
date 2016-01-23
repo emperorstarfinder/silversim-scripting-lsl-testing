@@ -249,15 +249,9 @@ namespace SilverSim.Scripting.Lsl
                 lock (m_TransactionLock)
                 {
                     writer.WriteStartElement("State");
-                    writer.WriteStartAttribute("UUID");
-                    writer.WriteValue(ItemID);
-                    writer.WriteEndAttribute();
-                    writer.WriteStartAttribute("Asset");
-                    writer.WriteValue(AssetID);
-                    writer.WriteEndAttribute();
-                    writer.WriteStartAttribute("Engine");
-                    writer.WriteValue("XEngine");
-                    writer.WriteEndAttribute();
+                    writer.WriteAttributeString("UUID", ItemID.ToString());
+                    writer.WriteAttributeString("Asset", AssetID.ToString());
+                    writer.WriteAttributeString("Engine", "XEngine");
                     {
                         writer.WriteStartElement("ScriptState");
                         {
@@ -1066,6 +1060,14 @@ namespace SilverSim.Scripting.Lsl
                 funcSignature += ")";
 
                 ShoutError("Script called unimplemented function " + funcSignature);
+            }
+        }
+
+        public override IScriptState ScriptState
+        {
+            get
+            {
+                return this;
             }
         }
 
