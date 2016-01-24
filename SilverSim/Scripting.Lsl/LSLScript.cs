@@ -137,6 +137,7 @@ namespace SilverSim.Scripting.Lsl
             public UUID AssetID = UUID.Zero;
             public UUID ItemID = UUID.Zero;
             readonly object m_TransactionLock = new object();
+            IScriptEvent[] Events = new IScriptEvent[0];
 
             public TransactionedState()
             {
@@ -145,8 +146,10 @@ namespace SilverSim.Scripting.Lsl
 
             public void UpdateFromScript(Script script)
             {
-                lock(m_TransactionLock)
+                IScriptEvent[] events = script.m_Events.ToArray();
+                lock (m_TransactionLock)
                 {
+                    Events = events;
                     AssetID = script.Item.AssetID;
                     ItemID = script.Item.ID;
                     MinEventDelay = script.MinEventDelay;
@@ -327,8 +330,13 @@ namespace SilverSim.Scripting.Lsl
                             }
                             writer.WriteEndElement();
                             writer.WriteStartElement("Queue");
+                            foreach(IScriptEvent ev in Events)
                             {
-
+                                Action<IScriptEvent, XmlTextWriter> serializer;
+                                if(EventSerializers.TryGetValue(ev.GetType(), out serializer))
+                                {
+                                    serializer(ev, writer);
+                                }
                             }
                             writer.WriteEndElement();
                             writer.WriteStartElement("Permissions");
@@ -384,325 +392,6 @@ namespace SilverSim.Scripting.Lsl
             m_Part.OnPositionChange += OnPrimPositionUpdate;
             m_Part.ObjectGroup.OnUpdate += OnGroupUpdate;
             m_Part.ObjectGroup.OnPositionChange += OnGroupPositionUpdate;
-        }
-
-        static bool TryTranslateEventParams(SavedScriptState.EventParams ep, out IScriptEvent res)
-        {
-            switch(ep.EventName)
-            {
-                case "object_rez":
-                    if(ep.Params.Count >= 1)
-                    {
-                        ObjectRezEvent ev = new ObjectRezEvent();
-                        ev.ObjectID = new UUID(ep.Params[0].ToString());
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "email":
-                    if(ep.Params.Count >= 5)
-                    {
-                        EmailEvent ev = new EmailEvent();
-                        ev.Time = ep.Params[0].ToString();
-                        ev.Address = ep.Params[1].ToString();
-                        ev.Subject = ep.Params[2].ToString();
-                        ev.Message = ep.Params[3].ToString();
-                        ev.NumberLeft = (int)ep.Params[4];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "run_time_permissions":
-                    if(ep.Params.Count >= 1)
-                    {
-                        RuntimePermissionsEvent ev = new RuntimePermissionsEvent();
-                        ev.Permissions = (ScriptPermissions)(int)ep.Params[0];
-                        if(ep.Params.Count > 1)
-                        {
-                            ev.PermissionsKey = new UUI(ep.Params[1].ToString());
-                        }
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "link_message":
-                    if(ep.Params.Count >= 4)
-                    {
-                        LinkMessageEvent ev = new LinkMessageEvent();
-                        ev.SenderNumber = (int)ep.Params[0];
-                        ev.Number = (int)ep.Params[1];
-                        ev.Data = ep.Params[2].ToString();
-                        ev.Id = ep.Params[3].ToString();
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "remote_data":
-                    if(ep.Params.Count >= 6)
-                    {
-                        RemoteDataEvent ev = new RemoteDataEvent();
-                        ev.Type = (int)ep.Params[0];
-                        ev.Channel = new UUID(ep.Params[1].ToString());
-                        ev.MessageID = new UUID(ep.Params[2].ToString());
-                        ev.Sender = ep.Params[3].ToString();
-                        ev.IData = (int)ep.Params[4];
-                        ev.SData = ep.Params[5].ToString();
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "transaction_result":
-                    if(ep.Params.Count >= 3)
-                    {
-                        TransactionResultEvent ev = new TransactionResultEvent();
-                        ev.TransactionID = ep.Params[0].ToString();
-                        ev.Success = (int)ep.Params[1] != 0;
-                        ev.ReplyData = ep.Params[2].ToString();
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "dataserver":
-                    if(ep.Params.Count >= 2)
-                    {
-                        DataserverEvent ev = new DataserverEvent();
-                        ev.QueryID = new UUID(ep.Params[0].ToString());
-                        ev.Data = ep.Params[1].ToString();
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "http_response":
-                    if(ep.Params.Count >= 4)
-                    {
-                        HttpResponseEvent ev = new HttpResponseEvent();
-                        ev.RequestID = new UUID(ep.Params[0].ToString());
-                        ev.Status = (int)ep.Params[1];
-                        ev.Metadata = (AnArray)ep.Params[2];
-                        ev.Body = ep.Params[3].ToString();
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "listen":
-                    if(ep.Params.Count >= 4)
-                    {
-                        ListenEvent ev = new ListenEvent();
-                        ev.Channel = (int)ep.Params[0];
-                        ev.Name = ep.Params[1].ToString();
-                        ev.ID = new UUID(ep.Params[2].ToString());
-                        ev.Message = ep.Params[3].ToString();
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "no_sensor":
-                    res = new NoSensorEvent();
-                    return true;
-
-                case "sensor":
-                    {
-                        SensorEvent ev = new SensorEvent();
-                        ev.Data = ep.Detected;
-                        res = ev;
-                        return true;
-                    }
-
-                case "timer":
-                    res = new TimerEvent();
-                    return true;
-
-                case "on_rez":
-                    if(ep.Params.Count >= 1)
-                    {
-                        OnRezEvent ev = new OnRezEvent();
-                        ev.StartParam = (int)ep.Params[0];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "attach":
-                    if(ep.Params.Count >= 1)
-                    {
-                        AttachEvent ev = new AttachEvent();
-                        ev.ObjectID = new UUID(ep.Params[0].ToString());
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "changed":
-                    if(ep.Params.Count >= 1)
-                    {
-                        ChangedEvent ev = new ChangedEvent();
-                        ev.Flags = (ChangedEvent.ChangedFlags)(int)ep.Params[0];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "touch_start":
-                    {
-                        TouchEvent ev = new TouchEvent();
-                        ev.Type = TouchEvent.TouchType.Start;
-                        ev.Detected = ep.Detected;
-                        res = ev;
-                        return true;
-                    }
-
-                case "touch":
-                    {
-                        TouchEvent ev = new TouchEvent();
-                        ev.Type = TouchEvent.TouchType.Continuous;
-                        ev.Detected = ep.Detected;
-                        res = ev;
-                        return true;
-                    }
-
-                case "touch_end":
-                    {
-                        TouchEvent ev = new TouchEvent();
-                        ev.Type = TouchEvent.TouchType.End;
-                        ev.Detected = ep.Detected;
-                        res = ev;
-                        return true;
-                    }
-
-                case "money":
-                    if(ep.Params.Count >= 2)
-                    {
-                        MoneyEvent ev = new MoneyEvent();
-                        ev.ID = new UUID(ep.Params[0].ToString());
-                        ev.Amount = (int)ep.Params[1];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "collision_start":
-                    {
-                        CollisionEvent ev = new CollisionEvent();
-                        ev.Type = CollisionEvent.CollisionType.Start;
-                        ev.Detected = ep.Detected;
-                        res = ev;
-                        return true;
-                    }
-
-                case "collision":
-                    {
-                        CollisionEvent ev = new CollisionEvent();
-                        ev.Type = CollisionEvent.CollisionType.Continuous;
-                        ev.Detected = ep.Detected;
-                        res = ev;
-                        return true;
-                    }
-
-                case "collision_end":
-                    {
-                        CollisionEvent ev = new CollisionEvent();
-                        ev.Type = CollisionEvent.CollisionType.End;
-                        ev.Detected = ep.Detected;
-                        res = ev;
-                        return true;
-                    }
-
-                case "land_collision_start":
-                    if(ep.Params.Count >= 1)
-                    {
-                        LandCollisionEvent ev = new LandCollisionEvent();
-                        ev.Type = LandCollisionEvent.CollisionType.Start;
-                        ev.Position = (Vector3)ep.Params[0];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "land_collision":
-                    if (ep.Params.Count >= 1)
-                    {
-                        LandCollisionEvent ev = new LandCollisionEvent();
-                        ev.Type = LandCollisionEvent.CollisionType.Continuous;
-                        ev.Position = (Vector3)ep.Params[0];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "land_collision_end":
-                    if (ep.Params.Count >= 1)
-                    {
-                        LandCollisionEvent ev = new LandCollisionEvent();
-                        ev.Type = LandCollisionEvent.CollisionType.End;
-                        ev.Position = (Vector3)ep.Params[0];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "control":
-                    if (ep.Params.Count >= 3)
-                    {
-                        ControlEvent ev = new ControlEvent();
-                        ev.AgentID = new UUID(ep.Params[0].ToString());
-                        ev.Level = (int)ep.Params[1];
-                        ev.Flags = (int)ep.Params[2];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "at_target":
-                    if(ep.Params.Count >= 3)
-                    {
-                        AtTargetEvent ev = new AtTargetEvent();
-                        ev.Handle = (int)ep.Params[0];
-                        ev.TargetPosition = (Vector3)ep.Params[1];
-                        ev.OurPosition = (Vector3)ep.Params[2];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "not_at_target":
-                    res = new NotAtTargetEvent();
-                    return true;
-
-                case "at_rot_target":
-                    if(ep.Params.Count >= 3)
-                    {
-                        AtRotTargetEvent ev = new AtRotTargetEvent();
-                        ev.Handle = (int)ep.Params[0];
-                        ev.TargetRotation = (Quaternion)ep.Params[1];
-                        ev.OurRotation = (Quaternion)ep.Params[2];
-                        res = ev;
-                        return true;
-                    }
-                    break;
-
-                case "moving_start":
-                    res = new MovingStartEvent();
-                    return true;
-
-                case "moving_end":
-                    res = new MovingEndEvent();
-                    return true;
-
-                default:
-                    break;
-            }
-
-            res = null;
-            return false;
         }
 
         public void LoadScriptState(SavedScriptState state)
@@ -1415,10 +1104,847 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        static bool TryTranslateEventParams(SavedScriptState.EventParams ep, out IScriptEvent res)
+        {
+            res = null;
+            Func<SavedScriptState.EventParams, IScriptEvent> deserializer;
+            if (EventDeserializers.TryGetValue(ep.EventName, out deserializer))
+            {
+                res = deserializer(ep);
+            }
+            return res != null;
+        }
+
+        static IScriptEvent ObjectRezDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                ObjectRezEvent ev = new ObjectRezEvent();
+                ev.ObjectID = new UUID(ep.Params[0].ToString());
+                return ev;
+            }
+            return null;
+        }
+
+        static void ObjectRezSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            ObjectRezEvent ev = (ObjectRezEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "object_rez");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.ObjectID);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent EmailDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 5)
+            {
+                EmailEvent ev = new EmailEvent();
+                ev.Time = ep.Params[0].ToString();
+                ev.Address = ep.Params[1].ToString();
+                ev.Subject = ep.Params[2].ToString();
+                ev.Message = ep.Params[3].ToString();
+                ev.NumberLeft = (int)ep.Params[4];
+                return ev;
+            }
+            return null;
+        }
+
+        static void EmailSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            EmailEvent ev = (EmailEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "email");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.Time);
+                writer.WriteTypedValue("Param", ev.Address);
+                writer.WriteTypedValue("Param", ev.Subject);
+                writer.WriteTypedValue("Param", ev.Message);
+                writer.WriteTypedValue("Param", ev.NumberLeft);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent RuntimePermissionsDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                RuntimePermissionsEvent ev = new RuntimePermissionsEvent();
+                ev.Permissions = (ScriptPermissions)(int)ep.Params[0];
+                if (ep.Params.Count > 1)
+                {
+                    ev.PermissionsKey = new UUI(ep.Params[1].ToString());
+                }
+                return ev;
+            }
+            return null;
+        }
+
+        static void RuntimePermissionsSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            RuntimePermissionsEvent ev = (RuntimePermissionsEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "run_time_permissions");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", (int)ev.Permissions);
+                writer.WriteTypedValue("Param", ev.PermissionsKey.ID);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent LinkMessageDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 4)
+            {
+                LinkMessageEvent ev = new LinkMessageEvent();
+                ev.SenderNumber = (int)ep.Params[0];
+                ev.Number = (int)ep.Params[1];
+                ev.Data = ep.Params[2].ToString();
+                ev.Id = ep.Params[3].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void LinkMessageSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            LinkMessageEvent ev = (LinkMessageEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "link_message");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.SenderNumber);
+                writer.WriteTypedValue("Param", ev.Number);
+                writer.WriteTypedValue("Param", ev.Data);
+                writer.WriteTypedValue("Param", ev.Id);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent RemoteDataDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 6)
+            {
+                RemoteDataEvent ev = new RemoteDataEvent();
+                ev.Type = (int)ep.Params[0];
+                ev.Channel = new UUID(ep.Params[1].ToString());
+                ev.MessageID = new UUID(ep.Params[2].ToString());
+                ev.Sender = ep.Params[3].ToString();
+                ev.IData = (int)ep.Params[4];
+                ev.SData = ep.Params[5].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void RemoteDataSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            RemoteDataEvent ev = (RemoteDataEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "remote_data");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.Type);
+                writer.WriteTypedValue("Param", ev.Channel);
+                writer.WriteTypedValue("Param", ev.MessageID);
+                writer.WriteTypedValue("Param", ev.Sender);
+                writer.WriteTypedValue("Param", ev.IData);
+                writer.WriteTypedValue("Param", ev.SData);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent TransactionResultDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 3)
+            {
+                TransactionResultEvent ev = new TransactionResultEvent();
+                ev.TransactionID = ep.Params[0].ToString();
+                ev.Success = (int)ep.Params[1] != 0;
+                ev.ReplyData = ep.Params[2].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void TransactionResultSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            TransactionResultEvent ev = (TransactionResultEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "transaction_result");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.TransactionID);
+                writer.WriteTypedValue("Param", ev.Success);
+                writer.WriteTypedValue("Param", ev.ReplyData);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent ObjectMessageDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 2)
+            {
+                MessageObjectEvent ev = new MessageObjectEvent();
+                ev.ObjectID = new UUID(ep.Params[0].ToString());
+                ev.Data = ep.Params[1].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void ObjectMessageSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            MessageObjectEvent ev = (MessageObjectEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "object_message");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.ObjectID);
+                writer.WriteTypedValue("Param", ev.Data);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent DataserverDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 2)
+            {
+                DataserverEvent ev = new DataserverEvent();
+                ev.QueryID = new UUID(ep.Params[0].ToString());
+                ev.Data = ep.Params[1].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void DataserverSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            DataserverEvent ev = (DataserverEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "dataserver");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.QueryID);
+                writer.WriteTypedValue("Param", ev.Data);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent HttpResponseDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 4)
+            {
+                HttpResponseEvent ev = new HttpResponseEvent();
+                ev.RequestID = new UUID(ep.Params[0].ToString());
+                ev.Status = (int)ep.Params[1];
+                ev.Metadata = (AnArray)ep.Params[2];
+                ev.Body = ep.Params[3].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void HttpResponseSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            HttpResponseEvent ev = (HttpResponseEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "http_response");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.RequestID);
+                writer.WriteTypedValue("Param", ev.Status);
+                writer.WriteTypedValue("Param", ev.Metadata);
+                writer.WriteTypedValue("Param", ev.Body);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent ListenDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 4)
+            {
+                ListenEvent ev = new ListenEvent();
+                ev.Channel = (int)ep.Params[0];
+                ev.Name = ep.Params[1].ToString();
+                ev.ID = new UUID(ep.Params[2].ToString());
+                ev.Message = ep.Params[3].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void ListenSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            ListenEvent ev = (ListenEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "listen");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.Channel);
+                writer.WriteTypedValue("Param", ev.Name);
+                writer.WriteTypedValue("Param", ev.ID);
+                writer.WriteTypedValue("Param", ev.Message);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent OnRezDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                OnRezEvent ev = new OnRezEvent();
+                ev.StartParam = (int)ep.Params[0];
+                return ev;
+            }
+            return null;
+        }
+
+        static void OnRezSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            OnRezEvent ev = (OnRezEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "on_rez");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.StartParam);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent AttachDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                AttachEvent ev = new AttachEvent();
+                ev.ObjectID = new UUID(ep.Params[0].ToString());
+                return ev;
+            }
+            return null;
+        }
+
+        static void AttachSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            AttachEvent ev = (AttachEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "attach");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.ObjectID);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent ChangedDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                ChangedEvent ev = new ChangedEvent();
+                ev.Flags = (ChangedEvent.ChangedFlags)(int)ep.Params[0];
+                return ev;
+            }
+            return null;
+        }
+
+        static void ChangedSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            ChangedEvent ev = (ChangedEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "changed");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", (int)ev.Flags);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent MoneyDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 2)
+            {
+                MoneyEvent ev = new MoneyEvent();
+                ev.ID = new UUID(ep.Params[0].ToString());
+                ev.Amount = (int)ep.Params[1];
+                return ev;
+            }
+            return null;
+        }
+
+        static void MoneySerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            MoneyEvent ev = (MoneyEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "money");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.ID);
+                writer.WriteTypedValue("Param", ev.Amount);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent LandCollisionStartDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                LandCollisionEvent ev = new LandCollisionEvent();
+                ev.Type = LandCollisionEvent.CollisionType.Start;
+                ev.Position = (Vector3)ep.Params[0];
+                return ev;
+            }
+            return null;
+        }
+
+        static void LandCollisionSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            LandCollisionEvent ev = (LandCollisionEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                switch(ev.Type)
+                {
+                    case LandCollisionEvent.CollisionType.Start:
+                        writer.WriteAttributeString("event", "land_collision_start");
+                        break;
+                    case LandCollisionEvent.CollisionType.Continuous:
+                        writer.WriteAttributeString("event", "land_collision");
+                        break;
+                    case LandCollisionEvent.CollisionType.End:
+                        writer.WriteAttributeString("event", "land_collision_end");
+                        break;
+                    default:
+                        break;
+                }
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.Position);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent LandCollisionDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                LandCollisionEvent ev = new LandCollisionEvent();
+                ev.Type = LandCollisionEvent.CollisionType.Continuous;
+                ev.Position = (Vector3)ep.Params[0];
+                return ev;
+            }
+            return null;
+        }
+
+        static IScriptEvent LandCollisionEndDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                LandCollisionEvent ev = new LandCollisionEvent();
+                ev.Type = LandCollisionEvent.CollisionType.End;
+                ev.Position = (Vector3)ep.Params[0];
+                return ev;
+            }
+            return null;
+        }
+
+        static IScriptEvent ControlDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 3)
+            {
+                ControlEvent ev = new ControlEvent();
+                ev.AgentID = new UUID(ep.Params[0].ToString());
+                ev.Level = (int)ep.Params[1];
+                ev.Flags = (int)ep.Params[2];
+                return ev;
+            }
+            return null;
+        }
+
+        static void ControlSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            ControlEvent ev = (ControlEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "control");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.AgentID);
+                writer.WriteTypedValue("Param", ev.Level);
+                writer.WriteTypedValue("Param", ev.Flags);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent AtTargetDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 3)
+            {
+                AtTargetEvent ev = new AtTargetEvent();
+                ev.Handle = (int)ep.Params[0];
+                ev.TargetPosition = (Vector3)ep.Params[1];
+                ev.OurPosition = (Vector3)ep.Params[2];
+                return ev;
+            }
+            return null;
+        }
+
+        static void AtTargetSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            AtTargetEvent ev = (AtTargetEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "at_target");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.Handle);
+                writer.WriteTypedValue("Param", ev.TargetPosition);
+                writer.WriteTypedValue("Param", ev.OurPosition);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static IScriptEvent AtRotTargetDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 3)
+            {
+                AtRotTargetEvent ev = new AtRotTargetEvent();
+                ev.Handle = (int)ep.Params[0];
+                ev.TargetRotation = (Quaternion)ep.Params[1];
+                ev.OurRotation = (Quaternion)ep.Params[2];
+                return ev;
+            }
+            return null;
+        }
+
+        static void AtRotTargetSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            AtRotTargetEvent ev = (AtRotTargetEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "at_rot_target");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.Handle);
+                writer.WriteTypedValue("Param", ev.TargetRotation);
+                writer.WriteTypedValue("Param", ev.OurRotation);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static void NoParamSerializer(IScriptEvent iev, string name, XmlTextWriter writer)
+        {
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", name);
+                writer.WriteStartElement("Params");
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static void DetectedSerializer(List<DetectInfo> di, string name, XmlTextWriter writer)
+        {
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", name);
+                writer.WriteStartElement("Params");
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                foreach(DetectInfo d in di)
+                {
+                    writer.WriteStartElement("Object");
+                    writer.WriteAttributeString("pos", d.GrabOffset.ToString());
+                    writer.WriteAttributeString("linkNum", d.LinkNumber.ToString());
+                    writer.WriteAttributeString("group", d.Group.ToString());
+                    writer.WriteAttributeString("name", d.Name);
+                    writer.WriteAttributeString("owner", d.Owner.ToString());
+                    writer.WriteAttributeString("position", d.Position.ToString());
+                    writer.WriteAttributeString("rotation", d.Rotation.ToString());
+                    writer.WriteAttributeString("type", ((int)d.ObjType).ToString());
+                    writer.WriteAttributeString("velocity", d.Velocity.ToString());
+
+                    /* for whatever reason, OpenSim does not serialize the following */
+                    writer.WriteAttributeString("touchst", d.TouchST.ToString());
+                    writer.WriteAttributeString("touchuv", d.TouchUV.ToString());
+                    writer.WriteAttributeString("touchbinormal", d.TouchBinormal.ToString());
+                    writer.WriteAttributeString("touchpos", d.TouchPosition.ToString());
+                    writer.WriteAttributeString("touchface", d.TouchFace.ToString());
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        static void TouchSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            TouchEvent ev = (TouchEvent)iev;
+            switch(ev.Type)
+            {
+                case TouchEvent.TouchType.Start:
+                    DetectedSerializer(ev.Detected, "touch_start", writer);
+                    break;
+                case TouchEvent.TouchType.Continuous:
+                    DetectedSerializer(ev.Detected, "touch", writer);
+                    break;
+                case TouchEvent.TouchType.End:
+                    DetectedSerializer(ev.Detected, "touch_end", writer);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        static void CollisionSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            CollisionEvent ev = (CollisionEvent)iev;
+            switch (ev.Type)
+            {
+                case CollisionEvent.CollisionType.Start:
+                    DetectedSerializer(ev.Detected, "collision_start", writer);
+                    break;
+                case CollisionEvent.CollisionType.Continuous:
+                    DetectedSerializer(ev.Detected, "collision", writer);
+                    break;
+                case CollisionEvent.CollisionType.End:
+                    DetectedSerializer(ev.Detected, "collision_end", writer);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        static IScriptEvent HttpRequestDeserializer(SavedScriptState.EventParams ep)
+        {
+            if(ep.Params.Count >= 3)
+            {
+                HttpRequestEvent ev = new HttpRequestEvent();
+                ev.RequestID = UUID.Parse(ep.Params[0].ToString());
+                ev.Method = ep.Params[1].ToString();
+                ev.Body = ep.Params[2].ToString();
+                return ev;
+            }
+            return null;
+        }
+
+        static void HttpRequestSerializer(IScriptEvent iev, XmlTextWriter writer)
+        {
+            HttpRequestEvent ev = (HttpRequestEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "http_request");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Param", ev.RequestID);
+                writer.WriteTypedValue("Param", ev.Method);
+                writer.WriteTypedValue("Param", ev.Body);
+                writer.WriteEndElement();
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
         #region Event to function handlers
+        static readonly Dictionary<Type, Action<IScriptEvent, XmlTextWriter>> EventSerializers = new Dictionary<Type, Action<IScriptEvent, XmlTextWriter>>();
+        static readonly Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>>();
 
         static Script()
         {
+            EventDeserializers.Add("http_request", HttpRequestDeserializer);
+            EventSerializers.Add(typeof(HttpRequestEvent), HttpRequestSerializer);
+            EventDeserializers.Add("land_collision_start", LandCollisionStartDeserializer);
+            EventSerializers.Add(typeof(LandCollisionEvent), LandCollisionSerializer);
+            EventDeserializers.Add("land_collision", LandCollisionDeserializer);
+            EventDeserializers.Add("land_collision_end", LandCollisionEndDeserializer);
+            EventDeserializers.Add("at_target", AtTargetDeserializer);
+            EventSerializers.Add(typeof(AtTargetEvent), AtTargetSerializer);
+            EventDeserializers.Add("at_rot_target", AtRotTargetDeserializer);
+            EventSerializers.Add(typeof(AtRotTargetEvent), AtRotTargetSerializer);
+            EventDeserializers.Add("control", ControlDeserializer);
+            EventSerializers.Add(typeof(ControlEvent), ControlSerializer);
+            EventDeserializers.Add("object_rez", ObjectRezDeserializer);
+            EventSerializers.Add(typeof(ObjectRezEvent), ObjectRezSerializer);
+            EventDeserializers.Add("email", EmailDeserializer);
+            EventSerializers.Add(typeof(EmailEvent), EmailSerializer);
+            EventDeserializers.Add("run_time_permissions", RuntimePermissionsDeserializer);
+            EventSerializers.Add(typeof(RuntimePermissionsEvent), RuntimePermissionsSerializer);
+            EventDeserializers.Add("link_message", LinkMessageDeserializer);
+            EventSerializers.Add(typeof(LinkMessageEvent), LinkMessageSerializer);
+            EventDeserializers.Add("remote_data", RemoteDataDeserializer);
+            EventSerializers.Add(typeof(RemoteDataEvent), RemoteDataSerializer);
+            EventDeserializers.Add("transaction_result", TransactionResultDeserializer);
+            EventSerializers.Add(typeof(TransactionResultEvent), TransactionResultSerializer);
+            EventDeserializers.Add("dataserver", DataserverDeserializer);
+            EventSerializers.Add(typeof(DataserverEvent), DataserverSerializer);
+            EventDeserializers.Add("object_message", ObjectMessageDeserializer);
+            EventSerializers.Add(typeof(MessageObjectEvent), ObjectMessageSerializer);
+            EventDeserializers.Add("http_response", HttpResponseDeserializer);
+            EventSerializers.Add(typeof(HttpResponseEvent), HttpResponseSerializer);
+            EventDeserializers.Add("listen", ListenDeserializer);
+            EventSerializers.Add(typeof(ListenEvent), ListenSerializer);
+            EventDeserializers.Add("sensor", delegate(SavedScriptState.EventParams ep)
+            {
+                SensorEvent ev = new SensorEvent();
+                ev.Data = ep.Detected;
+                return ev;
+            });
+            EventSerializers.Add(typeof(SensorEvent), delegate (IScriptEvent iev, XmlTextWriter writer)
+            {
+                SensorEvent ev = (SensorEvent)iev;
+                DetectedSerializer(ev.Data, "sensor", writer);
+            });
+            EventDeserializers.Add("on_rez", OnRezDeserializer);
+            EventSerializers.Add(typeof(OnRezEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            {
+                NoParamSerializer(ev, "on_rez", writer);
+            });
+            EventDeserializers.Add("attach", AttachDeserializer);
+            EventSerializers.Add(typeof(AttachEvent), AttachSerializer);
+            EventDeserializers.Add("changed", ChangedDeserializer);
+            EventSerializers.Add(typeof(ChangedEvent), ChangedSerializer);
+            EventDeserializers.Add("money", MoneyDeserializer);
+            EventSerializers.Add(typeof(MoneyEvent), MoneySerializer);
+            EventDeserializers.Add("no_sensor", delegate (SavedScriptState.EventParams ep)
+            {
+                return new NoSensorEvent();
+            });
+            EventSerializers.Add(typeof(NoSensorEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            {
+                NoParamSerializer(ev, "no_sensor", writer);
+            });
+            EventDeserializers.Add("timer", delegate (SavedScriptState.EventParams ep)
+            {
+                return new TimerEvent();
+            });
+            EventSerializers.Add(typeof(TimerEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            {
+                NoParamSerializer(ev, "timer", writer);
+            });
+            EventDeserializers.Add("touch_start", delegate (SavedScriptState.EventParams ep)
+            {
+                TouchEvent ev = new TouchEvent();
+                ev.Type = TouchEvent.TouchType.Start;
+                ev.Detected = ep.Detected;
+                return ev;
+            });
+            EventSerializers.Add(typeof(TouchEvent), TouchSerializer);
+            EventDeserializers.Add("touch", delegate (SavedScriptState.EventParams ep)
+            {
+                TouchEvent ev = new TouchEvent();
+                ev.Type = TouchEvent.TouchType.Continuous;
+                ev.Detected = ep.Detected;
+                return ev;
+            });
+            EventDeserializers.Add("touch_end", delegate (SavedScriptState.EventParams ep)
+            {
+                TouchEvent ev = new TouchEvent();
+                ev.Type = TouchEvent.TouchType.End;
+                ev.Detected = ep.Detected;
+                return ev;
+            });
+            EventDeserializers.Add("collision_start", delegate (SavedScriptState.EventParams ep)
+            {
+                CollisionEvent ev = new CollisionEvent();
+                ev.Type = CollisionEvent.CollisionType.Start;
+                ev.Detected = ep.Detected;
+                return ev;
+            });
+            EventSerializers.Add(typeof(CollisionEvent), CollisionSerializer);
+            EventDeserializers.Add("collision", delegate (SavedScriptState.EventParams ep)
+            {
+                CollisionEvent ev = new CollisionEvent();
+                ev.Type = CollisionEvent.CollisionType.Continuous;
+                ev.Detected = ep.Detected;
+                return ev;
+            });
+            EventDeserializers.Add("collision_end", delegate (SavedScriptState.EventParams ep)
+            {
+                CollisionEvent ev = new CollisionEvent();
+                ev.Type = CollisionEvent.CollisionType.End;
+                ev.Detected = ep.Detected;
+                return ev;
+            });
+            EventDeserializers.Add("not_at_target", delegate (SavedScriptState.EventParams ep)
+            {
+                return new NotAtTargetEvent();
+            });
+            EventSerializers.Add(typeof(NotAtTargetEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            {
+                NoParamSerializer(ev, "not_at_target", writer);
+            });
+            EventDeserializers.Add("moving_start", delegate (SavedScriptState.EventParams ep)
+            {
+                return new MovingStartEvent();
+            });
+            EventSerializers.Add(typeof(MovingStartEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            {
+                NoParamSerializer(ev, "moving_start", writer);
+            });
+            EventDeserializers.Add("moving_end", delegate (SavedScriptState.EventParams ep)
+            {
+                return new MovingEndEvent();
+            });
+            EventSerializers.Add(typeof(MovingEndEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            {
+                NoParamSerializer(ev, "moving_end", writer);
+            });
+
+            #region Default state event handlers
             StateEventHandlers.Add(typeof(AtRotTargetEvent), delegate(Script script, IScriptEvent ev)
             {
                 AtRotTargetEvent e = (AtRotTargetEvent)ev;
@@ -1547,6 +2073,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 script.InvokeStateEvent("timer");
             });
+            #endregion
         }
 
         static void HandleCollision(Script script, IScriptEvent ev)
