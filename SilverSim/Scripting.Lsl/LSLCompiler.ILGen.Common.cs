@@ -468,6 +468,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
                 }
+                else if(fromType == typeof(LSLKey))
+                {
+                    /* extension to LSL explicit typecasting rules */
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { typeof(string) }));
+                }
                 else
                 {
                     throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
@@ -537,6 +543,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Conv_R8);
                 }
+                else if (fromType == typeof(LSLKey))
+                {
+                    /* extension to LSL explicit typecasting rules */
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToDouble", new Type[] { typeof(string) }));
+                }
                 else
                 {
                     throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
@@ -548,6 +560,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToVector", new Type[] { typeof(string) }));
                 }
+                else if (fromType == typeof(LSLKey))
+                {
+                    /* extension to LSL explicit typecasting rules */
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToVector", new Type[] { typeof(string) }));
+                }
                 else
                 {
                     throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
@@ -557,6 +575,12 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(string))
                 {
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToQuaternion", new Type[] { typeof(string) }));
+                }
+                else if (fromType == typeof(LSLKey))
+                {
+                    /* extension to LSL explicit typecasting rules */
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToQuaternion", new Type[] { typeof(string) }));
                 }
                 else
