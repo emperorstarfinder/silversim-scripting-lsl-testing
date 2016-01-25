@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl
 
             public class LanguageExtensionsData
             {
-                public bool EnableExtendedExplicitTypecastModel = true;
+                public bool EnableExtendedTypecasts = false;
                 /** <summary>Enables a rather unknown function overloading support that happen to exist within OpenSim's XEngine</summary> */
                 public bool EnableFunctionOverloading = true;
             }

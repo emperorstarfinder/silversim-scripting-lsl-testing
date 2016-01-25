@@ -501,7 +501,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.ASSL | APIFlags.OSSL | APIFlags.LSL;
-                        compileState.LanguageExtensions.EnableExtendedExplicitTypecastModel = true;
+                        compileState.LanguageExtensions.EnableExtendedTypecasts = true;
                         compileState.ForcedSleepDefault = false;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
@@ -518,7 +518,12 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            foreach(KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+            if(apiExtensions.Contains(APIExtension.ExtendedTypecasts))
+            {
+                compileState.LanguageExtensions.EnableExtendedTypecasts = true;
+            }
+
+            foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
             {
                 if((kvp.Key & acceptedFlags) != 0)
                 {

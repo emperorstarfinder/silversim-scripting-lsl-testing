@@ -432,7 +432,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("function does not return anything"));
+                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(string))
@@ -543,7 +543,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Conv_R8);
                 }
-                else if (fromType == typeof(LSLKey) && compileState.LanguageExtensions.EnableExtendedExplicitTypecastModel)
+                else if (fromType == typeof(LSLKey) && compileState.LanguageExtensions.EnableExtendedTypecasts)
                 {
                     /* extension to LSL explicit typecasting rules */
                     compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
@@ -560,7 +560,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToVector", new Type[] { typeof(string) }));
                 }
-                else if (fromType == typeof(LSLKey) && compileState.LanguageExtensions.EnableExtendedExplicitTypecastModel)
+                else if (fromType == typeof(LSLKey) && compileState.LanguageExtensions.EnableExtendedTypecasts)
                 {
                     /* extension to LSL explicit typecasting rules */
                     compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
@@ -577,7 +577,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToQuaternion", new Type[] { typeof(string) }));
                 }
-                else if (fromType == typeof(LSLKey) && compileState.LanguageExtensions.EnableExtendedExplicitTypecastModel)
+                else if (fromType == typeof(LSLKey) && compileState.LanguageExtensions.EnableExtendedTypecasts)
                 {
                     /* extension to LSL explicit typecasting rules */
                     compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
