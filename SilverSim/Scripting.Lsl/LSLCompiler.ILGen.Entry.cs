@@ -85,11 +85,14 @@ namespace SilverSim.Scripting.Lsl
 
                 dumpILGen.WriteLine("_____: ");
 
-                foreach (KeyValuePair<string, List<LineInfo>> functionKvp in compileState.m_Functions)
+                foreach (KeyValuePair<string, List<FunctionInfo>> functionKvp in compileState.m_Functions)
                 {
-                    DumpFunctionLines(dumpILGen, functionKvp.Value);
+                    foreach (FunctionInfo funcInfo in functionKvp.Value)
+                    {
+                        DumpFunctionLines(dumpILGen, funcInfo.FunctionLines);
 
-                    dumpILGen.WriteLine("_____: ");
+                        dumpILGen.WriteLine("_____: ");
+                    }
                 }
 
                 bool first = true;
@@ -410,132 +413,139 @@ namespace SilverSim.Scripting.Lsl
 
 #region Function compilation
                 /* we have to process the function definition first */
-                foreach (KeyValuePair<string, List<LineInfo>> functionKvp in compileState.m_Functions)
+                foreach (KeyValuePair<string, List<FunctionInfo>> functionKvp in compileState.m_Functions)
                 {
-                    MethodBuilder method;
-                    Type returnType = typeof(void);
-                    List<string> functionDeclaration = functionKvp.Value[0].Line;
-                    string functionName = functionDeclaration[1];
-                    int functionStart = 3;
-
-                    switch (functionDeclaration[0])
+                    foreach (FunctionInfo funcInfo in functionKvp.Value)
                     {
-                        case "integer":
-                            returnType = typeof(int);
-                            break;
+                        MethodBuilder method;
+                        Type returnType = typeof(void);
+                        List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
+                        string functionName = functionDeclaration[1];
+                        int functionStart = 3;
 
-                        case "vector":
-                            returnType = typeof(Vector3);
-                            break;
-
-                        case "list":
-                            returnType = typeof(AnArray);
-                            break;
-
-                        case "float":
-                            returnType = typeof(double);
-                            break;
-
-                        case "string":
-                            returnType = typeof(string);
-                            break;
-
-                        case "key":
-                            returnType = typeof(LSLKey);
-                            break;
-
-                        case "rotation":
-                        case "quaternion":
-                            returnType = typeof(Quaternion);
-                            break;
-
-                        case "void":
-                            returnType = typeof(void);
-                            break;
-
-                        default:
-                            functionName = functionDeclaration[0];
-                            functionStart = 2;
-                            break;
-                    }
-                    List<Type> paramTypes = new List<Type>();
-                    List<string> paramName = new List<string>();
-                    while (functionDeclaration[functionStart] != ")")
-                    {
-                        if (functionDeclaration[functionStart] == ",")
-                        {
-                            ++functionStart;
-                        }
-                        switch (functionDeclaration[functionStart++])
+                        switch (functionDeclaration[0])
                         {
                             case "integer":
-                                paramTypes.Add(typeof(int));
-                                paramName.Add(functionDeclaration[functionStart++]);
+                                returnType = typeof(int);
                                 break;
 
                             case "vector":
-                                paramTypes.Add(typeof(Vector3));
-                                paramName.Add(functionDeclaration[functionStart++]);
+                                returnType = typeof(Vector3);
                                 break;
 
                             case "list":
-                                paramTypes.Add(typeof(AnArray));
-                                paramName.Add(functionDeclaration[functionStart++]);
+                                returnType = typeof(AnArray);
                                 break;
 
                             case "float":
-                                paramTypes.Add(typeof(double));
-                                paramName.Add(functionDeclaration[functionStart++]);
+                                returnType = typeof(double);
                                 break;
 
                             case "string":
-                                paramTypes.Add(typeof(string));
-                                paramName.Add(functionDeclaration[functionStart++]);
+                                returnType = typeof(string);
                                 break;
 
                             case "key":
-                                paramTypes.Add(typeof(LSLKey));
-                                paramName.Add(functionDeclaration[functionStart++]);
+                                returnType = typeof(LSLKey);
                                 break;
 
                             case "rotation":
                             case "quaternion":
-                                paramTypes.Add(typeof(Quaternion));
-                                paramName.Add(functionDeclaration[functionStart++]);
+                                returnType = typeof(Quaternion);
+                                break;
+
+                            case "void":
+                                returnType = typeof(void);
                                 break;
 
                             default:
-                                throw CompilerException(functionKvp.Value[0], "Internal Error");
+                                functionName = functionDeclaration[0];
+                                functionStart = 2;
+                                break;
                         }
-                    }
+                        List<Type> paramTypes = new List<Type>();
+                        List<string> paramName = new List<string>();
+                        while (functionDeclaration[functionStart] != ")")
+                        {
+                            if (functionDeclaration[functionStart] == ",")
+                            {
+                                ++functionStart;
+                            }
+                            switch (functionDeclaration[functionStart++])
+                            {
+                                case "integer":
+                                    paramTypes.Add(typeof(int));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "vector":
+                                    paramTypes.Add(typeof(Vector3));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "list":
+                                    paramTypes.Add(typeof(AnArray));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "float":
+                                    paramTypes.Add(typeof(double));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "string":
+                                    paramTypes.Add(typeof(string));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "key":
+                                    paramTypes.Add(typeof(LSLKey));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "rotation":
+                                case "quaternion":
+                                    paramTypes.Add(typeof(Quaternion));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                default:
+                                    throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
+                            }
+                        }
 
 #if DEBUG
-                    dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
+                        dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
 #endif
-                    method = scriptTypeBuilder.DefineMethod("fn_" + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
-                    KeyValuePair<string, Type>[] paramSignature = new KeyValuePair<string, Type>[paramTypes.Count];
-                    for (int i = 0; i < paramTypes.Count; ++i)
-                    {
-                        paramSignature[i] = new KeyValuePair<string, Type>(paramName[i], paramTypes[i]);
+                        method = scriptTypeBuilder.DefineMethod("fn_" + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
+                        KeyValuePair<string, Type>[] paramSignature = new KeyValuePair<string, Type>[paramTypes.Count];
+                        for (int i = 0; i < paramTypes.Count; ++i)
+                        {
+                            paramSignature[i] = new KeyValuePair<string, Type>(paramName[i], paramTypes[i]);
+                        }
+                        funcInfo.Parameters = paramSignature;
+                        funcInfo.ReturnType = returnType;
+                        funcInfo.Method = method;
                     }
-                    compileState.m_FunctionSignature[functionName] = new KeyValuePair<Type, KeyValuePair<string, Type>[]>(returnType, paramSignature);
-                    compileState.m_FunctionInfo[functionName] = method;
                 }
 
-                foreach (KeyValuePair<string, List<LineInfo>> functionKvp in compileState.m_Functions)
+                foreach (KeyValuePair<string, List<FunctionInfo>> functionKvp in compileState.m_Functions)
                 {
-                    List<string> functionDeclaration = functionKvp.Value[0].Line;
-                    string functionName = functionDeclaration[1];
-                    MethodBuilder method = compileState.m_FunctionInfo[functionName];
+                    foreach (FunctionInfo funcInfo in functionKvp.Value)
+                    {
+                        List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
+                        string functionName = functionDeclaration[1];
+                        MethodBuilder method = funcInfo.Method;
 
 #if DEBUG
-                    ILGenDumpProxy method_ilgen = new ILGenDumpProxy(method.GetILGenerator(), dumpILGen);
+                        ILGenDumpProxy method_ilgen = new ILGenDumpProxy(method.GetILGenerator(), dumpILGen);
 #else
                     ILGenerator method_ilgen = method.GetILGenerator();
 #endif
-                    typeLocals = new Dictionary<string, object>(typeLocalsInited);
-                    ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, functionKvp.Value, typeLocals);
-                    method_ilgen.Emit(OpCodes.Ret);
+                        typeLocals = new Dictionary<string, object>(typeLocalsInited);
+                        ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, funcInfo.FunctionLines, typeLocals);
+                        method_ilgen.Emit(OpCodes.Ret);
+                    }
                 }
 #endregion
 

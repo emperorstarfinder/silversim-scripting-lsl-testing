@@ -4,6 +4,7 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Scripting.Lsl.Expression;
+using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -19,24 +20,25 @@ namespace SilverSim.Scripting.Lsl
         {
             sealed class FunctionParameterInfo
             {
-                public readonly string ParameterName;
-                public readonly Type ParameterType;
+                public readonly string ParameterName = string.Empty;
+
                 public readonly Tree FunctionArgument;
                 public readonly int Position;
-                public FunctionParameterInfo(string name, Type t, Tree functionarg, int position)
+
+                public Type ParameterType; /* will be resolved later */
+                public int LineNumber;
+                public FunctionParameterInfo(Tree functionarg, int position)
                 {
-                    ParameterName = name;
-                    ParameterType = t;
                     FunctionArgument = functionarg;
                     Position = position;
                 }
             }
             readonly List<FunctionParameterInfo> m_Parameters = new List<FunctionParameterInfo>();
+            int m_ParameterPos = 0;
+            readonly List<object> m_SelectedFunctions = new List<object>();
 
             readonly string m_FunctionName;
-            readonly Type m_FunctionReturnType;
             readonly int m_LineNumber;
-            readonly MethodInfo m_MethodInfo;
 
             public FunctionExpression(
                 LSLCompiler lslCompiler,
@@ -45,75 +47,85 @@ namespace SilverSim.Scripting.Lsl
                 int lineNumber,
                 Dictionary<string, object> localVars)
             {
-                MethodBuilder mb;
-                m_LineNumber = lineNumber;
+                List<FunctionInfo> funcInfos;
                 List<ApiMethodInfo> methods;
-                if (compileState.m_FunctionInfo.TryGetValue(functionTree.Entry, out mb))
+                bool functionNameValid = false;
+
+                m_LineNumber = lineNumber;
+
+                m_FunctionName = functionTree.Entry;
+
+                for (int i = 0; i < functionTree.SubTree.Count; ++i)
                 {
-                    KeyValuePair<Type, KeyValuePair<string, Type>[]> signatureInfo = compileState.m_FunctionSignature[functionTree.Entry];
-                    KeyValuePair<string, Type>[] pi = signatureInfo.Value;
-
-                    if (null == compileState.StateTypeBuilder)
-                    {
-                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                    }
-                    else
-                    {
-                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                    }
-
-                    m_FunctionName = functionTree.Entry;
-
-                    for (int i = 0; i < functionTree.SubTree.Count; ++i)
-                    {
-                        m_Parameters.Add(new FunctionParameterInfo(pi[i].Key, pi[i].Value, functionTree.SubTree[i], i));
-                    }
-                    m_MethodInfo = mb;
-                    m_FunctionReturnType = signatureInfo.Key;
+                    m_Parameters.Add(new FunctionParameterInfo(functionTree.SubTree[i], i));
                 }
-                else if (compileState.ApiInfo.Methods.TryGetValue(functionTree.Entry, out methods))
+
+                if (compileState.m_Functions.TryGetValue(functionTree.Entry, out funcInfos))
                 {
+                    functionNameValid = true;
+                    /*
+                    */
+
+                    foreach (FunctionInfo funcInfo in funcInfos)
+                    {
+                        if (funcInfo.Parameters.Length == m_Parameters.Count)
+                        {
+                            m_SelectedFunctions.Add(funcInfo);
+                        }
+                    }
+                    if (m_SelectedFunctions.Count == 0)
+                    {
+                        if (functionTree.SubTree.Count == 1)
+                        {
+                            throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", functionTree.Entry, functionTree.SubTree.Count));
+                        }
+                        else
+                        {
+                            throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", functionTree.Entry, functionTree.SubTree.Count));
+                        }
+                    }
+                }
+
+                if (compileState.ApiInfo.Methods.TryGetValue(functionTree.Entry, out methods))
+                {
+                    functionNameValid = true;
                     foreach (ApiMethodInfo method in methods)
                     {
                         ParameterInfo[] pi = method.Method.GetParameters();
                         if (pi.Length - 1 == functionTree.SubTree.Count)
                         {
-                            ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(method.Api.GetType(), typeof(ScriptApiNameAttribute));
+                            bool methodValid = true;
 
                             if (!IsValidType(method.Method.ReturnType))
                             {
-                                throw new CompilerException(lineNumber, string.Format("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name));
-                            }
-
-                            compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
-
-                            if (null == compileState.StateTypeBuilder)
-                            {
-                                compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                            }
-                            else
-                            {
-                                compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                                compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                                methodValid = false;
+                                m_Log.ErrorFormat("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name);
                             }
 
                             for (int i = 0; i < functionTree.SubTree.Count; ++i)
                             {
                                 if (!IsValidType(pi[i + 1].ParameterType))
                                 {
-                                    throw new CompilerException(lineNumber, string.Format("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
-                                        pi[i + 1].Name, pi[i + 1].ParameterType.FullName, functionTree.Entry));
+                                    m_Log.ErrorFormat("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
+                                        pi[i + 1].Name, pi[i + 1].ParameterType.FullName, functionTree.Entry);
+                                    methodValid = false;
                                 }
-
-                                m_Parameters.Add(new FunctionParameterInfo(pi[i + 1].Name, pi[i + 1].ParameterType, functionTree.SubTree[i], i));
                             }
 
-                            m_MethodInfo = method.Method;
-                            m_FunctionReturnType = method.Method.ReturnType;
-                            return;
+                            if (methodValid)
+                            {
+                                m_SelectedFunctions.Add(method);
+                            }
                         }
                     }
+                }
+
+                if (!functionNameValid)
+                {
+                    throw new CompilerException(lineNumber, string.Format("No function {0} defined", functionTree.Entry));
+                }
+                else if (m_SelectedFunctions.Count == 0)
+                {
                     if (functionTree.SubTree.Count == 1)
                     {
                         throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", functionTree.Entry, functionTree.SubTree.Count));
@@ -122,10 +134,6 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", functionTree.Entry, functionTree.SubTree.Count));
                     }
-                }
-                else
-                {
-                    throw new CompilerException(lineNumber, string.Format("No function {0} defined", functionTree.Entry));
                 }
             }
 
@@ -137,47 +145,271 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (null != innerExpressionReturn)
                 {
-                    try
-                    {
-                        ProcessImplicitCasts(compileState, m_Parameters[0].ParameterType, innerExpressionReturn, m_LineNumber);
-                    }
-                    catch
-                    {
-                        throw new CompilerException(m_LineNumber,
-                            string.Format("No implicit cast from {0} to {1} possible for parameter '{2}' of function '{3}'",
-                                MapType(innerExpressionReturn),
-                                MapType(m_Parameters[0].ParameterType),
-                                m_Parameters[0].ParameterName,
-                                m_FunctionName));
-                    }
-
-                    m_Parameters.RemoveAt(0);
+                    m_Parameters[m_ParameterPos - 1].ParameterType = innerExpressionReturn;
                 }
-
-                if(m_Parameters.Count == 0)
+                if(m_Parameters.Count > m_ParameterPos)
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, m_MethodInfo);
-
-                    if (m_MethodInfo.GetType().Equals(typeof(MethodInfo)))
-                    {
-                        ForcedSleepAttribute forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(m_MethodInfo, typeof(ForcedSleepAttribute));
-                        if (forcedSleep != null)
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                            if (compileState.StateTypeBuilder != null)
-                            {
-                                compileState.ILGen.Emit(OpCodes.Ldfld, compileState.StateTypeBuilder.GetField("ScriptInstance"));
-                            }
-                            compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)(forcedSleep.Seconds * 1000));
-                            compileState.ILGen.Emit(OpCodes.Call, compileState.ScriptTypeBuilder.GetMethod("ForcedSleep", new Type[] { typeof(int) }));
-                        }
-                    }
-                    throw new ReturnTypeException(m_FunctionReturnType, m_LineNumber);
+                    return m_Parameters[m_ParameterPos++].FunctionArgument;
                 }
                 else
                 {
-                    return m_Parameters[0].FunctionArgument;
+                    Type returnType = GenerateFunctionCall(compileState);
+                    throw new ReturnTypeException(returnType, m_LineNumber);
                 }
+            }
+
+            bool IsFunctionIdenticalMatch(object o)
+            {
+                Type t = o.GetType();
+                if(t == typeof(ApiMethodInfo))
+                {
+                    ApiMethodInfo methodInfo = (ApiMethodInfo)o;
+                    int i = 0;
+                    ParameterInfo[] pi = methodInfo.Method.GetParameters();
+                    for (i = 0; i < m_Parameters.Count; ++i)
+                    {
+                        Type sourceType = m_Parameters[i].ParameterType;
+                        Type destType = pi[i + 1].ParameterType;
+                        if(sourceType != destType)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else if(t == typeof(FunctionInfo))
+                {
+                    FunctionInfo methodInfo = (FunctionInfo)o;
+                    int i = 0;
+                    KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
+                    for (i = 0; i < m_Parameters.Count; ++i)
+                    {
+                        Type sourceType = m_Parameters[i].ParameterType;
+                        Type destType = pi[i].Value;
+                        if (sourceType != destType)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            bool IsImplicitCastable(Type to, Type from)
+            {
+                if(to == typeof(AnArray))
+                {
+                    return true;
+                }
+                if(to == typeof(LSLKey) && from == typeof(string))
+                {
+                    return true;
+                }
+
+                if(to == typeof(string) && from == typeof(LSLKey))
+                {
+                    return true;
+                }
+
+                if(to == typeof(double) && from == typeof(int))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool IsImplicitCastedMatch(object o, out int matchedCount)
+            {
+                matchedCount = 0;
+                Type t = o.GetType();
+                if (t == typeof(ApiMethodInfo))
+                {
+                    ApiMethodInfo methodInfo = (ApiMethodInfo)o;
+                    int i = 0;
+                    ParameterInfo[] pi = methodInfo.Method.GetParameters();
+                    for (i = 0; i < m_Parameters.Count; ++i)
+                    {
+                        Type sourceType = m_Parameters[i].ParameterType;
+                        Type destType = pi[i + 1].ParameterType;
+                        if (sourceType != destType)
+                        {
+                            if(!IsImplicitCastable(destType, sourceType))
+                            {
+                                return false;
+                            }
+                            
+                        }
+                        else
+                        {
+                            ++matchedCount;
+                        }
+                    }
+                }
+                else if (t == typeof(FunctionInfo))
+                {
+                    FunctionInfo methodInfo = (FunctionInfo)o;
+                    int i = 0;
+                    KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
+                    for (i = 0; i < m_Parameters.Count; ++i)
+                    {
+                        Type sourceType = m_Parameters[i].ParameterType;
+                        Type destType = pi[i].Value;
+                        if (sourceType != destType)
+                        {
+                            if (!IsImplicitCastable(destType, sourceType))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            ++matchedCount;
+                        }
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            Type GenerateFunctionCall(CompileState compileState)
+            {
+                compileState.ILGen.BeginScope();
+                LocalBuilder[] lbs = new LocalBuilder[m_Parameters.Count];
+                for (int i = 0; i < lbs.Length; ++i)
+                {
+                    lbs[i] = compileState.ILGen.DeclareLocal(m_Parameters[i].ParameterType);
+                }
+
+                /* store all parameters to locals */
+                for (int i = lbs.Length; i-- > 0;)
+                {
+                    compileState.ILGen.Emit(OpCodes.Stloc, lbs[i]);
+                }
+
+                object o = SelectFunctionCall(compileState, lbs);
+                Type ot = o.GetType();
+                if (ot == typeof(FunctionInfo))
+                {
+                    FunctionInfo funcInfo = o as FunctionInfo;
+                    MethodBuilder methodInfo = funcInfo.Method;
+                    /* load script instance reference */
+                    if (null == compileState.StateTypeBuilder)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    }
+                    else
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    }
+
+                    /* load actual parameters */
+                    KeyValuePair<string, Type>[] parameters = funcInfo.Parameters;
+                    for (int i = 0; i < lbs.Length; ++i)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
+                        ProcessImplicitCasts(compileState, parameters[i].Value, m_Parameters[i].ParameterType, m_LineNumber);
+                    }
+
+                    compileState.ILGen.Emit(OpCodes.Call, funcInfo.Method);
+
+                    compileState.ILGen.EndScope();
+                    return funcInfo.Method.ReturnType;
+                }
+                else if (ot == typeof(ApiMethodInfo))
+                {
+                    ApiMethodInfo apiMethod = (ApiMethodInfo)o;
+                    MethodInfo methodInfo = apiMethod.Method;
+                    ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
+
+                    /* load ScriptApi reference */
+                    compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
+
+                    /* load ScriptInstance reference */
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    if (compileState.StateTypeBuilder != null)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    }
+
+                    /* load actual parameters */
+                    ParameterInfo[] parameters = methodInfo.GetParameters();
+                    for (int i = 0; i < lbs.Length; ++i)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
+                        ProcessImplicitCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                    }
+
+                    compileState.ILGen.Emit(OpCodes.Call, apiMethod.Method);
+
+                    ForcedSleepAttribute forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ForcedSleepAttribute));
+                    if (forcedSleep != null)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                        if (compileState.StateTypeBuilder != null)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                        }
+                        compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)(forcedSleep.Seconds * 1000));
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("ForcedSleep", new Type[] { typeof(int) }));
+                    }
+
+                    compileState.ILGen.EndScope();
+                    return methodInfo.ReturnType;
+                }
+                else if (m_Parameters.Count == 1)
+                {
+                    throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", m_FunctionName, m_Parameters.Count));
+                }
+                else
+                {
+                    throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", m_FunctionName, m_Parameters.Count));
+                }
+            }
+
+
+            object SelectFunctionCall(CompileState compileState, LocalBuilder[] lbs)
+            {
+                /* search the identical match or closest match */
+                object closeMatch = null;
+                int closeMatchCountHighest = -1;
+                foreach(object o in m_SelectedFunctions)
+                {
+                    if(IsFunctionIdenticalMatch(o))
+                    {
+                        return o;
+                    }
+                    int closeMatchCount;
+                    if (IsImplicitCastedMatch(o, out closeMatchCount) && closeMatchCount > closeMatchCountHighest)
+                    {
+                        closeMatch = o;
+                        closeMatchCountHighest = closeMatchCount;
+                    }
+                }
+
+                if(null == closeMatch)
+                {
+                    if (m_Parameters.Count == 1)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", m_FunctionName, m_Parameters.Count));
+                    }
+                    else
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", m_FunctionName, m_Parameters.Count));
+                    }
+
+                }
+
+                return closeMatch;
             }
         }
     }

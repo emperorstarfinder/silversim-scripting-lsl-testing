@@ -59,11 +59,15 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an event.", name, type));
             }
-            else if (cs.m_Functions.ContainsKey(name) && (type == "Function" || type == "Variable"))
+            else if (cs.m_Functions.ContainsKey(name) && type == "Function" && !cs.LanguageExtensions.EnableFunctionOverloading)
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is an already defined as user function.", name, type));
             }
-            if(cs.m_LocalVariables.Count == 0)
+            else if (cs.m_Functions.ContainsKey(name) && type == "Variable")
+            {
+                throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is already defined as user function.", name, type));
+            }
+            if (cs.m_LocalVariables.Count == 0)
             {
 
             }
@@ -73,7 +77,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        struct FuncParamInfo
+        internal struct FuncParamInfo
         {
             public Type Type;
             public string Name;
@@ -485,6 +489,7 @@ namespace SilverSim.Scripting.Lsl
                         windLightApiType = string.Empty;
                         acceptedFlags = APIFlags.LSL;
                         compileState.ForcedSleepDefault = true;
+                        compileState.LanguageExtensions.EnableFunctionOverloading = false;
                     }
                     else if(mode == "ossl")
                     {
@@ -679,7 +684,8 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        List<LineInfo> funcList = new List<LineInfo>();
+                        List<FuncParamInfo> funcparam;
+                        List <LineInfo> funcList = new List<LineInfo>();
                         /* either type or function name */
                         switch (args[0])
                         {
@@ -693,10 +699,14 @@ namespace SilverSim.Scripting.Lsl
                             case "quaternion":
                             case "void":
                                 CheckUsedName(compileState, p, "Function", args[1]);
-                                CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
+                                funcparam = CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
                                 funcList.Add(new LineInfo(args, lineNumber));
                                 ParseBlock(compileState, p, funcList, false);
-                                compileState.m_Functions[args[1]] = funcList;
+                                if(!compileState.m_Functions.ContainsKey(args[1]))
+                                {
+                                    compileState.m_Functions.Add(args[1], new List<FunctionInfo>());
+                                }
+                                compileState.m_Functions[args[1]].Add(new FunctionInfo(funcparam, funcList));
                                 break;
 
                             default:
@@ -704,11 +714,15 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     throw ParserException(p, "Invalid state declaration");
                                 }
-                                CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
+                                funcparam = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
                                 args.Insert(0, "void");
                                 funcList.Add(new LineInfo(args, lineNumber));
                                 ParseBlock(compileState, p, funcList, false);
-                                compileState.m_Functions[args[1]] = funcList;
+                                if (!compileState.m_Functions.ContainsKey(args[1]))
+                                {
+                                    compileState.m_Functions.Add(args[1], new List<FunctionInfo>());
+                                }
+                                compileState.m_Functions[args[1]].Add(new FunctionInfo(funcparam, funcList));
                                 break;
                         }
                     }

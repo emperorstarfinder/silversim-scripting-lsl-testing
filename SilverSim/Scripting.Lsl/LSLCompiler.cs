@@ -879,16 +879,19 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region Write functions
-                foreach(KeyValuePair<string, List<LineInfo>> kvp in cs.m_Functions)
+                foreach(KeyValuePair<string, List<FunctionInfo>> kvp in cs.m_Functions)
                 {
-                    foreach(LineInfo li in kvp.Value)
+                    foreach (FunctionInfo funcInfo in kvp.Value)
                     {
-                        WriteIndented(writer, li.Line, ref indent);
-                        if (li.Line[li.Line.Count - 1] != "{" && li.Line[li.Line.Count - 1] != ";" && li.Line[li.Line.Count - 1] != "}")
+                        foreach (LineInfo li in funcInfo.FunctionLines)
                         {
-                            ++indent;
-                            WriteIndented(writer, "\n", ref indent);
-                            --indent;
+                            WriteIndented(writer, li.Line, ref indent);
+                            if (li.Line[li.Line.Count - 1] != "{" && li.Line[li.Line.Count - 1] != ";" && li.Line[li.Line.Count - 1] != "}")
+                            {
+                                ++indent;
+                                WriteIndented(writer, "\n", ref indent);
+                                --indent;
+                            }
                         }
                     }
                 }
