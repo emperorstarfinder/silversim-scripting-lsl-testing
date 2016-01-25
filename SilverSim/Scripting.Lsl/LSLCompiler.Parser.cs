@@ -496,6 +496,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.ASSL | APIFlags.OSSL | APIFlags.LSL;
+                        compileState.LanguageExtensions.EnableExtendedExplicitTypecastModel = true;
                         compileState.ForcedSleepDefault = false;
                     }
                     else if (mode == "aurora" || mode == "whitecore")

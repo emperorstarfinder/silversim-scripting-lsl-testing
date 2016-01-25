@@ -53,6 +53,13 @@ namespace SilverSim.Scripting.Lsl
             public List<LineInfo> FunctionBody;
             public int FunctionLineIndex;
 
+            public class LanguageExtensionsData
+            {
+                public bool EnableExtendedExplicitTypecastModel = true;
+            }
+
+            public readonly LanguageExtensionsData LanguageExtensions = new LanguageExtensionsData();
+
             public CompileState()
             {
 
