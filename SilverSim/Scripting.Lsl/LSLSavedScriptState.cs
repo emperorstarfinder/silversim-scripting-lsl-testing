@@ -741,7 +741,6 @@ namespace SilverSim.Scripting.Lsl
 
             public static SavedScriptState FromXML(XmlTextReader reader, ObjectPartInventoryItem item)
             {
-                SavedScriptState state = new SavedScriptState();
                 for (;;)
                 {
                     if (!reader.Read())

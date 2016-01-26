@@ -621,7 +621,6 @@ namespace SilverSim.Scripting.Lsl
 
         void SetCurrentState(ILSLState state)
         {
-            Type stateType = state.GetType();
             m_CurrentState = state;
             m_CurrentStateMethods.Clear();
             m_HasTouchEvent = HasStateEvent("touch") || HasStateEvent("touch_start") || HasStateEvent("touch_end");

@@ -534,7 +534,6 @@ namespace SilverSim.Scripting.Lsl
                     foreach (FunctionInfo funcInfo in functionKvp.Value)
                     {
                         List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
-                        string functionName = functionDeclaration[1];
                         MethodBuilder method = funcInfo.Method;
 
 #if DEBUG

@@ -26,7 +26,6 @@ namespace SilverSim.Scripting.Lsl
                 public readonly int Position;
 
                 public Type ParameterType; /* will be resolved later */
-                public int LineNumber;
                 public FunctionParameterInfo(Tree functionarg, int position)
                 {
                     FunctionArgument = functionarg;
@@ -34,7 +33,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
             readonly List<FunctionParameterInfo> m_Parameters = new List<FunctionParameterInfo>();
-            int m_ParameterPos = 0;
+            int m_ParameterPos;
             readonly List<object> m_SelectedFunctions = new List<object>();
 
             readonly string m_FunctionName;
@@ -300,7 +299,6 @@ namespace SilverSim.Scripting.Lsl
                 if (ot == typeof(FunctionInfo))
                 {
                     FunctionInfo funcInfo = o as FunctionInfo;
-                    MethodBuilder methodInfo = funcInfo.Method;
                     /* load script instance reference */
                     if (null == compileState.StateTypeBuilder)
                     {
