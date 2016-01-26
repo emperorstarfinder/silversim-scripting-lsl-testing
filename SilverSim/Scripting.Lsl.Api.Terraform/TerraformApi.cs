@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
             }
         }
 
-        [APILevel(APIFlags.OSSL, "osGetTerrainHeight")]
+        [APILevel(APIFlags.OSSL, "osSetTerrainHeight")]
         public int SetTerrainHeight(ScriptInstance instance, int x, int y, double val)
         {
             lock (instance)
