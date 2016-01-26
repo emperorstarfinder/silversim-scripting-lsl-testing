@@ -163,9 +163,8 @@ namespace SilverSim.Scripting.Lsl
                 if(t == typeof(ApiMethodInfo))
                 {
                     ApiMethodInfo methodInfo = (ApiMethodInfo)o;
-                    int i = 0;
                     ParameterInfo[] pi = methodInfo.Method.GetParameters();
-                    for (i = 0; i < m_Parameters.Count; ++i)
+                    for (int i = 0; i < m_Parameters.Count; ++i)
                     {
                         Type sourceType = m_Parameters[i].ParameterType;
                         Type destType = pi[i + 1].ParameterType;
@@ -178,9 +177,8 @@ namespace SilverSim.Scripting.Lsl
                 else if(t == typeof(FunctionInfo))
                 {
                     FunctionInfo methodInfo = (FunctionInfo)o;
-                    int i = 0;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
-                    for (i = 0; i < m_Parameters.Count; ++i)
+                    for (int i = 0; i < m_Parameters.Count; ++i)
                     {
                         Type sourceType = m_Parameters[i].ParameterType;
                         Type destType = pi[i].Value;
@@ -229,9 +227,8 @@ namespace SilverSim.Scripting.Lsl
                 if (t == typeof(ApiMethodInfo))
                 {
                     ApiMethodInfo methodInfo = (ApiMethodInfo)o;
-                    int i = 0;
                     ParameterInfo[] pi = methodInfo.Method.GetParameters();
-                    for (i = 0; i < m_Parameters.Count; ++i)
+                    for (int i = 0; i < m_Parameters.Count; ++i)
                     {
                         Type sourceType = m_Parameters[i].ParameterType;
                         Type destType = pi[i + 1].ParameterType;
@@ -252,9 +249,8 @@ namespace SilverSim.Scripting.Lsl
                 else if (t == typeof(FunctionInfo))
                 {
                     FunctionInfo methodInfo = (FunctionInfo)o;
-                    int i = 0;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
-                    for (i = 0; i < m_Parameters.Count; ++i)
+                    for (int i = 0; i < m_Parameters.Count; ++i)
                     {
                         Type sourceType = m_Parameters[i].ParameterType;
                         Type destType = pi[i].Value;
