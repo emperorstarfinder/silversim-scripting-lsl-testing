@@ -332,10 +332,10 @@ namespace SilverSim.Scripting.Lsl
                             writer.WriteStartElement("Queue");
                             foreach(IScriptEvent ev in Events)
                             {
-                                Action<IScriptEvent, XmlTextWriter> serializer;
+                                Action<Script, IScriptEvent, XmlTextWriter> serializer;
                                 if(EventSerializers.TryGetValue(ev.GetType(), out serializer))
                                 {
-                                    serializer(ev, writer);
+                                    serializer(script, ev, writer);
                                 }
                             }
                             writer.WriteEndElement();
@@ -1125,7 +1125,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void ObjectRezSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void ObjectRezSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             ObjectRezEvent ev = (ObjectRezEvent)iev;
             writer.WriteStartElement("Item");
@@ -1155,7 +1155,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void EmailSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void EmailSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             EmailEvent ev = (EmailEvent)iev;
             writer.WriteStartElement("Item");
@@ -1189,7 +1189,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void RuntimePermissionsSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void RuntimePermissionsSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             RuntimePermissionsEvent ev = (RuntimePermissionsEvent)iev;
             writer.WriteStartElement("Item");
@@ -1219,7 +1219,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void LinkMessageSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void LinkMessageSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             LinkMessageEvent ev = (LinkMessageEvent)iev;
             writer.WriteStartElement("Item");
@@ -1253,7 +1253,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void RemoteDataSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void RemoteDataSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             RemoteDataEvent ev = (RemoteDataEvent)iev;
             writer.WriteStartElement("Item");
@@ -1286,7 +1286,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void TransactionResultSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void TransactionResultSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             TransactionResultEvent ev = (TransactionResultEvent)iev;
             writer.WriteStartElement("Item");
@@ -1315,12 +1315,12 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void ObjectMessageSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void ObjectMessageSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             MessageObjectEvent ev = (MessageObjectEvent)iev;
             writer.WriteStartElement("Item");
             {
-                writer.WriteAttributeString("event", "object_message");
+                writer.WriteAttributeString("event", script.UseMessageObjectEvent ? "object_message" : "dataserver");
                 writer.WriteStartElement("Params");
                 writer.WriteTypedValue("Param", ev.ObjectID);
                 writer.WriteTypedValue("Param", ev.Data);
@@ -1343,7 +1343,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void DataserverSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void DataserverSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             DataserverEvent ev = (DataserverEvent)iev;
             writer.WriteStartElement("Item");
@@ -1373,7 +1373,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void HttpResponseSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void HttpResponseSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             HttpResponseEvent ev = (HttpResponseEvent)iev;
             writer.WriteStartElement("Item");
@@ -1405,7 +1405,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void ListenSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void ListenSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             ListenEvent ev = (ListenEvent)iev;
             writer.WriteStartElement("Item");
@@ -1434,7 +1434,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void OnRezSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void OnRezSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             OnRezEvent ev = (OnRezEvent)iev;
             writer.WriteStartElement("Item");
@@ -1460,7 +1460,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void AttachSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void AttachSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             AttachEvent ev = (AttachEvent)iev;
             writer.WriteStartElement("Item");
@@ -1486,7 +1486,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void ChangedSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void ChangedSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             ChangedEvent ev = (ChangedEvent)iev;
             writer.WriteStartElement("Item");
@@ -1513,7 +1513,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void MoneySerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void MoneySerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             MoneyEvent ev = (MoneyEvent)iev;
             writer.WriteStartElement("Item");
@@ -1541,7 +1541,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void LandCollisionSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void LandCollisionSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             LandCollisionEvent ev = (LandCollisionEvent)iev;
             writer.WriteStartElement("Item");
@@ -1606,7 +1606,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void ControlSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void ControlSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             ControlEvent ev = (ControlEvent)iev;
             writer.WriteStartElement("Item");
@@ -1636,7 +1636,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void AtTargetSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void AtTargetSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             AtTargetEvent ev = (AtTargetEvent)iev;
             writer.WriteStartElement("Item");
@@ -1666,7 +1666,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void AtRotTargetSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void AtRotTargetSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             AtRotTargetEvent ev = (AtRotTargetEvent)iev;
             writer.WriteStartElement("Item");
@@ -1730,7 +1730,7 @@ namespace SilverSim.Scripting.Lsl
             writer.WriteEndElement();
         }
 
-        static void TouchSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void TouchSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             TouchEvent ev = (TouchEvent)iev;
             switch(ev.Type)
@@ -1749,7 +1749,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        static void CollisionSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void CollisionSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             CollisionEvent ev = (CollisionEvent)iev;
             switch (ev.Type)
@@ -1781,7 +1781,7 @@ namespace SilverSim.Scripting.Lsl
             return null;
         }
 
-        static void HttpRequestSerializer(IScriptEvent iev, XmlTextWriter writer)
+        static void HttpRequestSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
             HttpRequestEvent ev = (HttpRequestEvent)iev;
             writer.WriteStartElement("Item");
@@ -1799,7 +1799,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Event to function handlers
-        static readonly Dictionary<Type, Action<IScriptEvent, XmlTextWriter>> EventSerializers = new Dictionary<Type, Action<IScriptEvent, XmlTextWriter>>();
+        static readonly Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>> EventSerializers = new Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>>();
         static readonly Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>>();
 
         static Script()
@@ -1842,13 +1842,13 @@ namespace SilverSim.Scripting.Lsl
                 ev.Data = ep.Detected;
                 return ev;
             });
-            EventSerializers.Add(typeof(SensorEvent), delegate (IScriptEvent iev, XmlTextWriter writer)
+            EventSerializers.Add(typeof(SensorEvent), delegate (Script script, IScriptEvent iev, XmlTextWriter writer)
             {
                 SensorEvent ev = (SensorEvent)iev;
                 DetectedSerializer(ev.Data, "sensor", writer);
             });
             EventDeserializers.Add("on_rez", OnRezDeserializer);
-            EventSerializers.Add(typeof(OnRezEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            EventSerializers.Add(typeof(OnRezEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
             {
                 NoParamSerializer(ev, "on_rez", writer);
             });
@@ -1862,7 +1862,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return new NoSensorEvent();
             });
-            EventSerializers.Add(typeof(NoSensorEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            EventSerializers.Add(typeof(NoSensorEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
             {
                 NoParamSerializer(ev, "no_sensor", writer);
             });
@@ -1870,7 +1870,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return new TimerEvent();
             });
-            EventSerializers.Add(typeof(TimerEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            EventSerializers.Add(typeof(TimerEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
             {
                 NoParamSerializer(ev, "timer", writer);
             });
@@ -1922,7 +1922,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return new NotAtTargetEvent();
             });
-            EventSerializers.Add(typeof(NotAtTargetEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            EventSerializers.Add(typeof(NotAtTargetEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
             {
                 NoParamSerializer(ev, "not_at_target", writer);
             });
@@ -1930,7 +1930,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return new MovingStartEvent();
             });
-            EventSerializers.Add(typeof(MovingStartEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            EventSerializers.Add(typeof(MovingStartEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
             {
                 NoParamSerializer(ev, "moving_start", writer);
             });
@@ -1938,7 +1938,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return new MovingEndEvent();
             });
-            EventSerializers.Add(typeof(MovingEndEvent), delegate (IScriptEvent ev, XmlTextWriter writer)
+            EventSerializers.Add(typeof(MovingEndEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
             {
                 NoParamSerializer(ev, "moving_end", writer);
             });
