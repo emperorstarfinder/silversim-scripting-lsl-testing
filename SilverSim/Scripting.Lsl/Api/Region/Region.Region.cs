@@ -683,5 +683,19 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 }
             }
         }
+
+        [APILevel(APIFlags.OSSL, "osRegionRestart")]
+        public void RegionRestart(ScriptInstance instance, float seconds)
+        {
+            lock (instance)
+            {
+                ObjectPart part = instance.Part;
+                SceneInterface scene = part.ObjectGroup.Scene;
+                if (scene.IsRegionOwner(part.Owner) || scene.IsEstateManager(part.Owner))
+                {
+                    instance.Part.ObjectGroup.Scene.RequestRegionRestart((int)seconds);
+                }
+            }
+        }
     }
 }
