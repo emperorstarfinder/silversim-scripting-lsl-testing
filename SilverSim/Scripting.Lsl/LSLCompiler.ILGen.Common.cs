@@ -326,32 +326,9 @@ namespace SilverSim.Scripting.Lsl
             Type fromType, 
             int lineNumber)
         {
-            if (fromType == toType)
+            if(IsImplicitlyCastable(toType, fromType))
             {
-
-            }
-            else if (toType == typeof(void))
-            {
-            }
-            else if (fromType == typeof(string) && toType == typeof(LSLKey))
-            {
-
-            }
-            else if (fromType == typeof(LSLKey) && toType == typeof(string))
-            {
-
-            }
-            else if (fromType == typeof(int) && toType == typeof(double))
-            {
-
-            }
-            else if (toType == typeof(AnArray))
-            {
-
-            }
-            else if (toType == typeof(bool))
-            {
-
+                ProcessCasts(compileState, toType, fromType, lineNumber);
             }
             else if(null == fromType)
             {
@@ -373,7 +350,6 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new CompilerException(lineNumber, string.Format("Unsupported implicit typecast from {0} to {1}", MapType(fromType), MapType(toType)));
             }
-            ProcessCasts(compileState, toType, fromType, lineNumber);
         }
 
         public static double ParseStringToDouble(string input)
@@ -404,6 +380,17 @@ namespace SilverSim.Scripting.Lsl
                 q = Quaternion.Identity;
             }
             return q;
+        }
+
+        internal static bool IsImplicitlyCastable(Type toType, Type fromType)
+        {
+            return (fromType == toType ||
+                toType == typeof(void) ||
+                (fromType == typeof(string) && toType == typeof(LSLKey)) ||
+                (fromType == typeof(LSLKey) && toType == typeof(string)) ||
+                (fromType == typeof(int) && toType == typeof(double)) ||
+                toType == typeof(AnArray) ||
+                toType == typeof(bool)) ;
         }
 
         internal static void ProcessCasts(

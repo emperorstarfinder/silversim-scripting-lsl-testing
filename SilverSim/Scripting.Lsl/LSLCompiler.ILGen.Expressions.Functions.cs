@@ -196,30 +196,6 @@ namespace SilverSim.Scripting.Lsl
                 return true;
             }
 
-            bool IsImplicitCastable(Type to, Type from)
-            {
-                if(to == typeof(AnArray))
-                {
-                    return true;
-                }
-                if(to == typeof(LSLKey) && from == typeof(string))
-                {
-                    return true;
-                }
-
-                if(to == typeof(string) && from == typeof(LSLKey))
-                {
-                    return true;
-                }
-
-                if(to == typeof(double) && from == typeof(int))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
             bool IsImplicitCastedMatch(object o, out int matchedCount)
             {
                 matchedCount = 0;
@@ -234,7 +210,7 @@ namespace SilverSim.Scripting.Lsl
                         Type destType = pi[i + 1].ParameterType;
                         if (sourceType != destType)
                         {
-                            if(!IsImplicitCastable(destType, sourceType))
+                            if(!IsImplicitlyCastable(destType, sourceType))
                             {
                                 return false;
                             }
@@ -256,7 +232,7 @@ namespace SilverSim.Scripting.Lsl
                         Type destType = pi[i].Value;
                         if (sourceType != destType)
                         {
-                            if (!IsImplicitCastable(destType, sourceType))
+                            if (!IsImplicitlyCastable(destType, sourceType))
                             {
                                 return false;
                             }
