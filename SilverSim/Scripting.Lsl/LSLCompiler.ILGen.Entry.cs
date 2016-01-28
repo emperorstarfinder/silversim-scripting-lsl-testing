@@ -533,13 +533,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     foreach (FunctionInfo funcInfo in functionKvp.Value)
                     {
-                        List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         MethodBuilder method = funcInfo.Method;
 
 #if DEBUG
                         ILGenDumpProxy method_ilgen = new ILGenDumpProxy(method.GetILGenerator(), dumpILGen);
 #else
-                    ILGenerator method_ilgen = method.GetILGenerator();
+                        ILGenerator method_ilgen = method.GetILGenerator();
 #endif
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, funcInfo.FunctionLines, typeLocals);
