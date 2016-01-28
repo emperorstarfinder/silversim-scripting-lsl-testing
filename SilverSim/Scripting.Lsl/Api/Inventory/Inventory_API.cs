@@ -2,12 +2,21 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Transfer;
+using SilverSim.ServiceInterfaces.Asset;
+using SilverSim.ServiceInterfaces.Inventory;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using SilverSim.Types.Inventory;
+using SilverSim.Viewer.Messages.Inventory;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
@@ -73,19 +82,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         public const int PERM_MOVE = 524288;
         [APILevel(APIFlags.LSL)]
         public const int PERM_ALL = 2147483647;
-
-        [APILevel(APIFlags.LSL, "llGiveInventory")]
-        public void GiveInventory(ScriptInstance instance, LSLKey destination, string inventory)
-        {
-            throw new NotImplementedException("llGiveInventory(key, string)");
-        }
-
-        [APILevel(APIFlags.LSL, "llGiveInventoryList")]
-        [ForcedSleep(3)]
-        public void GiveInventoryList(ScriptInstance instance, LSLKey target, string folder, AnArray inventory)
-        {
-            throw new NotImplementedException("llGiveInventoryList(key, string, list)");
-        }
 
         [APILevel(APIFlags.LSL, "llRemoveInventory")]
         public void RemoveInventory(ScriptInstance instance, string item)
@@ -324,6 +320,335 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         public void RezAtRoot(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
             throw new NotImplementedException("llRezAtRoot(string, vector, vector, rotation, integer)");
+        }
+        #endregion
+
+        #region Give Inventory
+        [APILevel(APIFlags.LSL, "llGiveInventory")]
+        public void GiveInventory(ScriptInstance instance, LSLKey destination, string inventory)
+        {
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart targetPart;
+                IAgent targetAgent;
+                UUID id = destination.AsUUID;
+                UUI targetAgentId;
+                AnArray array = new AnArray();
+                array.Add(inventory);
+
+                if (scene.Primitives.TryGetValue(id, out targetPart))
+                {
+                    GiveInventoryToPrim(instance, targetPart, instance.Part, array, false);
+                }
+                else if(scene.Agents.TryGetValue(id, out targetAgent))
+                {
+                    GiveInventoryToAgent(
+                        instance,
+                        targetAgent.Owner,
+                        targetAgent.InventoryService,
+                        targetAgent.AssetService,
+                        scene,
+                        instance.Part,
+                        string.Empty,
+                        array,
+                        false);
+                }
+                else if(scene.AvatarNameService.TryGetValue(id, out targetAgentId))
+                {
+
+                }
+                else
+                {
+                    instance.ShoutError("Could not find destination");
+                }
+            }
+        }
+
+        [APILevel(APIFlags.LSL, "llGiveInventoryList")]
+        public void GiveInventoryList(ScriptInstance instance, LSLKey destination, string folder, AnArray inventory)
+        {
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart targetPart;
+                IAgent targetAgent;
+                UUID id = destination.AsUUID;
+                UUI targetAgentId;
+                AnArray array = new AnArray();
+                array.Add(inventory);
+
+                if (scene.Primitives.TryGetValue(id, out targetPart))
+                {
+                    GiveInventoryToPrim(instance, targetPart, instance.Part, array, true);
+                }
+                else if (scene.Agents.TryGetValue(id, out targetAgent))
+                {
+                    GiveInventoryToAgent(
+                        instance,
+                        targetAgent.Owner,
+                        targetAgent.InventoryService,
+                        targetAgent.AssetService,
+                        scene,
+                        instance.Part,
+                        folder,
+                        array,
+                        true);
+                }
+                else if (scene.AvatarNameService.TryGetValue(id, out targetAgentId))
+                {
+
+                }
+                else
+                {
+                    instance.ShoutError("Could not find destination");
+                }
+            }
+        }
+
+        void GiveInventoryToPrim(ScriptInstance instance, ObjectPart target, ObjectPart origin, AnArray inventoryitems, bool skipNoCopy)
+        {
+            if(!target.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Modify))
+            {
+                instance.ShoutError("Blocked by permissions");
+                return;
+            }
+
+            foreach(IValue iv in inventoryitems)
+            {
+                ObjectPartInventoryItem sourceItem;
+                string inventory = iv.ToString();
+                if(!origin.Inventory.TryGetValue(inventory, out sourceItem))
+                {
+                    instance.ShoutError("Inventory item " + inventory + " not found");
+                }
+                else
+                {
+                    bool removeItem = false;
+                    if(!target.Owner.EqualsGrid(origin.Owner) && sourceItem.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Transfer))
+                    {
+                        instance.ShoutError("Inventory item " + inventory + " has no transfer permission.");
+                        continue;
+                    }
+
+                    if (!sourceItem.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Copy))
+                    {
+                        removeItem = true;
+                        if (skipNoCopy)
+                        {
+                            instance.ShoutError("Inventory item " + inventory + " has no copy permission.");
+                            continue;
+                        }
+                    }
+
+                    if(removeItem)
+                    {
+                        ScriptInstance oldInstance = sourceItem.RemoveScriptInstance;
+                        if(null != oldInstance)
+                        {
+                            oldInstance.Abort();
+                        }
+
+                        origin.Inventory.Remove(sourceItem.ID);
+                        sourceItem.ID = UUID.Random;
+                        /* reset script if set */
+                        sourceItem.ScriptState = null;
+                        target.Inventory.Add(sourceItem);
+                    }
+                    else
+                    {
+                        /* duplicate item */
+                        ObjectPartInventoryItem newItem = new ObjectPartInventoryItem(sourceItem);
+                        newItem.ID = UUID.Random;
+                        target.Inventory.Add(newItem);
+                    }
+                }
+            }
+        }
+
+        void GiveInventoryToAgent(
+            ScriptInstance instance,
+            UUI agent,
+            InventoryServiceInterface inventoryService, AssetServiceInterface assetService,
+            SceneInterface scene,
+            ObjectPart origin,
+            string folderName, AnArray inventoryitems, bool createFolderAndSkipNoCopy)
+        {
+            List<InventoryItem> givenItems = new List<InventoryItem>();
+            List<UUID> assetIDs = new List<UUID>();
+
+            foreach (IValue iv in inventoryitems)
+            {
+                ObjectPartInventoryItem sourceItem;
+                string inventory = iv.ToString();
+                if (!origin.Inventory.TryGetValue(inventory, out sourceItem))
+                {
+                    instance.ShoutError("Inventory item " + inventory + " not found");
+                }
+                else
+                {
+                    bool removeItem = false;
+                    if (!agent.EqualsGrid(origin.Owner) && sourceItem.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Transfer))
+                    {
+                        instance.ShoutError("Inventory item " + inventory + " has no transfer permission.");
+                        continue;
+                    }
+
+                    if (!sourceItem.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Copy))
+                    {
+                        removeItem = true;
+                        if (createFolderAndSkipNoCopy)
+                        {
+                            instance.ShoutError("Inventory item " + inventory + " has no copy permission.");
+                            continue;
+                        }
+                    }
+
+                    if (removeItem)
+                    {
+                        origin.Inventory.Remove(sourceItem.ID);
+                    }
+                    assetIDs.Add(sourceItem.AssetID);
+                    givenItems.Add(new InventoryItem(sourceItem));
+                }
+            }
+
+            new InventoryTransferItem(
+                agent,
+                inventoryService, assetService,
+                scene,
+                assetIDs,
+                givenItems,
+                folderName,
+                createFolderAndSkipNoCopy);
+        }
+
+        sealed class InventoryTransferItem : AssetTransferWorkItem
+        {
+            readonly InventoryServiceInterface m_InventoryService;
+            readonly UUI m_DestinationAgent;
+            readonly UUID m_SceneID;
+            readonly List<InventoryItem> m_Items;
+            readonly string m_DestinationFolder = string.Empty;
+            readonly SceneInterface.TryGetSceneDelegate TryGetScene;
+            readonly bool m_CreateFolder;
+
+            public InventoryTransferItem(
+                UUI targetAgent,
+                InventoryServiceInterface inventoryService,
+                AssetServiceInterface assetService,
+                SceneInterface scene,
+                List<UUID> assetids,
+                List<InventoryItem> items,
+                string destinationFolder,
+                bool createFolder)
+                : base(assetService, scene.AssetService, assetids, ReferenceSource.Source)
+            {
+                m_InventoryService = inventoryService;
+                m_DestinationAgent = targetAgent;
+                m_SceneID = scene.ID;
+                m_Items = items;
+                m_DestinationFolder = destinationFolder;
+                TryGetScene = scene.TryGetScene;
+                m_CreateFolder = createFolder;
+            }
+
+            public override void AssetTransferComplete()
+            {
+                InventoryFolder folder;
+                SceneInterface scene = null;
+                IAgent agent = null;
+                if (!TryGetScene(m_SceneID, out scene) ||
+                    !scene.Agents.TryGetValue(m_DestinationAgent.ID, out agent))
+                {
+                    agent = null;
+                }
+
+                Dictionary<AssetType, UUID> selectedFolder = new Dictionary<AssetType, UUID>();
+
+                if (m_CreateFolder)
+                {
+                    if (!m_InventoryService.Folder.TryGetValue(m_DestinationAgent.ID, AssetType.RootFolder, out folder))
+                    {
+                        return;
+                    }
+                    UUID rootFolderID = folder.ID;
+                    folder = new InventoryFolder();
+                    folder.Owner = m_DestinationAgent;
+                    folder.ParentFolderID = rootFolderID;
+                    folder.InventoryType = InventoryType.Unknown;
+                    folder.Version = 1;
+                    folder.Name = m_DestinationFolder;
+                    folder.ID = UUID.Random;
+                    m_InventoryService.Folder.Add(folder);
+
+                    if (agent != null)
+                    {
+                        BulkUpdateInventory msg = new BulkUpdateInventory();
+                        msg.AgentID = m_DestinationAgent.ID;
+                        msg.TransactionID = UUID.Zero;
+                        msg.AddInventoryFolder(folder);
+                        agent.SendMessageAlways(msg, m_SceneID);
+                    }
+
+                    foreach (AssetType type in typeof(AssetType).GetEnumValues())
+                    {
+                        selectedFolder.Add(type, folder.ID);
+                    }
+                }
+
+                foreach (InventoryItem sellItem in m_Items)
+                {
+                    UUID folderID = UUID.Zero;
+                    AssetType[] assetTypes = new AssetType[] { sellItem.AssetType, AssetType.Object, AssetType.RootFolder };
+                    foreach (AssetType assetType in assetTypes)
+                    {
+                        if (!selectedFolder.TryGetValue(assetType, out folderID))
+                        {
+                            if (m_InventoryService.Folder.TryGetValue(m_DestinationAgent.ID, assetType, out folder))
+                            {
+                                folderID = folder.ID;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    if(UUID.Zero == folderID)
+                    {
+                        continue;
+                    }
+
+                    InventoryItem item = new InventoryItem(sellItem);
+                    item.LastOwner = item.Owner;
+                    item.Owner = m_DestinationAgent;
+                    item.ParentFolderID = folderID;
+                    item.IsGroupOwned = false;
+                    m_InventoryService.Item.Add(item);
+                    if (null != agent)
+                    {
+                        UpdateCreateInventoryItem msg = new UpdateCreateInventoryItem();
+                        msg.AgentID = m_DestinationAgent.ID;
+                        msg.AddItem(item, 0);
+                        msg.SimApproved = true;
+                        agent.SendMessageAlways(msg, m_SceneID);
+                    }
+                }
+            }
+
+            public override void AssetTransferFailed(Exception e)
+            {
+                SceneInterface scene;
+                IAgent agent;
+                if (!TryGetScene(m_DestinationAgent.ID, out scene) &&
+                    scene.Agents.TryGetValue(m_DestinationAgent.ID, out agent))
+                {
+
+                }
+            }
         }
         #endregion
     }
