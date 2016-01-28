@@ -520,7 +520,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 assetIDs,
                 givenItems,
                 folderName,
-                createFolderAndSkipNoCopy);
+                createFolderAndSkipNoCopy).QueueWorkItem();
         }
 
         sealed class InventoryTransferItem : AssetTransferWorkItem
