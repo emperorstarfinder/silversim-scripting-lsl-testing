@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.Grid;
 using SilverSim.Types;
 using SilverSim.Types.Agent;
@@ -143,7 +144,101 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [ForcedSleep(0.1)]
         public LSLKey RequestAgentData(ScriptInstance instance, LSLKey id, int data)
         {
-            throw new NotImplementedException("llRequestAgentData(key, integer)");
+            lock(instance)
+            {
+                IAgent agent;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                DataserverEvent ev;
+                UUID queryid = UUID.Random;
+                UUI uui;
+
+                if (scene.Agents.TryGetValue(id.AsUUID, out agent))
+                {
+                    switch(data)
+                    {
+                        case DATA_ONLINE:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+                            ev.Data = "1";
+                            instance.PostEvent(ev);
+                            break;
+
+                        case DATA_NAME:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+                            ev.Data = agent.FirstName + " " + agent.LastName;
+                            instance.PostEvent(ev);
+                            break;
+
+                        case DATA_BORN:
+#warning Implement this DATA_BORN
+                            break;
+
+                        case DATA_RATING:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+                            ev.Data = "[0,0,0,0,0,0]";
+                            instance.PostEvent(ev);
+                            break;
+
+                        case DATA_PAYINFO:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+                            ev.Data = "0";
+                            instance.PostEvent(ev);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    return queryid;
+                }
+                else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
+                {
+                    switch (data)
+                    {
+                        case DATA_ONLINE:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+#warning Implement this DATA_ONLINE correctly
+                            ev.Data = "0"; /* TODO: */
+                            instance.PostEvent(ev);
+                            break;
+
+                        case DATA_NAME:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+                            ev.Data = uui.FullName;
+                            instance.PostEvent(ev);
+                            break;
+
+                        case DATA_BORN:
+#warning Implement this DATA_BORN
+                            break;
+
+                        case DATA_RATING:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+                            ev.Data = "[0,0,0,0,0,0]";
+                            instance.PostEvent(ev);
+                            break;
+
+                        case DATA_PAYINFO:
+                            ev = new DataserverEvent();
+                            ev.QueryID = queryid;
+                            ev.Data = "0";
+                            instance.PostEvent(ev);
+                            break;
+
+                        default:
+                            break;
+                    }
+                    return queryid;
+                }
+            }
+
+            return UUID.Zero;
         }
 
         [APILevel(APIFlags.OSSL, "osSetSpeed")]
@@ -188,7 +283,30 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRequestUsername")]
         public LSLKey RequestUsername(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("llRequestUsername(key)");
+            lock(instance)
+            {
+                IAgent agent;
+                UUI uui;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if(scene.Agents.TryGetValue(id.AsUUID, out agent))
+                {
+                    DataserverEvent ev = new DataserverEvent();
+                    UUID queryid = UUID.Random;
+                    ev.QueryID = queryid;
+                    ev.Data = agent.Owner.FullName;
+                    return queryid;
+                }
+                else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
+                {
+                    DataserverEvent ev = new DataserverEvent();
+                    UUID queryid = UUID.Random;
+                    ev.QueryID = queryid;
+                    ev.Data = uui.FullName;
+                    return queryid;
+                }
+
+                return UUID.Zero;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetDisplayName")]
