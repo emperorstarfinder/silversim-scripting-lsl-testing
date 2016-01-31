@@ -16,9 +16,9 @@ using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Attachments
 {
-    [ScriptApiName("Agents")]
+    [ScriptApiName("Attachments")]
     [LSLImplementation]
-    [Description("LSL/OSSL Agents API")]
+    [Description("LSL/OSSL Attachments API")]
     public class AttachmentsApi : IScriptApi
     {
         public AttachmentsApi()
