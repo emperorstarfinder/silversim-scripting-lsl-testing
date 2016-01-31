@@ -19,7 +19,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
     [ScriptApiName("Attachments")]
     [LSLImplementation]
     [Description("LSL/OSSL Attachments API")]
-    public class AttachmentsApi : IScriptApi
+    public class AttachmentsApi : IScriptApi, IPlugin
     {
         public AttachmentsApi()
         {
