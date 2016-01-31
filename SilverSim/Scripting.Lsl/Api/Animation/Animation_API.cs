@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if ((grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0 ||
+                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.TriggerAnimation) ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;
@@ -123,7 +123,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if ((grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0 ||
+                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.TriggerAnimation) ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;

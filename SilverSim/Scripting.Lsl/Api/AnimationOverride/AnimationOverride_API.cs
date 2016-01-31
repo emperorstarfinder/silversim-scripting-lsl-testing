@@ -90,7 +90,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
 
-                if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
+                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.OverrideAnimations) ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;
@@ -123,8 +123,8 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
             {
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if (((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 &&
-                    (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0) ||
+                if ((!grantinfo.PermsMask.HasFlag(ScriptPermissions.OverrideAnimations) &&
+                    !grantinfo.PermsMask.HasFlag(ScriptPermissions.TriggerAnimation)) ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return string.Empty;
@@ -151,7 +151,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
             {
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
+                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.OverrideAnimations) ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;

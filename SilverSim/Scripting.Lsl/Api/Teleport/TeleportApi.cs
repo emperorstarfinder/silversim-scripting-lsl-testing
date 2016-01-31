@@ -236,7 +236,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
                     else if(!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
-                        (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
+                        !grantinfo.PermsMask.HasFlag(ScriptPermissions.Teleport))
                     {
                         instance.ShoutError("Teleport permission is not granted by avatar");
                         return;
@@ -271,7 +271,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
                     else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
-                        (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
+                        !grantinfo.PermsMask.HasFlag(ScriptPermissions.Teleport))
                     {
                         instance.ShoutError("Teleport permission is not granted by avatar");
                         return;

@@ -156,7 +156,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     else if (type >= 0)
                     {
-                        return instance.Part.Inventory[(Types.Inventory.InventoryType)type, (uint)number].Name;
+                        return instance.Part.Inventory[(InventoryType)type, (uint)number].Name;
                     }
                 }
                 catch
@@ -176,7 +176,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 {
                     return instance.Part.Inventory.Count;
                 }
-                return instance.Part.Inventory.CountType((Types.Inventory.InventoryType)type);
+                return instance.Part.Inventory.CountType((InventoryType)type);
             }
         }
 
@@ -259,7 +259,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                             mask = InventoryPermissionsMask.None;
                             break;
                     }
-                    return (int)(UInt32)mask;
+                    return (int)(uint)mask;
                 }
                 catch
                 {

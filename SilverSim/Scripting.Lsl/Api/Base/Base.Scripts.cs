@@ -231,6 +231,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 ObjectPartInventoryItem newitem = new ObjectPartInventoryItem(scriptitem);
                 destpart.Inventory.Replace(name, newitem);
+                ScriptInstance oldInstance = scriptitem.ScriptInstance;
+                /* duplicate script state */
+                if (oldInstance != null)
+                {
+                    newitem.ScriptState = oldInstance.ScriptState;
+                }
                 ScriptInstance newInstance = ScriptLoader.Load(destpart, newitem, newitem.Owner, asset);
                 newInstance.IsRunning = running != 0;
                 newInstance.PostEvent(new OnRezEvent(start_param));

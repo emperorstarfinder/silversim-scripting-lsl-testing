@@ -58,7 +58,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if ((grantinfo.PermsMask & ScriptPermissions.TakeControls) == 0 ||
+                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.TakeControls) ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;
