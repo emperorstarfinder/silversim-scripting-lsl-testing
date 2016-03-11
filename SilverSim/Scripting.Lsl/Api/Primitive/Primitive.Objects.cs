@@ -65,18 +65,18 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int OBJECT_PHANTOM = 22;
         [APILevel(APIFlags.LSL)]
         public const int OBJECT_TEMP_ON_REZ = 23;
-		[APILevel(APIFlags.LSL)]
-		public const int OBJECT_RENDER_WEIGHT = 24;
-		[APILevel(APIFlags.LSL)]
-		public const int OBJECT_HOVER_HEIGHT = 25;
-		[APILevel(APIFlags.LSL)]
-		public const int OBJECT_BODY_SHAPE_TYPE = 26;
-		[APILevel(APIFlags.LSL)]
-		public const int OBJECT_LAST_OWNER_ID = 27;
-		[APILevel(APIFlags.LSL)]
-		public const int OBJECT_CLICK_ACTION = 28;
-		[APILevel(APIFlags.LSL)]
-		public const int OBJECT_OMEGA = 29;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_RENDER_WEIGHT = 24;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_HOVER_HEIGHT = 25;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_BODY_SHAPE_TYPE = 26;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_LAST_OWNER_ID = 27;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_CLICK_ACTION = 28;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_OMEGA = 29;
 
         [APILevel(APIFlags.LSL)]
         public const int OPT_OTHER = -1;
