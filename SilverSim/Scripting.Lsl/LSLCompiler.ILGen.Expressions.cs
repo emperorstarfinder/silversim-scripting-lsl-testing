@@ -747,7 +747,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format("invalid value"));
+                                throw new CompilerException(lineNumber, "invalid value");
                             }
                             break;
 

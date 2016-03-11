@@ -145,12 +145,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (i + 3 != arguments.Count)
                     {
-                        throw ParserException(p, string.Format("Missing ')' at the end of function declaration"));
+                        throw ParserException(p, "Missing ')' at the end of function declaration");
                     }
                     return funcParams;
                 }
             }
-            throw ParserException(p, string.Format("Missing ')' at the end of function declaration"));
+            throw ParserException(p, "Missing ')' at the end of function declaration");
         }
 
         int FindEndOfControlFlow(List<string> line, int lineNumber)

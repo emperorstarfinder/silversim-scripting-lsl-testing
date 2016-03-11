@@ -409,7 +409,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (fromType == typeof(void))
             {
-                throw new CompilerException(lineNumber, string.Format("function does not return anything"));
+                throw new CompilerException(lineNumber, "function does not return anything");
             }
             else if (toType == typeof(LSLKey))
             {
