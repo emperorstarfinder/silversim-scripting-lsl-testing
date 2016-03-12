@@ -174,8 +174,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                if (alpha < 0) alpha = 0;
-                if (alpha > 1) alpha = 1;
+                alpha = alpha.Clamp(0f, 1f);
 
                 if (face == ALL_SIDES)
                 {
@@ -359,12 +358,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetLinkColor")]
         public void SetLinkColor(ScriptInstance instance, int link, Vector3 color, int face)
         {
-            if (color.X < 0) color.X = 0;
-            if (color.X > 1) color.X = 1;
-            if (color.Y < 0) color.Y = 0;
-            if (color.Y > 1) color.Y = 1;
-            if (color.Z < 0) color.Z = 0;
-            if (color.Z > 1) color.Z = 1;
+            color.X = color.X.Clamp(0f, 1f);
+            color.Y = color.Y.Clamp(0f, 1f);
+            color.Z = color.Z.Clamp(0f, 1f);
 
             lock(instance)
             {

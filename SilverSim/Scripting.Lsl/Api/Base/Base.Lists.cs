@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -332,8 +333,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     {
                         int j;
                         for (j = 1; j < test.Count; j++)
+                        {
                             if (!(src[i + j].Equals(test[j]) || test[j].Equals(src[i + j])))
+                            {
                                 break;
+                            }
+                        }
 
                         if (j == test.Count)
                         {
@@ -467,17 +472,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Description("Returns a string that is the list src converted to a string with separator between the entries.")]
         public string DumpList2String(ScriptInstance instance, AnArray src, string separator)
         {
-            string s = string.Empty;
+            StringBuilder sb = new StringBuilder();
 
             foreach(IValue val in src)
             {
-                if(!string.IsNullOrEmpty(s))
+                if(sb.Length != 0)
                 {
-                    s += separator;
+                    sb.Append(separator);
                 }
-                s += val.ToString();
+                sb.Append(val.ToString());
             }
-            return s;
+            return sb.ToString();
         }
 
         [APILevel(APIFlags.LSL, "llList2CSV")]
@@ -666,8 +671,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             bool wsconsume = true;
             bool inbracket = false;
-            string value = string.Empty;
             AnArray ret = new AnArray();
+            StringBuilder value = new StringBuilder();
 
             foreach(char c in src)
             {
@@ -678,38 +683,41 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         {
                             break;
                         }
-                        value += c.ToString();
+                        value.Append(c);
                         break;
 
                     case '<':
                         inbracket = true;
-                        value += c.ToString();
+                        value.Append(c);
                         break;
 
                     case '>':
                         inbracket = false;
-                        value += c.ToString();
+                        value.Append(c);
                         break;
 
                     case ',':
                         if(inbracket)
                         {
-                            value += c.ToString();
+                            value.Append(c);
                             break;
                         }
 
-                        ret.Add(value);
+                        ret.Add(value.ToString());
+                        value.Clear();
                         wsconsume = true;
                         break;
 
                     default:
                         wsconsume = false;
-                        value += c.ToString();
+                        value.Append(c);
                         break;
                 }
             }
-
-            ret.Add(string.Empty);
+            if (value.Length != 0)
+            {
+                ret.Add(value.ToString());
+            }
             return ret;
         }
 

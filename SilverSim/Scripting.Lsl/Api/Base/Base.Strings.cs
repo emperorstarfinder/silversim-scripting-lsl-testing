@@ -95,9 +95,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 case STRING_TRIM:
                     src = src.Trim(trimchars);
                     break;
-
-                default:
-                    break;
             }
 
             return src;
@@ -185,12 +182,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             using (MD5 md5 = MD5.Create())
             {
                 byte[] b = md5.ComputeHash(string.Format("{0}:{1}", src, nonce.ToString()).ToUTF8Bytes());
-                string s = string.Empty;
+                StringBuilder s = new StringBuilder();
                 for(int i = 0; i < b.Length; ++i)
                 {
-                    s += string.Format("{0:x2}", b[i]);
+                    s.Append(string.Format("{0:x2}", b[i]));
                 }
-                return s;
+                return s.ToString();
             }
         }
 
@@ -200,12 +197,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             using (SHA1 sha1 = SHA1.Create())
             {
                 byte[] b = sha1.ComputeHash(src.ToUTF8Bytes());
-                string s = string.Empty;
+                StringBuilder s = new StringBuilder();
                 for (int i = 0; i < b.Length; ++i)
                 {
-                    s += string.Format("{0:x2}", b[i]);
+                    s.Append(string.Format("{0:x2}", b[i]));
                 }
-                return s;
+                return s.ToString();
             }
         }
 

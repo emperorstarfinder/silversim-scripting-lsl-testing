@@ -182,9 +182,6 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                         estateService.EstateGroup[estateID, ugi] = false;
                         message = string.Format("Removed group {0} from allowed list for estate {1}", ugi.FullName, estate.Name);
                         break;
-
-                    default:
-                        break;
                 }
 
                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = instance.Item.PermsGranter;

@@ -115,8 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         static float ValidParticleScale(double value)
         {
-            if (value > 4.0f) return 4.0f;
-            if (value < 0f) return 0f;
+            value = value.Clamp(0f, 4f);
             return (float)value;
         }
 

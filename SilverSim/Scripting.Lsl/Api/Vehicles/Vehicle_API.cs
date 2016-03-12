@@ -239,9 +239,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                     case VEHICLE_INVERTED_BANKING_MODIFIER:
                         thisGroup[VehicleFloatParamId.InvertedBankingModifier] = value;
                         break;
-
-                    default:
-                        break;
                 }
             }
         }
@@ -259,9 +256,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 {
                     case VEHICLE_REFERENCE_FRAME:
                         thisGroup[VehicleRotationParamId.ReferenceFrame] = rot;
-                        break;
-
-                    default:
                         break;
                 }
             }
@@ -386,9 +380,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
                     case VEHICLE_LINEAR_MOTOR_TIMESCALE:
                         thisGroup[VehicleVectorParamId.LinearMotorTimescale] = vec;
-                        break;
-
-                    default:
                         break;
                 }
             }

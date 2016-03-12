@@ -229,9 +229,6 @@ namespace SilverSim.Scripting.Lsl
                         case "type":
                             type = reader.Value;
                             break;
-
-                        default:
-                            break;
                     }
                 } while (reader.MoveToNextAttribute());
             }

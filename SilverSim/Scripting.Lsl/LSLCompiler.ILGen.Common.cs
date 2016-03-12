@@ -295,26 +295,74 @@ namespace SilverSim.Scripting.Lsl
         #region Type validation and string representation
         internal static bool IsValidType(Type t)
         {
-            if (t == typeof(string)) return true;
-            if (t == typeof(int)) return true;
-            if (t == typeof(double)) return true;
-            if (t == typeof(LSLKey)) return true;
-            if (t == typeof(Quaternion)) return true;
-            if (t == typeof(Vector3)) return true;
-            if (t == typeof(AnArray)) return true;
-            if (t == typeof(void)) return true;
+            if (t == typeof(string))
+            {
+                return true;
+            }
+            if (t == typeof(int))
+            {
+                return true;
+            }
+            if (t == typeof(double))
+            {
+                return true;
+            }
+            if (t == typeof(LSLKey))
+            {
+                return true;
+            }
+            if (t == typeof(Quaternion))
+            {
+                return true;
+            }
+            if (t == typeof(Vector3))
+            {
+                return true;
+            }
+            if (t == typeof(AnArray))
+            {
+                return true;
+            }
+            if (t == typeof(void))
+            {
+                return true;
+            }
             return false;
         }
         internal static string MapType(Type t)
         {
-            if (t == typeof(string)) return "string";
-            if (t == typeof(int)) return "integer";
-            if (t == typeof(double)) return "float";
-            if (t == typeof(LSLKey)) return "key";
-            if (t == typeof(Quaternion)) return "rotation";
-            if (t == typeof(Vector3)) return "vector";
-            if (t == typeof(AnArray)) return "list";
-            if (t == typeof(void)) return "void";
+            if (t == typeof(string))
+            {
+                return "string";
+            }
+            if (t == typeof(int))
+            {
+                return "integer";
+            }
+            if (t == typeof(double))
+            {
+                return "float";
+            }
+            if (t == typeof(LSLKey))
+            {
+                return "key";
+            }
+            if (t == typeof(Quaternion))
+            {
+                return "rotation";
+            }
+            if (t == typeof(Vector3))
+            {
+                return "vector";
+            }
+            if (t == typeof(AnArray))
+            {
+                return "list";
+            }
+            if (t == typeof(void))
+            {
+                return "void";
+            }
             return "???";
         }
         #endregion

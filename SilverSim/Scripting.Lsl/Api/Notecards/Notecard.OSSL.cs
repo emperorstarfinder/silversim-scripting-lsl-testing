@@ -11,6 +11,7 @@ using SilverSim.Types.Inventory;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Notecards
 {
@@ -26,17 +27,18 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             [Description("Contents for the notecard. string is also allowed here.")]
             AnArray contents)
         {
-            string nc = string.Empty;
-
+            StringBuilder nc = new StringBuilder();
+            bool first = true;
             foreach(IValue val in contents)
             {
-                if(!string.IsNullOrEmpty(nc))
+                if(!first)
                 {
-                    nc += "\n";
+                    nc.Append("\n");
                 }
-                nc += val.ToString();
+                first = false;
+                nc.Append(val.ToString());
             }
-            MakeNotecard(instance, notecardName, nc);
+            MakeNotecard(instance, notecardName, nc.ToString());
         }
 
         [APILevel(APIFlags.OSSL, "osMakeNotecard")]

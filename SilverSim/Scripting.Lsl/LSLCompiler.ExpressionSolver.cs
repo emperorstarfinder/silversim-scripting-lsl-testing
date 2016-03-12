@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -170,8 +171,6 @@ namespace SilverSim.Scripting.Lsl
                                     case "s":
                                         st.Value = new Tree.ConstantValueFloat(((ConstantValueRotation)st.SubTree[0].Value).Value.W);
                                         break;
-                                    default:
-                                        break;
                                 }
                             }
                             else if (st.SubTree[0].Value is ConstantValueVector)
@@ -186,8 +185,6 @@ namespace SilverSim.Scripting.Lsl
                                         break;
                                     case "z":
                                         st.Value = new Tree.ConstantValueFloat(((ConstantValueVector)st.SubTree[0].Value).Value.Z);
-                                        break;
-                                    default:
                                         break;
                                 }
                             }
@@ -937,12 +934,12 @@ namespace SilverSim.Scripting.Lsl
 
                                     if (isConstant)
                                     {
-                                        string o = string.Empty;
+                                        StringBuilder o = new StringBuilder();
                                         foreach (Tree sst in st.SubTree[0].SubTree)
                                         {
-                                            o += sst.Value.ToString();
+                                            o.Append(sst.Value.ToString());
                                         }
-                                        st.Value = new Tree.ConstantValueString(o);
+                                        st.Value = new Tree.ConstantValueString(o.ToString());
                                     }
                                 }
                                 break;
@@ -1004,9 +1001,6 @@ namespace SilverSim.Scripting.Lsl
                                         st.Value = new Tree.ConstantValueFloat(0);
                                     }
                                 }
-                                break;
-
-                            default:
                                 break;
                         }
                     }
@@ -1135,9 +1129,6 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.Rotation:
                                 enumeratorStack.Add(elem);
                                 break;
-
-                            default:
-                                break;
                         }
                         continue;
                     }
@@ -1210,9 +1201,6 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.Vector:
                             case Tree.EntryType.Rotation:
                                 enumeratorStack.Add(elem);
-                                break;
-
-                            default:
                                 break;
                         }
                         continue;
@@ -1294,9 +1282,6 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.OperatorLeftUnary:
                             case Tree.EntryType.OperatorRightUnary:
                                 enumeratorStack.Add(elem);
-                                break;
-
-                            default:
                                 break;
                         }
                         continue;
@@ -1422,9 +1407,6 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.OperatorRightUnary:
                                 enumeratorStack.Add(elem);
                                 break;
-
-                            default:
-                                break;
                         }
                         continue;
                     }
@@ -1545,9 +1527,6 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.Rotation:
                                 enumeratorStack.Add(elem);
                                 break;
-
-                            default:
-                                break;
                         }
                         continue;
                     }
@@ -1611,9 +1590,6 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.Vector:
                                     hasValidLeftHand = true;
                                     break;
-
-                                default:
-                                    break;
                             }
                         }
 
@@ -1639,9 +1615,6 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.Vector:
                                 case Tree.EntryType.Rotation:
                                     hasValidRightHand = true;
-                                    break;
-
-                                default:
                                     break;
                             }
                         }
@@ -1952,9 +1925,6 @@ namespace SilverSim.Scripting.Lsl
                                         st.Type = Tree.EntryType.Declaration;
                                     }
                                     break;
-
-                                default:
-                                    break;
                             }
                         }
                         break;
@@ -1995,9 +1965,6 @@ namespace SilverSim.Scripting.Lsl
                                 case "&&":
                                     st.Type = Tree.EntryType.Declaration;
                                     break;
-
-                                default:
-                                    break;
                             }
                         }
                         else 
@@ -2011,14 +1978,8 @@ namespace SilverSim.Scripting.Lsl
                                         st.Type = Tree.EntryType.Declaration;
                                     }
                                     break;
-
-                                default:
-                                    break;
                             }
                         }
-                        break;
-
-                    default:
                         break;
                 }
             }
@@ -2066,9 +2027,6 @@ namespace SilverSim.Scripting.Lsl
                                 st.Entry = "-" + st.Entry;
                                 resolvetree.SubTree.RemoveAt(i - 1);
                                 --i;
-                                break;
-
-                            default:
                                 break;
                         }
                     }
@@ -2134,9 +2092,6 @@ namespace SilverSim.Scripting.Lsl
                         case "(integer)":
                         case "(float)":
                             st.Type = Tree.EntryType.OperatorUnknown;
-                            break;
-
-                        default:
                             break;
                     }
                 }
@@ -2207,7 +2162,7 @@ namespace SilverSim.Scripting.Lsl
             IdentifyDeclarations(cs, expressionTree);
 
             int n = expressionTree.SubTree.Count;
-            string msg = string.Empty;
+            StringBuilder msg = new StringBuilder();
             for(int i = 0; i < n; ++i)
             {
                 Tree st = expressionTree.SubTree[i];
@@ -2223,9 +2178,9 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if(msg.Length != 0)
                         {
-                            msg += "\n";
+                            msg.Append("\n");
                         }
-                        msg = string.Format("no function '{0}' defined", entry);
+                        msg.AppendFormat("no function '{0}' defined", entry);
                     }
                     else if(i > 0 && 
                         expressionTree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown &&
@@ -2237,9 +2192,9 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (msg.Length != 0)
                         {
-                            msg += "\n";
+                            msg.Append("\n");
                         }
-                        msg = string.Format("no variable '{0}' defined", entry);
+                        msg.AppendFormat("no variable '{0}' defined", entry);
                     }
                 }
                 st.Process(lineNumber);
@@ -2247,7 +2202,7 @@ namespace SilverSim.Scripting.Lsl
 
             if(msg.Length != 0)
             {
-                throw new CompilerException(lineNumber, msg);
+                throw new CompilerException(lineNumber, msg.ToString());
             }
 
             /* After OrderBrackets only deep-scanners can be used */

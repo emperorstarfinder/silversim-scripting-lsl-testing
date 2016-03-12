@@ -189,27 +189,69 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                                     string typeName;
                                     switch (type)
                                     {
-                                        case CAMERA_PITCH: typeName = "CAMERA_PITCH"; break;
-                                        case CAMERA_FOCUS_OFFSET_X: typeName = "CAMERA_FOCUS_OFFSET_X"; break;
-                                        case CAMERA_FOCUS_OFFSET_Y: typeName = "CAMERA_FOCUS_OFFSET_Y"; break;
-                                        case CAMERA_FOCUS_OFFSET_Z: typeName = "CAMERA_FOCUS_OFFSET_Z"; break;
-                                        case CAMERA_POSITION_LAG: typeName = "CAMERA_POSITION_LAG"; break;
-                                        case CAMERA_FOCUS_LAG: typeName = "CAMERA_FOCUS_LAG"; break;
-                                        case CAMERA_DISTANCE: typeName = "CAMERA_DISTANCE"; break;
-                                        case CAMERA_BEHINDNESS_ANGLE: typeName = "CAMERA_BEHINDNESS_ANGLE"; break;
-                                        case CAMERA_BEHINDNESS_LAG: typeName = "CAMERA_BEHINDNESS_LAG"; break;
-                                        case CAMERA_POSITION_THRESHOLD: typeName = "CAMERA_POSITION_THRESHOLD"; break;
-                                        case CAMERA_FOCUS_THRESHOLD: typeName = "CAMERA_FOCUS_THRESHOLD"; break;
-                                        case CAMERA_ACTIVE: typeName = "CAMERA_ACTIVE"; break;
-                                        case CAMERA_POSITION_X: typeName = "CAMERA_POSITION_X"; break;
-                                        case CAMERA_POSITION_Y: typeName = "CAMERA_POSITION_Y"; break;
-                                        case CAMERA_POSITION_Z: typeName = "CAMERA_POSITION_Z"; break;
-                                        case CAMERA_FOCUS_X: typeName = "CAMERA_FOCUS_X"; break;
-                                        case CAMERA_FOCUS_Y: typeName = "CAMERA_FOCUS_Y"; break;
-                                        case CAMERA_FOCUS_Z: typeName = "CAMERA_FOCUS_Z"; break;
-                                        case CAMERA_POSITION_LOCKED: typeName = "CAMERA_POSITION_LOCKED"; break;
-                                        case CAMERA_FOCUS_LOCKED: typeName = "CAMERA_FOCUS_LOCKED"; break;
-                                        default: typeName = string.Format("{0}", rules[i - 1].AsInt); break;
+                                        case CAMERA_PITCH:
+                                            typeName = "CAMERA_PITCH";
+                                            break;
+                                        case CAMERA_FOCUS_OFFSET_X:
+                                            typeName = "CAMERA_FOCUS_OFFSET_X";
+                                            break;
+                                        case CAMERA_FOCUS_OFFSET_Y:
+                                            typeName = "CAMERA_FOCUS_OFFSET_Y";
+                                            break;
+                                        case CAMERA_FOCUS_OFFSET_Z:
+                                            typeName = "CAMERA_FOCUS_OFFSET_Z";
+                                            break;
+                                        case CAMERA_POSITION_LAG:
+                                            typeName = "CAMERA_POSITION_LAG";
+                                            break;
+                                        case CAMERA_FOCUS_LAG:
+                                            typeName = "CAMERA_FOCUS_LAG";
+                                            break;
+                                        case CAMERA_DISTANCE:
+                                            typeName = "CAMERA_DISTANCE";
+                                            break;
+                                        case CAMERA_BEHINDNESS_ANGLE:
+                                            typeName = "CAMERA_BEHINDNESS_ANGLE";
+                                            break;
+                                        case CAMERA_BEHINDNESS_LAG:
+                                            typeName = "CAMERA_BEHINDNESS_LAG";
+                                            break;
+                                        case CAMERA_POSITION_THRESHOLD:
+                                            typeName = "CAMERA_POSITION_THRESHOLD";
+                                            break;
+                                        case CAMERA_FOCUS_THRESHOLD:
+                                            typeName = "CAMERA_FOCUS_THRESHOLD";
+                                            break;
+                                        case CAMERA_ACTIVE:
+                                            typeName = "CAMERA_ACTIVE";
+                                            break;
+                                        case CAMERA_POSITION_X:
+                                            typeName = "CAMERA_POSITION_X";
+                                            break;
+                                        case CAMERA_POSITION_Y:
+                                            typeName = "CAMERA_POSITION_Y";
+                                            break;
+                                        case CAMERA_POSITION_Z:
+                                            typeName = "CAMERA_POSITION_Z";
+                                            break;
+                                        case CAMERA_FOCUS_X:
+                                            typeName = "CAMERA_FOCUS_X";
+                                            break;
+                                        case CAMERA_FOCUS_Y:
+                                            typeName = "CAMERA_FOCUS_Y";
+                                            break;
+                                        case CAMERA_FOCUS_Z:
+                                            typeName = "CAMERA_FOCUS_Z";
+                                            break;
+                                        case CAMERA_POSITION_LOCKED:
+                                            typeName = "CAMERA_POSITION_LOCKED";
+                                            break;
+                                        case CAMERA_FOCUS_LOCKED:
+                                            typeName = "CAMERA_FOCUS_LOCKED";
+                                            break;
+                                        default:
+                                            typeName = string.Format("{0}", rules[i - 1].AsInt);
+                                            break;
                                     }
                                     instance.ShoutError("llSetCameraParams: " + typeName + ": Parameter is invalid");
                                     return;

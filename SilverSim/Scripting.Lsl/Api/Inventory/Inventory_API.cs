@@ -211,9 +211,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                             case MASK_OWNER:
                                 item.Permissions.Current = (InventoryPermissionsMask)mask;
                                 break;
-
-                            default:
-                                break;
                         }
                     }
                     catch

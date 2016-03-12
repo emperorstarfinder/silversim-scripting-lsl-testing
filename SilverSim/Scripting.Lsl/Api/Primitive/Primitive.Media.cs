@@ -6,6 +6,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -213,16 +214,16 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                         case PRIM_MEDIA_WHITELIST:
                             {
-                                string csv = string.Empty;
+                                StringBuilder csv = new StringBuilder();
                                 foreach (string whitelistEntry in entry.WhiteList)
                                 {
                                     if (csv.Length != 0)
                                     {
-                                        csv += ",";
+                                        csv.Append(",");
                                     }
-                                    csv += Uri.EscapeUriString(whitelistEntry);
+                                    csv.Append(Uri.EscapeUriString(whitelistEntry));
                                 }
-                                res.Add(csv);
+                                res.Add(csv.ToString());
                             }
                             break;
 

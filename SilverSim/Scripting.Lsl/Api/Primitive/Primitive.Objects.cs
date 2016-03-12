@@ -299,9 +299,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         case MASK_NEXT:
                             instance.Part.NextOwnerMask = (InventoryPermissionsMask)value;
                             break;
-
-                        default:
-                            break;
                     }
                 }
             }

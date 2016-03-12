@@ -53,10 +53,14 @@ redo:
                     case '\n':      /* these all are simply white space */
                         if(is_preprocess)
                         {
-                            if(0 == args.Count)
+                            if (0 == args.Count)
+                            {
                                 return;
-                            if(args[args.Count - 1] != "\\")
+                            }
+                            if (args[args.Count - 1] != "\\")
+                            {
                                 return;
+                            }
                         }
                         break;
 
@@ -75,7 +79,9 @@ redo:
                         }
                         args.Add(";");
                         if (args.Count != 0 && parencount == 0)
+                        {
                             return;
+                        }
                         break;
 
                     case '{':       /* opening statement */
@@ -203,7 +209,10 @@ redo:
                             MarkBeginOfLine();
                         }
                         args.Add(new string(new char[] {c}));
-                        if (c == '(') ++parencount;
+                        if (c == '(')
+                        {
+                            ++parencount;
+                        }
                         if( c == ')')
                         {
                             if(parencount == 0)
@@ -240,8 +249,10 @@ redo:
                                 c = ReadC();
                             } while(c != '>');
                             token += "\"";
-                            if(0 != token.Length)
+                            if (0 != token.Length)
+                            {
                                 args.Add(token);
+                            }
                             token = string.Empty;
                             break;
                         }
@@ -453,7 +464,9 @@ redo:
                             }
                         }
                         else
+                        {
                             break;
+                        }
                     }
                     else if ('.' == c)
                     {
