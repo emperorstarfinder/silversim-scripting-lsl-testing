@@ -222,31 +222,32 @@ namespace SilverSim.Scripting.Lsl
 
                                                 DescriptionAttribute tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(mi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
-                                                string avail = "Supported for";
+                                                StringBuilder avail = new StringBuilder("Supported for");
                                                 if ((level.Flags & APIFlags.LSL) != APIFlags.None)
                                                 {
-                                                    avail += " LSL";
+                                                    avail.Append(" LSL");
                                                 }
                                                 if ((level.Flags & APIFlags.ASSL) != APIFlags.None)
                                                 {
-                                                    avail += " ASSL";
+                                                    avail.Append(" ASSL");
                                                 }
                                                 if ((level.Flags & APIFlags.OSSL) != APIFlags.None)
                                                 {
-                                                    avail += " OSSL";
+                                                    avail.Append(" OSSL");
                                                 }
                                                 foreach(APIExtensionAttribute ext in apiExtensionAttrs)
                                                 {
-                                                    avail += " " + ext.Extension;
+                                                    avail.Append(" ");
+                                                    avail.Append(ext.Extension);
                                                 }
 
                                                 if (tooltip != null)
                                                 {
-                                                    writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
+                                                    writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail.ToString());
                                                 }
                                                 else
                                                 {
-                                                    writer.WriteNamedValue("string", t.Name + "\\n" + avail);
+                                                    writer.WriteNamedValue("string", t.Name + "\\n" + avail.ToString());
                                                 }
                                             }
                                             writer.WriteEndElement();

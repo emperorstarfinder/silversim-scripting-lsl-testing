@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Timers;
 using System.Xml;
 
@@ -764,20 +765,20 @@ namespace SilverSim.Scripting.Lsl
                     methodName = apiLevel.Name;
                 }
 
-                string funcSignature = methodName + "(";
+                StringBuilder funcSignature = new StringBuilder("Script called unimplemented function " + methodName + "(");
 
                 ParameterInfo[] pi = mb.GetParameters();
                 for (int i = 1; i < pi.Length; ++i)
                 {
                     if (i > 1)
                     {
-                        funcSignature += ", ";
+                        funcSignature.Append(", ");
                     }
-                    funcSignature = MapTypeToString(pi[i].ParameterType);
+                    funcSignature.Append(MapTypeToString(pi[i].ParameterType));
                 }
-                funcSignature += ")";
+                funcSignature.Append(")");
 
-                ShoutError("Script called unimplemented function " + funcSignature);
+                ShoutError(funcSignature.ToString());
             }
         }
 
