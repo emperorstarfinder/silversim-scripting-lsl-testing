@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 {
@@ -88,13 +89,14 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             {
                 return "";
             }
-            drawList += "FillPolygon " + x[0].AsReal.ToString() + "," + y[0].AsReal.ToString();
+            StringBuilder drawBuild = new StringBuilder(drawList);
+            drawBuild.AppendFormat("FillPolygon {0},{1}", x[0].AsReal.ToString(), y[0].AsReal.ToString());
             for (int i = 1; i < xCount; i++)
             {
-                drawList += "," + x[i].AsReal.ToString() + "," + y[i].AsReal.ToString();
+                drawBuild.AppendFormat(",{0},{1}", x[i].AsReal.ToString(), y[i].AsReal.ToString());
             }
-            drawList += ";";
-            return drawList;
+            drawBuild.Append(";");
+            return drawBuild.ToString();
         }
 
         [APILevel(APIFlags.OSSL, "osDrawPolygon")]
@@ -105,13 +107,14 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             {
                 return "";
             }
-            drawList += "Polygon " + x[0].AsReal.ToString() + "," + y[0].AsReal.ToString();
+            StringBuilder drawBuild = new StringBuilder(drawList);
+            drawBuild.AppendFormat("Polygon {0},{1}", x[0].AsReal.ToString(), y[0].AsReal.ToString());
             for (int i = 1; i < xCount; i++)
             {
-                drawList += "," + x[i].AsReal.ToString() + "," + y[i].AsReal.ToString();
+                drawBuild.AppendFormat(",{0},{1}", x[i].AsReal.ToString(), y[i].AsReal.ToString());
             }
-            drawList += ";";
-            return drawList;
+            drawBuild.AppendFormat(";");
+            return drawBuild.ToString();
         }
 
         [APILevel(APIFlags.OSSL, "osSetFontSize")]

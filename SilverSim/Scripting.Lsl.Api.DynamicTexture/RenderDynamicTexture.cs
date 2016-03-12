@@ -458,9 +458,6 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                                         drawFont = newFont;
                                     }
                                     break;
-
-                                default:
-                                    break;
                             }
                         }
                     }
@@ -555,8 +552,6 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     case "flat":
                         drawPen.EndCap = LineCap.Flat;
                         break;
-                    default:
-                        break;
                 }
             }
             if (start)
@@ -574,8 +569,6 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         break;
                     case "flat":
                         drawPen.StartCap = LineCap.Flat;
-                        break;
-                    default:
                         break;
                 }
             }

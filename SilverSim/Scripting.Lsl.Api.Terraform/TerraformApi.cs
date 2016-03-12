@@ -141,11 +141,18 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
 
                     switch (level)
                     {
-                        case 0: scene.RegionSettings.TerrainTexture1 = textureID; break;
-                        case 1: scene.RegionSettings.TerrainTexture2 = textureID; break;
-                        case 2: scene.RegionSettings.TerrainTexture3 = textureID; break;
-                        case 3: scene.RegionSettings.TerrainTexture4 = textureID; break;
-                        default: break;
+                        case 0:
+                            scene.RegionSettings.TerrainTexture1 = textureID;
+                            break;
+                        case 1:
+                            scene.RegionSettings.TerrainTexture2 = textureID;
+                            break;
+                        case 2:
+                            scene.RegionSettings.TerrainTexture3 = textureID;
+                            break;
+                        case 3:
+                            scene.RegionSettings.TerrainTexture4 = textureID;
+                            break;
                     }
                     scene.TriggerRegionSettingsChanged();
                 }
