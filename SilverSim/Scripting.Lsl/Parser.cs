@@ -2,9 +2,11 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Scripting.Common;
+using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -33,7 +35,7 @@ namespace SilverSim.Scripting.Lsl
         public void ReadPass1(List<string> args)
         {
             char c;
-            string token = string.Empty;
+            StringBuilder token = new StringBuilder();
             Begin();
             args.Clear();
             bool is_preprocess = false;
@@ -71,7 +73,7 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
                         if(args.Count == 0)
                         {
@@ -91,7 +93,7 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
                         if (args.Count == 0)
                         {
@@ -107,7 +109,7 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
                         if (args.Count == 0)
                         {
@@ -127,30 +129,30 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
                         MarkBeginOfLine();
-                        token = string.Empty;
+                        token.Clear();
                         do
                         {
                             if (c == '\\')
                             {
-                                token += c.ToString();
+                                token.Append(c);
                                 c = ReadC();
-                                token += c.ToString();
+                                token.Append(c);
                             }
                             else
                             {
-                                token += c.ToString();
+                                token.Append(c);
                             }
                             c = ReadC();
                         } while(c != '\"');
-                        token += "\"";
+                        token.Append("\"");
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
-                        token = string.Empty;
+                        token.Clear();
                         break;
             
                     case '\'':      /* string literal */
@@ -160,30 +162,30 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
                         MarkBeginOfLine();
-                        token = string.Empty;
+                        token.Clear();
                         do
                         {
                             if (c == '\\')
                             {
-                                token += c.ToString();
+                                token.Append(c);
                                 c = ReadC();
-                                token += c.ToString();
+                                token.Append(c);
                             }
                             else
                             {
-                                token += c.ToString();
+                                token.Append(c);
                             }
                             c = ReadC();
                         } while(c != '\'');
-                        token += "\'";
+                        token.Append("\'");
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
-                        token = string.Empty;
+                        token.Clear();
                         break;
 
                     case '@':
@@ -201,9 +203,9 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token);
+                            args.Add(token.ToString());
                         }
-                        token = string.Empty;
+                        token.Clear();
                         if (args.Count == 0)
                         {
                             MarkBeginOfLine();
@@ -235,25 +237,25 @@ redo:
                             /* preprocessor literal */
                             if (0 != token.Length)
                             {
-                                args.Add(token);
+                                args.Add(token.ToString());
                             }
                             if (args.Count == 0)
                             {
                                 MarkBeginOfLine();
                             }
-                            token = string.Empty;
+                            token.Clear();
                             c = '\"';
                             do
                             {
-                                token += c.ToString();
+                                token.Append(c);
                                 c = ReadC();
                             } while(c != '>');
-                            token += "\"";
+                            token.Append("\"");
                             if (0 != token.Length)
                             {
-                                args.Add(token);
+                                args.Add(token.ToString());
                             }
-                            token = string.Empty;
+                            token.Clear();
                             break;
                         }
                         /* fall-through since it is a special case only in preprocessor handling */
@@ -265,8 +267,8 @@ redo:
                         {
                             if(0 != token.Length)
                             {
-                                args.Add(token);
-                                token = string.Empty;
+                                args.Add(token.ToString());
+                                token.Clear();
                             }
                         }
                         else
@@ -282,8 +284,7 @@ redo:
                             MarkBeginOfLine();
                             while (!IsLSLWhitespace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
-                                token += c.ToString();
-
+                                token.Append(c);
                                 if(token.EndsWith("//"))
                                 {
                                     /* got C++-style comment */
@@ -303,7 +304,7 @@ redo:
                                             throw;
                                         }
                                     }
-                                    token = token.Substring(0, token.Length - 2);
+                                    token.Remove(token.Length - 2, 2);
                                     c = ' ';
                                     goto redo;
                                 }
@@ -351,7 +352,7 @@ redo:
                                         }
                                     }
 
-                                    token = token.Substring(0, token.Length - 2);
+                                    token.Remove(token.Length - 2, 2);
                                     c = ' ';
                                     goto redo;
                                 }
@@ -364,14 +365,14 @@ redo:
                                 {
                                     if(token.Length != 0)
                                     {
-                                        args.Add(token);
+                                        args.Add(token.ToString());
                                         return;
                                     }
                                     throw;
                                 }
                             }
-                            args.Add(token);
-                            token = string.Empty;
+                            args.Add(token.ToString());
+                            token.Clear();
                             goto redo;
                         }
                         break;
