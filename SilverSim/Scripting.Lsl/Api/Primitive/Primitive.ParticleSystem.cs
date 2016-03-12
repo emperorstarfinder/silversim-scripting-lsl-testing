@@ -115,8 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         static float ValidParticleScale(double value)
         {
-            value = value.Clamp(0f, 4f);
-            return (float)value;
+            return (float)value.Clamp(0f, 4f);
         }
 
         [APILevel(APIFlags.LSL, "llLinkParticleSystem")]
