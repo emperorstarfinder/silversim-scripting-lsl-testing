@@ -189,6 +189,9 @@ namespace SilverSim.Scripting.Lsl
                                     case "z":
                                         st.Value = new Tree.ConstantValueFloat(((ConstantValueVector)st.SubTree[0].Value).Value.Z);
                                         break;
+
+                                    default:
+                                        break;
                                 }
                             }
                             break;
@@ -1005,6 +1008,9 @@ namespace SilverSim.Scripting.Lsl
                                     }
                                 }
                                 break;
+
+                            default:
+                                break;
                         }
                     }
                 }
@@ -1291,6 +1297,9 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.OperatorLeftUnary:
                             case Tree.EntryType.OperatorRightUnary:
                                 enumeratorStack.Add(elem);
+                                break;
+
+                            default:
                                 break;
                         }
                         continue;
