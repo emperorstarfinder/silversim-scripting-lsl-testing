@@ -305,6 +305,9 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                                 res.Add(type);
                                 res.Add(skyData.SunMoonPosition);
                                 break;
+
+                            default:
+                                break;
                         }
                     }
                 }

@@ -187,6 +187,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             ev.Data = "0";
                             instance.PostEvent(ev);
                             break;
+
+                        default:
+                            break;
                     }
 
                     return queryid;
@@ -226,6 +229,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             ev.QueryID = queryid;
                             ev.Data = "0";
                             instance.PostEvent(ev);
+                            break;
+
+                        default:
                             break;
                     }
                     return queryid;

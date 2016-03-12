@@ -90,6 +90,9 @@ namespace SilverSim.Scripting.Lsl.Api.KeyframedMotion
                         case KFM_CMD_STOP:
                             grp.StopKeyframedMotion();
                             break;
+
+                        default:
+                            break;
                     }
                 }
                 else if(options.Count % 2 == 0)

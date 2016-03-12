@@ -296,6 +296,9 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                             case PARCEL_MEDIA_COMMAND_AUTO_ALIGN:
                                 res.Add(parcelInfo.MediaAutoScale ? 1 : 0);
                                 break;
+
+                            default:
+                                break;
                         }
                     }
                 }

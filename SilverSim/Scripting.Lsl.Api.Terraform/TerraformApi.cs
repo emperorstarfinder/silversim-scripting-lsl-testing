@@ -153,6 +153,9 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                         case 3:
                             scene.RegionSettings.TerrainTexture4 = textureID;
                             break;
+
+                        default:
+                            break;
                     }
                     scene.TriggerRegionSettingsChanged();
                 }
