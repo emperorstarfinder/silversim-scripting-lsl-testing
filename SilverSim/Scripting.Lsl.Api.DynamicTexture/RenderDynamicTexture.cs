@@ -518,7 +518,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
         static void PenCap(Pen drawPen, string cmdLine)
         {
-            bool start = true, end = true;
+            bool start = true;
+            bool end = true;
+
             cmdLine = cmdLine.Remove(0, 6).Trim();
             string[] cap = cmdLine.Split(PartsDelimiter);
             if(cap.Length < 2)

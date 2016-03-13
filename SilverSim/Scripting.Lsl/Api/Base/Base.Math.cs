@@ -134,7 +134,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRot2Euler")]
         public Vector3 Rot2Euler(ScriptInstance instance, Quaternion q)
         {
-            double roll, pitch, yaw;
+            double roll;
+            double pitch;
+            double yaw;
 
             q.GetEulerAngles(out roll, out pitch, out yaw);
             return new Vector3(roll, pitch, yaw);
@@ -242,7 +244,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
         public Vector3 Rot2Fwd(ScriptInstance instance, Quaternion r)
         {
-            double x, y, z, sq;
+            double x;
+            double y;
+            double z;
+            double sq;
+
             sq = r.LengthSquared;
             if(Math.Abs(1.0 - sq) > Double.Epsilon)
             {
@@ -262,7 +268,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRot2Left")]
         public Vector3 Rot2Left(ScriptInstance instance, Quaternion r)
         {
-            double x, y, z, sq;
+            double x;
+            double y;
+            double z;
+            double sq;
 
             sq = r.LengthSquared;
             if (Math.Abs(1.0 - sq) > Double.Epsilon)
@@ -283,7 +292,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRot2Up")]
         public Vector3 Rot2Up(ScriptInstance instance, Quaternion r)
         {
-            double x, y, z, sq;
+            double x;
+            double y;
+            double z;
+            double sq;
 
             sq = r.LengthSquared;
             if (Math.Abs(1.0 - sq) > Double.Epsilon)
