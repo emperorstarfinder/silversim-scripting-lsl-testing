@@ -26,7 +26,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.LSL, "transaction_result")]

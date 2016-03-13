@@ -22,6 +22,7 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
 
         public void Startup(ConfigurationLoader loader)
         {
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.OSSL)]

@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
         public void Startup(ConfigurationLoader loader)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.OSSL, "osMovePen")]

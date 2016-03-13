@@ -121,7 +121,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
         [APILevel(APIFlags.OSSL, "osTerrainFlush")]
         public void TerrainFlush(ScriptInstance instance)
         {
-
+            /* intentionally left empty */
         }
 
         [APILevel(APIFlags.OSSL, "osSetTerrainTexture")]

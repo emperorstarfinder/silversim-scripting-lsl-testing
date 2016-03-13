@@ -153,13 +153,14 @@ namespace SilverSim.Scripting.Lsl
 
         public void Startup(ConfigurationLoader loader)
         {
+            /* intentionally left empty */
         }
 
         public ShutdownOrder ShutdownOrder
         {
             get
             {
-                return Main.Common.ShutdownOrder.LogoutRegion;
+                return ShutdownOrder.LogoutRegion;
             }
         }
 
