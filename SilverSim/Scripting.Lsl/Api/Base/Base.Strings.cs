@@ -104,7 +104,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llInsertString")]
-        public string llInsertString(ScriptInstance instance, string dest, int index, string src)
+        public string InsertString(ScriptInstance instance, string dest, int index, string src)
         {
             if (index < 0)
             {
