@@ -296,8 +296,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                      new Types.Primitive.PrimitiveMedia.Entry() :
                      mediaList[face];
 
-                int i, v;
-                for (i = 0; i < param.Count; i += 2)
+                int v;
+                for (int i = 0; i < param.Count; i += 2)
                 {
                     switch(param[i].AsInt)
                     {

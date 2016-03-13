@@ -317,9 +317,11 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         {   /* for(a;b;c) */
-                            int semicolon1, semicolon2;
+                            int semicolon1;
+                            int semicolon2;
                             int endoffor;
                             int countparens = 0;
+
                             for (endoffor = 0; endoffor <= functionLine.Line.Count; ++endoffor)
                             {
                                 if (functionLine.Line[endoffor] == ")")
