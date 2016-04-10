@@ -63,13 +63,13 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
-            instance.Part.ObjectGroup.SetVehicleFlags = (VehicleFlags)flags;
+            instance.Part.ObjectGroup.SetVehicleFlags((VehicleFlags)flags);
         }
 
         [APILevel(APIFlags.LSL, "llRemoveVehicleFlags")]
         public void RemoveVehicleFlags(ScriptInstance instance, int flags)
         {
-            instance.Part.ObjectGroup.ClearVehicleFlags = (VehicleFlags)flags;
+            instance.Part.ObjectGroup.ClearVehicleFlags((VehicleFlags)flags);
         }
 
         [APILevel(APIFlags.LSL)]

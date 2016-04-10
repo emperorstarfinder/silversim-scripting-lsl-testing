@@ -50,9 +50,9 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     return;
                 }
                 
-                physobj.AppliedTorque = (local != 0) ?
+                physobj.SetAppliedTorque((local != 0) ?
                     torque / instance.Part.ObjectGroup.GlobalRotation :
-                    torque;
+                    torque);
             }
         }
 
@@ -98,9 +98,9 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     return;
                 }
 
-                physobj.AppliedForce = (local != 0) ?
+                physobj.SetAppliedForce((local != 0) ?
                     force / instance.Part.ObjectGroup.GlobalRotation :
-                    force;
+                    force);
             }
         }
 
@@ -119,18 +119,18 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
 
                 if (force == Vector3.Zero || torque == Vector3.Zero)
                 {
-                    physobj.AppliedTorque = Vector3.Zero;
-                    physobj.AppliedForce = Vector3.Zero;
+                    physobj.SetAppliedTorque(Vector3.Zero);
+                    physobj.SetAppliedForce(Vector3.Zero);
                 }
                 else if(local != 0)
                 {
-                    physobj.AppliedForce = force / thisGroup.GlobalRotation;
-                    physobj.AppliedTorque = torque / thisGroup.GlobalRotation;
+                    physobj.SetAppliedForce(force / thisGroup.GlobalRotation);
+                    physobj.SetAppliedTorque(torque / thisGroup.GlobalRotation);
                 }
                 else
                 {
-                    physobj.AppliedForce = force;
-                    physobj.AppliedTorque = torque;
+                    physobj.SetAppliedForce(force);
+                    physobj.SetAppliedTorque(torque);
                 }
             }
         }
