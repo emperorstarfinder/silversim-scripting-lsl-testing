@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 {
                     ConsoleCommandTTY tty = new ConsoleCommandTTY();
                     List<string> args = tty.GetCmdLine(cmd);
-                    CommandRegistry.ExecuteCommand(args, tty, scene.ID);
+                    m_Commands.ExecuteCommand(args, tty, scene.ID);
                     return tty.OutputBuffer;
                 }
                 else

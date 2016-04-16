@@ -41,6 +41,8 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
         [Description("Remove the agent from this estate's Banned residents list.")]
         public const int ESTATE_ACCESS_BANNED_AGENT_REMOVE = 0x80;
 
+        SceneList m_Scenes;
+
         public EstateApi()
         {
 
@@ -48,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
         public void Startup(ConfigurationLoader loader)
         {
-            /* intentionally left empty */
+            m_Scenes = loader.Scenes;
         }
 
         [APILevel(APIFlags.OSSL, "osSetEstateSunSettings")]
@@ -81,7 +83,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                     foreach(UUID regionID in estateService.RegionMap[estateID])
                     {
                         SceneInterface estateScene;
-                        if(SceneManager.Scenes.TryGetValue(regionID, out estateScene))
+                        if(m_Scenes.TryGetValue(regionID, out estateScene))
                         {
                             estateScene.TriggerEstateUpdate();
                         }

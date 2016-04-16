@@ -523,6 +523,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         }
 
         readonly RwLockedDictionary<UUID, SceneInfo> m_Scenes = new RwLockedDictionary<UUID, SceneInfo>();
+        SceneList m_SceneList;
 
         public SensorApi()
         {
@@ -531,14 +532,15 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
         public void Startup(ConfigurationLoader loader)
         {
-            SceneManager.Scenes.OnRegionAdd += Scenes_OnRegionAdd;
-            SceneManager.Scenes.OnRegionRemove += Scenes_OnRegionRemove;
+            m_SceneList = loader.Scenes;
+            m_SceneList.OnRegionAdd += Scenes_OnRegionAdd;
+            m_SceneList.OnRegionRemove += Scenes_OnRegionRemove;
         }
 
         public void Shutdown()
         {
-            SceneManager.Scenes.OnRegionAdd -= Scenes_OnRegionAdd;
-            SceneManager.Scenes.OnRegionRemove -= Scenes_OnRegionRemove;
+            m_SceneList.OnRegionAdd -= Scenes_OnRegionAdd;
+            m_SceneList.OnRegionRemove -= Scenes_OnRegionRemove;
         }
 
         public ShutdownOrder ShutdownOrder

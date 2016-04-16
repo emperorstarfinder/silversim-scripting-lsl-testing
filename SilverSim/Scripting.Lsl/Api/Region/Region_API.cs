@@ -2,6 +2,8 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Main.Common.CmdIO;
+using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Script;
 using System.ComponentModel;
 
@@ -48,6 +50,8 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         public const int REGION_FLAGS_BLOCK_PARCEL_SEARCH = 0x20000000;
         public const int REGION_FLAGS_DENY_AGEUNVERIFIED = 0x40000000;
 
+        CommandRegistry m_Commands;
+
         public RegionApi()
         {
             /* intentionally left empty */
@@ -55,7 +59,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         public void Startup(ConfigurationLoader loader)
         {
-            /* intentionally left empty */
+            m_Commands = loader.CommandRegistry;
         }
     }
 }

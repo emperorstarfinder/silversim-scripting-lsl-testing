@@ -179,7 +179,7 @@ namespace SilverSim.Scripting.Lsl
         public void AddPlugins(ConfigurationLoader loader)
         {
             loader.AddPlugin("LSLHTTP", new LSLHTTP());
-            loader.AddPlugin("LSLHttpClient", new LSLHTTPClient_RequestQueue());
+            loader.AddPlugin("LSLHttpClient", new LSLHTTPClient_RequestQueue(loader.Scenes));
             Type[] types = GetType().Assembly.GetTypes();
             foreach (Type type in types)
             {

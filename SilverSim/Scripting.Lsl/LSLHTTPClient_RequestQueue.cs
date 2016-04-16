@@ -45,11 +45,13 @@ namespace SilverSim.Scripting.Lsl
         }
 
         readonly RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>> m_RequestQueues = new RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>>();
+        readonly SceneList m_Scenes;
 
-        public LSLHTTPClient_RequestQueue()
+        public LSLHTTPClient_RequestQueue(SceneList scenes)
         {
-            SceneManager.Scenes.OnRegionAdd += RegionAdded;
-            SceneManager.Scenes.OnRegionRemove += RegionRemoved;
+            m_Scenes = scenes;
+            scenes.OnRegionAdd += RegionAdded;
+            scenes.OnRegionRemove += RegionRemoved;
         }
 
         void RegionRemoved(SceneInterface scene)
@@ -132,7 +134,7 @@ namespace SilverSim.Scripting.Lsl
                     e.Status = 499;
                 }
                 SceneInterface scene;
-                if(!SceneManager.Scenes.TryGetValue(req.SceneID, out scene))
+                if(!m_Scenes.TryGetValue(req.SceneID, out scene))
                 {
                     continue;
                 }

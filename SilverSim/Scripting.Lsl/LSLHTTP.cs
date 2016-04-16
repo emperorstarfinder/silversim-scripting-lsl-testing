@@ -29,6 +29,7 @@ namespace SilverSim.Scripting.Lsl
         BaseHttpServer m_HttpsServer;
         readonly Timer m_HttpTimer;
         int m_TotalUrls = 15000;
+        SceneList m_Scenes;
 
         public int TotalUrls
         {
@@ -113,6 +114,7 @@ namespace SilverSim.Scripting.Lsl
 
         public void Startup(ConfigurationLoader loader)
         {
+            m_Scenes = loader.Scenes;
             m_HttpServer = loader.HttpServer;
             m_HttpServer.StartsWithUriHandlers.Add("/lslhttp/", LSLHttpRequestHandler);
             try
@@ -278,7 +280,7 @@ namespace SilverSim.Scripting.Lsl
 
             try
             {
-                SceneInterface scene = SceneManager.Scenes[urlData.SceneID];
+                SceneInterface scene = m_Scenes[urlData.SceneID];
                 ObjectPart part = scene.Primitives[urlData.ItemID];
                 ObjectPartInventoryItem item = part.Inventory[urlData.ItemID];
                 ScriptInstance instance = item.ScriptInstance;
