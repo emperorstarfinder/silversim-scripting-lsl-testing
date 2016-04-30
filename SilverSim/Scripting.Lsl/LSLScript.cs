@@ -2066,6 +2066,12 @@ namespace SilverSim.Scripting.Lsl
                 throw new ResetScriptException();
             });
 
+            StateEventHandlers.Add(typeof(ItemSoldEvent), delegate (Script script, IScriptEvent ev)
+            {
+                ItemSoldEvent e = (ItemSoldEvent)ev;
+                script.InvokeStateEvent("item_sold", e.Agent.FullName, new LSLKey(e.Agent.ID), e.ObjectName, new LSLKey(e.ObjectID));
+            });
+
             StateEventHandlers.Add(typeof(SensorEvent), HandleSensor);
             StateEventHandlers.Add(typeof(RuntimePermissionsEvent), HandleRuntimePermissions);
             StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
