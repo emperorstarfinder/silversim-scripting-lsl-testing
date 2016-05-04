@@ -495,11 +495,7 @@ namespace SilverSim.Scripting.Lsl
             else if (toType == typeof(int))
             {
                 /* yes, we need special handling for conversion of string to integer or float to integer. (see section about Integer Overflow) */
-                if (fromType == typeof(string))
-                {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
-                }
-                else if (fromType == typeof(double))
+                if (fromType == typeof(string) || fromType == typeof(double))
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
                 }

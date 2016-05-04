@@ -470,24 +470,14 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                 compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
 
-                if(m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(double))
+                if((m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(double)) ||
+                    (m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(Quaternion)) ||
+                    (m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(double)))
                 {
-
+                    /* three combined cases */
                 }
-                else if (m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(Quaternion))
-                {
-
-                }
-                else if (m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(double))
-                {
-
-                }
-                else if(m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(int))
-                {
-                    ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
-                    m_RightHandType = typeof(double);
-                }
-                else if(m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(int))
+                else if((m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(int)) ||
+                    (m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(int)))
                 {
                     ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
                     m_RightHandType = typeof(double);

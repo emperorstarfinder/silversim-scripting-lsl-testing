@@ -233,7 +233,7 @@ namespace SilverSim.Scripting.Lsl
                         args = args.GetRange(eocf + 1, args.Count - eocf - 1);
                     }
                 }
-                else if (args[0] == "else")
+                else if (args[0] == "else" || args[0] == "do")
                 {
                     if (args[1] == "{")
                     {
@@ -248,40 +248,7 @@ namespace SilverSim.Scripting.Lsl
                         args = args.GetRange(1, args.Count - 1);
                     }
                 }
-                else if (args[0] == "do")
-                {
-                    if (args[1] == "{")
-                    {
-                        block.Add(new LineInfo(args, lineNumber));
-                        ParseBlock(compileState, p, block, inState, true);
-                        return;
-                    }
-                    else
-                    {
-                        List<string> controlflow = args.GetRange(0, 1);
-                        block.Add(new LineInfo(controlflow, lineNumber));
-
-                        args = args.GetRange(1, args.Count - 1);
-                    }
-                }
-                else if (args[0] == "if")
-                {
-                    int eocf = FindEndOfControlFlow(args, lineNumber);
-                    /* make it a block */
-                    if (args[eocf + 1] == "{")
-                    {
-                        block.Add(new LineInfo(args, lineNumber));
-                        ParseBlock(compileState, p, block, inState, true);
-                        return;
-                    }
-                    else
-                    {
-                        List<string> controlflow = args.GetRange(0, eocf + 1);
-                        block.Add(new LineInfo(controlflow, lineNumber));
-                        args = args.GetRange(eocf + 1, args.Count - eocf - 1);
-                    }
-                }
-                else if (args[0] == "for" || args[0] == "while")
+                else if (args[0] == "if" || args[0] == "for" || args[0] == "while")
                 {
                     int eocf = FindEndOfControlFlow(args, lineNumber);
                     /* make it a block */
