@@ -77,6 +77,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int OBJECT_CLICK_ACTION = 28;
         [APILevel(APIFlags.LSL)]
         public const int OBJECT_OMEGA = 29;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_PRIM_COUNT = 30;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_TOTAL_INVENTORY_COUNT = 31;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_REZZER_KEY = 32;
 
         [APILevel(APIFlags.LSL)]
         public const int OPT_OTHER = -1;
@@ -157,10 +163,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                ObjectGroup obj;
-                if (!instance.Part.ObjectGroup.Scene.ObjectGroups.TryGetValue(key.AsUUID, out obj))
+                ObjectPart obj;
+                if (!instance.Part.ObjectGroup.Scene.Primitives.TryGetValue(key.AsUUID, out obj))
                 {
-                    return obj.Count;
+                    ObjectGroup grp = obj.ObjectGroup;
+                    if(null != grp)
+                    {
+                        if(grp.IsAttached)
+                        {
+                            return 0;
+                        }
+                        else
+                        {
+                            return grp.Count;
+                        }
+                    }
                 }
                 return 0;
             }
