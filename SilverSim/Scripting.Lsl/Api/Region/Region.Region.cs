@@ -648,6 +648,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 case "region_idle":
                     return "0";
 
+                case "region_size_x":
+                    return instance.Part.ObjectGroup.Scene.GetRegionInfo().Size.X.ToString();
+
+                case "region_size_y":
+                    return instance.Part.ObjectGroup.Scene.GetRegionInfo().Size.Y.ToString();
+
                 case "region_product_name":
                     return instance.Part.ObjectGroup.Scene.ProductName;
 
