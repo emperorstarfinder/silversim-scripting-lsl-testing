@@ -433,7 +433,7 @@ namespace SilverSim.Scripting.Lsl
 
                     using (MD5 md5 = MD5.Create())
                     {
-                        LSLSyntaxFile = ms.GetBuffer();
+                        LSLSyntaxFile = ms.ToArray();
                         byte[] hash = md5.ComputeHash(LSLSyntaxFile);
                         LSLSyntaxId = new UUID(hash, 0);
                     }

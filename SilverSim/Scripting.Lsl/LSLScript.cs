@@ -375,7 +375,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     ToXml(writer);
                 }
-                return ms.GetBuffer();
+                return ms.ToArray();
             }
         }
 
