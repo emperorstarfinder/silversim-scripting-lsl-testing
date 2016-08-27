@@ -73,19 +73,17 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
 
         readonly RwLockedDictionary<UUID, int> m_MaxListenerHandleParams = new RwLockedDictionary<UUID, int>();
 
-        public void TriggerParameterUpdated(UUID regionID, string parametername, string value)
+        [ServerParam("LSL.MaxListenersPerScript")]
+        public void MaxListenersPerScriptUpdated(UUID regionID, string value)
         {
-            if (parametername == "LSL.MaxListenersPerScript")
+            int intval;
+            if (value.Length == 0)
             {
-                int intval;
-                if (value.Length == 0)
-                {
-                    m_MaxListenerHandleParams.Remove(regionID);
-                }
-                else if (int.TryParse(value, out intval))
-                {
-                    m_MaxListenerHandleParams[regionID] = intval;
-                }
+                m_MaxListenerHandleParams.Remove(regionID);
+            }
+            else if (int.TryParse(value, out intval))
+            {
+                m_MaxListenerHandleParams[regionID] = intval;
             }
         }
     }
