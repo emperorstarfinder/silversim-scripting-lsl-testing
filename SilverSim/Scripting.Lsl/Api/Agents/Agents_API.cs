@@ -513,7 +513,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osAgentSaveAppearance", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osAgentSaveAppearance", Script.ThreatLevelType.VeryHigh);
                 return SaveAppearance(instance, agentId.AsUUID, notecard);
             }
         }
@@ -523,7 +523,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osOwnerSaveAppearance", ScriptInstance.ThreatLevelType.High);
+                ((Script)instance).CheckThreatLevel("osOwnerSaveAppearance", Script.ThreatLevelType.High);
                 return SaveAppearance(instance, instance.Part.Owner.ID, notecard);
             }
         }
@@ -549,7 +549,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock(instance)
             {
-                instance.CheckThreatLevel("osForceOtherSit", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osForceOtherSit", Script.ThreatLevelType.VeryHigh);
             }
             throw new NotImplementedException("osForceOtherSit(key)");
         }
@@ -559,7 +559,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osForceOtherSit", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osForceOtherSit", Script.ThreatLevelType.VeryHigh);
             }
             throw new NotImplementedException("osForceOtherSit(key, key)");
         }
@@ -638,7 +638,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock(instance)
             {
-                instance.CheckThreatLevel("osGetAgentIP", ScriptInstance.ThreatLevelType.High);
+                ((Script)instance).CheckThreatLevel("osGetAgentIP", Script.ThreatLevelType.High);
 
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(key.AsUUID, out agent))
@@ -654,7 +654,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osGetAvatarHomeURI", ScriptInstance.ThreatLevelType.Low);
+                ((Script)instance).CheckThreatLevel("osGetAvatarHomeURI", Script.ThreatLevelType.Low);
 
                 IAgent agent;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;

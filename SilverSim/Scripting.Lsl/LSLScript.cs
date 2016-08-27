@@ -5,10 +5,13 @@ using log4net;
 using SilverSim.Scene.ServiceInterfaces.Chat;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.ServiceInterfaces.Groups;
 using SilverSim.Threading;
 using SilverSim.Types;
+using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
@@ -2191,6 +2194,159 @@ namespace SilverSim.Scripting.Lsl
                 default:
                     break;
             }
+        }
+        #endregion
+
+        #region Threat Level System
+
+        public class Permissions
+        {
+            public readonly RwLockedList<UUI> Creators = new RwLockedList<UUI>();
+            public readonly RwLockedList<UUI> Owners = new RwLockedList<UUI>();
+            public bool IsAllowedForParcelOwner;
+            public bool IsAllowedForParcelGroupMember;
+            public bool IsAllowedForEstateOwner;
+            public bool IsAllowedForEstateManager;
+            public bool IsAllowedForRegionOwner;
+            public bool IsAllowedForEveryone;
+
+            public Permissions()
+            {
+
+            }
+        }
+
+        [SuppressMessage("Gendarme.Rules.Design", "EnumsShouldUseInt32Rule")]
+        public enum ThreatLevelType : uint
+        {
+            None = 0,
+            Nuisance = 1,
+            VeryLow = 2,
+            Low = 3,
+            Moderate = 4,
+            High = 5,
+            VeryHigh = 6,
+            Severe = 7
+        }
+
+        public const ThreatLevelType DefaultThreatLevel = ThreatLevelType.Low;
+
+        public static readonly RwLockedDictionaryAutoAdd<UUID, ThreatLevelType> ThreatLevels = new RwLockedDictionaryAutoAdd<UUID, ThreatLevelType>(delegate () { return DefaultThreatLevel; });
+
+        public static readonly RwLockedDictionaryAutoAdd<string,
+            RwLockedDictionaryAutoAdd<UUID, Permissions>> OSSLPermissions = new RwLockedDictionaryAutoAdd<string, RwLockedDictionaryAutoAdd<UUID, Permissions>>(delegate ()
+            {
+                return new RwLockedDictionaryAutoAdd<UUID, Permissions>(
+                    delegate ()
+                    {
+                        return new Permissions();
+                    });
+            });
+
+        bool TryOSSLAllowed(
+            SceneInterface scene,
+            ParcelInfo pInfo,
+            ObjectGroup objgroup,
+            UUI creator,
+            UUI owner,
+            Permissions perms)
+        {
+            if (perms.IsAllowedForEveryone)
+            {
+                return true;
+            }
+
+            if (perms.Creators.Contains(creator))
+            {
+                return true;
+            }
+
+            if (perms.Owners.Contains(owner))
+            {
+                return true;
+            }
+
+            if (perms.IsAllowedForRegionOwner && scene.Owner.EqualsGrid(owner))
+            {
+                return true;
+            }
+
+            if (null != pInfo && (perms.IsAllowedForParcelOwner || perms.IsAllowedForParcelGroupMember))
+            {
+                if (owner.EqualsGrid(pInfo.Owner) && perms.IsAllowedForParcelOwner)
+                {
+                    return true;
+                }
+
+                GroupsServiceInterface groupsService = scene.GroupsService;
+                if (groupsService != null && perms.IsAllowedForParcelGroupMember)
+                {
+                    if (groupsService.Members.ContainsKey(owner, pInfo.Group, owner))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (perms.IsAllowedForEstateOwner &&
+                objgroup.Scene.Owner.EqualsGrid(owner))
+            {
+                return true;
+            }
+
+            if (perms.IsAllowedForEstateManager)
+            {
+                if (scene.IsEstateManager(owner))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void CheckThreatLevel(string name, ThreatLevelType level)
+        {
+            Permissions perms;
+            ObjectPart part = Part;
+            ObjectGroup objgroup = part.ObjectGroup;
+            SceneInterface scene = objgroup.Scene;
+            ObjectPart rootPart = objgroup.RootPart;
+            UUI creator = rootPart.Creator;
+            UUI owner = objgroup.Owner;
+            ParcelInfo pInfo;
+
+            if((int)level <= (int)ThreatLevels[scene.ID])
+            {
+                return;
+            }
+            else if((int)level <= (int)ThreatLevels[UUID.Zero])
+            {
+                return;
+            }
+
+            if (!scene.Parcels.TryGetValue(rootPart.GlobalPosition, out pInfo))
+            {
+                pInfo = null;
+            }
+
+            RwLockedDictionaryAutoAdd<UUID, Permissions> functionPerms;
+
+            if (OSSLPermissions.TryGetValue(name, out functionPerms))
+            {
+                if (functionPerms.TryGetValue(scene.ID, out perms) &&
+                    TryOSSLAllowed(scene, pInfo, objgroup, creator, owner, perms))
+                {
+                    return;
+                }
+                if (functionPerms.TryGetValue(UUID.Zero, out perms) &&
+                    TryOSSLAllowed(scene, pInfo, objgroup, creator, owner, perms))
+                {
+                    return;
+                }
+            }
+
+            throw new InvalidOperationException(string.Format("Function {0} not allowed", name));
         }
         #endregion
     }

@@ -259,7 +259,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osTeleportAgent", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {
@@ -290,7 +290,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osTeleportAgent", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {
@@ -304,7 +304,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osTeleportAgentLandmark", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osTeleportAgentLandmark", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {
@@ -318,7 +318,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osTeleportAgent", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osTeleportAgent", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {

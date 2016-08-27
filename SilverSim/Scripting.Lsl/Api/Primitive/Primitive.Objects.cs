@@ -530,7 +530,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                instance.CheckThreatLevel(MethodBase.GetCurrentMethod().Name, ScriptInstance.ThreatLevelType.Low);
+                ((Script)instance).CheckThreatLevel(MethodBase.GetCurrentMethod().Name, Script.ThreatLevelType.Low);
 
                 IObject obj = instance.Part.ObjectGroup.Scene.Objects[objectUUID];
                 MessageObjectEvent ev = new MessageObjectEvent();

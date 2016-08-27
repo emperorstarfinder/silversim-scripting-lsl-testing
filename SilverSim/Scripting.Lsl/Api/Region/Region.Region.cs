@@ -245,7 +245,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(instance)
             {
-                instance.CheckThreatLevel("osGetSimulatorMemory", ScriptInstance.ThreatLevelType.Moderate);
+                ((Script)instance).CheckThreatLevel("osGetSimulatorMemory", Script.ThreatLevelType.Moderate);
                 long pws = Process.GetCurrentProcess().WorkingSet64;
                 if(pws > Int32.MaxValue)
                 {
@@ -680,7 +680,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(instance)
             {
-                instance.CheckThreatLevel("osRegionNotice", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osRegionNotice", Script.ThreatLevelType.VeryHigh);
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 foreach(IAgent agent in scene.RootAgents)

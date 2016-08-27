@@ -45,7 +45,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 if (UUID.Zero != prim)
                 {
-                    instance.CheckThreatLevel(MethodBase.GetCurrentMethod().Name, ScriptInstance.ThreatLevelType.High);
+                    ((Script)instance).CheckThreatLevel(MethodBase.GetCurrentMethod().Name, Script.ThreatLevelType.High);
                 }
 
                 ObjectPart part;

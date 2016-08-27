@@ -367,7 +367,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         {
             lock(instance)
             {
-                instance.CheckThreatLevel("osSetParcelDetails", ScriptInstance.ThreatLevelType.High);
+                ((Script)instance).CheckThreatLevel("osSetParcelDetails", Script.ThreatLevelType.High);
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 ParcelInfo pInfo;
 

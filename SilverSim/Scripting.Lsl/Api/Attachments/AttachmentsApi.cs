@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osForceAttachToOtherAvatarFromInventory", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osForceAttachToOtherAvatarFromInventory", Script.ThreatLevelType.VeryHigh);
                 throw new NotImplementedException("osForceAttachToOtherAvatarFromInventory(key, string, integer)");
             }
         }

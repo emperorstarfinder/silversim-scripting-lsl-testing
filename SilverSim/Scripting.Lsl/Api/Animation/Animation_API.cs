@@ -75,7 +75,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osAvatarPlayAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osAvatarPlayAnimation", Script.ThreatLevelType.VeryHigh);
                 StartAnimation(instance, avatar.AsUUID, animation, "osAvatarPlayAnimation");
             }
         }
@@ -91,7 +91,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osNpcPlayAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osNpcPlayAnimation", Script.ThreatLevelType.VeryHigh);
                 StartAnimation(instance, avatar.AsUUID, animation, "osNpcPlayAnimation");
             }
         }
@@ -143,7 +143,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osAvatarStopAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osAvatarStopAnimation", Script.ThreatLevelType.VeryHigh);
                 StopAnimation(instance, avatar.AsUUID, animation, "osAvatarStopAnimation");
             }
         }
@@ -159,7 +159,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osNpcStopAnimation", ScriptInstance.ThreatLevelType.VeryHigh);
+                ((Script)instance).CheckThreatLevel("osNpcStopAnimation", Script.ThreatLevelType.VeryHigh);
                 StopAnimation(instance, avatar.AsUUID, animation, "osNpcStopAnimation");
             }
         }

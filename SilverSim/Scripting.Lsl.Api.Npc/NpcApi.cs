@@ -51,7 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         {
             lock(instance)
             {
-                instance.CheckThreatLevel("osNpcCreate", ScriptInstance.ThreatLevelType.High);
+                ((Script)instance).CheckThreatLevel("osNpcCreate", Script.ThreatLevelType.High);
             }
             throw new NotImplementedException("osNpcCreate(string, string, vector, string)");
         }
@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.Lsl.Api.Npc
         {
             lock (instance)
             {
-                instance.CheckThreatLevel("osNpcCreate", ScriptInstance.ThreatLevelType.High);
+                ((Script)instance).CheckThreatLevel("osNpcCreate", Script.ThreatLevelType.High);
             }
             throw new NotImplementedException("osNpcCreate(string, string, vector, string, integer)");
         }
