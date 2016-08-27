@@ -9,6 +9,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Threading;
 using SilverSim.Types;
 using System;
@@ -23,13 +24,28 @@ namespace SilverSim.Scripting.Lsl
 {
     [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
     [Description("LSL HTTP Server Support")]
-    public sealed class LSLHTTP : IPlugin, IPluginShutdown
+    [ServerParam("LSL.MaxURLs")]
+    public sealed class LSLHTTP : IPlugin, IPluginShutdown, IServerParamListener
     {
         BaseHttpServer m_HttpServer;
         BaseHttpServer m_HttpsServer;
         readonly Timer m_HttpTimer;
         int m_TotalUrls = 15000;
         SceneList m_Scenes;
+
+        [ServerParam("LSL.MaxURLs")]
+        public void MaxURLsUpdated(UUID regionID, string value)
+        {
+            int intval;
+            if (value.Length == 0)
+            {
+                m_TotalUrls = 15000;
+            }
+            else if (int.TryParse(value, out intval))
+            {
+                m_TotalUrls = intval;
+            }
+        }
 
         public int TotalUrls
         {
@@ -171,6 +187,10 @@ namespace SilverSim.Scripting.Lsl
         {
             get
             {
+                if(m_TotalUrls < UsedUrls)
+                {
+                    return 0;
+                }
                 return m_TotalUrls - UsedUrls;
             }
         }
