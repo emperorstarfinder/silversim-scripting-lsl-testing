@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
+using OpenJp2.Net;
 using System.IO;
 
 namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
@@ -17,14 +18,14 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
     {
         const string DefaultFontName = "Arial";
 
-        public static AssetData ToTexture(this Bitmap bmp)
+        public static AssetData ToTexture(this Bitmap bmp, bool lossless = false)
         {
             AssetData data = new AssetData();
             data.Type = AssetType.Texture;
             data.Name = "Dynamic Texture";
             data.Local = true;
             data.Flags = AssetFlags.Collectable;
-            data.Data = J2KEncoder.EncodeJPEG(bmp);
+            data.Data = J2cEncoder.Encode(bmp, lossless);
 
             return data;
         }
