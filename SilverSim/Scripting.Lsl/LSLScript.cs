@@ -593,34 +593,20 @@ namespace SilverSim.Scripting.Lsl
             state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
             if (e.InnerException != null)
             {
-                m_Log.ErrorFormat("Script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
-                    state_name, name,
-                    e.InnerException.GetType().FullName, e.InnerException.Message, e.InnerException.StackTrace,
-                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
+                e = e.InnerException;
             }
-            else
+
+            if (e is InvalidProgramException || e is MethodAccessException || e is CallDepthLimitViolationException)
             {
-                m_Log.ErrorFormat("Script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
                     e.GetType().FullName, e.Message, e.StackTrace,
                     Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
-            }
-        }
-
-        private void LogInvokeExceptionWithStop(string name, Exception e)
-        {
-            string state_name = m_CurrentState.GetType().FullName;
-            state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
-            if (e.InnerException != null)
-            {
-                m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
-                    state_name, name,
-                    e.InnerException.GetType().FullName, e.InnerException.Message, e.InnerException.StackTrace,
-                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
+                IsRunning = false;
             }
             else
             {
-                m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                m_Log.ErrorFormat("Script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
                     e.GetType().FullName, e.Message, e.StackTrace,
                     Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
@@ -643,6 +629,22 @@ namespace SilverSim.Scripting.Lsl
         void InvokeStateEvent(string name, params object[] param)
         {
             InvokeStateEventReal(name, param);
+        }
+
+        int m_RecursionCount;
+        static public int CallDepthLimit = 20;
+
+        public void IncCallDepthCount()
+        {
+            if(++m_RecursionCount > CallDepthLimit)
+            {
+                throw new CallDepthLimitViolationException();
+            }
+        }
+
+        public void DecCallDepthCount()
+        {
+            --m_RecursionCount;
         }
 
         void SetCurrentState(ILSLState state)
@@ -709,9 +711,12 @@ namespace SilverSim.Scripting.Lsl
                 }
                 catch (InvalidProgramException e)
                 {
-                    LogInvokeExceptionWithStop(name, e);
+                    LogInvokeException(name, e);
                     ShoutError(e.Message);
-                    IsRunning = false;
+                }
+                catch(CallDepthLimitViolationException e)
+                {
+                    LogInvokeException(name, e);
                 }
                 catch (TargetParameterCountException e)
                 {

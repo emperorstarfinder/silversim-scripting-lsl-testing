@@ -6,6 +6,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Common;
+using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,8 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     [Description("LSL Compiler")]
-    public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory
+    [ServerParam("LSL.CallDepthLimit")]
+    public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory, IServerParamListener
     {
         internal struct ApiMethodInfo
         {
@@ -37,6 +39,16 @@ namespace SilverSim.Scripting.Lsl
                 FunctionName = functionName;
                 Api = api;
                 Method = method;
+            }
+        }
+
+        [ServerParam("LSL.CallDepthLimit")]
+        public void SetCallDepthLimit(UUID regionID, string value)
+        {
+            int val;
+            if(UUID.Zero == regionID && int.TryParse(value, out val) && val > 0)
+            {
+                Script.CallDepthLimit = val;
             }
         }
 

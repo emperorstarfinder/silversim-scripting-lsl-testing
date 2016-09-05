@@ -39,6 +39,36 @@ namespace SilverSim.Scripting.Lsl
             readonly string m_FunctionName;
             readonly int m_LineNumber;
 
+            void GenIncCallDepthCount(CompileState compileState)
+            {
+                /* load script instance reference */
+                if (null == compileState.StateTypeBuilder)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                }
+                compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("IncCallDepthCount", Type.EmptyTypes));
+            }
+
+            void GenDecCallDepthCount(CompileState compileState)
+            {
+                /* load script instance reference */
+                if (null == compileState.StateTypeBuilder)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                }
+                compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("DecCallDepthCount", Type.EmptyTypes));
+            }
+
             public FunctionExpression(
                 LSLCompiler lslCompiler,
                 CompileState compileState,
@@ -290,7 +320,9 @@ namespace SilverSim.Scripting.Lsl
                         ProcessImplicitCasts(compileState, parameters[i].Value, m_Parameters[i].ParameterType, m_LineNumber);
                     }
 
+                    GenIncCallDepthCount(compileState);
                     compileState.ILGen.Emit(OpCodes.Call, funcInfo.Method);
+                    GenDecCallDepthCount(compileState);
 
                     compileState.ILGen.EndScope();
                     return funcInfo.Method.ReturnType;
@@ -319,7 +351,9 @@ namespace SilverSim.Scripting.Lsl
                         ProcessImplicitCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
                     }
 
+                    GenIncCallDepthCount(compileState);
                     compileState.ILGen.Emit(OpCodes.Call, apiMethod.Method);
+                    GenDecCallDepthCount(compileState);
 
                     ForcedSleepAttribute forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ForcedSleepAttribute));
                     if (forcedSleep != null)

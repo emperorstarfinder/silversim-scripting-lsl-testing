@@ -1,10 +1,7 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -29,6 +26,34 @@ namespace SilverSim.Scripting.Lsl
         }
 
         public ResetScriptException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
+    }
+
+    [Serializable]
+    public class CallDepthLimitViolationException : Exception
+    {
+        public CallDepthLimitViolationException()
+            : base("Function call depth limit violation")
+        {
+
+        }
+
+        public CallDepthLimitViolationException(string message)
+            : base(message)
+        {
+
+        }
+
+        protected CallDepthLimitViolationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
+        }
+
+        public CallDepthLimitViolationException(string message, Exception innerException)
             : base(message, innerException)
         {
 
