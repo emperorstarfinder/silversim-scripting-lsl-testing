@@ -717,6 +717,7 @@ namespace SilverSim.Scripting.Lsl
                 catch(CallDepthLimitViolationException e)
                 {
                     LogInvokeException(name, e);
+                    ShoutError(e.Message);
                 }
                 catch (TargetParameterCountException e)
                 {
