@@ -593,15 +593,17 @@ namespace SilverSim.Scripting.Lsl
             state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
             if (e.InnerException != null)
             {
-                m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                m_Log.ErrorFormat("Script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
-                    e.InnerException.GetType().FullName, e.InnerException.Message, e.InnerException.StackTrace);
+                    e.InnerException.GetType().FullName, e.InnerException.Message, e.InnerException.StackTrace,
+                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
             }
             else
             {
-                m_Log.FatalFormat("Within state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                m_Log.ErrorFormat("Script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
-                    e.GetType().FullName, e.Message, e.StackTrace);
+                    e.GetType().FullName, e.Message, e.StackTrace,
+                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
             }
         }
 
@@ -689,6 +691,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     LogInvokeException(name, e);
                     ShoutError(e.Message);
+                    IsRunning = false;
                 }
                 catch (TargetParameterCountException e)
                 {
