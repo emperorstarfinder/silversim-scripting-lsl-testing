@@ -51,6 +51,7 @@ redo:
                     case '\x20':
                     case '\x09':
                     case '\r':
+                    case '\0':
                         break;
                     case '\n':      /* these all are simply white space */
                         if(is_preprocess)
