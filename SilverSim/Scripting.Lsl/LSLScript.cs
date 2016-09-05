@@ -607,6 +607,26 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void LogInvokeExceptionWithStop(string name, Exception e)
+        {
+            string state_name = m_CurrentState.GetType().FullName;
+            state_name = state_name.Substring(1 + state_name.LastIndexOf('.'));
+            if (e.InnerException != null)
+            {
+                m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                    state_name, name,
+                    e.InnerException.GetType().FullName, e.InnerException.Message, e.InnerException.StackTrace,
+                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
+            }
+            else
+            {
+                m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
+                    state_name, name,
+                    e.GetType().FullName, e.Message, e.StackTrace,
+                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
+            }
+        }
+
         public override bool IsLinkMessageReceiver
         {
             get
@@ -689,7 +709,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 catch (InvalidProgramException e)
                 {
-                    LogInvokeException(name, e);
+                    LogInvokeExceptionWithStop(name, e);
                     ShoutError(e.Message);
                     IsRunning = false;
                 }
