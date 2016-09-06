@@ -309,11 +309,12 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 res.Add("listen");
                 int idx = res.Count;
                 res.Add("0");
+                int countofs = res.Count;
                 foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
                 {
                     kvp.Value.Serialize(res, kvp.Key);
                 }
-                res[idx] = (res.Count - idx - 1);
+                res[idx] = (res.Count - countofs);
             }
         }
     }

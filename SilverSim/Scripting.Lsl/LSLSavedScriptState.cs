@@ -601,6 +601,10 @@ namespace SilverSim.Scripting.Lsl
                         case XmlNodeType.Element:
                             if (reader.IsEmptyElement)
                             {
+                                if(reader.Name == "ListItem")
+                                {
+                                    res.Add(reader.ReadTypedValue());
+                                }
                                 break;
                             }
 

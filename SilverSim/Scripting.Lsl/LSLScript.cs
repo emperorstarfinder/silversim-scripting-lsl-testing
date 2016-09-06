@@ -407,11 +407,11 @@ namespace SilverSim.Scripting.Lsl
             foreach (KeyValuePair<string, object> kvp in state.Variables)
             {
                 FieldInfo fi = scriptType.GetField(kvp.Key);
-                if(fi == null)
+                if (fi == null)
                 {
                     m_Log.ErrorFormat("Restoring variable {0} failed", kvp.Key);
                 }
-                else if(fi.IsLiteral || fi.IsInitOnly || fi.FieldType != kvp.Value.GetType())
+                else if (fi.IsLiteral || fi.IsInitOnly || fi.FieldType != kvp.Value.GetType())
                 {
                     continue;
                 }
@@ -426,10 +426,10 @@ namespace SilverSim.Scripting.Lsl
             }
 
             /* queue deserialization */
-            foreach(SavedScriptState.EventParams ep in state.EventData)
+            foreach (SavedScriptState.EventParams ep in state.EventData)
             {
                 IScriptEvent ev;
-                if(TryTranslateEventParams(ep, out ev))
+                if (TryTranslateEventParams(ep, out ev))
                 {
                     m_Events.Enqueue(ev);
                 }
@@ -441,21 +441,37 @@ namespace SilverSim.Scripting.Lsl
             /* initialize plugin data */
             int pluginpos = 0;
             int pluginlen = state.PluginData.Count;
-            while(pluginpos + 1 < pluginlen)
+            try
             {
-                int len = (int)state.PluginData[pluginpos + 1];
-                if (len + 2 + pluginpos > pluginlen)
+                while (pluginpos + 1 < pluginlen)
                 {
-                    break;
+                    int len = (int)state.PluginData[pluginpos + 1];
+                    if (len + 2 + pluginpos > pluginlen)
+                    {
+                        break;
+                    }
+                    string type = (string)state.PluginData[pluginpos];
+                    Action<ScriptInstance, List<object>> del;
+                    if(len > 0 && DeserializationDelegates.TryGetValue(type, out del))
+                    {
+                        del(this, state.PluginData.GetRange(pluginpos + 2, len));
+                    }
+                    pluginpos += 2 + len;
                 }
-                string type = (string)state.PluginData[0];
-                Action<ScriptInstance, List<object>> del;
-                if(DeserializationDelegates.TryGetValue(type, out del))
-                {
-                    del(this, state.PluginData.GetRange(pluginpos + 2, len));
-                }
-                pluginpos += 2 + len;
             }
+            catch(Exception e)
+            {
+                StringBuilder disp = new StringBuilder();
+                int pos = 0;
+                foreach(object o in state.PluginData)
+                {
+                    disp.Append((pos++).ToString() + ":" + o.ToString());
+                    disp.Append(" ");
+                }
+                m_Log.WarnFormat("Deserialization of state failed at position {0}: {1}\n=> {2}: {3}\n{4}", pluginpos, disp.ToString(), e.GetType().FullName, e.Message, e.StackTrace);
+                throw;
+            }
+
 
             IsRunning = state.IsRunning;
 
