@@ -648,7 +648,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         int m_RecursionCount;
-        static public int CallDepthLimit = 20;
+        static public int CallDepthLimit = 40;
 
         public void IncCallDepthCount()
         {
