@@ -345,6 +345,7 @@ namespace SilverSim.Scripting.Lsl
             Writer.WriteLine("MarkLabel({0})", loc.ToString());
 #endif
             m_ILGen.MarkLabel(loc);
+            GeneratedRetAtLast = false;
         }
 
         public void MarkSequencePoint(ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn)
