@@ -185,15 +185,17 @@ namespace SilverSim.Scripting.Lsl
 
                 compileState.ScriptTypeBuilder = scriptTypeBuilder;
                 compileState.StateTypeBuilder = null;
+                ILGenDumpProxy script_ILGen = new ILGenDumpProxy(script_ilgen
 #if DEBUG
-                ILGenDumpProxy script_ILGen = new ILGenDumpProxy(script_ilgen, dumpILGen);
-                ILGenDumpProxy reset_ILGen = new ILGenDumpProxy(reset_ilgen, dumpILGen);
-                compileState.ILGen = script_ILGen;
-#else
-                compileState.ILGen = script_ilgen;
-                ILGenerator script_ILGen = script_ilgen;
-                ILGenerator reset_ILGen = reset_ilgen;
+                    ,dumpILGen
 #endif
+                    );
+                ILGenDumpProxy reset_ILGen = new ILGenDumpProxy(reset_ilgen
+#if DEBUG
+                    , dumpILGen
+#endif
+                    );
+                compileState.ILGen = script_ILGen;
                 foreach(KeyValuePair<string, FieldBuilder> kvp in compileState.m_VariableFieldInfo)
                 {
 #if DEBUG
@@ -536,13 +538,116 @@ namespace SilverSim.Scripting.Lsl
                         MethodBuilder method = funcInfo.Method;
 
 #if DEBUG
-                        ILGenDumpProxy method_ilgen = new ILGenDumpProxy(method.GetILGenerator(), dumpILGen);
-#else
-                        ILGenerator method_ilgen = method.GetILGenerator();
+                        Type returnType = typeof(void);
+                        List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
+                        string functionName = functionDeclaration[1];
+                        int functionStart = 3;
+
+                        switch (functionDeclaration[0])
+                        {
+                            case "integer":
+                                returnType = typeof(int);
+                                break;
+
+                            case "vector":
+                                returnType = typeof(Vector3);
+                                break;
+
+                            case "list":
+                                returnType = typeof(AnArray);
+                                break;
+
+                            case "float":
+                                returnType = typeof(double);
+                                break;
+
+                            case "string":
+                                returnType = typeof(string);
+                                break;
+
+                            case "key":
+                                returnType = typeof(LSLKey);
+                                break;
+
+                            case "rotation":
+                            case "quaternion":
+                                returnType = typeof(Quaternion);
+                                break;
+
+                            case "void":
+                                returnType = typeof(void);
+                                break;
+
+                            default:
+                                functionName = functionDeclaration[0];
+                                functionStart = 2;
+                                break;
+                        }
+                        List<Type> paramTypes = new List<Type>();
+                        List<string> paramName = new List<string>();
+                        while (functionDeclaration[functionStart] != ")")
+                        {
+                            if (functionDeclaration[functionStart] == ",")
+                            {
+                                ++functionStart;
+                            }
+                            switch (functionDeclaration[functionStart++])
+                            {
+                                case "integer":
+                                    paramTypes.Add(typeof(int));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "vector":
+                                    paramTypes.Add(typeof(Vector3));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "list":
+                                    paramTypes.Add(typeof(AnArray));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "float":
+                                    paramTypes.Add(typeof(double));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "string":
+                                    paramTypes.Add(typeof(string));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "key":
+                                    paramTypes.Add(typeof(LSLKey));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                case "rotation":
+                                case "quaternion":
+                                    paramTypes.Add(typeof(Quaternion));
+                                    paramName.Add(functionDeclaration[functionStart++]);
+                                    break;
+
+                                default:
+                                    throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
+                            }
+                        }
+
+                        dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
 #endif
+
+                        ILGenDumpProxy method_ilgen = new ILGenDumpProxy(method.GetILGenerator()
+#if DEBUG
+                            , dumpILGen
+#endif
+                            );
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, funcInfo.FunctionLines, typeLocals);
-                        method_ilgen.Emit(OpCodes.Ret);
+
+#if DEBUG
+                        dumpILGen.WriteLine("GenerateMethodIL.End(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
+#endif
                     }
                 }
 #endregion
@@ -596,13 +701,16 @@ namespace SilverSim.Scripting.Lsl
                             MethodAttributes.Public,
                             typeof(void),
                             paramtypes);
+                        ILGenDumpProxy event_ilgen = new ILGenDumpProxy(eventbuilder.GetILGenerator()
 #if DEBUG
-                        ILGenDumpProxy event_ilgen = new ILGenDumpProxy(eventbuilder.GetILGenerator(), dumpILGen);
-#else
-                        ILGenerator event_ilgen = eventbuilder.GetILGenerator();
+                            , dumpILGen
 #endif
+                            );
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         ProcessFunction(compileState, scriptTypeBuilder, state, eventbuilder, event_ilgen, eventKvp.Value, typeLocals);
+#if DEBUG
+                        dumpILGen.WriteLine("DefineEvent.ILGenEnd(\"{0}\")", eventKvp.Key);
+#endif
                     }
 
                     stateTypes.Add(stateKvp.Key, state.CreateType());

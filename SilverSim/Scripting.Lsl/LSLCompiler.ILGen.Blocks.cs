@@ -779,11 +779,7 @@ namespace SilverSim.Scripting.Lsl
             TypeBuilder scriptTypeBuilder,
             TypeBuilder stateTypeBuilder,
             MethodBuilder mb,
-#if DEBUG
             ILGenDumpProxy ilgen,
-#else
-            ILGenerator ilgen,
-#endif
             List<LineInfo> functionBody,
             Dictionary<string, object> localVars)
         {
@@ -889,36 +885,39 @@ namespace SilverSim.Scripting.Lsl
                 localVars,
                 labels);
 
-            /* we have no missing return value check right now, so we simply emit default values in that case */
-            if (returnType == typeof(int))
+            if (!ilgen.GeneratedRetAtLast)
             {
-                ilgen.Emit(OpCodes.Ldc_I4_0);
+                /* we have no missing return value check right now, so we simply emit default values in that case */
+                if (returnType == typeof(int))
+                {
+                    ilgen.Emit(OpCodes.Ldc_I4_0);
+                }
+                else if (returnType == typeof(double))
+                {
+                    ilgen.Emit(OpCodes.Ldc_R8, (double)0);
+                }
+                else if (returnType == typeof(string))
+                {
+                    ilgen.Emit(OpCodes.Ldstr);
+                }
+                else if (returnType == typeof(AnArray))
+                {
+                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                }
+                else if (returnType == typeof(Vector3))
+                {
+                    ilgen.Emit(OpCodes.Ldsfld, typeof(Vector3).GetField("Zero"));
+                }
+                else if (returnType == typeof(Quaternion))
+                {
+                    ilgen.Emit(OpCodes.Ldsfld, typeof(Quaternion).GetField("Identity"));
+                }
+                else if (returnType == typeof(LSLKey))
+                {
+                    ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
+                }
+                ilgen.Emit(OpCodes.Ret);
             }
-            else if (returnType == typeof(double))
-            {
-                ilgen.Emit(OpCodes.Ldc_R8, (double)0);
-            }
-            else if (returnType == typeof(string))
-            {
-                ilgen.Emit(OpCodes.Ldstr);
-            }
-            else if (returnType == typeof(AnArray))
-            {
-                ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-            }
-            else if (returnType == typeof(Vector3))
-            {
-                ilgen.Emit(OpCodes.Ldsfld, typeof(Vector3).GetField("Zero"));
-            }
-            else if (returnType == typeof(Quaternion))
-            {
-                ilgen.Emit(OpCodes.Ldsfld, typeof(Quaternion).GetField("Identity"));
-            }
-            else if (returnType == typeof(LSLKey))
-            {
-                ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
-            }
-            ilgen.Emit(OpCodes.Ret);
 
             Dictionary<int, string> labelsUndefined = new Dictionary<int, string>();
             foreach (KeyValuePair<string, ILLabelInfo> kvp in labels)

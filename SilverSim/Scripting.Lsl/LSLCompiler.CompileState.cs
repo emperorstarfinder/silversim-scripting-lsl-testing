@@ -59,11 +59,7 @@ namespace SilverSim.Scripting.Lsl
             public TypeBuilder ScriptTypeBuilder;
             public TypeBuilder StateTypeBuilder;
             public FieldBuilder InstanceField;
-#if DEBUG
             public ILGenDumpProxy ILGen;
-#else
-            public ILGenerator ILGen;
-#endif
 
             public List<LineInfo> FunctionBody;
             public int FunctionLineIndex;
