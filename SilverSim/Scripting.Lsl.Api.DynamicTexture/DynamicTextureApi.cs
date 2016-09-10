@@ -368,6 +368,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 {
                     textureAsset = frontImage.ToTexture();
                 }
+                textureAsset.ID = UUID.Random;
                 textureAsset.Creator = instance.Part.Owner;
                 textureAsset.Temporary = (disp & DISP_TEMP) != 0;
                 instance.Part.ObjectGroup.Scene.AssetService.Store(textureAsset);
