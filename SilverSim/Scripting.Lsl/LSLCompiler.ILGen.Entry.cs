@@ -733,11 +733,14 @@ namespace SilverSim.Scripting.Lsl
 #region Initialize static fields
                 Type t = scriptTypeBuilder.CreateType();
 
-                foreach (IScriptApi api in m_Apis)
+                if (access == AssemblyBuilderAccess.RunAndCollect)
                 {
-                    ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiNameAttribute));
-                    FieldInfo info = t.GetField(apiAttr.Name, BindingFlags.Static | BindingFlags.Public);
-                    info.SetValue(null, api);
+                    foreach (IScriptApi api in m_Apis)
+                    {
+                        ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(api.GetType(), typeof(ScriptApiNameAttribute));
+                        FieldInfo info = t.GetField(apiAttr.Name, BindingFlags.Static | BindingFlags.Public);
+                        info.SetValue(null, api);
+                    }
                 }
 #endregion
 
