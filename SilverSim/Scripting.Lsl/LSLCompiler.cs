@@ -947,7 +947,15 @@ namespace SilverSim.Scripting.Lsl
         public IScriptAssembly Compile(AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1)
         {
             CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
-            return PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault);
+            return PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndCollect);
+        }
+
+        public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1)
+        {
+            CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
+            LSLScriptAssembly scriptAssembly = (LSLScriptAssembly)PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.Save);
+            AssemblyBuilder builder = (AssemblyBuilder)scriptAssembly.Assembly;
+            builder.Save(filename);
         }
     }
 }

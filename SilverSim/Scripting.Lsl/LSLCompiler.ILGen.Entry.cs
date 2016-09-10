@@ -62,7 +62,7 @@ namespace SilverSim.Scripting.Lsl
         }
 #endif
 
-        IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault)
+        IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault, AssemblyBuilderAccess access)
         {
 #if DEBUG
             Directory.CreateDirectory("../data/dumps");
@@ -125,7 +125,7 @@ namespace SilverSim.Scripting.Lsl
 #endif
                 string assetAssemblyName = "Script." + assetID.ToString().Replace('-', '_');
                 AssemblyName aName = new AssemblyName(assetAssemblyName);
-                AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, AssemblyBuilderAccess.RunAndCollect);
+                AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, access);
                 ModuleBuilder mb = ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols);
 
 #region Create Script Container
