@@ -663,6 +663,11 @@ namespace SilverSim.Scripting.Lsl
             --m_RecursionCount;
         }
 
+        public void ResetCallDepthCount()
+        {
+            m_RecursionCount = 0;
+        }
+
         void SetCurrentState(ILSLState state)
         {
             m_CurrentState = state;

@@ -775,6 +775,8 @@ namespace SilverSim.Scripting.Lsl
                             mi = m_LeftHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
                             if (null != mi)
                             {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Call, mi);
                                 if (!IsValidType(mi.ReturnType))
                                 {
@@ -788,6 +790,8 @@ namespace SilverSim.Scripting.Lsl
                             mi = m_RightHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
                             if (null != mi)
                             {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Call, mi);
                                 if (!IsValidType(mi.ReturnType))
                                 {
@@ -822,6 +826,8 @@ namespace SilverSim.Scripting.Lsl
                             mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
                             if (null != mi)
                             {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Call, mi);
                                 if (!IsValidType(mi.ReturnType))
                                 {
@@ -835,6 +841,8 @@ namespace SilverSim.Scripting.Lsl
                             mi = m_RightHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
                             if (null != mi)
                             {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Call, mi);
                                 if (!IsValidType(mi.ReturnType))
                                 {
@@ -892,6 +900,8 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
                         if (null != mi)
                         {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
                             {
@@ -902,6 +912,8 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
                         if (null != mi)
                         {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
                             {
@@ -943,6 +955,8 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_RightHandType });
                         if (null != mi)
                         {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                             if (!IsValidType(mi.ReturnType))
                             {
@@ -984,6 +998,8 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_RightHandType.GetMethod("op_Modulus", new Type[] { m_LeftHandType, m_RightHandType });
                         if (null != mi)
                         {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                             if(!IsValidType(mi.ReturnType))
                             {

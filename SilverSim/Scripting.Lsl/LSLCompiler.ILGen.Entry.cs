@@ -126,10 +126,20 @@ namespace SilverSim.Scripting.Lsl
                 string assetAssemblyName = "Script." + assetID.ToString().Replace('-', '_');
                 AssemblyName aName = new AssemblyName(assetAssemblyName);
                 AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, access);
-                ModuleBuilder mb = ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols);
+                ModuleBuilder mb;
 
-#region Create Script Container
+                if (access != AssemblyBuilderAccess.RunAndCollect)
+                {
+                    mb = ab.DefineDynamicModule(aName.Name, ab.GetName().Name + ".dll", compileState.EmitDebugSymbols);
+                }
+                else
+                { 
+                    mb = ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols);
+                }
+
+                #region Create Script Container
 #if DEBUG
+                dumpILGen.WriteLine("********************************************************************************");
                 dumpILGen.WriteLine("DefineType({0})", assetAssemblyName + ".Script");
 #endif
                 TypeBuilder scriptTypeBuilder = mb.DefineType(assetAssemblyName + ".Script", TypeAttributes.Public, typeof(Script));
@@ -144,6 +154,7 @@ namespace SilverSim.Scripting.Lsl
 
 
 #if DEBUG
+                dumpILGen.WriteLine("********************************************************************************");
                 dumpILGen.WriteLine("DefineConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) })");
 #endif
                 Type[] script_cb_params = new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) };
@@ -172,6 +183,7 @@ namespace SilverSim.Scripting.Lsl
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                 {
 #if DEBUG
+                    dumpILGen.WriteLine("********************************************************************************");
                     dumpILGen.WriteLine("DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName);
 #endif
                     FieldBuilder fb = scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
@@ -517,6 +529,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
 #if DEBUG
+                        dumpILGen.WriteLine("********************************************************************************");
                         dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
 #endif
                         method = scriptTypeBuilder.DefineMethod("fn_" + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
@@ -634,6 +647,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                         }
 
+                        dumpILGen.WriteLine("********************************************************************************");
                         dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
 #endif
 
@@ -657,6 +671,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     FieldBuilder fb;
 #if DEBUG
+                    dumpILGen.WriteLine("********************************************************************************");
                     dumpILGen.WriteLine("DefineState(\"{0}\")", stateKvp.Key);
 #endif
                     TypeBuilder state = mb.DefineType(aName.Name + ".State." + stateKvp.Key, TypeAttributes.Public, typeof(object));
@@ -694,6 +709,7 @@ namespace SilverSim.Scripting.Lsl
                             paramtypes[pi] = pinfo[pi].ParameterType;
                         }
 #if DEBUG
+                        dumpILGen.WriteLine("********************************************************************************");
                         dumpILGen.WriteLine("DefineEvent(\"{0}\")", eventKvp.Key);
 #endif
                         MethodBuilder eventbuilder = state.DefineMethod(
@@ -706,6 +722,10 @@ namespace SilverSim.Scripting.Lsl
                             , dumpILGen
 #endif
                             );
+                        event_ilgen.Emit(OpCodes.Ldarg_0);
+                        event_ilgen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                        event_ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("ResetCallDepthCount"));
+
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         ProcessFunction(compileState, scriptTypeBuilder, state, eventbuilder, event_ilgen, eventKvp.Value, typeLocals);
 #if DEBUG
