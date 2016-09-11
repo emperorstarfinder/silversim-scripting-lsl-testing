@@ -19,14 +19,17 @@ namespace SilverSim.Scripting.Lsl
 #endif
         List<Label> m_DefinedLabels = new List<Label>();
         public bool GeneratedRetAtLast;
+        public ISymbolDocumentWriter DebugDocument;
 
-        public ILGenDumpProxy(ILGenerator ilgen
+        public ILGenDumpProxy(ILGenerator ilgen,
+            ISymbolDocumentWriter debugDocument
 #if DEBUG
             , StreamWriter textWriter
 #endif
             )
         {
             m_ILGen = ilgen;
+            DebugDocument = debugDocument;
 #if DEBUG
             Writer = textWriter;
 #endif
@@ -348,9 +351,12 @@ namespace SilverSim.Scripting.Lsl
             GeneratedRetAtLast = false;
         }
 
-        public void MarkSequencePoint(ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn)
+        public void MarkSequencePoint(int startLine, int startColumn, int endLine, int endColumn)
         {
-            m_ILGen.MarkSequencePoint(document, startLine, startColumn, endLine, endColumn);
+            if (DebugDocument != null)
+            {
+                m_ILGen.MarkSequencePoint(DebugDocument, startLine, startColumn, endLine, endColumn);
+            }
         }
 
         public void ThrowException(Type excType)

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
@@ -60,6 +61,7 @@ namespace SilverSim.Scripting.Lsl
             public TypeBuilder StateTypeBuilder;
             public FieldBuilder InstanceField;
             public ILGenDumpProxy ILGen;
+            public ISymbolDocumentWriter DebugDocument;
 
             public List<LineInfo> FunctionBody;
             public int FunctionLineIndex;

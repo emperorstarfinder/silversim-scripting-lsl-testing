@@ -7,6 +7,7 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -137,6 +138,14 @@ namespace SilverSim.Scripting.Lsl
                     mb = ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols);
                 }
 
+                if (compileState.EmitDebugSymbols)
+                {
+                    compileState.DebugDocument = mb.DefineDocument(assetID.ToString() + ".lsl",
+                        SymDocumentType.Text,
+                        Guid.Empty,
+                        Guid.Empty);
+                }
+
                 #region Create Script Container
 #if DEBUG
                 dumpILGen.WriteLine("********************************************************************************");
@@ -197,12 +206,14 @@ namespace SilverSim.Scripting.Lsl
 
                 compileState.ScriptTypeBuilder = scriptTypeBuilder;
                 compileState.StateTypeBuilder = null;
-                ILGenDumpProxy script_ILGen = new ILGenDumpProxy(script_ilgen
+                ILGenDumpProxy script_ILGen = new ILGenDumpProxy(script_ilgen,
+                    compileState.DebugDocument
 #if DEBUG
                     ,dumpILGen
 #endif
                     );
-                ILGenDumpProxy reset_ILGen = new ILGenDumpProxy(reset_ilgen
+                ILGenDumpProxy reset_ILGen = new ILGenDumpProxy(reset_ilgen,
+                    compileState.DebugDocument
 #if DEBUG
                     , dumpILGen
 #endif
@@ -651,7 +662,8 @@ namespace SilverSim.Scripting.Lsl
                         dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
 #endif
 
-                        ILGenDumpProxy method_ilgen = new ILGenDumpProxy(method.GetILGenerator()
+                        ILGenDumpProxy method_ilgen = new ILGenDumpProxy(method.GetILGenerator(),
+                            compileState.DebugDocument
 #if DEBUG
                             , dumpILGen
 #endif
@@ -717,7 +729,8 @@ namespace SilverSim.Scripting.Lsl
                             MethodAttributes.Public,
                             typeof(void),
                             paramtypes);
-                        ILGenDumpProxy event_ilgen = new ILGenDumpProxy(eventbuilder.GetILGenerator()
+                        ILGenDumpProxy event_ilgen = new ILGenDumpProxy(eventbuilder.GetILGenerator(),
+                            compileState.DebugDocument
 #if DEBUG
                             , dumpILGen
 #endif

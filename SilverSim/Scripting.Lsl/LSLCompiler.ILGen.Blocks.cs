@@ -24,6 +24,7 @@ namespace SilverSim.Scripting.Lsl
             processnext:
                 LineInfo functionLine = compileState.GetLine();
                 LocalBuilder lb;
+                compileState.ILGen.MarkSequencePoint(functionLine.LineNumber, functionLine.LineNumber, 1, 1);
                 switch (functionLine.Line[0])
                 {
                     #region Label definition
