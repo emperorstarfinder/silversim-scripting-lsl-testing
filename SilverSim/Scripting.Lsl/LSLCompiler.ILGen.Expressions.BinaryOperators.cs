@@ -874,11 +874,13 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (m_LeftHandType == typeof(double))
                         {
-                            if(m_RightHandType == typeof(Vector3) || m_RightHandType == typeof(Quaternion))
+                            if (m_RightHandType == typeof(Vector3) || m_RightHandType == typeof(Quaternion))
                             {
                                 mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
                                 if (null != mi)
                                 {
+                                    compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                    compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                                     compileState.ILGen.Emit(OpCodes.Call, mi);
                                     if (!IsValidType(mi.ReturnType))
                                     {
