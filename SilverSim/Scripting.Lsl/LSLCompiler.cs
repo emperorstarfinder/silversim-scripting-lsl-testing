@@ -958,6 +958,7 @@ namespace SilverSim.Scripting.Lsl
         public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, bool emitDebugSymbols, int lineNumber = 1)
         {
             CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
+            compileState.EmitDebugSymbols = emitDebugSymbols;
             LSLScriptAssembly scriptAssembly = (LSLScriptAssembly)PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndSave, filename);
             if(null == scriptAssembly)
             {
