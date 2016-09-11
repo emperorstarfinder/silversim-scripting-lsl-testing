@@ -898,7 +898,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (returnType == typeof(string))
                 {
-                    ilgen.Emit(OpCodes.Ldstr);
+                    ilgen.Emit(OpCodes.Ldstr, string.Empty);
                 }
                 else if (returnType == typeof(AnArray))
                 {

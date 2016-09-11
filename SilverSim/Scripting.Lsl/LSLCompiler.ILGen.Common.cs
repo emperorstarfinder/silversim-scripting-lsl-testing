@@ -541,6 +541,7 @@ namespace SilverSim.Scripting.Lsl
                 else if (fromType == typeof(AnArray))
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetProperty("Count").GetGetMethod());
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Ceq);

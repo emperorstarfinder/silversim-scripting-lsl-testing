@@ -954,7 +954,15 @@ namespace SilverSim.Scripting.Lsl
         {
             CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
             LSLScriptAssembly scriptAssembly = (LSLScriptAssembly)PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndSave);
+            if(null == scriptAssembly)
+            {
+                throw new CompilerException();
+            }
             AssemblyBuilder builder = (AssemblyBuilder)scriptAssembly.Assembly;
+            if(null == builder)
+            {
+                throw new CompilerException();
+            }
             builder.Save(filename);
         }
     }

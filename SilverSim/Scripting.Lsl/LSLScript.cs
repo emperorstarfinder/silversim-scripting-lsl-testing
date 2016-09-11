@@ -612,7 +612,7 @@ namespace SilverSim.Scripting.Lsl
                 e = e.InnerException;
             }
 
-            if (e is InvalidProgramException || e is MethodAccessException || e is CallDepthLimitViolationException)
+            if (e is InvalidProgramException || e is MethodAccessException || e is CallDepthLimitViolationException || e is ExecutionEngineException)
             {
                 m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
@@ -705,6 +705,9 @@ namespace SilverSim.Scripting.Lsl
             {
                 try
                 {
+#if DEBUG
+                    m_Log.DebugFormat("BEGIN! Invoking event {0} in state {1} of {2} ({3})", name, m_CurrentState.GetType().FullName, Item.Name, Item.AssetID);
+#endif
                     mi.Invoke(m_CurrentState, param);
                 }
                 catch (ChangeStateException)
@@ -729,6 +732,11 @@ namespace SilverSim.Scripting.Lsl
                 catch (NotImplementedException e)
                 {
                     ShoutUnimplementedException(e);
+                }
+                catch (ExecutionEngineException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
                 }
                 catch (InvalidProgramException e)
                 {
@@ -767,6 +775,12 @@ namespace SilverSim.Scripting.Lsl
                     LogInvokeException(name, e);
                     ShoutError(e.Message);
                 }
+#if DEBUG
+                finally
+                {
+                    m_Log.DebugFormat("END! Invoking event {0} in state {1} of {2} ({3})", name, m_CurrentState.GetType().FullName, Item.Name, Item.AssetID);
+                }
+#endif
             }
         }
 
