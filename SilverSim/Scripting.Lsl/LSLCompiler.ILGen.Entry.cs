@@ -62,7 +62,7 @@ namespace SilverSim.Scripting.Lsl
         }
 #endif
 
-        IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault, AssemblyBuilderAccess access)
+        IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault, AssemblyBuilderAccess access, string filename = "")
         {
 #if DEBUG
             Directory.CreateDirectory("../data/dumps");
@@ -130,7 +130,7 @@ namespace SilverSim.Scripting.Lsl
 
                 if (access != AssemblyBuilderAccess.RunAndCollect)
                 {
-                    mb = ab.DefineDynamicModule(aName.Name, ab.GetName().Name + ".dll", compileState.EmitDebugSymbols);
+                    mb = ab.DefineDynamicModule(aName.Name, filename, compileState.EmitDebugSymbols);
                 }
                 else
                 { 
