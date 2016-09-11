@@ -668,7 +668,6 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Stfld, varType.GetField(fieldName));
                     compileState.ILGen.Emit(OpCodes.Ldloc, componentLocal);
                     SetVarFromStack(compileState, varInfo, m_LineNumber);
-                    compileState.ILGen.Emit(OpCodes.Ldloc, resultLocal);
                     throw Return(compileState, typeof(double));
                 }
                 else

@@ -705,9 +705,6 @@ namespace SilverSim.Scripting.Lsl
             {
                 try
                 {
-#if DEBUG
-                    m_Log.DebugFormat("BEGIN! Invoking event {0} in state {1} of {2} ({3})", name, m_CurrentState.GetType().FullName, Item.Name, Item.AssetID);
-#endif
                     mi.Invoke(m_CurrentState, param);
                 }
                 catch (ChangeStateException)
@@ -775,12 +772,6 @@ namespace SilverSim.Scripting.Lsl
                     LogInvokeException(name, e);
                     ShoutError(e.Message);
                 }
-#if DEBUG
-                finally
-                {
-                    m_Log.DebugFormat("END! Invoking event {0} in state {1} of {2} ({3})", name, m_CurrentState.GetType().FullName, Item.Name, Item.AssetID);
-                }
-#endif
             }
         }
 
