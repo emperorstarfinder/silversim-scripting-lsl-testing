@@ -50,6 +50,8 @@ namespace SilverSim.Scripting.Lsl
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string ExtendedTypecasts = "ExtendedTypecasts";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
+        public const string StateVariables = "StateVariables";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Selling = "Selling";
     }
 

@@ -195,10 +195,29 @@ namespace SilverSim.Scripting.Lsl
                     dumpILGen.WriteLine("********************************************************************************");
                     dumpILGen.WriteLine("DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName);
 #endif
-                    FieldBuilder fb = scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
+                    FieldBuilder fb = compileState.LanguageExtensions.EnableStateVariables ? 
+                        scriptTypeBuilder.DefineField("var_glob_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public) :
+                        scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
                     compileState.m_VariableFieldInfo[variableKvp.Key] = fb;
                     typeLocalsInited[variableKvp.Key] = fb;
                 }
+                foreach(KeyValuePair<string, Dictionary<string, Type>> stateVariableKvp in compileState.m_StateVariableDeclarations)
+                {
+                    foreach (KeyValuePair<string, Type> variableKvp in stateVariableKvp.Value)
+                    {
+#if DEBUG
+                        dumpILGen.WriteLine("********************************************************************************");
+                        dumpILGen.WriteLine("State[{2}].DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName, stateVariableKvp.Key);
+#endif
+                        FieldBuilder fb = scriptTypeBuilder.DefineField("var_state_" + stateVariableKvp.Key + "_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
+                        if(!compileState.m_StateVariableFieldInfo.ContainsKey(stateVariableKvp.Key))
+                        {
+                            compileState.m_StateVariableFieldInfo.Add(stateVariableKvp.Key, new Dictionary<string, FieldBuilder>());
+                        }
+                        compileState.m_StateVariableFieldInfo[stateVariableKvp.Key][variableKvp.Key] = fb;
+                    }
+                }
+
                 typeLocals = new Dictionary<string, object>(typeLocalsInited);
 
                 List<string> varIsInited = new List<string>();
@@ -307,6 +326,93 @@ namespace SilverSim.Scripting.Lsl
                         reset_ILGen.Emit(OpCodes.Stfld, fb);
                     }
 
+                }
+
+                /* init state variables with default values */
+                foreach(KeyValuePair<string, Dictionary<string, FieldBuilder>> stateVarKvp in compileState.m_StateVariableFieldInfo)
+                {
+                    foreach(KeyValuePair<string, FieldBuilder> kvp in stateVarKvp.Value)
+                    {
+                        FieldBuilder fb = kvp.Value;
+                        if (fb.FieldType == typeof(LSLKey))
+                        {
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+
+                        }
+                        else if (fb.FieldType == typeof(string))
+                        {
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Ldstr, string.Empty);
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Ldstr, string.Empty);
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
+                        else if (fb.FieldType == typeof(double))
+                        {
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
+                        else if (fb.FieldType == typeof(int))
+                        {
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Ldc_I4_0);
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Ldc_I4_0);
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
+                        else if (fb.FieldType == typeof(AnArray))
+                        {
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
+                        else if (fb.FieldType != typeof(Vector3) && fb.FieldType != typeof(Quaternion))
+                        {
+                            throw new ArgumentException("Unexpected type " + fb.FieldType.FullName);
+                        }
+
+                        if (fb.FieldType == typeof(Vector3))
+                        {
+                            FieldInfo sfld = typeof(Vector3).GetField("Zero");
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Ldsfld, sfld);
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Ldsfld, sfld);
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
+                        else if (fb.FieldType == typeof(Quaternion))
+                        {
+                            FieldInfo sfld = typeof(Quaternion).GetField("Identity");
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ilgen.Emit(OpCodes.Ldsfld, sfld);
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ilgen.Emit(OpCodes.Ldsfld, sfld);
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
+                    }
                 }
 
                 while (varsToInit.Count != 0)
@@ -711,6 +817,26 @@ namespace SilverSim.Scripting.Lsl
                     state_ilgen = state_cb.GetILGenerator();
                     state_ilgen.Emit(OpCodes.Ret);
 
+                    if(!stateKvp.Value.ContainsKey("state_entry"))
+                    {
+                        MethodBuilder eventbuilder = state.DefineMethod(
+                            "state_entry",
+                            MethodAttributes.Public,
+                            typeof(void),
+                            Type.EmptyTypes);
+                        ILGenDumpProxy event_ilgen = new ILGenDumpProxy(
+                            eventbuilder.GetILGenerator(),
+                            compileState.DebugDocument
+#if DEBUG
+                            , dumpILGen
+#endif
+                            );
+                        compileState.ILGen = event_ilgen;
+                        typeLocals = new Dictionary<string, object>(typeLocalsInited);
+                        StateEntryInitVars(stateKvp.Key, compileState, typeLocals);
+                        event_ilgen.Emit(OpCodes.Ret);
+                    }
+
                     foreach (KeyValuePair<string, List<LineInfo>> eventKvp in stateKvp.Value)
                     {
                         MethodInfo d = compileState.ApiInfo.EventDelegates[eventKvp.Key];
@@ -735,11 +861,27 @@ namespace SilverSim.Scripting.Lsl
                             , dumpILGen
 #endif
                             );
+                        compileState.ILGen = event_ilgen;
+                        typeLocals = new Dictionary<string, object>(typeLocalsInited);
+                        Dictionary<string, FieldBuilder> stateVarDict;
+
+                        if (compileState.m_StateVariableFieldInfo.TryGetValue(stateKvp.Key, out stateVarDict))
+                        {
+                            foreach(KeyValuePair<string, FieldBuilder> fbKvp in stateVarDict)
+                            {
+                                typeLocals[fbKvp.Key] = fbKvp.Value;
+                            }
+                        }
+
+                        if (eventKvp.Key == "state_entry")
+                        {
+                            StateEntryInitVars(stateKvp.Key, compileState, typeLocals);
+                        }
+
                         event_ilgen.Emit(OpCodes.Ldarg_0);
                         event_ilgen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                         event_ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("ResetCallDepthCount"));
 
-                        typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         ProcessFunction(compileState, scriptTypeBuilder, state, eventbuilder, event_ilgen, eventKvp.Value, typeLocals);
 #if DEBUG
                         dumpILGen.WriteLine("DefineEvent.ILGenEnd(\"{0}\")", eventKvp.Key);
@@ -784,6 +926,118 @@ namespace SilverSim.Scripting.Lsl
 #if DEBUG
             }
 #endif
+        }
+
+        void StateEntryInitVars(string stateName, CompileState compileState, Dictionary<string, object> typeLocalIn)
+        {
+            Dictionary<string, FieldBuilder> stateVars;
+            Dictionary<string, LineInfo> stateVarInitValues;
+            if(!compileState.m_StateVariableFieldInfo.TryGetValue(stateName, out stateVars))
+            {
+                return;
+            }
+            if(!compileState.m_StateVariableInitValues.TryGetValue(stateName, out stateVarInitValues))
+            {
+                stateVarInitValues = new Dictionary<string, LineInfo>();
+            }
+
+            List<string> varsToInit = new List<string>(stateVars.Keys);
+            List<string> varIsInited = new List<string>();
+            Dictionary<string, object> typeLocals = new Dictionary<string, object>(typeLocalIn);
+
+            while (varsToInit.Count != 0)
+            {
+                string varName = varsToInit[0];
+                varsToInit.RemoveAt(0);
+
+                FieldBuilder fb = stateVars[varName];
+                LineInfo initargs;
+
+                if (stateVarInitValues.TryGetValue(varName, out initargs))
+                {
+                    Tree expressionTree;
+                    try
+                    {
+                        expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber);
+                    }
+                    catch (Exception e)
+                    {
+                        throw CompilerException(initargs, string.Format("Init value of state variable {0} has syntax error. {1}\n{2}", varName, e.Message, e.StackTrace));
+                    }
+
+                    if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))
+                    {
+#if DEBUG
+                        compileState.ILGen.Writer.WriteLine("-- Init state var " + varName);
+#endif
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                        ProcessExpression(
+                            compileState,
+                            fb.FieldType,
+                            expressionTree,
+                            initargs.LineNumber,
+                            typeLocals);
+                        compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                        varIsInited.Add(varName);
+                    }
+                    else
+                    {
+                        /* push back that var. We got it too early. */
+                        varsToInit.Add(varName);
+                    }
+                }
+                else if (fb.FieldType == typeof(int))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
+                else if (fb.FieldType == typeof(double))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
+                else if (fb.FieldType == typeof(string))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldstr, string.Empty);
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
+                else if (fb.FieldType == typeof(Vector3))
+                {
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
+                else if (fb.FieldType == typeof(Quaternion))
+                {
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
+                else if (fb.FieldType == typeof(AnArray))
+                {
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
+                else if (fb.FieldType == typeof(LSLKey))
+                {
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
+            }
         }
 
         bool AreAllVarReferencesSatisfied(CompileState cs, List<string> initedVars, Tree expressionTree)

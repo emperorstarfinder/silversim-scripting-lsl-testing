@@ -50,8 +50,11 @@ namespace SilverSim.Scripting.Lsl
             public bool ForcedSleepDefault;
             public bool EmitDebugSymbols;
             public Dictionary<string, Type> m_VariableDeclarations = new Dictionary<string, Type>();
+            public Dictionary<string, Dictionary<string, Type>> m_StateVariableDeclarations = new Dictionary<string, Dictionary<string, Type>>();
             public Dictionary<string, FieldBuilder> m_VariableFieldInfo = new Dictionary<string, FieldBuilder>();
+            public Dictionary<string, Dictionary<string, FieldBuilder>> m_StateVariableFieldInfo = new Dictionary<string, Dictionary<string, FieldBuilder>>();
             public Dictionary<string, LineInfo> m_VariableInitValues = new Dictionary<string, LineInfo>();
+            public Dictionary<string, Dictionary<string, LineInfo>> m_StateVariableInitValues = new Dictionary<string, Dictionary<string, LineInfo>>();
             public List<List<string>> m_LocalVariables = new List<List<string>>();
             public Dictionary<string, List<FunctionInfo>> m_Functions = new Dictionary<string, List<FunctionInfo>>();
             public Dictionary<string, Dictionary<string, List<LineInfo>>> m_States = new Dictionary<string, Dictionary<string, List<LineInfo>>>();
@@ -71,6 +74,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableExtendedTypecasts;
                 /** <summary>Enables a rather unknown function overloading support that happen to exist within OpenSim's XEngine</summary> */
                 public bool EnableFunctionOverloading = true;
+
+                public bool EnableStateVariables = false;
             }
 
             public readonly LanguageExtensionsData LanguageExtensions = new LanguageExtensionsData();

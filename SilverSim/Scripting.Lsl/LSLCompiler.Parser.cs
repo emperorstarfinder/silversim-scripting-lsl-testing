@@ -86,10 +86,6 @@ namespace SilverSim.Scripting.Lsl
         List<FuncParamInfo> CheckFunctionParameters(CompileState cs, Parser p, List<string> arguments)
         {
             List<FuncParamInfo> funcParams = new List<FuncParamInfo>();
-            if (cs.m_LocalVariables.Count != 0)
-            {
-                throw ParserException(p, "Internal parser error");
-            }
             cs.m_LocalVariables.Add(new List<string>());
             if (arguments.Count == 1 && arguments[0] == ")")
             {
@@ -362,78 +358,147 @@ namespace SilverSim.Scripting.Lsl
         void ParseState(CompileState compileState, Parser p, string stateName)
         {
             compileState.m_States.Add(stateName, new Dictionary<string, List<LineInfo>>());
-            for (; ; )
+            compileState.m_LocalVariables.Add(new List<string>());
+            try
             {
-                int lineNumber;
-                List<string> args = new List<string>();
-                try
+                for (;;)
                 {
-                    p.Read(args);
-                }
-                catch(ArgumentException e)
-                {
-                    throw ParserException(p, e.Message);
-                }
-                catch (ParserBase.EndOfStringException)
-                {
-                    throw ParserException(p, "Missing '\"' at the end of string");
-                }
-                catch (ParserBase.EndOfFileException)
-                {
-                    throw ParserException(p, "Missing '}' at end of script");
-                }
-                catch (ParserBase.StackEmptyException)
-                {
-                    throw ParserException(p, "Premature end of script");
-                }
-                lineNumber = p.CurrentLineNumber;
+                    int lineNumber;
+                    List<string> args = new List<string>();
+                    try
+                    {
+                        p.Read(args);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        throw ParserException(p, e.Message);
+                    }
+                    catch (ParserBase.EndOfStringException)
+                    {
+                        throw ParserException(p, "Missing '\"' at the end of string");
+                    }
+                    catch (ParserBase.EndOfFileException)
+                    {
+                        throw ParserException(p, "Missing '}' at end of script");
+                    }
+                    catch (ParserBase.StackEmptyException)
+                    {
+                        throw ParserException(p, "Premature end of script");
+                    }
+                    lineNumber = p.CurrentLineNumber;
 
-                if (args.Count == 0)
-                {
-                    /* should not happen but better be safe here */
-                }
-                else if (args[args.Count - 1] == ";")
-                {
-                    throw ParserException(p, string.Format("Neither variable declarations nor statements allowed outside of event functions. Offending state {0}.", stateName));
-                }
-                else if (args[args.Count - 1] == "{")
-                {
-                    if (!compileState.ApiInfo.EventDelegates.ContainsKey(args[0]))
+                    if (args.Count == 0)
                     {
-                        throw ParserException(p, string.Format("'{0}' is not a valid event.", args[0]));
+                        /* should not happen but better be safe here */
                     }
-                    List<FuncParamInfo> fp = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
-                    MethodInfo m = compileState.ApiInfo.EventDelegates[args[0]];
-                    ParameterInfo[] pi = m.GetParameters();
-                    if (fp.Count != pi.Length)
+                    else if (args[args.Count - 1] == ";")
                     {
-                        throw ParserException(p, string.Format("'{0}' does not have the correct parameters.", args[0]));
-                    }
-                    int i;
-                    for (i = 0; i < fp.Count; ++i)
-                    {
-                        if (!fp[i].Type.Equals(pi[i].ParameterType))
+                        Type stateVarType = null;
+                        switch (args[0])
                         {
-                            throw ParserException(p, string.Format("'{0}' does not match in parameter types", args[0]));
+                            case "integer":
+                                stateVarType = typeof(int);
+                                break;
+
+                            case "float":
+                                stateVarType = typeof(double);
+                                break;
+
+                            case "vector":
+                                stateVarType = typeof(Vector3);
+                                break;
+
+                            case "quaternion":
+                            case "rotation":
+                                stateVarType = typeof(Quaternion);
+                                break;
+
+                            case "string":
+                                stateVarType = typeof(string);
+                                break;
+
+                            case "list":
+                                stateVarType = typeof(AnArray);
+                                break;
+
+                            case "key":
+                                stateVarType = typeof(LSLKey);
+                                break;
+
+                            default:
+                                throw ParserException(p, string.Format("Neither variable declarations nor statements allowed outside of event functions. Offending state {0}.", stateName));
                         }
+
+                        if (!compileState.LanguageExtensions.EnableStateVariables)
+                        {
+                            throw ParserException(p, string.Format("Neither variable declarations nor statements allowed outside of event functions. Offending state {0}.", stateName));
+                        }
+                        CheckUsedName(compileState, p, "State variable", args[1]);
+                        if (args[2] == "=")
+                        {
+                            if (!compileState.m_StateVariableInitValues.ContainsKey(stateName))
+                            {
+                                compileState.m_StateVariableInitValues.Add(stateName, new Dictionary<string, LineInfo>());
+                            }
+                            compileState.m_StateVariableInitValues[stateName].Add(args[1], new LineInfo(args.GetRange(3, args.Count - 4), lineNumber));
+                        }
+                        else if(args[2] != ";")
+                        { 
+                            throw ParserException(p, string.Format("State variable name must be followed by ';' or '='. Offending state {0}.", stateName));
+                        }
+                        if(!compileState.m_StateVariableDeclarations.ContainsKey(stateName))
+                        {
+                            compileState.m_StateVariableDeclarations.Add(stateName, new Dictionary<string, Type>());
+                        }
+                        compileState.m_StateVariableDeclarations[stateName].Add(args[1], stateVarType);
                     }
-                    if (compileState.m_States[stateName].ContainsKey(args[0]))
+                    else if (args[args.Count - 1] == "{")
                     {
-                        throw ParserException(p, string.Format("Event '{0}' already defined", args[0]));
+                        if (!compileState.ApiInfo.EventDelegates.ContainsKey(args[0]))
+                        {
+                            throw ParserException(p, string.Format("'{0}' is not a valid event.", args[0]));
+                        }
+                        if (compileState.m_LocalVariables.Count != 1)
+                        {
+                            throw ParserException(p, "Internal parser error");
+                        }
+                        List<FuncParamInfo> fp = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
+                        MethodInfo m = compileState.ApiInfo.EventDelegates[args[0]];
+                        ParameterInfo[] pi = m.GetParameters();
+                        if (fp.Count != pi.Length)
+                        {
+                            throw ParserException(p, string.Format("'{0}' does not have the correct parameters.", args[0]));
+                        }
+                        int i;
+                        for (i = 0; i < fp.Count; ++i)
+                        {
+                            if (!fp[i].Type.Equals(pi[i].ParameterType))
+                            {
+                                throw ParserException(p, string.Format("'{0}' does not match in parameter types", args[0]));
+                            }
+                        }
+                        if (compileState.m_States[stateName].ContainsKey(args[0]))
+                        {
+                            throw ParserException(p, string.Format("Event '{0}' already defined", args[0]));
+                        }
+                        List<LineInfo> stateList = new List<LineInfo>();
+                        compileState.m_States[stateName].Add(args[0], stateList);
+                        stateList.Add(new LineInfo(args, lineNumber));
+                        ParseBlock(compileState, p, stateList, true);
                     }
-                    List<LineInfo> stateList = new List<LineInfo>();
-                    compileState.m_States[stateName].Add(args[0], stateList);
-                    stateList.Add(new LineInfo(args, lineNumber));
-                    ParseBlock(compileState, p, stateList, true);
-                }
-                else if (args[0] == "}")
-                {
-                    if(compileState.m_States[stateName].Count == 0)
+                    else if (args[0] == "}")
                     {
-                        throw ParserException(p, string.Format("state '{0}' does not have any events.", stateName));
+                        if (compileState.m_States[stateName].Count == 0)
+                        {
+                            throw ParserException(p, string.Format("state '{0}' does not have any events.", stateName));
+                        }
+                        return;
                     }
-                    return;
                 }
+            }
+            finally
+            {
+                compileState.m_LocalVariables.RemoveAt(compileState.m_LocalVariables.Count - 1);
             }
         }
 
@@ -469,6 +534,7 @@ namespace SilverSim.Scripting.Lsl
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.ASSL | APIFlags.OSSL | APIFlags.LSL;
                         compileState.LanguageExtensions.EnableExtendedTypecasts = true;
+                        compileState.LanguageExtensions.EnableStateVariables = true;
                         compileState.ForcedSleepDefault = false;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
@@ -488,6 +554,11 @@ namespace SilverSim.Scripting.Lsl
             if(apiExtensions.Contains(APIExtension.ExtendedTypecasts))
             {
                 compileState.LanguageExtensions.EnableExtendedTypecasts = true;
+            }
+            
+            if(apiExtensions.Contains(APIExtension.StateVariables))
+            {
+                compileState.LanguageExtensions.EnableStateVariables = true;
             }
 
             foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
@@ -671,6 +742,10 @@ namespace SilverSim.Scripting.Lsl
                             case "quaternion":
                             case "void":
                                 CheckUsedName(compileState, p, "Function", args[1]);
+                                if (compileState.m_LocalVariables.Count != 0)
+                                {
+                                    throw ParserException(p, "Internal parser error");
+                                }
                                 funcparam = CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
                                 funcList.Add(new LineInfo(args, lineNumber));
                                 ParseBlock(compileState, p, funcList, false);
@@ -685,6 +760,10 @@ namespace SilverSim.Scripting.Lsl
                                 if(args.Count < 3)
                                 {
                                     throw ParserException(p, "Invalid state declaration");
+                                }
+                                if (compileState.m_LocalVariables.Count != 0)
+                                {
+                                    throw ParserException(p, "Internal parser error");
                                 }
                                 funcparam = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
                                 args.Insert(0, "void");
