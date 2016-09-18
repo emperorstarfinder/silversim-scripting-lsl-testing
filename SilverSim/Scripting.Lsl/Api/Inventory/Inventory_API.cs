@@ -83,6 +83,59 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.LSL)]
         public const int PERM_ALL = 2147483647;
 
+        /* private constants */
+        const int LINK_ROOT = 1;
+        const int LINK_SET = -1;
+        const int LINK_ALL_OTHERS = -2;
+        const int LINK_ALL_CHILDREN = -3;
+        const int LINK_THIS = -4;
+
+        List<ObjectPart> DetermineLinks(ObjectPart thisPart, int link)
+        {
+            List<ObjectPart> res = new List<ObjectPart>();
+            ObjectGroup grp = thisPart.ObjectGroup;
+            switch(link)
+            {
+                case LINK_THIS:
+                    res.Add(thisPart);
+                    break;
+
+                case LINK_ROOT:
+                    res.Add(grp.RootPart);
+                    break;
+
+                case LINK_ALL_OTHERS:
+                    foreach (ObjectPart p in grp.ValuesByKey1)
+                    {
+                        if (p != thisPart)
+                        {
+                            res.Add(p);
+                        }
+                    }
+                    break;
+
+                case LINK_ALL_CHILDREN:
+                    foreach(ObjectPart p in grp.ValuesByKey1)
+                    {
+                        if (p != grp.RootPart)
+                        {
+                            res.Add(p);
+                        }
+                    }
+                    break;
+
+                default:
+                    ObjectPart part;
+                    if(grp.TryGetValue(link, out part))
+                    {
+                        res.Add(part);
+                    }
+                    break;
+            }
+
+            return res;
+        }
+
         [APILevel(APIFlags.LSL, "llRemoveInventory")]
         public void RemoveInventory(ScriptInstance instance, string item)
         {
@@ -111,6 +164,38 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
+        [APILevel(APIFlags.ASSL, "asRemoveLinkInventory")]
+        [APIExtension(APIExtension.InWorldz, "iwRemoveLinkInventory")]
+        public void RemoveInventory(ScriptInstance instance, int link, string item)
+        {
+            lock (instance)
+            {
+                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    ObjectPartInventoryItem resitem;
+                    if (instance.Part.Inventory.TryGetValue(item, out resitem))
+                    {
+                        ScriptInstance si = resitem.ScriptInstance;
+
+                        instance.Part.Inventory.Remove(resitem.ID);
+                        if (si == instance)
+                        {
+                            throw new ScriptAbortException();
+                        }
+                        else if (si != null)
+                        {
+                            si = resitem.RemoveScriptInstance;
+                            if (si != null)
+                            {
+                                si.Abort();
+                                si.Remove();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetInventoryCreator")]
         public LSLKey GetInventoryCreator(ScriptInstance instance, string item)
         {
@@ -124,6 +209,24 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 {
                     return UUID.Zero;
                 }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryCreator")]
+        [APIExtension(APIExtension.InWorldz, "iwGetLinkInventoryCreator")]
+        public LSLKey GetInventoryCreator(ScriptInstance instance, int link, string name)
+        {
+            lock(instance)
+            {
+                ObjectPartInventoryItem item;
+                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    if(part.Inventory.TryGetValue(name, out item))
+                    {
+                        return item.Creator.ID;
+                    }
+                }
+                return UUID.Zero;
             }
         }
 
@@ -141,6 +244,24 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     return UUID.Zero;
                 }
             }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryKey")]
+        [APIExtension(APIExtension.InWorldz, "iwGetLinkInventoryKey")]
+        public LSLKey GetInventoryKey(ScriptInstance instance, int link, string name)
+        {
+            lock (instance)
+            {
+                ObjectPartInventoryItem item;
+                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    if (part.Inventory.TryGetValue(name, out item))
+                    {
+                        return item.AssetID;
+                    }
+                }
+            }
+            return UUID.Zero;
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryName")]
@@ -167,6 +288,62 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             return string.Empty;
         }
 
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryName")]
+        [APIExtension(APIExtension.InWorldz, "iwGetLinkInventoryName")]
+        public string GetInventoryName(ScriptInstance instance, int link, int type, int number)
+        {
+            lock (instance)
+            {
+                if (type == INVENTORY_ALL)
+                {
+                    foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                    {
+                        int cnt = part.Inventory.Count;
+                        if (number < cnt)
+                        {
+                            try
+                            {
+                                return part.Inventory[(uint)number].Name;
+                            }
+                            catch
+                            {
+                                /* no action required */
+                            }
+                        }
+                        number -= cnt;
+                        if (number < 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                    {
+                        int cnt = part.Inventory.CountType((InventoryType)type);
+                        if (number < cnt)
+                        {
+                            try
+                            {
+                                return part.Inventory[(InventoryType)type, (uint)number].Name;
+                            }
+                            catch
+                            {
+                                /* no action required */
+                            }
+                        }
+                        number -= cnt;
+                        if (number < 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            return string.Empty;
+        }
+
         [APILevel(APIFlags.LSL, "llGetInventoryNumber")]
         public int GetInventoryNumber(ScriptInstance instance, int type)
         {
@@ -177,6 +354,21 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     return instance.Part.Inventory.Count;
                 }
                 return instance.Part.Inventory.CountType((InventoryType)type);
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryNumber")]
+        [APIExtension(APIExtension.InWorldz, "iwGetLinkInventoryNumber")]
+        public int GetInventoryNumber(ScriptInstance instance, int link, int type)
+        {
+            lock (instance)
+            {
+                int cnt = 0;
+                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    cnt += ((type == INVENTORY_ALL) ? part.Inventory.Count : part.Inventory.CountType((InventoryType)type));
+                }
+                return cnt;
             }
         }
 
@@ -224,6 +416,52 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
+        [APILevel(APIFlags.ASSL, "asSetLinkInventoryPermMask")]
+        public void SetInventoryPermMask(ScriptInstance instance, int link, string name, int category, int mask)
+        {
+            if (instance.Part.ObjectGroup.Scene.IsSimConsoleAllowed(instance.Part.Owner))
+            {
+                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    try
+                    {
+                        ObjectPartInventoryItem item = instance.Part.Inventory[name];
+                        switch (category)
+                        {
+                            case MASK_BASE:
+                                item.Permissions.Base = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_EVERYONE:
+                                item.Permissions.EveryOne = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_GROUP:
+                                item.Permissions.Group = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_NEXT:
+                                item.Permissions.NextOwner = (InventoryPermissionsMask)mask;
+                                break;
+
+                            case MASK_OWNER:
+                                item.Permissions.Current = (InventoryPermissionsMask)mask;
+                                break;
+
+                            default:
+                                break;
+                        }
+                        return;
+                    }
+                    catch
+                    {
+                        /* no action required */
+                    }
+                }
+                throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetInventoryPermMask")]
         public int GetInventoryPermMask(ScriptInstance instance, string name, int category)
         {
@@ -268,6 +506,55 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryPermMask")]
+        [APIExtension(APIExtension.InWorldz, "iwGetLinkInventoryPermMask")]
+        public int GetInventoryPermMask(ScriptInstance instance, int link, string name, int category)
+        {
+            lock (instance)
+            {
+                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    try
+                    {
+                        ObjectPartInventoryItem item = instance.Part.Inventory[name];
+                        InventoryPermissionsMask mask;
+                        switch (category)
+                        {
+                            case MASK_BASE:
+                                mask = item.Permissions.Base;
+                                break;
+
+                            case MASK_EVERYONE:
+                                mask = item.Permissions.EveryOne;
+                                break;
+
+                            case MASK_GROUP:
+                                mask = item.Permissions.Group;
+                                break;
+
+                            case MASK_NEXT:
+                                mask = item.Permissions.NextOwner;
+                                break;
+
+                            case MASK_OWNER:
+                                mask = item.Permissions.Current;
+                                break;
+
+                            default:
+                                mask = InventoryPermissionsMask.None;
+                                break;
+                        }
+                        return (int)(uint)mask;
+                    }
+                    catch
+                    {
+                        /* no action required */
+                    }
+                }
+                throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetInventoryType")]
         public int GetInventoryType(ScriptInstance instance, string name)
         {
@@ -281,6 +568,24 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 {
                     return -1;
                 }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryType")]
+        [APIExtension(APIExtension.InWorldz, "iwGetLinkInventoryType")]
+        public int GetInventoryType(ScriptInstance instance, int link, string name)
+        {
+            lock (instance)
+            {
+                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    ObjectPartInventoryItem item;
+                    if(part.Inventory.TryGetValue(name, out item))
+                    {
+                        return (int)instance.Part.Inventory[name].InventoryType;
+                    }
+                }
+                return -1;
             }
         }
 
@@ -305,6 +610,24 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 {
                     return string.Empty;
                 }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryDesc")]
+        [APIExtension(APIExtension.InWorldz, "iwGetLinkInventoryDesc")]
+        public string GetInventoryDesc(ScriptInstance instance, int link, string name)
+        {
+            lock(instance)
+            {
+                foreach(ObjectPart part in DetermineLinks(instance.Part, link))
+                {
+                    ObjectPartInventoryItem item;
+                    if(part.Inventory.TryGetValue(name, out item))
+                    {
+                        return item.Description;
+                    }
+                }
+                return string.Empty;
             }
         }
         #endregion
