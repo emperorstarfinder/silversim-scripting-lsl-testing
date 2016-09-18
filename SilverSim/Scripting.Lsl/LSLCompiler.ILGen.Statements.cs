@@ -16,6 +16,25 @@ namespace SilverSim.Scripting.Lsl
             throw new ChangeStateException(newState);
         }
 
+        void GenerateTypedEqualOperator(CompileState cs, LineInfo functionLine, Type t)
+        {
+            if(t == typeof(int) || t == typeof(double))
+            {
+                cs.ILGen.Emit(OpCodes.Ceq);
+            }
+            else if(t == typeof(string) ||
+                t == typeof(Quaternion) ||
+                t == typeof(Vector3) ||
+                t == typeof(LSLKey))
+            {
+                cs.ILGen.Emit(OpCodes.Callvirt, t.GetMethod("Equals", new Type[] { t }));
+            }
+            else
+            {
+                throw CompilerException(functionLine, "Internal Compiler Error");
+            }
+        }
+
         void ProcessStatement(
             CompileState compileState,
             Type returnType,
@@ -25,7 +44,59 @@ namespace SilverSim.Scripting.Lsl
             Dictionary<string, object> localVars,
             Dictionary<string, ILLabelInfo> labels)
         {
-            if (functionLine.Line[startAt] == "@")
+            if(functionLine.Line[startAt] == "case" && compileState.LanguageExtensions.EnableSwitchBlock)
+            {
+                if(compileState.m_BreakContinueLabels.Count == 0 ||
+                    compileState.m_BreakContinueLabels[0].SwitchValueLocal == null)
+                {
+                    throw CompilerException(functionLine, "'case' not in 'switch' block");
+                }
+
+                BreakContinueLabel bc = compileState.m_BreakContinueLabels[0];
+                Label ftLabel = compileState.ILGen.DefineLabel();
+                compileState.ILGen.Emit(OpCodes.Br, ftLabel);
+                compileState.ILGen.MarkLabel(bc.NextCaseLabel);
+                bc.NextCaseLabel = compileState.ILGen.DefineLabel();
+                bc.CaseRequired = false;
+
+                ProcessExpression(
+                                compileState,
+                                bc.SwitchValueLocal.LocalType,
+                                1,
+                                functionLine.Line.Count - 2,
+                                functionLine,
+                                localVars);
+                GenerateTypedEqualOperator(compileState, functionLine, bc.SwitchValueLocal.LocalType);
+                compileState.ILGen.Emit(OpCodes.Brfalse, bc.NextCaseLabel);
+
+                Label lb = compileState.ILGen.DefineLabel();
+                compileState.ILGen.MarkLabel(ftLabel);
+            }
+            else if(functionLine.Line[startAt] == "default" && compileState.LanguageExtensions.EnableSwitchBlock)
+            {
+                if (compileState.m_BreakContinueLabels.Count == 0 ||
+                    compileState.m_BreakContinueLabels[0].SwitchValueLocal == null)
+                {
+                    throw CompilerException(functionLine, "'default' not in 'switch' block");
+                }
+
+                BreakContinueLabel bc = compileState.m_BreakContinueLabels[0];
+
+                Label ftLabel = compileState.ILGen.DefineLabel();
+                compileState.ILGen.Emit(OpCodes.Br, ftLabel);
+
+                bc.DefaultLabel = ftLabel;
+                bc.HaveDefaultCase = true;
+                bc.CaseRequired = false;
+                compileState.ILGen.MarkLabel(ftLabel);
+
+            }
+            else if (compileState.m_BreakContinueLabels.Count != 0 &&
+                compileState.m_BreakContinueLabels[0].CaseRequired)
+            {
+                throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+            }
+            else if (functionLine.Line[startAt] == "@")
             {
                 throw CompilerException(functionLine, "Invalid label declaration");
             }
@@ -47,6 +118,35 @@ namespace SilverSim.Scripting.Lsl
                 return;
             }
             #endregion
+            #region Break & Continue
+            else if(functionLine.Line[startAt] == "break" &&
+                (compileState.LanguageExtensions.EnableSwitchBlock || compileState.LanguageExtensions.EnableBreakContinueStatement))
+            {
+                if (compileState.m_BreakContinueLabels.Count == 0 || !compileState.m_BreakContinueLabels[0].HaveBreakTarget)
+                {
+                    if (compileState.LanguageExtensions.EnableSwitchBlock)
+                    {
+                        throw CompilerException(functionLine, "'continue' not in 'for'/'while'/'do while'/'switch' block");
+                    }
+                    else
+                    {
+                        throw CompilerException(functionLine, "'continue' not in 'for'/'while'/'do while' block");
+                    }
+                }
+
+                compileState.ILGen.Emit(OpCodes.Br, compileState.m_BreakContinueLabels[0].BreakTargetLabel);
+            }
+            else if (functionLine.Line[startAt] == "continue" &&
+                compileState.LanguageExtensions.EnableBreakContinueStatement)
+            {
+                if(compileState.m_BreakContinueLabels.Count == 0 || !compileState.m_BreakContinueLabels[0].HaveContinueTarget)
+                {
+                    throw CompilerException(functionLine, "'continue' not in 'for'/'while'/'do while' block");
+                }
+
+                compileState.ILGen.Emit(OpCodes.Br, compileState.m_BreakContinueLabels[0].ContinueTargetLabel);
+            }
+            #endregion
             #region Return from function
             else if (functionLine.Line[startAt] == "return")
             {
@@ -63,71 +163,11 @@ namespace SilverSim.Scripting.Lsl
                             localVars);
                     }
                 }
-                else if (returnType == typeof(int))
+                else
                 {
                     ProcessExpression(
                         compileState,
-                        typeof(int),
-                        1,
-                        functionLine.Line.Count - 2,
-                        functionLine,
-                        localVars);
-                }
-                else if (returnType == typeof(string))
-                {
-                    ProcessExpression(
-                        compileState,
-                        typeof(string),
-                        1,
-                        functionLine.Line.Count - 2,
-                        functionLine,
-                        localVars);
-                }
-                else if (returnType == typeof(double))
-                {
-                    ProcessExpression(
-                        compileState,
-                        typeof(double),
-                        1,
-                        functionLine.Line.Count - 2,
-                        functionLine,
-                        localVars);
-                }
-                else if (returnType == typeof(AnArray))
-                {
-                    ProcessExpression(
-                        compileState,
-                        typeof(AnArray),
-                        1,
-                        functionLine.Line.Count - 2,
-                        functionLine,
-                        localVars);
-                }
-                else if (returnType == typeof(Vector3))
-                {
-                    ProcessExpression(
-                        compileState,
-                        typeof(Vector3),
-                        1,
-                        functionLine.Line.Count - 2,
-                        functionLine,
-                        localVars);
-                }
-                else if (returnType == typeof(Quaternion))
-                {
-                    ProcessExpression(
-                        compileState,
-                        typeof(Quaternion),
-                        1,
-                        functionLine.Line.Count - 2,
-                        functionLine,
-                        localVars);
-                }
-                else if (returnType == typeof(LSLKey))
-                {
-                    ProcessExpression(
-                        compileState,
-                        typeof(LSLKey),
+                        returnType,
                         1,
                         functionLine.Line.Count - 2,
                         functionLine,

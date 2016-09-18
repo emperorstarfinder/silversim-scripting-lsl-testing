@@ -29,6 +29,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     #region Label definition
                     case "@":
+                        if(compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
                         if(eoif_label.HasValue)
                         {
                             compileState.ILGen.MarkLabel(eoif_label.Value);
@@ -67,6 +72,11 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
 
                         if (eoif_label.HasValue)
                         {
@@ -101,6 +111,11 @@ namespace SilverSim.Scripting.Lsl
                         if (isImplicit)
                         {
                             throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
+                        }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
                         }
 
                         if (eoif_label.HasValue)
@@ -137,6 +152,11 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
 
                         if (eoif_label.HasValue)
                         {
@@ -172,6 +192,11 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
 
                         if (eoif_label.HasValue)
                         {
@@ -205,6 +230,11 @@ namespace SilverSim.Scripting.Lsl
                         if (isImplicit)
                         {
                             throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
+                        }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
                         }
 
                         if (eoif_label.HasValue)
@@ -240,6 +270,11 @@ namespace SilverSim.Scripting.Lsl
                         if (isImplicit)
                         {
                             throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
+                        }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
                         }
 
                         if (eoif_label.HasValue)
@@ -277,6 +312,11 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw CompilerException(functionLine, "variable declaration not allowed within conditional statement without block");
                         }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
 
                         if (eoif_label.HasValue)
                         {
@@ -311,6 +351,11 @@ namespace SilverSim.Scripting.Lsl
                     #region Control Flow (Loops)
                     /* Control Flow Statements are pre-splitted into own lines with same line number, so we do not have to care about here */
                     case "for":
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
                         if (eoif_label.HasValue)
                         {
                             compileState.ILGen.MarkLabel(eoif_label.Value);
@@ -359,6 +404,13 @@ namespace SilverSim.Scripting.Lsl
                             Label endlabel = compileState.ILGen.DefineLabel();
                             Label looplabel = compileState.ILGen.DefineLabel();
 
+                            BreakContinueLabel bcLabel = new BreakContinueLabel();
+                            bcLabel.BreakTargetLabel = endlabel;
+                            bcLabel.ContinueTargetLabel = looplabel;
+                            bcLabel.HaveBreakTarget = true;
+                            bcLabel.HaveContinueTarget = true;
+                            compileState.m_BreakContinueLabels.Insert(0, bcLabel);
+
                             compileState.ILGen.MarkLabel(looplabel);
 
                             if (semicolon1 + 1 != semicolon2)
@@ -406,10 +458,16 @@ namespace SilverSim.Scripting.Lsl
 
                             compileState.ILGen.Emit(OpCodes.Br, looplabel);
                             compileState.ILGen.MarkLabel(endlabel);
+                            compileState.m_BreakContinueLabels.RemoveAt(0);
                         }
                         break;
 
                     case "while":
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
                         if (eoif_label.HasValue)
                         {
                             compileState.ILGen.MarkLabel(eoif_label.Value);
@@ -442,6 +500,13 @@ namespace SilverSim.Scripting.Lsl
                             Label looplabel = compileState.ILGen.DefineLabel();
                             Label endlabel = compileState.ILGen.DefineLabel();
 
+                            BreakContinueLabel bcLabel = new BreakContinueLabel();
+                            bcLabel.BreakTargetLabel = endlabel;
+                            bcLabel.ContinueTargetLabel = looplabel;
+                            bcLabel.HaveBreakTarget = true;
+                            bcLabel.HaveContinueTarget = true;
+                            compileState.m_BreakContinueLabels.Insert(0, bcLabel);
+
                             compileState.ILGen.MarkLabel(looplabel);
                             ProcessExpression(
                                 compileState,
@@ -472,10 +537,16 @@ namespace SilverSim.Scripting.Lsl
 
                             compileState.ILGen.Emit(OpCodes.Br, looplabel);
                             compileState.ILGen.MarkLabel(endlabel);
+                            compileState.m_BreakContinueLabels.RemoveAt(0);
                         }
                         break;
 
                     case "do":
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
                         if (eoif_label.HasValue)
                         {
                             compileState.ILGen.MarkLabel(eoif_label.Value);
@@ -483,7 +554,13 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         {
+                            BreakContinueLabel bcLabel = new BreakContinueLabel();
+                            compileState.m_BreakContinueLabels.Insert(0, bcLabel);
                             Label looplabel = compileState.ILGen.DefineLabel();
+                            bcLabel.ContinueTargetLabel = looplabel;
+                            bcLabel.BreakTargetLabel = compileState.ILGen.DefineLabel();
+                            bcLabel.HaveContinueTarget = true;
+                            bcLabel.HaveBreakTarget = true;
 
                             compileState.ILGen.MarkLabel(looplabel);
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
@@ -545,7 +622,67 @@ namespace SilverSim.Scripting.Lsl
                                 functionLine,
                                 localVars);
                             compileState.ILGen.Emit(OpCodes.Brtrue, looplabel);
+
+                            compileState.ILGen.MarkLabel(bcLabel.BreakTargetLabel);
+                            compileState.m_BreakContinueLabels.RemoveAt(0);
                         }
+                        break;
+
+                    #endregion
+
+                    #region Control Flow (Switch)
+                    case "switch":
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
+                        if (!compileState.LanguageExtensions.EnableSwitchBlock)
+                        {
+                            goto default;
+                        }
+
+                        compileState.ILGen.BeginScope();
+                        BreakContinueLabel switchBcLabel = new BreakContinueLabel();
+                        compileState.m_BreakContinueLabels.Insert(0, switchBcLabel);
+
+                        switchBcLabel.CaseRequired = true;
+                        switchBcLabel.BreakTargetLabel = compileState.ILGen.DefineLabel();
+                        switchBcLabel.NextCaseLabel = compileState.ILGen.DefineLabel();
+                        switchBcLabel.HaveBreakTarget = true;
+
+                        Type switchVarType = ProcessExpressionToAnyType(
+                                compileState,
+                                2,
+                                functionLine.Line.Count - 3,
+                                functionLine,
+                                localVars);
+                        if(switchVarType == typeof(AnArray))
+                        {
+                            throw CompilerException(functionLine, "List value not supported for 'switch' block");
+                        }
+                        LocalBuilder switchLb = compileState.ILGen.DeclareLocal(switchVarType);
+                        compileState.ILGen.Emit(OpCodes.Stloc, switchLb);
+                        switchBcLabel.SwitchValueLocal = switchLb;
+
+                        ProcessBlock(
+                            compileState,
+                            returnType,
+                            new Dictionary<string, object>(localVars),
+                            labels);
+                        compileState.ILGen.Emit(OpCodes.Br, switchBcLabel.BreakTargetLabel);
+                        compileState.ILGen.MarkLabel(switchBcLabel.NextCaseLabel);
+                        if (switchBcLabel.HaveDefaultCase)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Br, switchBcLabel.DefaultLabel);
+                        }
+                        else
+                        {
+                            compileState.ILGen.Emit(OpCodes.Nop);
+                        }
+                        compileState.ILGen.MarkLabel(switchBcLabel.BreakTargetLabel);
+                        compileState.m_BreakContinueLabels.RemoveAt(0);
+                        compileState.ILGen.EndScope();
                         break;
 
                     #endregion
@@ -553,6 +690,11 @@ namespace SilverSim.Scripting.Lsl
                     #region Control Flow (Conditions)
                     /* Control Flow Statements are pre-splitted into own lines with same line number, so we do not have to care about here */
                     case "if":
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
                         if (eoif_label.HasValue)
                         {
                             compileState.ILGen.MarkLabel(eoif_label.Value);
@@ -593,7 +735,14 @@ namespace SilverSim.Scripting.Lsl
                                 functionLine,
                                 localVars);
                             compileState.ILGen.Emit(OpCodes.Brfalse, endlabel);
-
+                            if (compileState.m_BreakContinueLabels.Count == 0)
+                            {
+                                compileState.m_BreakContinueLabels.Add(new BreakContinueLabel());
+                            }
+                            else
+                            {
+                                compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel(compileState.m_BreakContinueLabels[0]));
+                            }
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
                                 ProcessBlock(
@@ -601,6 +750,7 @@ namespace SilverSim.Scripting.Lsl
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+                                compileState.m_BreakContinueLabels.RemoveAt(0);
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
                                 compileState.ILGen.MarkLabel(endlabel);
@@ -613,6 +763,7 @@ namespace SilverSim.Scripting.Lsl
                                     localVars,
                                     labels,
                                     true);
+                                compileState.m_BreakContinueLabels.RemoveAt(0);
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
                                 compileState.ILGen.MarkLabel(endlabel);
@@ -628,7 +779,12 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "else":
-                        if(!eoif_label.HasValue)
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
+                        if (!eoif_label.HasValue)
                         {
                             throw CompilerException(functionLine, "No matching 'if' found for 'else'");
                         }
@@ -667,6 +823,15 @@ namespace SilverSim.Scripting.Lsl
                                 localVars);
                             compileState.ILGen.Emit(OpCodes.Brfalse, endlabel);
 
+                            if (compileState.m_BreakContinueLabels.Count == 0)
+                            {
+                                compileState.m_BreakContinueLabels.Add(new BreakContinueLabel());
+                            }
+                            else
+                            {
+                                compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel(compileState.m_BreakContinueLabels[0]));
+                            }
+
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
                                 ProcessBlock(
@@ -674,6 +839,8 @@ namespace SilverSim.Scripting.Lsl
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+
+                                compileState.m_BreakContinueLabels.RemoveAt(0);
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
                                 compileState.ILGen.MarkLabel(endlabel);
@@ -686,6 +853,7 @@ namespace SilverSim.Scripting.Lsl
                                     localVars,
                                     labels,
                                     true);
+                                compileState.m_BreakContinueLabels.RemoveAt(0);
 
                                 compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
                                 compileState.ILGen.MarkLabel(endlabel);
@@ -725,10 +893,24 @@ namespace SilverSim.Scripting.Lsl
 
                     #region New unconditional block
                     case "{": /* new unconditional block */
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                        }
                         if (eoif_label.HasValue)
                         {
                             compileState.ILGen.MarkLabel(eoif_label.Value);
                             eoif_label = null;
+                        }
+
+                        if (compileState.m_BreakContinueLabels.Count == 0)
+                        {
+                            compileState.m_BreakContinueLabels.Add(new BreakContinueLabel());
+                        }
+                        else
+                        {
+                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel(compileState.m_BreakContinueLabels[0]));
                         }
 
                         ProcessBlock(
@@ -736,6 +918,7 @@ namespace SilverSim.Scripting.Lsl
                             returnType,
                             new Dictionary<string, object>(localVars),
                             labels);
+                        compileState.m_BreakContinueLabels.RemoveAt(0);
                         break;
                     #endregion
 
@@ -787,6 +970,7 @@ namespace SilverSim.Scripting.Lsl
             Type returnType = typeof(void);
             List<string> functionDeclaration = functionBody[0].Line;
             int functionStart = 2;
+            compileState.m_BreakContinueLabels.Clear();
             compileState.ScriptTypeBuilder = scriptTypeBuilder;
             compileState.StateTypeBuilder = stateTypeBuilder;
             compileState.ILGen = ilgen;

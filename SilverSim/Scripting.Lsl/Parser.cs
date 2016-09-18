@@ -67,6 +67,7 @@ redo:
                         }
                         break;
 
+                    case ':':       /* end of case */
                     case ';':       /* end of statement */
                         if (CurrentLineNumber < 0)
                         {
@@ -80,7 +81,7 @@ redo:
                         {
                             MarkBeginOfLine();
                         }
-                        args.Add(";");
+                        args.Add(c.ToString());
                         if (args.Count != 0 && parencount == 0)
                         {
                             return;
@@ -283,7 +284,7 @@ redo:
                                 is_preprocess = true;
                             }
                             MarkBeginOfLine();
-                            while (!IsLSLWhitespace(c) && c != ';' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
+                            while (!IsLSLWhitespace(c) && c != ';' && c != ':' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
                                 token.Append(c);
                                 if(token.EndsWith("//"))

@@ -44,6 +44,32 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        internal class BreakContinueLabel
+        {
+            public Label ContinueTargetLabel;
+            public Label BreakTargetLabel;
+            public Label DefaultLabel;
+            public Label NextCaseLabel;
+            public LocalBuilder SwitchValueLocal;
+            public bool CaseRequired;
+            public bool HaveDefaultCase;
+            public bool HaveContinueTarget;
+            public bool HaveBreakTarget;
+
+            public BreakContinueLabel()
+            {
+
+            }
+
+            public BreakContinueLabel(BreakContinueLabel bc)
+            {
+                ContinueTargetLabel = bc.ContinueTargetLabel;
+                BreakTargetLabel = bc.BreakTargetLabel;
+                HaveBreakTarget = bc.HaveBreakTarget;
+                HaveContinueTarget = bc.HaveContinueTarget;
+            }
+        }
+
         sealed internal class CompileState
         {
             public ApiInfo ApiInfo = new ApiInfo();
@@ -59,6 +85,7 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, List<FunctionInfo>> m_Functions = new Dictionary<string, List<FunctionInfo>>();
             public Dictionary<string, Dictionary<string, List<LineInfo>>> m_States = new Dictionary<string, Dictionary<string, List<LineInfo>>>();
             public Dictionary<string, FieldBuilder> m_ApiFieldInfo = new Dictionary<string, FieldBuilder>();
+            public List<BreakContinueLabel> m_BreakContinueLabels = new List<BreakContinueLabel>();
 
             public TypeBuilder ScriptTypeBuilder;
             public TypeBuilder StateTypeBuilder;
@@ -76,6 +103,10 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableFunctionOverloading = true;
 
                 public bool EnableStateVariables = false;
+
+                public bool EnableSwitchBlock = false;
+
+                public bool EnableBreakContinueStatement = false;
             }
 
             public readonly LanguageExtensionsData LanguageExtensions = new LanguageExtensionsData();

@@ -43,7 +43,9 @@ namespace SilverSim.Scripting.Lsl
         private void CheckUsedName(CompileState cs, Parser p, string type, string name)
         {
             CheckValidName(p, type, name);
-            if (m_ReservedWords.Contains(name))
+            if (m_ReservedWords.Contains(name) || 
+                (cs.LanguageExtensions.EnableSwitchBlock && (name == "switch" || name == "case" || name == "break")) ||
+                ((name == "break" || name == "continue") && cs.LanguageExtensions.EnableBreakContinueStatement))
             {
                 throw ParserException(p, string.Format("{1} cannot be declared as '{0}'. '{0}' is a reserved word.", name, type));
             }
@@ -149,7 +151,7 @@ namespace SilverSim.Scripting.Lsl
             throw ParserException(p, "Missing ')' at the end of function declaration");
         }
 
-        int FindEndOfControlFlow(List<string> line, int lineNumber)
+        int FindEndOfControlFlow(CompileState cs, List<string> line, int lineNumber)
         {
             int i;
             List<string> parenstack = new List<string>();
@@ -201,6 +203,22 @@ namespace SilverSim.Scripting.Lsl
                         }
                         break;
 
+                    case "continue":
+                    case "break":
+                        if(cs.LanguageExtensions.EnableBreakContinueStatement)
+                        {
+                            throw new CompilerException(lineNumber, string.Format("'{0}' not allowed in '{1}'", line[i], line[0]));
+                        }
+                        break;
+
+                    case "switch":
+                    case "case":
+                        if (cs.LanguageExtensions.EnableSwitchBlock)
+                        {
+                            throw new CompilerException(lineNumber, string.Format("'{0}' not allowed in '{1}'", line[i], line[0]));
+                        }
+                        break;
+
                     default:
                         break;
                 }
@@ -214,7 +232,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if(args[0] == "else" && args[1] == "if")
                 {
-                    int eocf = FindEndOfControlFlow(args.GetRange(1, args.Count - 1), lineNumber) + 1;
+                    int eocf = FindEndOfControlFlow(compileState, args.GetRange(1, args.Count - 1), lineNumber) + 1;
                     /* make it a block */
                     if (args[eocf + 1] == "{")
                     {
@@ -228,6 +246,54 @@ namespace SilverSim.Scripting.Lsl
                         block.Add(new LineInfo(controlflow, lineNumber));
                         args = args.GetRange(eocf + 1, args.Count - eocf - 1);
                     }
+                }
+                else if(args[0] == "switch" && compileState.LanguageExtensions.EnableSwitchBlock)
+                {
+                    if(args[args.Count - 1] != "{")
+                    {
+                        throw ParserException(p, "'{' required for 'switch' control flow instruction");
+                    }
+                    else if (args[args.Count - 2] != ")")
+                    {
+                        throw ParserException(p, "')' required for 'switch' control flow instruction");
+                    }
+                    else if (args[1] != "(")
+                    {
+                        throw ParserException(p, "'(' required for 'switch' control flow instruction");
+                    }
+                    block.Add(new LineInfo(args, lineNumber));
+                    ParseBlock(compileState, p, block, inState, true);
+                    return;
+                }
+                else if(args[0] == "continue" && compileState.LanguageExtensions.EnableBreakContinueStatement)
+                {
+                    if(args[1] != ";")
+                    {
+                        throw ParserException(p, "';' has to follow '" + args[0] + "'");
+                    }
+                    block.Add(new LineInfo(args, lineNumber));
+                    return;
+                }
+                else if (args[0] == "break" && 
+                    (compileState.LanguageExtensions.EnableBreakContinueStatement ||
+                     compileState.LanguageExtensions.EnableSwitchBlock))
+                {
+                    if (args[1] != ";")
+                    {
+                        throw ParserException(p, "';' has to follow '" + args[0] + "'");
+                    }
+                    block.Add(new LineInfo(args, lineNumber));
+                    return;
+                }
+                else if ((args[0] == "case" || args[0] == "default") &&
+                    compileState.LanguageExtensions.EnableSwitchBlock)
+                {
+                    if(args[args.Count - 1] != ":")
+                    {
+                        throw ParserException(p, "':' required for '" + args[0] + "' control flow instruction");
+                    }
+                    block.Add(new LineInfo(args, lineNumber));
+                    return;
                 }
                 else if (args[0] == "else" || args[0] == "do")
                 {
@@ -246,7 +312,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (args[0] == "if" || args[0] == "for" || args[0] == "while")
                 {
-                    int eocf = FindEndOfControlFlow(args, lineNumber);
+                    int eocf = FindEndOfControlFlow(compileState, args, lineNumber);
                     /* make it a block */
                     if(args[eocf + 1] == "{")
                     {
@@ -535,6 +601,8 @@ namespace SilverSim.Scripting.Lsl
                         acceptedFlags = APIFlags.ASSL | APIFlags.OSSL | APIFlags.LSL;
                         compileState.LanguageExtensions.EnableExtendedTypecasts = true;
                         compileState.LanguageExtensions.EnableStateVariables = true;
+                        compileState.LanguageExtensions.EnableBreakContinueStatement = true;
+                        compileState.LanguageExtensions.EnableSwitchBlock = true;
                         compileState.ForcedSleepDefault = false;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
@@ -559,6 +627,16 @@ namespace SilverSim.Scripting.Lsl
             if(apiExtensions.Contains(APIExtension.StateVariables))
             {
                 compileState.LanguageExtensions.EnableStateVariables = true;
+            }
+
+            if (apiExtensions.Contains(APIExtension.BreakContinue))
+            {
+                compileState.LanguageExtensions.EnableBreakContinueStatement = true;
+            }
+
+            if(apiExtensions.Contains(APIExtension.SwitchBlock))
+            {
+                compileState.LanguageExtensions.EnableSwitchBlock = true;
             }
 
             foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)

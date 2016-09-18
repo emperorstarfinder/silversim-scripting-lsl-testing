@@ -57,5 +57,28 @@ namespace SilverSim.Scripting.Lsl
                 retType,
                 lineNumber);
         }
+
+        Type ProcessExpressionToAnyType(
+            CompileState compileState,
+            int startAt,
+            int endAt,
+            LineInfo functionLine,
+            Dictionary<string, object> localVars)
+        {
+            if (startAt > endAt)
+            {
+                throw new NotSupportedException();
+            }
+
+            List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
+            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber);
+
+            return ProcessExpressionPart(
+                compileState,
+                expressionTree,
+                functionLine.LineNumber,
+                localVars);
+        }
+
     }
 }
