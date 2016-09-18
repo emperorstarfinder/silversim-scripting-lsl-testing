@@ -54,11 +54,15 @@ namespace SilverSim.Scripting.Lsl
 
                 BreakContinueLabel bc = compileState.m_BreakContinueLabels[0];
                 Label ftLabel = compileState.ILGen.DefineLabel();
-                compileState.ILGen.Emit(OpCodes.Br, ftLabel);
+                if (!bc.CaseRequired)
+                {
+                    compileState.ILGen.Emit(OpCodes.Br, ftLabel);
+                }
                 compileState.ILGen.MarkLabel(bc.NextCaseLabel);
                 bc.NextCaseLabel = compileState.ILGen.DefineLabel();
                 bc.CaseRequired = false;
 
+                compileState.ILGen.Emit(OpCodes.Ldloc, bc.SwitchValueLocal);
                 ProcessExpression(
                                 compileState,
                                 bc.SwitchValueLocal.LocalType,
@@ -83,7 +87,14 @@ namespace SilverSim.Scripting.Lsl
                 BreakContinueLabel bc = compileState.m_BreakContinueLabels[0];
 
                 Label ftLabel = compileState.ILGen.DefineLabel();
-                compileState.ILGen.Emit(OpCodes.Br, ftLabel);
+                if (bc.CaseRequired)
+                {
+                    compileState.ILGen.Emit(OpCodes.Br, bc.NextCaseLabel);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Br, ftLabel);
+                }
 
                 bc.DefaultLabel = ftLabel;
                 bc.HaveDefaultCase = true;
