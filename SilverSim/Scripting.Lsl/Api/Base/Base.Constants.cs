@@ -107,10 +107,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL)]
         public const int ATTACH_RIGHT_PEC = 30;
         [APILevel(APIFlags.LSL)]
-        public const int ATTACH_NECK = 39;
-        [APILevel(APIFlags.LSL)]
-        public const int ATTACH_AVATAR_CENTER = 40;
-        [APILevel(APIFlags.LSL)]
         public const int ATTACH_HUD_CENTER_2 = 31;
         [APILevel(APIFlags.LSL)]
         public const int ATTACH_HUD_TOP_RIGHT = 32;
@@ -126,7 +122,40 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int ATTACH_HUD_BOTTOM = 37;
         [APILevel(APIFlags.LSL)]
         public const int ATTACH_HUD_BOTTOM_RIGHT = 38;
-
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_NECK = 39;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_AVATAR_CENTER = 40;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_LHAND_RING1 = 41;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_RHAND_RING1 = 42;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_TAIL_BASE = 43;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_TAIL_TIP = 44;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_LWING = 45;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_RWING = 46;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_FACE_JAW = 47;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_FACE_LEAR = 48;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_FACE_REAR = 49;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_FACE_LEYE = 50;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_FACE_REYE = 51;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_FACE_TONGUE = 52;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_GROIN = 53;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_HIND_LFOOT = 54;
+        [APILevel(APIFlags.LSL)]
+        public const int ATTACH_HIND_RFOOT = 55;
         #endregion
     }
 }
