@@ -26,6 +26,7 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     [Description("LSL Compiler")]
     [ServerParam("LSL.CallDepthLimit")]
+    [ScriptEngineName("lsl")]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory, IServerParamListener
     {
         internal struct ApiMethodInfo
