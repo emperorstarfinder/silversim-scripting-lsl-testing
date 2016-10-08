@@ -10,6 +10,25 @@ namespace SilverSim.Scripting.Lsl
     [ServerParamStartsWith("OSSL.")]
     partial class LSLCompiler : IServerParamAnyListener
     {
+        public IDictionary<string, ServerParamType> ServerParams
+        {
+            get
+            {
+                Dictionary<string, ServerParamType> resList = new Dictionary<string, ServerParamType>();
+                resList.Add("OSSL.ThreatLevel", ServerParamType.GlobalAndRegion);
+                //Parameter format
+                //OSSL.<FunctionName>.AllowedCreators
+                //OSSL.<FunctionName>.AllowedOwners
+                //OSSL.<FunctionName>.IsEstateOwnerAllowed
+                //OSSL.<FunctionName>.IsEstateManagerAllowed
+                //OSSL.<FunctionName>.IsRegionOwnerAllowed
+                //OSSL.<FunctionName>.IsParcelOwnerAllowed
+                //OSSL.<FunctionName>.IsParcelGroupMemberAllowed
+                //OSSL.<FunctionName>.IsEveryoneAllowed
+                return resList;
+            }
+        }
+
         public void TriggerParameterUpdated(UUID regionID, string parametername, string value)
         {
             if (!parametername.StartsWith("OSSL."))
