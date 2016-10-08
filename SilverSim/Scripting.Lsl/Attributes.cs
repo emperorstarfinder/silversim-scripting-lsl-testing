@@ -18,6 +18,16 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class ThreatLevelUsedAttribute : Attribute
+    {
+        public ThreatLevelUsedAttribute()
+        {
+
+        }
+    }
+
+    [Serializable]
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
     public sealed class APILevelAttribute : Attribute
     {

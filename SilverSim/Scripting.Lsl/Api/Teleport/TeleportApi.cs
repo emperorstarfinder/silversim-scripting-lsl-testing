@@ -255,6 +255,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
+        [ThreatLevelUsed]
         public void TeleportAgent(ScriptInstance instance, LSLKey avatar, int regionX, int regionY, Vector3 position, Vector3 lookAt)
         {
             lock (instance)
@@ -286,6 +287,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
+        [ThreatLevelUsed]
         public void TeleportAgent(ScriptInstance instance, LSLKey avatar, string regionName, Vector3 position, Vector3 lookAt)
         {
             lock (instance)
@@ -300,6 +302,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgentLandmark")]
+        [ThreatLevelUsed]
         public void OsTeleportAgentLandmark(ScriptInstance instance, LSLKey avatar, string landmark, Vector3 lookAt)
         {
             lock (instance)
@@ -314,6 +317,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
+        [ThreatLevelUsed]
         public void TeleportAgent(ScriptInstance instance, LSLKey avatar, Vector3 position, Vector3 lookAt)
         {
             lock (instance)

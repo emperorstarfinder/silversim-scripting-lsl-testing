@@ -509,6 +509,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "osAgentSaveAppearance")]
+        [ThreatLevelUsed]
         public LSLKey AgentSaveAppearance(ScriptInstance instance, LSLKey agentId, string notecard)
         {
             lock (instance)
@@ -519,6 +520,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "osOwnerSaveAppearance")]
+        [ThreatLevelUsed]
         public LSLKey OwnerSaveAppearance(ScriptInstance instance, string notecard)
         {
             lock (instance)
@@ -545,6 +547,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
+        [ThreatLevelUsed]
         public void ForceOtherSit(ScriptInstance instance, LSLKey avatar)
         {
             lock(instance)
@@ -555,6 +558,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
+        [ThreatLevelUsed]
         public void ForceOtherSit(ScriptInstance instance, LSLKey avatar, LSLKey target)
         {
             lock (instance)
@@ -634,6 +638,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         #endregion
 
         [APILevel(APIFlags.OSSL, "osGetAgentIP")]
+        [ThreatLevelUsed]
         public string GetAgentIP(ScriptInstance instance, LSLKey key)
         {
             lock(instance)
@@ -650,6 +655,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osGetAvatarHomeURI")]
+        [ThreatLevelUsed]
         public string GetAvatarHomeURI(ScriptInstance instance, LSLKey key)
         {
             lock (instance)

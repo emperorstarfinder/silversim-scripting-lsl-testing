@@ -1,30 +1,61 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
+using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Types;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SilverSim.Scripting.Lsl
 {
     [ServerParamStartsWith("OSSL.")]
     partial class LSLCompiler : IServerParamAnyListener
     {
-        public IDictionary<string, ServerParamType> ServerParams
+        void AddServerParam(Dictionary<string, ServerParamAttribute> resList, ServerParamAttribute attr)
+        {
+            resList[attr.ParameterName] = attr;
+        }
+
+        void AddServerParamBlock(Dictionary<string, ServerParamAttribute> resList, string name)
+        {
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".AllowedCreators") { Description = "Defines allowed creators for " + name });
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".AllowedOwners") { Description = "Defines allowed owners for " + name });
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEstateOwnerAllowed"));
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEstateManagerAllowed"));
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsRegionOwnerAllowed"));
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsParcelOwnerAllowed"));
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsParcelGroupMemberAllowed"));
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEveryoneAllowed"));
+        }
+
+        public IDictionary<string, ServerParamAttribute> ServerParams
         {
             get
             {
-                Dictionary<string, ServerParamType> resList = new Dictionary<string, ServerParamType>();
-                resList.Add("OSSL.ThreatLevel", ServerParamType.GlobalAndRegion);
-                //Parameter format
-                //OSSL.<FunctionName>.AllowedCreators
-                //OSSL.<FunctionName>.AllowedOwners
-                //OSSL.<FunctionName>.IsEstateOwnerAllowed
-                //OSSL.<FunctionName>.IsEstateManagerAllowed
-                //OSSL.<FunctionName>.IsRegionOwnerAllowed
-                //OSSL.<FunctionName>.IsParcelOwnerAllowed
-                //OSSL.<FunctionName>.IsParcelGroupMemberAllowed
-                //OSSL.<FunctionName>.IsEveryoneAllowed
+                Dictionary<string, ServerParamAttribute> resList = new Dictionary<string, ServerParamAttribute>();
+                AddServerParam(resList, new ServerParamAttribute("OSSL.ThreatLevel") { Description = "Defines threat level" });
+                foreach(IScriptApi api in m_Apis)
+                {
+                    Type instanceType = api.GetType();
+                    MethodInfo[] mis = instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public);
+                    foreach(MethodInfo mi in mis)
+                    {
+                        if(Attribute.GetCustomAttribute(mi, typeof(ThreatLevelUsedAttribute)) != null)
+                        {
+                            foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
+                            {
+                                AddServerParamBlock(resList, string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                            }
+                            foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
+                            {
+                                AddServerParamBlock(resList, string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                            }
+                        }
+                    }
+                }
+
                 return resList;
             }
         }

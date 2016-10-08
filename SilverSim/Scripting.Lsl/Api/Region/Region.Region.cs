@@ -241,6 +241,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osGetSimulatorMemory")]
+        [ThreatLevelUsed]
         public int GetSimulatorMemory(ScriptInstance instance)
         {
             lock(instance)
@@ -676,6 +677,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osRegionNotice")]
+        [ThreatLevelUsed]
         public void RegionNotice(ScriptInstance instance, string msg)
         {
             lock(instance)
