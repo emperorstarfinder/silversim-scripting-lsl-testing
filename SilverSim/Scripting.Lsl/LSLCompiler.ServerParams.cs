@@ -22,12 +22,12 @@ namespace SilverSim.Scripting.Lsl
         {
             AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".AllowedCreators") { Description = "Defines allowed creators for " + name });
             AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".AllowedOwners") { Description = "Defines allowed owners for " + name });
-            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEstateOwnerAllowed"));
-            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEstateManagerAllowed"));
-            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsRegionOwnerAllowed"));
-            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsParcelOwnerAllowed"));
-            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsParcelGroupMemberAllowed"));
-            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEveryoneAllowed"));
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEstateOwnerAllowed") { ParameterType = typeof(bool) });
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEstateManagerAllowed") { ParameterType = typeof(bool) });
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsRegionOwnerAllowed") { ParameterType = typeof(bool) });
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsParcelOwnerAllowed") { ParameterType = typeof(bool) });
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsParcelGroupMemberAllowed") { ParameterType = typeof(bool) });
+            AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEveryoneAllowed") { ParameterType = typeof(bool) });
         }
 
         public IDictionary<string, ServerParamAttribute> ServerParams

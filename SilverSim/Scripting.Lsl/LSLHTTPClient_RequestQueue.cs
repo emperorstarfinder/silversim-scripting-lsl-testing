@@ -7,6 +7,7 @@ using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Threading;
 using SilverSim.Types;
 using System;
@@ -19,7 +20,10 @@ using System.Web;
 namespace SilverSim.Scripting.Lsl
 {
     [Description("LSL HTTP Client Support")]
-    public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown
+    [ServerParam("LSL.HTTPClient.WhiteList", Description = "List of URLs split by ;")]
+    [ServerParam("LSL.HTTPClient.BlackList", Description = "List of URLs split by ;")]
+    [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool))]
+    public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown, IServerParamListener
     {
         public class LSLHttpRequest
         {
@@ -46,6 +50,91 @@ namespace SilverSim.Scripting.Lsl
 
         readonly RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>> m_RequestQueues = new RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>>();
         readonly SceneList m_Scenes;
+        readonly RwLockedDictionary<UUID, string[]> m_BlackLists = new RwLockedDictionary<UUID, string[]>();
+        readonly RwLockedDictionary<UUID, string[]> m_WhiteLists = new RwLockedDictionary<UUID, string[]>();
+        readonly RwLockedDictionary<UUID, bool> m_WhiteListOnly = new RwLockedDictionary<UUID, bool>();
+
+        [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool))]
+        public void HandleWhiteListOnlyUpdated(UUID regionId, string value)
+        {
+            bool val;
+            if (string.IsNullOrEmpty(value))
+            {
+                m_WhiteListOnly.Remove(regionId);
+            }
+            else
+            {
+                if (!bool.TryParse(value, out val))
+                {
+                    val = false;
+                }
+                m_WhiteListOnly[regionId] = val;
+            }
+        }
+
+        [ServerParam("LSL.HTTPClient.WhiteList", Description = "List of URLs split by ;")]
+        public void HandleWhiteListUpdated(UUID regionId, string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                m_WhiteLists.Remove(regionId);
+            }
+            else
+            {
+                m_WhiteLists.Add(regionId, value.Split(';'));
+            }
+        }
+
+        [ServerParam("LSL.HTTPClient.BlackList", Description = "List of URLs split by ;")]
+        public void HandleBlackListUpdated(UUID regionId, string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                m_BlackLists.Remove(regionId);
+            }
+            else
+            {
+                m_BlackLists.Add(regionId, value.Split(';'));
+            }
+        }
+
+        bool IsURLAllowed(UUID regionId,  string url)
+        {
+            string[] blackList;
+            if(m_BlackLists.TryGetValue(regionId, out blackList) ||
+                m_BlackLists.TryGetValue(UUID.Zero, out blackList))
+            {
+                foreach(string u in blackList)
+                {
+                    if(url.StartsWith(u))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            string[] whiteList;
+            if (m_BlackLists.TryGetValue(regionId, out whiteList) ||
+                m_BlackLists.TryGetValue(UUID.Zero, out whiteList))
+            {
+                foreach (string u in blackList)
+                {
+                    if (url.StartsWith(u))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            /* check for WhiteList only */
+            bool wOnly;
+            if(!(m_WhiteListOnly.TryGetValue(regionId, out wOnly) ||
+                m_WhiteListOnly.TryGetValue(UUID.Zero, out wOnly)))
+            {
+                wOnly = true;
+            }
+            return wOnly;
+        }
 
         public LSLHTTPClient_RequestQueue(SceneList scenes)
         {
@@ -114,25 +203,34 @@ namespace SilverSim.Scripting.Lsl
 
                 HttpResponseEvent ev = new HttpResponseEvent();
                 ev.RequestID = req.RequestID;
-                try
+                if (IsURLAllowed(req.SceneID, req.Url))
                 {
-                    ev.Body = HttpRequestHandler.DoRequest(req.Method, req.Url, null, req.MimeType, req.RequestBody, false, 30000);
-                    ev.Status = (int)HttpStatusCode.OK;
+                    try
+                    {
+                        ev.Body = HttpRequestHandler.DoRequest(req.Method, req.Url, null, req.MimeType, req.RequestBody, false, 30000);
+                        ev.Status = (int)HttpStatusCode.OK;
+                    }
+                    catch (HttpRequestHandler.BadHttpResponseException)
+                    {
+                        ev.Status = 499;
+                    }
+                    catch (HttpException e)
+                    {
+                        ev.Body = e.Message;
+                        ev.Status = e.GetHttpCode();
+                    }
+                    catch
+                    {
+                        HttpResponseEvent e = new HttpResponseEvent();
+                        e.Status = 499;
+                    }
                 }
-                catch(HttpRequestHandler.BadHttpResponseException)
-                {
-                    ev.Status = 499;
-                }
-                catch(HttpException e)
-                {
-                    ev.Body = e.Message;
-                    ev.Status = e.GetHttpCode();
-                }
-                catch
+                else
                 {
                     HttpResponseEvent e = new HttpResponseEvent();
                     e.Status = 499;
                 }
+
                 SceneInterface scene;
                 if(!m_Scenes.TryGetValue(req.SceneID, out scene))
                 {

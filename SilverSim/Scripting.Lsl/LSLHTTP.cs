@@ -24,7 +24,7 @@ namespace SilverSim.Scripting.Lsl
 {
     [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
     [Description("LSL HTTP Server Support")]
-    [ServerParam("LSL.MaxURLs")]
+    [ServerParam("LSL.MaxURLs", ParameterType = typeof(uint))]
     public sealed class LSLHTTP : IPlugin, IPluginShutdown, IServerParamListener
     {
         BaseHttpServer m_HttpServer;
