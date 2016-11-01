@@ -84,6 +84,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_NORMAL = 37;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_ALPHA_MODE = 38;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_ALLOW_UNSIT = 39;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_SCRIPTED_SIT_ONLY = 40;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_SIT_TARGET = 41;
 
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_ALPHA")]
