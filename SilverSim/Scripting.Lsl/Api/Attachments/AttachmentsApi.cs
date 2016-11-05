@@ -221,7 +221,22 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             AttachmentPoint.RightPec,
             AttachmentPoint.LeftPec,
             AttachmentPoint.Neck,
-            AttachmentPoint.AvatarCenter
+            AttachmentPoint.AvatarCenter,
+            AttachmentPoint.LeftHandRing1,
+            AttachmentPoint.RightHandRing1,
+            AttachmentPoint.TailBase,
+            AttachmentPoint.TailTip,
+            AttachmentPoint.LeftWing,
+            AttachmentPoint.RightWing,
+            AttachmentPoint.FaceJaw,
+            AttachmentPoint.FaceLeftEar,
+            AttachmentPoint.FaceRightEar,
+            AttachmentPoint.FaceLeftEye,
+            AttachmentPoint.FaceRightEye,
+            AttachmentPoint.FaceTongue,
+            AttachmentPoint.Groin,
+            AttachmentPoint.HindLeftFoot,
+            AttachmentPoint.HindRightFoot
         };
 
         [APILevel(APIFlags.OSSL, "llGetAttachedList")]
@@ -240,6 +255,10 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
                             res.Add((int)ap);
                         }
                     }
+                }
+                else
+                {
+                    res.Add("NOT FOUND");
                 }
             }
             return res;
