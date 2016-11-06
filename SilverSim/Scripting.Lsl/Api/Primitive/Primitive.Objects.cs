@@ -461,6 +461,18 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     grp.IsPhantom = boolval;
                 }
+                if((status & STATUS_ROTATE_X) != 0)
+                {
+                    grp.IsRotateXEnabled = boolval;
+                }
+                if((status & STATUS_ROTATE_Y) != 0)
+                {
+                    grp.IsRotateYEnabled = boolval;
+                }
+                if((status & STATUS_ROTATE_Z) != 0)
+                {
+                    grp.IsRotateZEnabled = boolval;
+                }
 
                 /* TODO: more to implement see llGetStatus(integer) */
             }
@@ -478,13 +490,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         return grp.IsPhysics ? 1 : 0;
 
                     case STATUS_ROTATE_X:
-                        throw new NotImplementedException("llGetStatus(STATUS_ROTATE_X)");
+                        return grp.IsRotateXEnabled ? 1 : 0;
 
                     case STATUS_ROTATE_Y:
-                        throw new NotImplementedException("llGetStatus(STATUS_ROTATE_Y)");
+                        return grp.IsRotateYEnabled ? 1 : 0;
 
                     case STATUS_ROTATE_Z:
-                        throw new NotImplementedException("llGetStatus(STATUS_ROTATE_Z)");
+                        return grp.IsRotateZEnabled ? 1 : 0;
 
                     case STATUS_PHANTOM:
                         return grp.IsPhantom ? 1 : 0;
