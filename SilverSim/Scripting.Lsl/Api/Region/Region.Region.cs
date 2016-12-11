@@ -671,6 +671,9 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 case "simulator_hostname":
                     return GetSimulatorHostname(instance);
 
+                case "region_object_bonus":
+                    return instance.Part.ObjectGroup.Scene.RegionSettings.ObjectBonus.ToString();
+
                 default:
                     return string.Empty;
             }
