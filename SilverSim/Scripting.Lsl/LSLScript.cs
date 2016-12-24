@@ -648,11 +648,26 @@ namespace SilverSim.Scripting.Lsl
         }
 
         int m_RecursionCount;
-        static public int CallDepthLimit { get; set; }
+        static int m_CallDepthLimit = 40;
+        static public int CallDepthLimit
+        {
+            get
+            {
+                return m_CallDepthLimit;
+            }
+            set
+            {
+                if (value < 1)
+                {
+                    throw new ArgumentOutOfRangeException("value");
+                }
+                m_CallDepthLimit = value;
+            }
+        }
 
         public void IncCallDepthCount()
         {
-            if(++m_RecursionCount > CallDepthLimit)
+            if(++m_RecursionCount > m_CallDepthLimit)
             {
                 throw new CallDepthLimitViolationException();
             }
@@ -1863,8 +1878,6 @@ namespace SilverSim.Scripting.Lsl
 
         static Script()
         {
-            CallDepthLimit = 40;
-
             EventDeserializers.Add("http_request", HttpRequestDeserializer);
             EventSerializers.Add(typeof(HttpRequestEvent), HttpRequestSerializer);
             EventDeserializers.Add("land_collision_start", LandCollisionStartDeserializer);
