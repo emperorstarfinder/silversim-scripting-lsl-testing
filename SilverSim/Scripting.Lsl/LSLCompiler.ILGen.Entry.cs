@@ -129,14 +129,9 @@ namespace SilverSim.Scripting.Lsl
                 AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, access);
                 ModuleBuilder mb;
 
-                if (access != AssemblyBuilderAccess.RunAndCollect)
-                {
-                    mb = ab.DefineDynamicModule(aName.Name, filename, compileState.EmitDebugSymbols);
-                }
-                else
-                { 
-                    mb = ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols);
-                }
+                mb = access == AssemblyBuilderAccess.RunAndCollect ? 
+                    ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols) :
+                    ab.DefineDynamicModule(aName.Name, filename, compileState.EmitDebugSymbols);
 
                 if (compileState.EmitDebugSymbols)
                 {
