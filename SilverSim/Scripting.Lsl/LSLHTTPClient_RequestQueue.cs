@@ -157,7 +157,7 @@ namespace SilverSim.Scripting.Lsl
             }
             catch
             {
-
+                /* exception intentionally ignored should ever a queue already be added */
             }
             for(i = 0; i < 10; ++i)
             {

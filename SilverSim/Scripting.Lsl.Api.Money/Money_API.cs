@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                 }
                 catch
                 {
-
+                    /* error intentionally ignored sine ev.Success holds the result status */
                 }
                 if (instance != null)
                 {
