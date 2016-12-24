@@ -73,7 +73,6 @@ namespace SilverSim.Scripting.Lsl
                 GenerateTypedEqualOperator(compileState, functionLine, bc.SwitchValueLocal.LocalType);
                 compileState.ILGen.Emit(OpCodes.Brfalse, bc.NextCaseLabel);
 
-                Label lb = compileState.ILGen.DefineLabel();
                 compileState.ILGen.MarkLabel(ftLabel);
             }
             else if(functionLine.Line[startAt] == "default" && compileState.LanguageExtensions.EnableSwitchBlock)
