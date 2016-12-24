@@ -36,8 +36,8 @@ namespace SilverSim.Scripting.Lsl
             outstream.Write(LSLSyntaxFile, 0, LSLSyntaxFile.Length);
         }
 
-        static byte[] LSLSyntaxFile = new byte[0];
-        static UUID LSLSyntaxId = UUID.Zero;
+        byte[] LSLSyntaxFile = new byte[0];
+        UUID LSLSyntaxId = UUID.Zero;
 
         [SuppressMessage("Gendarme.Rules.Concurrency", "WriteStaticFieldFromInstanceMethodRule")]
         public void GenerateLSLSyntaxFile()
