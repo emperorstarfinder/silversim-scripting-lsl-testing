@@ -102,11 +102,11 @@ namespace SilverSim.Scripting.Lsl
                 /** <summary>Enables a rather unknown function overloading support that happen to exist within OpenSim's XEngine</summary> */
                 public bool EnableFunctionOverloading = true;
 
-                public bool EnableStateVariables = false;
+                public bool EnableStateVariables;
 
-                public bool EnableSwitchBlock = false;
+                public bool EnableSwitchBlock;
 
-                public bool EnableBreakContinueStatement = false;
+                public bool EnableBreakContinueStatement;
             }
 
             public readonly LanguageExtensionsData LanguageExtensions = new LanguageExtensionsData();
