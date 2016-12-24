@@ -13,11 +13,11 @@ namespace SilverSim.Scripting.Lsl
 {
     public class ILGenDumpProxy
     {
-        ILGenerator m_ILGen;
+        readonly ILGenerator m_ILGen;
 #if DEBUG
         public readonly StreamWriter Writer;
 #endif
-        List<Label> m_DefinedLabels = new List<Label>();
+        readonly List<Label> m_DefinedLabels = new List<Label>();
         public bool GeneratedRetAtLast;
         public ISymbolDocumentWriter DebugDocument;
 
