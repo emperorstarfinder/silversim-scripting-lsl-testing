@@ -2349,12 +2349,10 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 GroupsServiceInterface groupsService = scene.GroupsService;
-                if (groupsService != null && perms.IsAllowedForParcelGroupMember)
+                if (groupsService != null && perms.IsAllowedForParcelGroupMember &&
+                    groupsService.Members.ContainsKey(owner, pInfo.Group, owner))
                 {
-                    if (groupsService.Members.ContainsKey(owner, pInfo.Group, owner))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -2364,12 +2362,10 @@ namespace SilverSim.Scripting.Lsl
                 return true;
             }
 
-            if (perms.IsAllowedForEstateManager)
+            if (perms.IsAllowedForEstateManager &&
+                scene.IsEstateManager(owner))
             {
-                if (scene.IsEstateManager(owner))
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;
