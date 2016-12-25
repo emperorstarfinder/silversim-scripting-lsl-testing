@@ -71,7 +71,7 @@ namespace SilverSim.Scripting.Lsl
             }
             if (cs.m_LocalVariables.Count == 0)
             {
-
+                /* prevent next check from getting an empty list */
             }
             else if (cs.m_LocalVariables[cs.m_LocalVariables.Count - 1].Contains(name))
             {
@@ -138,6 +138,7 @@ namespace SilverSim.Scripting.Lsl
 
                 if (arguments[i + 2] == ",")
                 {
+                    /* nothing to do here */
                 }
                 else if (arguments[i + 2] == ")")
                 {

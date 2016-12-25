@@ -450,6 +450,7 @@ namespace SilverSim.Scripting.Lsl
             /* value is on stack before */
             if (toType == fromType)
             {
+                /* same type does not need any code to be generated */
             }
             else if (toType == typeof(void))
             {

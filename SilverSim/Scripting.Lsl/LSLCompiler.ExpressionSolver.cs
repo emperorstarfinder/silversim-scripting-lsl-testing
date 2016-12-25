@@ -81,7 +81,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (st.Entry != "<")
                 {
-
+                    /* intentionally left empty */
                 }
                 else if (st.Type == Tree.EntryType.Vector)
                 {
