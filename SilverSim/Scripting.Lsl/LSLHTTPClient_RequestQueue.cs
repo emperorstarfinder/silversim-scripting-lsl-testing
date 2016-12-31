@@ -207,10 +207,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     try
                     {
-                        ev.Body = HttpRequestHandler.DoRequest(req.Method, req.Url, null, req.MimeType, req.RequestBody, false, 30000);
+                        ev.Body = HttpClient.DoRequest(req.Method, req.Url, null, req.MimeType, req.RequestBody, false, 30000);
                         ev.Status = (int)HttpStatusCode.OK;
                     }
-                    catch (HttpRequestHandler.BadHttpResponseException)
+                    catch (HttpClient.BadHttpResponseException)
                     {
                         ev.Status = 499;
                     }
