@@ -127,7 +127,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 Scene = scene;
                 Scene.SceneListeners.Add(this);
                 m_Timer.Elapsed += SensorRepeatTimer;
-                m_ObjectWorkerThread = new Thread(SensorUpdateThread);
+                m_ObjectWorkerThread = ThreadManager.CreateThread(SensorUpdateThread);
                 m_ObjectWorkerThread.Start();
             }
 

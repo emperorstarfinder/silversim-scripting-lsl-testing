@@ -161,7 +161,7 @@ namespace SilverSim.Scripting.Lsl
             }
             for(i = 0; i < 10; ++i)
             {
-                Thread t = new Thread(ProcessThread);
+                Thread t = ThreadManager.CreateThread(ProcessThread);
                 t.Name = "LSL:HTTPClient Processor for region " + scene.ID.ToString();
                 t.Start(scene.ID);
             }
