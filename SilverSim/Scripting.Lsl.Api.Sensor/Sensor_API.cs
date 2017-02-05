@@ -134,6 +134,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             public void Stop()
             {
                 m_StopThread = true;
+                if (!m_ObjectWorkerThread.Join(10000))
+                {
+                    m_ObjectWorkerThread.Abort();
+                }
                 m_Timer.Stop();
                 m_Timer.Elapsed -= SensorRepeatTimer;
                 m_Timer.Dispose();
@@ -158,6 +162,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     try
                     {
                         info = m_ObjectUpdates.Dequeue(1000);
+                    }
+                    catch(NullReferenceException)
+                    {
+                        break;
                     }
                     catch
                     {
