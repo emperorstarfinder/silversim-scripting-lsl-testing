@@ -69,6 +69,7 @@ namespace SilverSim.Scripting.Lsl
             public string ContentType;
             public HttpRequest Request;
             public UUID UrlID;
+            public string UrlName;
 
             public HttpRequestData(HttpRequest req, UUID urlID)
             {
@@ -76,6 +77,15 @@ namespace SilverSim.Scripting.Lsl
                 ContentType = "text/plain";
                 ValidUntil = DateTime.UtcNow + TimeSpan.FromSeconds(25);
                 UrlID = urlID;
+                UrlName = string.Empty;
+            }
+            public HttpRequestData(HttpRequest req, string urlname)
+            {
+                Request = req;
+                ContentType = "text/plain";
+                ValidUntil = DateTime.UtcNow + TimeSpan.FromSeconds(25);
+                UrlID = UUID.Zero;
+                UrlName = urlname;
             }
         }
 
@@ -98,6 +108,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
         readonly RwLockedDictionary<UUID, URLData> m_UrlMap = new RwLockedDictionary<UUID, URLData>();
+        readonly RwLockedDictionary<string, URLData> m_NamedUrlMap = new RwLockedDictionary<string, URLData>();
 
         public LSLHTTP()
         {
@@ -133,6 +144,7 @@ namespace SilverSim.Scripting.Lsl
             m_Scenes = loader.Scenes;
             m_HttpServer = loader.HttpServer;
             m_HttpServer.StartsWithUriHandlers.Add("/lslhttp/", LSLHttpRequestHandler);
+            m_HttpServer.StartsWithUriHandlers.Add("/lslhttp-named/", LSLNamedHttpRequestHandler);
             try
             {
                 m_HttpsServer = loader.HttpsServer;
@@ -145,6 +157,7 @@ namespace SilverSim.Scripting.Lsl
             if(null != m_HttpsServer)
             {
                 m_HttpsServer.StartsWithUriHandlers.Add("/lslhttps/", LSLHttpRequestHandler);
+                m_HttpsServer.StartsWithUriHandlers.Add("/lslhttps-named/", LSLNamedHttpRequestHandler);
             }
 
             IConfig lslConfig = loader.Config.Configs["LSL"];
@@ -204,7 +217,7 @@ namespace SilverSim.Scripting.Lsl
 
         public void LSLHttpRequestHandler(HttpRequest req)
         {
-            string[] parts = req.RawUrl.Substring(1).Split(new char[] {'/'}, 3);
+            string[] parts = req.RawUrl.Substring(1).Split(new char[] { '/' }, 3);
             UUID id;
             URLData urlData;
             if (req.Method != "GET" && req.Method != "POST" && req.Method != "PUT" && req.Method != "DELETE")
@@ -212,20 +225,20 @@ namespace SilverSim.Scripting.Lsl
                 req.ErrorResponse(HttpStatusCode.MethodNotAllowed, "Method Not Allowed");
                 return;
             }
-            
+
             if (parts.Length < 2)
             {
                 req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
                 return;
             }
 
-            if(!UUID.TryParse(parts[1], out id))
+            if (!UUID.TryParse(parts[1], out id))
             {
                 req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
                 return;
             }
 
-            if(!m_UrlMap.TryGetValue(id, out urlData))
+            if (!m_UrlMap.TryGetValue(id, out urlData))
             {
                 req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
                 return;
@@ -234,7 +247,7 @@ namespace SilverSim.Scripting.Lsl
             BaseHttpServer httpServer;
             if (parts[0] == "lslhttps")
             {
-                if(!urlData.IsSSL)
+                if (!urlData.IsSSL)
                 {
                     req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
                     return;
@@ -252,7 +265,11 @@ namespace SilverSim.Scripting.Lsl
                 httpServer = m_HttpServer;
                 req["x-script-url"] = httpServer.Scheme + "://" + httpServer.ExternalHostName + httpServer.Port.ToString() + "/lslhttp/" + id.ToString();
             }
-            string pathinfo = req.RawUrl.Substring(45);
+            string pathinfo = string.Empty;
+            if (parts.Length > 2)
+            {
+                pathinfo = "/" + parts[2];
+            }
             int pos = pathinfo.IndexOf('?');
             if (pos >= 0)
             {
@@ -265,9 +282,83 @@ namespace SilverSim.Scripting.Lsl
             }
             req["x-remote-ip"] = req.CallerIP;
 
-            UUID reqid = UUID.Random;
             HttpRequestData data = new HttpRequestData(req, id);
+            LSLHttpRequestHandlerCommon(urlData, data);
+        }
 
+        public void LSLNamedHttpRequestHandler(HttpRequest req)
+        {
+            string[] parts = req.RawUrl.Substring(1).Split(new char[] { '/' }, 3);
+            URLData urlData;
+            if (req.Method != "GET" && req.Method != "POST" && req.Method != "PUT" && req.Method != "DELETE")
+            {
+                req.ErrorResponse(HttpStatusCode.MethodNotAllowed, "Method Not Allowed");
+                return;
+            }
+
+            if (parts.Length < 2)
+            {
+                req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                return;
+            }
+
+            if (!IsValidNamedURL(parts[1]))
+            {
+                req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                return;
+            }
+
+            if (!m_NamedUrlMap.TryGetValue(parts[1], out urlData))
+            {
+                req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                return;
+            }
+
+            BaseHttpServer httpServer;
+            if (parts[0] == "lslhttps-named")
+            {
+                if (!urlData.IsSSL)
+                {
+                    req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                    return;
+                }
+                httpServer = m_HttpsServer;
+                req["x-script-url"] = httpServer.Scheme + "://" + httpServer.ExternalHostName + httpServer.Port.ToString() + "/lslhttps-named/" + parts[1];
+            }
+            else
+            {
+                if (urlData.IsSSL)
+                {
+                    req.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                    return;
+                }
+                httpServer = m_HttpServer;
+                req["x-script-url"] = httpServer.Scheme + "://" + httpServer.ExternalHostName + httpServer.Port.ToString() + "/lslhttp-named/" + parts[1];
+            }
+            string pathinfo = string.Empty;
+            if(parts.Length > 2)
+            {
+                pathinfo = "/" + parts[2];
+            }
+            int pos = pathinfo.IndexOf('?');
+            if (pos >= 0)
+            {
+                req["x-path-info"] = pathinfo.Substring(0, pos);
+                req["x-query-string"] = req.RawUrl.Substring(pos + 1);
+            }
+            else
+            {
+                req["x-path-info"] = pathinfo;
+            }
+            req["x-remote-ip"] = req.CallerIP;
+
+            HttpRequestData data = new HttpRequestData(req, parts[1]);
+            LSLHttpRequestHandlerCommon(urlData, data);
+        }
+
+        void LSLHttpRequestHandlerCommon(URLData urlData, HttpRequestData data)
+        {
+            UUID reqid = UUID.Random;
             string body = string.Empty;
             string method = data.Request.Method;
             if (method != "GET" && method != "DELETE")
@@ -275,7 +366,7 @@ namespace SilverSim.Scripting.Lsl
                 int length;
                 if(!int.TryParse(data.Request["Content-Length"], out length))
                 {
-                    req.ErrorResponse(HttpStatusCode.InternalServerError, "script access error");
+                    data.Request.ErrorResponse(HttpStatusCode.InternalServerError, "script access error");
                     return;
                 }
                 byte[] buf = new byte[length];
@@ -289,7 +380,7 @@ namespace SilverSim.Scripting.Lsl
             }
             catch
             {
-                req.ErrorResponse(HttpStatusCode.InternalServerError, "script access error");
+                data.Request.ErrorResponse(HttpStatusCode.InternalServerError, "script access error");
                 return;
             }
 
@@ -359,12 +450,29 @@ namespace SilverSim.Scripting.Lsl
 
         readonly object m_ReqUrlLock = new object();
 
+        bool IsValidNamedURL(string name)
+        {
+            if(name.Length == 0)
+            {
+                return false;
+            }
+
+            foreach(char c in name)
+            {
+                if(!char.IsLetterOrDigit(c) && c != '-' && c != '_')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public string RequestURL(ObjectPart part, ObjectPartInventoryItem item)
         {
             UUID newid;
             lock(m_ReqUrlLock)
             {
-                if (m_UrlMap.Count >= m_TotalUrls)
+                if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
                 {
                     throw new InvalidOperationException("Too many URLs");
                 }
@@ -372,6 +480,23 @@ namespace SilverSim.Scripting.Lsl
                 m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false));
             }
             return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttp/" + newid.ToString();
+        }
+
+        public string RequestURL(ObjectPart part, ObjectPartInventoryItem item, string name)
+        {
+            if(!IsValidNamedURL(name))
+            {
+                throw new InvalidOperationException("Invalid name for predefined name");
+            }
+            lock(m_ReqUrlLock)
+            {
+                if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
+                {
+                    throw new InvalidOperationException("Too many URLs");
+                }
+                m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false);
+            }
+            return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttp-named/" + name;
         }
 
         public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item)
@@ -383,14 +508,35 @@ namespace SilverSim.Scripting.Lsl
             UUID newid;
             lock(m_ReqUrlLock)
             {
-                if (m_UrlMap.Count >= m_TotalUrls)
+                if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
                 {
                     throw new InvalidOperationException("Too many URLs");
                 }
                 newid = UUID.Random;
-                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false));
+                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true));
             }
             return m_HttpsServer.Scheme + "://" + m_HttpsServer.ExternalHostName + ":" + m_HttpsServer.Port.ToString() + "/lslhttps/" + newid.ToString();
+        }
+
+        public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item, string name)
+        {
+            if (!IsValidNamedURL(name))
+            {
+                throw new InvalidOperationException("Invalid name for predefined name");
+            }
+            if (null == m_HttpsServer)
+            {
+                throw new InvalidOperationException("No HTTPS support");
+            }
+            lock (m_ReqUrlLock)
+            {
+                if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
+                {
+                    throw new InvalidOperationException("Too many URLs");
+                }
+                m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true);
+            }
+            return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttps-named/" + name;
         }
 
         public void ReleaseURL(string url)
@@ -406,43 +552,74 @@ namespace SilverSim.Scripting.Lsl
             }
 
             string[] parts = uri.PathAndQuery.Substring(1).Split(new char[] { '/' }, 3);
-            if(parts.Length < 2 || (parts[0] != "lslhttp" && parts[0] != "lslhttps"))
+            if (parts[0] == "lslhttp" || parts[0] == "lslhttps")
             {
-                return;
-            }
-            
-            UUID urlid;
-            if(!UUID.TryParse(parts[1], out urlid))
-            {
-                return;
-            }
 
-            URLData urlData;
-            if(m_UrlMap.TryGetValue(urlid, out urlData) &&
-                ((!urlData.IsSSL && parts[0] != "lslhttp") ||
-                (urlData.IsSSL && parts[0] != "lslhttps")))
-            {
-                return;
-            }
-
-            if(m_UrlMap.Remove(urlid))
-            {
-                List<UUID> RemoveList = new List<UUID>();
-                foreach (KeyValuePair<UUID, HttpRequestData> kvp in m_HttpRequests)
+                UUID urlid;
+                if (!UUID.TryParse(parts[1], out urlid))
                 {
-                    if (kvp.Value.UrlID == urlid)
-                    {
-                        RemoveList.Add(kvp.Key);
-                    }
+                    return;
                 }
 
-                HttpRequestData reqdata;
-                foreach (UUID id in RemoveList)
+                URLData urlData;
+                if (m_UrlMap.TryGetValue(urlid, out urlData) &&
+                    ((!urlData.IsSSL && parts[0] != "lslhttp") ||
+                    (urlData.IsSSL && parts[0] != "lslhttps")))
                 {
-                    if (m_HttpRequests.Remove(id, out reqdata))
+                    return;
+                }
+
+                if (m_UrlMap.Remove(urlid))
+                {
+                    List<UUID> RemoveList = new List<UUID>();
+                    foreach (KeyValuePair<UUID, HttpRequestData> kvp in m_HttpRequests)
                     {
-                        reqdata.Request.SetConnectionClose();
-                        reqdata.Request.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                        if (kvp.Value.UrlID == urlid)
+                        {
+                            RemoveList.Add(kvp.Key);
+                        }
+                    }
+
+                    HttpRequestData reqdata;
+                    foreach (UUID id in RemoveList)
+                    {
+                        if (m_HttpRequests.Remove(id, out reqdata))
+                        {
+                            reqdata.Request.SetConnectionClose();
+                            reqdata.Request.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                        }
+                    }
+                }
+            }
+            else if(parts[0] == "lslhttp-named" || parts[0] == "lslhttps-named")
+            {
+                URLData urlData;
+                if (m_NamedUrlMap.TryGetValue(parts[1], out urlData) &&
+                    ((!urlData.IsSSL && parts[0] != "lslhttp-named") ||
+                    (urlData.IsSSL && parts[0] != "lslhttps-named")))
+                {
+                    return;
+                }
+
+                if (m_NamedUrlMap.Remove(parts[1]))
+                {
+                    List<UUID> RemoveList = new List<UUID>();
+                    foreach (KeyValuePair<UUID, HttpRequestData> kvp in m_HttpRequests)
+                    {
+                        if (kvp.Value.UrlName == parts[1])
+                        {
+                            RemoveList.Add(kvp.Key);
+                        }
+                    }
+
+                    HttpRequestData reqdata;
+                    foreach (UUID id in RemoveList)
+                    {
+                        if (m_HttpRequests.Remove(id, out reqdata))
+                        {
+                            reqdata.Request.SetConnectionClose();
+                            reqdata.Request.ErrorResponse(HttpStatusCode.NotFound, "Not Found");
+                        }
                     }
                 }
             }
