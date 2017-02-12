@@ -126,9 +126,9 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 if (null != instance)
                 {
                     RemoteDataEvent ev = new RemoteDataEvent();
-                    ev.Channel = rdi.Key;
+                    ev.Channel = UUID.Zero;
                     ev.IData = idata;
-                    ev.MessageID = UUID.Zero;
+                    ev.MessageID = rdi.Key;
                     ev.SData = sdata;
                     ev.Sender = string.Empty;
                     ev.Type = REMOTE_DATA_REPLY;
