@@ -3,10 +3,6 @@
 
 using Nini.Config;
 using SilverSim.Main.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
