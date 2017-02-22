@@ -145,7 +145,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             Map res = new Map();
             res.Add("StringValue", reply.SData);
             res.Add("IntValue", reply.IData);
-            return new XmlRpcStructs.XmlRpcResponse() { ReturnValue = res };
+            return new XmlRpcStructs.XmlRpcResponse { ReturnValue = res };
         }
 
         [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]
