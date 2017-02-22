@@ -243,8 +243,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             case DATA_ONLINE:
                                 ev = new DataserverEvent();
                                 ev.QueryID = queryid;
-#warning Implement this DATA_ONLINE correctly
-                                ev.Data = "0"; /* TODO: */
+                                ev.Data = uaservice.IsOnline(uui) ? "1" : "0";
                                 instance.PostEvent(ev);
                                 break;
 
