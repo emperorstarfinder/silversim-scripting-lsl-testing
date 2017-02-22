@@ -8,6 +8,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.Grid;
+using SilverSim.ServiceInterfaces.UserAgents;
 using SilverSim.Types;
 using SilverSim.Types.Agent;
 using SilverSim.Types.Asset;
@@ -17,6 +18,7 @@ using SilverSim.Types.Parcel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -171,7 +173,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             break;
 
                         case DATA_BORN:
-#warning Implement this DATA_BORN
+                            UserAgentServiceInterface uaservice = agent.UserAgentService;
+                            if(null != uaservice)
+                            {
+                                UserAgentServiceInterface.UserInfo ui = uaservice.GetUserInfo(agent.Owner);
+                                ev = new DataserverEvent();
+                                ev.QueryID = queryid;
+                                ev.Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo);
+                                instance.PostEvent(ev);
+                            }
                             break;
 
                         case DATA_RATING:
