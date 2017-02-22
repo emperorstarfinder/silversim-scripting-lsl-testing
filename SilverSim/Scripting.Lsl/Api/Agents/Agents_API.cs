@@ -27,6 +27,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     [Description("LSL/OSSL Agents API")]
     public class Agents_API : IScriptApi, IPlugin
     {
+        List<IUserAgentServicePlugin> m_UserAgentServicePlugins = new List<IUserAgentServicePlugin>();
         public Agents_API()
         {
             /* intentionally left empty */
@@ -35,6 +36,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
+            m_UserAgentServicePlugins = loader.GetServicesByValue<IUserAgentServicePlugin>();
         }
 
         [APILevel(APIFlags.LSL)]
@@ -142,6 +144,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL)]
         public const int PAYMENT_INFO_USED = 0x2;
 
+        bool TryConnectUserAgent(string uri, out UserAgentServiceInterface uaservice)
+        {
+            uaservice = null;
+            foreach(IUserAgentServicePlugin plugin in m_UserAgentServicePlugins)
+            {
+                if(plugin.IsProtocolSupported(uri))
+                {
+                    uaservice = plugin.Instantiate(uri);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         [APILevel(APIFlags.LSL, "llRequestAgentData")]
         [ForcedSleep(0.1)]
         public LSLKey RequestAgentData(ScriptInstance instance, LSLKey id, int data)
@@ -176,7 +193,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             UserAgentServiceInterface uaservice = agent.UserAgentService;
                             if(null != uaservice)
                             {
-                                UserAgentServiceInterface.UserInfo ui = uaservice.GetUserInfo(agent.Owner);
+                                UserAgentServiceInterface.UserInfo ui;
+                                try
+                                {
+                                    ui = uaservice.GetUserInfo(agent.Owner);
+                                }
+                                catch
+                                {
+                                    return UUID.Zero;
+                                }
                                 ev = new DataserverEvent();
                                 ev.QueryID = queryid;
                                 ev.Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo);
@@ -206,45 +231,65 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
                 {
-                    switch (data)
+                    UserAgentServiceInterface uaservice;
+                    if(uui.HomeURI == null || !TryConnectUserAgent(uui.HomeURI.ToString(), out uaservice))
                     {
-                        case DATA_ONLINE:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-#warning Implement this DATA_ONLINE correctly
-                            ev.Data = "0"; /* TODO: */
-                            instance.PostEvent(ev);
-                            break;
-
-                        case DATA_NAME:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-                            ev.Data = uui.FullName;
-                            instance.PostEvent(ev);
-                            break;
-
-                        case DATA_BORN:
-#warning Implement this DATA_BORN
-                            break;
-
-                        case DATA_RATING:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-                            ev.Data = "[0,0,0,0,0,0]";
-                            instance.PostEvent(ev);
-                            break;
-
-                        case DATA_PAYINFO:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-                            ev.Data = "0";
-                            instance.PostEvent(ev);
-                            break;
-
-                        default:
-                            break;
+                        return UUID.Zero;
                     }
-                    return queryid;
+                    else
+                    {
+                        switch (data)
+                        {
+                            case DATA_ONLINE:
+                                ev = new DataserverEvent();
+                                ev.QueryID = queryid;
+#warning Implement this DATA_ONLINE correctly
+                                ev.Data = "0"; /* TODO: */
+                                instance.PostEvent(ev);
+                                break;
+
+                            case DATA_NAME:
+                                ev = new DataserverEvent();
+                                ev.QueryID = queryid;
+                                ev.Data = uui.FullName;
+                                instance.PostEvent(ev);
+                                break;
+
+                            case DATA_BORN:
+                                UserAgentServiceInterface.UserInfo ui;
+                                try
+                                {
+                                    ui = uaservice.GetUserInfo(agent.Owner);
+                                }
+                                catch
+                                {
+                                    return UUID.Zero;
+                                }
+                                ev = new DataserverEvent();
+                                ev.QueryID = queryid;
+                                ev.Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo);
+                                instance.PostEvent(ev);
+                                break;
+
+                            case DATA_RATING:
+                                ev = new DataserverEvent();
+                                ev.QueryID = queryid;
+                                ev.Data = "[0,0,0,0,0,0]";
+                                instance.PostEvent(ev);
+                                break;
+
+                            case DATA_PAYINFO:
+                                ev = new DataserverEvent();
+                                ev.QueryID = queryid;
+                                ev.Data = "0";
+                                instance.PostEvent(ev);
+                                break;
+
+                            default:
+                                break;
+                        }
+                        return queryid;
+                    }
                 }
             }
 
