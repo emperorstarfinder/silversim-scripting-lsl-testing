@@ -1,20 +1,16 @@
 ﻿// SilverSim is distributed under the terms of the
 // GNU Affero General Public License v3
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SilverSim.Types;
-using System.ComponentModel;
-using SilverSim.Threading;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
-using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Object;
-using System.Threading;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Threading;
+using SilverSim.Types;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Email
 {
