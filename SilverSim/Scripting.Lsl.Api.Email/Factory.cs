@@ -3,10 +3,6 @@
 
 using Nini.Config;
 using SilverSim.Main.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Email
 {
@@ -20,7 +16,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
         public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
         {
-            return new EmailApi();
+            return new EmailApi(ownSection.GetString("EmailService", string.Empty));
         }
     }
 }
