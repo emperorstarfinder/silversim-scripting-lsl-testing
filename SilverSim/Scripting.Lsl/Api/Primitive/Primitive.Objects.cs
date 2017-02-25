@@ -83,6 +83,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int OBJECT_TOTAL_INVENTORY_COUNT = 31;
         [APILevel(APIFlags.LSL)]
         public const int OBJECT_REZZER_KEY = 32;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_GROUP_TAG = 33;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_TEMP_ATTACHED = 34;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_ATTACHED_SLOTS_AVAILABLE = 35;
 
         [APILevel(APIFlags.LSL)]
         public const int OPT_OTHER = -1;
