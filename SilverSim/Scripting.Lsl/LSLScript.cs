@@ -54,6 +54,7 @@ namespace SilverSim.Scripting.Lsl
 
         bool m_HasTouchEvent;
         bool m_HasMoneyEvent;
+        bool m_HaveQueuedTimerEvent;
 
         public override bool HasTouchEvent { get { return m_HasTouchEvent; } }
         public override bool HasMoneyEvent { get { return m_HasMoneyEvent; } }
@@ -62,7 +63,10 @@ namespace SilverSim.Scripting.Lsl
         {
             lock (m_Lock)
             {
-                PostEvent(new TimerEvent());
+                if (!m_HaveQueuedTimerEvent)
+                {
+                    PostEvent(new TimerEvent());
+                }
                 LastTimerEventTick = Environment.TickCount;
             }
         }
@@ -431,6 +435,10 @@ namespace SilverSim.Scripting.Lsl
                 IScriptEvent ev;
                 if (TryTranslateEventParams(ep, out ev))
                 {
+                    if(ev is TimerEvent)
+                    {
+                        m_HaveQueuedTimerEvent = true;
+                    }
                     m_Events.Enqueue(ev);
                 }
             }
@@ -544,6 +552,10 @@ namespace SilverSim.Scripting.Lsl
         {
             if (IsRunning && !IsAborting)
             {
+                if(e is TimerEvent)
+                {
+                    m_HaveQueuedTimerEvent = true;
+                }
                 m_Events.Enqueue(e);
                 Part.ObjectGroup.Scene.ScriptThreadPool.PostScript(this);
             }
@@ -576,6 +588,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
             IsRunning = false;
+            m_HaveQueuedTimerEvent = false;
             m_Events.Clear();
             m_States.Clear();
             m_Part = null;
@@ -875,6 +888,10 @@ namespace SilverSim.Scripting.Lsl
             bool executeScriptReset = false;
             ILSLState newState = m_CurrentState;
 
+            if(evgot is TimerEvent)
+            {
+                m_HaveQueuedTimerEvent = false;
+            }
 
             do
             {
