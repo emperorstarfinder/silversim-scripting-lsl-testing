@@ -6,12 +6,16 @@ using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scene.Types.Transfer;
 using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.ServiceInterfaces.Inventory;
+using SilverSim.ServiceInterfaces.UserAgents;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
+using SilverSim.Types.Asset.Format;
 using SilverSim.Types.Inventory;
+using SilverSim.Types.ServerURIs;
 using SilverSim.Viewer.Messages.Inventory;
 using System;
 using System.Collections.Generic;
@@ -25,6 +29,10 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
     [Description("LSL/OSSL Inventory API")]
     public class InventoryApi : IScriptApi, IPlugin
     {
+        List<IUserAgentServicePlugin> m_UserAgentServicePlugins;
+        List<IAssetServicePlugin> m_AssetServicePlugins;
+        List<IInventoryServicePlugin> m_InventoryServicePlugins;
+
         public InventoryApi()
         {
             /* intentionally left empty */
@@ -32,7 +40,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         public void Startup(ConfigurationLoader loader)
         {
-            /* intentionally left empty */
+            m_UserAgentServicePlugins = loader.GetServicesByValue<IUserAgentServicePlugin>();
+            m_AssetServicePlugins = loader.GetServicesByValue<IAssetServicePlugin>();
+            m_InventoryServicePlugins = loader.GetServicesByValue<IInventoryServicePlugin>();
         }
 
         [APILevel(APIFlags.LSL)]
@@ -593,7 +603,45 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [ForcedSleep(1.0)]
         public LSLKey RequestInventoryData(ScriptInstance instance, string name)
         {
-            throw new NotImplementedException("llRequestInventoryData(string)");
+            lock(instance)
+            {
+                ObjectPartInventoryItem item;
+                try
+                {
+                    item = instance.Part.Inventory[name];
+                }
+                catch
+                {
+                    instance.ShoutError(string.Format("Inventory item '{0}' is missing in object's inventory.", name));
+                    return UUID.Zero;
+                }
+
+                if(item.AssetType == AssetType.Landmark)
+                {
+                    AssetData data;
+                    Landmark landmark;
+                    try
+                    {
+                        data = instance.Part.ObjectGroup.AssetService[item.AssetID];
+                        landmark = new Landmark(data);
+                    }
+                    catch
+                    {
+                        instance.ShoutError(string.Format("Landmark data for '{0}' not found or valid", name));
+                        return UUID.Zero;
+                    }
+
+                    DataserverEvent e = new DataserverEvent();
+                    e.QueryID = UUID.Random;
+                    e.Data = landmark.LocalPos.ToString();
+                    instance.PostEvent(e);
+                    return e.QueryID;
+                }
+                else
+                {
+                    return UUID.Zero;
+                }
+            }
         }
 
         #region osGetInventoryDesc
@@ -646,6 +694,50 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
         #endregion
 
+        bool TryGetServices(UUI targetAgentId, out InventoryServiceInterface inventoryService, out AssetServiceInterface assetService)
+        {
+            UserAgentServiceInterface userAgentService = null;
+            string homeUri = targetAgentId.HomeURI.ToString();
+            inventoryService = null;
+            assetService = null;
+            foreach (IUserAgentServicePlugin userAgentPlugin in m_UserAgentServicePlugins)
+            {
+                if (userAgentPlugin.IsProtocolSupported(homeUri))
+                {
+                    userAgentService = userAgentPlugin.Instantiate(homeUri);
+                }
+            }
+
+            if (null == userAgentService)
+            {
+                return false;
+            }
+
+            ServerURIs serverurls = userAgentService.GetServerURLs(targetAgentId);
+            string inventoryServerURI = serverurls.InventoryServerURI;
+            string assetServerURI = serverurls.AssetServerURI;
+
+            foreach (IInventoryServicePlugin inventoryPlugin in m_InventoryServicePlugins)
+            {
+                if (inventoryPlugin.IsProtocolSupported(inventoryServerURI))
+                {
+                    inventoryService = inventoryPlugin.Instantiate(inventoryServerURI);
+                    break;
+                }
+            }
+
+            foreach (IAssetServicePlugin assetPlugin in m_AssetServicePlugins)
+            {
+                if (assetPlugin.IsProtocolSupported(assetServerURI))
+                {
+                    assetService = assetPlugin.Instantiate(assetServerURI);
+                    break;
+                }
+            }
+
+            return null != inventoryService && null != assetService;
+        }
+
         #region Give Inventory
         [APILevel(APIFlags.LSL, "llGiveInventory")]
         public void GiveInventory(ScriptInstance instance, LSLKey destination, string inventory)
@@ -679,7 +771,21 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 else if(scene.AvatarNameService.TryGetValue(id, out targetAgentId))
                 {
-
+                    InventoryServiceInterface inventoryService;
+                    AssetServiceInterface assetService;
+                    if (TryGetServices(targetAgentId, out inventoryService, out assetService))
+                    {
+                        GiveInventoryToAgent(
+                            instance,
+                            targetAgentId,
+                            inventoryService,
+                            assetService,
+                            scene,
+                            instance.Part,
+                            string.Empty,
+                            array,
+                            false);
+                    }
                 }
                 else
                 {
@@ -720,7 +826,21 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 else if (scene.AvatarNameService.TryGetValue(id, out targetAgentId))
                 {
-
+                    InventoryServiceInterface inventoryService;
+                    AssetServiceInterface assetService;
+                    if (TryGetServices(targetAgentId, out inventoryService, out assetService))
+                    {
+                        GiveInventoryToAgent(
+                            instance,
+                            targetAgentId,
+                            inventoryService,
+                            assetService,
+                            scene,
+                            instance.Part,
+                            folder,
+                            array,
+                            true);
+                    }
                 }
                 else
                 {
@@ -959,6 +1079,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         msg.SimApproved = true;
                         agent.SendMessageAlways(msg, m_SceneID);
                     }
+                    /* TODO: implement object InventoryOffered message */
                 }
             }
 
@@ -966,7 +1087,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             {
                 SceneInterface scene;
                 IAgent agent;
-                if (!TryGetScene(m_DestinationAgent.ID, out scene) &&
+                if (TryGetScene(m_DestinationAgent.ID, out scene) &&
                     scene.Agents.TryGetValue(m_DestinationAgent.ID, out agent))
                 {
 
