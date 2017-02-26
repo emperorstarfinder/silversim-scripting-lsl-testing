@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using JsonSerializer = SilverSim.Types.StructuredData.Json.Json;
 
 namespace SilverSim.Scripting.Lsl.Api.Json

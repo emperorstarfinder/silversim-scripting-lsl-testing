@@ -29,13 +29,20 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llGetMass")]
         public double GetMass(ScriptInstance instance)
         {
-            throw new NotImplementedException("llGetMass()");
+            lock(instance)
+            {
+                return instance.Part.Mass;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llVolumeDetect")]
         public void VolumeDetect(ScriptInstance instance, int enable)
         {
-            throw new NotImplementedException("llVolumeDetect(integer)");
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                grp.IsVolumeDetect = enable != 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSetTorque")]

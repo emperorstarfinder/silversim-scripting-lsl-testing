@@ -434,7 +434,54 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 }
                 else
                 {
-                    throw new NotImplementedException("llRequestSimulatorData(string, integer): Requesting region data of another region not yet supported");
+                    RegionInfo ri;
+                    if(scene.GridService.TryGetValue(scene.ScopeID, region, out ri))
+                    {
+                        UUID queryID = UUID.Random;
+                        DataserverEvent e = new DataserverEvent();
+                        e.QueryID = queryID;
+                        switch (data)
+                        {
+                            case DATA_SIM_POS:
+                                e.Data = new Vector3(ri.Location).ToString();
+                                instance.PostEvent(e);
+                                return queryID;
+
+                            case DATA_SIM_STATUS:
+                                e.Data = ri.Flags.HasFlag(RegionFlags.RegionOnline) ? "up" : "down";
+                                instance.PostEvent(e);
+                                return queryID;
+
+                            case DATA_SIM_RATING:
+                                switch (ri.Access)
+                                {
+                                    case RegionAccess.Adult:
+                                        e.Data = "ADULT";
+                                        break;
+
+                                    case RegionAccess.Mature:
+                                        e.Data = "MATURE";
+                                        break;
+
+                                    case RegionAccess.PG:
+                                        e.Data = "PG";
+                                        break;
+
+                                    default:
+                                        e.Data = "UNKNOWN";
+                                        break;
+                                }
+                                instance.PostEvent(e);
+                                return queryID;
+
+                            default:
+                                return UUID.Zero;
+                        }
+                    }
+                    else
+                    {
+                        return UUID.Zero;
+                    }
                 }
             }
         }
