@@ -19,4 +19,18 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             return new EmailApi(ownSection.GetString("EmailService", string.Empty));
         }
     }
+
+    [PluginName("LSL_Email_LocalOnlyService")]
+    public sealed class ServiceFactory : IPluginFactory
+    {
+        public ServiceFactory()
+        {
+
+        }
+
+        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
+        {
+            return new LocalEmailService();
+        }
+    }
 }
