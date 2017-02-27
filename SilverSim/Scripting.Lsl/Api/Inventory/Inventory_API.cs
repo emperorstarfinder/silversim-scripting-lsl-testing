@@ -8,6 +8,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scene.Types.Transfer;
+using SilverSim.ServiceInterfaces;
 using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.ServiceInterfaces.Inventory;
 using SilverSim.ServiceInterfaces.UserAgents;
@@ -700,9 +701,10 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             string homeUri = targetAgentId.HomeURI.ToString();
             inventoryService = null;
             assetService = null;
+            Dictionary<string, string> heloheaders = ServicePluginHelo.HeloRequest(homeUri);
             foreach (IUserAgentServicePlugin userAgentPlugin in m_UserAgentServicePlugins)
             {
-                if (userAgentPlugin.IsProtocolSupported(homeUri))
+                if (userAgentPlugin.IsProtocolSupported(homeUri, heloheaders))
                 {
                     userAgentService = userAgentPlugin.Instantiate(homeUri);
                 }
@@ -717,18 +719,20 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             string inventoryServerURI = serverurls.InventoryServerURI;
             string assetServerURI = serverurls.AssetServerURI;
 
+            heloheaders = ServicePluginHelo.HeloRequest(inventoryServerURI);
             foreach (IInventoryServicePlugin inventoryPlugin in m_InventoryServicePlugins)
             {
-                if (inventoryPlugin.IsProtocolSupported(inventoryServerURI))
+                if (inventoryPlugin.IsProtocolSupported(inventoryServerURI, heloheaders))
                 {
                     inventoryService = inventoryPlugin.Instantiate(inventoryServerURI);
                     break;
                 }
             }
 
+            heloheaders = ServicePluginHelo.HeloRequest(assetServerURI);
             foreach (IAssetServicePlugin assetPlugin in m_AssetServicePlugins)
             {
-                if (assetPlugin.IsProtocolSupported(assetServerURI))
+                if (assetPlugin.IsProtocolSupported(assetServerURI, heloheaders))
                 {
                     assetService = assetPlugin.Instantiate(assetServerURI);
                     break;

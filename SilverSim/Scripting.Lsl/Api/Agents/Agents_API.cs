@@ -7,6 +7,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.ServiceInterfaces;
 using SilverSim.ServiceInterfaces.Grid;
 using SilverSim.ServiceInterfaces.UserAgents;
 using SilverSim.Types;
@@ -147,9 +148,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         bool TryConnectUserAgent(string uri, out UserAgentServiceInterface uaservice)
         {
             uaservice = null;
+            Dictionary<string, string> heloheaders = ServicePluginHelo.HeloRequest(uri);
             foreach(IUserAgentServicePlugin plugin in m_UserAgentServicePlugins)
             {
-                if(plugin.IsProtocolSupported(uri))
+                if(plugin.IsProtocolSupported(uri, heloheaders))
                 {
                     uaservice = plugin.Instantiate(uri);
                     return true;
@@ -337,9 +339,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out agentid) && agentid.HomeURI != null)
                 {
                     UserAgentServiceInterface userAgentService = null;
+                    Dictionary<string, string> heloheaders = ServicePluginHelo.HeloRequest(agentid.HomeURI.ToString());
                     foreach(IUserAgentServicePlugin plugin in m_UserAgentServicePlugins)
                     {
-                        if(plugin.IsProtocolSupported(agentid.HomeURI.ToString()))
+                        if(plugin.IsProtocolSupported(agentid.HomeURI.ToString(), heloheaders))
                         {
                             userAgentService = plugin.Instantiate(agentid.HomeURI.ToString());
                             break;
