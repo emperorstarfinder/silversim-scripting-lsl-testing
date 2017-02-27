@@ -36,7 +36,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             {
                 return value;
             }
-            return 1000;
+            return 8;
         }
 
         int GetMaxRotTargets(UUID regionID)
@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             {
                 return value;
             }
-            return 1000;
+            return 8;
         }
 
         readonly RwLockedDictionary<UUID, int> m_MaxPosTargetHandleParams = new RwLockedDictionary<UUID, int>();
