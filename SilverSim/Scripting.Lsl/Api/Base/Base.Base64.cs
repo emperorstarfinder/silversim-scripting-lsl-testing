@@ -17,7 +17,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 Array.Reverse(b);
             }
-            return System.Convert.ToBase64String(b);
+            return Convert.ToBase64String(b);
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToInteger")]
@@ -28,7 +28,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
             string i = s.PadRight(8, '=');
-            byte[] b = System.Convert.FromBase64String(i);
+            byte[] b = Convert.FromBase64String(i);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(b, 0, 4);
@@ -40,13 +40,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public string StringToBase64(ScriptInstance instance, string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
-            return System.Convert.ToBase64String(b);
+            return Convert.ToBase64String(b);
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToString")]
         public string Base64ToString(ScriptInstance instance, string str)
         {
-            byte[] b = System.Convert.FromBase64String(str);
+            byte[] b = Convert.FromBase64String(str);
             return Encoding.UTF8.GetString(b);
         }
 
@@ -54,15 +54,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llXorBase64StringsCorrect")]
         public string XorBase64(ScriptInstance instance, string str1, string str2)
         {
-            byte[] a = System.Convert.FromBase64String(str1);
-            byte[] b = System.Convert.FromBase64String(str2);
+            byte[] a = Convert.FromBase64String(str1);
+            byte[] b = Convert.FromBase64String(str2);
             byte[] o = new byte[a.Length];
 
             for (int i = 0; i < a.Length; ++i)
             {
                 o[i] = (byte)(a[i] ^ b[i % b.Length]);
             }
-            return System.Convert.ToBase64String(o);
+            return Convert.ToBase64String(o);
         }
 
         [APILevel(APIFlags.LSL, "llXorBase64Strings")]
