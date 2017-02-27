@@ -2,8 +2,10 @@
 // GNU Affero General Public License v3
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
@@ -167,7 +169,40 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llPushObject")]
         public void PushObject(ScriptInstance instance, LSLKey target, Vector3 impulse, Vector3 ang_impulse, int local)
         {
-            throw new NotImplementedException("llPushObject(key, vector, vector, integer)");
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectGroup grp;
+                IAgent agent;
+                IPhysicsObject physObj = null;
+                Quaternion rot;
+
+                if (scene.RootAgents.TryGetValue(target.AsUUID, out agent))
+                {
+                    physObj = agent.PhysicsActor;
+                    rot = agent.GlobalRotation;
+                }
+                else if (scene.ObjectGroups.TryGetValue(target.AsUUID, out grp))
+                {
+                    physObj = grp.PhysicsActor;
+                    rot = grp.GlobalRotation;
+                }
+                else
+                {
+                    rot = Quaternion.Identity;
+                }
+
+                if (null != physObj)
+                {
+                    if(local != 0)
+                    {
+                        impulse /= rot;
+                        ang_impulse /= rot;
+                    }
+                    physObj.SetLinearImpulse(impulse);
+                    physObj.SetAngularImpulse(ang_impulse);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llApplyImpulse")]
