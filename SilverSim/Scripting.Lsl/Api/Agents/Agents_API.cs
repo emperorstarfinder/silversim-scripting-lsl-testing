@@ -316,7 +316,51 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRequestDisplayName")]
         public LSLKey RequestDisplayName(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("llRequestDisplayName(key)");
+            lock (instance)
+            {
+                IAgent agent;
+                UUI agentid;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.Agents.TryGetValue(id.AsUUID, out agent))
+                {
+                    string displayname;
+                    if(!agent.UserAgentService.DisplayName.TryGetValue(agent.Owner, out displayname))
+                    {
+                        displayname = agent.Owner.FullName;
+                    }
+                    DataserverEvent ev = new DataserverEvent();
+                    ev.QueryID = UUID.Random;
+                    ev.Data = displayname;
+                    instance.PostEvent(ev);
+                    return ev.QueryID;
+                }
+                else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out agentid) && agentid.HomeURI != null)
+                {
+                    UserAgentServiceInterface userAgentService = null;
+                    foreach(IUserAgentServicePlugin plugin in m_UserAgentServicePlugins)
+                    {
+                        if(plugin.IsProtocolSupported(agentid.HomeURI.ToString()))
+                        {
+                            userAgentService = plugin.Instantiate(agentid.HomeURI.ToString());
+                            break;
+                        }
+                    }
+                    if(userAgentService != null)
+                    {
+                        string displayname;
+                        if(!userAgentService.DisplayName.TryGetValue(agentid, out displayname))
+                        {
+                            displayname = agentid.FullName;
+                        }
+                        DataserverEvent ev = new DataserverEvent();
+                        ev.QueryID = UUID.Random;
+                        ev.Data = displayname;
+                        instance.PostEvent(ev);
+                        return ev.QueryID;
+                    }
+                }
+                return UUID.Zero;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetUsername")]
@@ -366,7 +410,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetDisplayName")]
         public string GetDisplayName(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("llGetDisplayName(key)");
+            lock (instance)
+            {
+                IAgent agent;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.Agents.TryGetValue(id.AsUUID, out agent))
+                {
+                    string displayname;
+                    if (!agent.UserAgentService.DisplayName.TryGetValue(agent.Owner, out displayname))
+                    {
+                        displayname = agent.Owner.FullName;
+                    }
+                    return displayname;
+                }
+                return string.Empty;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llKey2Name")]
