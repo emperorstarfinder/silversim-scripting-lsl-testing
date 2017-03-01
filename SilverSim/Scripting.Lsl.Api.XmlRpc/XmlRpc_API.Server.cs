@@ -177,7 +177,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 /* TODO: how to deal with persistency of channel ids here? As of now simply re-use objectid */
                 if (!m_ScriptChannels.TryGetValue(scriptID, out ci))
                 {
-                    ci = new ChannelInfo(objectID, sceneID, objectID, scriptID);
+                    ci = new ChannelInfo(scriptID, sceneID, objectID, scriptID);
                     m_ScriptChannels.Add(scriptID, ci);
                     m_Channels.Add(ci.ChannelID, ci);
 
