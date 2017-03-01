@@ -282,6 +282,11 @@ namespace SilverSim.Scripting.Lsl
                                 writer.WriteValue(script.IsRunning);
                             }
                             writer.WriteEndElement();
+                            writer.WriteStartElement("StartParameter");
+                            {
+                                writer.WriteValue(script.StartParameter);
+                            }
+                            writer.WriteEndElement();
                             writer.WriteStartElement("Variables");
                             foreach (KeyValuePair<string, object> kvp in Variables)
                             {

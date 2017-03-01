@@ -23,6 +23,7 @@ namespace SilverSim.Scripting.Lsl
             public bool IsRunning;
             public string CurrentState = "default";
             public double MinEventDelay;
+            public int StartParameter;
 
             static void ScriptPermissionsFromXML(XmlTextReader reader, ObjectPartInventoryItem item)
             {
@@ -659,6 +660,10 @@ namespace SilverSim.Scripting.Lsl
 
                                 case "Running":
                                     state.IsRunning = reader.ReadElementValueAsBoolean();
+                                    break;
+
+                                case "StartParameter":
+                                    state.StartParameter = reader.ReadElementValueAsInt();
                                     break;
 
                                 case "Variables":

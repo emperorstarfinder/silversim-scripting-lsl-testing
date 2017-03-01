@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SilverSim.Scripting.Lsl.Script;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
@@ -90,13 +91,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 ObjectPart rezzingpart = instance.Part;
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
-                if(IsRezDistanceLimitEnforced(sceneid) && 
+                bool removeinventory;
+                if (IsRezDistanceLimitEnforced(sceneid) && 
                     (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
                 {
                     /* silent fail as per definition */
                     return;
                 }
-                if(TryGetObjectInventory(instance, inventory, out groups))
+                if(TryGetObjectInventory(instance, inventory, out groups, out removeinventory))
                 {
                     Vector3 geometriccenteroffset = Vector3.Zero;
                     int primcount = 0;
@@ -113,6 +115,10 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     pos += geometriccenteroffset;
 
                     RealRezObject(scene, rezzingpart, groups, pos, vel, rot, param);
+                    if (removeinventory)
+                    {
+                        rezzingpart.Inventory.Remove(inventory);
+                    }
                 }
             }
         }
@@ -127,24 +133,33 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 ObjectPart rezzingpart = instance.Part;
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
+                bool removeinventory;
                 if (IsRezDistanceLimitEnforced(sceneid) &&
                     (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
                 {
                     /* silent fail as per definition */
                     return;
                 }
-                if (TryGetObjectInventory(instance, inventory, out groups))
+                if (TryGetObjectInventory(instance, inventory, out groups, out removeinventory))
                 {
                     RealRezObject(scene, rezzingpart, groups, pos, vel, rot, param);
+                    if(removeinventory)
+                    {
+                        rezzingpart.Inventory.Remove(inventory);
+                    }
                 }
             }
         }
 
         public void RealRezObject(SceneInterface scene, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
+            Quaternion rotOff = rot / groups[0].GlobalRotation;
+
             foreach (ObjectGroup sog in groups)
             {
                 sog.RezzingObjectID = rezzingpart.ID;
+                sog.GlobalRotation *= rotOff;
+                sog.GlobalPosition += (sog.GlobalPosition - pos) * rotOff;
                 foreach (ObjectPart part in sog.ValuesByKey1)
                 {
                     UUID oldID = part.ID;
@@ -155,8 +170,23 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         oldID = item.ID;
                         item.ID = UUID.Random;
                         part.Inventory.ChangeKey(item.ID, oldID);
+                        if(item.AssetType == AssetType.LSLText)
+                        {
+                            SavedScriptState savedScriptState = item.ScriptState as SavedScriptState;
+                            if (null != savedScriptState)
+                            {
+                                savedScriptState.StartParameter = param;
+                            }
+                            else
+                            {
+                                savedScriptState = new SavedScriptState();
+                                savedScriptState.StartParameter = param;
+                                item.ScriptState = savedScriptState;
+                            }
+                        }
                     }
                 }
+                sog.Velocity = vel;
             }
 
             foreach (ObjectGroup sog in groups)
@@ -168,13 +198,15 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        public bool TryGetObjectInventory(ScriptInstance instance, string name, out List<ObjectGroup> groups)
+        public bool TryGetObjectInventory(ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory)
         {
             ObjectPartInventoryItem item;
             AssetData data;
-            ObjectPart part = instance.Part;
+            ObjectPart rezzingpart = instance.Part;
+            ObjectGroup rezzinggrp = rezzingpart.ObjectGroup;
+            removeinventory = false;
             groups = null;
-            if(!part.Inventory.TryGetValue(name, out item))
+            if(!rezzingpart.Inventory.TryGetValue(name, out item))
             {
                 instance.ShoutError("Item '" + name + "' not found to rez");
                 return false;
@@ -184,9 +216,16 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 instance.ShoutError("Item '" + name + "' is not an object.");
                 return false;
             }
-            else if(!part.ObjectGroup.Scene.AssetService.TryGetValue(item.AssetID, out data))
+            else if(!rezzingpart.ObjectGroup.Scene.AssetService.TryGetValue(item.AssetID, out data))
             {
                 instance.ShoutError("Item '" + name + "' is missing in database.");
+                return false;
+            }
+
+            removeinventory = !item.CheckPermissions(instance.Item.Owner, instance.Item.Group, InventoryPermissionsMask.Copy);
+            if(removeinventory && rezzinggrp.IsAttached)
+            {
+                instance.ShoutError("Cannot rez no copy objects from an attached object.");
                 return false;
             }
 
