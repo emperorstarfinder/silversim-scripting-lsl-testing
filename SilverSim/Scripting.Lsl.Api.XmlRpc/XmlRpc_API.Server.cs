@@ -174,10 +174,10 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 ObjectPart part = instance.Part;
                 UUID objectID = part.ID;
                 UUID sceneID = part.ObjectGroup.Scene.ID;
-                /* TODO: how to deal with persistency of channel ids here? */
+                /* TODO: how to deal with persistency of channel ids here? As of now simply re-use objectid */
                 if (!m_ScriptChannels.TryGetValue(scriptID, out ci))
                 {
-                    ci = new ChannelInfo(UUID.Random, sceneID, objectID, scriptID);
+                    ci = new ChannelInfo(objectID, sceneID, objectID, scriptID);
                     m_ScriptChannels.Add(scriptID, ci);
                     m_Channels.Add(ci.ChannelID, ci);
 
