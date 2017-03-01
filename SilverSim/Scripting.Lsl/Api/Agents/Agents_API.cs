@@ -126,7 +126,43 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetAgentInfo")]
         public int GetAgentInfo(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("llGetAgentInfo(key)");
+            int flags = 0;
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                IAgent agent;
+                if(scene.Agents.TryGetValue(id.AsUUID, out agent))
+                {
+                    foreach(ObjectGroup att in agent.Attachments.All)
+                    {
+                        flags |= AGENT_ATTACHMENTS;
+                        foreach(ObjectPart part in att.Values)
+                        {
+                            if(part.IsScripted)
+                            {
+                                flags |= AGENT_SCRIPTED;
+                            }
+                        }
+                    }
+                    if(agent.Attachments.Count != 0)
+                    {
+                        flags |= AGENT_ATTACHMENTS;
+                    }
+
+                    /* TODO: AGENT_AWAY, AGENT_BUSY, AGENT_CROUCHING, AGENT_FLYING, AGENT_IN_AIR, AGENT_TYPING, AGENT_WALING */
+
+                    if(agent.SittingOnObject != null)
+                    {
+                        flags |= AGENT_ON_OBJECT | AGENT_SITTING;
+                    }
+
+                    if(agent.IsInMouselook)
+                    {
+                        flags |= AGENT_MOUSELOOK;
+                    }
+                }
+            }
+            return flags;
         }
 
         [APILevel(APIFlags.LSL)]
