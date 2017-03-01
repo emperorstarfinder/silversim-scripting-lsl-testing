@@ -21,14 +21,13 @@ using SilverSim.Viewer.Messages.Inventory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
     [ScriptApiName("Inventory")]
     [LSLImplementation]
     [Description("LSL/OSSL Inventory API")]
-    public class InventoryApi : IScriptApi, IPlugin
+    public partial class InventoryApi : IScriptApi, IPlugin
     {
         List<IUserAgentServicePlugin> m_UserAgentServicePlugins;
         List<IAssetServicePlugin> m_AssetServicePlugins;
@@ -678,20 +677,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 return string.Empty;
             }
-        }
-        #endregion
-
-        #region Rez Inventory
-        [APILevel(APIFlags.LSL, "llRezObject")]
-        public void RezObject(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
-        {
-            throw new NotImplementedException("llRezObject(string, vector, vector, rotation, integer)");
-        }
-
-        [APILevel(APIFlags.LSL, "llRezAtRoot")]
-        public void RezAtRoot(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
-        {
-            throw new NotImplementedException("llRezAtRoot(string, vector, vector, rotation, integer)");
         }
         #endregion
 

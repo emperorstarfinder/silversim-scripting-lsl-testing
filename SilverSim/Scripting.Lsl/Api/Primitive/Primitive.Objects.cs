@@ -152,7 +152,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llGetGeometricCenter")]
         public Vector3 GetGeometricCenter(ScriptInstance instance)
         {
-            throw new NotImplementedException("llGetGeometricCenter()");
+            Vector3 center = Vector3.Zero;
+            lock (instance)
+            {
+                int primcount = 0;
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                ObjectPart rootPart = grp.RootPart;
+                foreach(ObjectPart part in grp.Values)
+                {
+                    if (part != rootPart)
+                    {
+                        center += part.LocalPosition;
+                    }
+                }
+                center /= primcount;
+            }
+            return center;
         }
 
         [APILevel(APIFlags.LSL, "llGetAttached")]
