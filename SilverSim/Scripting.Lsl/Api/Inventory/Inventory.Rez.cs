@@ -114,8 +114,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     geometriccenteroffset -= groups[0].GlobalPosition;
                     pos += geometriccenteroffset;
 
-                    RealRezObject(scene, rezzingpart, groups, pos, vel, rot, param);
-                    if (removeinventory)
+                    if(RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                        removeinventory)
                     {
                         rezzingpart.Inventory.Remove(inventory);
                     }
@@ -140,26 +140,33 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     /* silent fail as per definition */
                     return;
                 }
-                if (TryGetObjectInventory(instance, inventory, out groups, out removeinventory))
+
+                if (TryGetObjectInventory(instance, inventory, out groups, out removeinventory) &&
+                    RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                    removeinventory)
                 {
-                    RealRezObject(scene, rezzingpart, groups, pos, vel, rot, param);
-                    if(removeinventory)
-                    {
-                        rezzingpart.Inventory.Remove(inventory);
-                    }
+                    rezzingpart.Inventory.Remove(inventory);
                 }
             }
         }
 
-        public void RealRezObject(SceneInterface scene, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param)
+        public bool RealRezObject(SceneInterface scene, UUI rezzingowner, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
             Quaternion rotOff = rot / groups[0].GlobalRotation;
-
             foreach (ObjectGroup sog in groups)
             {
                 sog.RezzingObjectID = rezzingpart.ID;
                 sog.GlobalRotation *= rotOff;
                 sog.GlobalPosition += (sog.GlobalPosition - pos) * rotOff;
+                if(!scene.CanRez(rezzingowner, sog.GlobalPosition))
+                {
+                    return false;
+                }
+            }
+
+            foreach (ObjectGroup sog in groups)
+            {
+                sog.RezzingObjectID = rezzingpart.ID;
                 foreach (ObjectPart part in sog.ValuesByKey1)
                 {
                     UUID oldID = part.ID;
@@ -196,6 +203,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 ev.ObjectID = sog.ID;
                 rezzingpart.PostEvent(ev);
             }
+
+            return true;
         }
 
         public bool TryGetObjectInventory(ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory)
