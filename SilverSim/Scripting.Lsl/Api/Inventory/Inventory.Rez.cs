@@ -81,6 +81,72 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             return 10;
         }
 
+        bool TryGetLink(ObjectPart part, int link, out ObjectPart linkedpart)
+        {
+            ObjectGroup grp = part.ObjectGroup;
+            if (LINK_THIS == link)
+            {
+                linkedpart = part;
+                return true;
+            }
+            else if(LINK_ROOT == link || 0 == link)
+            {
+                linkedpart = grp.RootPart;
+                return true;
+            }
+            else
+            {
+                return grp.TryGetValue(link, out linkedpart);
+            }
+        }
+
+        Vector3 CalculateGeometricCenter(List<ObjectGroup> groups)
+        {
+            Vector3 geometriccenteroffset = Vector3.Zero;
+            int primcount = 0;
+            foreach (ObjectGroup grp in groups)
+            {
+                foreach (ObjectPart part in grp.Values)
+                {
+                    geometriccenteroffset += part.GlobalPosition;
+                    ++primcount;
+                }
+            }
+            geometriccenteroffset /= primcount;
+            geometriccenteroffset -= groups[0].GlobalPosition;
+            return geometriccenteroffset;
+        }
+
+        [APILevel(APIFlags.ASSL, "asLinkRezObject")]
+        public void LinkRezObject(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
+        {
+            lock (instance)
+            {
+                List<ObjectGroup> groups;
+                ObjectPart invpart;
+                ObjectPart rezzingpart = instance.Part;
+                SceneInterface scene = rezzingpart.ObjectGroup.Scene;
+                UUID sceneid = scene.ID;
+                bool removeinventory;
+                if (IsRezDistanceLimitEnforced(sceneid) &&
+                    (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
+                {
+                    /* silent fail as per definition */
+                    return;
+                }
+                if (TryGetLink(rezzingpart, link, out invpart) &&
+                    TryGetObjectInventory(instance, invpart, inventory, out groups, out removeinventory))
+                {
+                    pos += CalculateGeometricCenter(groups);
+
+                    if (RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                        removeinventory)
+                    {
+                        rezzingpart.Inventory.Remove(inventory);
+                    }
+                }
+            }
+        }
         [APILevel(APIFlags.LSL, "llRezObject")]
         [ForcedSleep(0.1)]
         public void RezObject(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
@@ -100,25 +166,41 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 if(TryGetObjectInventory(instance, inventory, out groups, out removeinventory))
                 {
-                    Vector3 geometriccenteroffset = Vector3.Zero;
-                    int primcount = 0;
-                    foreach(ObjectGroup grp in groups)
-                    {
-                        foreach(ObjectPart part in grp.Values)
-                        {
-                            geometriccenteroffset += part.GlobalPosition;
-                            ++primcount;
-                        }
-                    }
-                    geometriccenteroffset /= primcount;
-                    geometriccenteroffset -= groups[0].GlobalPosition;
-                    pos += geometriccenteroffset;
+                    pos += CalculateGeometricCenter(groups);
 
                     if(RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
                         removeinventory)
                     {
                         rezzingpart.Inventory.Remove(inventory);
                     }
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asLinkRezAtRoot")]
+        public void LinkRezAtRoot(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
+        {
+            lock (instance)
+            {
+                List<ObjectGroup> groups;
+                ObjectPart rezzingpart = instance.Part;
+                ObjectPart invpart;
+                SceneInterface scene = rezzingpart.ObjectGroup.Scene;
+                UUID sceneid = scene.ID;
+                bool removeinventory;
+                if (IsRezDistanceLimitEnforced(sceneid) &&
+                    (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
+                {
+                    /* silent fail as per definition */
+                    return;
+                }
+
+                if (TryGetLink(rezzingpart, link, out invpart) &&
+                    TryGetObjectInventory(instance, invpart, inventory, out groups, out removeinventory) &&
+                    RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                    removeinventory)
+                {
+                    rezzingpart.Inventory.Remove(inventory);
                 }
             }
         }
@@ -209,13 +291,18 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         public bool TryGetObjectInventory(ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory)
         {
+            return TryGetObjectInventory(instance, instance.Part, name, out groups, out removeinventory);
+        }
+
+        public bool TryGetObjectInventory(ScriptInstance instance, ObjectPart linkpart, string name, out List<ObjectGroup> groups, out bool removeinventory)
+        {
             ObjectPartInventoryItem item;
             AssetData data;
             ObjectPart rezzingpart = instance.Part;
             ObjectGroup rezzinggrp = rezzingpart.ObjectGroup;
             removeinventory = false;
             groups = null;
-            if(!rezzingpart.Inventory.TryGetValue(name, out item))
+            if(!linkpart.Inventory.TryGetValue(name, out item))
             {
                 instance.ShoutError("Item '" + name + "' not found to rez");
                 return false;
