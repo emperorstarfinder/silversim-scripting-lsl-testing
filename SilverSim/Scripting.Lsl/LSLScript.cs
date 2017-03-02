@@ -451,6 +451,9 @@ namespace SilverSim.Scripting.Lsl
             /* min event delay */
             MinEventDelay = state.MinEventDelay;
 
+            /* start parameter */
+            StartParameter = state.StartParameter;
+
             /* initialize plugin data */
             int pluginpos = 0;
             int pluginlen = state.PluginData.Count;
