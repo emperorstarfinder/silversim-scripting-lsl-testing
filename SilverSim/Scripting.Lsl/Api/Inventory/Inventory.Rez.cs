@@ -11,7 +11,7 @@ using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Inventory;
 using System.Collections.Generic;
-using static SilverSim.Scripting.Lsl.Script;
+using SavedScriptState = SilverSim.Scripting.Lsl.Script.SavedScriptState;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
