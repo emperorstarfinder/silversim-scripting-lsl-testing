@@ -1098,6 +1098,11 @@ namespace SilverSim.Scripting.Lsl
                         Action<Script, IScriptEvent> evtDelegate;
                         if (StateEventHandlers.TryGetValue(evt, out evtDelegate))
                         {
+                            IScriptDetectedEvent detectedEv = ev as IScriptDetectedEvent;
+                            if(detectedEv != null)
+                            {
+                                m_Detected = detectedEv.Detected;
+                            }
                             evtDelegate(this, ev);
                         }
                     }
@@ -1938,13 +1943,13 @@ namespace SilverSim.Scripting.Lsl
             EventDeserializers.Add("sensor", delegate(SavedScriptState.EventParams ep)
             {
                 SensorEvent ev = new SensorEvent();
-                ev.Data = ep.Detected;
+                ev.Detected = ep.Detected;
                 return ev;
             });
             EventSerializers.Add(typeof(SensorEvent), delegate (Script script, IScriptEvent iev, XmlTextWriter writer)
             {
                 SensorEvent ev = (SensorEvent)iev;
-                DetectedSerializer(ev.Data, "sensor", writer);
+                DetectedSerializer(ev.Detected, "sensor", writer);
             });
             EventDeserializers.Add("on_rez", OnRezDeserializer);
             EventSerializers.Add(typeof(OnRezEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
@@ -2182,7 +2187,6 @@ namespace SilverSim.Scripting.Lsl
 
         static void HandleCollision(Script script, IScriptEvent ev)
         {
-            script.m_Detected = ((CollisionEvent)ev).Detected;
             switch (((CollisionEvent)ev).Type)
             {
                 case CollisionEvent.CollisionType.Start:
@@ -2240,7 +2244,6 @@ namespace SilverSim.Scripting.Lsl
         static void HandleSensor(Script script, IScriptEvent ev)
         {
             SensorEvent e = (SensorEvent)ev;
-            script.m_Detected = e.Data;
             script.InvokeStateEvent("sensor", script.m_Detected.Count);
         }
 
@@ -2271,7 +2274,6 @@ namespace SilverSim.Scripting.Lsl
         static void HandleTouch(Script script, IScriptEvent ev)
         {
             TouchEvent e = (TouchEvent)ev;
-            script.m_Detected = e.Detected;
             switch (e.Type)
             {
                 case TouchEvent.TouchType.Start:

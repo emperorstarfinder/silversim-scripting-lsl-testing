@@ -236,7 +236,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                             if (kvp.Value.SensorHits.Count != 0)
                             {
                                 SensorEvent ev = new SensorEvent();
-                                ev.Data = new List<DetectInfo>(kvp.Value.SensorHits.Values);
+                                ev.Detected = new List<DetectInfo>(kvp.Value.SensorHits.Values);
                                 kvp.Value.Instance.PostEvent(ev);
                             }
                             else
@@ -342,7 +342,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 if (sensor.SensorHits.Count != 0)
                 {
                     SensorEvent ev = new SensorEvent();
-                    ev.Data = new List<DetectInfo>(sensor.SensorHits.Values);
+                    ev.Detected = new List<DetectInfo>(sensor.SensorHits.Values);
                     sensor.Instance.PostEvent(ev);
                 }
                 else
@@ -595,7 +595,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SceneInfo sceneInfo;
                 if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
-                    sceneInfo.StartSensor(new SensorInfo(instance, true, 0, name, id, type, radius, arc));
+                    sceneInfo.StartSensor(new SensorInfo(instance, false, 0, name, id, type, radius, arc));
                 }
             }
         }
