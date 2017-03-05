@@ -91,6 +91,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
+        [APILevel(APIFlags.LSL, "llReleaseCamera")]
+        public void ReleaseCamera(ScriptInstance instance, LSLKey agent)
+        {
+            lock(instance)
+            {
+                instance.ShoutError("llReleaseCamera is deprecated and recognized for script compatibility\nUse llClearCameraParams instead.");
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llClearCameraParams")]
         public void ClearCameraParams(ScriptInstance instance)
         {
