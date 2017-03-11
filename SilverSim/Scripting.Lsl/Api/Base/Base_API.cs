@@ -81,10 +81,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [StateEventDelegate]
         public delegate void State_on_rez(int start_param);
 
-        [APILevel(APIFlags.LSL, "path_update")]
-        [StateEventDelegate]
-        public delegate void State_path_update(int type, AnArray reserved);
-
         [APILevel(APIFlags.LSL, "state_entry")]
         [StateEventDelegate]
         public delegate void State_state_entry();
