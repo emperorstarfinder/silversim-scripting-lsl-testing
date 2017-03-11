@@ -744,7 +744,6 @@ namespace SilverSim.Scripting.Lsl
                         {
                             ilgen.Emit(OpCodes.Ldloc, lb);
                             ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
-                            ilgen.Emit(OpCodes.Ldarg_1);
                             Type pt = kvp.Value.GetType();
                             if (typeof(FieldInfo).IsAssignableFrom(pt))
                             {
