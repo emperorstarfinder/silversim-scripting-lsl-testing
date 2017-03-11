@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+	<name>SilverSim.Scripting.Lsl.Api.DynamicTexture</name>
+	<default-configuration>
+		<source>SilverSim.Scripting.Lsl.Api.DynamicTexture:PackageConfig.ini</source>
+		<use-if-started-as>bare</use-if-started-as>
+		<use-if-started-as>simulator</use-if-started-as>
+		<use-if-started-as>standalone</use-if-started-as>
+	</default-configuration>
+	<dependencies>
+		<dependency name="SilverSim"/>
+		<dependency name="SilverSim.Scripting.Lsl"/>
+	</dependencies>
+	<files>
+		<file name="bin/plugins/SilverSim.Scripting.Lsl.Api.DynamicTexture.dll"/>
+	</files>
+</package>
