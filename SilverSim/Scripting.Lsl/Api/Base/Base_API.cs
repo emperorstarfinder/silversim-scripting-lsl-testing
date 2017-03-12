@@ -101,6 +101,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [StateEventDelegate]
         public delegate void State_touch_start(int num_detected);
 
+        [APILevel(APIFlags.LSL, "path_update")]
+        [StateEventDelegate]
+        public delegate void PathUpdateDelegate(int type, AnArray reserved);
+
         public BaseApi()
         {
             /* intentionally left empty */
