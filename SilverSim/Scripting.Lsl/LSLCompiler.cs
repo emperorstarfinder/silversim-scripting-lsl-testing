@@ -766,7 +766,7 @@ namespace SilverSim.Scripting.Lsl
                         ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
                         ilgen.Emit(OpCodes.Ldloc, lb);
 
-                        ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("InvokeStateEvent", BindingFlags.Static | BindingFlags.NonPublic));
+                        ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("InvokeStateEvent", BindingFlags.Static));
                         ilgen.Emit(OpCodes.Ret);
 
                         Script.StateEventHandlers.Add(evt, dynMethod.CreateDelegate(typeof(Action<Script, IScriptEvent>)) as Action<Script, IScriptEvent>);
