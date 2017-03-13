@@ -9,7 +9,6 @@
 	</default-configuration>
 	<dependencies>
 		<dependency name="SilverSim.Core"/>
-		<dependency name="SilverSim.Scripting.Lsl"/>
 	</dependencies>
 	<files>
 		<file name="bin/plugins/SilverSim.Scripting.Lsl.Api.Sensor.dll"/>
