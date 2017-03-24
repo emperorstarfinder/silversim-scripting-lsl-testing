@@ -38,8 +38,8 @@ using System.Web;
 namespace SilverSim.Scripting.Lsl
 {
     [Description("LSL HTTP Client Support")]
-    [ServerParam("LSL.HTTPClient.WhiteList", Description = "List of URLs split by ;")]
-    [ServerParam("LSL.HTTPClient.BlackList", Description = "List of URLs split by ;")]
+    [ServerParam("LSL.HTTPClient.WhiteList", Description = "List of URLs split by ;", ParameterType = typeof(string))]
+    [ServerParam("LSL.HTTPClient.BlackList", Description = "List of URLs split by ;", ParameterType = typeof(string))]
     [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool))]
     public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown, IServerParamListener
     {
@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl
         readonly RwLockedDictionary<UUID, string[]> m_WhiteLists = new RwLockedDictionary<UUID, string[]>();
         readonly RwLockedDictionary<UUID, bool> m_WhiteListOnly = new RwLockedDictionary<UUID, bool>();
 
-        [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool))]
+        [ServerParam("LSL.HTTPClient.WhiteListOnly")]
         public void HandleWhiteListOnlyUpdated(UUID regionId, string value)
         {
             bool val;
@@ -90,7 +90,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        [ServerParam("LSL.HTTPClient.WhiteList", Description = "List of URLs split by ;")]
+        [ServerParam("LSL.HTTPClient.WhiteList")]
         public void HandleWhiteListUpdated(UUID regionId, string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -103,7 +103,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        [ServerParam("LSL.HTTPClient.BlackList", Description = "List of URLs split by ;")]
+        [ServerParam("LSL.HTTPClient.BlackList")]
         public void HandleBlackListUpdated(UUID regionId, string value)
         {
             if (string.IsNullOrEmpty(value))
