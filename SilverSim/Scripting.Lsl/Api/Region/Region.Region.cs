@@ -655,7 +655,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock (instance)
             {
-                return instance.Part.ObjectGroup.Scene.RegionSettings.WaterHeight;
+                return instance.Part.ObjectGroup.Scene.GetLocationInfoProvider().At(offset).WaterHeight;
             }
         }
 
