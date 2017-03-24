@@ -354,19 +354,70 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llMoveToTarget")]
         public void MoveToTarget(ScriptInstance instance, Vector3 target, double tau)
         {
-            throw new NotImplementedException("llMoveToTarget(vector, float)");
+            lock(instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                if(grp.IsAttached)
+                {
+                    IAgent agent;
+                    if(scene.RootAgents.TryGetValue(scene.ID, out agent))
+                    {
+                        agent.MoveToTarget(target, tau, part.ID, instance.Item.ID);
+                    }
+                }
+                else
+                {
+                    grp.MoveToTarget(target, tau, part.ID, instance.Item.ID);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llStopMoveToTarget")]
         public void StopMoveToTarget(ScriptInstance instance)
         {
-            throw new NotImplementedException("llStopMoveToTarget()");
+            lock (instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                if (grp.IsAttached)
+                {
+                    IAgent agent;
+                    if (scene.RootAgents.TryGetValue(scene.ID, out agent))
+                    {
+                        agent.StopMoveToTarget();
+                    }
+                }
+                else
+                {
+                    grp.StopMoveToTarget();
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetObjectMass")]
         public double GetObjectMass(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("llGetObjectMass(key)");
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPart part;
+                IAgent agent;
+                if(scene.Primitives.TryGetValue(id.AsUUID, out part))
+                {
+                    return part.Mass;
+                }
+                else if(scene.Agents.TryGetValue(id.AsUUID, out agent))
+                {
+                    return agent.IsInScene(scene) ? agent.PhysicsActor.Mass : 0.01;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llCollisionFilter")]
