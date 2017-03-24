@@ -73,7 +73,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has no physical properties");
                     return;
                 }
                 
@@ -121,7 +121,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has no physical properties");
                     return;
                 }
 
@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = thisGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has no physical properties");
                     return;
                 }
 
@@ -170,18 +170,12 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has not physical properties");
+                    instance.ShoutError("Object has no physical properties");
                     return;
                 }
 
                 physobj.Buoyancy = buoyancy;
             }
-        }
-
-        [APILevel(APIFlags.LSL, "llGroundRepel")]
-        public void GroundRepel(ScriptInstance instance, double height, int water, double tau)
-        {
-            throw new NotImplementedException("llGroundRepel(float, integer, float)");
         }
 
         [APILevel(APIFlags.LSL, "llPushObject")]
@@ -339,16 +333,52 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             }
         }
 
+        [APILevel(APIFlags.LSL, "llGroundRepel")]
+        public void GroundRepel(ScriptInstance instance, double height, int water, double tau)
+        {
+            lock (instance)
+            {
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                if (null == physobj)
+                {
+                    instance.ShoutError("Object has no physical properties");
+                    return;
+                }
+
+                physobj.SetHoverHeight(height, water != 0, tau);
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llSetHoverHeight")]
         public void SetHoverHeight(ScriptInstance instance, double height, int water, double tau)
         {
-            throw new NotImplementedException("llSetHoverHeight(float, integer, float)");
+            lock (instance)
+            {
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                if (null == physobj)
+                {
+                    instance.ShoutError("Object has no physical properties");
+                    return;
+                }
+
+                physobj.SetHoverHeight(height, water != 0, tau);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llStopHover")]
         public void StopHover(ScriptInstance instance)
         {
-            throw new NotImplementedException("llStopHover()");
+            lock (instance)
+            {
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                if (null == physobj)
+                {
+                    instance.ShoutError("Object has no physical properties");
+                    return;
+                }
+
+                physobj.StopHover();
+            }
         }
 
         [APILevel(APIFlags.LSL, "llMoveToTarget")]
