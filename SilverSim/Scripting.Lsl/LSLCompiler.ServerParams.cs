@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl
             AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".IsEveryoneAllowed") { ParameterType = typeof(bool) });
         }
 
-        public IDictionary<string, ServerParamAttribute> ServerParams
+        public IReadOnlyDictionary<string, ServerParamAttribute> ServerParams
         {
             get
             {
