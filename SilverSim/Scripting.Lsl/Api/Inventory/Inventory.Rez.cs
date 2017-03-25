@@ -33,8 +33,8 @@ using SavedScriptState = SilverSim.Scripting.Lsl.Script.SavedScriptState;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
-    [ServerParam("LSL.EnforceRezDistanceLimit", ParameterType = typeof(bool))]
-    [ServerParam("LSL.RezDistanceMeterLimit", ParameterType = typeof(uint))]
+    [ServerParam("LSL.EnforceRezDistanceLimit", ParameterType = typeof(bool), DefaultValue = true)]
+    [ServerParam("LSL.RezDistanceMeterLimit", ParameterType = typeof(uint), DefaultValue = 10)]
     partial class InventoryApi
     {
         readonly RwLockedDictionary<UUID, bool> m_EnforceRezDistanceLimitParams = new RwLockedDictionary<UUID, bool>();

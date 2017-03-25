@@ -38,9 +38,9 @@ using System.Web;
 namespace SilverSim.Scripting.Lsl
 {
     [Description("LSL HTTP Client Support")]
-    [ServerParam("LSL.HTTPClient.WhiteList", Description = "List of URLs split by ;", ParameterType = typeof(string))]
-    [ServerParam("LSL.HTTPClient.BlackList", Description = "List of URLs split by ;", ParameterType = typeof(string))]
-    [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool))]
+    [ServerParam("LSL.HTTPClient.WhiteList", Description = "List of URLs split by ;", ParameterType = typeof(string), DefaultValue = "")]
+    [ServerParam("LSL.HTTPClient.BlackList", Description = "List of URLs split by ;", ParameterType = typeof(string), DefaultValue = "")]
+    [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool), DefaultValue = false)]
     public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown, IServerParamListener
     {
         public class LSLHttpRequest

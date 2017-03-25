@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
     [LSLImplementation]
     [ScriptApiName("Chat")]
     [Description("LSL/OSSL Chat API")]
-    [ServerParam("LSL.MaxListenersPerScript", ParameterType = typeof(uint))]
+    [ServerParam("LSL.MaxListenersPerScript", ParameterType = typeof(uint), DefaultValue = 1000)]
     public partial class ChatApi : IScriptApi, IPlugin, IServerParamListener
     {
         [APILevel(APIFlags.LSL)]

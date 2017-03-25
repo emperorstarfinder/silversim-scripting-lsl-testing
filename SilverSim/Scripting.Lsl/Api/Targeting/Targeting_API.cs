@@ -32,8 +32,8 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
     [ScriptApiName("Targeting")]
     [LSLImplementation]
     [Description("LSL Targeting API")]
-    [ServerParam("LSL.MaxTargetsPerScript", ParameterType = typeof(uint))]
-    [ServerParam("LSL.MaxRotTargetsPerScript", ParameterType = typeof(uint))]
+    [ServerParam("LSL.MaxTargetsPerScript", ParameterType = typeof(uint), DefaultValue = 8)]
+    [ServerParam("LSL.MaxRotTargetsPerScript", ParameterType = typeof(uint), DefaultValue = 8)]
     public class TargetingApi : IScriptApi, IPlugin
     {
         public TargetingApi()

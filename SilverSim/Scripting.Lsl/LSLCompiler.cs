@@ -43,7 +43,7 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     [Description("LSL Compiler")]
-    [ServerParam("LSL.CallDepthLimit", ParameterType = typeof(uint))]
+    [ServerParam("LSL.CallDepthLimit", ParameterType = typeof(uint), DefaultValue = 40)]
     [ScriptEngineName("lsl")]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory, IServerParamListener
     {
