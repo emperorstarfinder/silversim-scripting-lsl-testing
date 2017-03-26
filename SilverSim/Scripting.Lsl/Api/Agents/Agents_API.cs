@@ -404,8 +404,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                     return agent.IMSend(gim) ? 1 : 0;
                 }
+                else
+                {
+                    return 0;
+                }
             }
-            throw new NotImplementedException("osInviteToGroup(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osEjectFromGroup")]
