@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
@@ -29,8 +31,27 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public void Die(ScriptInstance instance)
         {
             instance.AbortBegin();
-            instance.Part.ObjectGroup.Scene.Remove(instance.Part.ObjectGroup, instance);
+            lock (instance)
+            {
+                instance.Part.ObjectGroup.Scene.Remove(instance.Part.ObjectGroup, instance);
+            }
             throw new ScriptAbortException();
+        }
+
+        [APILevel(APIFlags.OSSL, "osDie")]
+        public void Die(ScriptInstance instance, LSLKey objectId)
+        {
+            lock(instance)
+            {
+                ObjectPart part = instance.Part;
+                SceneInterface scene = part.ObjectGroup.Scene;
+                ObjectGroup grp;
+                if(scene.ObjectGroups.TryGetValue(objectId.AsUUID, out grp) &&
+                    grp.RezzingObjectID == part.ID)
+                {
+                    instance.Part.ObjectGroup.Scene.Remove(grp, instance);
+                }
+            }
         }
     }
 }
