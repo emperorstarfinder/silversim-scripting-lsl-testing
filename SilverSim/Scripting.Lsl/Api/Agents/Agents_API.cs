@@ -20,6 +20,7 @@
 // exception statement from your version.
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Management.IM;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
@@ -27,11 +28,14 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces;
 using SilverSim.ServiceInterfaces.Grid;
+using SilverSim.ServiceInterfaces.Groups;
 using SilverSim.ServiceInterfaces.UserAgents;
 using SilverSim.Types;
 using SilverSim.Types.Agent;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Asset.Format;
+using SilverSim.Types.Groups;
+using SilverSim.Types.IM;
 using SilverSim.Types.Inventory;
 using SilverSim.Types.Parcel;
 using System;
@@ -360,13 +364,111 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.OSSL, "osInviteToGroup")]
         public int OsInviteToGroup(ScriptInstance instance, LSLKey id)
         {
+            lock(instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                GroupsServiceInterface groupsService = scene.GroupsService;
+                IAgent agent;
+                UGI group = grp.Group;
+                UUI owner = grp.Owner;
+                if(scene.Agents.TryGetValue(id.AsUUID, out agent) &&
+                    group != UGI.Unknown && 
+                    (groupsService.GetAgentPowers(group, owner) & GroupPowers.Invite) == GroupPowers.Invite)
+                {
+                    GroupInvite invite = new GroupInvite();
+                    invite.Principal = agent.Owner;
+                    invite.RoleID = UUID.Zero;
+                    invite.Group = group;
+                    invite.ID = UUID.Random;
+
+                    try
+                    {
+                        groupsService.Invites.Add(grp.Owner, invite);
+                    }
+                    catch
+                    {
+                        return 0;
+                    }
+
+                    GridInstantMessage gim = new GridInstantMessage();
+                    gim.FromGroup = group;
+                    gim.FromAgent = owner;
+                    gim.Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "osGroupInviteMessage", "{0} has invited you to join a group called {1}. There is no cost to join this group."),
+                        owner.FullName, group.GroupName);
+                    gim.IsFromGroup = true;
+                    gim.RegionID = scene.ID;
+                    gim.BinaryBucket = new byte[20];
+                    gim.IMSessionID = invite.ID;
+
+                    return agent.IMSend(gim) ? 1 : 0;
+                }
+            }
             throw new NotImplementedException("osInviteToGroup(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osEjectFromGroup")]
         public int OsEjectFromToGroup(ScriptInstance instance, LSLKey id)
         {
-            throw new NotImplementedException("osEjectFromGroup(key)");
+            lock(instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                GroupsServiceInterface groupsService = scene.GroupsService;
+                UGI group = grp.Group;
+                UUI owner = grp.Owner;
+                UUI ejectee;
+                if (group != UGI.Unknown &&
+                    (groupsService.GetAgentPowers(group, owner) & GroupPowers.Eject) == GroupPowers.Eject &&
+                    scene.AvatarNameService.TryGetValue(id.AsUUID, out ejectee))
+                {
+                    try
+                    {
+                        groupsService.Members.Delete(owner, group, ejectee);
+                    }
+                    catch
+                    {
+                        return 0;
+                    }
+
+                    IAgent agent;
+                    GridInstantMessage gim = new GridInstantMessage();
+                    if (scene.Agents.TryGetValue(ejectee.ID, out agent))
+                    {
+                        gim.Dialog = GridInstantMessageDialog.MessageFromAgent;
+                    }
+                    else
+                    {
+                        gim.Dialog = GridInstantMessageDialog.EjectedFromGroup;
+                    }
+
+                    gim.IMSessionID = group.ID;
+                    gim.FromAgent = owner;
+                    gim.FromGroup = group;
+                    gim.RegionID = scene.ID;
+                    gim.Message = string.Format("You have been ejected from '{1}' by {0}.", owner.FullName, group.GroupName);
+                    gim.OnResult = delegate (GridInstantMessage g, bool result) { };
+                    IMRouter router = scene.GetService<IMRouter>();
+                    router.SendWithResultDelegate(gim);
+
+                    gim = new GridInstantMessage();
+                    gim.IMSessionID = UUID.Zero;
+                    gim.FromAgent = owner;
+                    gim.FromGroup = group;
+                    gim.IsFromGroup = true;
+                    gim.Message = string.Format("{2} has been ejected from '{1}' by {0}.", ejectee.FullName, group.GroupName, owner.FullName);
+                    gim.Dialog = GridInstantMessageDialog.MessageFromAgent;
+                    gim.RegionID = scene.ID;
+                    gim.OnResult = delegate (GridInstantMessage g, bool result) { };
+                    router.SendWithResultDelegate(gim);
+
+                    return 1;
+                }
+
+                return 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llRequestDisplayName")]
