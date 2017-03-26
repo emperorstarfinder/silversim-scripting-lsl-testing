@@ -69,6 +69,39 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osRequestURL")]
+        public LSLKey RequestURL(ScriptInstance instance, AnArray options)
+        {
+            bool allowXss = false;
+            foreach(IValue iv in options)
+            {
+                allowXss = iv.ToString() == "allowXss";
+            }
+
+            lock (instance)
+            {
+                UUID reqID = UUID.Random;
+                try
+                {
+                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item);
+                    HttpRequestEvent ev = new HttpRequestEvent();
+                    ev.RequestID = reqID;
+                    ev.Method = URL_REQUEST_GRANTED;
+                    ev.Body = urlID;
+                    instance.PostEvent(ev);
+                }
+                catch
+                {
+                    HttpRequestEvent ev = new HttpRequestEvent();
+                    ev.RequestID = reqID;
+                    ev.Method = URL_REQUEST_DENIED;
+                    ev.Body = string.Empty;
+                    instance.PostEvent(ev);
+                }
+                return reqID;
+            }
+        }
+
         [APILevel(APIFlags.ASSL, "asRequestURL")]
         public LSLKey RequestURL(ScriptInstance instance, string itemname)
         {
@@ -108,6 +141,39 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         [APILevel(APIFlags.LSL, "llRequestSecureURL")]
         public LSLKey RequestSecureURL(ScriptInstance instance)
         {
+            lock (instance)
+            {
+                UUID reqID = UUID.Random;
+                try
+                {
+                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item);
+                    HttpRequestEvent ev = new HttpRequestEvent();
+                    ev.RequestID = reqID;
+                    ev.Method = URL_REQUEST_GRANTED;
+                    ev.Body = urlID;
+                    instance.PostEvent(ev);
+                }
+                catch
+                {
+                    HttpRequestEvent ev = new HttpRequestEvent();
+                    ev.RequestID = reqID;
+                    ev.Method = URL_REQUEST_DENIED;
+                    ev.Body = string.Empty;
+                    instance.PostEvent(ev);
+                }
+                return reqID;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osRequestSecureURL")]
+        public LSLKey RequestSecureURL(ScriptInstance instance, AnArray options)
+        {
+            bool allowXss = false;
+            foreach (IValue iv in options)
+            {
+                allowXss = iv.ToString() == "allowXss";
+            }
+
             lock (instance)
             {
                 UUID reqID = UUID.Random;

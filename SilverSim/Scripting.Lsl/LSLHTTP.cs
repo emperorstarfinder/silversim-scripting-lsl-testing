@@ -88,17 +88,20 @@ namespace SilverSim.Scripting.Lsl
             public HttpRequest Request;
             public UUID UrlID;
             public string UrlName;
+            public bool AllowXss;
 
-            public HttpRequestData(HttpRequest req, UUID urlID)
+            public HttpRequestData(HttpRequest req, UUID urlID, bool allowXss)
             {
+                AllowXss = allowXss;
                 Request = req;
                 ContentType = "text/plain";
                 ValidUntil = DateTime.UtcNow + TimeSpan.FromSeconds(25);
                 UrlID = urlID;
                 UrlName = string.Empty;
             }
-            public HttpRequestData(HttpRequest req, string urlname)
+            public HttpRequestData(HttpRequest req, string urlname, bool allowXss)
             {
+                AllowXss = allowXss;
                 Request = req;
                 ContentType = "text/plain";
                 ValidUntil = DateTime.UtcNow + TimeSpan.FromSeconds(25);
@@ -116,13 +119,15 @@ namespace SilverSim.Scripting.Lsl
             public UUID PrimID;
             public UUID ItemID;
             public bool IsSSL;
+            public bool AllowXss;
 
-            public URLData(UUID sceneID, UUID primID, UUID itemID, bool isSSL)
+            public URLData(UUID sceneID, UUID primID, UUID itemID, bool isSSL, bool allowXss)
             {
                 SceneID = sceneID;
                 PrimID = primID;
                 ItemID = itemID;
                 IsSSL = isSSL;
+                AllowXss = allowXss;
             }
         }
         readonly RwLockedDictionary<UUID, URLData> m_UrlMap = new RwLockedDictionary<UUID, URLData>();
@@ -300,7 +305,7 @@ namespace SilverSim.Scripting.Lsl
             }
             req["x-remote-ip"] = req.CallerIP;
 
-            HttpRequestData data = new HttpRequestData(req, id);
+            HttpRequestData data = new HttpRequestData(req, id, urlData.AllowXss);
             LSLHttpRequestHandlerCommon(urlData, data);
         }
 
@@ -370,7 +375,7 @@ namespace SilverSim.Scripting.Lsl
             }
             req["x-remote-ip"] = req.CallerIP;
 
-            HttpRequestData data = new HttpRequestData(req, parts[1]);
+            HttpRequestData data = new HttpRequestData(req, parts[1], urlData.AllowXss);
             LSLHttpRequestHandlerCommon(urlData, data);
         }
 
@@ -458,6 +463,10 @@ namespace SilverSim.Scripting.Lsl
                 reqdata.Request.SetConnectionClose();
                 using (HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType))
                 {
+                    if (reqdata.AllowXss)
+                    {
+                        res.Headers.Add("Access-Control-Allow-Origin", "*");
+                    }
                     using (Stream s = res.GetOutputStream(b.LongLength))
                     {
                         s.Write(b, 0, b.Length);
@@ -485,7 +494,7 @@ namespace SilverSim.Scripting.Lsl
             return true;
         }
 
-        public string RequestURL(ObjectPart part, ObjectPartInventoryItem item)
+        public string RequestURL(ObjectPart part, ObjectPartInventoryItem item, bool allowXss = false)
         {
             UUID newid;
             lock(m_ReqUrlLock)
@@ -495,12 +504,12 @@ namespace SilverSim.Scripting.Lsl
                     throw new InvalidOperationException("Too many URLs");
                 }
                 newid = UUID.Random;
-                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false));
+                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false, allowXss));
             }
             return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttp/" + newid.ToString();
         }
 
-        public string RequestURL(ObjectPart part, ObjectPartInventoryItem item, string name)
+        public string RequestURL(ObjectPart part, ObjectPartInventoryItem item, string name, bool allowXss = false)
         {
             if(!IsValidNamedURL(name))
             {
@@ -512,12 +521,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new InvalidOperationException("Too many URLs");
                 }
-                m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false);
+                m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false, allowXss);
             }
             return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttp-named/" + name;
         }
 
-        public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item)
+        public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item, bool allowXss = false)
         {
             if(null == m_HttpsServer)
             {
@@ -531,12 +540,12 @@ namespace SilverSim.Scripting.Lsl
                     throw new InvalidOperationException("Too many URLs");
                 }
                 newid = UUID.Random;
-                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true));
+                m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true, allowXss));
             }
             return m_HttpsServer.Scheme + "://" + m_HttpsServer.ExternalHostName + ":" + m_HttpsServer.Port.ToString() + "/lslhttps/" + newid.ToString();
         }
 
-        public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item, string name)
+        public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item, string name, bool allowXss = false)
         {
             if (!IsValidNamedURL(name))
             {
@@ -552,7 +561,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new InvalidOperationException("Too many URLs");
                 }
-                m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true);
+                m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true, allowXss);
             }
             return m_HttpServer.Scheme + "://" + m_HttpServer.ExternalHostName + ":" + m_HttpServer.Port.ToString() + "/lslhttps-named/" + name;
         }
