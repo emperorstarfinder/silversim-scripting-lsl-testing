@@ -1,0 +1,1 @@
+osGroupInviteMessage={0} has invited you to join a group called {1}. There is no cost to join this group.

@@ -1,0 +1,1 @@
+osGroupInviteMessage={0} hat dich eingeladen, der Gruppe {1} beizutreten. Es entstehen keine Kosten durch den Beitritt.
