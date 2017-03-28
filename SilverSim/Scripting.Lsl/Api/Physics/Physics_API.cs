@@ -86,13 +86,33 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llGetForce")]
         public Vector3 GetForce(ScriptInstance instance)
         {
-            throw new NotImplementedException("llGetForce()");
+            lock(instance)
+            {
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                if (null == physobj)
+                {
+                    instance.ShoutError("Object has no physical properties");
+                    return Vector3.Zero;
+                }
+
+                return physobj.Force;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetTorque")]
         public Vector3 GetTorque(ScriptInstance instance)
         {
-            throw new NotImplementedException("llGetTorque()");
+            lock (instance)
+            {
+                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                if (null == physobj)
+                {
+                    instance.ShoutError("Object has no physical properties");
+                    return Vector3.Zero;
+                }
+
+                return physobj.Torque;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetAccel")]
