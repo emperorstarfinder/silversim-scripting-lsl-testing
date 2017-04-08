@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics;
@@ -26,11 +27,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SilverSim.Scripting.Lsl.Api.RayCast
 {
@@ -39,6 +36,8 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
     [Description("LSL RayCast API")]
     class RayCast_API : IScriptApi, IPlugin
     {
+        static readonly ILog m_Log = LogManager.GetLogger("LSL RAYCAST");
+
         public RayCast_API()
         {
 
@@ -97,82 +96,100 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             int flags;
             int dataFlags = 0;
 
-            for(i = 0; i + 1< options.Count; i += 2)
+            try
             {
-                switch(options[i].AsInt)
+                for (i = 0; i + 1 < options.Count; i += 2)
                 {
-                    case RC_REJECT_TYPES:
-                        flags = options[i + 1].AsInt;
-                        if((flags & RC_REJECT_AGENTS) != 0)
-                        {
-                            hitFlags &= ~RayTestHitFlags.Avatar;
-                        }
-                        else
-                        {
-                            hitFlags |= RayTestHitFlags.Avatar;
-                        }
-                        if ((flags & RC_REJECT_PHYSICAL) != 0)
-                        {
-                            hitFlags &= ~RayTestHitFlags.Physical;
-                        }
-                        else
-                        {
-                            hitFlags |= RayTestHitFlags.Avatar;
-                        }
-                        if ((flags & RC_REJECT_NONPHYSICAL) != 0)
-                        {
-                            hitFlags &= ~RayTestHitFlags.NonPhysical;
-                        }
-                        else
-                        {
-                            hitFlags |= RayTestHitFlags.Avatar;
-                        }
-                        if ((flags & RC_REJECT_LAND) != 0)
-                        {
-                            hitFlags &= ~RayTestHitFlags.Terrain;
-                        }
-                        else
-                        {
-                            hitFlags |= RayTestHitFlags.Avatar;
-                        }
-                        break;
+                    switch (options[i].AsInt)
+                    {
+                        case RC_REJECT_TYPES:
+                            flags = options[i + 1].AsInt;
+                            if ((flags & RC_REJECT_AGENTS) != 0)
+                            {
+                                hitFlags &= ~RayTestHitFlags.Avatar;
+                            }
+                            else
+                            {
+                                hitFlags |= RayTestHitFlags.Avatar;
+                            }
+                            if ((flags & RC_REJECT_PHYSICAL) != 0)
+                            {
+                                hitFlags &= ~RayTestHitFlags.Physical;
+                            }
+                            else
+                            {
+                                hitFlags |= RayTestHitFlags.Avatar;
+                            }
+                            if ((flags & RC_REJECT_NONPHYSICAL) != 0)
+                            {
+                                hitFlags &= ~RayTestHitFlags.NonPhysical;
+                            }
+                            else
+                            {
+                                hitFlags |= RayTestHitFlags.Avatar;
+                            }
+                            if ((flags & RC_REJECT_LAND) != 0)
+                            {
+                                hitFlags &= ~RayTestHitFlags.Terrain;
+                            }
+                            else
+                            {
+                                hitFlags |= RayTestHitFlags.Avatar;
+                            }
+                            break;
 
-                    case RC_DATA_FLAGS:
-                        dataFlags = options[i + 1].AsInt;
-                        break;
+                        case RC_DATA_FLAGS:
+                            dataFlags = options[i + 1].AsInt;
+                            break;
 
-                    case RC_MAX_HITS:
-                        maxHits = options[i + 1].AsInt.Clamp(0, 256);
-                        break;
+                        case RC_MAX_HITS:
+                            maxHits = options[i + 1].AsInt.Clamp(0, 256);
+                            break;
 
-                    case RC_DETECT_PHANTOM:
-                        if(options[i + 1].AsBoolean)
-                        {
-                            hitFlags |= RayTestHitFlags.Phantom;
-                        }
-                        else
-                        {
-                            hitFlags &= ~RayTestHitFlags.Phantom;
-                        }
-                        break;
+                        case RC_DETECT_PHANTOM:
+                            if (options[i + 1].AsBoolean)
+                            {
+                                hitFlags |= RayTestHitFlags.Phantom;
+                            }
+                            else
+                            {
+                                hitFlags &= ~RayTestHitFlags.Phantom;
+                            }
+                            break;
+                    }
                 }
+            }
+            catch(Exception e)
+            {
+                m_Log.Debug("Raycast parameter decoding encountered exception at prim " + instance.Part.ID + " within object " + instance.Part.ObjectGroup.ID, e);
+                resArray.Add(RCERR_UNKNOWN);
+                return resArray;
             }
 
             RayResult[] results;
             lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if(maxHits == 0)
+                try
                 {
-                    results = new RayResult[0];
+                    if (maxHits == 0)
+                    {
+                        results = new RayResult[0];
+                    }
+                    else if (maxHits == 1)
+                    {
+                        results = scene.PhysicsScene.ClosestRayTest(start, end, hitFlags);
+                    }
+                    else
+                    {
+                        results = scene.PhysicsScene.AllHitsRayTest(start, end, hitFlags, (uint)maxHits);
+                    }
                 }
-                else if(maxHits == 1)
+                catch(Exception e)
                 {
-                    results = scene.PhysicsScene.ClosestRayTest(start, end, hitFlags);
-                }
-                else
-                {
-                    results = scene.PhysicsScene.AllHitsRayTest(start, end, hitFlags, (uint)maxHits);
+                    m_Log.Debug("Raycast encountered exception at prim " + instance.Part.ID + " within object " + instance.Part.ObjectGroup.ID, e);
+                    resArray.Add(RCERR_UNKNOWN);
+                    return resArray;
                 }
 
                 foreach(RayResult result in results)
