@@ -195,7 +195,14 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
 
                 foreach(RayResult result in results)
                 {
-                    resArray.Add((dataFlags & RC_GET_ROOT_KEY) != 0 ? result.ObjectId : result.PartId);
+                    if (result.IsTerrain)
+                    {
+                        resArray.Add(UUID.Zero);
+                    }
+                    else
+                    {
+                        resArray.Add((dataFlags & RC_GET_ROOT_KEY) != 0 ? result.ObjectId : result.PartId);
+                    }
                     resArray.Add(result.HitPointWorld);
                     if((dataFlags & RC_GET_LINK_NUM) != 0)
                     {
