@@ -482,7 +482,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                ObjectPart part = instance.Part.ObjectGroup.ValuesByKey1.First(c => c.Name == name);
+                ObjectPart part = instance.Part.ObjectGroup.ValuesByKey1.FirstOrDefault(c => c.Name == name);
                 /* returns -1 if not found */
                 return part != null ? part.LinkNumber : -1;
             }
