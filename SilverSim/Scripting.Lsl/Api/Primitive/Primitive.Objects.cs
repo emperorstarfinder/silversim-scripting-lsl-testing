@@ -476,6 +476,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osGetLinkNumber")]
+        public int GetLinkNumber(ScriptInstance instance, string name)
+        {
+            /* returns -1 if not found */
+            throw new NotImplementedException("osGetLinkNumber(string)");
+        }
+
         [APILevel(APIFlags.LSL, "llGetLinkNumber")]
         public int GetLinkNumber(ScriptInstance instance)
         {
