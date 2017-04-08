@@ -29,6 +29,7 @@ using SilverSim.Types.Agent;
 using SilverSim.Types.Inventory;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -479,8 +480,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osGetLinkNumber")]
         public int GetLinkNumber(ScriptInstance instance, string name)
         {
-            /* returns -1 if not found */
-            throw new NotImplementedException("osGetLinkNumber(string)");
+            lock(instance)
+            {
+                ObjectPart part = instance.Part.ObjectGroup.ValuesByKey1.First(c => c.Name == name);
+                /* returns -1 if not found */
+                return part != null ? part.LinkNumber : -1;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetLinkNumber")]
