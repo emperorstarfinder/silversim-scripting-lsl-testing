@@ -23,6 +23,7 @@ using SilverSim.Main.Common;
 using SilverSim.Main.Common.CmdIO;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Pathfinding;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
@@ -691,7 +692,15 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     }
 
                 case "dynamic_pathfinding":
-                    return "disabled";
+                    try
+                    {
+                        IPathfindingService pathfinding = instance.Part.ObjectGroup.Scene.PathfindingService;
+                        return pathfinding.IsDynamicEnabled ? "enabled" : "disabled";
+                    }
+                    catch
+                    {
+                        return "disabled";
+                    }
 
                 case "estate_id":
                     lock (instance)
