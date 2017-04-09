@@ -34,11 +34,11 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
     [ScriptApiName("RayCast")]
     [LSLImplementation]
     [Description("LSL RayCast API")]
-    class RayCast_API : IScriptApi, IPlugin
+    public class RayCastApi : IScriptApi, IPlugin
     {
         static readonly ILog m_Log = LogManager.GetLogger("LSL RAYCAST");
 
-        public RayCast_API()
+        public RayCastApi()
         {
 
         }
