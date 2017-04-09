@@ -85,6 +85,8 @@ namespace SilverSim.Scripting.Lsl
         public const string SwitchBlock = "Switch";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Selling = "Selling";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
+        public const string Pathfinding = "Pathfinding";
     }
 
     [Serializable]

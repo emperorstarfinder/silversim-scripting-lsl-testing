@@ -651,7 +651,7 @@ namespace SilverSim.Scripting.Lsl
                 e = e.InnerException;
             }
 
-            if (e is InvalidProgramException || e is MethodAccessException || e is CallDepthLimitViolationException || e is ExecutionEngineException)
+            if (e is InvalidProgramException || e is MethodAccessException || e is CallDepthLimitViolationException)
             {
                 m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
@@ -783,11 +783,6 @@ namespace SilverSim.Scripting.Lsl
                 catch (NotImplementedException e)
                 {
                     ShoutUnimplementedException(e);
-                }
-                catch (ExecutionEngineException e)
-                {
-                    LogInvokeException(name, e);
-                    ShoutError(e.Message);
                 }
                 catch (InvalidProgramException e)
                 {
