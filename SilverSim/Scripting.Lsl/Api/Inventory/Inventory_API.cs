@@ -700,10 +700,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         bool TryGetServices(UUI targetAgentId, out InventoryServiceInterface inventoryService, out AssetServiceInterface assetService)
         {
-            UserAgentServiceInterface userAgentService = null;
-            string homeUri = targetAgentId.HomeURI.ToString();
             inventoryService = null;
             assetService = null;
+            UserAgentServiceInterface userAgentService = null;
+            if (targetAgentId.HomeURI == null)
+            {
+                return false;
+            }
+            string homeUri = targetAgentId.HomeURI.ToString();
             Dictionary<string, string> heloheaders = ServicePluginHelo.HeloRequest(homeUri);
             foreach (IUserAgentServicePlugin userAgentPlugin in m_UserAgentServicePlugins)
             {
