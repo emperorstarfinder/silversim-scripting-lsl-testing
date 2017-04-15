@@ -721,7 +721,16 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             Script script = (Script)instance;
             lock(script)
             {
-                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                SceneInterface scene;
+                try
+                {
+                    scene = instance.Part.ObjectGroup.Scene;
+                }
+                catch
+                {
+                    /* do not try serialization on remove */
+                    return;
+                }
                 SceneInfo sceneInfo;
                 if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
