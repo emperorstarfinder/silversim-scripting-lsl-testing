@@ -900,7 +900,15 @@ namespace SilverSim.Scripting.Lsl
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public override void ProcessEvent()
         {
-            IScriptEvent evgot = m_Events.Dequeue();
+            IScriptEvent evgot;
+            try
+            {
+                evgot = m_Events.Dequeue();
+            }
+            catch
+            {
+                return;
+            }
             int exectime;
             float execfloat;
             int startticks = Environment.TickCount;
