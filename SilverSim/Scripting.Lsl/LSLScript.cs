@@ -86,23 +86,27 @@ namespace SilverSim.Scripting.Lsl
                     PostEvent(new TimerEvent());
                 }
                 LastTimerEventTick = Environment.TickCount;
+                Timer.Interval = CurrentTimerInterval * 1000;
             }
         }
 
         public void SetTimerEvent(double interval, double elapsed = 0f)
         {
-            CurrentTimerInterval = interval;
-            if(interval < 0.01)
+            lock (m_Lock)
             {
-                Timer.Enabled = false;
-            }
-            else
-            {
-                Timer.Enabled = false;
-                LastTimerEventTick = Environment.TickCount;
-                Timer.Interval = interval - elapsed;
                 CurrentTimerInterval = interval;
-                Timer.Enabled = true;
+                if (interval < 0.01)
+                {
+                    Timer.Enabled = false;
+                }
+                else
+                {
+                    Timer.Enabled = false;
+                    LastTimerEventTick = Environment.TickCount;
+                    Timer.Interval = (interval - elapsed) * 1000;
+                    CurrentTimerInterval = interval;
+                    Timer.Enabled = true;
+                }
             }
         }
 

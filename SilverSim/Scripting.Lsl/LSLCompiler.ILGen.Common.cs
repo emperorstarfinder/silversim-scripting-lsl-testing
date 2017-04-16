@@ -493,12 +493,16 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (fromType == typeof(int) || fromType == typeof(Vector3) || fromType == typeof(Quaternion))
                 {
-                    compileState.ILGen.Emit(OpCodes.Box, fromType);
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
+                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if (fromType == typeof(double))
                 {
-                    compileState.ILGen.Emit(OpCodes.Box, fromType);
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
+                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     compileState.ILGen.Emit(OpCodes.Call, typeof(CultureInfo).GetProperty("InvariantCulture").GetGetMethod());
                     compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", new Type[] { typeof(CultureInfo) }));
                 }
@@ -567,12 +571,16 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(Quaternion))
                 {
-                    compileState.ILGen.Emit(OpCodes.Box, typeof(Quaternion));
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
+                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     compileState.ILGen.Emit(OpCodes.Call, typeof(Quaternion).GetProperty("IsLSLTrue").GetGetMethod());
                 }
                 else if (fromType == typeof(Vector3))
                 {
-                    compileState.ILGen.Emit(OpCodes.Box, typeof(Vector3));
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
+                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     compileState.ILGen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
                     compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
@@ -671,7 +679,6 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Dup);
                     compileState.ILGen.Emit(OpCodes.Ldloc, lb);
-                    compileState.ILGen.Emit(OpCodes.Box, fromType);
                     compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] {typeof(IValue) }));
                     compileState.ILGen.EndScope();
                 }
