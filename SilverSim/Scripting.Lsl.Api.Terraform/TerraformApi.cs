@@ -139,7 +139,15 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
         [APILevel(APIFlags.OSSL, "osTerrainFlush")]
         public void TerrainFlush(ScriptInstance instance)
         {
-            /* intentionally left empty */
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                if (scene.CanTerraform(grp.Owner, grp.GlobalPosition))
+                {
+                    scene.Terrain.UpdateTerrainDataToClients();
+                }
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osSetTerrainTexture")]
