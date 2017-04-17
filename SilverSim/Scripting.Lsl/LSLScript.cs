@@ -655,12 +655,31 @@ namespace SilverSim.Scripting.Lsl
                 e = e.InnerException;
             }
 
+            string objectName;
+            UUID objectID;
+            try
+            {
+                objectName = Part.ObjectGroup.Name;
+            }
+            catch
+            {
+                objectName = "<Unknown>";
+            }
+
+            try
+            {
+                objectID = Part.ObjectGroup.ID;
+            }
+            catch
+            {
+                objectID = UUID.Zero;
+            }
             if (e is InvalidProgramException || e is MethodAccessException || e is CallDepthLimitViolationException)
             {
                 m_Log.ErrorFormat("Stopping script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
                     e.GetType().FullName, e.Message, e.StackTrace,
-                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
+                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), objectName, objectID.ToString());
                 IsRunning = false;
             }
             else
@@ -668,7 +687,7 @@ namespace SilverSim.Scripting.Lsl
                 m_Log.ErrorFormat("Script {5} (asset {6}) in {7} ({8}) [{9} ({10})]\nWithin state {0} event {1}:\nException {2} at script execution: {3}\n{4}",
                     state_name, name,
                     e.GetType().FullName, e.Message, e.StackTrace,
-                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), Part.ObjectGroup.Name, Part.ObjectGroup.ID.ToString());
+                    Item.Name, Item.AssetID.ToString(), Part.Name, Part.ID.ToString(), objectName, objectID.ToString());
             }
         }
 
