@@ -53,11 +53,11 @@ namespace SilverSim.Scripting.Lsl
                     Tree st = functionTree.SubTree[i];
                     if(st.SubTree.Count != 1)
                     {
-                        throw new CompilerException(lineNumber, "Wrong list declaration");
+                        throw new CompilerException(lineNumber, this.GetLanguageString(compileState.CurrentCulture, "WrongListDeclaration", "Wrong list declaration"));
                     }
                     if(st.Type != Tree.EntryType.DeclarationArgument)
                     {
-                        throw new CompilerException(lineNumber, "Wrong list declaration");
+                        throw new CompilerException(lineNumber, this.GetLanguageString(compileState.CurrentCulture, "WrongListDeclaration", "Wrong list declaration"));
                     }
                     m_ListElements.Add(st.SubTree[0]);
                 }
@@ -73,7 +73,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (innerExpressionReturn == typeof(void))
                     {
-                        throw new CompilerException(m_LineNumber, "Function has no return value");
+                        throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "FunctionHasNoReturnValue", "Function has no return value"));
                     }
                     else if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double) || innerExpressionReturn == typeof(string))
                     {
@@ -92,7 +92,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (innerExpressionReturn == typeof(AnArray))
                     {
-                        throw new CompilerException(m_LineNumber, "Lists cannot be put into lists");
+                        throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "ListsCannotBePutIntoList", "Lists cannot be put into lists"));
                     }
                     else
                     {

@@ -77,3 +77,89 @@ ClosingBraceWithoutMatchingOpeningBrace='}' found without matching '{'
 0IsNotAValue='{0}' is not a value
 IncompleteStatementBeforeClosingBrace=incomplete statement before '}'
 MismatchingClosingParenthesis=Mismatching ')'
+PrematureEndOfFunctionBody=Premature end of function body.
+MissingCaseOrDefaultInSwitchBlock=missing 'case' or 'default' in 'switch' block
+NotAValidLabelDefinition=not a valid label definition
+Label0AlreadyDefined=label '{0}' already defined
+VariableDeclarationNotAllowedWithinConditionalStatementWithoutBlock=Variable declaration not allowed within conditional statement without block
+InvalidForEncountered=Invalid 'for' encountered
+InvalidWhileEncountered=Invalid 'while' encountered
+MissingWhileForDo=Missing 'while' for 'do'
+InvalidWhileForDo=Invalid 'while' for 'do'
+ListValueNotSupportedForSwitchBlock=List value not supported for 'switch' block
+InvalidIfEncountered=Invalid 'if' encountered
+NoMatchingIfFoundForElse=No matching 'if' found for 'else'
+InvalidElseIfEncountered=Invalid 'else if' encountered
+InternalError=Internal Error
+UndefinedLabel0Used=Undefined label '{0}' used
+UnexpectedMoreLinesFollowing=Unexpected more lines following
+UnsupportedImplicitTypecastFrom0To1=Unsupported implicit typecast from {0} to {1}
+FunctionDoesNotReturnAnything=Function does not return anything
+UnsupportedTypecastFrom0To1=Unsupported typecast from {0} to {1}
+SettingConstantsIsNotAllowed=Setting constants is not allowed
+Field0HasUnsupportedAttributeFlags1=Field {0} has unsupported attribute flags {1}
+InitValueOfVariable0HasSyntaxError=Init value of variable {0} has syntax error. {1}\n{2}
+LeftValueOfOperatorEqualsIsNotAVariable=l-value of operator '=' is not a variable
+OperatorDorNotSupportedFor=operator '.' not supported for {0}
+InvalidMemberAccessSToVector=Invalid member access 's' to vector
+InvalidMemberAccess0To1=invalid member access '{0}' to {1}
+0IsNotAMemberOfType1='{0}' is not a member of type {1}
+0IsNotAMemberOfTypeVector='{0}' is not a member of type vector
+0IsNotAMemberOfTypeRotation='{0}' is not a member of type rotation
+OperatorDotCanOnlyBeUsedOnTypeVectorOrRotation=operator '.' can only be used on type vector or rotation
+OperatorPlusEqualsNotSupportedFor0And1=operator '+=' not supported for '{0}' and '{1}'
+OperatorMinusEqualsNotSupportedFor0And1=operator '-=' not supported for '{0}' and '{1}'
+OperatorMultiplyEqualsNotSupportedFor0And1=operator '*=' not supported for '{0}' and '{1}'
+OperatorDivideEqualsNotSupportedFor0And1=operator '/=' not supported for '{0}' and '{1}'
+OperatorModuloEqualsNotSupportedFor0And1=operator '%=' not supported for '{0}' and '{1}'
+Operator0Unknown=Operator '{0}' unknown
+VectorDoesNothaveA0Member='vector' does not have a '{0}' member
+0DoesNotHaveA1Member='{0}' does not have a '{1}' member
+OperatorPlusNotSupportedFor0And1=operator '+' not supported for '{0}' and '{1}'
+OperatorMinusNotSupportedFor0And1=operator '-' not supported for '{0}' and '{1}'
+OperatorMultiplyNotSupportedFor0And1=operator '*' not supported for '{0}' and '{1}'
+OperatorDivideNotSupportedFor0And1=operator '/' not supported for '{0}' and '{1}'
+OperatorModuloNotSupportedFor0And1=operator '%' not supported for '{0}' and '{1}'
+OperatorShiftLeftNotSupportedFor0And1=operator '<<' not supported for '{0}' and '{1}'
+OperatorShiftRightNotSupportedFor0And1=operator '>>' not supported for '{0}' and '{1}'
+OperatorEqualsEqualsNotSupportedFor0And1=operator '==' not supported for '{0}' and '{1}'
+OperatorUnequalsNotSupportedFor0And1=operator '!=' not supported for '{0}' and '{1}'
+OperatorLessEqualsNotSupportedFor0And1=operator '<=' not supported for '{0}' and '{1}'
+OperatorLessNotSupportedFor0And1=operator '<' not supported for '{0}' and '{1}'
+OperatorGreaterNotSupportedFor0And1=operator '>' not supported for '{0}' and '{1}'
+OperatorGreaterEqualsNotSupportedFor0And1=operator '>=' not supported for '{0}' and '{1}'
+OperatorAndAndNotSupportedFor0And1=operator '&&' not supported for '{0}' and '{1}'
+OperatorAndNotSupportedFor0And1=operator '&' not supported for '{0}' and '{1}'
+OperatorOrNotSupportedFor0And1=operator '|' not supported for '{0}' and '{1}'
+OperatorXorNotSupportedFor0And1=operator '^' not supported for '{0}' and '{1}'
+OperatorOrOrNotSupportedFor0And1=operator '||' not supported for '{0}' and '{1}'
+UnknownOperator0For1And2=Unknown operator '{0}' for {1} and {2}
+OperatorPlusPlusNotSupportedFor0=operator '++' not supported for {0}
+ComponentAccessFor0AtVectorIsNotDefined=Component access for '{0}' at vector is not defined
+ComponentAccessFor0AtRotationIsNotDefined=Component access for '{0}' at rotation is not defined
+OperatorDotNotSupportedFor0=Operator '.' not supported for '{0}'
+OperatorPlusPlusNotSupportedFor0=Operator '++' not supported for '{0}'
+OperatorMinusMinusNotSupportedFor0=Operator '--' not supported for '{0}'
+RightUnaryOperator0NotSupported=Right unary operator '{0}' not supported
+0IsAReservedWord='{0}' is a reserved word
+InvalidValue=Invalid value
+Variable0NotDefined=Variable '{0}' not defined
+UnexpectedLevelEntry0=Unexpected level entry '{0}'
+Unknown0=Unknown '{0}'
+ParameterMismatchAtFunction0Parameter=Parameter mismatch at function {0}: no function variant takes {1} parameter
+ParameterMismatchAtFunction0Parameters=Parameter mismatch at function {0}: no function variant takes {1} parameters
+NoFunction0Defined=No function {0} defined
+OperatorNotSupportedFor0=Operator '!' not supported for {0}
+OperatorMinusSupportedFor0=Operator '-' not supported for {0}
+OperatorBitNotSupportedFor0=Operator '~' not supported for {0}
+LeftUnaryOperator0NotSupported=Left unary operator '{0}' not supported
+WrongListDeclaration=Wrong list declaration
+FunctionHasNoReturnValue=Function has no return value
+ListsCannotBePutIntoList=Lists cannot be put into lists
+CaseNotInSwitchBlock='case' not in 'switch' block
+DefaultNotInSwitchBlock='default' not in 'switch' block
+MissingCaseOrDefaultInSwitchBlock=Missing 'case' or 'default' in 'switch' block
+InvalidLabelDeclaration=Invalid label declaration
+InvalidJumpStatement=Invalid jump statement
+ContinueNotInForWhileDoWhileSwitchBlock='continue' not in 'for'/'while'/'do while'/'switch' block
+ContinueNotInForWhileDoWhileBlock='continue' not in 'for'/'while'/'do while' block

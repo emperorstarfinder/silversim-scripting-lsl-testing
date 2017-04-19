@@ -131,13 +131,13 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (m_LeftHand.SubTree[0].Type != Tree.EntryType.Variable)
                         {
-                            throw new CompilerException(m_LineNumber, "l-value of operator '=' is not a variable");
+                            throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "LeftValueOfOperatorEqualsIsNotAVariable", "L-value of operator '=' is not a variable"));
                         }
                         object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
                         m_LeftHandType = GetVarType(varInfo);
                         if(m_LeftHandType != typeof(Vector3) && m_LeftHandType != typeof(Quaternion))
                         {
-                            throw new CompilerException(m_LineNumber, "operator '.' not supported for " + MapType(m_LeftHandType));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), MapType(m_LeftHandType)));
                         }
                         switch(m_LeftHand.SubTree[1].Entry)
                         {
@@ -149,18 +149,18 @@ namespace SilverSim.Scripting.Lsl
                             case "s":
                                 if(m_LeftHandType != typeof(Quaternion))
                                 {
-                                    throw new CompilerException(m_LineNumber, "invalid member access 's' to vector");
+                                    throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccessSToVector", "Invalid member access 's' to vector"));
                                 }
                                 break;
 
                             default:
-                                throw new CompilerException(m_LineNumber, string.Format("invalid member access '{0}' to {1}", m_LeftHand.SubTree[1].Entry, MapType(m_LeftHandType)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, MapType(m_LeftHandType)));
                         }
                         m_LeftHandType = typeof(double);
                     }
                     else if (m_LeftHand.Type != Tree.EntryType.Variable)
                     {
-                        throw new CompilerException(m_LineNumber, "l-value of operator '=' is not a variable");
+                        throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "LeftValueOfOperatorEqualsIsNotAVariable", "L-value of operator '=' is not a variable"));
                     }
                     else
                     {
@@ -183,13 +183,13 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 if (m_LeftHand.SubTree[0].Type != Tree.EntryType.Variable)
                                 {
-                                    throw new CompilerException(m_LineNumber, "l-value of operator '=' is not a variable");
+                                    throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "LeftValueOfOperatorEqualsIsNotAVariable", "L-value of operator '=' is not a variable"));
                                 }
                                 object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
                                 m_LeftHandType = GetVarType(varInfo);
                                 if (m_LeftHandType != typeof(Vector3) && m_LeftHandType != typeof(Quaternion))
                                 {
-                                    throw new CompilerException(m_LineNumber, "operator '.' not supported for " + MapType(m_LeftHandType));
+                                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), MapType(m_LeftHandType)));
                                 }
                                 switch (m_LeftHand.SubTree[1].Entry)
                                 {
@@ -201,18 +201,18 @@ namespace SilverSim.Scripting.Lsl
                                     case "s":
                                         if (m_LeftHandType != typeof(Quaternion))
                                         {
-                                            throw new CompilerException(m_LineNumber, "invalid member access 's' to vector");
+                                            throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccessSToVector", "invalid member access 's' to vector"));
                                         }
                                         break;
 
                                     default:
-                                        throw new CompilerException(m_LineNumber, string.Format("invalid member access '{0}' to {1}", m_LeftHand.SubTree[1].Entry, MapType(m_LeftHandType)));
+                                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, MapType(m_LeftHandType)));
                                 }
                                 m_LeftHandType = typeof(double);
                             }
                             else if (m_LeftHand.Type != Tree.EntryType.Variable)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("l-value of operator '{0}' is not a variable", m_Operator));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "LeftValueOfOperatorEqualsIsNotAVariable", "L-value of operator '{0}' is not a variable"), m_Operator));
                             }
                             else
                             {
@@ -274,7 +274,7 @@ namespace SilverSim.Scripting.Lsl
                             return m_LeftHand;
 
                         default:
-                            throw new CompilerException(m_LineNumber, "Internal Error");
+                            throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
                     }
                 }
                 else
@@ -340,7 +340,7 @@ namespace SilverSim.Scripting.Lsl
                 if (m_RightHand.Type != Tree.EntryType.Unknown &&
                     m_RightHand.Type != Tree.EntryType.Variable)
                 {
-                    throw new CompilerException(m_LineNumber, string.Format("'{0}' is not a member of type {1}", m_RightHand.Entry, MapType(m_LeftHandType)));
+                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Entry, MapType(m_LeftHandType)));
                 }
                 if (m_LeftHandType == typeof(Vector3))
                 {
@@ -362,7 +362,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new CompilerException(m_LineNumber, string.Format("'{0}' is not a member of type vector", m_RightHand.Entry));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfTypeVector", "'{0}' is not a member of type vector"), m_RightHand.Entry));
                     }
                     throw Return(compileState, typeof(double));
                 }
@@ -390,13 +390,13 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new CompilerException(m_LineNumber, string.Format("'{0}' is not a member of type rotation", m_RightHand.Entry));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfTypeRotation", "'{0}' is not a member of type rotation"), m_RightHand.Entry));
                     }
                     throw Return(compileState, typeof(double));
                 }
                 else
                 {
-                    throw new CompilerException(m_LineNumber, "operator '.' can only be used on type vector or rotation");
+                    throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "OperatorDotCanOnlyBeUsedOnTypeVectorOrRotation", "operator '.' can only be used on type vector or rotation"));
                 }
             }
 
@@ -531,13 +531,13 @@ namespace SilverSim.Scripting.Lsl
                         {
                             if (mi.ReturnType != m_LeftHandType)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '+=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusEqualsNotSupportedFor0And1", "operator '+=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                             }
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '+=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusEqualsNotSupportedFor0And1", "operator '+=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         break;
 
@@ -553,13 +553,13 @@ namespace SilverSim.Scripting.Lsl
                         {
                             if (mi.ReturnType != m_LeftHandType)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '-=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusEqualsNotSupportedFor0And1", "operator '-=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                             }
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '-=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusEqualsNotSupportedFor0And1", "operator '-=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         break;
 
@@ -580,13 +580,13 @@ namespace SilverSim.Scripting.Lsl
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '*=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMultiplyEqualsNotSupportedFor0And1", "operator '*=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                             }
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '*=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMultiplyEqualsNotSupportedFor0And1", "operator '*=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         break;
 
@@ -607,13 +607,13 @@ namespace SilverSim.Scripting.Lsl
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '/=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDivideEqualsNotSupportedFor0And1", "operator '/=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                             }
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '*=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDivideEqualsNotSupportedFor0And1", "operator '/=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         break;
 
@@ -634,18 +634,18 @@ namespace SilverSim.Scripting.Lsl
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '%=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorModuloEqualsNotSupportedFor0And1", "operator '%=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                             }
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '%=' not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorModuloEqualsNotSupportedFor0And1", "operator '%=' not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         break;
 
                     default:
-                        throw new CompilerException(m_LineNumber, string.Format("operator '{0}' unknown", m_Operator));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Operator0Unknown", "Operator '{0}' unknown"), m_Operator));
                 }
 
                 compileState.ILGen.Emit(OpCodes.Dup);
@@ -674,13 +674,13 @@ namespace SilverSim.Scripting.Lsl
                         case "s":
                             if(typeof(Quaternion) != varType)
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("'vector' does not have a '{0}' member", m_LeftHand.SubTree[1].Entry));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "VectorDoesNothaveA0Member", "'vector' does not have a '{0}' member"), m_LeftHand.SubTree[1].Entry));
                             }
                             fieldName = "W";
                             break;
 
                         default:
-                            throw new CompilerException(m_LineNumber, string.Format("'{0}' does not have a '{1}' member", MapType(varType), m_LeftHand.SubTree[1].Entry));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0DoesNotHaveA1Member", "'{0}' does not have a '{1}' member"), MapType(varType), m_LeftHand.SubTree[1].Entry));
                     }
 
                     compileState.ILGen.Emit(OpCodes.Stfld, varType.GetField(fieldName));
@@ -819,7 +819,7 @@ namespace SilverSim.Scripting.Lsl
                                 throw Return(compileState, mi.ReturnType);
                             }
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '+' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusNotSupportedFor0And1", "operator '+' is not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "-":
                         if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
@@ -870,7 +870,7 @@ namespace SilverSim.Scripting.Lsl
                                 throw Return(compileState, mi.ReturnType);
                             }
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '-' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusNotSupportedFor0And1", "operator '-' is not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         
                     case "*":
                         if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
@@ -942,7 +942,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             throw Return(compileState, mi.ReturnType);
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '*' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMultiplyNotSupportedFor0And1", "operator '*' is not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "/":
                         if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
@@ -985,7 +985,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             throw Return(compileState, mi.ReturnType);
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '/' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDivideNotSupportedFor0And1", "operator '/' is not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "%":
                         if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int)) &&
@@ -1028,7 +1028,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             throw Return(compileState, mi.ReturnType);
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '%' is not supported for '{0}' and '{1}'", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorModuloNotSupportedFor0And1", "operator '%' is not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "<<":
                         if (m_LeftHandType == typeof(int) && m_RightHandType == typeof(int))
@@ -1039,7 +1039,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '<<' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorShiftLeftNotSupportedFor0And1", "operator '<<' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         throw Return(compileState, m_LeftHandType);
 
@@ -1052,7 +1052,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '>>' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorShiftRightNotSupportedFor0And1", "operator '>>' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
                         throw Return(compileState, m_LeftHandType);
 
@@ -1109,7 +1109,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '==' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorEqualsEqualsNotSupportedFor0And1", "operator '==' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "!=":
                         if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
@@ -1173,7 +1173,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Sub);
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '!=' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorUnequalsNotSupportedFor0And1", "operator '!=' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "<=":
                         if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
@@ -1210,7 +1210,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            throw new CompilerException(m_LineNumber, string.Format("operator '<=' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorLessEqualsNotSupportedFor0And1", "operator '<=' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
                         }
 
                     case "<":
@@ -1245,7 +1245,7 @@ namespace SilverSim.Scripting.Lsl
 
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '<' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_LeftHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorLessNotSupportedFor0And1", "operator '<' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_LeftHandType)));
 
                     case ">":
                         if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
@@ -1279,7 +1279,7 @@ namespace SilverSim.Scripting.Lsl
 
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '>' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_LeftHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorGreaterNotSupportedFor0And1", "operator '>' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_LeftHandType)));
 
                     case ">=":
                         if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
@@ -1317,7 +1317,7 @@ namespace SilverSim.Scripting.Lsl
 
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '>=' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorGreaterEqualsNotSupportedFor0And1", "operator '>=' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "&&":
                         if (typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType)
@@ -1329,7 +1329,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.And);
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '&&' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorAndAndNotSupportedFor0And1", "operator '&&' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "&":
                         if (typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType)
@@ -1339,7 +1339,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.And);
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '&' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorAndNotSupportedFor0And1", "operator '&' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "|":
                         if (typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType)
@@ -1349,7 +1349,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Or);
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '|' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorOrNotSupportedFor0And1", "operator '|' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "^":
                         if (typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType)
@@ -1359,7 +1359,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Xor);
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '^' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorXorNotSupportedFor0And1", "operator '^' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     case "||":
                         if (typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType)
@@ -1371,10 +1371,10 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.And);
                             throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format("operator '||' not supported for {0} and {1}", MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorOrOrNotSupportedFor0And1", "operator '||' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
 
                     default:
-                        throw new CompilerException(m_LineNumber, string.Format("unknown operator '{0}' for {1} and {2}", m_Operator, MapType(m_LeftHandType), MapType(m_RightHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "UnknownOperator0For1And2", "unknown operator '{0}' for {1} and {2}"), m_Operator, MapType(m_LeftHandType), MapType(m_RightHandType)));
                 }
             }
         }

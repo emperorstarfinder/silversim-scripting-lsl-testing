@@ -77,3 +77,4 @@ ClosingBraceWithoutMatchingOpeningBrace='}' gefunden ohne passende '{'
 0IsNotAValue='{0}' ist kein Wert
 IncompleteStatementBeforeClosingBrace=Unvollständige Anweisung vor '}'
 MismatchingClosingParenthesis=Unpassende ')' gefunden.
+PrematureEndOfFunctionBody=Vorzeitiges Ende des Funktionsblocks entdeckt.

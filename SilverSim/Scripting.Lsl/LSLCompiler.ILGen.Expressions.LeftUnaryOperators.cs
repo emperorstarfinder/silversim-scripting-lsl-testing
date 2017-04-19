@@ -86,7 +86,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '!' not supported for {0}", MapType(innerExpressionReturn)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorNotSupportedFor0", "Operator '!' not supported for {0}"), MapType(innerExpressionReturn)));
                             }
                             throw new ReturnTypeException(typeof(int), m_LineNumber);
 
@@ -105,7 +105,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '-' not supported for {0}", MapType(innerExpressionReturn)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusSupportedFor0", "operator '-' not supported for {0}"), MapType(innerExpressionReturn)));
                             }
                             throw new ReturnTypeException(innerExpressionReturn, m_LineNumber);
 
@@ -116,12 +116,12 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(m_LineNumber, string.Format("operator '~' not supported for {0}", MapType(innerExpressionReturn)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorBitNotSupportedFor0", "operator '~' not supported for {0}"), MapType(innerExpressionReturn)));
                             }
                             throw new ReturnTypeException(innerExpressionReturn, m_LineNumber);
 
                         default:
-                            throw new CompilerException(m_LineNumber, string.Format("left unary operator '{0}' not supported", m_Operator));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "LeftUnaryOperator0NotSupported", "Left unary operator '{0}' not supported"), m_Operator));
                     }
                 }
                 else

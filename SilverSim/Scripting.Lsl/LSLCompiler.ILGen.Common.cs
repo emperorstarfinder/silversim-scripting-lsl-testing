@@ -414,7 +414,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else
             {
-                throw new CompilerException(lineNumber, string.Format("Unsupported implicit typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedImplicitTypecastFrom0To1", "Unsupported implicit typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
             }
         }
 
@@ -476,7 +476,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (fromType == typeof(void))
             {
-                throw new CompilerException(lineNumber, "function does not return anything");
+                throw new CompilerException(lineNumber, compileState.GetLanguageString(compileState.CurrentCulture, "FunctionDoesNotReturnAnything", "function does not return anything"));
             }
             else if (toType == typeof(LSLKey))
             {
@@ -486,7 +486,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(string))
@@ -512,7 +512,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(int))
@@ -530,7 +530,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(bool))
@@ -589,7 +589,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(double))
@@ -610,7 +610,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(Vector3))
@@ -627,7 +627,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(Quaternion))
@@ -644,7 +644,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else if (toType == typeof(AnArray))
@@ -684,12 +684,12 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
             else
             {
-                throw new CompilerException(lineNumber, string.Format("unsupported typecast from {0} to {1}", MapType(fromType), MapType(toType)));
+                throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
             }
         }
         #endregion
@@ -842,7 +842,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if ((fb.Attributes & FieldAttributes.Static) != 0)
                 {
-                    throw new CompilerException(lineNumber, "Setting constants is not allowed");
+                    throw new CompilerException(lineNumber, compileState.GetLanguageString(compileState.CurrentCulture, "SettingConstantsIsNotAllowed", "Setting constants is not allowed"));
                 }
                 compileState.ILGen.BeginScope();
                 LocalBuilder swapLb = compileState.ILGen.DeclareLocal(fb.FieldType);
@@ -864,7 +864,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if ((fi.Attributes & FieldAttributes.Static) != 0)
                 {
-                    throw new CompilerException(lineNumber, "Setting constants is not allowed");
+                    throw new CompilerException(lineNumber, compileState.GetLanguageString(compileState.CurrentCulture, "SettingConstantsIsNotAllowed", "Setting constants is not allowed"));
                 }
                 compileState.ILGen.BeginScope();
                 LocalBuilder swapLb = compileState.ILGen.DeclareLocal(fi.FieldType);
@@ -900,7 +900,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", kvp.Key, f.Attributes.ToString());
+                        m_Log.DebugFormat(compileState.GetLanguageString(compileState.CurrentCulture, "Field0HasUnsupportedAttributeFlags1", "Field {0} has unsupported attribute flags {1}"), kvp.Key, f.Attributes.ToString());
                     }
                 }
 

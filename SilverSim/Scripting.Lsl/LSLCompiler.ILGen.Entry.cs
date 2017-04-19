@@ -445,7 +445,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         catch (Exception e)
                         {
-                            throw CompilerException(initargs, string.Format("Init value of variable {0} has syntax error. {1}\n{2}", varName, e.Message, e.StackTrace));
+                            throw CompilerException(initargs, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
                         }
 
                         if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))
@@ -975,7 +975,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     catch (Exception e)
                     {
-                        throw CompilerException(initargs, string.Format("Init value of state variable {0} has syntax error. {1}\n{2}", varName, e.Message, e.StackTrace));
+                        throw CompilerException(initargs, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of state variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
                     }
 
                     if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))

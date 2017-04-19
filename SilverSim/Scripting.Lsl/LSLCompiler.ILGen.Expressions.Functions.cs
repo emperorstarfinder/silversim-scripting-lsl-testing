@@ -21,6 +21,7 @@
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
+using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -122,11 +123,11 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (functionTree.SubTree.Count == 1)
                         {
-                            throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", functionTree.Entry, functionTree.SubTree.Count));
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter"), functionTree.Entry, functionTree.SubTree.Count));
                         }
                         else
                         {
-                            throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", functionTree.Entry, functionTree.SubTree.Count));
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters"), functionTree.Entry, functionTree.SubTree.Count));
                         }
                     }
                 }
@@ -167,17 +168,17 @@ namespace SilverSim.Scripting.Lsl
 
                 if (!functionNameValid)
                 {
-                    throw new CompilerException(lineNumber, string.Format("No function {0} defined", functionTree.Entry));
+                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NoFunction0Defined", "No function {0} defined"), functionTree.Entry));
                 }
                 else if (m_SelectedFunctions.Count == 0)
                 {
                     if (functionTree.SubTree.Count == 1)
                     {
-                        throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", functionTree.Entry, functionTree.SubTree.Count));
+                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter"), functionTree.Entry, functionTree.SubTree.Count));
                     }
                     else
                     {
-                        throw new CompilerException(lineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", functionTree.Entry, functionTree.SubTree.Count));
+                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters"), functionTree.Entry, functionTree.SubTree.Count));
                     }
                 }
             }
@@ -388,11 +389,11 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (m_Parameters.Count == 1)
                 {
-                    throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", m_FunctionName, m_Parameters.Count));
+                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter"), m_FunctionName, m_Parameters.Count));
                 }
                 else
                 {
-                    throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", m_FunctionName, m_Parameters.Count));
+                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters"), m_FunctionName, m_Parameters.Count));
                 }
             }
 
@@ -420,11 +421,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (m_Parameters.Count == 1)
                     {
-                        throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameter", m_FunctionName, m_Parameters.Count));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter"), m_FunctionName, m_Parameters.Count));
                     }
                     else
                     {
-                        throw new CompilerException(m_LineNumber, string.Format("Parameter mismatch at function {0}: no function variant takes {1} parameters", m_FunctionName, m_Parameters.Count));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters"), m_FunctionName, m_Parameters.Count));
                     }
 
                 }

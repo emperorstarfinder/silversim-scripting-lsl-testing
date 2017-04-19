@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl
                 if(compileState.m_BreakContinueLabels.Count == 0 ||
                     compileState.m_BreakContinueLabels[0].SwitchValueLocal == null)
                 {
-                    throw CompilerException(functionLine, "'case' not in 'switch' block");
+                    throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "CaseNotInSwitchBlock", "'case' not in 'switch' block"));
                 }
 
                 BreakContinueLabel bc = compileState.m_BreakContinueLabels[0];
@@ -98,7 +98,7 @@ namespace SilverSim.Scripting.Lsl
                 if (compileState.m_BreakContinueLabels.Count == 0 ||
                     compileState.m_BreakContinueLabels[0].SwitchValueLocal == null)
                 {
-                    throw CompilerException(functionLine, "'default' not in 'switch' block");
+                    throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "DefaultNotInSwitchBlock", "'default' not in 'switch' block"));
                 }
 
                 BreakContinueLabel bc = compileState.m_BreakContinueLabels[0];
@@ -122,18 +122,18 @@ namespace SilverSim.Scripting.Lsl
             else if (compileState.m_BreakContinueLabels.Count != 0 &&
                 compileState.m_BreakContinueLabels[0].CaseRequired)
             {
-                throw CompilerException(functionLine, "missing 'case' or 'default' in 'switch' block");
+                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
             }
             else if (functionLine.Line[startAt] == "@")
             {
-                throw CompilerException(functionLine, "Invalid label declaration");
+                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidLabelDeclaration", "Invalid label declaration"));
             }
             #region Jump to label
             else if (functionLine.Line[startAt] == "jump")
             {
                 if (functionLine.Line.Count <= startAt + 2)
                 {
-                    throw CompilerException(functionLine, "Invalid jump statement");
+                    throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidJumpStatement", "Invalid jump statement"));
                 }
                 if (!labels.ContainsKey(functionLine.Line[1]))
                 {
@@ -154,11 +154,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (compileState.LanguageExtensions.EnableSwitchBlock)
                     {
-                        throw CompilerException(functionLine, "'continue' not in 'for'/'while'/'do while'/'switch' block");
+                        throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "ContinueNotInForWhileDoWhileSwitchBlock", "'continue' not in 'for'/'while'/'do while'/'switch' block"));
                     }
                     else
                     {
-                        throw CompilerException(functionLine, "'continue' not in 'for'/'while'/'do while' block");
+                        throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "ContinueNotInForWhileDoWhileBlock", "'continue' not in 'for'/'while'/'do while' block"));
                     }
                 }
 
@@ -169,7 +169,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if(compileState.m_BreakContinueLabels.Count == 0 || !compileState.m_BreakContinueLabels[0].HaveContinueTarget)
                 {
-                    throw CompilerException(functionLine, "'continue' not in 'for'/'while'/'do while' block");
+                    throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "ContinueNotInForWhileDoWhileBlock", "'continue' not in 'for'/'while'/'do while' block"));
                 }
 
                 compileState.ILGen.Emit(OpCodes.Br, compileState.m_BreakContinueLabels[0].ContinueTargetLabel);
