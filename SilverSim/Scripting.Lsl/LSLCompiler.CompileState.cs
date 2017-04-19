@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
+using System.Globalization;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
@@ -91,6 +92,7 @@ namespace SilverSim.Scripting.Lsl
         sealed internal class CompileState
         {
             public ApiInfo ApiInfo = new ApiInfo();
+            public readonly CultureInfo CurrentCulture;
             public bool ForcedSleepDefault;
             public bool EmitDebugSymbols;
             public Dictionary<string, Type> m_VariableDeclarations = new Dictionary<string, Type>();
@@ -129,9 +131,9 @@ namespace SilverSim.Scripting.Lsl
 
             public readonly LanguageExtensionsData LanguageExtensions = new LanguageExtensionsData();
 
-            public CompileState()
+            public CompileState(CultureInfo currentCulture)
             {
-
+                CurrentCulture = currentCulture;
             }
 
             #region Function Body access

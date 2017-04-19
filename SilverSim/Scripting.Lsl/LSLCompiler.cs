@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -813,9 +814,9 @@ namespace SilverSim.Scripting.Lsl
             CompilerRegistry.ScriptCompilers["XEngine"] = this; /* we won't be supporting anything beyond LSL compatibility */
         }
 
-        public void SyntaxCheck(UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1)
+        public void SyntaxCheck(UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1, CultureInfo cultureInfo = null)
         {
-            Preprocess(user, shbangs, reader, linenumber);
+            Preprocess(user, shbangs, reader, linenumber, cultureInfo);
         }
 
         void WriteIndent(TextWriter writer, int indent)
@@ -884,9 +885,9 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public void SyntaxCheckAndDump(Stream s, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1)
+        public void SyntaxCheckAndDump(Stream s, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileState cs = Preprocess(user, shbangs, reader, linenumber);
+            CompileState cs = Preprocess(user, shbangs, reader, linenumber, cultureInfo);
             /* rewrite script */
             int indent = 0;
             using (TextWriter writer = new StreamWriter(s, new UTF8Encoding(false)))
@@ -962,18 +963,18 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public IScriptAssembly Compile(AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1)
+        public IScriptAssembly Compile(AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
+            CompileState compileState = Preprocess(user, shbangs, reader, lineNumber, cultureInfo);
             return PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndCollect);
         }
 
-        public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1)
+        public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileToDisk(filename, appDom, user, shbangs, assetID, reader, false, lineNumber);
+            CompileToDisk(filename, appDom, user, shbangs, assetID, reader, false, lineNumber, cultureInfo);
         }
 
-        public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, bool emitDebugSymbols, int lineNumber = 1)
+        public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, bool emitDebugSymbols, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
             CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
             compileState.EmitDebugSymbols = emitDebugSymbols;

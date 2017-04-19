@@ -24,6 +24,7 @@ using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 
@@ -587,9 +588,9 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        CompileState Preprocess(UUI user, Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1)
+        CompileState Preprocess(UUI user, Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileState compileState = new CompileState();
+            CompileState compileState = new CompileState(cultureInfo);
             APIFlags acceptedFlags;
             List<string> apiExtensions = new List<string>();
             acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
