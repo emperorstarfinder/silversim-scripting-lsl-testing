@@ -75,3 +75,5 @@ StateDefinitionCannotBeDeclaredTwice=State kann nicht zweimal deklariert werden.
 InvalidStateDeclaration=Ungültige State-Deklaration
 ClosingBraceWithoutMatchingOpeningBrace='}' gefunden ohne passende '{'
 0IsNotAValue='{0}' ist kein Wert
+IncompleteStatementBeforeClosingBrace=Unvollständige Anweisung vor '}'
+MismatchingClosingParenthesis=Unpassende ')' gefunden.

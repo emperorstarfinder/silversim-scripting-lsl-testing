@@ -683,7 +683,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            Parser p = new Parser();
+            Parser p = new Parser(cultureInfo);
             p.Push(reader, string.Empty, lineNumber);
 
             for (; ; )

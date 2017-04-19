@@ -75,3 +75,5 @@ StateDefinitionCannotBeDeclaredTwice=state definition cannot be declared twice
 InvalidStateDeclaration=Invalid state declaration
 ClosingBraceWithoutMatchingOpeningBrace='}' found without matching '{'
 0IsNotAValue='{0}' is not a value
+IncompleteStatementBeforeClosingBrace=incomplete statement before '}'
+MismatchingClosingParenthesis=Mismatching ')'

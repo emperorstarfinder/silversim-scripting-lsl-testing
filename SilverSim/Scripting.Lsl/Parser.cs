@@ -24,6 +24,7 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl
@@ -32,9 +33,10 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     public class Parser : ParserBase
     {
-        public Parser()
+        readonly CultureInfo m_CurrentCulture;
+        public Parser(CultureInfo currentCulture)
         {
-
+            m_CurrentCulture = currentCulture;
         }
 
         bool IsLSLWhitespace(char c)
@@ -138,7 +140,7 @@ redo:
                         args.Add("}");
                         if(args.Count > 1)
                         {
-                            throw new ArgumentException("incomplete statement before '}'");
+                            throw new ArgumentException(this.GetLanguageString(m_CurrentCulture, "IncompleteStatementBeforeClosingBrace", "incomplete statement before '}'"));
                         }
                         return;
                 
@@ -239,7 +241,7 @@ redo:
                         {
                             if(parencount == 0)
                             {
-                                throw new ArgumentException("Mismatching ')'");
+                                throw new ArgumentException(this.GetLanguageString(m_CurrentCulture, "MismatchingClosingParenthesis", "Mismatching ')'"));
                             }
                             --parencount;
                         }
