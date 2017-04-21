@@ -816,7 +816,7 @@ namespace SilverSim.Scripting.Lsl
                 catch(CallDepthLimitViolationException e)
                 {
                     LogInvokeException(name, e);
-                    ShoutError(e.Message);
+                    ShoutError(new LocalizedScriptMessage(this, "FunctionCallDepthLimitViolation", "Function call depth limit violation"));
                 }
                 catch (TargetParameterCountException e)
                 {
