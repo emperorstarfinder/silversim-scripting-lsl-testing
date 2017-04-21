@@ -250,3 +250,5 @@ UnknownTypeParameter1AtIndex0=Unknown type parameter {1} at index {0}
 InvalidParameterFor0At1MustBeType2=Invalid parameter for {0} at index {1}. It must be {2}.
 ParameterFor0AtIndex1MustBeReferingATexture=Parameter {0} at index {1} must be refering to a texture (either inventory name or asset id)
 FunctionCallDepthLimitViolation=Function call depth limit violation
+ScriptErrorStateChangeUsedInStateExit=Script error! state change used in state_exit
+llResetScriptUsedInDefaultStateEntry=Script error! llResetScript used in default.state_entry

@@ -998,7 +998,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 catch(ChangeStateException e)
                 {
-                    ShoutError("Script error! state change used in state_exit");
+                    ShoutError(new LocalizedScriptMessage(e, "ScriptErrorStateChangeUsedInStateExit", "Script error! state change used in state_exit"));
                     LogInvokeException("state_exit", e);
                 }
                 catch (TargetInvocationException e)
@@ -1011,7 +1011,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (eType == typeof(ChangeStateException))
                     {
-                        ShoutError("Script error! state change used in state_exit");
+                        ShoutError(new LocalizedScriptMessage(e.InnerException, "ScriptErrorStateChangeUsedInStateExit", "Script error! state change used in state_exit"));
                         LogInvokeException("state_exit", e);
                     }
                 }
@@ -1052,11 +1052,11 @@ namespace SilverSim.Scripting.Lsl
                         InvokeStateEvent("state_entry");
                     }
                 }
-                catch (ResetScriptException)
+                catch (ResetScriptException e)
                 {
                     if (m_States["default"] == m_CurrentState)
                     {
-                        ShoutError("Script error! llResetScript used in default.state_entry");
+                        ShoutError(new LocalizedScriptMessage(e.Message, "llResetScriptUsedInDefaultStateEntry", "Script error! llResetScript used in default.state_entry"));
                         return;
                     }
                     else
