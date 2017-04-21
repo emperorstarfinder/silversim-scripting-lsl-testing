@@ -148,14 +148,14 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if(!scene.IsEstateManager(instance.Item.Owner))
                 {
-                    instance.ShoutError("pfRebuildNavmesh can only be called by estate manager or owner");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0CanOnlyBeCalledByEstateManagerOrOwner", "{0} can only be called by estate manager or owner", "pfRebuildNavmesh"));
                     return;
                 }
 
                 IPathfindingService pathfindingService = scene.PathfindingService;
                 if(null == pathfindingService)
                 {
-                    instance.ShoutError("Pathfinding is not available");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "PathfindingIsNotAvailable", "Pathfinding is not available"));
                     return;
                 }
                 pathfindingService.TriggerRebuild();

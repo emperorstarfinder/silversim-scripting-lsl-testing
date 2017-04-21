@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     }
                     catch
                     {
-                        instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", impact_sound));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", impact_sound));
                     }
                 }
             }
@@ -121,7 +121,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 }
                 catch
                 {
-                    instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                     return;
                 }
                 thisPart.ObjectGroup.Scene.SendPreloadSound(thisPart, soundID);
@@ -173,7 +173,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 }
                 catch
                 {
-                    instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                     return;
                 }
                 thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, 20);
@@ -193,7 +193,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 }
                 catch
                 {
-                    instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                     return;
                 }
                 thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
@@ -242,7 +242,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
             catch
             {
-                instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                 return;
             }
             if (thisPart.IsSoundQueueing)
@@ -265,7 +265,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
             catch
             {
-                instance.ShoutError(string.Format("Inventory item {0} does not reference a sound", sound));
+                instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                 return;
             }
 

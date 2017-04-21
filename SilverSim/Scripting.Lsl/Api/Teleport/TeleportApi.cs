@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
 
                         if (!agent.TeleportTo(scene, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
                         {
-                            agent.SendAlertMessage("Landmark destination not found", scene.ID);
+                            agent.SendAlertMessage(this.GetLanguageString(agent.CurrentCulture, "LandmarkDestinationNotFound", "Landmark destination not found"), scene.ID);
                         }
                     }
                 }
@@ -94,13 +94,13 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
 
                     if (!agent.TeleportTo(scene, landmarkData.GatekeeperURI, landmarkData.RegionID, landmarkData.LocalPos, lookAt, TeleportFlags.ViaLandmark))
                     {
-                        agent.SendAlertMessage("Landmark destination not found", scene.ID);
+                        agent.SendAlertMessage(this.GetLanguageString(agent.CurrentCulture, "LandmarkDestinationNotFound", "Landmark destination not found"), scene.ID);
                     }
                 }
             }
             else
             {
-                instance.ShoutError("Landmark asset not found");
+                instance.ShoutError(new LocalizedScriptMessage(this, "LandmarkAssetNotFound", "Landmark asset not found"));
             }
         }
 
@@ -122,7 +122,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 }
                 if (!agent.TeleportTo(scene, location, position, lookAt, TeleportFlags.ViaLocation))
                 {
-                    agent.SendAlertMessage(string.Format("Location '{0}' not found.", location.ToString()), scene.ID);
+                    agent.SendAlertMessage(string.Format(this.GetLanguageString(agent.CurrentCulture, "TeleportLocation0NotFound", "Location '{0}' not found."), location.ToString()), scene.ID);
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 }
                 if (!agent.TeleportTo(scene, regionName, position, lookAt, TeleportFlags.ViaRegionID))
                 {
-                    agent.SendAlertMessage(string.Format("Region '{0}' not found.", regionName), scene.ID);
+                    agent.SendAlertMessage(string.Format(this.GetLanguageString(agent.CurrentCulture, "TeleportRegion0NotFound", "Region '{0}' not found."), regionName), scene.ID);
                 }
             }
         }
@@ -202,7 +202,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     }
                     if(!agent.TeleportHome(scene))
                     {
-                        agent.SendAlertMessage("Teleport home failed", scene.ID);
+                        agent.SendAlertMessage(this.GetLanguageString(agent.CurrentCulture, "TeleportHomeFailed", "Teleport home failed"), scene.ID);
                     }
                 }
             }
@@ -220,13 +220,13 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     if (agent.SittingOnObject != null)
                     {
                         /* refuse sitting avatars */
-                        instance.ShoutError("Sitting avatars cannot be teleported");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "SittingAvatarsCannotBeTeleported", "Sitting avatars cannot be teleported"));
                         return;
                     }
                     else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
                         (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
                     {
-                        instance.ShoutError("Teleport permission is not granted by avatar");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "TeleportPermissionIsNotGrantedByAvatar", "Teleport permission is not granted by avatar"));
                         return;
                     }
 
@@ -250,13 +250,13 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     if (agent.SittingOnObject != null)
                     {
                         /* refuse sitting avatars */
-                        instance.ShoutError("Sitting avatars cannot be teleported");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "SittingAvatarsCannotBeTeleported", "Sitting avatars cannot be teleported"));
                         return;
                     }
                     else if(!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
                         !grantinfo.PermsMask.HasFlag(ScriptPermissions.Teleport))
                     {
-                        instance.ShoutError("Teleport permission is not granted by avatar");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "TeleportPermissionIsNotGrantedByAvatar", "Teleport permission is not granted by avatar"));
                         return;
                     }
 
@@ -286,13 +286,13 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     if (agent.SittingOnObject != null)
                     {
                         /* refuse sitting avatars */
-                        instance.ShoutError("Sitting avatars cannot be teleported");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "SittingAvatarsCannotBeTeleported", "Sitting avatars cannot be teleported"));
                         return;
                     }
                     else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
                         !grantinfo.PermsMask.HasFlag(ScriptPermissions.Teleport))
                     {
-                        instance.ShoutError("Teleport permission is not granted by avatar");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "TeleportPermissionIsNotGrantedByAvatar", "Teleport permission is not granted by avatar"));
                         return;
                     }
 

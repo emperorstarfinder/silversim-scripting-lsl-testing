@@ -77,7 +77,7 @@ namespace SilverSim.Scripting.Lsl.Api.AttachedForces
                         case PHYSICS_NEW_LINK_TARGET:
                             if(!grp.TryGetValue(rules[i + 1].AsInt, out linkTarget))
                             {
-                                instance.ShoutError("asSetAdvancedPhysics: Unknown link target " + rules[i + 1].AsInt.ToString() + " for PHYSICS_NEW_LINK_TARGET");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "Function0UnknownLinkTargetForPHYSICS_NEW_LINK_TARGET", "{0}: Unknown link target {1} for PHYSICS_NEW_LINK_TARGET", "asSetAdvancedPhysics", rules[i + 1].AsInt));
                                 return;
                             }
                             linktargets.Clear();
@@ -87,7 +87,7 @@ namespace SilverSim.Scripting.Lsl.Api.AttachedForces
                         case PHYSICS_ADD_LINK_TARGET:
                             if (!grp.TryGetValue(rules[i + 1].AsInt, out linkTarget))
                             {
-                                instance.ShoutError("asSetAdvancedPhysics: Unknown link target " + rules[i + 1].AsInt.ToString() + " for PHYSICS_ADD_LINK_TARGET");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "Function0UnknownLinkTargetForPHYSICS_ADD_LINK_TARGET", "{0}: Unknown link target {1} for PHYSICS_ADD_LINK_TARGET", "asSetAdvancedPhysics", rules[i + 1].AsInt));
                                 return;
                             }
                             linktargets.Add(linkTarget.ID);
@@ -102,7 +102,7 @@ namespace SilverSim.Scripting.Lsl.Api.AttachedForces
                             break;
 
                         default:
-                            instance.ShoutError("asSetAdvancedPhysics: Unknown rule type " + ruleType.ToString());
+                            instance.ShoutError(new LocalizedScriptMessage(this, "Function0UnknownRuleType", "{0}: Unknown rule type {1}", "asSetAdvancedPhysics", ruleType));
                             break;
                     }
                 }

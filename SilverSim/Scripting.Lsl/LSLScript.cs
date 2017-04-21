@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Text;
 using System.Timers;
 using System.Xml;
+using System.Globalization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -1226,23 +1227,65 @@ namespace SilverSim.Scripting.Lsl
             PostEvent(ev);
         }
 
+        sealed class AtRegionMessageLocalization : IListenEventLocalization
+        {
+            readonly IListenEventLocalization m_SubMessage;
+            readonly string m_RegionName;
+            public AtRegionMessageLocalization(IListenEventLocalization subMessage, string regionName)
+            {
+                m_SubMessage = subMessage;
+                m_RegionName = regionName;
+            }
+
+            public string Localize(ListenEvent le, CultureInfo currentCulture)
+            {
+                return string.Format(this.GetLanguageString(currentCulture, "ShoutErrorAtRegion0", "At region {0}:") + "\n", m_RegionName) +
+                    m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message;
+            }
+        }
 
         public override void ShoutError(string message)
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = 0x7FFFFFFF; /* DEBUG_CHANNEL */
-            ev.Type = ListenEvent.ChatType.Shout;
+            ev.Type = ListenEvent.ChatType.Region;
             ChatServiceInterface chatService;
             lock (m_Lock)
             {
                 ObjectPart part = Part;
                 ObjectGroup objGroup = part.ObjectGroup;
-                ev.Message = "At region " + objGroup.Scene.Name + ":\n" + message;
+                ev.Message = message;
                 ev.SourceType = ListenEvent.ChatSourceType.Object;
                 ev.OwnerID = objGroup.Owner.ID;
                 ev.GlobalPosition = objGroup.GlobalPosition;
                 ev.ID = objGroup.ID;
                 ev.Name = objGroup.Name;
+                ev.Localization = new AtRegionMessageLocalization(null, objGroup.Scene.Name);
+                chatService = objGroup.Scene.GetService<ChatServiceInterface>();
+            }
+            if (null != chatService)
+            {
+                chatService.Send(ev);
+            }
+        }
+
+        public override void ShoutError(IListenEventLocalization localizedMessage)
+        {
+            ListenEvent ev = new ListenEvent();
+            ev.Channel = 0x7FFFFFFF; /* DEBUG_CHANNEL */
+            ev.Type = ListenEvent.ChatType.Region;
+            ChatServiceInterface chatService;
+            lock (m_Lock)
+            {
+                ObjectPart part = Part;
+                ObjectGroup objGroup = part.ObjectGroup;
+                ev.SourceType = ListenEvent.ChatSourceType.Object;
+                ev.OwnerID = objGroup.Owner.ID;
+                ev.GlobalPosition = objGroup.GlobalPosition;
+                ev.ID = objGroup.ID;
+                ev.Name = objGroup.Name;
+                ev.Localization = new AtRegionMessageLocalization(localizedMessage, objGroup.Scene.Name);
+                ev.Message = ev.Localization.Localize(ev, null);
                 chatService = objGroup.Scene.GetService<ChatServiceInterface>();
             }
             if (null != chatService)

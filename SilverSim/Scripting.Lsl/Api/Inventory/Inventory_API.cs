@@ -630,7 +630,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 catch
                 {
-                    instance.ShoutError(string.Format("Inventory item '{0}' is missing in object's inventory.", name));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0IsMissingInObjectsInventory", "Inventory item '{0}' is missing in object's inventory.", name));
                     return UUID.Zero;
                 }
 
@@ -645,7 +645,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     catch
                     {
-                        instance.ShoutError(string.Format("Landmark data for '{0}' not found or valid", name));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "LandmarkDataFor0NotFoundOrInvalid", "Landmark data for '{0}' not found or invalid", name));
                         return UUID.Zero;
                     }
 
@@ -800,7 +800,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 else
                 {
-                    instance.ShoutError("Could not find destination");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "CouldNotFindDestination", "Could not find destination"));
                 }
             }
         }
@@ -855,7 +855,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 else
                 {
-                    instance.ShoutError("Could not find destination");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "CouldNotFindDestination", "Could not find destination"));
                 }
             }
         }
@@ -864,7 +864,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             if(!target.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Modify))
             {
-                instance.ShoutError("Blocked by permissions");
+                instance.ShoutError(new LocalizedScriptMessage(this, "BlockedByPermission", "Blocked by permissions"));
                 return;
             }
 
@@ -874,14 +874,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 string inventory = iv.ToString();
                 if(!origin.Inventory.TryGetValue(inventory, out sourceItem))
                 {
-                    instance.ShoutError("Inventory item " + inventory + " not found");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0NotFound", "Inventory item '{0}' not found", inventory));
                 }
                 else
                 {
                     bool removeItem = false;
                     if(!target.Owner.EqualsGrid(origin.Owner) && sourceItem.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Transfer))
                     {
-                        instance.ShoutError("Inventory item " + inventory + " has no transfer permission.");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0HasNoTransferPermission", "Inventory item '{0}' has no transfer permission.", inventory));
                         continue;
                     }
 
@@ -890,7 +890,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         removeItem = true;
                         if (skipNoCopy)
                         {
-                            instance.ShoutError("Inventory item " + inventory + " has no copy permission.");
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0HasNoCopyPermission", "Inventory item '{0}' has no copy permission.", inventory));
                             continue;
                         }
                     }
@@ -937,14 +937,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 string inventory = iv.ToString();
                 if (!origin.Inventory.TryGetValue(inventory, out sourceItem))
                 {
-                    instance.ShoutError("Inventory item " + inventory + " not found");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0NotFound", "Inventory item '{0}' not found", inventory));
                 }
                 else
                 {
                     bool removeItem = false;
                     if (!agent.EqualsGrid(origin.Owner) && sourceItem.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Transfer))
                     {
-                        instance.ShoutError("Inventory item " + inventory + " has no transfer permission.");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0HasNoTransferPermission", "Inventory item '{0}' has no transfer permission.", inventory));
                         continue;
                     }
 
@@ -953,7 +953,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         removeItem = true;
                         if (createFolderAndSkipNoCopy)
                         {
-                            instance.ShoutError("Inventory item " + inventory + " has no copy permission.");
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0HasNoCopyPermission", "Inventory item '{0}' has no copy permission.", inventory));
                             continue;
                         }
                     }

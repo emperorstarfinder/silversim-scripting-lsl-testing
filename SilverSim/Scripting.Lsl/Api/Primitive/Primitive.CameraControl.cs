@@ -114,7 +114,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                instance.ShoutError("llReleaseCamera is deprecated and recognized for script compatibility\nUse llClearCameraParams instead.");
+                instance.ShoutError(new LocalizedScriptMessage(this, "llReleaseCameraDeprecated", "llReleaseCamera is deprecated and recognized for script compatibility\nUse llClearCameraParams instead."));
             }
         }
 
@@ -160,7 +160,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch
                         {
-                            instance.ShoutError(string.Format("Invalid camera param type {0}", rules[i - 1].ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidCameraParamType0", "Invalid camera param type {0}", rules[i - 1].ToString()));
                             return;
                         }
 
@@ -185,15 +185,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                                         switch (type)
                                         {
                                             case CAMERA_FOCUS:
-                                                instance.ShoutError("llSetCameraParams: CAMERA_FOCUS: Expecting a vector parameter");
+                                                instance.ShoutError(new LocalizedScriptMessage(this, "llSetCameraParams0ExpectingAVectorParameter", "llSetCameraParams: {0}: Expecting a vector parameter", "CAMERA_FOCUS"));
                                                 return;
 
                                             case CAMERA_FOCUS_OFFSET:
-                                                instance.ShoutError("llSetCameraParams: CAMERA_FOCUS_OFFSET: Expecting a vector parameter");
+                                                instance.ShoutError(new LocalizedScriptMessage(this, "llSetCameraParams0ExpectingAVectorParameter", "llSetCameraParams: {0}: Expecting a vector parameter", "CAMERA_FOCUS_OFFSET"));
                                                 return;
 
                                             case CAMERA_POSITION:
-                                                instance.ShoutError("llSetCameraParams: CAMERA_POSITION: Expecting a vector parameter");
+                                                instance.ShoutError(new LocalizedScriptMessage(this, "llSetCameraParams0ExpectingAVectorParameter", "llSetCameraParams: {0}: Expecting a vector parameter", "CAMERA_POSITION"));
                                                 return;
 
                                             default:
@@ -280,7 +280,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                                             typeName = string.Format("{0}", rules[i - 1].AsInt);
                                             break;
                                     }
-                                    instance.ShoutError("llSetCameraParams: " + typeName + ": Parameter is invalid");
+                                    instance.ShoutError(new LocalizedScriptMessage(this, "llSetCameraParamsType0ParameterIsInvalid", "llSetCameraParams: {0}: Parameter is invalid", typeName));
                                     return;
                                 }
                                 break;

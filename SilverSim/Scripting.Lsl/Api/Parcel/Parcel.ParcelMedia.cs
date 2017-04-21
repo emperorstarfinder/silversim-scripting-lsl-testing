@@ -175,7 +175,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                                 break;
 
                             default:
-                                instance.ShoutError("llParcelMediaCommandList: Unknown parameter");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "Function0UnknownParameter", "{0}: Unknown parameter", "llParcelMediaCommandList"));
                                 break;
                         }
                     }

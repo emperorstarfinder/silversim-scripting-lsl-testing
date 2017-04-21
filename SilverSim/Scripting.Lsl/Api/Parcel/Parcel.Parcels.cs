@@ -243,7 +243,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ParcelAccessEntry entry = new ParcelAccessEntry();
                 if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out entry.Accessor))
                 {
-                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                    instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
                 {
@@ -275,7 +275,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ParcelAccessEntry entry = new ParcelAccessEntry();
                 if(!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out entry.Accessor))
                 {
-                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                    instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
                 {
@@ -307,7 +307,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 UUI accessor;
                 if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out accessor))
                 {
-                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                    instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
@@ -331,7 +331,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 UUI accessor;
                 if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out accessor))
                 {
-                    instance.ShoutError("Failed to find agent for UUID " + avatar.AsUUID);
+                    instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||

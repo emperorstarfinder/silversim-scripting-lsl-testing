@@ -345,7 +345,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         break;
 
                     default:
-                        instance.ShoutError("Invalid vehicle type");
+                        instance.ShoutError(new LocalizedScriptMessage(this, "InvalidVehicleType", "Invalid vehicle type"));
                         break;
                 }
             }

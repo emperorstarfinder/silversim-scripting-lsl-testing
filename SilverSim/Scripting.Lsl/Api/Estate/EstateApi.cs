@@ -85,7 +85,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                 SceneInterface scene = thisGroup.Scene;
                 if (!scene.IsEstateManager(thisGroup.Owner))
                 {
-                    instance.ShoutError("osSetEstateSunSettings object owner must manage estate.");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0ObjectOwnerMustBeAbleToManageEstate", "{0}: object owner must be able to manage estate.", "osSetEstateSunSettings"));
                     return;
                 }
 
@@ -125,7 +125,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                 SceneInterface scene = thisGroup.Scene;
                 if (!scene.IsEstateManager(thisGroup.Owner))
                 {
-                    instance.ShoutError("llManageEstateAccess object owner must manage estate.");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0ObjectOwnerMustBeAbleToManageEstate", "{0}: object owner must be able to manage estate.", "llManageEstateAccess"));
                     return 0;
                 }
 

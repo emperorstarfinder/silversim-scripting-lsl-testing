@@ -70,7 +70,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 SceneInterface scene = thisGroup.Scene;
                 if (!scene.IsEstateManager(thisGroup.Owner) && !scene.Owner.EqualsGrid(thisGroup.Owner))
                 {
-                    instance.ShoutError("osSetRegionSunSettings object owner must manage region.");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0ObjectOwnerMustBeAbleToManageEstate", "{0}: Object owner must manage region.", "osSetRegionSunSettings"));
                     return;
                 }
 

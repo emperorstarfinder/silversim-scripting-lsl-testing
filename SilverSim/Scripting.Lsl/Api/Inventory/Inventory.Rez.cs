@@ -317,24 +317,24 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             groups = null;
             if(!linkpart.Inventory.TryGetValue(name, out item))
             {
-                instance.ShoutError("Item '" + name + "' not found to rez");
+                instance.ShoutError(new LocalizedScriptMessage(this, "Item0NotFoundToRez", "Item '{0}' not found to rez", name));
                 return false;
             }
             else if(item.InventoryType != InventoryType.Object || item.AssetType != AssetType.Object)
             {
-                instance.ShoutError("Item '" + name + "' is not an object.");
+                instance.ShoutError(new LocalizedScriptMessage(this, "Item0IsNotAnObject", "Item '{0}' is not an object.", name));
                 return false;
             }
             else if(!rezzingpart.ObjectGroup.Scene.AssetService.TryGetValue(item.AssetID, out data))
             {
-                instance.ShoutError("Item '" + name + "' is missing in database.");
+                instance.ShoutError(new LocalizedScriptMessage(this, "Item0IsMissingInDatabase", "Item '{0}' is missing in database.", name));
                 return false;
             }
 
             removeinventory = !item.CheckPermissions(instance.Item.Owner, instance.Item.Group, InventoryPermissionsMask.Copy);
             if(removeinventory && rezzinggrp.IsAttached)
             {
-                instance.ShoutError("Cannot rez no copy objects from an attached object.");
+                instance.ShoutError(new LocalizedScriptMessage(this, "CannotRezNoCopyObjectsFromAnAttachedObject", "Cannot rez no copy objects from an attached object."));
                 return false;
             }
 
@@ -345,7 +345,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
             catch
             {
-                instance.ShoutError("Item '" + name + "' has invalid content.");
+                instance.ShoutError(new LocalizedScriptMessage(this, "Item0HasInvalidContent", "Item '{0}' has invalid content.", name));
                 return false;
             }
         }

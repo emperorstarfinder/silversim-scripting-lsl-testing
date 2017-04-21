@@ -168,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                instance.ShoutError("This function has been deprecated. Please use llRemoteLoadScriptPin instead");
+                instance.ShoutError(new LocalizedScriptMessage(this, "DeprecatedllRemoteLoadScript", "This function has been deprecated. Please use llRemoteLoadScriptPin instead"));
             }
         }
 
@@ -185,13 +185,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 AssetData asset;
                 if(!thisGroup.Scene.Primitives.TryGetValue(target, out destpart))
                 {
-                    instance.ShoutError("llRemoteLoadScriptPin: destination prim does not exist");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0DestinationPrimDoesNotExist", "{0}: destination prim does not exist", "llRemoteLoadScriptPin"));
                     return;
                 }
 
                 if(!thisPart.Inventory.TryGetValue(name, out scriptitem))
                 {
-                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Script '{0}' does not exist", name));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Script1DoesNotExist", "{0}: Script '{1}' does not exist", "llRemoteLoadScriptPin", name));
                     return;
                 }
 
@@ -201,19 +201,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 catch
                 {
-                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Failed to find asset for script '{0}'", name));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0FailedToFindAssetForScript1", "{0}: Failed to find asset for script '{1}'", "llRemoteLoadScriptPin", name));
                     return;
                 }
 
                 if (destpart.ID == thisPart.ID)
                 {
-                    instance.ShoutError("llRemoteLoadScriptPin: Unable to add item");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0UnableToAddItem", "{0}: Unable to add item", "llRemoteLoadScriptPin"));
                     return;
                 }
 
                 if(scriptitem.InventoryType != InventoryType.LSLText)
                 {
-                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Inventory item '{0}' is not a script", name));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item '{1}' is not a script", "llRemoteLoadScriptPin", name));
                     return;
                 }
 
@@ -221,18 +221,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Transfer) == 0)
                     {
-                        instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} does not have transfer permission", scriptitem.Name));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1DoesNotHaveTransferPermission", "{0}: Item {1} does not have transfer permission", "llRemoteLoadScriptPin", scriptitem.Name));
                         return;
                     }
                     else if (destpart.CheckPermissions(thisPart.Owner, thisGroup.Group, InventoryPermissionsMask.Modify))
                     {
-                        instance.ShoutError(string.Format("llRemoteLoadScriptPin: Dest Part {0} does not have modify permission", destpart.Name));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0DestPrim1DoesNotHaveModifyPermisions", "{0}: Destination prim {1} does not have modify permission", "llRemoteLoadScriptPin", destpart.Name));
                         return;
                     }
                 }
                 if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Copy) == 0)
                 {
-                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} does not have copy permission", scriptitem.Name));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1DoesNotHaveCopyPermission", "{0}: Item {1} does not have copy permission", "llRemoteLoadScriptPin", scriptitem.Name));
                     return;
                 }
 
@@ -243,7 +243,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 if(destpart.ScriptAccessPin != pin)
                 {
-                    instance.ShoutError(string.Format("llRemoteLoadScriptPin: Item {0} trying to load script onto prim {1} without correct access pin", thisPart.Name, destpart.Name));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1TryingToLoadScriptOntoPrim2WithoutCorrectAccessPin", "{0}: Item {1} trying to load script onto prim {2} without correct access pin", "llRemoteLoadScriptPin", thisPart.Name, destpart.Name));
                     return;
                 }
 

@@ -201,7 +201,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                         break;
 
                     default:
-                        instance.ShoutError(string.Format("Invalid parameter type {0}", iv.AsInt));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0", "Invalid parameter type {0}", iv.AsInt));
                         return res;
                 }
             }
@@ -237,7 +237,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                 {
                     lock (instance)
                     {
-                        instance.ShoutError(string.Format("Invalid parameter type {0}", ivtype.LSL_Type.ToString()));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0", "Invalid parameter type {0}", ivtype.LSL_Type.ToString()));
                         return 0;
                     }
                 }
@@ -247,7 +247,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_BLUR_MULTIPLIER:
                         if(ivvalue.GetType() != typeof(Real))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_BLUR_MODIFIER", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_BLUR_MODIFIER"));
                             return 0;
                         }
                         waterSettings.BlurMultiplier = ivvalue.AsReal;
@@ -256,7 +256,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_FRESNEL_OFFSET:
                         if(ivvalue.GetType() != typeof(Real))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_FRESNEL_OFFSET", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_FRESNEL_OFFSET"));
                             return 0;
                         }
                         waterSettings.FresnelOffset = ivvalue.AsReal;
@@ -265,7 +265,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_FRESNEL_SCALE:
                         if(ivvalue.GetType() != typeof(Real))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_FRESNEL_SCALE", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_FRESNEL_SCALE"));
                             return 0;
                         }
                         waterSettings.FresnelScale = ivvalue.AsReal;
@@ -289,7 +289,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_UNDERWATER_FOG_MODIFIER:
                         if(ivvalue.GetType() != typeof(Real))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_UNDERWATER_FOG_MODIFIER", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_UNDERWATER_FOG_MODIFIER"));
                             return 0;
                         }
                         waterSettings.UnderwaterFogModifier = ivvalue.AsReal;
@@ -298,7 +298,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_SCALE_ABOVE:
                         if(ivvalue.GetType() != typeof(Real))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_SCALE_ABOVE", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_SCALE_ABOVE"));
                             return 0;
                         }
                         waterSettings.ScaleAbove = ivvalue.AsReal;
@@ -307,7 +307,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_SCALE_BELOW:
                         if(ivvalue.GetType() != typeof(Real))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_SCALE_BELOW", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_SCALE_BELOW"));
                             return 0;
                         }
                         waterSettings.ScaleBelow = ivvalue.AsReal;
@@ -316,7 +316,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_FOG_DENSITY:
                         if(ivvalue.GetType() != typeof(Real))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_FOG_DENSITY", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_FOG_DENSITY"));
                             return 0;
                         }
                         waterSettings.WaterFogDensity = ivvalue.AsReal;
@@ -325,7 +325,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_FOG_COLOR:
                         if(ivvalue.GetType() != typeof(Quaternion))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_FOG_COLOR", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_FOG_COLOR"));
                             return 0;
                         }
 
@@ -338,7 +338,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_BIG_WAVE_DIRECTION:
                         if(ivvalue.GetType() != typeof(Vector3))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_BIG_WAVE_DIRECTION", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_BIG_WAVE_DIRECTION"));
                             return 0;
                         }
                         waterSettings.Wave1Direction = ivvalue.AsVector3;
@@ -347,7 +347,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_LITTLE_WAVE_DIRECTION:
                         if(ivvalue.GetType() != typeof(Vector3))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_LITTLE_WAVE_DIRECTION", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_LITTLE_WAVE_DIRECTION"));
                             return 0;
                         }
                         waterSettings.Wave2Direction = ivvalue.AsVector3;
@@ -356,14 +356,14 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
                     case REGION_WL_WATER_NORMAL_SCALE:
                         if(ivvalue.GetType() != typeof(Vector3))
                         {
-                            instance.ShoutError(string.Format("Invalid parameter type {0} for REGION_WL_WATER_NORMAL_SCALE", ivvalue.LSL_Type.ToString()));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0For1", "Invalid parameter type {0} for {1}", ivvalue.LSL_Type.ToString(), "REGION_WL_WATER_NORMAL_SCALE"));
                             return 0;
                         }
                         waterSettings.NormScale = ivvalue.AsVector3;
                         break;
 
                     default:
-                        instance.ShoutError(string.Format("Invalid parameter type {0}", ivtype.AsInt));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterType0", "Invalid parameter type {0}", ivtype.AsInt));
                         return 0;
                 }
             }

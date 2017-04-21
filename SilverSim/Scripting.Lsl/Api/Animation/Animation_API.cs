@@ -56,7 +56,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             IAgent agent;
             if(!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(agentid, out agent))
             {
-                instance.ShoutError(functionname + ": agent not in region");
+                instance.ShoutError(new LocalizedScriptMessage(this, "Function0AgentNotInRegion", "{0}: agent not in region", functionname));
                 return;
             }
 
@@ -126,7 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             UUID animID = instance.GetAnimationAssetID(animation);
             if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(agentid, out agent))
             {
-                instance.ShoutError(functionname + ": permission granter not in region");
+                instance.ShoutError(new LocalizedScriptMessage(this, "Function0PermissionGranterNotInRegion", "{0}: permission granter not in region", functionname));
                 return;
             }
 

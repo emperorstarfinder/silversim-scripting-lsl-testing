@@ -113,13 +113,14 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 {
                     return;
                 }
+
                 try
                 {
                     agent = instance.Part.ObjectGroup.Scene.Agents[grantinfo.PermsGranter.ID];
                 }
                 catch
                 {
-                    instance.ShoutError("llSetAnimationOverride: permission granter not in region");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0PermissionGranterNotInRegion", "{0}: permission granter not in region", "llSetAnimationOverride"));
                     return;
                 }
 
@@ -153,7 +154,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 }
                 catch
                 {
-                    instance.ShoutError("llSetAnimationOverride: permission granter not in region");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0PermissionGranterNotInRegion", "{0}: permission granter not in region", "llGetAnimationOverride"));
                     return string.Empty;
                 }
 
@@ -180,7 +181,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 }
                 catch
                 {
-                    instance.ShoutError("llSetAnimationOverride: permission granter not in region");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0PermissionGranterNotInRegion", "{0}: permission granter not in region", "llResetAnimationOverride"));
                     return;
                 }
 

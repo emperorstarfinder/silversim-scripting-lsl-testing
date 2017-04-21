@@ -155,7 +155,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 catch (InvalidCastException)
                 {
-                    instance.ShoutError(string.Format("Error running particle system params index #{0}: particle system parameter type must be integer", i));
+                    instance.ShoutError(new LocalizedScriptMessage(this, "InvalidTypeParameterAtIndex0", "Invalid type parameter at index {0}", i));
                     return;
                 }
                 IValue value = rules[i + 1];
@@ -168,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_FLAGS: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_FLAGS", i + 1, "integer"));
                             return;
                         }
                         break;
@@ -180,7 +180,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_COLOR: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_START_COLOR", i + 1, "vector"));
                             return;
                         }
                         ps.PartStartColor.R = tempv.X;
@@ -195,7 +195,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_ALPHA: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_START_ALPHA", i + 1, "float"));
                             return;
                         }
                         break;
@@ -207,7 +207,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_COLOR: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_END_COLOR", i + 1, "vector"));
                             return;
                         }
                         ps.PartEndColor.R = tempv.X;
@@ -222,7 +222,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_ALPHA: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_END_ALPHA", i + 1, "float"));
                             return;
                         }
                         break;
@@ -234,7 +234,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_SCALE: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_START_SCALE", i + 1, "vector"));
                             return;
                         }
                         ps.PartStartScaleX = ValidParticleScale(tempv.X);
@@ -248,7 +248,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_SCALE: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_END_SCALE", i + 1, "vector"));
                             return;
                         }
                         ps.PartEndScaleX = ValidParticleScale(tempv.X);
@@ -262,7 +262,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_MAX_AGE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_MAX_AGE", i + 1, "float"));
                             return;
                         }
                         break;
@@ -274,7 +274,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_ACCEL: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_ACCEL", i + 1, "vector"));
                             return;
                         }
                         ps.PartAcceleration.X = tempv.X;
@@ -289,7 +289,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_PATTERN: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_PATTERN", i + 1, "integer"));
                             return;
                         }
                         break;
@@ -305,7 +305,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_INNERANGLE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_INNERANGLE", i + 1, "float"));
                             return;
                         }
                         ps.InnerAngle = tempf;
@@ -319,7 +319,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_OUTERANGLE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_OUTERANGLE", i + 1, "float"));
                             return;
                         }
                         ps.OuterAngle = tempf;
@@ -333,7 +333,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_BLEND_FUNC_SOURCE: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_BLEND_FUNC_SOURCE", i + 1, "integer"));
                             return;
                         }
                         ps.BlendFuncSource = (ParticleSystem.BlendFunc)tmpi;
@@ -346,7 +346,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_BLEND_FUNC_DEST: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_BLEND_FUNC_DEST", i + 1, "integer"));
                             return;
                         }
                         ps.BlendFuncDest = (ParticleSystem.BlendFunc)tmpi;
@@ -359,7 +359,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_START_GLOW: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_START_GLOW", i + 1, "float"));
                             return;
                         }
                         ps.PartStartGlow = tempf;
@@ -372,7 +372,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_PART_END_GLOW: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_PART_END_GLOW", i + 1, "float"));
                             return;
                         }
                         ps.PartEndGlow = tempf;
@@ -385,12 +385,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch(InvalidOperationException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_TEXTURE: arg #{0} - parameter 1 must be refering to a texture (either inventory name or texture ID)", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "ParameterFor0AtIndex1MustBeReferingATexture", "PSYS_SRC_TEXTURE", i + 1));
                             return;
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_TEXTURE: arg #{0} - parameter 1 must be string or key", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "ParameterFor0AtIndex1MustBeReferingATexture", "PSYS_SRC_TEXTURE", i + 1));
                             return;
                         }
                         break;
@@ -402,7 +402,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_RATE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_BURST_RATE", i + 1, "float"));
                             return;
                         }
                         break;
@@ -414,7 +414,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_PART_COUNT: arg #{0} - parameter 1 must be integer", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_BURST_PART_COUNT", i + 1, "integer"));
                             return;
                         }
                         break;
@@ -426,7 +426,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_RADIUS: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_BURST_RADIUS", i + 1, "float"));
                             return;
                         }
                         break;
@@ -438,7 +438,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_SPEED_MIN: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_BURST_SPEED_MIN", i + 1, "float"));
                             return;
                         }
                         break;
@@ -450,7 +450,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_BURST_SPEED_MAX: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_BURST_SPEED_MAX", i + 1, "float"));
                             return;
                         }
                         break;
@@ -462,7 +462,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_MAX_AGE: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_MAX_AGE", i + 1, "float"));
                             return;
                         }
                         break;
@@ -481,7 +481,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_OMEGA: arg #{0} - parameter 1 must be vector", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_OMEGA", i + 1, "vector"));
                             return;
                         }
                         break;
@@ -493,7 +493,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_ANGLE_BEGIN: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_ANGLE_BEGIN", i + 1, "float"));
                             return;
                         }
                         ps.InnerAngle = tempf;
@@ -507,7 +507,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         }
                         catch (InvalidCastException)
                         {
-                            instance.ShoutError(string.Format("Error running rule PSYS_SRC_ANGLE_END: arg #{0} - parameter 1 must be float", i + 1));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "InvalidParameterFor0At1MustBeType2", "Invalid parameter for {0} at index {1}. It must be {2}.", "PSYS_SRC_ANGLE_END", i + 1, "float"));
                             return;
                         }
                         ps.OuterAngle = tempf;
@@ -515,7 +515,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         break;
 
                     default:
-                        instance.ShoutError(string.Format("Error running rule #{0} - unknown rule {1}", i, psystype));
+                        instance.ShoutError(new LocalizedScriptMessage(this, "UnknownTypeParameter1AtIndex0", "Unknown type parameter {1} at index {0}", i, psystype));
                         return;
                 }
 

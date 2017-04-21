@@ -79,7 +79,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
                 
@@ -97,7 +97,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return Vector3.Zero;
                 }
 
@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return Vector3.Zero;
                 }
 
@@ -147,7 +147,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
 
@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = thisGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
 
@@ -196,7 +196,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
 
@@ -367,7 +367,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
 
@@ -383,7 +383,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
 
@@ -399,7 +399,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
                 if (null == physobj)
                 {
-                    instance.ShoutError("Object has no physical properties");
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
 

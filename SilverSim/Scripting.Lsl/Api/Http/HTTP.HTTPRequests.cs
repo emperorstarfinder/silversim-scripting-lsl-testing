@@ -99,7 +99,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         {
                             lock(instance)
                             {
-                                instance.ShoutError("Missing parameter for HTTP_METHOD");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_METHOD"));
                                 return UUID.Zero;
                             }
                         }
@@ -112,7 +112,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         {
                             lock(instance)
                             {
-                                instance.ShoutError("Missing parameter for HTTP_MIMEYPE");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_MIMEYPE"));
                                 return UUID.Zero;
                             }
                         }
@@ -125,7 +125,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         {
                             lock(instance)
                             {
-                                instance.ShoutError("Missing parameter for HTTP_METHOD");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_METHOD"));
                                 return UUID.Zero;
                             }
                         }
@@ -138,7 +138,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         {
                             lock(instance)
                             {
-                                instance.ShoutError("Missing parameter for HTTP_VERIFY_CERT");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_VERIFY_CERT"));
                                 return UUID.Zero;
                             }
                         }
@@ -151,7 +151,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         {
                             lock(instance)
                             {
-                                instance.ShoutError("Missing parameter for HTTP_VERBOSE_THROTTLE");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_VERBOSE_THROTTLE"));
                                 return UUID.Zero;
                             }
                         }
@@ -164,7 +164,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         {
                             lock(instance)
                             {
-                                instance.ShoutError("Missing parameter for HTTP_CUSTOM_HEADER");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_CUSTOM_HEADER"));
                                 return UUID.Zero;
                             }
                         }
@@ -174,7 +174,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 
                         if (!m_AllowedHttpHeaders.Contains(name))
                         {
-                            instance.ShoutError(string.Format("Custom header {0} not allowed", name));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "CustomHeader0NotAllowed", "Custom header {0} not allowed", name));
                             return UUID.Zero;
                         }
                         try
@@ -183,7 +183,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         }
                         catch
                         {
-                            instance.ShoutError(string.Format("Custom header {0} already defined", name));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "CustomHeader0AlreadyDefined", "Custom header {0} already defined", name));
                             return UUID.Zero;
                         }
                         break;
@@ -193,7 +193,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         {
                             lock(instance)
                             {
-                                instance.ShoutError("Missing parameter for HTTP_PRAGMA_NO_CACHE");
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_PRAGMA_NO_CACHE"));
                                 return UUID.Zero;
                             }
                         }
@@ -204,7 +204,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     default:
                         lock(instance)
                         {
-                            instance.ShoutError(string.Format("Unknown parameter {0} for llHTTPRequest", parameters[i].AsInt));
+                            instance.ShoutError(new LocalizedScriptMessage(this, "UnknownParameter0forllHTTPRequest", "Unknown parameter {0} for llHTTPRequest", parameters[i].AsInt));
                             return UUID.Zero;
                         }
                 }
