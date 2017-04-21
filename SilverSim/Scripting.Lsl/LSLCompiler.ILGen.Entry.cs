@@ -441,7 +441,7 @@ namespace SilverSim.Scripting.Lsl
                         Tree expressionTree;
                         try
                         {
-                            expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber);
+                            expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber, compileState.CurrentCulture);
                         }
                         catch (Exception e)
                         {
@@ -971,7 +971,7 @@ namespace SilverSim.Scripting.Lsl
                     Tree expressionTree;
                     try
                     {
-                        expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber);
+                        expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber, compileState.CurrentCulture);
                     }
                     catch (Exception e)
                     {

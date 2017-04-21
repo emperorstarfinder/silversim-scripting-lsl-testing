@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
-            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber);
+            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber, compileState.CurrentCulture);
 
             ProcessExpression(
                 compileState, 
@@ -89,7 +89,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
-            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber);
+            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber, compileState.CurrentCulture);
 
             return ProcessExpressionPart(
                 compileState,
