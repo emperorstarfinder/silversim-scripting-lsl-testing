@@ -575,10 +575,11 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     catch
                     {
-                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
+                        /* no action required */
                     }
                 }
             }
+            throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
         }
 
         [APILevel(APIFlags.LSL, "llGetInventoryType")]

@@ -41,7 +41,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 UUI groupOwner = thisGroup.Owner;
                 if (message.Length > 511)
                 {
-                    throw new LocalizedScriptErrorException(this, "MessageMoreThan511Characters", "Message more than 511 characters")
+                    throw new LocalizedScriptErrorException(this, "MessageMoreThan511Characters", "Message more than 511 characters");
                 }
                 else if(message.Length == 0)
                 {

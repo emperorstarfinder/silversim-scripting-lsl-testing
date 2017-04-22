@@ -39,7 +39,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
-            ev.Type = ListenEvent.ChatType.Shout;
+            ev.Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Shout;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
             ev.OwnerID = GetOwner(instance);
@@ -51,7 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
-            ev.Type = ListenEvent.ChatType.Say;
+            ev.Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Say;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
             ev.OwnerID = GetOwner(instance);
@@ -63,7 +63,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
-            ev.Type = ListenEvent.ChatType.Whisper;
+            ev.Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Whisper;
             ev.Message = message;
             ev.SourceType = ListenEvent.ChatSourceType.Object;
             ev.OwnerID = GetOwner(instance);
@@ -92,7 +92,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             if (channel != PUBLIC_CHANNEL)
             {
                 ListenEvent ev = new ListenEvent();
-                ev.Type = ListenEvent.ChatType.Region;
+                ev.Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Region;
                 ev.Channel = channel;
                 ev.Message = message;
                 ev.OwnerID = GetOwner(instance);
@@ -106,7 +106,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = channel;
-            ev.Type = ListenEvent.ChatType.Region;
+            ev.Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Region;
             ev.Message = message;
             ev.TargetID = target;
             ev.OwnerID = GetOwner(instance);
