@@ -1285,7 +1285,7 @@ namespace SilverSim.Scripting.Lsl
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = 0x7FFFFFFF; /* DEBUG_CHANNEL */
-            ev.Type = ListenEvent.ChatType.Region;
+            ev.Type = ListenEvent.ChatType.DebugChannel;
             ChatServiceInterface chatService;
             lock (m_Lock)
             {
