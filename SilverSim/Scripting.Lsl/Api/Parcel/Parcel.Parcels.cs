@@ -415,7 +415,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                             case PARCEL_DETAILS_OWNER:
                                 if(!scene.AvatarNameService.TryGetValue(rules[idx++].AsUUID, out agentId))
                                 {
-                                    throw new ArgumentException("PARCEL_DETAILS_OWNER parameter does not resolve to an agent");
+                                    throw new LocalizedScriptErrorException(this, "Parameter0Parameter1DoesNotResolveToAnAgent", "{0} parameter '{1}' does not resolve to an agent", "PARCEL_DETAILS_OWNER", rules[idx++].ToString());
                                 }
                                 pInfo.Owner = agentId;
                                 break;
@@ -423,7 +423,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                             case PARCEL_DETAILS_GROUP:
                                 if(!scene.GroupsNameService.TryGetValue(rules[idx++].AsUUID, out groupId))
                                 {
-                                    throw new ArgumentException("PARCEL_DETAILS_GROUP parameter does not resolve to a group");
+                                    throw new LocalizedScriptErrorException(this, "Parameter0Parameter1DoesNotResolveToAnAgent", "{0} parameter '{1}' does not resolve to an agent", "PARCEL_DETAILS_GROUP", rules[idx++].ToString());
                                 }
                                 pInfo.Group = groupId;
                                 break;
@@ -433,7 +433,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                                 break;
 
                             default:
-                                throw new ArgumentException(string.Format("osSetParcelDetails: Unknown parameter type {0}", type));
+                                throw new LocalizedScriptErrorException(this, "OsSetParcelDetailsUnknownParameterType0", "osSetParcelDetails: Unknown parameter type {0}", type);
                         }
                     }
                     if(parcelDataChanged)

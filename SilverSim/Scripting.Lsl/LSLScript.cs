@@ -896,7 +896,7 @@ namespace SilverSim.Scripting.Lsl
                     methodName = apiLevel.Name;
                 }
 
-                StringBuilder funcSignature = new StringBuilder("Script called unimplemented function " + methodName + "(");
+                StringBuilder funcSignature = new StringBuilder(methodName + "(");
 
                 ParameterInfo[] pi = mb.GetParameters();
                 for (int i = 1; i < pi.Length; ++i)
@@ -909,7 +909,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 funcSignature.Append(")");
 
-                ShoutError(funcSignature.ToString());
+                ShoutError(new LocalizedScriptMessage(apiLevel, "ScriptCalledUnimplementedFunction0", "Script called unimplemented function {0}", funcSignature.ToString()));
             }
         }
 
@@ -1015,6 +1015,10 @@ namespace SilverSim.Scripting.Lsl
                         LogInvokeException("state_exit", e);
                     }
                 }
+                catch(LocalizedScriptErrorException e)
+                {
+                    ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
+                }
                 finally
                 {
                     if (executedStateExit)
@@ -1107,6 +1111,10 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
+                catch (LocalizedScriptErrorException e)
+                {
+                    ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
+                }
                 finally
                 {
                     if (executedStateEntry)
@@ -1193,6 +1201,10 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
+                catch (LocalizedScriptErrorException e)
+                {
+                    ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
+                }
                 finally
                 {
                     if (eventExecuted)
@@ -1248,7 +1260,7 @@ namespace SilverSim.Scripting.Lsl
         {
             ListenEvent ev = new ListenEvent();
             ev.Channel = 0x7FFFFFFF; /* DEBUG_CHANNEL */
-            ev.Type = ListenEvent.ChatType.Region;
+            ev.Type = ListenEvent.ChatType.DebugChannel;
             ChatServiceInterface chatService;
             lock (m_Lock)
             {

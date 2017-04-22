@@ -254,7 +254,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             break;
 
                         default:
-                            throw new ArgumentException(string.Format("Unknown media parameter {0}", iv.ToString()));
+                            throw new LocalizedScriptErrorException(this, "UnknownMediaParameter0", "Unknown media parameter {0}", iv.ToString());
                     }
                 }
                 return res;

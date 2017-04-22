@@ -98,7 +98,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                     }
                 }
             }
-            throw new ArgumentException(string.Format("Could not store notecard with name {0}", notecardName));
+            throw new LocalizedScriptErrorException(this, "CouldNotStoreNotecardWithName0", "Could not store notecard with name {0}", notecardName);
         }
         #endregion
 

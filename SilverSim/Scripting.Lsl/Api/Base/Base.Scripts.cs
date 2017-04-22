@@ -85,11 +85,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
                     {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a script", name));
+                        throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", name);
                     }
                     else if (null == si)
                     {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a compiled script", name));
+                        throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotACompiledScript", "{0}: Inventory item {1} is not a compiled script.", "llResetOtherScript", name);
                     }
                     else
                     {
@@ -98,7 +98,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 else
                 {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
+                    throw new LocalizedScriptErrorException(this, "Function0Script1DoesNotExist", "{0}: Script {1} does not exist", "llResetOtherScript", name);
                 }
             }
         }
@@ -115,11 +115,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
                     {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a script", script));
+                        throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", script);
                     }
                     else if (null == si)
                     {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a compiled script", script));
+                        throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotACompiledScript", "{0}: Inventory item {1} is not a compiled script.", "llResetOtherScript", script);
                     }
                     else
                     {
@@ -128,7 +128,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 else
                 {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", script));
+                    throw new LocalizedScriptErrorException(this, "Function0Script1DoesNotExist", "{0}: Script {1} does not exist", "llResetOtherScript", script);
                 }
             }
         }
@@ -145,11 +145,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     si = item.ScriptInstance;
                     if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
                     {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a script", script));
+                        throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", script);
                     }
                     else if (null == si)
                     {
-                        throw new ArgumentException(string.Format("Inventory item {0} is not a compiled script", script));
+                        throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotACompiledScript", "{0}: Inventory item {1} is not a compiled script.", "llResetOtherScript", script);
                     }
                     else
                     {
@@ -158,7 +158,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 else
                 {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", script));
+                    throw new LocalizedScriptErrorException(this, "Function0Script1DoesNotExist", "{0}: Script {1} does not exist", "llResetOtherScript", script);
                 }
             }
         }

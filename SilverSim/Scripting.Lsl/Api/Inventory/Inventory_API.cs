@@ -438,7 +438,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     catch
                     {
-                        throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
+                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
                     }
                 }
             }
@@ -483,10 +483,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     catch
                     {
-                        /* no action required */
+                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
                     }
                 }
-                throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
             }
         }
 
@@ -529,7 +528,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 catch
                 {
-                    throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
+                    throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
                 }
             }
         }
@@ -576,10 +575,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     catch
                     {
-                        /* no action required */
+                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
                     }
                 }
-                throw new ArgumentException(string.Format("Inventory item {0} does not exist", name));
             }
         }
 

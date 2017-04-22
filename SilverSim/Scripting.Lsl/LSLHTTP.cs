@@ -501,7 +501,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
                 {
-                    throw new InvalidOperationException("Too many URLs");
+                    throw new LocalizedScriptErrorException(this, "TooManyUrls", "Too many URLs");
                 }
                 newid = UUID.Random;
                 m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false, allowXss));
@@ -513,13 +513,13 @@ namespace SilverSim.Scripting.Lsl
         {
             if(!IsValidNamedURL(name))
             {
-                throw new InvalidOperationException("Invalid name for predefined name");
+                throw new LocalizedScriptErrorException(this, "InvalidNameForPredefinedName", "Invalid name for predefined name");
             }
             lock(m_ReqUrlLock)
             {
                 if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
                 {
-                    throw new InvalidOperationException("Too many URLs");
+                    throw new LocalizedScriptErrorException(this, "TooManyUrls", "Too many URLs");
                 }
                 m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, false, allowXss);
             }
@@ -530,14 +530,14 @@ namespace SilverSim.Scripting.Lsl
         {
             if(null == m_HttpsServer)
             {
-                throw new InvalidOperationException("No HTTPS support");
+                throw new LocalizedScriptErrorException(this, "NoHTTPSSupport", "No HTTPS support");
             }
             UUID newid;
             lock(m_ReqUrlLock)
             {
                 if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
                 {
-                    throw new InvalidOperationException("Too many URLs");
+                    throw new LocalizedScriptErrorException(this, "TooManyUrls", "Too many URLs");
                 }
                 newid = UUID.Random;
                 m_UrlMap.Add(newid, new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true, allowXss));
@@ -549,17 +549,17 @@ namespace SilverSim.Scripting.Lsl
         {
             if (!IsValidNamedURL(name))
             {
-                throw new InvalidOperationException("Invalid name for predefined name");
+                throw new LocalizedScriptErrorException(this, "InvalidNameForPredefinedName", "Invalid name for predefined name");
             }
             if (null == m_HttpsServer)
             {
-                throw new InvalidOperationException("No HTTPS support");
+                throw new LocalizedScriptErrorException(this, "NoHTTPSSupport", "No HTTPS support");
             }
             lock (m_ReqUrlLock)
             {
                 if (m_UrlMap.Count + m_NamedUrlMap.Count >= m_TotalUrls)
                 {
-                    throw new InvalidOperationException("Too many URLs");
+                    throw new LocalizedScriptErrorException(this, "TooManyUrls", "Too many URLs");
                 }
                 m_NamedUrlMap[name] = new URLData(part.ObjectGroup.Scene.ID, part.ID, item.ID, true, allowXss);
             }

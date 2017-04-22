@@ -352,7 +352,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (i.InventoryType != Types.Inventory.InventoryType.Animation)
                     {
-                        throw new InvalidOperationException(string.Format("Inventory item {0} is not an animation", item));
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotAnAnimation", "Inventory item {0} is not an animation", item);
                     }
                     else
                     {
@@ -363,7 +363,7 @@ namespace SilverSim.Scripting.Lsl
 
                 if (checkViewerBuiltin && !m_InternalAnimations.TryGetValue(item, out assetID))
                 {
-                    throw new InvalidOperationException(string.Format("Inventory item {0} not found", item));
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
                 }
             }
             return assetID;
@@ -380,12 +380,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (i.InventoryType != Types.Inventory.InventoryType.Landmark)
                     {
-                        throw new InvalidOperationException(string.Format("Inventory item {0} is not a landmark", item));
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotALandmark", "Inventory item {0} is not a landmark", item);
                     }
                 }
                 else
                 {
-                    throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
                 }
                 assetID = i.AssetID;
             }
@@ -403,12 +403,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (i.InventoryType != Types.Inventory.InventoryType.Notecard)
                     {
-                        throw new InvalidOperationException(string.Format("Inventory item {0} is not a notecard", item));
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotANotecard", "Inventory item {0} is not a notecard", item);
                     }
                 }
                 else
                 {
-                    throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
                 }
                 assetID = i.AssetID;
             }
@@ -428,12 +428,12 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (i.InventoryType != Types.Inventory.InventoryType.Sound)
                         {
-                            throw new InvalidOperationException(string.Format("Inventory item {0} is not a sound", item));
+                            throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotASound", "Inventory item {0} is not a sound", item);
                         }
                     }
                     else
                     {
-                        throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
                     }
                     assetID = i.AssetID;
                 }
@@ -454,13 +454,13 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (i.InventoryType != Types.Inventory.InventoryType.Texture)
                         {
-                            throw new InvalidOperationException(string.Format("Inventory item {0} is not a texture", item));
+                            throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotATexture", "Inventory item {0} is not a texture", item);
                         }
                         assetID = i.AssetID;
                     }
                     else
                     {
-                        throw new InvalidOperationException(string.Format("{0} not found in prim's inventory", item));
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
                     }
                 }
             }

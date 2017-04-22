@@ -408,7 +408,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
         {
             if(rules.Count % 2 != 0)
             {
-                throw new ArgumentException("rules list to " + functionName + " must have an even number of parameters.");
+                throw new LocalizedScriptErrorException(this, "RulesListTo0MustHaveAnEvenNumberOfParameters", "rules list to {0} must have an even number of parameters.", functionName);
             }
 
             int idx = 0;
@@ -423,7 +423,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch(InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_WATER_COLOR");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_WATER_COLOR");
                         }
                         break;
 
@@ -434,7 +434,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch(InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_WATER_FOG_DENSITY_EXPONENT");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_WATER_FOG_DENSITY_EXPONENT");
                         }
                         break;
 
@@ -445,7 +445,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_UNDERWATER_FOG_MODIFIER");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_UNDERWATER_FOG_MODIFIER");
                         }
                         break;
 
@@ -456,7 +456,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_REFLECTION_WAVELET_SCALE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_REFLECTION_WAVELET_SCALE");
                         }
                         break;
 
@@ -467,7 +467,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_FRESNEL_SCALE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_FRESNEL_SCALE");
                         }
                         break;
 
@@ -478,7 +478,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_FRESNEL_OFFSET");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_FRESNEL_OFFSET");
                         }
                         break;
 
@@ -489,7 +489,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_REFRACT_SCALE_ABOVE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_REFRACT_SCALE_ABOVE");
                         }
                         break;
 
@@ -500,7 +500,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_REFRACT_SCALE_BELOW");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_REFRACT_SCALE_BELOW");
                         }
                         break;
 
@@ -511,7 +511,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_BLUR_MULTIPLIER");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_BLUR_MULTIPLIER");
                         }
                         break;
 
@@ -522,7 +522,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_BIG_WAVE_DIRECTION");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_BIG_WAVE_DIRECTION");
                         }
                         break;
 
@@ -533,7 +533,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_LITTLE_WAVE_DIRECTION");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_LITTLE_WAVE_DIRECTION");
                         }
                         break;
 
@@ -544,7 +544,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_NORMAL_MAP_TEXTURE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_NORMAL_MAP_TEXTURE");
                         }
                         break;
 
@@ -555,7 +555,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_HORIZON");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_HORIZON");
                         }
                         break;
 
@@ -566,7 +566,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_HAZE_HORIZON");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_HAZE_HORIZON");
                         }
                         break;
 
@@ -577,7 +577,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_BLUE_DENSITY");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_BLUE_DENSITY");
                         }
                         break;
 
@@ -588,7 +588,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_HAZE_DENSITY");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_HAZE_DENSITY");
                         }
                         break;
 
@@ -599,7 +599,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_DENSITY_MULTIPLIER");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_DENSITY_MULTIPLIER");
                         }
                         break;
 
@@ -610,7 +610,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_DISTANCE_MULTIPLIER");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_DISTANCE_MULTIPLIER");
                         }
                         break;
 
@@ -621,7 +621,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_MAX_ALTITUDE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_MAX_ALTITUDE");
                         }
                         break;
 
@@ -632,7 +632,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_SUN_MOON_COLOR");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_SUN_MOON_COLOR");
                         }
                         break;
 
@@ -643,7 +643,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_AMBIENT");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_AMBIENT");
                         }
                         break;
 
@@ -654,7 +654,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_EAST_ANGLE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_EAST_ANGLE");
                         }
                         break;
 
@@ -665,7 +665,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_SUN_GLOW_FOCUS");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_SUN_GLOW_FOCUS");
                         }
                         break;
 
@@ -676,7 +676,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_SUN_GLOW_SIZE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_SUN_GLOW_SIZE");
                         }
                         break;
 
@@ -687,7 +687,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_SCENE_GAMMA");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_SCENE_GAMMA");
                         }
                         break;
 
@@ -698,7 +698,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_STAR_BRIGHTNESS");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_STAR_BRIGHTNESS");
                         }
                         break;
 
@@ -709,7 +709,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_COLOR");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_COLOR");
                         }
                         break;
 
@@ -720,7 +720,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_XY_DENSITY");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_XY_DENSITY");
                         }
                         break;
 
@@ -731,7 +731,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_COVERAGE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_COVERAGE");
                         }
                         break;
 
@@ -742,7 +742,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_SCALE");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_SCALE");
                         }
                         break;
 
@@ -753,7 +753,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_DETAIL_XY_DENSITY");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_DETAIL_XY_DENSITY");
                         }
                         break;
 
@@ -764,7 +764,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_SCROLL_X");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_SCROLL_X");
                         }
                         break;
 
@@ -775,7 +775,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_SCROLL_Y");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_SCROLL_Y");
                         }
                         break;
 
@@ -786,7 +786,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_SCROLL_X_LOCK");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_SCROLL_X_LOCK");
                         }
                         break;
 
@@ -797,7 +797,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_CLOUD_SCROLL_Y_LOCK");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_CLOUD_SCROLL_Y_LOCK");
                         }
                         break;
 
@@ -808,7 +808,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_DRAW_CLASSIC_CLOUDS");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_DRAW_CLASSIC_CLOUDS");
                         }
                         break;
 
@@ -819,12 +819,12 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
                         }
                         catch (InvalidCastException)
                         {
-                            throw new ArgumentException(functionName + ": Invalid parameter to WL_SUN_MOON_POSITION");
+                            throw new LocalizedScriptErrorException(this, "Function0InvalidParameterTo1", "{0}: Invalid parameter to {1}", functionName, "WL_SUN_MOON_POSITION");
                         }
                         break;
 
                     default:
-                        throw new ArgumentException(functionName + ": Invalid parameter " + rules[idx - 1].ToString());
+                        throw new LocalizedScriptErrorException(this, "Function0InvalidParameter1", "{0}: Invalid parameter {1}", functionName, rules[idx - 1].ToString());
                 }
             }
         }

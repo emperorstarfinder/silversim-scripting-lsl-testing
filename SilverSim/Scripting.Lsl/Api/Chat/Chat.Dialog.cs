@@ -41,19 +41,19 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 UUI groupOwner = thisGroup.Owner;
                 if (message.Length > 511)
                 {
-                    throw new ArgumentException("Message more than 511 characters");
+                    throw new LocalizedScriptErrorException(this, "MessageMoreThan511Characters", "Message more than 511 characters")
                 }
                 else if(message.Length == 0)
                 {
-                    throw new ArgumentException("Message is empty");
+                    throw new LocalizedScriptErrorException(this, "MessageIsEmpty", "Message is empty");
                 }
                 else if(buttons.Count > 12)
                 {
-                    throw new ArgumentException("Too many buttons");
+                    throw new LocalizedScriptErrorException(this, "TooManyButtons", "Too many buttons");
                 }
                 else if(buttons.Count == 0)
                 {
-                    throw new ArgumentException("At least one button must be defined");
+                    throw new LocalizedScriptErrorException(this, "AtLeastOneButtonMustBeDefined", "At least one button must be defined");
                 }
                 SilverSim.Viewer.Messages.Script.ScriptDialog m = new SilverSim.Viewer.Messages.Script.ScriptDialog();
                 m.Message = message.Substring(0, 256);
@@ -68,7 +68,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     string buttontext = buttons[c].ToString();
                     if (buttontext.Length == 0)
                     {
-                        throw new ArgumentException("button label cannot be blank");
+                        throw new LocalizedScriptErrorException(this, "ButtonLabelCannotBeBlank", "button label cannot be blank");
                     }
                     else if (buttontext.Length > 24)
                     {
