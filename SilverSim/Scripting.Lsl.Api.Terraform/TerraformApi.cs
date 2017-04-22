@@ -107,7 +107,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if (x < 0 || y < 0 || x >= scene.SizeX || y >= scene.SizeY)
                 {
-                    throw new ArgumentException("Coordinate out of bounds");
+                    throw new LocalizedScriptErrorException(this, "CoordinateOutOfBounds", "Coordinate out of bounds");
                 }
                 return instance.Part.ObjectGroup.Scene.Terrain[(uint)x, (uint)y];
             }
@@ -122,7 +122,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                 SceneInterface scene = grp.Scene;
                 if (x < 0 || y < 0 || x >= scene.SizeX || y >= scene.SizeY)
                 {
-                    throw new ArgumentException("Coordinate out of bounds");
+                    throw new LocalizedScriptErrorException(this, "CoordinateOutOfBounds", "Coordinate out of bounds");
                 }
                 if (scene.CanTerraform(grp.Owner, new Vector3(x, y, 0)))
                 {

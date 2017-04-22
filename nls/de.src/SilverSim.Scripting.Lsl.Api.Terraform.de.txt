@@ -1,0 +1,1 @@
+CoordinateOutOfBounds=Koordinaten ausserhalb der Region.

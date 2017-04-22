@@ -12,5 +12,7 @@
 	</dependencies>
 	<files>
 		<file name="bin/plugins/SilverSim.Scripting.Lsl.Api.Terraform.dll"/>
+		<file name="bin/languages/en/SilverSim.Scripting.Lsl.Api.Terraform.en.resources"/>
+		<file name="bin/languages/de/SilverSim.Scripting.Lsl.Api.Terraform.de.resources"/>
 	</files>
 </package>
