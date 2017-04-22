@@ -803,7 +803,8 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (innerType == typeof(ChangeStateException) ||
                         innerType == typeof(ResetScriptException) ||
-                        innerType == typeof(LocalizedScriptErrorException))
+                        innerType == typeof(LocalizedScriptErrorException) ||
+                        innerType == typeof(DivideByZeroException))
                     {
                         throw e.InnerException;
                     }
@@ -1011,6 +1012,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
                 }
+                catch(DivideByZeroException)
+                {
+                    ShoutError(new LocalizedScriptMessage(this, "DivisionByZeroEncountered", "Division by zero encountered"));
+                }
                 finally
                 {
                     if (executedStateExit)
@@ -1081,6 +1086,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
                 }
+                catch (DivideByZeroException)
+                {
+                    ShoutError(new LocalizedScriptMessage(this, "DivisionByZeroEncountered", "Division by zero encountered"));
+                }
                 finally
                 {
                     if (executedStateEntry)
@@ -1144,6 +1153,10 @@ namespace SilverSim.Scripting.Lsl
                 catch (LocalizedScriptErrorException e)
                 {
                     ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
+                }
+                catch (DivideByZeroException)
+                {
+                    ShoutError(new LocalizedScriptMessage(this, "DivisionByZeroEncountered", "Division by zero encountered"));
                 }
                 finally
                 {
