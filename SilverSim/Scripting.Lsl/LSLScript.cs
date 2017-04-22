@@ -796,10 +796,16 @@ namespace SilverSim.Scripting.Lsl
                 catch (TargetInvocationException e)
                 {
                     Type innerType = e.InnerException.GetType();
-                    if (innerType == typeof(ChangeStateException) ||
-                        innerType == typeof(ResetScriptException))
+                    if(innerType == typeof(NotImplementedException))
                     {
-                        throw;
+                        ShoutUnimplementedException(e.InnerException as NotImplementedException);
+                        return;
+                    }
+                    else if (innerType == typeof(ChangeStateException) ||
+                        innerType == typeof(ResetScriptException) ||
+                        innerType == typeof(LocalizedScriptErrorException))
+                    {
+                        throw e.InnerException;
                     }
                     LogInvokeException(name, e);
                     ShoutError(e.Message);
@@ -1001,20 +1007,6 @@ namespace SilverSim.Scripting.Lsl
                     ShoutError(new LocalizedScriptMessage(e, "ScriptErrorStateChangeUsedInStateExit", "Script error! state change used in state_exit"));
                     LogInvokeException("state_exit", e);
                 }
-                catch (TargetInvocationException e)
-                {
-                    Type eType = e.InnerException.GetType();
-                    if (eType == typeof(ResetScriptEvent))
-                    {
-                        executeScriptReset = true;
-                        continue;
-                    }
-                    else if (eType == typeof(ChangeStateException))
-                    {
-                        ShoutError(new LocalizedScriptMessage(e.InnerException, "ScriptErrorStateChangeUsedInStateExit", "Script error! state change used in state_exit"));
-                        LogInvokeException("state_exit", e);
-                    }
-                }
                 catch(LocalizedScriptErrorException e)
                 {
                     ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
@@ -1085,32 +1077,6 @@ namespace SilverSim.Scripting.Lsl
                         continue;
                     }
                 }
-                catch(TargetInvocationException e)
-                {
-                    Type eType = e.InnerException.GetType();
-                    if (eType == typeof(ResetScriptEvent))
-                    {
-                        executeScriptReset = true;
-                        continue;
-                    }
-                    else if (eType == typeof(ChangeStateException))
-                    {
-                        ChangeStateException innerException = (ChangeStateException)e.InnerException;
-                        if (m_CurrentState != m_States[innerException.NewState])
-                        {
-                            /* if state is equal, it simply aborts the event execution */
-                            newState = m_States[innerException.NewState];
-                            executeStateExit = true;
-                            executeStateEntry = true;
-
-                            lock (this) /* really needed to prevent aborting here */
-                            {
-                                m_TransactionedState.UpdateFromScript(this);
-                            }
-                            continue;
-                        }
-                    }
-                }
                 catch (LocalizedScriptErrorException e)
                 {
                     ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
@@ -1173,32 +1139,6 @@ namespace SilverSim.Scripting.Lsl
                         newState = m_States[e.NewState];
                         executeStateExit = true;
                         executeStateEntry = true;
-                    }
-                }
-                catch (TargetInvocationException e)
-                {
-                    Type eType = e.InnerException.GetType();
-                    if (eType == typeof(ResetScriptEvent))
-                    {
-                        executeScriptReset = true;
-                        continue;
-                    }
-                    else if (eType == typeof(ChangeStateException))
-                    {
-                        ChangeStateException innerException = (ChangeStateException)e.InnerException;
-                        if (m_CurrentState != m_States[innerException.NewState])
-                        {
-                            /* if state is equal, it simply aborts the event execution */
-                            newState = m_States[innerException.NewState];
-                            executeStateExit = true;
-                            executeStateEntry = true;
-
-                            lock (this) /* really needed to prevent aborting here */
-                            {
-                                m_TransactionedState.UpdateFromScript(this);
-                            }
-                            continue;
-                        }
                     }
                 }
                 catch (LocalizedScriptErrorException e)
@@ -1273,8 +1213,12 @@ namespace SilverSim.Scripting.Lsl
                 ev.ID = objGroup.ID;
                 ev.Name = objGroup.Name;
                 ev.Localization = new AtRegionMessageLocalization(null, objGroup.Scene.Name);
+                ev.Message = ev.Localization.Localize(ev, null);
                 chatService = objGroup.Scene.GetService<ChatServiceInterface>();
             }
+#if DEBUG
+            m_Log.DebugFormat("Sending message to DEBUG_CHANNEL for {1} at {2}: {0}", ev.Message, ev.Name, ev.GlobalPosition.ToString());
+#endif
             if (null != chatService)
             {
                 chatService.Send(ev);
@@ -1300,6 +1244,9 @@ namespace SilverSim.Scripting.Lsl
                 ev.Message = ev.Localization.Localize(ev, null);
                 chatService = objGroup.Scene.GetService<ChatServiceInterface>();
             }
+#if DEBUG
+            m_Log.DebugFormat("Sending localized message to DEBUG_CHANNEL for {1} at {2}: {0}", ev.Message, ev.Name, ev.GlobalPosition.ToString());
+#endif
             if (null != chatService)
             {
                 chatService.Send(ev);

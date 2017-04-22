@@ -760,6 +760,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 UUID id = destination.AsUUID;
                 UUI targetAgentId;
                 AnArray array = new AnArray();
+                InventoryServiceInterface inventoryService;
+                AssetServiceInterface assetService;
                 array.Add(inventory);
 
                 if (scene.Primitives.TryGetValue(id, out targetPart))
@@ -779,23 +781,19 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         array,
                         false);
                 }
-                else if(scene.AvatarNameService.TryGetValue(id, out targetAgentId))
+                else if(scene.AvatarNameService.TryGetValue(id, out targetAgentId) &&
+                    TryGetServices(targetAgentId, out inventoryService, out assetService))
                 {
-                    InventoryServiceInterface inventoryService;
-                    AssetServiceInterface assetService;
-                    if (TryGetServices(targetAgentId, out inventoryService, out assetService))
-                    {
-                        GiveInventoryToAgent(
-                            instance,
-                            targetAgentId,
-                            inventoryService,
-                            assetService,
-                            scene,
-                            instance.Part,
-                            string.Empty,
-                            array,
-                            false);
-                    }
+                    GiveInventoryToAgent(
+                        instance,
+                        targetAgentId,
+                        inventoryService,
+                        assetService,
+                        scene,
+                        instance.Part,
+                        string.Empty,
+                        array,
+                        false);
                 }
                 else
                 {
@@ -815,6 +813,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 UUID id = destination.AsUUID;
                 UUI targetAgentId;
                 AnArray array = new AnArray();
+                InventoryServiceInterface inventoryService;
+                AssetServiceInterface assetService;
                 array.Add(inventory);
 
                 if (scene.Primitives.TryGetValue(id, out targetPart))
@@ -834,23 +834,19 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         array,
                         true);
                 }
-                else if (scene.AvatarNameService.TryGetValue(id, out targetAgentId))
-                {
-                    InventoryServiceInterface inventoryService;
-                    AssetServiceInterface assetService;
-                    if (TryGetServices(targetAgentId, out inventoryService, out assetService))
-                    {
-                        GiveInventoryToAgent(
-                            instance,
-                            targetAgentId,
-                            inventoryService,
-                            assetService,
-                            scene,
-                            instance.Part,
-                            folder,
-                            array,
-                            true);
-                    }
+                else if (scene.AvatarNameService.TryGetValue(id, out targetAgentId) &&
+                    TryGetServices(targetAgentId, out inventoryService, out assetService))
+                { 
+                    GiveInventoryToAgent(
+                        instance,
+                        targetAgentId,
+                        inventoryService,
+                        assetService,
+                        scene,
+                        instance.Part,
+                        folder,
+                        array,
+                        true);
                 }
                 else
                 {
