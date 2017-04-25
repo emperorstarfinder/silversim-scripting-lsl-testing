@@ -1,6 +1,6 @@
 osGroupInviteMessage={0} has invited you to join a group called {1}. There is no cost to join this group.
 PrematureEndOfScript=Premature end of script
-MissingQuoteAtTheEndOfScript=Missing '\"' at the end of string
+MissingQuoteAtTheEndOfScript=Missing '"' at the end of string
 State0DoesNotHaveAnyEvents=State '{0}' does not have any events.
 Event0AlreadyDefined=Event '{0}' already defined
 Param0DoesNotMatchInParameterTypes='{0}' does not match in parameter types.
