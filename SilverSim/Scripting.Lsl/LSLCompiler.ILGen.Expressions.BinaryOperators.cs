@@ -738,12 +738,17 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                             }
+                            else if(typeof(Vector3) == m_RightHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddVector3ToList"));
+                            }
+                            else if (typeof(Quaternion) == m_RightHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddQuaternionToList"));
+                            }
                             else
                             {
-                                LocalBuilder lb = compileState.ILGen.DeclareLocal(m_RightHandType);
-                                compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                                compileState.ILGen.Emit(OpCodes.Ldloca, lb);
-                                compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
+                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", m_RightHandType.FullName));
                             }
                             throw Return(compileState, typeof(AnArray));
                         }

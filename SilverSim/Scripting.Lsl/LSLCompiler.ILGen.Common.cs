@@ -671,15 +671,26 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                     compileState.ILGen.EndScope();
                 }
-                else if (fromType == typeof(Vector3) || fromType == typeof(Quaternion))
+                else if (fromType == typeof(Vector3))
                 {
                     compileState.ILGen.BeginScope();
-                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(typeof(Vector3));
                     compileState.ILGen.Emit(OpCodes.Stloc, lb);
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Dup);
                     compileState.ILGen.Emit(OpCodes.Ldloc, lb);
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] {typeof(IValue) }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddVector3ToList"));
+                    compileState.ILGen.EndScope();
+                }
+                else if (fromType == typeof(Quaternion))
+                {
+                    compileState.ILGen.BeginScope();
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(typeof(Quaternion));
+                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Dup);
+                    compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddQuaternionToList"));
                     compileState.ILGen.EndScope();
                 }
                 else
