@@ -30,6 +30,16 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
+        public static void AddVector3ToList(AnArray array, Vector3 v)
+        {
+            array.Add(v);
+        }
+
+        public static void AddQuaternionToList(AnArray array, Quaternion q)
+        {
+            array.Add(q);
+        }
+
         sealed class ListExpression : IExpressionStackElement
         {
             readonly LocalBuilder m_NewList;
@@ -83,12 +93,15 @@ namespace SilverSim.Scripting.Lsl
                     {
                         compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
                     }
-                    else if( innerExpressionReturn == typeof(Vector3) || innerExpressionReturn == typeof(Quaternion))
+                    else if (innerExpressionReturn == typeof(Vector3))
                     {
                         LocalBuilder lb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
-                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                        compileState.ILGen.Emit(OpCodes.Ldloca, lb);
-                        compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddVector3ToList"));
+                    }
+                    else if (innerExpressionReturn == typeof(Quaternion))
+                    {
+                        LocalBuilder lb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddQuaternionToList"));
                     }
                     else if (innerExpressionReturn == typeof(AnArray))
                     {
