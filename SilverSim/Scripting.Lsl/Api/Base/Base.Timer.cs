@@ -76,5 +76,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
         }
+
+        [ExecutedOnStateChange]
+        [ExecutedOnScriptRemove]
+        public static void StopTimer(ScriptInstance instance)
+        {
+            Script script = (Script)instance;
+            lock (script)
+            {
+                script.SetTimerEvent(0);
+            }
+        }
+
     }
 }
