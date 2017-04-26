@@ -605,6 +605,7 @@ namespace SilverSim.Scripting.Lsl
 
         public override void Remove()
         {
+            Timer.Stop();
             Timer.Elapsed -= OnTimerEvent;
             m_Part.OnUpdate -= OnPrimUpdate;
             m_Part.OnPositionChange -= OnPrimPositionUpdate;
