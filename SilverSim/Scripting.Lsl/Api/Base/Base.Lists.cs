@@ -286,7 +286,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
 
-            return src[index].AsReal;
+            try
+            {
+                return src[index].AsReal;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llListInsertList")]
