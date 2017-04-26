@@ -30,31 +30,29 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock(instance)
             {
-                instance.ExecutionTime = 0;
+                Script script = (Script)instance;
+                script.GetAndResetTime();
             }
         }
 
         [APILevel(APIFlags.LSL, "llGetTime")]
         public double GetTime(ScriptInstance instance)
         {
-            double v;
             lock (instance)
             {
-                v = instance.ExecutionTime;
+                Script script = (Script)instance;
+                return script.GetTime() / 1000f;
             }
-            return v;
         }
 
         [APILevel(APIFlags.LSL, "llGetAndResetTime")]
         public double GetAndResetTime(ScriptInstance instance)
         {
-            double old;
             lock(instance)
             {
-                old = instance.ExecutionTime;
-                instance.ExecutionTime = 0;
+                Script script = (Script)instance;
+                return script.GetAndResetTime() / 1000f;
             }
-            return old;
         }
     }
 }

@@ -71,6 +71,27 @@ namespace SilverSim.Scripting.Lsl
         static internal readonly Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
         readonly object m_Lock = new object();
 
+        int m_ExecutionStartedAt = Environment.TickCount;
+
+        public uint GetAndResetTime()
+        {
+            lock (m_Lock)
+            {
+                int newtick = Environment.TickCount;
+                int oldvalue = m_ExecutionStartedAt;
+                m_ExecutionStartedAt = newtick;
+                return (uint)newtick - (uint)oldvalue;
+            }
+        }
+
+        public uint GetTime()
+        {
+            lock(m_Lock)
+            {
+                return (uint)Environment.TickCount - (uint)m_ExecutionStartedAt;
+            }
+        }
+
         bool m_HasTouchEvent;
         bool m_HasMoneyEvent;
         bool m_HaveQueuedTimerEvent;
