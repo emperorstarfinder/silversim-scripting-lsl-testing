@@ -398,7 +398,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else
             {
-                return src[index].AsInteger;
+                try
+                {
+                    return src[index].AsInteger;
+                }
+                catch
+                {
+                    return 0;
+                }
             }
         }
 
@@ -441,7 +448,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return Quaternion.Identity;
             }
 
-            return src[index].AsQuaternion;
+            try
+            {
+                return src[index].AsQuaternion;
+            }
+            catch
+            {
+                return Quaternion.Identity;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llList2String")]
@@ -483,7 +497,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return Vector3.Zero;
             }
 
-            return src[index].AsVector3;
+            try
+            {
+                return src[index].AsVector3;
+            }
+            catch
+            {
+                return Vector3.Zero;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llDumpList2String")]
