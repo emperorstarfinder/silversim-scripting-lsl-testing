@@ -178,7 +178,7 @@ namespace SilverSim.Scripting.Lsl
         {
             AnArray res = new AnArray();
             res.AddRange(src);
-            res.Add(key);
+            res.Add((IValue)key);
             return res;
         }
 
