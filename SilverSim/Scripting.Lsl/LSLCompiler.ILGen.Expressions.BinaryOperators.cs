@@ -511,7 +511,7 @@ namespace SilverSim.Scripting.Lsl
                     case "+=":
                         if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType)
                         {
-                            compileState.ILGen.Emit(OpCodes.Sub);
+                            compileState.ILGen.Emit(OpCodes.Add);
                             break;
                         }
                         if(typeof(string) == m_LeftHandType && typeof(string) == m_RightHandType)

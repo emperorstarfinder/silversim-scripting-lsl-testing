@@ -176,8 +176,10 @@ namespace SilverSim.Scripting.Lsl
 
         public static AnArray AddKeyToList(AnArray src, LSLKey key)
         {
-            src.Add(key);
-            return src;
+            AnArray res = new AnArray();
+            res.AddRange(src);
+            res.Add(key);
+            return res;
         }
 
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
