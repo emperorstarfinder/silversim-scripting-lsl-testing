@@ -500,9 +500,14 @@ namespace SilverSim.Scripting.Lsl
                     ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
                     m_RightHandType = typeof(double);
                 }
+                else if(m_LeftHandType == typeof(AnArray))
+                {
+                    /* no conversion required */
+                }
                 else
                 {
                     ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                    m_RightHandType = m_LeftHandType;
                 }
 
                 MethodInfo mi;
