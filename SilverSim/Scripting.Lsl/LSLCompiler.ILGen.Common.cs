@@ -519,7 +519,7 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     compileState.ILGen.Emit(OpCodes.Ldstr, "N6");
                     compileState.ILGen.Emit(OpCodes.Call, typeof(CultureInfo).GetProperty("InvariantCulture").GetGetMethod());
-                    compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", new Type[] { typeof(string), typeof(CultureInfo) }));
+                    compileState.ILGen.Emit(OpCodes.Call, fromType.GetMethod("ToString", new Type[] { typeof(string), typeof(CultureInfo) }));
                 }
                 else if(fromType == typeof(AnArray))
                 {
