@@ -457,9 +457,47 @@ namespace SilverSim.Scripting.Lsl
             StringBuilder sb = new StringBuilder();
             foreach(IValue iv in array)
             {
-                sb.Append(iv.ToString());
+                Type t = iv.GetType();
+                if(t == typeof(Real))
+                {
+                    double v = iv.AsReal;
+                    sb.Append(v.ToString("N6", CultureInfo.InvariantCulture));
+                }
+                else if(t == typeof(Vector3))
+                {
+                    Vector3 v = (Vector3)iv;
+                    sb.Append(string.Format("<{0}, {1}, {2}>",
+                            v.X.ToString("N6", CultureInfo.InvariantCulture),
+                            v.Y.ToString("N6", CultureInfo.InvariantCulture),
+                            v.Z.ToString("N6", CultureInfo.InvariantCulture)));
+                }
+                else if (t == typeof(Quaternion))
+                {
+                    sb.Append(TypecastRotationToString((Quaternion)iv));
+                }
+                else
+                {
+                    sb.Append(iv.ToString());
+                }
             }
             return sb.ToString();
+        }
+
+        public static string TypecastVectorToString(Vector3 v)
+        {
+            return string.Format("<{0}, {1}, {2}>",
+                v.X.ToString("N5", CultureInfo.InvariantCulture),
+                v.Y.ToString("N5", CultureInfo.InvariantCulture),
+                v.Z.ToString("N5", CultureInfo.InvariantCulture));
+        }
+
+        public static string TypecastRotationToString(Quaternion v)
+        {
+            return string.Format("<{0}, {1}, {2}, {3}>",
+                v.X.ToString("N5", CultureInfo.InvariantCulture),
+                v.Y.ToString("N5", CultureInfo.InvariantCulture),
+                v.Z.ToString("N5", CultureInfo.InvariantCulture),
+                v.W.ToString("N5", CultureInfo.InvariantCulture));
         }
 
         internal static bool IsImplicitlyCastable(Type toType, Type fromType)
@@ -505,12 +543,20 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (toType == typeof(string))
             {
-                if (fromType == typeof(int) || fromType == typeof(Vector3) || fromType == typeof(Quaternion))
+                if (fromType == typeof(int))
                 {
                     LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
                     compileState.ILGen.Emit(OpCodes.Stloc, lb);
                     compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
+                }
+                else if(fromType == typeof(Vector3))
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastVectorToString"));
+                }
+                else if (fromType == typeof(Quaternion))
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastRotationToString"));
                 }
                 else if (fromType == typeof(double))
                 {

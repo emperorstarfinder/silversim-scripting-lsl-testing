@@ -44,7 +44,10 @@ namespace SilverSim.Scripting.Lsl
 
             public override string ToString()
             {
-                return Value.ToString();
+                return string.Format("<{0}, {1}, {2}>",
+                    Value.X.ToString("N5", CultureInfo.InvariantCulture),
+                    Value.Y.ToString("N5", CultureInfo.InvariantCulture),
+                    Value.Z.ToString("N5", CultureInfo.InvariantCulture));
             }
 
             public override Tree.ValueBase Negate()
@@ -64,7 +67,11 @@ namespace SilverSim.Scripting.Lsl
 
             public override string ToString()
             {
-                return Value.ToString();
+                return string.Format("<{0}, {1}, {2}, {3}>",
+                    Value.X.ToString("N5", CultureInfo.InvariantCulture),
+                    Value.Y.ToString("N5", CultureInfo.InvariantCulture),
+                    Value.Z.ToString("N5", CultureInfo.InvariantCulture),
+                    Value.W.ToString("N5", CultureInfo.InvariantCulture));
             }
 
             public override Tree.ValueBase Negate()
