@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Expression
 
             public override string ToString()
             {
-                return Value.ToString(CultureInfo.InvariantCulture);
+                return Value.ToString("N6", CultureInfo.InvariantCulture);
             }
 
             public override ValueBase Negate()
