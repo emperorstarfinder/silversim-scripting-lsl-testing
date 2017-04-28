@@ -271,7 +271,7 @@ namespace SilverSim.Scripting.Lsl
         {
             return (a == -2147483648 && b == -1) ?
                 0 :
-                a / b;
+                a % b;
         }
         #endregion
 
