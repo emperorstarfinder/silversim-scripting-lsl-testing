@@ -284,7 +284,8 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (args[pos] == "+" && args[pos - 1].StartsWith("\"") && args[pos + 1].StartsWith("\""))
                 {
-                    args[pos - 1] = args[pos - 1] + args[pos + 1];
+                    string larg = args[pos - 1];
+                    args[pos - 1] = larg.Substring(0, larg.Length - 1) + args[pos + 1].Substring(1);
                     args.RemoveAt(pos);
                     args.RemoveAt(pos);
                     --pos;
