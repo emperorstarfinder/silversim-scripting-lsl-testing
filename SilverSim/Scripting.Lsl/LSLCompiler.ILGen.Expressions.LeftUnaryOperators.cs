@@ -112,7 +112,7 @@ namespace SilverSim.Scripting.Lsl
                         case "~":
                             if (innerExpressionReturn == typeof(int))
                             {
-                                compileState.ILGen.Emit(OpCodes.Neg);
+                                compileState.ILGen.Emit(OpCodes.Not);
                             }
                             else
                             {

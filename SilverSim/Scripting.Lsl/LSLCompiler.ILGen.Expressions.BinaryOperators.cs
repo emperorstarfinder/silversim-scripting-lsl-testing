@@ -494,6 +494,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     /* three combined cases */
                 }
+                else if(m_LeftHandType == typeof(int) && m_RightHandType == typeof(double))
+                {
+                    /* funky LSL type calculation */
+                    ProcessCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
+                    m_RightHandType = typeof(int);
+                }
                 else if((m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(int)) ||
                     (m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(int)))
                 {
