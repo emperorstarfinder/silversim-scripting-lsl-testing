@@ -1076,7 +1076,7 @@ namespace SilverSim.Scripting.Lsl
                         throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
                 }
                 /* parameter name and type in order */
-                localVars[functionDeclaration[functionStart]] = new ILParameterInfo(t, paramidx + 1);
+                localVars[functionDeclaration[functionStart]] = new ILParameterInfo(t, ++paramidx);
             }
 
             compileState.FunctionBody = functionBody;
