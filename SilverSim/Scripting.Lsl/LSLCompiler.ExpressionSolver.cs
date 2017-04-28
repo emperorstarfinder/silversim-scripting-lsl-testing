@@ -371,8 +371,8 @@ namespace SilverSim.Scripting.Lsl
                             else if (st.SubTree[0].Value is ConstantValueRotation && st.SubTree[1].Value is ConstantValueRotation)
                             {
                                 st.Value = new ConstantValueRotation(
-                                    ((ConstantValueRotation)(st.SubTree[0].Value)).Value *
-                                    ((ConstantValueRotation)(st.SubTree[1].Value)).Value);
+                                    ((ConstantValueRotation)(st.SubTree[1].Value)).Value *
+                                    ((ConstantValueRotation)(st.SubTree[0].Value)).Value);
                             }
                             else if (st.SubTree[0].Value is ConstantValueVector && st.SubTree[1].Value is ConstantValueRotation)
                             {
@@ -426,8 +426,8 @@ namespace SilverSim.Scripting.Lsl
                             else if (st.SubTree[0].Value is ConstantValueRotation && st.SubTree[1].Value is ConstantValueRotation)
                             {
                                 st.Value = new ConstantValueRotation(
-                                    ((ConstantValueRotation)(st.SubTree[0].Value)).Value /
-                                    ((ConstantValueRotation)(st.SubTree[1].Value)).Value);
+                                    LSLQuaternionDivision(((ConstantValueRotation)(st.SubTree[0].Value)).Value,
+                                    ((ConstantValueRotation)(st.SubTree[1].Value)).Value));
                             }
                             else if (st.SubTree[0].Value is ConstantValueVector && st.SubTree[1].Value is ConstantValueRotation)
                             {

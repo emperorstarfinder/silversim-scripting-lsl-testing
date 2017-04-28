@@ -483,6 +483,11 @@ namespace SilverSim.Scripting.Lsl
             return sb.ToString();
         }
 
+        public static Quaternion LSLQuaternionDivision(Quaternion a, Quaternion b)
+        {
+            return b.Conjugate() * a;
+        }
+
         public static string TypecastVectorToString(Vector3 v)
         {
             return string.Format("<{0}, {1}, {2}>",

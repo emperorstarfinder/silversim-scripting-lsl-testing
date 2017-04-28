@@ -933,7 +933,19 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(compileState, typeof(string));
                         }
-                        
+                        else if(m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(Quaternion))
+                        {
+                            mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            if (!IsValidType(mi.ReturnType))
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                            }
+                            throw Return(compileState, mi.ReturnType);
+                        }
+
                         mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
                         if (null != mi)
                         {
@@ -987,6 +999,18 @@ namespace SilverSim.Scripting.Lsl
                             ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(compileState, typeof(string));
+                        }
+                        else if(m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(Quaternion))
+                        {
+                            mi = typeof(LSLCompiler).GetMethod("LSLQuaternionDivision");
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            if (!IsValidType(mi.ReturnType))
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
+                            }
+                            throw Return(compileState, mi.ReturnType);
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_RightHandType });
