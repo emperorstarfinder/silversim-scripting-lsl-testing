@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Expression
 {
@@ -172,11 +173,50 @@ namespace SilverSim.Scripting.Lsl.Expression
             }
         }
 
+        static string ProcessCSlashes(string v)
+        {
+            int idx = 0;
+            int slen = v.Length;
+            StringBuilder o = new StringBuilder();
+            while(idx < v.Length)
+            {
+                char c = v[idx++];
+                switch(c)
+                {
+                    case '\\':
+                        if (idx < v.Length)
+                        {
+                            c = v[idx++];
+                            switch (c)
+                            {
+                                case 't':
+                                    o.Append("    ");
+                                    break;
+
+                                case 'n':
+                                    o.Append((char)10);
+                                    break;
+
+                                default:
+                                    o.Append(c);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    default:
+                        o.Append(c);
+                        break;
+                }
+            }
+            return o.ToString();
+        }
+
         public void Process(int lineNumber)
         {
             if(Type == EntryType.StringValue)
             {
-                Value = new ConstantValueString(Entry);
+                Value = new ConstantValueString(ProcessCSlashes(Entry));
             }
             else if(Type == EntryType.Value)
             {
