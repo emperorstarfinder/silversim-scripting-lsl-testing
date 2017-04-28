@@ -29,6 +29,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
@@ -450,6 +451,16 @@ namespace SilverSim.Scripting.Lsl
             return q;
         }
 
+        public static string TypecastListToString(AnArray array)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(IValue iv in array)
+            {
+                sb.Append(iv.ToString());
+            }
+            return sb.ToString();
+        }
+
         internal static bool IsImplicitlyCastable(Type toType, Type fromType)
         {
             return (fromType == toType ||
@@ -508,7 +519,11 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Call, typeof(CultureInfo).GetProperty("InvariantCulture").GetGetMethod());
                     compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", new Type[] { typeof(CultureInfo) }));
                 }
-                else if (fromType == typeof(AnArray) || fromType == typeof(LSLKey))
+                else if(fromType == typeof(AnArray))
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastListToString"));
+                }
+                else if (fromType == typeof(LSLKey))
                 {
                     compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
                 }
