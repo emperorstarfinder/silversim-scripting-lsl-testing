@@ -139,7 +139,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llVecNorm")]
         public Vector3 VecNorm(ScriptInstance instance, Vector3 v)
         {
-            return v / v.Length;
+            return (v.Length == 0.0) ? Vector3.Zero : (v / v.Length);
         }
 
         [APILevel(APIFlags.LSL, "llModPow")]
@@ -217,10 +217,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llAxes2Rot")]
         public Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up)
         {
+            return Quaternion.Axes2Rot(fwd, left, up);
+            /*
             double s;
             double t = fwd.X + left.Y + up.Z + 1.0;
 
-            if(t >= 1.0)
+            if(fwd.Length + left.Length + up.Length < double.Epsilon)
+            {
+                return new Quaternion(1, 0, 0, 0);
+            }
+            else if(t >= 1.0)
             {
                 s = 0.5 / Math.Sqrt(t);
                 return new Quaternion((left.Z - up.Y) * s, (up.X - fwd.Z) * s, (fwd.Y - left.X) * s, 0.25 / s);
@@ -257,6 +263,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         (fwd.Y - left.X) * (0.5 / s));
                 }
             }
+            */
         }
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
