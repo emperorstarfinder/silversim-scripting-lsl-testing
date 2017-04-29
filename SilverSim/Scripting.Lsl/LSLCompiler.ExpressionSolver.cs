@@ -74,8 +74,13 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
+        public enum FloatingPointPrecision
+        {
+            Single,
+            Double
+        }
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        void SolveConstantOperations(Tree tree, int lineNumber, CultureInfo currentCulture)
+        void SolveConstantOperations(Tree tree, int lineNumber, CultureInfo currentCulture, FloatingPointPrecision precision)
         {
             List<Tree> processNodes = new List<Tree>();
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
@@ -531,9 +536,19 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                st.Value = new Tree.ConstantValueInt(
-                                    ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value >
-                                    ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                if (precision == FloatingPointPrecision.Single)
+                                {
+                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    st.Value = new Tree.ConstantValueInt(
+                                        l > r ? 1 : 0);
+                                }
+                                else
+                                {
+                                    st.Value = new Tree.ConstantValueInt(
+                                        ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value >
+                                        ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                }
                             }
                             else
                             {
@@ -562,9 +577,20 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                st.Value = new Tree.ConstantValueInt(
-                                    ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value <
-                                    ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                if (precision == FloatingPointPrecision.Single)
+                                {
+                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    st.Value = new Tree.ConstantValueInt(
+                                        l <
+                                        r ? 1 : 0);
+                                }
+                                else
+                                {
+                                    st.Value = new Tree.ConstantValueInt(
+                                        ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value <
+                                        ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                }
                             }
                             else
                             {
@@ -593,9 +619,20 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                st.Value = new Tree.ConstantValueInt(
-                                    ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value >=
-                                    ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                if (precision == FloatingPointPrecision.Single)
+                                {
+                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    st.Value = new Tree.ConstantValueInt(
+                                        l >=
+                                        r ? 1 : 0);
+                                }
+                                else
+                                {
+                                    st.Value = new Tree.ConstantValueInt(
+                                        ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value >=
+                                        ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                }
                             }
                             else
                             {
@@ -624,9 +661,20 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                st.Value = new Tree.ConstantValueInt(
-                                    ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value <=
-                                    ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                if (precision == FloatingPointPrecision.Single)
+                                {
+                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    st.Value = new Tree.ConstantValueInt(
+                                        l <=
+                                        r ? 1 : 0);
+                                }
+                                else
+                                {
+                                    st.Value = new Tree.ConstantValueInt(
+                                        ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value <=
+                                        ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                }
                             }
                             else
                             {
@@ -655,9 +703,20 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                st.Value = new Tree.ConstantValueInt(
-                                    ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value !=
-                                    ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                if (precision == FloatingPointPrecision.Single)
+                                {
+                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    st.Value = new Tree.ConstantValueInt(
+                                        l !=
+                                        r ? 1 : 0);
+                                }
+                                else
+                                {
+                                    st.Value = new Tree.ConstantValueInt(
+                                        ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value !=
+                                        ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                }
                             }
                             else if (st.SubTree[0].Value is ConstantValueVector && st.SubTree[1].Value is ConstantValueVector)
                             {
@@ -698,9 +757,20 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                st.Value = new Tree.ConstantValueInt(
-                                    ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value ==
-                                    ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                if (precision == FloatingPointPrecision.Single)
+                                {
+                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    st.Value = new Tree.ConstantValueInt(
+                                        l ==
+                                        r ? 1 : 0);
+                                }
+                                else
+                                {
+                                    st.Value = new Tree.ConstantValueInt(
+                                        ((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value ==
+                                        ((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value ? 1 : 0);
+                                }
                             }
                             else if (st.SubTree[0].Value is ConstantValueVector && st.SubTree[1].Value is ConstantValueVector)
                             {
@@ -926,15 +996,24 @@ namespace SilverSim.Scripting.Lsl
                             case "(string)":
                                 if (st.SubTree[0].Value is ConstantValueRotation)
                                 {
-                                    st.Value = new Tree.ConstantValueString(TypecastRotationToString5Places(((ConstantValueRotation)st.SubTree[0].Value).Value));
+                                    st.Value = new Tree.ConstantValueString(
+                                        precision == FloatingPointPrecision.Single ?
+                                        SinglePrecision.TypecastRotationToString5Places(((ConstantValueRotation)st.SubTree[0].Value).Value) :
+                                        TypecastRotationToString5Places(((ConstantValueRotation)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is ConstantValueVector)
                                 {
-                                    st.Value = new Tree.ConstantValueString(TypecastVectorToString5Places(((ConstantValueVector)st.SubTree[0].Value).Value));
+                                    st.Value = new Tree.ConstantValueString(
+                                        precision == FloatingPointPrecision.Single ?
+                                        SinglePrecision.TypecastVectorToString5Places(((ConstantValueVector)st.SubTree[0].Value).Value) :
+                                        TypecastVectorToString5Places(((ConstantValueVector)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueFloat)
                                 {
-                                    st.Value = new Tree.ConstantValueString(TypecastDoubleToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value));
+                                    st.Value = new Tree.ConstantValueString(
+                                        precision == FloatingPointPrecision.Single ?
+                                        SinglePrecision.TypecastFloatToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value) :
+                                        TypecastDoubleToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueInt)
                                 {
@@ -1020,7 +1099,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueInt)
                                 {
-                                    st.Value = new Tree.ConstantValueFloat((int)((Tree.ConstantValueInt)st.SubTree[0].Value).Value);
+                                    st.Value = new Tree.ConstantValueFloat(((Tree.ConstantValueInt)st.SubTree[0].Value).Value);
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueString)
                                 {
@@ -1945,8 +2024,9 @@ namespace SilverSim.Scripting.Lsl
 
         void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames, int lineNumber, CultureInfo currentCulture)
         {
+            FloatingPointPrecision precision = cs.UsesSinglePrecision ? FloatingPointPrecision.Single : FloatingPointPrecision.Double;
             SolveMaxNegValues(cs, resolvetree);
-            SolveConstantOperations(resolvetree, lineNumber, currentCulture);
+            SolveConstantOperations(resolvetree, lineNumber, currentCulture, precision);
         }
 
 #region Pre-Tree identifiers

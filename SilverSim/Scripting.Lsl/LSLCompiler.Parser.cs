@@ -639,6 +639,10 @@ namespace SilverSim.Scripting.Lsl
                     string api = shbang.Value.Substring(11).Trim().ToLower();
                     apiExtensions.Add(api);
                 }
+                else if(shbang.Value.StartsWith("//#!UsesSinglePrecision"))
+                {
+                    compileState.UsesSinglePrecision = true;
+                }
             }
 
             if(apiExtensions.Contains(APIExtension.ExtendedTypecasts))

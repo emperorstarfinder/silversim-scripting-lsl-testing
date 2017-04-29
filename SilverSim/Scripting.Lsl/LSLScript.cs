@@ -70,6 +70,14 @@ namespace SilverSim.Scripting.Lsl
         internal Dictionary<string, Action<ScriptInstance, List<object>>> DeserializationDelegates;
         static internal readonly Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
         readonly object m_Lock = new object();
+        protected bool m_UsesSinglePrecision;
+        public bool UsesSinglePrecision
+        {
+            get
+            {
+                return m_UsesSinglePrecision;
+            }
+        }
 
         int m_ExecutionStartedAt = Environment.TickCount;
 

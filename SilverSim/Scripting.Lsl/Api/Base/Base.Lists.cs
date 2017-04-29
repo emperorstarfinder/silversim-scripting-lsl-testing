@@ -424,6 +424,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("Index of the element of interest.")]
             int index)
         {
+            Script script = (Script)instance;
             if (index < 0)
             {
                 index = src.Count - index;
@@ -434,7 +435,30 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return UUID.Zero;
             }
 
-            return src[index].ToString();
+            IValue val = src[index];
+            Type t = val.GetType();
+            if (t == typeof(Real))
+            {
+                return script.UsesSinglePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
+                    LSLCompiler.TypecastDoubleToString(val.AsReal);
+            }
+            else if (t == typeof(Vector3))
+            {
+                return script.UsesSinglePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
+                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
+            }
+            else if (t == typeof(Quaternion))
+            {
+                return script.UsesSinglePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
+                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
+            }
+            else
+            {
+                return src[index].ToString();
+            }
         }
 
         [APILevel(APIFlags.LSL, "llList2Rot")]
@@ -473,6 +497,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("Index of the element of interest.")]
             int index)
         {
+            Script script = (Script)instance;
             if (index < 0)
             {
                 index = src.Count - index;
@@ -487,15 +512,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             Type t = val.GetType();
             if (t == typeof(Real))
             {
-                return LSLCompiler.TypecastDoubleToString(val.AsReal);
+                return script.UsesSinglePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
+                    LSLCompiler.TypecastDoubleToString(val.AsReal);
             }
             else if (t == typeof(Vector3))
             {
-                return LSLCompiler.TypecastVectorToString6Places((Vector3)val);
+                return script.UsesSinglePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
+                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
             }
             else if (t == typeof(Quaternion))
             {
-                return LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
+                return script.UsesSinglePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
+                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
             }
             else
             {
@@ -535,6 +566,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Description("Returns a string that is the list src converted to a string with separator between the entries.")]
         public string DumpList2String(ScriptInstance instance, AnArray src, string separator)
         {
+            Script script = (Script)instance;
             StringBuilder sb = new StringBuilder();
 
             foreach(IValue val in src)
@@ -546,15 +578,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 Type t = val.GetType();
                 if (t == typeof(Real))
                 {
-                    sb.Append(LSLCompiler.TypecastDoubleToString(val.AsReal));
+                    sb.Append(script.UsesSinglePrecision ? 
+                        LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) : 
+                        LSLCompiler.TypecastDoubleToString(val.AsReal));
                 }
                 else if (t == typeof(Vector3))
                 {
-                    sb.Append(LSLCompiler.TypecastVectorToString6Places((Vector3)val));
+                    sb.Append(script.UsesSinglePrecision ?
+                        LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
+                        LSLCompiler.TypecastVectorToString6Places((Vector3)val));
                 }
                 else if (t == typeof(Quaternion))
                 {
-                    sb.Append(LSLCompiler.TypecastRotationToString6Places((Quaternion)val));
+                    sb.Append(script.UsesSinglePrecision ?
+                        LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
+                        LSLCompiler.TypecastRotationToString6Places((Quaternion)val));
                 }
                 else
                 {

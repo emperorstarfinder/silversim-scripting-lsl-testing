@@ -526,37 +526,106 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public static string TypecastListToString(AnArray array)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach(IValue iv in array)
-            {
-                Type t = iv.GetType();
-                if(t == typeof(Real))
-                {
-                    double v = iv.AsReal;
-                    sb.Append(TypecastDoubleToString(v));
-                }
-                else if(t == typeof(Vector3))
-                {
-                    Vector3 v = (Vector3)iv;
-                    sb.Append(TypecastVectorToString6Places(v));
-                }
-                else if (t == typeof(Quaternion))
-                {
-                    sb.Append(TypecastRotationToString6Places((Quaternion)iv));
-                }
-                else
-                {
-                    sb.Append(iv.ToString());
-                }
-            }
-            return sb.ToString();
-        }
-
         public static Quaternion LSLQuaternionDivision(Quaternion a, Quaternion b)
         {
             return b.Conjugate() * a;
+        }
+
+        public static class SinglePrecision
+        {
+            static string TypecastFloatToString(double v, int placesAfter)
+            {
+                string val;
+                if (BitConverter.DoubleToInt64Bits(v) == BitConverter.DoubleToInt64Bits(NegativeZero))
+                {
+                    val = "-0";
+                }
+                else
+                {
+                    val = ((float)v).ToString(CultureInfo.InvariantCulture);
+                }
+
+                if (!val.Contains("E") && !val.Contains("e"))
+                {
+                    int pos = val.IndexOf('.');
+                    if (pos < 0)
+                    {
+                        val += ".0".PadRight(placesAfter + 1, '0');
+                    }
+                    else
+                    {
+                        val = val.Substring(0, pos + 1) + val.Substring(pos + 1).PadRight(placesAfter, '0');
+                    }
+                }
+                return val;
+            }
+
+            public static string TypecastFloatToString(double v)
+            {
+                return TypecastFloatToString(v, 6);
+            }
+
+            public static string TypecastVectorToString5Places(Vector3 v)
+            {
+                return string.Format("<{0}, {1}, {2}>",
+                    TypecastFloatToString(v.X, 5),
+                    TypecastFloatToString(v.Y, 5),
+                    TypecastFloatToString(v.Z, 5));
+            }
+
+            public static string TypecastVectorToString6Places(Vector3 v)
+            {
+                return string.Format("<{0}, {1}, {2}>",
+                    TypecastFloatToString(v.X, 6),
+                    TypecastFloatToString(v.Y, 6),
+                    TypecastFloatToString(v.Z, 6));
+            }
+
+            public static string TypecastRotationToString5Places(Quaternion v)
+            {
+                return string.Format("<{0}, {1}, {2}, {3}>",
+                    TypecastFloatToString(v.X, 5),
+                    TypecastFloatToString(v.Y, 5),
+                    TypecastFloatToString(v.Z, 5),
+                    TypecastFloatToString(v.W, 5));
+            }
+
+            public static string TypecastRotationToString6Places(Quaternion v)
+            {
+                return string.Format("<{0}, {1}, {2}, {3}>",
+                    TypecastFloatToString(v.X, 6),
+                    TypecastFloatToString(v.Y, 6),
+                    TypecastFloatToString(v.Z, 6),
+                    TypecastFloatToString(v.W, 6));
+            }
+
+            public static string TypecastListToString(AnArray array)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (IValue iv in array)
+                {
+                    Type t = iv.GetType();
+                    if (t == typeof(Real))
+                    {
+                        sb.Append(TypecastFloatToString(iv.AsReal));
+                    }
+                    else if (t == typeof(Vector3))
+                    {
+                        sb.Append(TypecastVectorToString6Places((Vector3)iv));
+                    }
+                    else if (t == typeof(Quaternion))
+                    {
+                        sb.Append(TypecastRotationToString6Places((Quaternion)iv));
+                    }
+                    else
+                    {
+                        sb.Append(iv.ToString());
+                    }
+                }
+                return sb.ToString();
+            }
+
+
         }
 
         static string TypecastDoubleToString(double v, int placesAfter)
@@ -625,6 +694,32 @@ namespace SilverSim.Scripting.Lsl
                 TypecastDoubleToString(v.W, 6));
         }
 
+        public static string TypecastListToString(AnArray array)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (IValue iv in array)
+            {
+                Type t = iv.GetType();
+                if (t == typeof(Real))
+                {
+                    sb.Append(TypecastDoubleToString(iv.AsReal));
+                }
+                else if (t == typeof(Vector3))
+                {
+                    sb.Append(TypecastVectorToString6Places((Vector3)iv));
+                }
+                else if (t == typeof(Quaternion))
+                {
+                    sb.Append(TypecastRotationToString6Places((Quaternion)iv));
+                }
+                else
+                {
+                    sb.Append(iv.ToString());
+                }
+            }
+            return sb.ToString();
+        }
+
         internal static bool IsImplicitlyCastable(Type toType, Type fromType)
         {
             return (fromType == toType ||
@@ -677,19 +772,23 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if(fromType == typeof(Vector3))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastVectorToString5Places"));
+                    compileState.ILGen.Emit(OpCodes.Call, 
+                        (compileState.UsesSinglePrecision ? typeof(SinglePrecision) : typeof(LSLCompiler)).GetMethod("TypecastVectorToString5Places"));
                 }
                 else if (fromType == typeof(Quaternion))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastRotationToString5Places"));
+                    compileState.ILGen.Emit(OpCodes.Call, 
+                        (compileState.UsesSinglePrecision ? typeof(SinglePrecision) : typeof(LSLCompiler)).GetMethod("TypecastRotationToString5Places"));
                 }
                 else if (fromType == typeof(double))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastDoubleToString"));
+                    compileState.ILGen.Emit(OpCodes.Call, 
+                        compileState.UsesSinglePrecision ? typeof(SinglePrecision).GetMethod("TypecastFloatToString") : typeof(LSLCompiler).GetMethod("TypecastDoubleToString"));
                 }
                 else if(fromType == typeof(AnArray))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastListToString"));
+                    compileState.ILGen.Emit(OpCodes.Call,
+                        (compileState.UsesSinglePrecision ? typeof(SinglePrecision) : typeof(LSLCompiler)).GetMethod("TypecastListToString"));
                 }
                 else if (fromType == typeof(LSLKey))
                 {

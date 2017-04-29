@@ -130,6 +130,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableBreakContinueStatement;
             }
 
+            public bool UsesSinglePrecision;
+
             public readonly LanguageExtensionsData LanguageExtensions = new LanguageExtensionsData();
 
             public CompileState(CultureInfo currentCulture)

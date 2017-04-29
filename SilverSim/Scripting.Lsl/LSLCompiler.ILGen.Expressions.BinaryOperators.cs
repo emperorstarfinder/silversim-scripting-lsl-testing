@@ -1101,8 +1101,16 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
 
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
@@ -1156,8 +1164,16 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
 
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
@@ -1220,8 +1236,16 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
 
                             compileState.ILGen.Emit(OpCodes.Cgt);
                             compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
@@ -1258,8 +1282,16 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
 
                             compileState.ILGen.Emit(OpCodes.Clt);
 
@@ -1326,8 +1358,16 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                            if (compileState.UsesSinglePrecision)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Conv_R4);
+                            }
 
                             compileState.ILGen.Emit(OpCodes.Clt);
                             compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
