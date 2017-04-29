@@ -134,6 +134,13 @@ namespace SilverSim.Scripting.Lsl
             Binary
         }
 
+        static readonly double NegativeZero;
+
+        static LSLCompiler()
+        {
+            NegativeZero *= -1.0;
+        }
+
         public LSLCompiler()
         {
             m_ApiInfos.Add(APIFlags.ASSL, new ApiInfo());

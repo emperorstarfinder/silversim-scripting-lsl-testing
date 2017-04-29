@@ -205,35 +205,28 @@ namespace SilverSim.Scripting.Lsl
                 }
                 catch
                 {
-                    try
+                    string t;
+                    uint i;
+                    int pos = 0;
+                    while (pos < v.Length)
                     {
-                        if (v.StartsWith("-"))
+                        char c = v[pos];
+                        if (!char.IsDigit(c) && c != '-')
                         {
-                            try
-                            {
-                                return -((int)uint.Parse(v.Substring(1)));
-                            }
-                            catch
-                            {
-                                return 1;
-                            }
+                            break;
                         }
-                        else
-                        {
-                            try
-                            {
-                                return (int)uint.Parse(v.Substring(1));
-                            }
-                            catch
-                            {
-                                return -1;
-                            }
-                        }
+                        ++pos;
                     }
-                    catch
+                    t = v.Substring(0, pos);
+                    if (t.StartsWith("-"))
                     {
-                        /* LSL specifics here */
-                        return v.StartsWith("-") ? 1 : -1;
+                        uint m = int.MaxValue;
+                        m += 1;
+                        return (pos == 1 || !uint.TryParse(t.Substring(1), out i) || i > m) ? 1 : -(int)i;
+                    }
+                    else
+                    {
+                        return (pos == 0 || !uint.TryParse(t, out i) || i > int.MaxValue) ? -1 : (int)i;
                     }
                 }
             }
@@ -424,32 +417,101 @@ namespace SilverSim.Scripting.Lsl
 
         public static double ParseStringToDouble(string input)
         {
-            double v;
-            if(!Double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out v))
+            double v = 0;
+            string inp = input;
+            int strLen = inp.Length;
+            bool isneg = strLen > 0 && input[0] == '-';
+            while (strLen > 0)
             {
-                v = 0;
+                if (!double.TryParse(inp, NumberStyles.Float, CultureInfo.InvariantCulture, out v))
+                {
+                    v = 0;
+                    inp = inp.Substring(0, --strLen);
+                }
+                else
+                {
+                    if(isneg)
+                    {
+                        if (0 == BitConverter.DoubleToInt64Bits(v))
+                        {
+                            v *= -1.0;
+                        }
+                    }
+                    break;
+                }
             }
             return v;
         }
 
-        public static Vector3 ParseStringToVector(string input)
+        public static bool TryParseStringToDouble(string input, out double v)
         {
-            Vector3 v;
-            if(!Vector3.TryParse(input, out v))
+            bool isneg = input.StartsWith("-");
+            v = 0;
+            bool parsed = double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out v);
+            if(parsed && isneg)
             {
-                v = Vector3.Zero;
+                if(0 == BitConverter.DoubleToInt64Bits(v))
+                {
+                    v *= -1.0;
+                }
             }
-            return v;
+            return parsed;
+        }
+
+        public static Vector3 ParseStringToVector(string val)
+        {
+            char[] splitChar = { ',' };
+            string[] split = val.Replace("<", System.String.Empty).Replace(">", System.String.Empty).Split(splitChar);
+            if (split.Length != 3)
+            {
+                return Vector3.Zero;
+            }
+
+            double x;
+            double y;
+            double z;
+
+            if (!TryParseStringToDouble(split[0], out x) ||
+                !TryParseStringToDouble(split[1], out y) ||
+                !TryParseStringToDouble(split[2], out z))
+            {
+                return Vector3.Zero;
+            }
+            return new Vector3(x, y, z);
         }
 
         public static Quaternion ParseStringToQuaternion(string input)
         {
-            Quaternion q;
-            if(!Quaternion.TryParse(input, out q))
+            char[] splitChar = { ',' };
+            string[] split = input.Replace("<", string.Empty).Replace(">", string.Empty).Split(splitChar);
+            int splitLength = split.Length;
+            if (splitLength < 3 || splitLength > 4)
             {
-                q = Quaternion.Identity;
+                return Quaternion.Identity;
             }
-            return q;
+            double x;
+            double y;
+            double z;
+            double w;
+            if (!TryParseStringToDouble(split[0], out x) ||
+               !TryParseStringToDouble(split[1], out y) ||
+                !TryParseStringToDouble(split[2], out z))
+            {
+                return Quaternion.Identity;
+            }
+
+            if (splitLength == 3)
+            {
+                return new Quaternion(x, y, z);
+            }
+            else
+            {
+                if (!TryParseStringToDouble(split[3], out w))
+                {
+                    return Quaternion.Identity;
+                }
+                return new Quaternion(x, y, z, w);
+            }
         }
 
         public static string TypecastListToString(AnArray array)
@@ -461,15 +523,12 @@ namespace SilverSim.Scripting.Lsl
                 if(t == typeof(Real))
                 {
                     double v = iv.AsReal;
-                    sb.Append(v.ToString("N6", CultureInfo.InvariantCulture));
+                    sb.Append(TypecastFloatToString(v));
                 }
                 else if(t == typeof(Vector3))
                 {
                     Vector3 v = (Vector3)iv;
-                    sb.Append(string.Format("<{0}, {1}, {2}>",
-                            v.X.ToString("N6", CultureInfo.InvariantCulture),
-                            v.Y.ToString("N6", CultureInfo.InvariantCulture),
-                            v.Z.ToString("N6", CultureInfo.InvariantCulture)));
+                    sb.Append(TypecastVectorToString6Places(v));
                 }
                 else if (t == typeof(Quaternion))
                 {
@@ -488,21 +547,61 @@ namespace SilverSim.Scripting.Lsl
             return b.Conjugate() * a;
         }
 
-        public static string TypecastVectorToString(Vector3 v)
+        static string TypecastFloatToString(double v, int placesAfter)
+        {
+            string val;
+            if(BitConverter.DoubleToInt64Bits(v) == BitConverter.DoubleToInt64Bits(NegativeZero))
+            {
+                val = "-0";
+            }
+            else
+            {
+                val = v.ToString(CultureInfo.InvariantCulture);
+            }
+
+            if(!val.Contains("E") && !val.Contains("e"))
+            {
+                int pos = val.IndexOf('.');
+                if(pos < 0)
+                {
+                    val += ".0".PadRight(placesAfter + 1, '0');
+                }
+                else
+                {
+                    val = val.Substring(0, pos + 1) + val.Substring(pos + 1).PadRight(placesAfter, '0');
+                }
+            }
+            return val;
+        }
+
+        public static string TypecastFloatToString(double v)
+        {
+            return TypecastFloatToString(v, 6);
+        }
+
+        public static string TypecastVectorToString5Places(Vector3 v)
         {
             return string.Format("<{0}, {1}, {2}>",
-                v.X.ToString("N5", CultureInfo.InvariantCulture),
-                v.Y.ToString("N5", CultureInfo.InvariantCulture),
-                v.Z.ToString("N5", CultureInfo.InvariantCulture));
+                TypecastFloatToString(v.X, 5),
+                TypecastFloatToString(v.Y, 5),
+                TypecastFloatToString(v.Z, 5));
+        }
+
+        public static string TypecastVectorToString6Places(Vector3 v)
+        {
+            return string.Format("<{0}, {1}, {2}>",
+                TypecastFloatToString(v.X, 6),
+                TypecastFloatToString(v.Y, 6),
+                TypecastFloatToString(v.Z, 6));
         }
 
         public static string TypecastRotationToString(Quaternion v)
         {
             return string.Format("<{0}, {1}, {2}, {3}>",
-                v.X.ToString("N5", CultureInfo.InvariantCulture),
-                v.Y.ToString("N5", CultureInfo.InvariantCulture),
-                v.Z.ToString("N5", CultureInfo.InvariantCulture),
-                v.W.ToString("N5", CultureInfo.InvariantCulture));
+                TypecastFloatToString(v.X, 5),
+                TypecastFloatToString(v.Y, 5),
+                TypecastFloatToString(v.Z, 5),
+                TypecastFloatToString(v.W, 5));
         }
 
         internal static bool IsImplicitlyCastable(Type toType, Type fromType)
@@ -553,11 +652,11 @@ namespace SilverSim.Scripting.Lsl
                     LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
                     compileState.ILGen.Emit(OpCodes.Stloc, lb);
                     compileState.ILGen.Emit(OpCodes.Ldloca, lb);
-                    compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(int).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if(fromType == typeof(Vector3))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastVectorToString"));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastVectorToString5Places"));
                 }
                 else if (fromType == typeof(Quaternion))
                 {
@@ -565,12 +664,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(double))
                 {
-                    LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
-                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                    compileState.ILGen.Emit(OpCodes.Ldloca, lb);
-                    compileState.ILGen.Emit(OpCodes.Ldstr, "N6");
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(CultureInfo).GetProperty("InvariantCulture").GetGetMethod());
-                    compileState.ILGen.Emit(OpCodes.Call, fromType.GetMethod("ToString", new Type[] { typeof(string), typeof(CultureInfo) }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastFloatToString"));
                 }
                 else if(fromType == typeof(AnArray))
                 {
@@ -578,7 +672,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(LSLKey))
                 {
-                    compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
                 }
                 else
                 {

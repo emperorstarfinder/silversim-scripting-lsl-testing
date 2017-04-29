@@ -44,10 +44,7 @@ namespace SilverSim.Scripting.Lsl
 
             public override string ToString()
             {
-                return string.Format("<{0}, {1}, {2}>",
-                    Value.X.ToString("N5", CultureInfo.InvariantCulture),
-                    Value.Y.ToString("N5", CultureInfo.InvariantCulture),
-                    Value.Z.ToString("N5", CultureInfo.InvariantCulture));
+                return TypecastVectorToString5Places(Value);
             }
 
             public override Tree.ValueBase Negate()
@@ -67,11 +64,7 @@ namespace SilverSim.Scripting.Lsl
 
             public override string ToString()
             {
-                return string.Format("<{0}, {1}, {2}, {3}>",
-                    Value.X.ToString("N5", CultureInfo.InvariantCulture),
-                    Value.Y.ToString("N5", CultureInfo.InvariantCulture),
-                    Value.Z.ToString("N5", CultureInfo.InvariantCulture),
-                    Value.W.ToString("N5", CultureInfo.InvariantCulture));
+                return TypecastRotationToString(Value);
             }
 
             public override Tree.ValueBase Negate()
@@ -933,15 +926,15 @@ namespace SilverSim.Scripting.Lsl
                             case "(string)":
                                 if (st.SubTree[0].Value is ConstantValueRotation)
                                 {
-                                    st.Value = new Tree.ConstantValueString(((ConstantValueRotation)st.SubTree[0].Value).ToString());
+                                    st.Value = new Tree.ConstantValueString(TypecastRotationToString(((ConstantValueRotation)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is ConstantValueVector)
                                 {
-                                    st.Value = new Tree.ConstantValueString(((ConstantValueVector)st.SubTree[0].Value).ToString());
+                                    st.Value = new Tree.ConstantValueString(TypecastVectorToString5Places(((ConstantValueVector)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueFloat)
                                 {
-                                    st.Value = new Tree.ConstantValueString(((Tree.ConstantValueFloat)st.SubTree[0].Value).ToString());
+                                    st.Value = new Tree.ConstantValueString(TypecastFloatToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueInt)
                                 {
@@ -983,10 +976,18 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueString)
                                 {
-                                    Quaternion q;
-                                    st.Value = (Quaternion.TryParse(((Tree.ConstantValueString)st.SubTree[0].Value).Value, out q)) ?
-                                        new ConstantValueRotation(q) :
-                                        new ConstantValueRotation(Quaternion.Identity);
+                                    st.Value = new ConstantValueRotation(ParseStringToQuaternion(((Tree.ConstantValueString)st.SubTree[0].Value).Value));
+                                }
+                                break;
+
+                            case "(vector)":
+                                if (st.SubTree[0].Value is ConstantValueVector)
+                                {
+                                    st.Value = st.SubTree[0].Value;
+                                }
+                                else if (st.SubTree[0].Value is Tree.ConstantValueString)
+                                {
+                                    st.Value = new ConstantValueVector(ParseStringToVector(((Tree.ConstantValueString)st.SubTree[0].Value).Value));
                                 }
                                 break;
 
@@ -1025,7 +1026,7 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     try
                                     {
-                                        st.Value = new Tree.ConstantValueFloat(double.Parse(((Tree.ConstantValueString)st.SubTree[0].Value).Value, NumberStyles.Float, CultureInfo.InvariantCulture));
+                                        st.Value = new Tree.ConstantValueFloat(ParseStringToDouble(((Tree.ConstantValueString)st.SubTree[0].Value).Value));
                                     }
                                     catch
                                     {
