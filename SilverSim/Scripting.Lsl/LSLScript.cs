@@ -2550,16 +2550,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            throw new OSSLInsufficientPermissionsException(this, "Function0NotAllowed", "Function {0} not allowed", name);
-        }
-
-        public sealed class OSSLInsufficientPermissionsException : LocalizedScriptErrorException
-        {
-            public OSSLInsufficientPermissionsException(object nlsRefObject, string nlsId, string nlsDefMessage, params object[] param)
-                : base(nlsRefObject, nlsId, nlsDefMessage, param)
-            {
-
-            }
+            throw new LocalizedScriptErrorException(this, "Function0NotAllowed", "Function {0} not allowed", name);
         }
         #endregion
     }
