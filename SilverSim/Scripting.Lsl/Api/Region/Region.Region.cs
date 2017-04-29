@@ -648,7 +648,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             Vector3 vsl = vsn;
             vsl.Z = (((vsn.X * vsn.X) + (vsn.Y * vsn.Y)) / (-1 * vsn.Z));
 
-            return vsl.Normalize();
+            return vsl;
         }
 
         [APILevel(APIFlags.LSL, "llWater")]
