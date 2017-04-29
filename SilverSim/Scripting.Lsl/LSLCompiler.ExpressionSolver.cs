@@ -64,7 +64,7 @@ namespace SilverSim.Scripting.Lsl
 
             public override string ToString()
             {
-                return TypecastRotationToString(Value);
+                return TypecastRotationToString6Places(Value);
             }
 
             public override Tree.ValueBase Negate()
@@ -926,7 +926,7 @@ namespace SilverSim.Scripting.Lsl
                             case "(string)":
                                 if (st.SubTree[0].Value is ConstantValueRotation)
                                 {
-                                    st.Value = new Tree.ConstantValueString(TypecastRotationToString(((ConstantValueRotation)st.SubTree[0].Value).Value));
+                                    st.Value = new Tree.ConstantValueString(TypecastRotationToString5Places(((ConstantValueRotation)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is ConstantValueVector)
                                 {

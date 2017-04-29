@@ -540,7 +540,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (t == typeof(Quaternion))
                 {
-                    sb.Append(TypecastRotationToString((Quaternion)iv));
+                    sb.Append(TypecastRotationToString6Places((Quaternion)iv));
                 }
                 else
                 {
@@ -603,7 +603,7 @@ namespace SilverSim.Scripting.Lsl
                 TypecastFloatToString(v.Z, 6));
         }
 
-        public static string TypecastRotationToString(Quaternion v)
+        public static string TypecastRotationToString5Places(Quaternion v)
         {
             return string.Format("<{0}, {1}, {2}, {3}>",
                 TypecastFloatToString(v.X, 5),
@@ -677,7 +677,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(Quaternion))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastRotationToString"));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastRotationToString5Places"));
                 }
                 else if (fromType == typeof(double))
                 {
