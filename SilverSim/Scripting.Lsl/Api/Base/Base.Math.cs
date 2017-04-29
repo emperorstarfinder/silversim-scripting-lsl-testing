@@ -269,73 +269,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
         public Vector3 Rot2Fwd(ScriptInstance instance, Quaternion r)
         {
-            double x;
-            double y;
-            double z;
-            double sq;
-
-            sq = r.LengthSquared;
-            if(Math.Abs(1.0 - sq) > Double.Epsilon)
-            {
-                sq = 1.0 / Math.Sqrt(sq);
-                r.X *= sq;
-                r.Y *= sq;
-                r.Z *= sq;
-                r.W *= sq;
-            }
-
-            x = r.X * r.X - r.Y * r.Y - r.Z * r.Z + r.W * r.W;
-            y = 2 * (r.X * r.Y + r.Z * r.W);
-            z = 2 * (r.X * r.Z - r.Y * r.W);
-            return new Vector3(x, y, z);
+            return r.FwdAxis;
         }
 
         [APILevel(APIFlags.LSL, "llRot2Left")]
         public Vector3 Rot2Left(ScriptInstance instance, Quaternion r)
         {
-            double x;
-            double y;
-            double z;
-            double sq;
-
-            sq = r.LengthSquared;
-            if (Math.Abs(1.0 - sq) > Double.Epsilon)
-            {
-                sq = 1.0 / Math.Sqrt(sq);
-                r.X *= sq;
-                r.Y *= sq;
-                r.Z *= sq;
-                r.W *= sq;
-            }
-
-            x = 2 * (r.X * r.Y - r.Z * r.W);
-            y = -r.X * r.X + r.Y * r.Y - r.Z * r.Z + r.W * r.W;
-            z = 2 * (r.X * r.W + r.Y * r.Z);
-            return new Vector3(x, y, z);
+            return r.LeftAxis;
         }
 
         [APILevel(APIFlags.LSL, "llRot2Up")]
         public Vector3 Rot2Up(ScriptInstance instance, Quaternion r)
         {
-            double x;
-            double y;
-            double z;
-            double sq;
-
-            sq = r.LengthSquared;
-            if (Math.Abs(1.0 - sq) > Double.Epsilon)
-            {
-                sq = 1.0 / Math.Sqrt(sq);
-                r.X *= sq;
-                r.Y *= sq;
-                r.Z *= sq;
-                r.W *= sq;
-            }
-
-            x = 2 * (r.X * r.Z + r.Y * r.W);
-            y = 2 * (-r.X * r.W + r.Y * r.Z);
-            z = -r.X * r.X - r.Y * r.Y + r.Z * r.Z + r.W * r.W;
-            return new Vector3(x, y, z);
+            return r.UpAxis;
         }
 
         [APILevel(APIFlags.LSL, "llRotBetween")]
