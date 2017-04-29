@@ -134,7 +134,7 @@ namespace SilverSim.Scripting.Lsl
             Binary
         }
 
-        static readonly double NegativeZero;
+        static internal readonly double NegativeZero;
 
         static LSLCompiler()
         {

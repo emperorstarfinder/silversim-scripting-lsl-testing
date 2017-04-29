@@ -221,13 +221,17 @@ namespace SilverSim.Scripting.Lsl.Expression
             else if(Type == EntryType.Value)
             {
                 int val;
-                float fval;
+                double fval;
                 if(int.TryParse(Entry, out val) || Entry.StartsWith("0x") || Entry.StartsWith("0X"))
                 {
                     Value = new ConstantValueInt(Entry);
                 }
-                else if(float.TryParse(Entry, NumberStyles.Float, CultureInfo.InvariantCulture, out fval))
+                else if(double.TryParse(Entry, NumberStyles.Float, CultureInfo.InvariantCulture, out fval))
                 {
+                    if (Entry.StartsWith("-") && BitConverter.DoubleToInt64Bits(fval) == 0)
+                    {
+                        fval = LSLCompiler.NegativeZero;
+                    }
                     Value = new ConstantValueFloat(fval);
                 }
                 else
