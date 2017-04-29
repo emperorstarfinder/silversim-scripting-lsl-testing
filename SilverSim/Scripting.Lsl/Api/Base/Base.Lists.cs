@@ -483,7 +483,24 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return string.Empty;
             }
 
-            return src[index].AsString.ToString();
+            IValue val = src[index];
+            Type t = val.GetType();
+            if (t == typeof(Real))
+            {
+                return LSLCompiler.TypecastFloatToString(val.AsReal);
+            }
+            else if (t == typeof(Vector3))
+            {
+                return LSLCompiler.TypecastVectorToString6Places((Vector3)val);
+            }
+            else if (t == typeof(Quaternion))
+            {
+                return LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
+            }
+            else
+            {
+                return val.ToString();
+            }
         }
 
         [APILevel(APIFlags.LSL, "llList2Vector")]
@@ -526,7 +543,23 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     sb.Append(separator);
                 }
-                sb.Append(val.ToString());
+                Type t = val.GetType();
+                if (t == typeof(Real))
+                {
+                    sb.Append(LSLCompiler.TypecastFloatToString(val.AsReal));
+                }
+                else if (t == typeof(Vector3))
+                {
+                    sb.Append(LSLCompiler.TypecastVectorToString6Places((Vector3)val));
+                }
+                else if (t == typeof(Quaternion))
+                {
+                    sb.Append(LSLCompiler.TypecastRotationToString6Places((Quaternion)val));
+                }
+                else
+                {
+                    sb.Append(val.ToString());
+                }
             }
             return sb.ToString();
         }

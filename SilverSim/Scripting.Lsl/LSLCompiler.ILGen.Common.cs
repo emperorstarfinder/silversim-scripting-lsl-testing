@@ -461,7 +461,11 @@ namespace SilverSim.Scripting.Lsl
         public static Vector3 ParseStringToVector(string val)
         {
             char[] splitChar = { ',' };
-            string[] split = val.Replace("<", System.String.Empty).Replace(">", System.String.Empty).Split(splitChar);
+            if(!val.StartsWith("<") && !val.EndsWith(">"))
+            {
+                return Vector3.Zero;
+            }
+            string[] split = val.Replace("<", string.Empty).Replace(">", string.Empty).Split(splitChar);
             if (split.Length != 3)
             {
                 return Vector3.Zero;
@@ -483,6 +487,10 @@ namespace SilverSim.Scripting.Lsl
         public static Quaternion ParseStringToQuaternion(string input)
         {
             char[] splitChar = { ',' };
+            if (!input.StartsWith("<") && !input.EndsWith(">"))
+            {
+                return Quaternion.Identity;
+            }
             string[] split = input.Replace("<", string.Empty).Replace(">", string.Empty).Split(splitChar);
             int splitLength = split.Length;
             if (splitLength < 3 || splitLength > 4)
@@ -602,6 +610,15 @@ namespace SilverSim.Scripting.Lsl
                 TypecastFloatToString(v.Y, 5),
                 TypecastFloatToString(v.Z, 5),
                 TypecastFloatToString(v.W, 5));
+        }
+
+        public static string TypecastRotationToString6Places(Quaternion v)
+        {
+            return string.Format("<{0}, {1}, {2}, {3}>",
+                TypecastFloatToString(v.X, 6),
+                TypecastFloatToString(v.Y, 6),
+                TypecastFloatToString(v.Z, 6),
+                TypecastFloatToString(v.W, 6));
         }
 
         internal static bool IsImplicitlyCastable(Type toType, Type fromType)
