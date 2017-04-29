@@ -275,3 +275,4 @@ InvalidNameForPredefinedName=Ungültiger Name für vorgegebenen Namen bei HTTP-IN
 NoHTTPSSupport=HTTPS nicht aktiviert.
 ScriptCalledUnimplementedFunction0=Script hat die nicht implementierte Funktion {0} aufgerufen.
 DivisionByZeroEncountered=Division durch Null aufgetreten.
+Function0NotAllowed=Funktion {0} nicht erlaubt

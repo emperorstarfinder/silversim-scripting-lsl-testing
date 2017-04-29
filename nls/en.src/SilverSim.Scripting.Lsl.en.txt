@@ -275,3 +275,4 @@ InvalidNameForPredefinedName=Invalid name for predefined name
 NoHTTPSSupport=No HTTPS support
 ScriptCalledUnimplementedFunction0=Script called unimplemented function {0}
 DivisionByZeroEncountered=Division by zero encountered
+Function0NotAllowed=Function {0} not allowed

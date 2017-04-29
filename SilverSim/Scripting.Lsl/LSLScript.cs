@@ -40,6 +40,7 @@ using System.Text;
 using System.Timers;
 using System.Xml;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -2549,7 +2550,16 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            throw new InvalidOperationException(string.Format("Function {0} not allowed", name));
+            throw new OSSLInsufficientPermissionsException(this, "Function0NotAllowed", "Function {0} not allowed", name);
+        }
+
+        public sealed class OSSLInsufficientPermissionsException : LocalizedScriptErrorException
+        {
+            public OSSLInsufficientPermissionsException(object nlsRefObject, string nlsId, string nlsDefMessage, params object[] param)
+                : base(nlsRefObject, nlsId, nlsDefMessage, param)
+            {
+
+            }
         }
         #endregion
     }
