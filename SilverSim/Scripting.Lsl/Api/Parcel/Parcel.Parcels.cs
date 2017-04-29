@@ -161,7 +161,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                 ParcelInfo pInfo;
                 return (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) && 
-                    (pInfo.Owner.EqualsGrid(thisPart.Owner) || !pInfo.ObscureMusic)) ?
+                    pInfo.MusicURI != null && (pInfo.Owner.EqualsGrid(thisPart.Owner) || !pInfo.ObscureMusic)) ?
                     pInfo.MusicURI :
                     string.Empty;
             }
@@ -180,7 +180,14 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 if (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) &&
                     pInfo.Owner.EqualsGrid(thisPart.Owner))
                 {
-                    pInfo.MusicURI = new URI(url);
+                    try
+                    {
+                        pInfo.MusicURI = new URI(url);
+                    }
+                    catch
+                    {
+                        pInfo.MusicURI = null;
+                    }
                     scene.TriggerParcelUpdate(pInfo);
                 }
             }
