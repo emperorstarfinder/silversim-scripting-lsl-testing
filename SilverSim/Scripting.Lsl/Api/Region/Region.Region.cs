@@ -632,7 +632,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             lock (instance)
             {
                 Vector3 regionPos = instance.Part.GlobalPosition + offset;
-                return instance.Part.ObjectGroup.Scene.Terrain.Normal((int)regionPos.X, (int)regionPos.Y);
+                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceNormal((int)regionPos.X, (int)regionPos.Y);
             }
         }
 
