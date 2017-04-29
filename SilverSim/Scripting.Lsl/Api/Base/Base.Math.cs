@@ -207,7 +207,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 return 2.0 * Math.Acos(Math.Sqrt(s2 / (s2 + v2)));
             }
-            else if (v2 > Double.Epsilon)
+            else if (v2 > double.Epsilon)
             {
                 return 2.0 * Math.Asin(Math.Sqrt(v2 / (s2 + v2)));
             }
@@ -218,52 +218,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up)
         {
             return Quaternion.Axes2Rot(fwd, left, up);
-            /*
-            double s;
-            double t = fwd.X + left.Y + up.Z + 1.0;
-
-            if(fwd.Length + left.Length + up.Length < double.Epsilon)
-            {
-                return new Quaternion(1, 0, 0, 0);
-            }
-            else if(t >= 1.0)
-            {
-                s = 0.5 / Math.Sqrt(t);
-                return new Quaternion((left.Z - up.Y) * s, (up.X - fwd.Z) * s, (fwd.Y - left.X) * s, 0.25 / s);
-            }
-            else
-            {
-                double m = (left.Y > up.Z) ? left.Y : up.Z;
-
-                if(m < fwd.X)
-                {
-                    s = Math.Sqrt(fwd.X - (left.Y + up.Z) + 1.0);
-                    return new Quaternion(
-                        s * 0.5,
-                        (fwd.Y + left.X) * (0.5 / s),
-                        (up.X + fwd.Z) * (0.5 / s),
-                        (left.Z - up.Y) * (0.5 / s));
-                }
-                else if(Math.Abs(m - left.Y) < Double.Epsilon)
-                {
-                    s = Math.Sqrt(left.Y - (up.Z + fwd.X) + 1.0);
-                    return new Quaternion(
-                        (fwd.Y + left.X) * (0.5 / s),
-                        s * 0.5,
-                        (left.Z + up.Y) * (0.5 / s),
-                        (up.X - fwd.Z) * (0.5 / s));
-                }
-                else
-                {
-                    s = Math.Sqrt(up.Z - (fwd.X + left.Y) + 1.0);
-                    return new Quaternion(
-                        (up.X + fwd.Z) * (0.5 / s),
-                        (left.Z + up.Y) * (0.5 / s),
-                        s * 0.5,
-                        (fwd.Y - left.X) * (0.5 / s));
-                }
-            }
-            */
         }
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
