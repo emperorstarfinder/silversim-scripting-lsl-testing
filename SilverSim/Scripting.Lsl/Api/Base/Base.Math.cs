@@ -217,7 +217,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llAxes2Rot")]
         public Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up)
         {
-            return Quaternion.Axes2Rot(fwd, left, up).Normalize();
+            return Quaternion.Axes2Rot(fwd, left, up);
         }
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
