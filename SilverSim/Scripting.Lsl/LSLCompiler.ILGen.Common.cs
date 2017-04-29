@@ -218,7 +218,11 @@ namespace SilverSim.Scripting.Lsl
                         ++pos;
                     }
                     t = v.Substring(0, pos);
-                    if (t.StartsWith("-"))
+                    if(t.Length == 0)
+                    {
+                        return 0;
+                    }
+                    else if (t.StartsWith("-"))
                     {
                         uint m = int.MaxValue;
                         m += 1;
