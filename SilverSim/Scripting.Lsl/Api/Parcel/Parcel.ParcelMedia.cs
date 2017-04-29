@@ -27,7 +27,6 @@ using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Parcel;
 using SilverSim.Viewer.Messages.Parcel;
-using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
