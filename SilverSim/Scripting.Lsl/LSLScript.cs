@@ -622,6 +622,22 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public sealed class StartScriptEvent : IScriptEvent
+        {
+
+        }
+
+        public override void Start(int startparam = 0)
+        {
+            if (!IsRunning && !IsAborting)
+            {
+                StartParameter = startparam;
+                IsRunning = true;
+                m_Events.Enqueue(new StartScriptEvent());
+                Part.ObjectGroup.Scene.ScriptThreadPool.PostScript(this);
+            }
+        }
+
         public override bool IsRunning { get; set; }
 
         public override void Remove()

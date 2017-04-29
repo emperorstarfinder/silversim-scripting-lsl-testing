@@ -256,8 +256,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     newitem.ScriptState = oldInstance.ScriptState;
                 }
                 ScriptInstance newInstance = ScriptLoader.Load(destpart, newitem, newitem.Owner, asset, null);
-                newInstance.IsRunning = running != 0;
-                newInstance.PostEvent(new OnRezEvent(start_param));
+                if(oldInstance != null)
+                {
+                    newInstance.IsRunning = running != 0;
+                }
+                else if (running != 0)
+                {
+                    newInstance.Start(start_param);
+                }
             }
         }
     }
