@@ -123,19 +123,16 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new InvalidObjectXmlException();
                 }
-                string vardata;
 
                 switch (type)
                 {
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion":
-                        vardata = reader.ReadElementValueAsString();
-                        array.Add(Quaternion.Parse(vardata));
+                        array.Add(LSLCompiler.ParseStringToQuaternion(reader.ReadElementValueAsString()));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector":
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3":
-                        vardata = reader.ReadElementValueAsString();
-                        array.Add(Vector3.Parse(vardata));
+                        array.Add(LSLCompiler.ParseStringToVector(reader.ReadElementValueAsString()));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
@@ -143,7 +140,7 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
-                        array.Add(reader.ReadElementValueAsFloat());
+                        array.Add(LSLCompiler.ParseStringToDouble(reader.ReadElementContentAsString()));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":

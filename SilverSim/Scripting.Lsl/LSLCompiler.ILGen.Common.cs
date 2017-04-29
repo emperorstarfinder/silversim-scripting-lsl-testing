@@ -531,7 +531,7 @@ namespace SilverSim.Scripting.Lsl
                 if(t == typeof(Real))
                 {
                     double v = iv.AsReal;
-                    sb.Append(TypecastFloatToString(v));
+                    sb.Append(TypecastDoubleToString(v));
                 }
                 else if(t == typeof(Vector3))
                 {
@@ -555,7 +555,7 @@ namespace SilverSim.Scripting.Lsl
             return b.Conjugate() * a;
         }
 
-        static string TypecastFloatToString(double v, int placesAfter)
+        static string TypecastDoubleToString(double v, int placesAfter)
         {
             string val;
             if(BitConverter.DoubleToInt64Bits(v) == BitConverter.DoubleToInt64Bits(NegativeZero))
@@ -582,43 +582,43 @@ namespace SilverSim.Scripting.Lsl
             return val;
         }
 
-        public static string TypecastFloatToString(double v)
+        public static string TypecastDoubleToString(double v)
         {
-            return TypecastFloatToString(v, 6);
+            return TypecastDoubleToString(v, 6);
         }
 
         public static string TypecastVectorToString5Places(Vector3 v)
         {
             return string.Format("<{0}, {1}, {2}>",
-                TypecastFloatToString(v.X, 5),
-                TypecastFloatToString(v.Y, 5),
-                TypecastFloatToString(v.Z, 5));
+                TypecastDoubleToString(v.X, 5),
+                TypecastDoubleToString(v.Y, 5),
+                TypecastDoubleToString(v.Z, 5));
         }
 
         public static string TypecastVectorToString6Places(Vector3 v)
         {
             return string.Format("<{0}, {1}, {2}>",
-                TypecastFloatToString(v.X, 6),
-                TypecastFloatToString(v.Y, 6),
-                TypecastFloatToString(v.Z, 6));
+                TypecastDoubleToString(v.X, 6),
+                TypecastDoubleToString(v.Y, 6),
+                TypecastDoubleToString(v.Z, 6));
         }
 
         public static string TypecastRotationToString5Places(Quaternion v)
         {
             return string.Format("<{0}, {1}, {2}, {3}>",
-                TypecastFloatToString(v.X, 5),
-                TypecastFloatToString(v.Y, 5),
-                TypecastFloatToString(v.Z, 5),
-                TypecastFloatToString(v.W, 5));
+                TypecastDoubleToString(v.X, 5),
+                TypecastDoubleToString(v.Y, 5),
+                TypecastDoubleToString(v.Z, 5),
+                TypecastDoubleToString(v.W, 5));
         }
 
         public static string TypecastRotationToString6Places(Quaternion v)
         {
             return string.Format("<{0}, {1}, {2}, {3}>",
-                TypecastFloatToString(v.X, 6),
-                TypecastFloatToString(v.Y, 6),
-                TypecastFloatToString(v.Z, 6),
-                TypecastFloatToString(v.W, 6));
+                TypecastDoubleToString(v.X, 6),
+                TypecastDoubleToString(v.Y, 6),
+                TypecastDoubleToString(v.Z, 6),
+                TypecastDoubleToString(v.W, 6));
         }
 
         internal static bool IsImplicitlyCastable(Type toType, Type fromType)
@@ -681,7 +681,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fromType == typeof(double))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastFloatToString"));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("TypecastDoubleToString"));
                 }
                 else if(fromType == typeof(AnArray))
                 {

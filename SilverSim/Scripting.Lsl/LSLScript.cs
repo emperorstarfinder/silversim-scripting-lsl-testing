@@ -270,21 +270,21 @@ namespace SilverSim.Scripting.Lsl
                         writer.WriteStartElement("ListItem");
                         writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
                         double v = (Real)val;
-                        writer.WriteValue(v);
+                        writer.WriteValue(LSLCompiler.TypecastDoubleToString(v));
                         writer.WriteEndElement();
                     }
                     else if (valtype == typeof(Quaternion))
                     {
                         writer.WriteStartElement("ListItem");
                         writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
-                        writer.WriteValue(val.ToString());
+                        writer.WriteValue(LSLCompiler.TypecastRotationToString6Places((Quaternion)val));
                         writer.WriteEndElement();
                     }
                     else if (valtype == typeof(Vector3))
                     {
                         writer.WriteStartElement("ListItem");
                         writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
-                        writer.WriteValue(val.ToString());
+                        writer.WriteValue(LSLCompiler.TypecastVectorToString6Places((Vector3)val));
                         writer.WriteEndElement();
                     }
                     else if (valtype == typeof(AString))
@@ -342,36 +342,42 @@ namespace SilverSim.Scripting.Lsl
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
+                                    writer.WriteValue(varValue.ToString());
                                 }
                                 else if (varType == typeof(double))
                                 {
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
+                                    writer.WriteValue(LSLCompiler.TypecastDoubleToString((double)varValue));
                                 }
                                 else if (varType == typeof(Vector3))
                                 {
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
+                                    writer.WriteValue(LSLCompiler.TypecastVectorToString6Places((Vector3)varValue));
                                 }
                                 else if (varType == typeof(Quaternion))
                                 {
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
+                                    writer.WriteValue(LSLCompiler.TypecastRotationToString6Places((Quaternion)varValue));
                                 }
                                 else if (varType == typeof(UUID) || varType == typeof(LSLKey))
                                 {
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
+                                    writer.WriteValue(varValue.ToString());
                                 }
                                 else if (varType == typeof(string))
                                 {
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
+                                    writer.WriteValue(varValue.ToString());
                                 }
                                 else if (varType == typeof(AnArray))
                                 {
@@ -382,7 +388,6 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     continue;
                                 }
-                                writer.WriteValue(varValue.ToString());
                                 writer.WriteEndElement();
                             }
                             writer.WriteEndElement();

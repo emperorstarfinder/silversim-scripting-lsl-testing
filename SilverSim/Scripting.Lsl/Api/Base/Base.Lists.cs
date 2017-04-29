@@ -487,7 +487,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             Type t = val.GetType();
             if (t == typeof(Real))
             {
-                return LSLCompiler.TypecastFloatToString(val.AsReal);
+                return LSLCompiler.TypecastDoubleToString(val.AsReal);
             }
             else if (t == typeof(Vector3))
             {
@@ -546,7 +546,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 Type t = val.GetType();
                 if (t == typeof(Real))
                 {
-                    sb.Append(LSLCompiler.TypecastFloatToString(val.AsReal));
+                    sb.Append(LSLCompiler.TypecastDoubleToString(val.AsReal));
                 }
                 else if (t == typeof(Vector3))
                 {

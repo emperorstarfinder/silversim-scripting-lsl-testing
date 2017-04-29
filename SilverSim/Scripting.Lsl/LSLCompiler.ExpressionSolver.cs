@@ -934,7 +934,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueFloat)
                                 {
-                                    st.Value = new Tree.ConstantValueString(TypecastFloatToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value));
+                                    st.Value = new Tree.ConstantValueString(TypecastDoubleToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueInt)
                                 {

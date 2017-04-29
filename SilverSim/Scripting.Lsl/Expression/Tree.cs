@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Expression
 
             public override string ToString()
             {
-                return LSLCompiler.TypecastFloatToString(Value);
+                return LSLCompiler.TypecastDoubleToString(Value);
             }
 
             public override ValueBase Negate()
