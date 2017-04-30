@@ -169,6 +169,14 @@ namespace SilverSim.Scripting.Lsl.Expression
 
         public ValueBase Value;
 
+        public Type ValueType
+        {
+            get
+            {
+                return Value != null ? Value.GetType() : null;
+            }
+        }
+
 
         public Tree()
         {
