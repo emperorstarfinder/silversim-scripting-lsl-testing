@@ -622,8 +622,11 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGroundContour")]
         public Vector3 GroundContour(ScriptInstance instance, Vector3 offset)
         {
-            Vector3 v = GroundSlope(instance, offset);
-            return new Vector3(-v.Y, v.X, 0);
+            lock(instance)
+            {
+                Vector3 regionPos = instance.Part.GlobalPosition + offset;
+                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceContour(regionPos.X, regionPos.Y);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGroundNormal")]
@@ -632,23 +635,18 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             lock (instance)
             {
                 Vector3 regionPos = instance.Part.GlobalPosition + offset;
-                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceNormal((int)regionPos.X, (int)regionPos.Y);
+                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceNormal(regionPos.X, regionPos.Y);
             }
         }
 
         [APILevel(APIFlags.LSL, "llGroundSlope")]
         public Vector3 GroundSlope(ScriptInstance instance, Vector3 offset)
         {
-            Vector3 vsn = GroundNormal(instance, offset);
-
-            /* Put the x,y coordinates of the slope normal into the plane equation to get
-             * the height of that point on the plane.  
-             * The resulting vector provides the slope.
-             */
-            Vector3 vsl = vsn;
-            vsl.Z = (((vsn.X * vsn.X) + (vsn.Y * vsn.Y)) / (-1 * vsn.Z));
-
-            return vsl;
+            lock(instance)
+            {
+                Vector3 regionPos = instance.Part.GlobalPosition + offset;
+                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceSlope(regionPos.X, regionPos.Y);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llWater")]
