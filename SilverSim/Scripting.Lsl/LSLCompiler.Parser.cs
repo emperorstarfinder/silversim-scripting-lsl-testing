@@ -653,6 +653,10 @@ namespace SilverSim.Scripting.Lsl
                         compileState.LanguageExtensions.EnableBreakContinueStatement = true;
                         compileState.LanguageExtensions.EnableSwitchBlock = true;
                         compileState.ForcedSleepDefault = false;
+                        if (!apiExtensions.Contains(APIExtension.LongInteger))
+                        {
+                            apiExtensions.Add(APIExtension.LongInteger);
+                        }
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
@@ -664,7 +668,10 @@ namespace SilverSim.Scripting.Lsl
                 else if (shbang.Value.StartsWith("//#!Enable:"))
                 {
                     string api = shbang.Value.Substring(11).Trim().ToLower();
-                    apiExtensions.Add(api);
+                    if (!apiExtensions.Contains(api))
+                    {
+                        apiExtensions.Add(api);
+                    }
                 }
                 else if(shbang.Value.StartsWith("//#!UsesSinglePrecision"))
                 {
