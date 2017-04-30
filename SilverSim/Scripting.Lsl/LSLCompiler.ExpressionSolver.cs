@@ -74,13 +74,8 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        public enum FloatingPointPrecision
-        {
-            Single,
-            Double
-        }
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        void SolveConstantOperations(Tree tree, int lineNumber, CultureInfo currentCulture, FloatingPointPrecision precision)
+        void SolveConstantOperations(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             List<Tree> processNodes = new List<Tree>();
             List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
@@ -168,7 +163,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (ot.Type == Tree.EntryType.Value && null == ot.Value)
                         {
-                            ot.Process(lineNumber);
+                            ot.Process(cs, lineNumber);
                         }
                     }
                 }
@@ -536,7 +531,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                if (precision == FloatingPointPrecision.Single)
+                                if (cs.UsesSinglePrecision)
                                 {
                                     float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
                                     float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
@@ -577,7 +572,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                if (precision == FloatingPointPrecision.Single)
+                                if (cs.UsesSinglePrecision)
                                 {
                                     float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
                                     float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
@@ -619,7 +614,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                if (precision == FloatingPointPrecision.Single)
+                                if (cs.UsesSinglePrecision)
                                 {
                                     float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
                                     float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
@@ -661,7 +656,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                if (precision == FloatingPointPrecision.Single)
+                                if (cs.UsesSinglePrecision)
                                 {
                                     float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
                                     float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
@@ -703,7 +698,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                if (precision == FloatingPointPrecision.Single)
+                                if (cs.UsesSinglePrecision)
                                 {
                                     float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
                                     float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
@@ -757,7 +752,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (st.SubTree[0].Value is Tree.ConstantValueFloat && st.SubTree[1].Value is Tree.ConstantValueFloat)
                             {
-                                if (precision == FloatingPointPrecision.Single)
+                                if (cs.UsesSinglePrecision)
                                 {
                                     float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
                                     float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
@@ -942,7 +937,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (st.Entry != "-" && st.SubTree[0].Type == Tree.EntryType.Value)
                     {
-                        st.Process(lineNumber);
+                        st.Process(cs, lineNumber);
                     }
                     if (st.Entry == "+")
                     {
@@ -952,7 +947,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (st.SubTree[0].Value == null)
                         {
-                            st.SubTree[0].Process(lineNumber);
+                            st.SubTree[0].Process(cs, lineNumber);
                         }
                         if (st.Value == null)
                         {
@@ -997,21 +992,21 @@ namespace SilverSim.Scripting.Lsl
                                 if (st.SubTree[0].Value is ConstantValueRotation)
                                 {
                                     st.Value = new Tree.ConstantValueString(
-                                        precision == FloatingPointPrecision.Single ?
+                                        cs.UsesSinglePrecision ?
                                         SinglePrecision.TypecastRotationToString5Places(((ConstantValueRotation)st.SubTree[0].Value).Value) :
                                         TypecastRotationToString5Places(((ConstantValueRotation)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is ConstantValueVector)
                                 {
                                     st.Value = new Tree.ConstantValueString(
-                                        precision == FloatingPointPrecision.Single ?
+                                        cs.UsesSinglePrecision ?
                                         SinglePrecision.TypecastVectorToString5Places(((ConstantValueVector)st.SubTree[0].Value).Value) :
                                         TypecastVectorToString5Places(((ConstantValueVector)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueFloat)
                                 {
                                     st.Value = new Tree.ConstantValueString(
-                                        precision == FloatingPointPrecision.Single ?
+                                        cs.UsesSinglePrecision ?
                                         SinglePrecision.TypecastFloatToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value) :
                                         TypecastDoubleToString(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value));
                                 }
@@ -2063,9 +2058,8 @@ namespace SilverSim.Scripting.Lsl
 
         void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames, int lineNumber, CultureInfo currentCulture)
         {
-            FloatingPointPrecision precision = cs.UsesSinglePrecision ? FloatingPointPrecision.Single : FloatingPointPrecision.Double;
             SolveMaxNegValues(cs, resolvetree);
-            SolveConstantOperations(resolvetree, lineNumber, currentCulture, precision);
+            SolveConstantOperations(cs, resolvetree, lineNumber, currentCulture);
         }
 
 #region Pre-Tree identifiers
@@ -2404,7 +2398,7 @@ namespace SilverSim.Scripting.Lsl
                         msg.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
                     }
                 }
-                st.Process(lineNumber);
+                st.Process(cs, lineNumber);
             }
 
             if(msg.Length != 0)

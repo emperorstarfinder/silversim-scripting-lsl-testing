@@ -238,7 +238,7 @@ namespace SilverSim.Scripting.Lsl.Expression
             return o.ToString();
         }
 
-        public void Process(int lineNumber)
+        internal void Process(LSLCompiler.CompileState cs, int lineNumber)
         {
             if(Type == EntryType.StringValue)
             {
@@ -251,6 +251,10 @@ namespace SilverSim.Scripting.Lsl.Expression
                 if(int.TryParse(Entry, out val) || Entry.StartsWith("0x") || Entry.StartsWith("0X"))
                 {
                     Value = new ConstantValueInt(Entry);
+                }
+                else if(cs.LanguageExtensions.EnableLongIntegers && (Entry.EndsWith("l") || Entry.EndsWith("L")))
+                {
+                    Value = new ConstantValueLong(Entry.Substring(0, Entry.Length - 1));
                 }
                 else if(double.TryParse(Entry, NumberStyles.Float, CultureInfo.InvariantCulture, out fval))
                 {
