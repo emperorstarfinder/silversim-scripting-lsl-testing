@@ -87,6 +87,8 @@ namespace SilverSim.Scripting.Lsl
         public const string Selling = "Selling";
         [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Pathfinding = "Pathfinding";
+        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
+        public const string LongInteger = "LongInteger";
     }
 
     [Serializable]

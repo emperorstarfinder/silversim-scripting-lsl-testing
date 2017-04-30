@@ -66,7 +66,8 @@ namespace SilverSim.Scripting.Lsl
             CheckValidName(cs, p, type, name);
             if (m_ReservedWords.Contains(name) || 
                 (cs.LanguageExtensions.EnableSwitchBlock && (name == "switch" || name == "case" || name == "break")) ||
-                ((name == "break" || name == "continue") && cs.LanguageExtensions.EnableBreakContinueStatement))
+                (cs.LanguageExtensions.EnableBreakContinueStatement && (name == "break" || name == "continue")) ||
+                (cs.LanguageExtensions.EnableLongIntegers && name == "long"))
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAReservedWord", type + " cannot be declared as '{0}'. '{0}' is a reserved word."), name));
             }
@@ -82,11 +83,11 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAnEvent", type + " cannot be declared as '{0}'. '{0}' is an event."), name));
             }
-            else if (cs.m_Functions.ContainsKey(name) && type == "Function" && !cs.LanguageExtensions.EnableFunctionOverloading)
+            else if (!cs.LanguageExtensions.EnableFunctionOverloading && type == "Function" && cs.m_Functions.ContainsKey(name))
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAlreadyADefinedUserFunc", type + " cannot be declared as '{0}'. '{0}' is an already defined as user function."), name));
             }
-            else if (cs.m_Functions.ContainsKey(name) && type == "Variable")
+            else if (type == "Variable" && cs.m_Functions.ContainsKey(name))
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAlreadyADefinedUserFunc", type + " cannot be declared as '{0}'. '{0}' is an already defined as user function."), name));
             }
@@ -669,6 +670,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.UsesSinglePrecision = true;
                 }
+            }
+
+            if(apiExtensions.Contains(APIExtension.LongInteger))
+            {
+                compileState.LanguageExtensions.EnableLongIntegers = true;
             }
 
             if(apiExtensions.Contains(APIExtension.ExtendedTypecasts))

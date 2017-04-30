@@ -377,6 +377,45 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return index;
         }
 
+        [APIExtension(APIExtension.LongInteger, "llList2Long")]
+        [Description("Returns an integer that is at index in src")]
+        public long List2Long(ScriptInstance instance,
+            [Description("List containing the element of interest")]
+            AnArray src,
+            [Description("Index of the element of interest.")]
+            int index)
+        {
+            if (index < 0)
+            {
+                index = src.Count - index;
+            }
+
+            if (index < 0 || index >= src.Count)
+            {
+                return 0;
+            }
+
+            if (src[index] is Real)
+            {
+                return LSLCompiler.ConvToLong((Real)src[index]);
+            }
+            else if (src[index] is AString)
+            {
+                return LSLCompiler.ConvToLong(src[index].ToString());
+            }
+            else
+            {
+                try
+                {
+                    return src[index].AsLong;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llList2Integer")]
         [Description("Returns an integer that is at index in src")]
         public int List2Integer(ScriptInstance instance,

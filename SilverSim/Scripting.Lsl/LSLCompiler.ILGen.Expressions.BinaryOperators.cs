@@ -764,7 +764,11 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
                             compileState.ILGen.Emit(OpCodes.Dup);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            if (typeof(int) == m_RightHandType || typeof(double) == m_RightHandType || typeof(string) == m_RightHandType)
+                            if(typeof(long) == m_RightHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddLongInt", new Type[] { m_RightHandType }));
+                            }
+                            else if (typeof(int) == m_RightHandType || typeof(double) == m_RightHandType || typeof(string) == m_RightHandType)
                             {
                                 compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { m_RightHandType }));
                             }

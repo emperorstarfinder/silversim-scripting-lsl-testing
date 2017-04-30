@@ -89,6 +89,10 @@ namespace SilverSim.Scripting.Lsl
                     {
                         compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { innerExpressionReturn }));
                     }
+                    else if (innerExpressionReturn == typeof(long))
+                    {
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddLongInt", new Type[] { typeof(long) }));
+                    }
                     else if (innerExpressionReturn == typeof(LSLKey))
                     {
                         compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(IValue) }));
