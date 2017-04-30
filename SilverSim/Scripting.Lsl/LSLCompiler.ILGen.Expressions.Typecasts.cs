@@ -46,6 +46,10 @@ namespace SilverSim.Scripting.Lsl
                 m_TypecastTree = functionTree.SubTree[0];
                 switch (functionTree.Entry)
                 {
+                    case "(long)":
+                        m_TargetType = typeof(long);
+                        break;
+
                     case "(integer)":
                         m_TargetType = typeof(int);
                         break;

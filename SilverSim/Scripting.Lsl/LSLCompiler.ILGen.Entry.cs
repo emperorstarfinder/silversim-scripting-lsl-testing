@@ -297,6 +297,16 @@ namespace SilverSim.Scripting.Lsl
                             reset_ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                             reset_ILGen.Emit(OpCodes.Stfld, fb);
                         }
+                        else if (fb.FieldType == typeof(long))
+                        {
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Ldc_I8, 0L);
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Ldc_I8, 0L);
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
                         else if (fb.FieldType == typeof(int))
                         {
                             script_ILGen.Emit(OpCodes.Ldarg_0);
@@ -383,6 +393,16 @@ namespace SilverSim.Scripting.Lsl
 
                             reset_ILGen.Emit(OpCodes.Ldarg_0);
                             reset_ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                            reset_ILGen.Emit(OpCodes.Stfld, fb);
+                        }
+                        else if (fb.FieldType == typeof(long))
+                        {
+                            script_ILGen.Emit(OpCodes.Ldarg_0);
+                            script_ILGen.Emit(OpCodes.Ldc_I8, (long)0);
+                            script_ILGen.Emit(OpCodes.Stfld, fb);
+
+                            reset_ILGen.Emit(OpCodes.Ldarg_0);
+                            reset_ILGen.Emit(OpCodes.Ldc_I8, (long)0);
                             reset_ILGen.Emit(OpCodes.Stfld, fb);
                         }
                         else if (fb.FieldType == typeof(int))
@@ -489,6 +509,16 @@ namespace SilverSim.Scripting.Lsl
                             varsToInit.Add(varName);
                         }
                     }
+                    else if (fb.FieldType == typeof(long))
+                    {
+                        script_ilgen.Emit(OpCodes.Ldc_I8, 0L);
+                        script_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        reset_ilgen.Emit(OpCodes.Ldc_I8, 0L);
+                        reset_ilgen.Emit(OpCodes.Stfld, fb);
+
+                        varIsInited.Add(varName);
+                    }
                     else if (fb.FieldType == typeof(int))
                     {
                         script_ilgen.Emit(OpCodes.Ldc_I4_0);
@@ -576,6 +606,14 @@ namespace SilverSim.Scripting.Lsl
 
                         switch (functionDeclaration[0])
                         {
+                            case "long":
+                                if(!compileState.LanguageExtensions.EnableLongIntegers)
+                                {
+                                    goto default;
+                                }
+                                returnType = typeof(long);
+                                break;
+
                             case "integer":
                                 returnType = typeof(int);
                                 break;
@@ -624,45 +662,47 @@ namespace SilverSim.Scripting.Lsl
                             }
                             switch (functionDeclaration[functionStart++])
                             {
+                                case "long":
+                                    if(!compileState.LanguageExtensions.EnableLongIntegers)
+                                    {
+                                        goto default;
+                                    }
+                                    paramTypes.Add(typeof(long));
+                                    break;
+
                                 case "integer":
                                     paramTypes.Add(typeof(int));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "vector":
                                     paramTypes.Add(typeof(Vector3));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "list":
                                     paramTypes.Add(typeof(AnArray));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "float":
                                     paramTypes.Add(typeof(double));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "string":
                                     paramTypes.Add(typeof(string));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "key":
                                     paramTypes.Add(typeof(LSLKey));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "rotation":
                                 case "quaternion":
                                     paramTypes.Add(typeof(Quaternion));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 default:
                                     throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
                             }
+                            paramName.Add(functionDeclaration[functionStart++]);
                         }
 
 #if DEBUG
@@ -695,6 +735,14 @@ namespace SilverSim.Scripting.Lsl
 
                         switch (functionDeclaration[0])
                         {
+                            case "long":
+                                if(!compileState.LanguageExtensions.EnableLongIntegers)
+                                {
+                                    goto default;
+                                }
+                                returnType = typeof(long);
+                                break;
+
                             case "integer":
                                 returnType = typeof(int);
                                 break;
@@ -743,45 +791,47 @@ namespace SilverSim.Scripting.Lsl
                             }
                             switch (functionDeclaration[functionStart++])
                             {
+                                case "long":
+                                    if(!compileState.LanguageExtensions.EnableLongIntegers)
+                                    {
+                                        goto default;
+                                    }
+                                    paramTypes.Add(typeof(long));
+                                    break;
+
                                 case "integer":
                                     paramTypes.Add(typeof(int));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "vector":
                                     paramTypes.Add(typeof(Vector3));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "list":
                                     paramTypes.Add(typeof(AnArray));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "float":
                                     paramTypes.Add(typeof(double));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "string":
                                     paramTypes.Add(typeof(string));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "key":
                                     paramTypes.Add(typeof(LSLKey));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 case "rotation":
                                 case "quaternion":
                                     paramTypes.Add(typeof(Quaternion));
-                                    paramName.Add(functionDeclaration[functionStart++]);
                                     break;
 
                                 default:
                                     throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
                             }
+                            paramName.Add(functionDeclaration[functionStart++]);
                         }
 
                         dumpILGen.WriteLine("********************************************************************************");
@@ -1007,6 +1057,13 @@ namespace SilverSim.Scripting.Lsl
                         /* push back that var. We got it too early. */
                         varsToInit.Add(varName);
                     }
+                }
+                else if (fb.FieldType == typeof(long))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldc_I8, 0L);
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
                 }
                 else if (fb.FieldType == typeof(int))
                 {

@@ -119,6 +119,14 @@ namespace SilverSim.Scripting.Lsl
                 FuncParamInfo fp = new FuncParamInfo();
                 switch (arguments[i])
                 {
+                    case "long":
+                        if(!cs.LanguageExtensions.EnableLongIntegers)
+                        {
+                            goto default;
+                        }
+                        fp.Type = typeof(long);
+                        break;
+
                     case "integer":
                         fp.Type = typeof(int);
                         break;
@@ -368,6 +376,16 @@ namespace SilverSim.Scripting.Lsl
                 {
                     switch (args[0])
                     {
+                        case "long":
+                            if(compileState.LanguageExtensions.EnableLongIntegers)
+                            {
+                                goto case "integer";
+                            }
+                            else
+                            {
+                                goto default;
+                            }
+
                         case "integer":
                         case "vector":
                         case "list":
@@ -484,6 +502,14 @@ namespace SilverSim.Scripting.Lsl
                         Type stateVarType = null;
                         switch (args[0])
                         {
+                            case "long":
+                                if (!compileState.LanguageExtensions.EnableLongIntegers)
+                                {
+                                    goto default;
+                                }
+                                stateVarType = typeof(long);
+                                break;
+
                             case "integer":
                                 stateVarType = typeof(int);
                                 break;
@@ -727,6 +753,19 @@ namespace SilverSim.Scripting.Lsl
                     }
                     switch (args[0])
                     {
+                        case "long":
+                            if(!compileState.LanguageExtensions.EnableLongIntegers)
+                            {
+                                goto default;
+                            }
+                            CheckUsedName(compileState, p, "Variable", args[1]);
+                            compileState.m_VariableDeclarations[args[1]] = typeof(long);
+                            if (args[2] == "=")
+                            {
+                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
+                            }
+                            break;
+
                         case "integer":
                             CheckUsedName(compileState, p, "Variable", args[1]);
                             compileState.m_VariableDeclarations[args[1]] = typeof(int);
@@ -836,6 +875,16 @@ namespace SilverSim.Scripting.Lsl
                         /* either type or function name */
                         switch (args[0])
                         {
+                            case "long":
+                                if(compileState.LanguageExtensions.EnableLongIntegers)
+                                {
+                                    goto case "integer";
+                                }
+                                else
+                                {
+                                    goto default;
+                                }
+
                             case "integer":
                             case "vector":
                             case "list":

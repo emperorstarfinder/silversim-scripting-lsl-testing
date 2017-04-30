@@ -103,6 +103,32 @@ namespace SilverSim.Scripting.Lsl.Expression
         }
 
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
+        public class ConstantValueLong : ConstantValue
+        {
+            public long Value;
+
+            public ConstantValueLong(long value)
+            {
+                Value = value;
+            }
+
+            public ConstantValueLong(string str)
+            {
+                Value = LSLCompiler.ConvToLong(str);
+            }
+
+            public override string ToString()
+            {
+                return Value.ToString(CultureInfo.InvariantCulture);
+            }
+
+            public override ValueBase Negate()
+            {
+                return new ConstantValueLong(-Value);
+            }
+        }
+
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public class ConstantValueFloat : ConstantValue
         {
             public double Value;

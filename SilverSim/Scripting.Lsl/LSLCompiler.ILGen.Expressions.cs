@@ -129,6 +129,11 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
                         innerExpressionReturn = typeof(int);
                     }
+                    else if (functionTree.Value is Tree.ConstantValueLong)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldc_I8, ((Tree.ConstantValueLong)functionTree.Value).Value);
+                        innerExpressionReturn = typeof(long);
+                    }
                     else if (functionTree.Value is Tree.ConstantValueString)
                     {
                         compileState.ILGen.Emit(OpCodes.Ldstr, ((Tree.ConstantValueString)functionTree.Value).Value);
@@ -197,7 +202,14 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }
-                                        else if(innerExpressionReturn == typeof(double))
+                                        else if (innerExpressionReturn == typeof(long))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
@@ -311,6 +323,13 @@ namespace SilverSim.Scripting.Lsl
                                         if (innerExpressionReturn == typeof(int))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(long))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, lineNumber);
@@ -465,6 +484,13 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }
+                                        else if (innerExpressionReturn == typeof(long))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
@@ -580,6 +606,13 @@ namespace SilverSim.Scripting.Lsl
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            SetVarFromStack(compileState, v, lineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(long))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             SetVarFromStack(compileState, v, lineNumber);
                                         }
@@ -762,6 +795,11 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
                                 innerExpressionReturn = typeof(int);
+                            }
+                            else if (functionTree.Value is Tree.ConstantValueLong)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, ((Tree.ConstantValueLong)functionTree.Value).Value);
+                                innerExpressionReturn = typeof(long);
                             }
                             else
                             {

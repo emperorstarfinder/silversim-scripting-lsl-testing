@@ -128,6 +128,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableSwitchBlock;
 
                 public bool EnableBreakContinueStatement;
+
+                public bool EnableLongIntegers;
             }
 
             public bool UsesSinglePrecision;

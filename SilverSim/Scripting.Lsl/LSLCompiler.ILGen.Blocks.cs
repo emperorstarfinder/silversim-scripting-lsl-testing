@@ -85,6 +85,52 @@ namespace SilverSim.Scripting.Lsl
 
                     #region Variable declarations
                     /* type named things are variable declaration */
+                    case "long":
+                        if(!compileState.LanguageExtensions.EnableLongIntegers)
+                        {
+                            goto default;
+                        }
+
+                        if (isImplicit)
+                        {
+                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "VariableDeclarationNotAllowedWithinConditionalStatementWithoutBlock", "variable declaration not allowed within conditional statement without block"));
+                        }
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                        }
+
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
+                        lb = compileState.ILGen.DeclareLocal(typeof(long));
+                        if (compileState.EmitDebugSymbols)
+                        {
+                            lb.SetLocalSymInfo(functionLine.Line[1]);
+                        }
+                        localVars[functionLine.Line[1]] = lb;
+                        if (functionLine.Line[2] != ";")
+                        {
+                            ProcessExpression(
+                                compileState,
+                                typeof(long),
+                                3,
+                                functionLine.Line.Count - 2,
+                                functionLine,
+                                localVars);
+                        }
+                        else
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                        }
+                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                        break;
+
+                    /* type named things are variable declaration */
                     case "integer":
                         if (isImplicit)
                         {
@@ -995,6 +1041,14 @@ namespace SilverSim.Scripting.Lsl
 
             switch (functionDeclaration[0])
             {
+                case "long":
+                    if(!compileState.LanguageExtensions.EnableLongIntegers)
+                    {
+                        goto default;
+                    }
+                    returnType = typeof(long);
+                    break;
+
                 case "integer":
                     returnType = typeof(int);
                     break;
@@ -1043,6 +1097,14 @@ namespace SilverSim.Scripting.Lsl
                 Type t;
                 switch (functionDeclaration[functionStart++])
                 {
+                    case "long":
+                        if(!compileState.LanguageExtensions.EnableLongIntegers)
+                        {
+                            goto default;
+                        }
+                        t = typeof(long);
+                        break;
+
                     case "integer":
                         t = typeof(int);
                         break;
@@ -1094,6 +1156,10 @@ namespace SilverSim.Scripting.Lsl
                 if (returnType == typeof(int))
                 {
                     ilgen.Emit(OpCodes.Ldc_I4_0);
+                }
+                else if(returnType == typeof(long))
+                {
+                    ilgen.Emit(OpCodes.Ldc_I8, (long)0);
                 }
                 else if (returnType == typeof(double))
                 {

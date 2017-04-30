@@ -64,7 +64,12 @@ namespace SilverSim.Scripting.Lsl
                                 compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                                 compileState.ILGen.Emit(OpCodes.Ceq);
                             }
-                            else if(innerExpressionReturn == typeof(LSLKey) ||
+                            else if (innerExpressionReturn == typeof(int))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, 0L);
+                                compileState.ILGen.Emit(OpCodes.Ceq);
+                            }
+                            else if (innerExpressionReturn == typeof(LSLKey) ||
                                 innerExpressionReturn == typeof(Quaternion))
                             {
                                 compileState.ILGen.Emit(OpCodes.Call, innerExpressionReturn.GetProperty("IsLSLTrue").GetGetMethod());
@@ -91,7 +96,7 @@ namespace SilverSim.Scripting.Lsl
                             throw new ReturnTypeException(typeof(int), m_LineNumber);
 
                         case "-":
-                            if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double))
+                            if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double) || innerExpressionReturn == typeof(long))
                             {
                                 compileState.ILGen.Emit(OpCodes.Neg);
                             }
@@ -110,7 +115,7 @@ namespace SilverSim.Scripting.Lsl
                             throw new ReturnTypeException(innerExpressionReturn, m_LineNumber);
 
                         case "~":
-                            if (innerExpressionReturn == typeof(int))
+                            if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(long))
                             {
                                 compileState.ILGen.Emit(OpCodes.Not);
                             }

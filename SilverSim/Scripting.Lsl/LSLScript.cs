@@ -232,6 +232,7 @@ namespace SilverSim.Scripting.Lsl
                         if (fi.FieldType == typeof(int) ||
                             fi.FieldType == typeof(Vector3) ||
                             fi.FieldType == typeof(double) ||
+                            fi.FieldType == typeof(long) ||
                             fi.FieldType == typeof(Quaternion) ||
                             fi.FieldType == typeof(UUID))
                         {
@@ -351,6 +352,13 @@ namespace SilverSim.Scripting.Lsl
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
+                                    writer.WriteValue(varValue.ToString());
+                                }
+                                if (varType == typeof(long))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "long");
                                     writer.WriteValue(varValue.ToString());
                                 }
                                 else if (varType == typeof(double))
@@ -916,6 +924,10 @@ namespace SilverSim.Scripting.Lsl
             else if(typeof(int) == t)
             {
                 return "integer";
+            }
+            else if(typeof(long) == t)
+            {
+                return "long";
             }
             else if(typeof(Quaternion) == t)
             {

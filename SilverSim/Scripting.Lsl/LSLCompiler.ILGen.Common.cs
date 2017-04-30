@@ -175,12 +175,61 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public static long ConvToLong(double v)
+        {
+            try
+            {
+                return (long)v;
+            }
+            catch
+            {
+                if (v > 0)
+                {
+                    try
+                    {
+                        return (long)((ulong)v);
+                    }
+                    catch
+                    {
+                        return -1;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        return -(long)(((ulong)v));
+                    }
+                    catch
+                    {
+                        return 1;
+                    }
+                }
+            }
+        }
+
         public static AnArray AddKeyToList(AnArray src, LSLKey key)
         {
             AnArray res = new AnArray();
             res.AddRange(src);
             res.Add((IValue)key);
             return res;
+        }
+
+        public static int ConvToInt(long v)
+        {
+            if(v > int.MaxValue)
+            {
+                return -1;
+            }
+            else if(v < int.MinValue)
+            {
+                return 1;
+            }
+            else
+            {
+                return (int)v;
+            }
         }
 
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
@@ -236,10 +285,63 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
+        public static long ConvToLong(string v)
+        {
+            if (v.ToLower().StartsWith("0x"))
+            {
+                try
+                {
+                    return (long)ulong.Parse(v.Substring(2), NumberStyles.HexNumber);
+                }
+                catch
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return long.Parse(v);
+                }
+                catch
+                {
+                    string t;
+                    ulong i;
+                    int pos = 0;
+                    while (pos < v.Length)
+                    {
+                        char c = v[pos];
+                        if (!char.IsDigit(c) && c != '-')
+                        {
+                            break;
+                        }
+                        ++pos;
+                    }
+                    t = v.Substring(0, pos);
+                    if (t.Length == 0)
+                    {
+                        return 0;
+                    }
+                    else if (t.StartsWith("-"))
+                    {
+                        uint m = int.MaxValue;
+                        m += 1;
+                        return (pos == 1 || !ulong.TryParse(t.Substring(1), out i) || i > m) ? 1 : -(int)i;
+                    }
+                    else
+                    {
+                        return (pos == 0 || !ulong.TryParse(t, out i) || i > int.MaxValue) ? -1 : (int)i;
+                    }
+                }
+            }
+        }
+
         public static int LSL_IntegerMultiply(int a, int b)
         {
             long c = (long)a * b;
-            if(c >= UInt32.MaxValue)
+            if(c >= uint.MaxValue)
             {
                 c = -1;
             }
@@ -247,11 +349,11 @@ namespace SilverSim.Scripting.Lsl
             {
                 c = 1;
             }
-            else if(c > Int32.MaxValue && c < UInt32.MaxValue)
+            else if(c > int.MaxValue && c < uint.MaxValue)
             {
                 c = (int)(uint)c;
             }
-            else if(c < Int32.MinValue && c < -(long)UInt32.MaxValue)
+            else if(c < int.MinValue && c < -uint.MaxValue)
             {
                 c = -(int)(uint)c;
             }
@@ -291,11 +393,11 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        void CombineTypecastArguments(List<string> args)
+        void CombineTypecastArguments(CompileState cs, List<string> args)
         {
             for (int pos = 0; pos < args.Count - 2; ++pos)
             {
-                if (args[pos] == "(" && m_Typecasts.Contains(args[pos + 1]) && args[pos + 2] == ")")
+                if (args[pos] == "(" && (m_Typecasts.Contains(args[pos + 1]) || (cs.LanguageExtensions.EnableLongIntegers && args[pos + 1] == "long")) && args[pos + 2] == ")")
                 {
                     args[pos] = "(" + args[pos + 1] + ")";
                     args.RemoveAt(pos + 1);
@@ -305,15 +407,19 @@ namespace SilverSim.Scripting.Lsl
         }
 
         /*  Process important things before solving operators */
-        void PreprocessLine(List<string> args)
+        void PreprocessLine(CompileState cs, List<string> args)
         {
-            CombineTypecastArguments(args);
+            CombineTypecastArguments(cs, args);
             CollapseStringConstants(args);
         }
 
         #region Type validation and string representation
         internal static bool IsValidType(Type t)
         {
+            if(t == typeof(long))
+            {
+                return true;
+            }
             if (t == typeof(string))
             {
                 return true;
@@ -350,6 +456,10 @@ namespace SilverSim.Scripting.Lsl
         }
         internal static string MapType(Type t)
         {
+            if(t == typeof(long))
+            {
+                return "long";
+            }
             if (t == typeof(string))
             {
                 return "string";
@@ -727,6 +837,8 @@ namespace SilverSim.Scripting.Lsl
                 (fromType == typeof(string) && toType == typeof(LSLKey)) ||
                 (fromType == typeof(LSLKey) && toType == typeof(string)) ||
                 (fromType == typeof(int) && toType == typeof(double)) ||
+                (fromType == typeof(long) && toType == typeof(double)) ||
+                (fromType == typeof(int) && toType == typeof(long)) ||
                 toType == typeof(AnArray) ||
                 toType == typeof(bool)) ;
         }
@@ -763,7 +875,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else if (toType == typeof(string))
             {
-                if (fromType == typeof(int))
+                if (fromType == typeof(int) || fromType == typeof(long))
                 {
                     LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
                     compileState.ILGen.Emit(OpCodes.Stloc, lb);
@@ -799,10 +911,28 @@ namespace SilverSim.Scripting.Lsl
                     throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
                 }
             }
-            else if (toType == typeof(int))
+            else if (toType == typeof(long))
             {
                 /* yes, we need special handling for conversion of string to integer or float to integer. (see section about Integer Overflow) */
                 if (fromType == typeof(string) || fromType == typeof(double))
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToLong", new Type[] { fromType }));
+                }
+                else if (fromType == typeof(LSLKey))
+                {
+                    /* extension to LSL explicit typecasting rules */
+                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToLong", new Type[] { typeof(string) }));
+                }
+                else
+                {
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                }
+            }
+            else if (toType == typeof(int))
+            {
+                /* yes, we need special handling for conversion of string to integer or float to integer. (see section about Integer Overflow) */
+                if (fromType == typeof(string) || fromType == typeof(double) || fromType == typeof(long))
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { fromType }));
                 }
@@ -830,6 +960,13 @@ namespace SilverSim.Scripting.Lsl
                 else if (fromType == typeof(int))
                 {
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Ceq);
+                }
+                else if (fromType == typeof(long))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldc_I8, 0L);
                     compileState.ILGen.Emit(OpCodes.Ceq);
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
@@ -882,7 +1019,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ParseStringToDouble", new Type[] { typeof(string) }));
                 }
-                else if (fromType == typeof(int))
+                else if (fromType == typeof(int) || fromType == typeof(long))
                 {
                     compileState.ILGen.Emit(OpCodes.Conv_R8);
                 }

@@ -1019,6 +1019,10 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     st.Value = new Tree.ConstantValueString(((Tree.ConstantValueInt)st.SubTree[0].Value).ToString());
                                 }
+                                else if (st.SubTree[0].Value is Tree.ConstantValueLong)
+                                {
+                                    st.Value = new Tree.ConstantValueString(((Tree.ConstantValueLong)st.SubTree[0].Value).ToString());
+                                }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueString)
                                 {
                                     st.Value = st.SubTree[0].Value;
@@ -1070,10 +1074,40 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 break;
 
+                            case "(long)":
+                                if (st.SubTree[0].Value is Tree.ConstantValueInt)
+                                {
+                                    st.Value = new Tree.ConstantValueLong(((Tree.ConstantValueInt)st.SubTree[0].Value).Value);
+                                }
+                                else if (st.SubTree[0].Value is Tree.ConstantValueLong)
+                                {
+                                    st.Value = st.SubTree[0].Value;
+                                }
+                                else if (st.SubTree[0].Value is Tree.ConstantValueFloat)
+                                {
+                                    st.Value = new Tree.ConstantValueLong(ConvToLong(((Tree.ConstantValueFloat)st.SubTree[0].Value).Value));
+                                }
+                                else if (st.SubTree[0].Value is Tree.ConstantValueString)
+                                {
+                                    try
+                                    {
+                                        st.Value = new Tree.ConstantValueLong(ConvToLong(((Tree.ConstantValueString)st.SubTree[0].Value).Value));
+                                    }
+                                    catch
+                                    {
+                                        st.Value = new Tree.ConstantValueInt(0);
+                                    }
+                                }
+                                break;
+
                             case "(integer)":
                                 if (st.SubTree[0].Value is Tree.ConstantValueInt)
                                 {
                                     st.Value = st.SubTree[0].Value;
+                                }
+                                else if (st.SubTree[0].Value is Tree.ConstantValueLong)
+                                {
+                                    st.Value = new Tree.ConstantValueLong(ConvToInt(((Tree.ConstantValueLong)st.SubTree[0].Value).Value));
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueFloat)
                                 {
@@ -1100,6 +1134,10 @@ namespace SilverSim.Scripting.Lsl
                                 else if (st.SubTree[0].Value is Tree.ConstantValueInt)
                                 {
                                     st.Value = new Tree.ConstantValueFloat(((Tree.ConstantValueInt)st.SubTree[0].Value).Value);
+                                }
+                                else if (st.SubTree[0].Value is Tree.ConstantValueLong)
+                                {
+                                    st.Value = new Tree.ConstantValueFloat(((Tree.ConstantValueLong)st.SubTree[0].Value).Value);
                                 }
                                 else if (st.SubTree[0].Value is Tree.ConstantValueString)
                                 {
@@ -1627,7 +1665,7 @@ namespace SilverSim.Scripting.Lsl
             "(key)"
             });
 
-        void OrderOperators_UnaryLefts(Tree tree, int lineNumber, CultureInfo currentCulture)
+        void OrderOperators_UnaryLefts(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             List<Tree> enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1660,7 +1698,8 @@ namespace SilverSim.Scripting.Lsl
                         continue;
                     }
 
-                    if (ent == "!" || ent == "~" || m_TypecastOperators.Contains(ent))
+                    if (ent == "!" || ent == "~" || m_TypecastOperators.Contains(ent) ||
+                        (cs.LanguageExtensions.EnableLongIntegers && ent == "(long)"))
                     {
                         if (pos + 1 < tree.SubTree.Count ||
                             (pos == 0 ||
@@ -1785,11 +1824,11 @@ namespace SilverSim.Scripting.Lsl
         readonly List<string> m_LogicalOps = new List<string>(new string[] { "&&", "||" });
 
 
-        void OrderOperators(Tree tree, int lineNumber, CultureInfo currentCulture)
+        void OrderOperators(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             OrderOperators_ElementSelector(tree, lineNumber, currentCulture);
             OrderOperators_IncsDecs(tree, lineNumber, currentCulture);
-            OrderOperators_UnaryLefts(tree, lineNumber, currentCulture);
+            OrderOperators_UnaryLefts(cs, tree, lineNumber, currentCulture);
             OrderOperators_Common(tree, m_MulDivOps, lineNumber, currentCulture);
             OrderOperators_Common(tree, m_AddSubOps, lineNumber, currentCulture);
             OrderOperators_Common(tree, m_BitwiseShiftOps, lineNumber, currentCulture);
@@ -2206,6 +2245,7 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 if(m_ReservedWords.Contains(ent) ||
+                    (ent == "long" && cs.LanguageExtensions.EnableLongIntegers) ||
                     ((ent == "switch" || ent == "case" || ent == "break") && cs.LanguageExtensions.EnableSwitchBlock) ||
                     ((ent == "break" || ent == "continue") && cs.LanguageExtensions.EnableBreakContinueStatement))
                 {
@@ -2239,6 +2279,14 @@ namespace SilverSim.Scripting.Lsl
                 {
                     switch (ent)
                     {
+                        case "(long)":
+                            if(!cs.LanguageExtensions.EnableLongIntegers)
+                            {
+                                goto default;
+                            }
+                            st.Type = Tree.EntryType.OperatorUnknown;
+                            break;
+
                         case "(list)":
                         case "(string)":
                         case "(key)":
@@ -2311,7 +2359,7 @@ namespace SilverSim.Scripting.Lsl
 
         Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames, int lineNumber, CultureInfo currentCulture)
         {
-            PreprocessLine(expressionLine);
+            PreprocessLine(cs, expressionLine);
             Tree expressionTree = new Tree(expressionLine);
             IdentifyReservedWords(cs, expressionTree);
             IdentifyVariables(cs, expressionTree, localVarNames);
@@ -2367,7 +2415,7 @@ namespace SilverSim.Scripting.Lsl
             /* After OrderBrackets only deep-scanners can be used */
             OrderBrackets(cs, expressionTree, lineNumber, currentCulture);
 
-            OrderOperators(expressionTree, lineNumber, currentCulture);
+            OrderOperators(cs, expressionTree, lineNumber, currentCulture);
 
             SolveTree(cs, expressionTree, localVarNames, lineNumber, currentCulture);
             if (expressionTree.SubTree.Count != 1)
