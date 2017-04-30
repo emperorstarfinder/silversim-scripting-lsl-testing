@@ -24,12 +24,8 @@ using SilverSim.Scene.Types.Pathfinding;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SilverSim.Scripting.Lsl.Api.Pathfinding
 {

@@ -880,7 +880,7 @@ namespace SilverSim.Scripting.Lsl
                     LocalBuilder lb = compileState.ILGen.DeclareLocal(fromType);
                     compileState.ILGen.Emit(OpCodes.Stloc, lb);
                     compileState.ILGen.Emit(OpCodes.Ldloca, lb);
-                    compileState.ILGen.Emit(OpCodes.Callvirt, typeof(int).GetMethod("ToString", Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Callvirt, fromType.GetMethod("ToString", Type.EmptyTypes));
                 }
                 else if(fromType == typeof(Vector3))
                 {

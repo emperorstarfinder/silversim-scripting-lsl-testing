@@ -48,10 +48,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     [ScriptApiName("Agents")]
     [LSLImplementation]
     [Description("LSL/OSSL Agents API")]
-    public class Agents_API : IScriptApi, IPlugin
+    public class AgentsApi : IScriptApi, IPlugin
     {
         List<IUserAgentServicePlugin> m_UserAgentServicePlugins = new List<IUserAgentServicePlugin>();
-        public Agents_API()
+        public AgentsApi()
         {
             /* intentionally left empty */
         }

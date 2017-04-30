@@ -25,7 +25,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using SilverSim.Types.Asset.Format;
-using SilverSim.Types.Inventory;
 using System;
 using System.Runtime.Remoting.Messaging;
 

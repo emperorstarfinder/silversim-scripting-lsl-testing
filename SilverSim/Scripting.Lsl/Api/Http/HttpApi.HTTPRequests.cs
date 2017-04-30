@@ -25,7 +25,6 @@ using SilverSim.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SilverSim.Scripting.Lsl.Api.Http

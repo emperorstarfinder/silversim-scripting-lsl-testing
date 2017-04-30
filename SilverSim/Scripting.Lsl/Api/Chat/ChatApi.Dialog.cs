@@ -25,7 +25,6 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
-using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Chat
 {
