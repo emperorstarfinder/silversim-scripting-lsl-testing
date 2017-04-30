@@ -918,6 +918,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToLong", new Type[] { fromType }));
                 }
+                else if(fromType == typeof(int))
+                {
+                    compileState.ILGen.Emit(OpCodes.Conv_I8);
+                }
                 else if (fromType == typeof(LSLKey))
                 {
                     /* extension to LSL explicit typecasting rules */

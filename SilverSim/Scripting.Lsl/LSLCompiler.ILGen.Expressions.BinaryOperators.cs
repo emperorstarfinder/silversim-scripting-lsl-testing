@@ -1154,7 +1154,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, typeof(long), m_RightHandType, m_LineNumber);
+                            ProcessCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Shl);
                         }
                         else
@@ -1176,7 +1176,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, typeof(long), m_RightHandType, m_LineNumber);
+                            ProcessCasts(compileState, typeof(int), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Shr);
                         }
                         else
