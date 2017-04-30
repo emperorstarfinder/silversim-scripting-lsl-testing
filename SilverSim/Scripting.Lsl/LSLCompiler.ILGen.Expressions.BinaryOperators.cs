@@ -1567,26 +1567,14 @@ namespace SilverSim.Scripting.Lsl
 
                     case "&&":
                         /* DeMorgan helps here a lot to convert the operations nicely */
-                        if (typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType)
+                        if ((typeof(int) == m_LeftHandType || typeof(long) == m_LeftHandType) && 
+                            (typeof(int) == m_RightHandType || typeof(long) == m_RightHandType))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(bool), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(bool), m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Or);
-                            compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
-                            compileState.ILGen.Emit(OpCodes.Ceq);
-                            throw Return(compileState, typeof(int));
-                        }
-                        else if (typeof(long) == m_LeftHandType || typeof(long) == m_RightHandType)
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            ProcessImplicitCasts(compileState, typeof(bool), m_LeftHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, typeof(bool), m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Or);
-                            compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
-                            compileState.ILGen.Emit(OpCodes.Ceq);
+                            compileState.ILGen.Emit(OpCodes.And);
                             throw Return(compileState, typeof(int));
                         }
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorAndAndNotSupportedFor0And1", "operator '&&' not supported for {0} and {1}"), MapType(m_LeftHandType), MapType(m_RightHandType)));
@@ -1599,7 +1587,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.And);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType)
+                        else if (typeof(long) == m_LeftHandType || typeof(long) == m_RightHandType)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
@@ -1618,7 +1606,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Or);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType)
+                        else if (typeof(long) == m_LeftHandType || typeof(long) == m_RightHandType)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
@@ -1637,7 +1625,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Xor);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType)
+                        else if (typeof(long) == m_LeftHandType || typeof(long) == m_RightHandType)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
