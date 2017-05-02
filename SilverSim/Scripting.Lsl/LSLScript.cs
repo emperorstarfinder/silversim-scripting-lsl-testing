@@ -2251,6 +2251,12 @@ namespace SilverSim.Scripting.Lsl
                 script.InvokeStateEvent("http_response", new LSLKey(e.RequestID), e.Status, e.Metadata, e.Body);
             });
 
+            StateEventHandlers.Add(typeof(HttpRequestEvent), delegate (Script script, IScriptEvent ev)
+            {
+                HttpRequestEvent e = (HttpRequestEvent)ev;
+                script.InvokeStateEvent("http_request", new LSLKey(e.RequestID), e.Method, e.Body);
+            });
+
             StateEventHandlers.Add(typeof(LandCollisionEvent), HandleLandCollision);
 
             StateEventHandlers.Add(typeof(LinkMessageEvent), delegate(Script script, IScriptEvent ev)
