@@ -22,6 +22,7 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
+using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Http
 {
@@ -239,7 +240,14 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         {
             lock(instance)
             {
-                m_HTTPHandler.HttpResponse(requestID, status, body);
+                try
+                {
+                    m_HTTPHandler.HttpResponse(requestID, status, body);
+                }
+                catch(Exception)
+                {
+                    /* ignore this one, it should never be passed */
+                }
             }
         }
 

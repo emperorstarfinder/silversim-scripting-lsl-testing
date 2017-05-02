@@ -415,7 +415,7 @@ namespace SilverSim.Scripting.Lsl
             try
             {
                 SceneInterface scene = m_Scenes[urlData.SceneID];
-                ObjectPart part = scene.Primitives[urlData.ItemID];
+                ObjectPart part = scene.Primitives[urlData.PrimID];
                 ObjectPartInventoryItem item = part.Inventory[urlData.ItemID];
                 ScriptInstance instance = item.ScriptInstance;
                 if (instance == null)
