@@ -843,6 +843,39 @@ namespace SilverSim.Scripting.Lsl
             {
                 try
                 {
+                    foreach(object p in param)
+                    {
+                        if(p == null)
+                        {
+                            StringBuilder sb = new StringBuilder("Call failure at ");
+                            sb.Append(name + "(");
+                            bool first = true;
+                            foreach (object pa in param)
+                            {
+                                if (!first)
+                                {
+                                    sb.Append(",");
+                                }
+                                first = false;
+                                if (pa == null)
+                                {
+                                    sb.Append("null");
+                                }
+                                else if (pa is LSLKey || pa is string)
+                                {
+                                    sb.Append("\"" + pa.ToString() + "\"");
+                                }
+                                else
+                                {
+                                    sb.Append(pa.ToString());
+                                }
+                            }
+                            sb.Append(")");
+                            m_Log.Debug(sb);
+                            return;
+                        }
+                    }
+
                     mi.Invoke(m_CurrentState, param);
                 }
                 catch (ChangeStateException)

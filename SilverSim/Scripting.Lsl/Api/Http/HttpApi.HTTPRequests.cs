@@ -74,6 +74,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 req.SceneID = instance.Part.ObjectGroup.Scene.ID;
                 req.PrimID = instance.Part.ID;
                 req.ItemID = instance.Item.ID;
+                req.Url = url;
             }
 
             if (url.Contains(' '))

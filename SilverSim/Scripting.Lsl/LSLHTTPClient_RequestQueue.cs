@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using log4net;
 using SilverSim.Http.Client;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
@@ -43,6 +44,8 @@ namespace SilverSim.Scripting.Lsl
     [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool), DefaultValue = false)]
     public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown, IServerParamListener
     {
+        static readonly ILog m_Log = LogManager.GetLogger("LSL HTTP CLIENT");
+
         public class LSLHttpRequest
         {
             public UUID RequestID = UUID.Random;
@@ -221,6 +224,8 @@ namespace SilverSim.Scripting.Lsl
 
                 HttpResponseEvent ev = new HttpResponseEvent();
                 ev.RequestID = req.RequestID;
+                ev.Body = string.Empty;
+                ev.Metadata = new AnArray();
                 if (IsURLAllowed(req.SceneID, req.Url))
                 {
                     try
@@ -228,8 +233,9 @@ namespace SilverSim.Scripting.Lsl
                         ev.Body = HttpClient.DoRequest(req.Method, req.Url, null, req.MimeType, req.RequestBody, false, 30000);
                         ev.Status = (int)HttpStatusCode.OK;
                     }
-                    catch (HttpClient.BadHttpResponseException)
+                    catch (HttpClient.BadHttpResponseException e)
                     {
+                        ev.Body = e.Message;
                         ev.Status = 499;
                     }
                     catch (HttpException e)
@@ -237,16 +243,18 @@ namespace SilverSim.Scripting.Lsl
                         ev.Body = e.Message;
                         ev.Status = e.GetHttpCode();
                     }
-                    catch
+                    catch(Exception e)
                     {
-                        HttpResponseEvent e = new HttpResponseEvent();
-                        e.Status = 499;
+#if DEBUG
+                        m_Log.Debug("Failed to request " + req.Url, e);
+#endif
+                        ev.Status = 499;
                     }
                 }
                 else
                 {
-                    HttpResponseEvent e = new HttpResponseEvent();
-                    e.Status = 499;
+                    ev.Body = "URL not allowed to access";
+                    ev.Status = 499;
                 }
 
                 SceneInterface scene;
