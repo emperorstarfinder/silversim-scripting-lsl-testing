@@ -810,13 +810,6 @@ namespace SilverSim.Scripting.Lsl
         {
             m_CurrentState = state;
             m_CurrentStateMethods.Clear();
-            m_HasTouchEvent = HasStateEvent("touch") || HasStateEvent("touch_start") || HasStateEvent("touch_end");
-            m_HasMoneyEvent = HasStateEvent("money");
-            lock(this)
-            {
-                /* lock(this) needed here to prevent aborting in wrong place */
-                Part.UpdateScriptFlags();
-            }
         }
 
         bool HasStateEvent(string name)
@@ -1147,6 +1140,14 @@ namespace SilverSim.Scripting.Lsl
                         {
                             evgot = null;
                         }
+                        m_HasTouchEvent = HasStateEvent("touch") || HasStateEvent("touch_start") || HasStateEvent("touch_end");
+                        m_HasMoneyEvent = HasStateEvent("money");
+                        lock (this)
+                        {
+                            /* lock(this) needed here to prevent aborting in wrong place */
+                            Part.UpdateScriptFlags();
+                        }
+
                         InvokeStateEvent("state_entry");
                     }
                 }
