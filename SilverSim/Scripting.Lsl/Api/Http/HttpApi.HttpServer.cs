@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using SilverSim.Main.Common.HttpServer;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
@@ -244,9 +245,18 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 {
                     m_HTTPHandler.HttpResponse(requestID, status, body);
                 }
-                catch(Exception)
+                catch(HttpResponse.ConnectionCloseException)
                 {
-                    /* ignore this one, it should never be passed */
+                    /* ignore this one */
+                }
+                catch
+#if DEBUG
+                (Exception e)
+#endif
+                {
+#if DEBUG
+                    m_Log.Debug("Exception in llHTTPResponse", e);
+#endif
                 }
             }
         }

@@ -422,6 +422,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new ArgumentException("item.ScriptInstance is null");
                 }
+                data.Request.SetConnectionClose();
                 instance.PostEvent(ev);
             }
             catch
@@ -460,7 +461,6 @@ namespace SilverSim.Scripting.Lsl
             {
                 byte[] b = body.ToUTF8Bytes();
                 HttpStatusCode httpStatus = (HttpStatusCode)status;
-                reqdata.Request.SetConnectionClose();
                 using (HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType))
                 {
                     if (reqdata.AllowXss)

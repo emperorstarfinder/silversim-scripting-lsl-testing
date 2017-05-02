@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -31,6 +32,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
     [Description("LSL/OSSL HTTP API")]
     public partial class HttpApi : IScriptApi, IPlugin
     {
+        static readonly ILog m_Log = LogManager.GetLogger("HTTP LSL API");
         LSLHTTP m_HTTPHandler;
         LSLHTTPClient_RequestQueue m_LSLHTTPClient;
 
