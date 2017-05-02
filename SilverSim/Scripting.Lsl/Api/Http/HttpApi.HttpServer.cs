@@ -300,7 +300,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         m_HTTPHandler.SetContentType(requestID, "application/llsd+xml");
                         break;
                     case CONTENT_TYPE_FORM:
-                        m_HTTPHandler.SetContentType(requestID, "application/x-www-form-urlencoded ");
+                        m_HTTPHandler.SetContentType(requestID, "application/x-www-form-urlencoded");
                         break;
                     case CONTENT_TYPE_RSS:
                         m_HTTPHandler.SetContentType(requestID, "application/rss+xml ");
