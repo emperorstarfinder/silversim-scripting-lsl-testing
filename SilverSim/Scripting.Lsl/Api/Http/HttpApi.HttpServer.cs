@@ -24,6 +24,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
+using System.Net.Sockets;
 
 namespace SilverSim.Scripting.Lsl.Api.Http
 {
@@ -245,7 +246,11 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 {
                     m_HTTPHandler.HttpResponse(requestID, status, body);
                 }
-                catch(HttpResponse.ConnectionCloseException)
+                catch(SocketException)
+                {
+                    /* ignore this one */
+                }
+                catch (HttpResponse.ConnectionCloseException)
                 {
                     /* ignore this one */
                 }
