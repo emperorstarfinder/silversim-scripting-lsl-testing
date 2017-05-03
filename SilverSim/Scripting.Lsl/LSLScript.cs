@@ -2572,11 +2572,14 @@ namespace SilverSim.Scripting.Lsl
             UUI owner = objgroup.Owner;
             ParcelInfo pInfo;
 
-            if((int)level <= (int)ThreatLevels[scene.ID])
+            ThreatLevelType regionThreatLevel;
+            ThreatLevelType instanceThreatLevel;
+
+            if (ThreatLevels.TryGetValue(scene.ID, out regionThreatLevel) && (int)regionThreatLevel >= (int)level)
             {
                 return;
             }
-            else if((int)level <= (int)ThreatLevels[UUID.Zero])
+            else if(ThreatLevels.TryGetValue(UUID.Zero, out instanceThreatLevel) && (int)instanceThreatLevel >= (int)level)
             {
                 return;
             }
