@@ -370,7 +370,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock (instance)
             {
-                return instance.Part.ObjectGroup.Scene.Agents.Count;
+                return instance.Part.ObjectGroup.Scene.RootAgents.Count;
             }
         }
 
