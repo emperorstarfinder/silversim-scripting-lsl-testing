@@ -34,13 +34,12 @@ using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Timers;
 using System.Xml;
-using System.Globalization;
-using System.Runtime.Serialization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -2476,22 +2475,9 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        [SuppressMessage("Gendarme.Rules.Design", "EnumsShouldUseInt32Rule")]
-        public enum ThreatLevelType : uint
-        {
-            None = 0,
-            Nuisance = 1,
-            VeryLow = 2,
-            Low = 3,
-            Moderate = 4,
-            High = 5,
-            VeryHigh = 6,
-            Severe = 7
-        }
+        public const ThreatLevel DefaultThreatLevel = ThreatLevel.Low;
 
-        public const ThreatLevelType DefaultThreatLevel = ThreatLevelType.Low;
-
-        public static readonly RwLockedDictionaryAutoAdd<UUID, ThreatLevelType> ThreatLevels = new RwLockedDictionaryAutoAdd<UUID, ThreatLevelType>(delegate () { return DefaultThreatLevel; });
+        public static readonly RwLockedDictionaryAutoAdd<UUID, ThreatLevel> ThreatLevels = new RwLockedDictionaryAutoAdd<UUID, ThreatLevel>(delegate () { return DefaultThreatLevel; });
 
         public static readonly RwLockedDictionaryAutoAdd<string,
             RwLockedDictionaryAutoAdd<UUID, Permissions>> OSSLPermissions = new RwLockedDictionaryAutoAdd<string, RwLockedDictionaryAutoAdd<UUID, Permissions>>(delegate ()
@@ -2561,7 +2547,7 @@ namespace SilverSim.Scripting.Lsl
             return false;
         }
 
-        public void CheckThreatLevel(string name, ThreatLevelType level)
+        public void CheckThreatLevel(string name, ThreatLevel level)
         {
             Permissions perms;
             ObjectPart part = Part;
@@ -2572,8 +2558,8 @@ namespace SilverSim.Scripting.Lsl
             UUI owner = objgroup.Owner;
             ParcelInfo pInfo;
 
-            ThreatLevelType regionThreatLevel;
-            ThreatLevelType instanceThreatLevel;
+            ThreatLevel regionThreatLevel;
+            ThreatLevel instanceThreatLevel;
 
             if (ThreatLevels.TryGetValue(scene.ID, out regionThreatLevel) && (int)regionThreatLevel >= (int)level)
             {

@@ -57,14 +57,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         /// Set parameters for light projection with uuid of target prim
         /// </summary>
         [APILevel(APIFlags.OSSL, "osSetProjectionParams")]
-        [ThreatLevelUsed]
         public void SetProjectionParams(ScriptInstance instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
         {
             lock (instance)
             {
                 if (UUID.Zero != prim)
                 {
-                    ((Script)instance).CheckThreatLevel(MethodBase.GetCurrentMethod().Name, Script.ThreatLevelType.High);
+                    ((Script)instance).CheckThreatLevel("osSetProjectionParams", ThreatLevel.High);
                 }
 
                 ObjectPart part;

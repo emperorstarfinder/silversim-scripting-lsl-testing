@@ -349,6 +349,22 @@ namespace SilverSim.Scripting.Lsl
                     ApiMethodInfo apiMethod = (ApiMethodInfo)o;
                     MethodInfo methodInfo = apiMethod.Method;
                     ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
+                    ThreatLevelRequiredAttribute threatLevelAttr = (ThreatLevelRequiredAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ThreatLevelRequiredAttribute));
+
+                    if (null != threatLevelAttr)
+                    {
+                        /* load ScriptInstance reference */
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                        if (compileState.StateTypeBuilder != null)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                        }
+                        compileState.ILGen.Emit(OpCodes.Castclass, typeof(Script));
+                        compileState.ILGen.Emit(OpCodes.Ldstr, m_FunctionName);
+                        compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)threatLevelAttr.ThreatLevel);
+                        MethodInfo checkMethod = typeof(Script).GetMethod("CheckThreatLevel", new Type[] { typeof(string), typeof(ThreatLevel) });
+                        compileState.ILGen.Emit(OpCodes.Call, checkMethod);
+                    }
 
                     /* load ScriptApi reference */
                     compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);

@@ -357,12 +357,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osSetSpeed")]
+        [ThreatLevelRequired(ThreatLevel.Moderate)]
         public void SetSpeed(ScriptInstance instance, LSLKey id, double speedfactor)
         {
             lock(instance)
             {
                 Script script = (Script)instance;
-                script.CheckThreatLevel("osSetSpeed", Script.ThreatLevelType.Moderate);
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id.AsUUID, out agent))
                 {
@@ -797,23 +797,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "osAgentSaveAppearance")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public LSLKey AgentSaveAppearance(ScriptInstance instance, LSLKey agentId, string notecard)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osAgentSaveAppearance", Script.ThreatLevelType.VeryHigh);
                 return SaveAppearance(instance, agentId.AsUUID, notecard);
             }
         }
 
         [APILevel(APIFlags.LSL, "osOwnerSaveAppearance")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.High)]
         public LSLKey OwnerSaveAppearance(ScriptInstance instance, string notecard)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osOwnerSaveAppearance", Script.ThreatLevelType.High);
                 return SaveAppearance(instance, instance.Part.Owner.ID, notecard);
             }
         }
@@ -835,24 +833,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void ForceOtherSit(ScriptInstance instance, LSLKey avatar)
         {
-            lock(instance)
-            {
-                ((Script)instance).CheckThreatLevel("osForceOtherSit", Script.ThreatLevelType.VeryHigh);
-            }
             throw new NotImplementedException("osForceOtherSit(key)");
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void ForceOtherSit(ScriptInstance instance, LSLKey avatar, LSLKey target)
         {
-            lock (instance)
-            {
-                ((Script)instance).CheckThreatLevel("osForceOtherSit", Script.ThreatLevelType.VeryHigh);
-            }
             throw new NotImplementedException("osForceOtherSit(key, key)");
         }
 
@@ -926,13 +916,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         #endregion
 
         [APILevel(APIFlags.OSSL, "osGetAgentIP")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.High)]
         public string GetAgentIP(ScriptInstance instance, LSLKey key)
         {
             lock(instance)
             {
-                ((Script)instance).CheckThreatLevel("osGetAgentIP", Script.ThreatLevelType.High);
-
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(key.AsUUID, out agent))
                 {
@@ -943,13 +931,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osGetAvatarHomeURI")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.Low)]
         public string GetAvatarHomeURI(ScriptInstance instance, LSLKey key)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osGetAvatarHomeURI", Script.ThreatLevelType.Low);
-
                 IAgent agent;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if (scene.Agents.TryGetValue(key.AsUUID, out agent))

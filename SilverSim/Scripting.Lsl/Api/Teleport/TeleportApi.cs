@@ -273,12 +273,11 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void TeleportAgent(ScriptInstance instance, LSLKey avatar, int regionX, int regionY, Vector3 position, Vector3 lookAt)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osTeleportAgent", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {
@@ -305,12 +304,11 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void TeleportAgent(ScriptInstance instance, LSLKey avatar, string regionName, Vector3 position, Vector3 lookAt)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osTeleportAgent", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {
@@ -320,12 +318,11 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgentLandmark")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void OsTeleportAgentLandmark(ScriptInstance instance, LSLKey avatar, string landmark, Vector3 lookAt)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osTeleportAgentLandmark", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {
@@ -335,12 +332,11 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportAgent")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void TeleportAgent(ScriptInstance instance, LSLKey avatar, Vector3 position, Vector3 lookAt)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osTeleportAgent", Script.ThreatLevelType.VeryHigh);
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(avatar, out agent))
                 {

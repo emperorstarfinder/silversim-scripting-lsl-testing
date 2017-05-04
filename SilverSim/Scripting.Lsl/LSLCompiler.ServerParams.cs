@@ -60,7 +60,7 @@ namespace SilverSim.Scripting.Lsl
                     MethodInfo[] mis = instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public);
                     foreach(MethodInfo mi in mis)
                     {
-                        if(Attribute.GetCustomAttribute(mi, typeof(ThreatLevelUsedAttribute)) != null)
+                        if(Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) != null)
                         {
                             foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                             {
@@ -95,35 +95,35 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "none":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.None;
+                        Script.ThreatLevels[regionID] = ThreatLevel.None;
                         break;
 
                     case "nuisance":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.Nuisance;
+                        Script.ThreatLevels[regionID] = ThreatLevel.Nuisance;
                         break;
 
                     case "verylow":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.VeryLow;
+                        Script.ThreatLevels[regionID] = ThreatLevel.VeryLow;
                         break;
 
                     case "low":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.Low;
+                        Script.ThreatLevels[regionID] = ThreatLevel.Low;
                         break;
 
                     case "moderate":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.Moderate;
+                        Script.ThreatLevels[regionID] = ThreatLevel.Moderate;
                         break;
 
                     case "high":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.High;
+                        Script.ThreatLevels[regionID] = ThreatLevel.High;
                         break;
 
                     case "veryhigh":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.VeryHigh;
+                        Script.ThreatLevels[regionID] = ThreatLevel.VeryHigh;
                         break;
 
                     case "severe":
-                        Script.ThreatLevels[regionID] = Script.ThreatLevelType.Severe;
+                        Script.ThreatLevels[regionID] = ThreatLevel.Severe;
                         break;
 
                     default:

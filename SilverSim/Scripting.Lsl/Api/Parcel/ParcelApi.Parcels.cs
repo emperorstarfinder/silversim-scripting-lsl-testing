@@ -388,12 +388,11 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         }
 
         [APILevel(APIFlags.OSSL, "osSetParcelDetails")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.High)]
         public void SetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray rules)
         {
             lock(instance)
             {
-                ((Script)instance).CheckThreatLevel("osSetParcelDetails", Script.ThreatLevelType.High);
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 ParcelInfo pInfo;
 

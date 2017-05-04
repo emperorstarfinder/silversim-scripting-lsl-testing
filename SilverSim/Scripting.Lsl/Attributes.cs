@@ -37,11 +37,12 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class ThreatLevelUsedAttribute : Attribute
+    public sealed class ThreatLevelRequiredAttribute : Attribute
     {
-        public ThreatLevelUsedAttribute()
+        public ThreatLevel ThreatLevel { get; private set; }
+        public ThreatLevelRequiredAttribute(ThreatLevel threatLevel)
         {
-
+            ThreatLevel = threatLevel;
         }
     }
 

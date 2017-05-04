@@ -127,12 +127,11 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
         }
 
         [APILevel(APIFlags.OSSL, "osForceAttachToOtherAvatarFromInventory")]
-        [ThreatLevelUsed]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void ForceAttachToOtherAvatarFromInventory(ScriptInstance instance, LSLKey id, string item_name, int attach_point)
         {
             lock (instance)
             {
-                ((Script)instance).CheckThreatLevel("osForceAttachToOtherAvatarFromInventory", Script.ThreatLevelType.VeryHigh);
                 throw new NotImplementedException("osForceAttachToOtherAvatarFromInventory(key, string, integer)");
             }
         }
