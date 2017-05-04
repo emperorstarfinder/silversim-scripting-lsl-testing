@@ -23,6 +23,7 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Management.IM;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
@@ -358,7 +359,20 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.OSSL, "osSetSpeed")]
         public void SetSpeed(ScriptInstance instance, LSLKey id, double speedfactor)
         {
-            throw new NotImplementedException("osSetSpeed(key, float)");
+            lock(instance)
+            {
+                Script script = (Script)instance;
+                script.CheckThreatLevel("osSetSpeed", Script.ThreatLevelType.Moderate);
+                IAgent agent;
+                if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id.AsUUID, out agent))
+                {
+                    IAgentPhysicsObject agentContoller = agent.PhysicsActor as IAgentPhysicsObject;
+                    if (agentContoller != null)
+                    {
+                        agentContoller.SpeedFactor = speedfactor;
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osInviteToGroup")]
