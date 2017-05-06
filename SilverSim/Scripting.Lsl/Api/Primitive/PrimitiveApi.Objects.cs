@@ -175,15 +175,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 AnArray res = new AnArray();
                 if(scene.Agents.TryGetValue(objectKey.AsUUID, out agent))
                 {
-                    grp = agent.SittingOnObject;
-                    if (grp != null)
-                    {
-                        grp.GetBoundingBox(out box);
-                    }
-                    else
-                    {
-                        agent.GetBoundingBox(out box);
-                    }
+                    agent.GetBoundingBox(out box);
                 }
                 else if(scene.Primitives.TryGetValue(objectKey.AsUUID, out part))
                 {
