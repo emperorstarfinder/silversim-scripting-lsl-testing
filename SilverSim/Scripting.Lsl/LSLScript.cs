@@ -665,10 +665,17 @@ namespace SilverSim.Scripting.Lsl
         {
             Timer.Stop();
             Timer.Elapsed -= OnTimerEvent;
-            m_Part.OnUpdate -= OnPrimUpdate;
-            m_Part.OnPositionChange -= OnPrimPositionUpdate;
-            m_Part.ObjectGroup.OnUpdate -= OnGroupUpdate;
-            m_Part.ObjectGroup.OnPositionChange -= OnGroupPositionUpdate;
+            try
+            {
+                m_Part.OnUpdate -= OnPrimUpdate;
+                m_Part.OnPositionChange -= OnPrimPositionUpdate;
+                m_Part.ObjectGroup.OnUpdate -= OnGroupUpdate;
+                m_Part.ObjectGroup.OnPositionChange -= OnGroupPositionUpdate;
+            }
+            catch
+            {
+                /* ignore intentionally */
+            }
             if(null != ScriptRemoveDelegates)
             {
                 /* call remove delegates */
