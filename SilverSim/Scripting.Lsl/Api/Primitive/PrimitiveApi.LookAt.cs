@@ -35,13 +35,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
             lock (instance)
             {
-                ObjectPart part = instance.Part;
-                Vector3 from = part.GlobalPosition;
-                Vector3 direction = (target - from).Normalize();
-                Vector3 leftAxis = Vector3.UnitZ.Cross(direction);
-                Vector3 upAxis = direction.Cross(leftAxis);
+                Vector3 direction = (target - instance.Part.GlobalPosition).Normalize();
+                double z = Math.Atan2(direction.Y, direction.X);
+                double y = Math.Atan2(direction.Z, Math.Sqrt(direction.X * direction.X + direction.Y * direction.Y));
 
-                targetRotation = new Quaternion(0, 0.707107, 0, 0.707107) * Quaternion.Axes2Rot(direction, leftAxis, upAxis);
+                targetRotation = Quaternion.CreateFromEulers(new Vector3(0, y, 0)) * Quaternion.CreateFromEulers(new Vector3(0, 0, z));
             }
 
             RotLookAt(instance, targetRotation, strength, damping);
@@ -64,8 +62,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 ObjectPart part = instance.Part;
                 if (part.IsPhysics)
                 {
-                    ObjectGroup grp = part.ObjectGroup;
-                    grp.PhysicsActor.SetLookAt(target_direction, strength, damping);
+                    part.PhysicsActor.SetLookAt(target_direction, strength, damping);
                 }
                 else
                 {
