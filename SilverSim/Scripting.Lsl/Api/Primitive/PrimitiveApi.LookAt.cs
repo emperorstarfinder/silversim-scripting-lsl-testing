@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
             lock (instance)
             {
-                Vector3 direction = (target - instance.Part.GlobalPosition).Normalize();
+                Vector3 direction = (target - instance.Part.GlobalPosition);
                 double z = Math.Atan2(direction.Y, direction.X);
                 double y = Math.Atan2(direction.Z, Math.Sqrt(direction.X * direction.X + direction.Y * direction.Y));
 
