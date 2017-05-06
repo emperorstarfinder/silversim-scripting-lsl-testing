@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using SilverSim.Scene.Management.IM;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
@@ -57,6 +58,55 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                     (int)Math.Floor(im.Position.Z));
                 im.BinaryBucket = binBuck.ToUTF8Bytes();
                 im.OnResult = delegate(GridInstantMessage imret, bool success) { };
+
+                imservice.Send(im);
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osMessageBox")]
+        public void MessageBox(ScriptInstance instance, LSLKey user, string message)
+        {
+            lock (instance)
+            {
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
+                IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                GridInstantMessage im = new GridInstantMessage();
+                im.FromAgent.ID = thisPart.Owner.ID;
+                im.FromAgent.FullName = thisGroup.Name;
+                im.IMSessionID = thisGroup.ID;
+                im.ToAgent.ID = user;
+                im.Position = thisGroup.GlobalPosition;
+                im.RegionID = thisScene.ID;
+                im.Message = message;
+                im.Dialog = GridInstantMessageDialog.MessageBox;
+                im.OnResult = delegate (GridInstantMessage imret, bool success) { };
+
+                imservice.Send(im);
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGotoUrl")]
+        public void GotoUrl(ScriptInstance instance, LSLKey user, string message, string url)
+        {
+            lock (instance)
+            {
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
+                IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                GridInstantMessage im = new GridInstantMessage();
+                im.FromAgent.ID = thisPart.Owner.ID;
+                im.FromAgent.FullName = thisGroup.Name;
+                im.IMSessionID = thisGroup.ID;
+                im.ToAgent.ID = user;
+                im.Position = thisGroup.GlobalPosition;
+                im.RegionID = thisScene.ID;
+                im.Message = message;
+                im.BinaryBucket = (url + "\0").ToUTF8Bytes();
+                im.Dialog = GridInstantMessageDialog.GotoUrl;
+                im.OnResult = delegate (GridInstantMessage imret, bool success) { };
 
                 imservice.Send(im);
             }

@@ -413,8 +413,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         owner.FullName, group.GroupName);
                     gim.IsFromGroup = true;
                     gim.RegionID = scene.ID;
-                    gim.BinaryBucket = new byte[20];
+                    gim.BinaryBucket = new byte[] { (byte)'M', (byte)'0', 0 };
                     gim.IMSessionID = invite.ID;
+                    gim.Dialog = GridInstantMessageDialog.GroupInvitation;
 
                     return agent.IMSend(gim) ? 1 : 0;
                 }
