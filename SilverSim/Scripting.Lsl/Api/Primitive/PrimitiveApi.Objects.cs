@@ -164,7 +164,48 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llGetBoundingBox")]
         public AnArray GetBoundingBox(ScriptInstance instance, LSLKey objectKey)
         {
-            throw new NotImplementedException("llGetBoundingBox()");
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+
+                IAgent agent;
+                BoundingBox box;
+                ObjectPart part;
+                ObjectGroup grp;
+                AnArray res = new AnArray();
+                if(scene.Agents.TryGetValue(objectKey.AsUUID, out agent))
+                {
+                    grp = agent.SittingOnObject;
+                    if (grp != null)
+                    {
+                        grp.GetBoundingBox(out box);
+                    }
+                    else
+                    {
+                        agent.GetBoundingBox(out box);
+                    }
+                }
+                else if(scene.Primitives.TryGetValue(objectKey.AsUUID, out part))
+                {
+                    grp = part.ObjectGroup;
+                    if (grp.IsAttached && scene.Agents.TryGetValue(grp.Owner.ID, out agent))
+                    {
+                        agent.GetBoundingBox(out box);
+                    }
+                    else
+                    {
+                        grp.GetBoundingBox(out box);
+                    }
+                }
+                else
+                {
+                    return res;
+                }
+
+                res.Add(box.CenterOffset - box.Size / 2);
+                res.Add(box.CenterOffset + box.Size / 2);
+                return res;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetGeometricCenter")]

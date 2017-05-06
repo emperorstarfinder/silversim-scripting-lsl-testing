@@ -22,7 +22,6 @@
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
-using System.Reflection;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
