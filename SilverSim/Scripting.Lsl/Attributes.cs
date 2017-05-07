@@ -40,9 +40,11 @@ namespace SilverSim.Scripting.Lsl
     public sealed class ThreatLevelRequiredAttribute : Attribute
     {
         public ThreatLevel ThreatLevel { get; private set; }
-        public ThreatLevelRequiredAttribute(ThreatLevel threatLevel)
+        public string FunctionName { get; private set; }
+        public ThreatLevelRequiredAttribute(ThreatLevel threatLevel, string functionName = "")
         {
             ThreatLevel = threatLevel;
+            FunctionName = functionName;
         }
     }
 

@@ -360,7 +360,14 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                         }
                         compileState.ILGen.Emit(OpCodes.Castclass, typeof(Script));
-                        compileState.ILGen.Emit(OpCodes.Ldstr, m_FunctionName);
+                        if (string.IsNullOrEmpty(threatLevelAttr.FunctionName))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldstr, m_FunctionName);
+                        }
+                        else
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldstr, threatLevelAttr.FunctionName);
+                        }
                         compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)threatLevelAttr.ThreatLevel);
                         MethodInfo checkMethod = typeof(Script).GetMethod("CheckThreatLevel", new Type[] { typeof(string), typeof(ThreatLevel) });
                         compileState.ILGen.Emit(OpCodes.Call, checkMethod);
