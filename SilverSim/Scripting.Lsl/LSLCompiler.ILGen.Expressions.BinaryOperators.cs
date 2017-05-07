@@ -1610,8 +1610,18 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
+                            if(typeof(int) == m_LeftHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, 0xFFFFFFFFL);
+                                compileState.ILGen.Emit(OpCodes.And);
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_RightHandType, m_LineNumber);
+                            if (typeof(int) == m_RightHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, 0xFFFFFFFFL);
+                                compileState.ILGen.Emit(OpCodes.And);
+                            }
                             compileState.ILGen.Emit(OpCodes.Or);
                             throw Return(compileState, typeof(long));
                         }
@@ -1629,8 +1639,18 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
+                            if (typeof(int) == m_LeftHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, 0xFFFFFFFFL);
+                                compileState.ILGen.Emit(OpCodes.And);
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_RightHandType, m_LineNumber);
+                            if (typeof(int) == m_RightHandType)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, 0xFFFFFFFFL);
+                                compileState.ILGen.Emit(OpCodes.And);
+                            }
                             compileState.ILGen.Emit(OpCodes.Xor);
                             throw Return(compileState, typeof(long));
                         }
