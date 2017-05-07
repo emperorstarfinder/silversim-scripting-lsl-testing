@@ -44,7 +44,9 @@ namespace SilverSim.Scripting.Lsl
     [ServerParam("LSL.HTTPClient.WhiteListOnly", ParameterType = typeof(bool), DefaultValue = false)]
     public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown, IServerParamListener
     {
+#if DEBUG
         static readonly ILog m_Log = LogManager.GetLogger("LSL HTTP CLIENT");
+#endif
 
         public class LSLHttpRequest
         {

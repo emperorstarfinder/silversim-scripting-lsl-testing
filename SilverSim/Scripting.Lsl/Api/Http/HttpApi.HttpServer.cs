@@ -86,7 +86,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item);
+                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, allowXss);
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_GRANTED;
@@ -182,7 +182,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item);
+                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, allowXss);
                     HttpRequestEvent ev = new HttpRequestEvent();
                     ev.RequestID = reqID;
                     ev.Method = URL_REQUEST_GRANTED;

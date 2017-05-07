@@ -99,12 +99,10 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (innerExpressionReturn == typeof(Vector3))
                     {
-                        LocalBuilder lb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
                         compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddVector3ToList"));
                     }
                     else if (innerExpressionReturn == typeof(Quaternion))
                     {
-                        LocalBuilder lb = compileState.ILGen.DeclareLocal(innerExpressionReturn);
                         compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("AddQuaternionToList"));
                     }
                     else if (innerExpressionReturn == typeof(AnArray))

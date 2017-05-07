@@ -362,7 +362,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock(instance)
             {
-                Script script = (Script)instance;
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id.AsUUID, out agent))
                 {

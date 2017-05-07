@@ -32,7 +32,9 @@ namespace SilverSim.Scripting.Lsl.Api.Http
     [Description("LSL/OSSL HTTP API")]
     public partial class HttpApi : IScriptApi, IPlugin
     {
+#if DEBUG
         static readonly ILog m_Log = LogManager.GetLogger("HTTP LSL API");
+#endif
         LSLHTTP m_HTTPHandler;
         LSLHTTPClient_RequestQueue m_LSLHTTPClient;
 

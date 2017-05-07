@@ -1103,15 +1103,15 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (leftType == typeof(Tree.ConstantValueLong) && rightType == typeof(Tree.ConstantValueInt))
                             {
-                                st.Value = new Tree.ConstantValueLong(
-                                    ((Tree.ConstantValueLong)(st.SubTree[0].Value)).Value |
-                                    (long)((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value);
+                                ulong a = (ulong)((Tree.ConstantValueLong)(st.SubTree[0].Value)).Value;
+                                ulong b = (ulong)((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value;
+                                st.Value = new Tree.ConstantValueLong((long)(a | b));
                             }
                             else if (leftType == typeof(Tree.ConstantValueInt) && rightType == typeof(Tree.ConstantValueLong))
                             {
-                                st.Value = new Tree.ConstantValueLong(
-                                    (long)((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value |
-                                    ((Tree.ConstantValueLong)(st.SubTree[1].Value)).Value);
+                                ulong a = (ulong)((Tree.ConstantValueLong)(st.SubTree[0].Value)).Value;
+                                ulong b = (ulong)((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value;
+                                st.Value = new Tree.ConstantValueLong((long)(a | b));
                             }
                             else
                             {
