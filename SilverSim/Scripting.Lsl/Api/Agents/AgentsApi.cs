@@ -32,7 +32,6 @@ using SilverSim.ServiceInterfaces.Grid;
 using SilverSim.ServiceInterfaces.Groups;
 using SilverSim.ServiceInterfaces.UserAgents;
 using SilverSim.Types;
-using SilverSim.Types.Agent;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Asset.Format;
 using SilverSim.Types.Groups;
