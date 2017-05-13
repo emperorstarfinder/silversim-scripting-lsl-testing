@@ -2011,8 +2011,6 @@ namespace SilverSim.Scripting.Lsl
                 case TouchEvent.TouchType.End:
                     DetectedSerializer(ev.Detected, "touch_end", writer);
                     break;
-                default:
-                    break;
             }
         }
 
@@ -2029,8 +2027,6 @@ namespace SilverSim.Scripting.Lsl
                     break;
                 case CollisionEvent.CollisionType.End:
                     DetectedSerializer(ev.Detected, "collision_end", writer);
-                    break;
-                default:
                     break;
             }
         }
@@ -2369,9 +2365,6 @@ namespace SilverSim.Scripting.Lsl
                 case CollisionEvent.CollisionType.Continuous:
                     script.InvokeStateEvent("collision", script.m_Detected.Count);
                     break;
-
-                default:
-                    break;
             }
         }
 
@@ -2404,15 +2397,11 @@ namespace SilverSim.Scripting.Lsl
                 case LandCollisionEvent.CollisionType.Continuous:
                     script.InvokeStateEvent("land_collision", e.Position);
                     break;
-
-                default:
-                    break;
             }
         }
 
         static void HandleSensor(Script script, IScriptEvent ev)
-        {
-            SensorEvent e = (SensorEvent)ev;
+		{
             script.InvokeStateEvent("sensor", script.m_Detected.Count);
         }
 
@@ -2456,9 +2445,6 @@ namespace SilverSim.Scripting.Lsl
                 case TouchEvent.TouchType.Continuous:
                     script.InvokeStateEvent("touch", script.m_Detected.Count);
                     break;
-
-                default:
-                    break;
             }
         }
         #endregion
@@ -2475,11 +2461,6 @@ namespace SilverSim.Scripting.Lsl
             public bool IsAllowedForEstateManager;
             public bool IsAllowedForRegionOwner;
             public bool IsAllowedForEveryone;
-
-            public Permissions()
-            {
-
-            }
         }
 
         public const ThreatLevel DefaultThreatLevel = ThreatLevel.Low;
