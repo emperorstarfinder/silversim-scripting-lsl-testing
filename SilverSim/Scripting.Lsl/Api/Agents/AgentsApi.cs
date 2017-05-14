@@ -236,16 +236,20 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     switch(data)
                     {
                         case DATA_ONLINE:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-                            ev.Data = "1";
+                            ev = new DataserverEvent()
+                            {
+                                QueryID = queryid,
+                                Data = "1"
+                            };
                             instance.PostEvent(ev);
                             break;
 
                         case DATA_NAME:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-                            ev.Data = agent.FirstName + " " + agent.LastName;
+                            ev = new DataserverEvent()
+                            {
+                                QueryID = queryid,
+                                Data = agent.FirstName + " " + agent.LastName
+                            };
                             instance.PostEvent(ev);
                             break;
 
@@ -262,24 +266,30 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 {
                                     return UUID.Zero;
                                 }
-                                ev = new DataserverEvent();
-                                ev.QueryID = queryid;
-                                ev.Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo);
+                                ev = new DataserverEvent()
+                                {
+                                    QueryID = queryid,
+                                    Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
+                                };
                                 instance.PostEvent(ev);
                             }
                             break;
 
                         case DATA_RATING:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-                            ev.Data = "[0,0,0,0,0,0]";
+                            ev = new DataserverEvent()
+                            {
+                                QueryID = queryid,
+                                Data = "[0,0,0,0,0,0]"
+                            };
                             instance.PostEvent(ev);
                             break;
 
                         case DATA_PAYINFO:
-                            ev = new DataserverEvent();
-                            ev.QueryID = queryid;
-                            ev.Data = "0";
+                            ev = new DataserverEvent()
+                            {
+                                QueryID = queryid,
+                                Data = "0"
+                            };
                             instance.PostEvent(ev);
                             break;
 
@@ -301,16 +311,20 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         switch (data)
                         {
                             case DATA_ONLINE:
-                                ev = new DataserverEvent();
-                                ev.QueryID = queryid;
-                                ev.Data = uaservice.IsOnline(uui) ? "1" : "0";
+                                ev = new DataserverEvent()
+                                {
+                                    QueryID = queryid,
+                                    Data = uaservice.IsOnline(uui) ? "1" : "0"
+                                };
                                 instance.PostEvent(ev);
                                 break;
 
                             case DATA_NAME:
-                                ev = new DataserverEvent();
-                                ev.QueryID = queryid;
-                                ev.Data = uui.FullName;
+                                ev = new DataserverEvent()
+                                {
+                                    QueryID = queryid,
+                                    Data = uui.FullName
+                                };
                                 instance.PostEvent(ev);
                                 break;
 
@@ -324,23 +338,29 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 {
                                     return UUID.Zero;
                                 }
-                                ev = new DataserverEvent();
-                                ev.QueryID = queryid;
-                                ev.Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo);
+                                ev = new DataserverEvent()
+                                {
+                                    QueryID = queryid,
+                                    Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
+                                };
                                 instance.PostEvent(ev);
                                 break;
 
                             case DATA_RATING:
-                                ev = new DataserverEvent();
-                                ev.QueryID = queryid;
-                                ev.Data = "[0,0,0,0,0,0]";
+                                ev = new DataserverEvent()
+                                {
+                                    QueryID = queryid,
+                                    Data = "[0,0,0,0,0,0]"
+                                };
                                 instance.PostEvent(ev);
                                 break;
 
                             case DATA_PAYINFO:
-                                ev = new DataserverEvent();
-                                ev.QueryID = queryid;
-                                ev.Data = "0";
+                                ev = new DataserverEvent()
+                                {
+                                    QueryID = queryid,
+                                    Data = "0"
+                                };
                                 instance.PostEvent(ev);
                                 break;
 
@@ -389,12 +409,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     group != UGI.Unknown && 
                     (groupsService.GetAgentPowers(group, owner) & GroupPowers.Invite) == GroupPowers.Invite)
                 {
-                    GroupInvite invite = new GroupInvite();
-                    invite.Principal = agent.Owner;
-                    invite.RoleID = UUID.Zero;
-                    invite.Group = group;
-                    invite.ID = UUID.Random;
-
+                    GroupInvite invite = new GroupInvite()
+                    {
+                        Principal = agent.Owner,
+                        RoleID = UUID.Zero,
+                        Group = group,
+                        ID = UUID.Random
+                    };
                     try
                     {
                         groupsService.Invites.Add(grp.Owner, invite);
@@ -404,17 +425,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         return 0;
                     }
 
-                    GridInstantMessage gim = new GridInstantMessage();
-                    gim.FromGroup = group;
-                    gim.FromAgent = owner;
-                    gim.Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "osGroupInviteMessage", "{0} has invited you to join a group called {1}. There is no cost to join this group."),
-                        owner.FullName, group.GroupName);
-                    gim.IsFromGroup = true;
-                    gim.RegionID = scene.ID;
-                    gim.BinaryBucket = new byte[] { (byte)'M', (byte)'0', 0 };
-                    gim.IMSessionID = invite.ID;
-                    gim.Dialog = GridInstantMessageDialog.GroupInvitation;
-
+                    GridInstantMessage gim = new GridInstantMessage()
+                    {
+                        FromGroup = group,
+                        FromAgent = owner,
+                        Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "osGroupInviteMessage", "{0} has invited you to join a group called {1}. There is no cost to join this group."),
+                        owner.FullName, group.GroupName),
+                        IsFromGroup = true,
+                        RegionID = scene.ID,
+                        BinaryBucket = new byte[] { (byte)'M', (byte)'0', 0 },
+                        IMSessionID = invite.ID,
+                        Dialog = GridInstantMessageDialog.GroupInvitation
+                    };
                     return agent.IMSend(gim) ? 1 : 0;
                 }
                 else
@@ -450,34 +472,33 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     }
 
                     IAgent agent;
-                    GridInstantMessage gim = new GridInstantMessage();
-                    if (scene.Agents.TryGetValue(ejectee.ID, out agent))
+                    GridInstantMessage gim = new GridInstantMessage()
                     {
-                        gim.Dialog = GridInstantMessageDialog.MessageFromAgent;
-                    }
-                    else
-                    {
-                        gim.Dialog = GridInstantMessageDialog.EjectedFromGroup;
-                    }
+                        Dialog = scene.Agents.TryGetValue(ejectee.ID, out agent) ?
+                            GridInstantMessageDialog.MessageFromAgent :
+                            GridInstantMessageDialog.EjectedFromGroup,
 
-                    gim.IMSessionID = group.ID;
-                    gim.FromAgent = owner;
-                    gim.FromGroup = group;
-                    gim.RegionID = scene.ID;
-                    gim.Message = string.Format("You have been ejected from '{1}' by {0}.", owner.FullName, group.GroupName);
-                    gim.OnResult = delegate (GridInstantMessage g, bool result) { };
+                        IMSessionID = group.ID,
+                        FromAgent = owner,
+                        FromGroup = group,
+                        RegionID = scene.ID,
+                        Message = string.Format("You have been ejected from '{1}' by {0}.", owner.FullName, group.GroupName),
+                        OnResult = delegate (GridInstantMessage g, bool result) { }
+                    };
                     IMRouter router = scene.GetService<IMRouter>();
                     router.SendWithResultDelegate(gim);
 
-                    gim = new GridInstantMessage();
-                    gim.IMSessionID = UUID.Zero;
-                    gim.FromAgent = owner;
-                    gim.FromGroup = group;
-                    gim.IsFromGroup = true;
-                    gim.Message = string.Format("{2} has been ejected from '{1}' by {0}.", ejectee.FullName, group.GroupName, owner.FullName);
-                    gim.Dialog = GridInstantMessageDialog.MessageFromAgent;
-                    gim.RegionID = scene.ID;
-                    gim.OnResult = delegate (GridInstantMessage g, bool result) { };
+                    gim = new GridInstantMessage()
+                    {
+                        IMSessionID = UUID.Zero,
+                        FromAgent = owner,
+                        FromGroup = group,
+                        IsFromGroup = true,
+                        Message = string.Format("{2} has been ejected from '{1}' by {0}.", ejectee.FullName, group.GroupName, owner.FullName),
+                        Dialog = GridInstantMessageDialog.MessageFromAgent,
+                        RegionID = scene.ID,
+                        OnResult = delegate (GridInstantMessage g, bool result) { }
+                    };
                     router.SendWithResultDelegate(gim);
 
                     return 1;
@@ -502,9 +523,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     {
                         displayname = agent.Owner.FullName;
                     }
-                    DataserverEvent ev = new DataserverEvent();
-                    ev.QueryID = UUID.Random;
-                    ev.Data = displayname;
+                    DataserverEvent ev = new DataserverEvent()
+                    {
+                        QueryID = UUID.Random,
+                        Data = displayname
+                    };
                     instance.PostEvent(ev);
                     return ev.QueryID;
                 }
@@ -527,9 +550,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         {
                             displayname = agentid.FullName;
                         }
-                        DataserverEvent ev = new DataserverEvent();
-                        ev.QueryID = UUID.Random;
-                        ev.Data = displayname;
+                        DataserverEvent ev = new DataserverEvent()
+                        {
+                            QueryID = UUID.Random,
+                            Data = displayname
+                        };
                         instance.PostEvent(ev);
                         return ev.QueryID;
                     }
@@ -774,21 +799,22 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 asset.ID = UUID.Random;
                 scene.AssetService.Store(asset);
 
-                ObjectPartInventoryItem item = new ObjectPartInventoryItem();
-                item.AssetID = asset.ID;
-                item.AssetType = AssetType.Notecard;
-                item.Creator = part.Owner;
-                item.ParentFolderID = part.ID;
-                item.InventoryType = InventoryType.Notecard;
-                item.LastOwner = part.Owner;
+                ObjectPartInventoryItem item = new ObjectPartInventoryItem()
+                {
+                    AssetID = asset.ID,
+                    AssetType = AssetType.Notecard,
+                    Creator = part.Owner,
+                    ParentFolderID = part.ID,
+                    InventoryType = InventoryType.Notecard,
+                    LastOwner = part.Owner,
+                    Name = notecard,
+                    Description = "Saved Appearance"
+                };
                 item.Permissions.Base = InventoryPermissionsMask.Every;
                 item.Permissions.Current = InventoryPermissionsMask.Every;
                 item.Permissions.Group = InventoryPermissionsMask.None;
                 item.Permissions.NextOwner = InventoryPermissionsMask.All;
                 item.Permissions.EveryOne = InventoryPermissionsMask.None;
-
-                item.Name = notecard;
-                item.Description = "Saved Appearance";
                 part.Inventory.Add(item);
                 return asset.ID;
             }
