@@ -770,20 +770,50 @@ namespace SilverSim.Scripting.Lsl
                         {
                             ilgen.Emit(OpCodes.Ldloc, lb);
                             ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
-                            Type pt = kvp.Value.GetType();
-                            if (typeof(FieldInfo).IsAssignableFrom(pt))
+                            Type retType = null;
+                            FieldInfo fi;
+                            PropertyInfo pi;
+
+                            if (null != (fi = kvp.Value as FieldInfo))
                             {
-                                FieldInfo fi = (FieldInfo)kvp.Value;
                                 ilgen.Emit(OpCodes.Ldloc, eventlb);
                                 ilgen.Emit(OpCodes.Ldfld, fi);
-                                ilgen.Emit(OpCodes.Stelem, fi.FieldType);
+                                retType = fi.FieldType;
                             }
-                            else if (typeof(PropertyInfo).IsAssignableFrom(pt))
+                            else if(null != (pi = kvp.Value as PropertyInfo))
                             {
-                                PropertyInfo pi = (PropertyInfo)kvp.Value;
                                 ilgen.Emit(OpCodes.Ldloc, eventlb);
                                 ilgen.Emit(OpCodes.Call, pi.GetGetMethod());
-                                ilgen.Emit(OpCodes.Stelem, pi.PropertyType);
+                                retType = pi.PropertyType;
+                            }
+                            else
+                            {
+                                continue;
+                            }
+
+                            if (retType == typeof(int))
+                            {
+                                ilgen.Emit(OpCodes.Stelem_I4);
+                            }
+                            else if (retType == typeof(double))
+                            {
+                                ilgen.Emit(OpCodes.Stelem_R8);
+                            }
+                            else if (retType == typeof(long))
+                            {
+                                ilgen.Emit(OpCodes.Stelem_I8);
+                            }
+                            else if(retType == typeof(Vector3) ||
+                                retType == typeof(Quaternion))
+                            {
+                                ilgen.Emit(OpCodes.Box, retType);
+                                ilgen.Emit(OpCodes.Castclass, typeof(object));
+                                ilgen.Emit(OpCodes.Stelem, typeof(object));
+                            }
+                            else
+                            {
+                                ilgen.Emit(OpCodes.Castclass, typeof(object));
+                                ilgen.Emit(OpCodes.Stelem, typeof(object));
                             }
                         }
 
