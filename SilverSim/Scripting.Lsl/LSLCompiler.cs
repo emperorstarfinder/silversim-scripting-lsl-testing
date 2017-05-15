@@ -762,7 +762,7 @@ namespace SilverSim.Scripting.Lsl
                         /* create object[] array */
                         LocalBuilder lb = ilgen.DeclareLocal(typeof(object[]));
                         ilgen.Emit(OpCodes.Ldc_I4, paramcount);
-                        ilgen.Emit(OpCodes.Newarr, typeof(object[]));
+                        ilgen.Emit(OpCodes.Newarr, typeof(object));
                         ilgen.Emit(OpCodes.Stloc, lb);
 
                         /* collect parameters into object[] array */
@@ -791,30 +791,11 @@ namespace SilverSim.Scripting.Lsl
                                 continue;
                             }
 
-                            if (retType == typeof(int))
-                            {
-                                ilgen.Emit(OpCodes.Stelem_I4);
-                            }
-                            else if (retType == typeof(double))
-                            {
-                                ilgen.Emit(OpCodes.Stelem_R8);
-                            }
-                            else if (retType == typeof(long))
-                            {
-                                ilgen.Emit(OpCodes.Stelem_I8);
-                            }
-                            else if(retType == typeof(Vector3) ||
-                                retType == typeof(Quaternion))
+                            if (!retType.IsByRef)
                             {
                                 ilgen.Emit(OpCodes.Box, retType);
-                                ilgen.Emit(OpCodes.Castclass, typeof(object));
-                                ilgen.Emit(OpCodes.Stelem, typeof(object));
                             }
-                            else
-                            {
-                                ilgen.Emit(OpCodes.Castclass, typeof(object));
-                                ilgen.Emit(OpCodes.Stelem, typeof(object));
-                            }
+                            ilgen.Emit(OpCodes.Stelem_Ref);
                         }
 
                         /* parameters for function */
