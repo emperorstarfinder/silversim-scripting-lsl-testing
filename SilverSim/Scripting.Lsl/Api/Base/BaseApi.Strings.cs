@@ -66,28 +66,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llToLower")]
-        public string ToLower(ScriptInstance instance, string s)
-        {
-            return s.ToLower();
-        }
+        public string ToLower(ScriptInstance instance, string s) => s.ToLower();
 
         [APILevel(APIFlags.LSL, "llToUpper")]
-        public string ToUpper(ScriptInstance instance, string s)
-        {
-            return s.ToUpper();
-        }
+        public string ToUpper(ScriptInstance instance, string s) => s.ToUpper();
 
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
-        public string UnescapeURL(ScriptInstance instance, string url)
-        {
-            return Uri.UnescapeDataString(url);
-        }
+        public string UnescapeURL(ScriptInstance instance, string url) => Uri.UnescapeDataString(url);
 
         [APILevel(APIFlags.LSL, "llEscapeURL")]
-        public string EscapeURL(ScriptInstance instance, string url)
-        {
-            return Uri.EscapeDataString(url);
-        }
+        public string EscapeURL(ScriptInstance instance, string url) => Uri.EscapeDataString(url);
 
         [APILevel(APIFlags.LSL)]
         public const int STRING_TRIM_HEAD = 0x1;
@@ -144,16 +132,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
-        public int StringLength(ScriptInstance instance, string src)
-        {
-            return src.Length;
-        }
+        public int StringLength(ScriptInstance instance, string src) => src.Length;
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
-        public int SubStringIndex(ScriptInstance instance, string source, string pattern)
-        {
-            return source.IndexOf(pattern);
-        }
+        public int SubStringIndex(ScriptInstance instance, string source, string pattern) => source.IndexOf(pattern);
 
         [APILevel(APIFlags.LSL, "llGetSubString")]
         public string GetSubstring(ScriptInstance instance, string src, int start, int end)
@@ -200,10 +182,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llMD5String")]
         public string MD5String(ScriptInstance instance, string src, int nonce)
         {
-            using (MD5 md5 = MD5.Create())
+            using (var md5 = MD5.Create())
             {
                 byte[] b = md5.ComputeHash(string.Format("{0}:{1}", src, nonce.ToString()).ToUTF8Bytes());
-                StringBuilder s = new StringBuilder();
+                var s = new StringBuilder();
                 for(int i = 0; i < b.Length; ++i)
                 {
                     s.Append(string.Format("{0:x2}", b[i]));
@@ -215,10 +197,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llSHA1String")]
         public string SHA1String(ScriptInstance instance, string src)
         {
-            using (SHA1 sha1 = SHA1.Create())
+            using (var sha1 = SHA1.Create())
             {
                 byte[] b = sha1.ComputeHash(src.ToUTF8Bytes());
-                StringBuilder s = new StringBuilder();
+                var s = new StringBuilder();
                 for (int i = 0; i < b.Length; ++i)
                 {
                     s.Append(string.Format("{0:x2}", b[i]));
@@ -230,7 +212,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.OSSL, "osMatchString")]
         public AnArray OsMatchString(ScriptInstance instance, string src, string pattern, int start)
         {
-            AnArray result = new AnArray();
+            var result = new AnArray();
 
             /* Normalize indices (if negative). */
             if (start < 0)
@@ -244,7 +226,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
 
             // Find matches beginning at start position
-            Regex matcher = new Regex(pattern);
+            var matcher = new Regex(pattern);
             Match match = matcher.Match(src, start);
             while (match.Success)
             {
@@ -276,15 +258,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return src;
             }
 
-            Regex matcher = new Regex(pattern);
+            var matcher = new Regex(pattern);
             return matcher.Replace(src, replace, count, start);
         }
 
         [APILevel(APIFlags.OSSL, "osFormatString")]
-        public string OsFormatString(ScriptInstance instance, string fmt, AnArray list)
-        {
-            return string.Format(fmt, list.ToArray());
-        }
+        public string OsFormatString(ScriptInstance instance, string fmt, AnArray list) => string.Format(fmt, list.ToArray());
 
         [APILevel(APIFlags.OSSL, "osRegexIsMatch")]
         public int RegexIsMatch(ScriptInstance instance, string input, string pattern)

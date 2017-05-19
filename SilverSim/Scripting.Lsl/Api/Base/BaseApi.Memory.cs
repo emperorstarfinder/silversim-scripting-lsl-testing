@@ -37,31 +37,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llSetMemoryLimit")]
-        public int SetMemoryLimit(ScriptInstance instance, int limit)
-        {
-            /* we are not doing anything with the provided value */
-            return 0;
-        }
+        public int SetMemoryLimit(ScriptInstance instance, int limit) => 0; /* we are not doing anything with the provided value */
 
         [APILevel(APIFlags.LSL, "llGetSPMaxMemory")]
-        public int GetSPMaxMemory(ScriptInstance instance)
-        {
-            /* MaxMemory value used for Mono scripts in SL */
-            return 65536;
-        }
+        public int GetSPMaxMemory(ScriptInstance instance) => 65536; /* MaxMemory value used for Mono scripts in SL */
 
         [APILevel(APIFlags.LSL, "llGetUsedMemory")]
-        public int GetUsedMemory(ScriptInstance instance)
-        {
-            /* we have no resource tracking */
-            return 0;
-        }
+        public int GetUsedMemory(ScriptInstance instance) => 0; /* we have no resource tracking */
 
         [APILevel(APIFlags.LSL, "llGetFreeMemory")]
-        public int GetFreeMemory(ScriptInstance instance)
-        {
-            /* we have no resource tracking */
-            return 65536;
-        }
+        public int GetFreeMemory(ScriptInstance instance) => 65536; /* we have no resource tracking */
     }
 }

@@ -41,113 +41,59 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const double SQRT2 = 1.414213538f;
 
         [APILevel(APIFlags.OSSL, "osMax")]
-        public double Max(ScriptInstance instance, double a, double b)
-        {
-            return (a > b) ? a : b;
-        }
+        public double Max(ScriptInstance instance, double a, double b) => (a > b) ? a : b;
 
         [APILevel(APIFlags.OSSL, "osMin")]
-        public double Min(ScriptInstance instance, double a, double b)
-        {
-            return (a < b) ? a : b;
-        }
+        public double Min(ScriptInstance instance, double a, double b) => (a < b) ? a : b;
 
         [APILevel(APIFlags.LSL, "llAbs")]
-        public int Abs(ScriptInstance instance, int v)
-        {
-            return (v < 0) ? -v : v;
-        }
+        public int Abs(ScriptInstance instance, int v) => (v < 0) ? -v : v;
 
         [APILevel(APIFlags.LSL, "llAcos")]
-        public double Acos(ScriptInstance instance, double v)
-        {
-            return Math.Acos(v);
-        }
+        public double Acos(ScriptInstance instance, double v) => Math.Acos(v);
 
         [APILevel(APIFlags.LSL, "llAsin")]
-        public double Asin(ScriptInstance instance, double v)
-        {
-            return Math.Asin(v);
-        }
+        public double Asin(ScriptInstance instance, double v) => Math.Asin(v);
 
         [APILevel(APIFlags.LSL, "llAtan2")]
-        public double Atan2(ScriptInstance instance, double y, double x)
-        {
-            return Math.Atan2(y, x);
-        }
+        public double Atan2(ScriptInstance instance, double y, double x) => Math.Atan2(y, x);
 
         [APILevel(APIFlags.LSL, "llCos")]
-        public double Cos(ScriptInstance instance, double v)
-        {
-            return Math.Cos(v);
-        }
+        public double Cos(ScriptInstance instance, double v) => Math.Cos(v);
 
         [APILevel(APIFlags.LSL, "llFabs")]
-        public double Fabs(ScriptInstance instance, double v)
-        {
-            return Math.Abs(v);
-        }
+        public double Fabs(ScriptInstance instance, double v) => Math.Abs(v);
 
         [APILevel(APIFlags.LSL, "llLog")]
-        public double Log(ScriptInstance instance, double v)
-        {
-            return Math.Log(v);
-        }
+        public double Log(ScriptInstance instance, double v) => Math.Log(v);
 
         [APILevel(APIFlags.LSL, "llLog10")]
-        public double Log10(ScriptInstance instance, double v)
-        {
-            return Math.Log10(v);
-        }
+        public double Log10(ScriptInstance instance, double v) => Math.Log10(v);
 
         [APILevel(APIFlags.LSL, "llPow")]
-        public double Pow(ScriptInstance instance, double bas, double exponent)
-        {
-            return Math.Pow(bas, exponent);
-        }
+        public double Pow(ScriptInstance instance, double bas, double exponent) => Math.Pow(bas, exponent);
 
         [APILevel(APIFlags.LSL, "llSin")]
-        public double Sin(ScriptInstance instance, double v)
-        {
-            return Math.Sin(v);
-        }
+        public double Sin(ScriptInstance instance, double v) => Math.Sin(v);
 
         [APILevel(APIFlags.LSL, "llSqrt")]
-        public double Sqrt(ScriptInstance instance, double v)
-        {
-            return Math.Sqrt(v);
-        }
+        public double Sqrt(ScriptInstance instance, double v) => Math.Sqrt(v);
 
         [APILevel(APIFlags.LSL, "llTan")]
-        public double Tan(ScriptInstance instance, double v)
-        {
-            return Math.Tan(v);
-        }
+        public double Tan(ScriptInstance instance, double v) => Math.Tan(v);
 
         [APILevel(APIFlags.LSL, "llVecDist")]
-        public double VecDist(ScriptInstance instance, Vector3 a, Vector3 b)
-        {
-            return (a - b).Length;
-        }
+        public double VecDist(ScriptInstance instance, Vector3 a, Vector3 b) => (a - b).Length;
 
         [APILevel(APIFlags.LSL, "llVecMag")]
-        public double VecMag(ScriptInstance instance, Vector3 v)
-        {
-            return v.Length;
-        }
+        public double VecMag(ScriptInstance instance, Vector3 v) => v.Length;
 
         [APILevel(APIFlags.LSL, "llVecNorm")]
-        public Vector3 VecNorm(ScriptInstance instance, Vector3 v)
-        {
-            return (v.Length == 0.0) ? Vector3.Zero : (v / v.Length);
-        }
+        public Vector3 VecNorm(ScriptInstance instance, Vector3 v) => (v.Length == 0.0) ? Vector3.Zero : (v / v.Length);
 
         [APILevel(APIFlags.LSL, "llModPow")]
         [ForcedSleep(1)]
-        public int ModPow(ScriptInstance instance, int a, int b, int c)
-        {
-            return ((int)Math.Pow(a, b)) % c;
-        }
+        public int ModPow(ScriptInstance instance, int a, int b, int c) => ((int)Math.Pow(a, b)) % c;
 
         [APILevel(APIFlags.LSL, "llRot2Euler")]
         public Vector3 Rot2Euler(ScriptInstance instance, Quaternion q)
@@ -180,22 +126,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llRot2Axis")]
-        public Vector3 Rot2Axis(ScriptInstance instance, Quaternion q)
-        {
-            return VecNorm(instance, new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
-        }
+        public Vector3 Rot2Axis(ScriptInstance instance, Quaternion q) => VecNorm(instance, new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
 
         [APILevel(APIFlags.LSL, "llAxisAngle2Rot")]
-        public Quaternion AxisAngle2Rot(ScriptInstance instance, Vector3 axis, double angle)
-        {
-            return Quaternion.CreateFromAxisAngle(axis, angle);
-        }
+        public Quaternion AxisAngle2Rot(ScriptInstance instance, Vector3 axis, double angle) => Quaternion.CreateFromAxisAngle(axis, angle);
 
         [APILevel(APIFlags.LSL, "llEuler2Rot")]
-        public Quaternion Euler2Rot(ScriptInstance instance, Vector3 v)
-        {
-            return Quaternion.CreateFromEulers(v);
-        }
+        public Quaternion Euler2Rot(ScriptInstance instance, Vector3 v) => Quaternion.CreateFromEulers(v);
 
         [APILevel(APIFlags.LSL, "llAngleBetween")]
         public double AngleBetween(ScriptInstance instance, Quaternion a, Quaternion b)
@@ -215,52 +152,28 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llAxes2Rot")]
-        public Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up)
-        {
-            return Quaternion.Axes2Rot(fwd, left, up);
-        }
+        public Quaternion Axes2Rot(ScriptInstance instance, Vector3 fwd, Vector3 left, Vector3 up) => Quaternion.Axes2Rot(fwd, left, up);
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
-        public Vector3 Rot2Fwd(ScriptInstance instance, Quaternion r)
-        {
-            return r.FwdAxis;
-        }
+        public Vector3 Rot2Fwd(ScriptInstance instance, Quaternion r) => r.FwdAxis;
 
         [APILevel(APIFlags.LSL, "llRot2Left")]
-        public Vector3 Rot2Left(ScriptInstance instance, Quaternion r)
-        {
-            return r.LeftAxis;
-        }
+        public Vector3 Rot2Left(ScriptInstance instance, Quaternion r) => r.LeftAxis;
 
         [APILevel(APIFlags.LSL, "llRot2Up")]
-        public Vector3 Rot2Up(ScriptInstance instance, Quaternion r)
-        {
-            return r.UpAxis;
-        }
+        public Vector3 Rot2Up(ScriptInstance instance, Quaternion r) => r.UpAxis;
 
         [APILevel(APIFlags.LSL, "llRotBetween")]
-        public Quaternion RotBetween(ScriptInstance instance, Vector3 a, Vector3 b)
-        {
-            return Quaternion.RotBetween(a, b);
-        }
+        public Quaternion RotBetween(ScriptInstance instance, Vector3 a, Vector3 b) => Quaternion.RotBetween(a, b);
 
         [APILevel(APIFlags.LSL, "llFloor")]
-        public int Floor(ScriptInstance instance, double f)
-        {
-            return (int)Math.Floor(f);
-        }
+        public int Floor(ScriptInstance instance, double f) => (int)Math.Floor(f);
 
         [APILevel(APIFlags.LSL, "llCeil")]
-        public int Ceil(ScriptInstance instance, double f)
-        {
-            return (int)Math.Ceiling(f);
-        }
+        public int Ceil(ScriptInstance instance, double f) => (int)Math.Ceiling(f);
 
         [APILevel(APIFlags.LSL, "llRound")]
-        public int Round(ScriptInstance instance, double f)
-        {
-            return (int)Math.Round(f, MidpointRounding.AwayFromZero);
-        }
+        public int Round(ScriptInstance instance, double f) => (int)Math.Round(f, MidpointRounding.AwayFromZero);
 
         private readonly Random random = new Random();
         [APILevel(APIFlags.LSL, "llFrand")]

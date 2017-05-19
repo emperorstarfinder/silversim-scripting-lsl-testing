@@ -78,11 +78,6 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, FieldInfo> Constants = new Dictionary<string, FieldInfo>();
             public Dictionary<string, MethodInfo> EventDelegates = new Dictionary<string, MethodInfo>();
 
-            public ApiInfo()
-            {
-
-            }
-
             public void Add(ApiInfo info)
             {
                 foreach(KeyValuePair<string, List<ApiMethodInfo>> mInfo in info.Methods)
@@ -218,8 +213,7 @@ namespace SilverSim.Scripting.Lsl
         {
             loader.AddPlugin("LSLHTTP", new LSLHTTP());
             loader.AddPlugin("LSLHttpClient", new LSLHTTPClient_RequestQueue(loader.Scenes));
-            Type[] types = GetType().Assembly.GetTypes();
-            foreach (Type type in types)
+            foreach (Type type in GetType().Assembly.GetTypes())
             {
                 if (typeof(IScriptApi).IsAssignableFrom(type))
                 {
@@ -236,8 +230,7 @@ namespace SilverSim.Scripting.Lsl
 
         void CollectApis(ConfigurationLoader loader)
         {
-            List<IScriptApi> apis = loader.GetServicesByValue<IScriptApi>();
-            foreach (IScriptApi api in apis)
+            foreach (IScriptApi api in loader.GetServicesByValue<IScriptApi>())
             {
                 Type apiType = api.GetType();
                 Attribute attr = Attribute.GetCustomAttribute(apiType, typeof(LSLImplementationAttribute));
@@ -264,8 +257,8 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (IsValidType(f.FieldType))
                     {
-                        APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
-                        APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                        var apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                        var apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                         if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                         {
                             foreach (APILevelAttribute attr in apiLevelAttrs)
@@ -304,8 +297,8 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
-                        APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                        var apiLevelAttrs = Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                        var apiExtensionAttrs = Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                         if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                         {
                             m_Log.DebugFormat("Field {0} has unsupported attribute flags {1}", f.Name, f.Attributes.ToString());
@@ -319,11 +312,11 @@ namespace SilverSim.Scripting.Lsl
         {
             foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
             {
-                StateEventDelegateAttribute stateEventAttr = (StateEventDelegateAttribute)Attribute.GetCustomAttribute(t, typeof(StateEventDelegateAttribute));
+                var stateEventAttr = (StateEventDelegateAttribute)Attribute.GetCustomAttribute(t, typeof(StateEventDelegateAttribute));
                 if (stateEventAttr != null)
                 {
-                    APILevelAttribute[] apiLevelAttrs = System.Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
-                    APIExtensionAttribute[] apiExtensionAttrs = System.Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                    var apiLevelAttrs = Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
+                    var apiExtensionAttrs = Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                     MethodInfo mi = t.GetMethod("Invoke");
                     if (apiLevelAttrs.Length == 0 && apiExtensionAttrs.Length == 0)
                     {
@@ -408,8 +401,8 @@ namespace SilverSim.Scripting.Lsl
         {
             foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
             {
-                APILevelAttribute[] funcNameAttrs = Attribute.GetCustomAttributes(m, typeof(APILevelAttribute)) as APILevelAttribute[];
-                APIExtensionAttribute[] apiExtensionAttrs = Attribute.GetCustomAttributes(m, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                var funcNameAttrs = Attribute.GetCustomAttributes(m, typeof(APILevelAttribute)) as APILevelAttribute[];
+                var apiExtensionAttrs = Attribute.GetCustomAttributes(m, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                 if (funcNameAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                 {
                     ParameterInfo[] pi = m.GetParameters();
@@ -614,7 +607,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
-                ExecutedOnDeserializationAttribute deserializeattr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnDeserializationAttribute)) as ExecutedOnDeserializationAttribute;
+                var deserializeattr = Attribute.GetCustomAttribute(m, typeof(ExecutedOnDeserializationAttribute)) as ExecutedOnDeserializationAttribute;
                 if (deserializeattr != null)
                 {
                     ParameterInfo[] pi = m.GetParameters();
@@ -653,7 +646,7 @@ namespace SilverSim.Scripting.Lsl
         {
             foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
             {
-                TranslatedScriptEventsInfoAttribute listattr = Attribute.GetCustomAttribute(f, typeof(TranslatedScriptEventsInfoAttribute)) as TranslatedScriptEventsInfoAttribute;
+                var listattr = Attribute.GetCustomAttribute(f, typeof(TranslatedScriptEventsInfoAttribute)) as TranslatedScriptEventsInfoAttribute;
                 if (listattr == null ||
                     f.FieldType != typeof(Type[]))
                 {
@@ -665,16 +658,16 @@ namespace SilverSim.Scripting.Lsl
                     (Type[])f.GetValue(api);
                 foreach (Type evt in typeList)
                 {
-                    TranslatedScriptEventAttribute eventAttr = Attribute.GetCustomAttribute(evt, typeof(TranslatedScriptEventAttribute)) as TranslatedScriptEventAttribute;
+                    var eventAttr = Attribute.GetCustomAttribute(evt, typeof(TranslatedScriptEventAttribute)) as TranslatedScriptEventAttribute;
                     if (eventAttr != null && evt.GetInterfaces().Contains(typeof(IScriptEvent)))
                     {
                         /* translatable parameters */
-                        SortedDictionary<int, object> parameters = new SortedDictionary<int, object>();
+                        var parameters = new SortedDictionary<int, object>();
                         bool notUsable = false;
 
                         foreach(FieldInfo fi in evt.GetFields(BindingFlags.Instance | BindingFlags.Public))
                         {
-                            TranslatedScriptEventParameterAttribute paramAttr = Attribute.GetCustomAttribute(fi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
+                            var paramAttr = Attribute.GetCustomAttribute(fi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
 
                             if (paramAttr != null)
                             {
@@ -702,7 +695,7 @@ namespace SilverSim.Scripting.Lsl
 
                         foreach(PropertyInfo pi in evt.GetProperties(BindingFlags.Instance | BindingFlags.Public))
                         {
-                            TranslatedScriptEventParameterAttribute paramAttr = Attribute.GetCustomAttribute(pi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
+                            var paramAttr = Attribute.GetCustomAttribute(pi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
 
                             if (paramAttr != null)
                             {
@@ -747,7 +740,7 @@ namespace SilverSim.Scripting.Lsl
                             continue;
                         }
 
-                        DynamicMethod dynMethod = new DynamicMethod("Translate_" + eventAttr.EventName,
+                        var dynMethod = new DynamicMethod("Translate_" + eventAttr.EventName,
                             typeof(void),
                             new Type[2] { typeof(Script), typeof(IScriptEvent) },
                             typeof(Script).Module);
@@ -996,12 +989,12 @@ namespace SilverSim.Scripting.Lsl
         {
             CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
             compileState.EmitDebugSymbols = emitDebugSymbols;
-            LSLScriptAssembly scriptAssembly = (LSLScriptAssembly)PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndSave, filename);
+            var scriptAssembly = (LSLScriptAssembly)PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndSave, filename);
             if(null == scriptAssembly)
             {
                 throw new CompilerException();
             }
-            AssemblyBuilder builder = (AssemblyBuilder)scriptAssembly.Assembly;
+            var builder = (AssemblyBuilder)scriptAssembly.Assembly;
             if(null == builder)
             {
                 throw new CompilerException();

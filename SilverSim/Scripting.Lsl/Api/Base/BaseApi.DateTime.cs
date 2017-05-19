@@ -28,22 +28,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llGetTimestamp")]
-        public string GetTimestamp(ScriptInstance instance)
-        {
-            return DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
-        }
+        public string GetTimestamp(ScriptInstance instance) => DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 
         [APILevel(APIFlags.LSL, "llGetUnixTime")]
-        public int GetUnixTime(ScriptInstance instance)
-        {
-            return (int)Date.GetUnixTime();
-        }
+        public int GetUnixTime(ScriptInstance instance) => (int)Date.GetUnixTime();
 
         [APILevel(APIFlags.LSL, "llGetGMTclock")]
-        public double GetGMTclock(ScriptInstance instance)
-        {
-            return Date.GetUnixTime();
-        }
+        public double GetGMTclock(ScriptInstance instance) => Date.GetUnixTime();
 
         [APILevel(APIFlags.LSL, "llGetTimeOfDay")]
         public double GetTimeOfDay(ScriptInstance instance)
@@ -55,25 +46,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetWallclock")]
-        public double GetWallclock(ScriptInstance instance)
-        {
-            /* function is defined as returning PST, so we do that */
-            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "Pacific Standard Time").TimeOfDay.TotalMilliseconds / 1000;
-        }
+        public double GetWallclock(ScriptInstance instance) => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "Pacific Standard Time").TimeOfDay.TotalMilliseconds / 1000;
 
         [APILevel(APIFlags.LSL, "llGetDate")]
-        public string GetDate(ScriptInstance instance)
-        {
-            return DateTime.UtcNow.ToString("yyyy-MM-dd");
-        }
+        public string GetDate(ScriptInstance instance) => DateTime.UtcNow.ToString("yyyy-MM-dd");
 
         [APILevel(APIFlags.OSSL, "osUnixTimeToTimestamp")]
         public string OsUnixTimeToTimestamp(ScriptInstance instance, int time)
         {
-            long baseTicks = 621355968000000000;
-            long tickResolution = 10000000;
+            const long baseTicks = 621355968000000000;
+            const long tickResolution = 10000000;
             long epochTicks = (time * tickResolution) + baseTicks;
-            DateTime date = new DateTime(epochTicks);
+            var date = new DateTime(epochTicks);
 
             return date.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         }

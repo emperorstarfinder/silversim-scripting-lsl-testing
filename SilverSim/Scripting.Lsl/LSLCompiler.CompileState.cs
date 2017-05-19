@@ -41,10 +41,7 @@ namespace SilverSim.Scripting.Lsl
                 LineNumber = lineNo;
             }
 
-            public override string ToString()
-            {
-                return LineNumber.ToString() + ": " + string.Join(" ", Line);
-            }
+            public override string ToString() => LineNumber.ToString() + ": " + string.Join(" ", Line);
         }
 
         internal class FunctionInfo
@@ -78,7 +75,6 @@ namespace SilverSim.Scripting.Lsl
 
             public BreakContinueLabel()
             {
-
             }
 
             public BreakContinueLabel(BreakContinueLabel bc)
@@ -172,13 +168,7 @@ namespace SilverSim.Scripting.Lsl
                 return functionBody[lineIndex];
             }
 
-            public bool HaveMoreLines
-            {
-                get
-                {
-                    return FunctionLineIndex < FunctionBody.Count;
-                }
-            }
+            public bool HaveMoreLines => FunctionLineIndex < FunctionBody.Count;
             #endregion
         }
     }

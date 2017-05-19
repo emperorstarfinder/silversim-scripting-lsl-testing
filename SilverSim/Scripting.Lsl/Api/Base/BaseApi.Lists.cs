@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else
             {
-                AnArray res = new AnArray();
+                var res = new AnArray();
 
                 for (int i = 0; i < start + 1; ++i)
                 {
@@ -108,9 +108,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             int stride)
         {
 
-            AnArray result = new AnArray();
-            int[] si = new int[2];
-            int[] ei = new int[2];
+            var result = new AnArray();
+            var si = new int[2];
+            var ei = new int[2];
             bool twopass = false;
 
             /*
@@ -247,7 +247,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if (start <= end)
             {
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 for (int i = start; i <= end; ++i )
                 {
                     res.Add(src[i]);
@@ -257,7 +257,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else
             {
-                AnArray res = new AnArray();
+                var res = new AnArray();
 
                 for (int i = 0; i < end + 1; ++i)
                 {
@@ -304,7 +304,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if (index < 0)
             {
-                index = index + dest.Count;
+                index += dest.Count;
                 if (index < 0)
                 {
                     index = 0;
@@ -536,7 +536,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("Index of the element of interest.")]
             int index)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             if (index < 0)
             {
                 index = src.Count - index;
@@ -605,8 +605,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Description("Returns a string that is the list src converted to a string with separator between the entries.")]
         public string DumpList2String(ScriptInstance instance, AnArray src, string separator)
         {
-            Script script = (Script)instance;
-            StringBuilder sb = new StringBuilder();
+            var script = (Script)instance;
+            var sb = new StringBuilder();
 
             foreach(IValue val in src)
             {
@@ -643,10 +643,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llList2CSV")]
         [Description("Returns a string of comma separated values taken in order from src.")]
-        public string List2CSV(ScriptInstance instance, AnArray src)
-        {
-            return DumpList2String(instance, src, ", ");
-        }
+        public string List2CSV(ScriptInstance instance, AnArray src) => DumpList2String(instance, src, ", ");
 
         [APILevel(APIFlags.LSL)]
         public const int TYPE_INTEGER = 1;
@@ -686,14 +683,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llGetListLength")]
         [Description("Returns an integer that is the number of elements in the list src")]
-        public int GetListLength(ScriptInstance instance, AnArray src)
-        {
-            return src.Count;
-        }
+        public int GetListLength(ScriptInstance instance, AnArray src) => src.Count;
 
         AnArray ParseString2List(ScriptInstance instance, string src, AnArray separators, AnArray spacers, bool keepNulls)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             string value = null;
             
             while(src.Length != 0)
@@ -803,10 +797,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("separators to be discarded")]
             AnArray separators,
             [Description("spacers to be kept")]
-            AnArray spacers)
-        {
-            return ParseString2List(instance, src, separators, spacers, false);
-        }
+            AnArray spacers) => ParseString2List(instance, src, separators, spacers, false);
 
         [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
         [Description("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
@@ -816,10 +807,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("separators to be discarded")]
             AnArray separators,
             [Description("spacers to be kept")]
-            AnArray spacers)
-        {
-            return ParseString2List(instance, src, separators, spacers, true);
-        }
+            AnArray spacers) => ParseString2List(instance, src, separators, spacers, true);
 
         [APILevel(APIFlags.LSL, "llCSV2List")]
         [Description("This function takes a string of values separated by commas, and turns it into a list.")]
@@ -827,8 +815,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             bool wsconsume = true;
             bool inbracket = false;
-            AnArray ret = new AnArray();
-            StringBuilder value = new StringBuilder();
+            var ret = new AnArray();
+            var value = new StringBuilder();
 
             foreach(char c in src)
             {
@@ -887,12 +875,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             // indices could still be negative.
             if (start < 0)
             {
-                start = start + dest.Count;
+                start += dest.Count;
             }
 
             if (end < 0)
             {
-                end = end + dest.Count;
+                end += dest.Count;
             }
             if (start <= end)
             {
@@ -958,10 +946,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        static int ElementCompareDescending(IValue left, IValue right)
-        {
-            return 0 - ElementCompare(left, right);
-        }
+        static int ElementCompareDescending(IValue left, IValue right) => 0 - ElementCompare(left, right);
 
         [APILevel(APIFlags.LSL, "llListSort")]
         [Description("Returns a list that is src sorted by stride.")]
@@ -980,9 +965,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return new AnArray();
             }
 
-            Comparison<IValue> compare;
-            compare = (ascending == 1) ?
-                (Comparison<IValue>)ElementCompare :
+            Comparison<IValue> compare = (ascending == 1) ?
+                ElementCompare :
                 (Comparison<IValue>)ElementCompareDescending;
 
             IValue[] ret = src.ToArray();
@@ -1045,7 +1029,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
              * Conceptually, the algorithm selects llGetListLength(src) / stride buckets, and then for each bucket swaps in the contents with another b
              */
             AnArray result;
-            Random rand = new Random();
+            var rand = new Random();
 
             int chunkcount;
             int[] chunks;
@@ -1282,10 +1266,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return sum / count;
         }
 
-        double ListMedian(AnArray src)
-        {
-            return ListQi(src, 0.5);
-        }
+        double ListMedian(AnArray src) => ListQi(src, 0.5);
 
         double ListGeometricMean(AnArray src)
         {
@@ -1319,7 +1300,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
 
-            return ((double)count / ret);
+            return count / ret;
         }
 
         double ListVariance(AnArray src)
@@ -1348,7 +1329,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         double[] NumericSort(AnArray src)
         {
-            List<double> resList = new List<double>();
+            var resList = new List<double>();
             double entry;
 
             for (int i = 0; i < src.Count; i++)
@@ -1368,7 +1349,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             double[] j = NumericSort(src);
 
-            return Math.Abs((Math.Ceiling(j.Length * i) - (j.Length * i))) < Double.Epsilon ?
+            return Math.Abs(Math.Ceiling(j.Length * i) - (j.Length * i)) < Double.Epsilon ?
                 (j[(int)(j.Length * i - 1)] + j[(int)(j.Length * i)]) / 2 :
                 j[(int)(Math.Ceiling(j.Length * i)) - 1];
         }

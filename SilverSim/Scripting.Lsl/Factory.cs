@@ -27,14 +27,7 @@ namespace SilverSim.Scripting.Lsl
     [PluginName("ScriptEngine")]
     public class Factory : IPluginFactory
     {
-        public Factory()
-        {
-
-        }
-
-        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
-        {
-            return new LSLCompiler();
-        }
+        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection) =>
+            new LSLCompiler();
     }
 }

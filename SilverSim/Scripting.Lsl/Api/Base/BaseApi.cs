@@ -163,15 +163,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock(instance)
             {
-                Script script = (Script)instance;
+                var script = (Script)instance;
                 script.UseForcedSleep = flag != 0;
             }
         }
 
         [APILevel(APIFlags.OSSL, "osGetScriptEngineName")]
-        public string GetScriptEngineName(ScriptInstance instance)
-        {
-            return "Porthos";
-        }
+        public string GetScriptEngineName(ScriptInstance instance) => "Porthos";
     }
 }

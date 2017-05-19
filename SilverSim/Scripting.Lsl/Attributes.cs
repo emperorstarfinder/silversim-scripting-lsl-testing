@@ -39,8 +39,8 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ThreatLevelRequiredAttribute : Attribute
     {
-        public ThreatLevel ThreatLevel { get; private set; }
-        public string FunctionName { get; private set; }
+        public ThreatLevel ThreatLevel { get; }
+        public string FunctionName { get; }
         public ThreatLevelRequiredAttribute(ThreatLevel threatLevel, string functionName = "")
         {
             ThreatLevel = threatLevel;
@@ -52,8 +52,8 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
     public sealed class APILevelAttribute : Attribute
     {
-        public APIFlags Flags { get; private set; }
-        public string Name { get; private set; }
+        public APIFlags Flags { get; }
+        public string Name { get; }
 
         public APILevelAttribute(APIFlags flags, string name = "")
         {
@@ -98,8 +98,8 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
     public sealed class APIExtensionAttribute : Attribute
     {
-        public string Extension { get; private set; }
-        public string Name { get; private set; }
+        public string Extension { get; }
+        public string Name { get; }
 
         public APIExtensionAttribute(string extension, string name = "")
         {
@@ -112,7 +112,7 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public sealed class ForcedSleepAttribute : Attribute
     {
-        public double Seconds { get; private set; }
+        public double Seconds { get; }
         public ForcedSleepAttribute(double seconds)
         {
             Seconds = seconds;
@@ -123,37 +123,25 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public sealed class ExecutedOnStateChangeAttribute : Attribute
     {
-        public ExecutedOnStateChangeAttribute()
-        {
-
-        }
     }
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public sealed class ExecutedOnScriptResetAttribute : Attribute
     {
-        public ExecutedOnScriptResetAttribute()
-        {
-
-        }
     }
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public sealed class ExecutedOnScriptRemoveAttribute : Attribute
     {
-        public ExecutedOnScriptRemoveAttribute()
-        {
-
-        }
     }
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public sealed class ExecutedOnSerializationAttribute : Attribute
     {
-        public string Name { get; set; }
+        public string Name { get; }
         public ExecutedOnSerializationAttribute(string name)
         {
             Name = name;
@@ -164,7 +152,7 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public sealed class ExecutedOnDeserializationAttribute : Attribute
     {
-        public string Name { get; set; }
+        public string Name { get; }
         public ExecutedOnDeserializationAttribute(string name)
         {
             Name = name;
@@ -175,19 +163,12 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class LSLImplementationAttribute : Attribute
     {
-        public LSLImplementationAttribute()
-        {
-
-        }
     }
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Delegate, Inherited = false)]
     public sealed class StateEventDelegateAttribute : Attribute
     {
-        public StateEventDelegateAttribute()
-        {
-        }
     }
 
     [Serializable]
@@ -206,10 +187,6 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Field, Inherited = false)]
     public sealed class TranslatedScriptEventsInfoAttribute : Attribute
     {
-        public TranslatedScriptEventsInfoAttribute()
-        {
-
-        }
     }
 
     [Serializable]
@@ -228,8 +205,8 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
     public sealed class TranslatedScriptEventParameterAttribute : Attribute
     {
-        public int ParameterNumber { get; private set; }
-        
+        public int ParameterNumber { get; }
+
         public TranslatedScriptEventParameterAttribute(int parameterNumber)
         {
             ParameterNumber = parameterNumber;

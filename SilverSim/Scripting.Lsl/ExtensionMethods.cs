@@ -183,11 +183,7 @@ namespace SilverSim.Scripting.Lsl
 
         public static bool FillDetectInfoFromObject(this DetectInfo detectInfo, IObject obj)
         {
-            ObjectGroup grp;
-            ObjectPart part;
-            IAgent agent;
-
-            agent = obj as IAgent;
+            var agent = obj as IAgent;
             if (null != agent)
             {
                 detectInfo.ObjType = agent.DetectedType;
@@ -200,7 +196,7 @@ namespace SilverSim.Scripting.Lsl
                 return true;
             }
 
-            grp = obj as ObjectGroup;
+            var grp = obj as ObjectGroup;
             if (null != grp)
             {
                 detectInfo.ObjType = obj.DetectedType;
@@ -213,7 +209,7 @@ namespace SilverSim.Scripting.Lsl
                 return true;
             }
 
-            part = obj as ObjectPart;
+            var part = obj as ObjectPart;
             if (null != part)
             {
                 detectInfo.ObjType = part.DetectedType;
@@ -228,10 +224,7 @@ namespace SilverSim.Scripting.Lsl
             return false;
         }
 
-        public static int ToLSLBoolean(this bool v)
-        {
-            return v ? 1 : 0;
-        }
+        public static int ToLSLBoolean(this bool v) => v ? 1 : 0;
 
         public static object ReadTypedValue(this XmlTextReader reader)
         {

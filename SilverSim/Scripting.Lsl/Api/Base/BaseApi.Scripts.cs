@@ -51,7 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llMinEventDelay")]
         public void MinEventDelay(ScriptInstance instance, double delay)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock(script)
             {
                 script.MinEventDelay = delay;
@@ -247,7 +247,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     return;
                 }
 
-                ObjectPartInventoryItem newitem = new ObjectPartInventoryItem(scriptitem);
+                var newitem = new ObjectPartInventoryItem(scriptitem);
                 destpart.Inventory.Replace(name, newitem);
                 ScriptInstance oldInstance = scriptitem.ScriptInstance;
                 /* duplicate script state */

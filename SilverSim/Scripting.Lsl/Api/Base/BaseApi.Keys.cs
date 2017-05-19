@@ -28,10 +28,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llGenerateKey")]
-        public LSLKey GenerateKey(ScriptInstance instance)
-        {
-            return new LSLKey(UUID.Random);
-        }
+        public LSLKey GenerateKey(ScriptInstance instance) => new LSLKey(UUID.Random);
 
         #region osIsUUID
         [APILevel(APIFlags.OSSL, "osIsUUID")]

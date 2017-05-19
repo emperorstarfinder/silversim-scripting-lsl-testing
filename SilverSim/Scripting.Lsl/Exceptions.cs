@@ -30,25 +30,21 @@ namespace SilverSim.Scripting.Lsl
     {
         public ResetScriptException()
         {
-
         }
 
         public ResetScriptException(string message)
             : base(message)
         {
-
         }
 
         protected ResetScriptException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-
         }
 
         public ResetScriptException(string message, Exception innerException)
             : base(message, innerException)
         {
-
         }
     }
 
@@ -58,25 +54,21 @@ namespace SilverSim.Scripting.Lsl
         public CallDepthLimitViolationException()
             : base("Function call depth limit violation")
         {
-
         }
 
         public CallDepthLimitViolationException(string message)
             : base(message)
         {
-
         }
 
         protected CallDepthLimitViolationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-
         }
 
         public CallDepthLimitViolationException(string message, Exception innerException)
             : base(message, innerException)
         {
-
         }
     }
 
@@ -91,19 +83,16 @@ namespace SilverSim.Scripting.Lsl
 
         public ChangeStateException()
         {
-
         }
 
         protected ChangeStateException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-
         }
 
         public ChangeStateException(string message, Exception innerException)
             : base(message, innerException)
         {
-
         }
     }
 }

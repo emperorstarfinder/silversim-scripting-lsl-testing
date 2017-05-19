@@ -53,13 +53,7 @@ namespace SilverSim.Scripting.Lsl
 #endif
         }
 
-        public int ILOffset 
-        { 
-            get
-            {
-                return m_ILGen.ILOffset;
-            }
-        }
+        public int ILOffset => m_ILGen.ILOffset;
 
         public void BeginCatchBlock(Type exceptionType)
         {

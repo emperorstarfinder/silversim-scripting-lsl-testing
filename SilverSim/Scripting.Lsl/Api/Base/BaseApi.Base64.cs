@@ -85,9 +85,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llXorBase64Strings")]
         [ForcedSleep(0.3)]
-        public string XorBase64Strings(ScriptInstance instance, string str1, string str2)
-        {
-            return XorBase64(instance, str1, str2);
-        }
+        public string XorBase64Strings(ScriptInstance instance, string str1, string str2) =>
+            XorBase64(instance, str1, str2);
     }
 }

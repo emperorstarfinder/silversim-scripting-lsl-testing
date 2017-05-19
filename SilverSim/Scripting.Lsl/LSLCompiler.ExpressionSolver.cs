@@ -42,15 +42,9 @@ namespace SilverSim.Scripting.Lsl
                 Value = v;
             }
 
-            public override string ToString()
-            {
-                return TypecastVectorToString5Places(Value);
-            }
+            public override string ToString() => TypecastVectorToString5Places(Value);
 
-            public override Tree.ValueBase Negate()
-            {
-                return new ConstantValueVector(-Value);
-            }
+            public override Tree.ValueBase Negate() => new ConstantValueVector(-Value);
         }
 
         sealed class ConstantValueRotation : Tree.ConstantValue
@@ -62,15 +56,9 @@ namespace SilverSim.Scripting.Lsl
                 Value = v;
             }
 
-            public override string ToString()
-            {
-                return TypecastRotationToString6Places(Value);
-            }
+            public override string ToString() => TypecastRotationToString6Places(Value);
 
-            public override Tree.ValueBase Negate()
-            {
-                return new ConstantValueRotation(-Value);
-            }
+            public override Tree.ValueBase Negate() => new ConstantValueRotation(-Value);
         }
         #endregion
 

@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llSetTimerEvent")]
         public void SetTimerEvent(ScriptInstance instance, double sec)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock (script)
             {
                 script.SetTimerEvent(sec);
@@ -48,11 +48,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 return;
             }
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock(script)
             {
-                double interval = (double)param[0];
-                double elapsed = (double)param[1];
+                var interval = (double)param[0];
+                var elapsed = (double)param[1];
                 elapsed %= interval;
                 script.SetTimerEvent(interval, elapsed);
             }
@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [ExecutedOnSerialization("timer")]
         public void Serialize(ScriptInstance instance, List<object> res)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock(script)
             {
                 if (script.Timer.Enabled)
@@ -81,7 +81,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [ExecutedOnScriptRemove]
         public static void StopTimer(ScriptInstance instance)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock (script)
             {
                 script.SetTimerEvent(0);

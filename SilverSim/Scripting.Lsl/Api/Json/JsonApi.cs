@@ -160,7 +160,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                         return null;
                     }
                 }
-                AnArray a = json as AnArray;
+                var a = json as AnArray;
                 if(a != null)
                 {
                     ++pos;
@@ -219,7 +219,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         [APILevel(APIFlags.LSL, "llJsonValueType")]
         public string JsonValueType(ScriptInstance instance, string json, AnArray specifiers)
         {
-            using (MemoryStream ms = new MemoryStream(json.ToUTF8Bytes()))
+            using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
                 IValue val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
 
@@ -287,13 +287,13 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         public AnArray Json2List(ScriptInstance instance, string src)
         {
             IValue jsonData;
-            AnArray res = new AnArray();
-            using (MemoryStream ms = new MemoryStream(src.ToUTF8Bytes()))
+            var res = new AnArray();
+            using (var ms = new MemoryStream(src.ToUTF8Bytes()))
             {
                 jsonData = JsonSerializer.Deserialize(ms);
             }
 
-            AnArray array = jsonData as AnArray;
+            var array = jsonData as AnArray;
             if (null != array)
             {
                 foreach (IValue val in array)
@@ -303,7 +303,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 return res;
             }
 
-            Map m = jsonData as Map;
+            var m = jsonData as Map;
             if (null != m)
             {
                 foreach (KeyValuePair<string, IValue> kvp in m)
@@ -435,7 +435,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             LevelAssignment jsonLevel = null;
             IValue jsonLevelData = null;
 
-            using (MemoryStream ms = new MemoryStream(json.ToUTF8Bytes()))
+            using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
                 jsonData = JsonSerializer.Deserialize(ms);
             }
@@ -453,14 +453,14 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                     int index = spec.AsInt;
                     if(null == jsonLevel)
                     {
-                        AnArray a = new AnArray();
+                        var a = new AnArray();
                         jsonData = a;
                         jsonLevel = new LevelArrayAssignment(a, 0);
                         jsonLevelData = a;
                     }
                     else
                     {
-                        AnArray a = jsonLevelData as AnArray;
+                        var a = jsonLevelData as AnArray;
                         if(a == null)
                         {
                             a = new AnArray();
@@ -479,14 +479,14 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                     string key = spec.ToString();
                     if(null == jsonLevel)
                     {
-                        Map m = new Map();
+                        var m = new Map();
                         jsonData = m;
                         jsonLevel = new LevelMapAssignment(m, key);
                         jsonLevelData = m;
                     }
                     else
                     {
-                        Map m = jsonLevelData as Map;
+                        var m = jsonLevelData as Map;
                         if(m == null)
                         {
                             m = new Map();
