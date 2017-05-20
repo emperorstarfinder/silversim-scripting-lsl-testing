@@ -30,7 +30,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock(instance)
             {
-                Script script = (Script)instance;
+                var script = (Script)instance;
                 script.GetAndResetTime();
             }
         }
@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock (instance)
             {
-                Script script = (Script)instance;
+                var script = (Script)instance;
                 return script.GetTime() / 1000f;
             }
         }
@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             lock(instance)
             {
-                Script script = (Script)instance;
+                var script = (Script)instance;
                 return script.GetAndResetTime() / 1000f;
             }
         }

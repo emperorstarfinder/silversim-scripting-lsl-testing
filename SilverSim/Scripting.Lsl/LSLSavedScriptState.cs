@@ -159,7 +159,7 @@ namespace SilverSim.Scripting.Lsl
 
             static AnArray ListFromXml(XmlTextReader reader)
             {
-                AnArray array = new AnArray();
+                var array = new AnArray();
                 for(;;)
                 {
                     if(!reader.Read())
@@ -318,11 +318,6 @@ namespace SilverSim.Scripting.Lsl
                 public string EventName = string.Empty;
                 public List<object> Params = new List<object>();
                 public List<DetectInfo> Detected = new List<DetectInfo>();
-
-                public EventParams()
-                {
-
-                }
             }
 
             static EventParams EventFromXml(XmlTextReader reader)
@@ -352,7 +347,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new InvalidObjectXmlException();
                 }
-                EventParams ev = new EventParams();
+                var ev = new EventParams();
 
                 for (;;)
                 {
@@ -403,7 +398,7 @@ namespace SilverSim.Scripting.Lsl
 
             static DetectInfo DetectedObjectFromXml(XmlTextReader reader)
             {
-                DetectInfo di = new DetectInfo();
+                var di = new DetectInfo();
                 if (reader.MoveToFirstAttribute())
                 {
                     do
@@ -479,7 +474,7 @@ namespace SilverSim.Scripting.Lsl
 
             static List<DetectInfo> DetectedFromXml(XmlTextReader reader)
             {
-                List<DetectInfo> res = new List<DetectInfo>();
+                var res = new List<DetectInfo>();
                 for (;;)
                 {
                     if (!reader.Read())
@@ -522,7 +517,7 @@ namespace SilverSim.Scripting.Lsl
 
             static List<object> ParamsFromXml(XmlTextReader reader)
             {
-                List<object> res = new List<object>();
+                var res = new List<object>();
                 for (;;)
                 {
                     if (!reader.Read())
@@ -565,7 +560,7 @@ namespace SilverSim.Scripting.Lsl
 
             static List<EventParams> EventsFromXml(XmlTextReader reader)
             {
-                List<EventParams> events = new List<EventParams>();
+                var events = new List<EventParams>();
                 for (;;)
                 {
                     if (!reader.Read())
@@ -608,7 +603,7 @@ namespace SilverSim.Scripting.Lsl
 
             static List<object> PluginsFromXml(XmlTextReader reader)
             {
-                List<object> res = new List<object>();
+                var res = new List<object>();
                 for (;;)
                 {
                     if (!reader.Read())
@@ -655,7 +650,7 @@ namespace SilverSim.Scripting.Lsl
 
             static SavedScriptState ScriptStateFromXML(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item)
             {
-                SavedScriptState state = new SavedScriptState();
+                var state = new SavedScriptState();
                 for (; ;)
                 {
                     if(!reader.Read())
@@ -726,7 +721,7 @@ namespace SilverSim.Scripting.Lsl
 
             public static SavedScriptState FromXML(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item)
             {
-                SavedScriptState state = new SavedScriptState();
+                var state = new SavedScriptState();
                 for (; ; )
                 {
                     if (!reader.Read())

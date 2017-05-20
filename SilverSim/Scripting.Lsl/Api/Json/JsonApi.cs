@@ -92,11 +92,6 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         specifiers location within json.
         */
 
-        public JsonApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -146,7 +141,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             for(; pos < specifiers.Count; ++pos)
             {
                 string spec = specifiers[pos].ToString();
-                Map m = json as Map;
+                var m = json as Map;
                 if(m != null)
                 {
                     ++pos;
@@ -192,7 +187,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         [APILevel(APIFlags.LSL, "llJsonGetValue")]
         public string JsonGetValue(ScriptInstance instance, string json, AnArray specifiers)
         {
-            using (MemoryStream ms = new MemoryStream(json.ToUTF8Bytes()))
+            using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
                 IValue val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
                 if(val == null)
@@ -265,7 +260,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             }
             else if (type == JSON_OBJECT)
             {
-                Map m = new Map();
+                var m = new Map();
                 if (values.Count % 2 != 0)
                 {
                     return JSON_INVALID;

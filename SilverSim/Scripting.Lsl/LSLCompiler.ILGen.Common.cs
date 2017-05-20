@@ -69,7 +69,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 ConstructorInfo scriptconstructor = m_ScriptType.
                     GetConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) });
-                Script m_Script = (Script)scriptconstructor.Invoke(new object[3] { objpart, item, m_ForcedSleep });
+                var m_Script = (Script)scriptconstructor.Invoke(new object[3] { objpart, item, m_ForcedSleep });
 
                 foreach (KeyValuePair<string, Type> t in m_StateTypes)
                 {
@@ -86,9 +86,9 @@ namespace SilverSim.Scripting.Lsl
                 {
                     try
                     {
-                        using (MemoryStream ms = new MemoryStream(serializedState))
+                        using (var ms = new MemoryStream(serializedState))
                         {
-                            using (XmlTextReader reader = new XmlTextReader(ms))
+                            using (var reader = new XmlTextReader(ms))
                             {
                                 m_Script.LoadScriptState(Script.SavedScriptState.FromXML(reader, item));
                             }
@@ -210,7 +210,7 @@ namespace SilverSim.Scripting.Lsl
 
         public static AnArray AddKeyToList(AnArray src, LSLKey key)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             res.AddRange(src);
             res.Add((IValue)key);
             return res;
@@ -274,7 +274,7 @@ namespace SilverSim.Scripting.Lsl
                     else if (t.StartsWith("-"))
                     {
                         uint m = int.MaxValue;
-                        m += 1;
+                        ++m;
                         return (pos == 1 || !uint.TryParse(t.Substring(1), out i) || i > m) ? 1 : -(int)i;
                     }
                     else
@@ -499,8 +499,8 @@ namespace SilverSim.Scripting.Lsl
         #region Typecasting IL Generator
         internal static void ProcessImplicitCasts(
             CompileState compileState,
-            Type toType, 
-            Type fromType, 
+            Type toType,
+            Type fromType,
             int lineNumber)
         {
             if(IsImplicitlyCastable(toType, fromType))
@@ -544,12 +544,9 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    if(isneg)
+                    if (isneg && 0 == BitConverter.DoubleToInt64Bits(v))
                     {
-                        if (0 == BitConverter.DoubleToInt64Bits(v))
-                        {
-                            v *= -1.0;
-                        }
+                        v *= -1.0;
                     }
                     break;
                 }
@@ -562,12 +559,9 @@ namespace SilverSim.Scripting.Lsl
             bool isneg = input.StartsWith("-");
             v = 0;
             bool parsed = double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out v);
-            if(parsed && isneg)
+            if (parsed && isneg && 0 == BitConverter.DoubleToInt64Bits(v))
             {
-                if(0 == BitConverter.DoubleToInt64Bits(v))
-                {
-                    v *= -1.0;
-                }
+                v *= -1.0;
             }
             return parsed;
         }
@@ -636,10 +630,8 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public static Quaternion LSLQuaternionDivision(Quaternion a, Quaternion b)
-        {
-            return b.Conjugate() * a;
-        }
+        public static Quaternion LSLQuaternionDivision(Quaternion a, Quaternion b) =>
+            b.Conjugate() * a;
 
         public static class SinglePrecision
         {
@@ -670,48 +662,38 @@ namespace SilverSim.Scripting.Lsl
                 return val;
             }
 
-            public static string TypecastFloatToString(double v)
-            {
-                return TypecastFloatToString(v, 6);
-            }
+            public static string TypecastFloatToString(double v) =>
+                TypecastFloatToString(v, 6);
 
-            public static string TypecastVectorToString5Places(Vector3 v)
-            {
-                return string.Format("<{0}, {1}, {2}>",
+            public static string TypecastVectorToString5Places(Vector3 v) =>
+                string.Format("<{0}, {1}, {2}>",
                     TypecastFloatToString(v.X, 5),
                     TypecastFloatToString(v.Y, 5),
                     TypecastFloatToString(v.Z, 5));
-            }
 
-            public static string TypecastVectorToString6Places(Vector3 v)
-            {
-                return string.Format("<{0}, {1}, {2}>",
+            public static string TypecastVectorToString6Places(Vector3 v) =>
+                string.Format("<{0}, {1}, {2}>",
                     TypecastFloatToString(v.X, 6),
                     TypecastFloatToString(v.Y, 6),
                     TypecastFloatToString(v.Z, 6));
-            }
 
-            public static string TypecastRotationToString5Places(Quaternion v)
-            {
-                return string.Format("<{0}, {1}, {2}, {3}>",
+            public static string TypecastRotationToString5Places(Quaternion v) =>
+                string.Format("<{0}, {1}, {2}, {3}>",
                     TypecastFloatToString(v.X, 5),
                     TypecastFloatToString(v.Y, 5),
                     TypecastFloatToString(v.Z, 5),
                     TypecastFloatToString(v.W, 5));
-            }
 
-            public static string TypecastRotationToString6Places(Quaternion v)
-            {
-                return string.Format("<{0}, {1}, {2}, {3}>",
+            public static string TypecastRotationToString6Places(Quaternion v) =>
+                string.Format("<{0}, {1}, {2}, {3}>",
                     TypecastFloatToString(v.X, 6),
                     TypecastFloatToString(v.Y, 6),
                     TypecastFloatToString(v.Z, 6),
                     TypecastFloatToString(v.W, 6));
-            }
 
             public static string TypecastListToString(AnArray array)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 foreach (IValue iv in array)
                 {
                     Type t = iv.GetType();
@@ -765,48 +747,38 @@ namespace SilverSim.Scripting.Lsl
             return val;
         }
 
-        public static string TypecastDoubleToString(double v)
-        {
-            return TypecastDoubleToString(v, 6);
-        }
+        public static string TypecastDoubleToString(double v) =>
+            TypecastDoubleToString(v, 6);
 
-        public static string TypecastVectorToString5Places(Vector3 v)
-        {
-            return string.Format("<{0}, {1}, {2}>",
+        public static string TypecastVectorToString5Places(Vector3 v) =>
+            string.Format("<{0}, {1}, {2}>",
                 TypecastDoubleToString(v.X, 5),
                 TypecastDoubleToString(v.Y, 5),
                 TypecastDoubleToString(v.Z, 5));
-        }
 
-        public static string TypecastVectorToString6Places(Vector3 v)
-        {
-            return string.Format("<{0}, {1}, {2}>",
+        public static string TypecastVectorToString6Places(Vector3 v) =>
+            string.Format("<{0}, {1}, {2}>",
                 TypecastDoubleToString(v.X, 6),
                 TypecastDoubleToString(v.Y, 6),
                 TypecastDoubleToString(v.Z, 6));
-        }
 
-        public static string TypecastRotationToString5Places(Quaternion v)
-        {
-            return string.Format("<{0}, {1}, {2}, {3}>",
+        public static string TypecastRotationToString5Places(Quaternion v) =>
+            string.Format("<{0}, {1}, {2}, {3}>",
                 TypecastDoubleToString(v.X, 5),
                 TypecastDoubleToString(v.Y, 5),
                 TypecastDoubleToString(v.Z, 5),
                 TypecastDoubleToString(v.W, 5));
-        }
 
-        public static string TypecastRotationToString6Places(Quaternion v)
-        {
-            return string.Format("<{0}, {1}, {2}, {3}>",
+        public static string TypecastRotationToString6Places(Quaternion v) =>
+            string.Format("<{0}, {1}, {2}, {3}>",
                 TypecastDoubleToString(v.X, 6),
                 TypecastDoubleToString(v.Y, 6),
                 TypecastDoubleToString(v.Z, 6),
                 TypecastDoubleToString(v.W, 6));
-        }
 
         public static string TypecastListToString(AnArray array)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (IValue iv in array)
             {
                 Type t = iv.GetType();
@@ -830,9 +802,8 @@ namespace SilverSim.Scripting.Lsl
             return sb.ToString();
         }
 
-        internal static bool IsImplicitlyCastable(Type toType, Type fromType)
-        {
-            return (fromType == toType ||
+        internal static bool IsImplicitlyCastable(Type toType, Type fromType) =>
+            fromType == toType ||
                 toType == typeof(void) ||
                 (fromType == typeof(string) && toType == typeof(LSLKey)) ||
                 (fromType == typeof(LSLKey) && toType == typeof(string)) ||
@@ -840,8 +811,7 @@ namespace SilverSim.Scripting.Lsl
                 (fromType == typeof(long) && toType == typeof(double)) ||
                 (fromType == typeof(int) && toType == typeof(long)) ||
                 toType == typeof(AnArray) ||
-                toType == typeof(bool)) ;
-        }
+                toType == typeof(bool);
 
         internal static void ProcessCasts(
             CompileState compileState,
@@ -1335,7 +1305,7 @@ namespace SilverSim.Scripting.Lsl
         #region Constants collector for IL Generator
         Dictionary<string, object> AddConstants(CompileState compileState, TypeBuilder typeBuilder, ILGenerator ilgen)
         {
-            Dictionary<string, object> localVars = new Dictionary<string, object>();
+            var localVars = new Dictionary<string, object>();
             foreach(KeyValuePair<string, FieldInfo> kvp in compileState.ApiInfo.Constants)
             {
                 FieldInfo f = kvp.Value;

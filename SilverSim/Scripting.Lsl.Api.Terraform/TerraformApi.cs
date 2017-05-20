@@ -35,12 +35,6 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
     [Description("LSL/OSSL Terraforming API")]
     public class TerraformApi : IScriptApi, IPlugin
     {
-
-        public TerraformApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -78,16 +72,20 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                 {
                     duration = 4.0;
                 }
-                ModifyLand modLand = new ModifyLand();
-                modLand.Height = pos.Z;
-                modLand.Size = (byte)brush;
-                modLand.Seconds = duration;
-                ModifyLand.Data landData = new ModifyLand.Data();
-                landData.BrushSize = brush;
-                landData.East = pos.X;
-                landData.West = pos.X;
-                landData.North = pos.Y;
-                landData.South = pos.Y;
+                var modLand = new ModifyLand()
+                {
+                    Height = pos.Z,
+                    Size = (byte)brush,
+                    Seconds = duration
+                };
+                var landData = new ModifyLand.Data()
+                {
+                    BrushSize = brush,
+                    East = pos.X,
+                    West = pos.X,
+                    North = pos.Y,
+                    South = pos.Y
+                };
                 modLand.ParcelData.Add(landData);
 
                 Action<UUI, SceneInterface, ModifyLand, ModifyLand.Data> modifier;

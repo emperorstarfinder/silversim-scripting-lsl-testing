@@ -59,10 +59,6 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
         RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, LogListenInfo>> m_Listeners = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, LogListenInfo>>(delegate () { return new RwLockedDictionary<UUID, LogListenInfo>(); });
         SceneList m_Scenes;
 
-        public LogListenApi()
-        {
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             m_Scenes = loader.Scenes;
@@ -83,13 +79,7 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
             m_Listeners.Remove(scene.ID);
         }
 
-        public ShutdownOrder ShutdownOrder
-        {
-            get
-            {
-                return ShutdownOrder.LogoutDatabase;
-            }
-        }
+        public ShutdownOrder ShutdownOrder => ShutdownOrder.LogoutDatabase;
 
         readonly BlockingQueue<LoggingEvent> m_LogEventQueue = new BlockingQueue<LoggingEvent>();
 

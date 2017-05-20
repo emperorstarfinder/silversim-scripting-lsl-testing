@@ -127,8 +127,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
                     ObjectGroup grp = instance.Part.ObjectGroup;
-                    ClearFollowCamProperties followcamprops = new ClearFollowCamProperties();
-                    followcamprops.ObjectID = grp.ID;
+                    var followcamprops = new ClearFollowCamProperties()
+                    {
+                        ObjectID = grp.ID
+                    };
                     SceneInterface scene = grp.Scene;
                     IAgent agent;
                     if (scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
@@ -147,7 +149,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
-                    SortedDictionary<int, double> parameters = new SortedDictionary<int, double>();
+                    var parameters = new SortedDictionary<int, double>();
 
                     int type;
                     int i = 0;
@@ -291,14 +293,17 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     if (parameters.Count > 0)
                     {
                         ObjectGroup grp = instance.Part.ObjectGroup;
-                        SetFollowCamProperties followcamprops = new SetFollowCamProperties();
-                        followcamprops.ObjectID = grp.ID;
-                        foreach(KeyValuePair<int, double> kvp in parameters)
+                        var followcamprops = new SetFollowCamProperties()
                         {
-                            SetFollowCamProperties.CameraProperty prop = new SetFollowCamProperties.CameraProperty();
-                            prop.Type = kvp.Key;
-                            prop.Value = kvp.Value;
-                            followcamprops.CameraProperties.Add(prop);
+                            ObjectID = grp.ID
+                        };
+                        foreach (KeyValuePair<int, double> kvp in parameters)
+                        {
+                            followcamprops.CameraProperties.Add(new SetFollowCamProperties.CameraProperty()
+                            {
+                                Type = kvp.Key,
+                                Value = kvp.Value
+                            });
                         }
                         SceneInterface scene = grp.Scene;
                         IAgent agent;

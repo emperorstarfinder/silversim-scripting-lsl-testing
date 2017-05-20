@@ -109,7 +109,7 @@ namespace SilverSim.Scripting.Lsl
 
         List<FuncParamInfo> CheckFunctionParameters(CompileState cs, Parser p, List<string> arguments)
         {
-            List<FuncParamInfo> funcParams = new List<FuncParamInfo>();
+            var funcParams = new List<FuncParamInfo>();
             cs.m_LocalVariables.Add(new List<string>());
             if (arguments.Count == 1 && arguments[0] == ")")
             {
@@ -117,7 +117,7 @@ namespace SilverSim.Scripting.Lsl
             }
             for (int i = 0; i < arguments.Count; i += 3)
             {
-                FuncParamInfo fp = new FuncParamInfo();
+                var fp = new FuncParamInfo();
                 switch (arguments[i])
                 {
                     case "long":
@@ -185,7 +185,7 @@ namespace SilverSim.Scripting.Lsl
         int FindEndOfControlFlow(CompileState cs, List<string> line, int lineNumber)
         {
             int i;
-            List<string> parenstack = new List<string>();
+            var parenstack = new List<string>();
 
             if(line[1] != "(")
             {
@@ -422,7 +422,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 int lineNumber;
                 string fname;
-                List<string> args = new List<string>();
+                var args = new List<string>();
                 try
                 {
                     p.Read(args);
@@ -471,7 +471,7 @@ namespace SilverSim.Scripting.Lsl
                 for (;;)
                 {
                     int lineNumber;
-                    List<string> args = new List<string>();
+                    var args = new List<string>();
                     try
                     {
                         p.Read(args);
@@ -596,7 +596,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Event0AlreadyDefined", "Event '{0}' already defined"), args[0]));
                         }
-                        List<LineInfo> stateList = new List<LineInfo>();
+                        var stateList = new List<LineInfo>();
                         compileState.m_States[stateName].Add(args[0], stateList);
                         stateList.Add(new LineInfo(args, lineNumber));
                         ParseBlock(compileState, p, stateList, true);
@@ -619,9 +619,9 @@ namespace SilverSim.Scripting.Lsl
 
         CompileState Preprocess(UUI user, Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileState compileState = new CompileState(cultureInfo);
+            var compileState = new CompileState(cultureInfo);
             APIFlags acceptedFlags;
-            List<string> apiExtensions = new List<string>();
+            var apiExtensions = new List<string>();
             acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
             string windLightApiType = APIExtension.LightShare;
             compileState.ForcedSleepDefault = true;
@@ -726,12 +726,12 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            Parser p = new Parser(cultureInfo);
+            var p = new Parser(cultureInfo);
             p.Push(reader, string.Empty, lineNumber);
 
             for (; ; )
             {
-                List<string> args = new List<string>();
+                var args = new List<string>();
                 try
                 {
                     p.Read(args);
@@ -884,7 +884,7 @@ namespace SilverSim.Scripting.Lsl
                     else
                     {
                         List<FuncParamInfo> funcparam;
-                        List <LineInfo> funcList = new List<LineInfo>();
+                        var funcList = new List<LineInfo>();
                         /* either type or function name */
                         switch (args[0])
                         {

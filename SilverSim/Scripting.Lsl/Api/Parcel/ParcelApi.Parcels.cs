@@ -84,7 +84,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelDetails")]
         public AnArray GetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray param)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock (instance)
             {
                 ParcelInfo pinfo;
@@ -247,7 +247,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 ParcelInfo pInfo;
-                ParcelAccessEntry entry = new ParcelAccessEntry();
+                var entry = new ParcelAccessEntry();
                 if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out entry.Accessor))
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
@@ -279,7 +279,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 ParcelInfo pInfo;
-                ParcelAccessEntry entry = new ParcelAccessEntry();
+                var entry = new ParcelAccessEntry();
                 if(!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out entry.Accessor))
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));

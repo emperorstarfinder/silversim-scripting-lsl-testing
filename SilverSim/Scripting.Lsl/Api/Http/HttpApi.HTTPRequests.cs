@@ -68,7 +68,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
         public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
         {
-            LSLHTTPClient_RequestQueue.LSLHttpRequest req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();
+            var req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();
             lock (instance)
             {
                 req.SceneID = instance.Part.ObjectGroup.Scene.ID;
@@ -81,9 +81,11 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             {
                 lock (instance)
                 {
-                    HttpResponseEvent e = new HttpResponseEvent();
-                    e.RequestID = UUID.Random;
-                    e.Status = 499;
+                    var e = new HttpResponseEvent()
+                    {
+                        RequestID = UUID.Random,
+                        Status = 499
+                    };
                     instance.Part.PostEvent(e);
                     return e.RequestID;
                 }

@@ -34,11 +34,6 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
     [Description("LSL/OSSL Controls API")]
     public class ControlsApi : IScriptApi, IPlugin
     {
-        public ControlsApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

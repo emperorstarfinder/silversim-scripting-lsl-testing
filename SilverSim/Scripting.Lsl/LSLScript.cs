@@ -49,7 +49,6 @@ namespace SilverSim.Scripting.Lsl
     {
         private readonly ILog m_Log = LogManager.GetLogger("LSLSCRIPT");
         private ObjectPart m_Part;
-        readonly ObjectPartInventoryItem m_Item;
         readonly NonblockingQueue<IScriptEvent> m_Events = new NonblockingQueue<IScriptEvent>();
         internal List<DetectInfo> m_Detected = new List<DetectInfo>();
         readonly Dictionary<string, ILSLState> m_States = new Dictionary<string, ILSLState>();
@@ -71,13 +70,7 @@ namespace SilverSim.Scripting.Lsl
         static internal readonly Dictionary<Type, Action<Script, IScriptEvent>> StateEventHandlers = new Dictionary<Type, Action<Script, IScriptEvent>>();
         readonly object m_Lock = new object();
         protected bool m_UsesSinglePrecision;
-        public bool UsesSinglePrecision
-        {
-            get
-            {
-                return m_UsesSinglePrecision;
-            }
-        }
+        public bool UsesSinglePrecision => m_UsesSinglePrecision;
 
         int m_ExecutionStartedAt = Environment.TickCount;
 
@@ -198,11 +191,6 @@ namespace SilverSim.Scripting.Lsl
             public UUID ItemID = UUID.Zero;
             readonly object m_TransactionLock = new object();
             IScriptEvent[] Events = new IScriptEvent[0];
-
-            public TransactionedState()
-            {
-
-            }
 
             public void UpdateFromScript(Script script)
             {
@@ -446,9 +434,9 @@ namespace SilverSim.Scripting.Lsl
 
         public byte[] ToDbSerializedState()
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (XmlTextWriter writer = ms.UTF8XmlTextWriter())
+                using (var writer = ms.UTF8XmlTextWriter())
                 {
                     ToXml(writer);
                 }
@@ -460,12 +448,12 @@ namespace SilverSim.Scripting.Lsl
         {
             UseForcedSleep = forcedSleepDefault;
             m_Part = part;
-            m_Item = item;
+            Item = item;
             m_TransactionedState.ItemID = item.ID;
             m_TransactionedState.AssetID = item.AssetID;
             Timer.Elapsed += OnTimerEvent;
             /* we replace the loaded script state with ours */
-            m_Item.ScriptState = this;
+            Item.ScriptState = this;
             m_Part.OnUpdate += OnPrimUpdate;
             m_Part.OnPositionChange += OnPrimPositionUpdate;
             m_Part.ObjectGroup.OnUpdate += OnGroupUpdate;
@@ -542,7 +530,7 @@ namespace SilverSim.Scripting.Lsl
             }
             catch(Exception e)
             {
-                StringBuilder disp = new StringBuilder();
+                var disp = new StringBuilder();
                 int pos = 0;
                 foreach(object o in state.PluginData)
                 {
@@ -584,42 +572,32 @@ namespace SilverSim.Scripting.Lsl
 
         private void OnPrimUpdate(ObjectPart part, UpdateChangedFlags flags)
         {
-            ChangedEvent.ChangedFlags changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
+            var changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
             if (changedflags != 0)
             {
-                ChangedEvent e = new ChangedEvent();
-                e.Flags = changedflags;
-                PostEvent(e);
+                PostEvent(new ChangedEvent()
+                {
+                    Flags = changedflags
+                });
             }
         }
 
         private void OnGroupUpdate(ObjectGroup group, UpdateChangedFlags flags)
         {
-            ChangedEvent.ChangedFlags changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
+            var changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
             if (changedflags != 0)
             {
-                ChangedEvent e = new ChangedEvent();
-                e.Flags = changedflags;
-                PostEvent(e);
+                PostEvent(new ChangedEvent()
+                {
+                    Flags = changedflags
+                });
             }
         }
 
-        public override ObjectPart Part
-        {
-            get
-            {
-                return m_Part;
-            }
-        }
+        public override ObjectPart Part => m_Part;
 
         [SuppressMessage("Gendarme.Rules.Design", "AvoidMultidimensionalIndexerRule")]
-        public override ObjectPartInventoryItem Item 
-        {
-            get
-            {
-                return m_Item;
-            }
-        }
+        public override ObjectPartInventoryItem Item { get; }
 
         public override void PostEvent(IScriptEvent e)
         {
@@ -645,7 +623,6 @@ namespace SilverSim.Scripting.Lsl
 
         public sealed class StartScriptEvent : IScriptEvent
         {
-
         }
 
         public override void Start(int startparam = 0)
@@ -758,13 +735,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public override bool IsLinkMessageReceiver
-        {
-            get
-            {
-                return m_CurrentStateMethods.ContainsKey("link_message");
-            }
-        }
+        public override bool IsLinkMessageReceiver => m_CurrentStateMethods.ContainsKey("link_message");
 
         static public void InvokeStateEvent(Script script, string name, object[] param)
         {
@@ -846,7 +817,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if(p == null)
                         {
-                            StringBuilder sb = new StringBuilder("Call failure at ");
+                            var sb = new StringBuilder("Call failure at ");
                             sb.Append(name + "(");
                             bool first = true;
                             foreach (object pa in param)
@@ -990,7 +961,7 @@ namespace SilverSim.Scripting.Lsl
         void ShoutUnimplementedException(NotImplementedException e)
         {
             MethodBase mb = e.TargetSite;
-            APILevelAttribute apiLevel = (APILevelAttribute)Attribute.GetCustomAttribute(mb, typeof(APILevelAttribute));
+            var apiLevel = (APILevelAttribute)Attribute.GetCustomAttribute(mb, typeof(APILevelAttribute));
             if (apiLevel != null)
             {
                 string methodName = mb.Name;
@@ -999,7 +970,7 @@ namespace SilverSim.Scripting.Lsl
                     methodName = apiLevel.Name;
                 }
 
-                StringBuilder funcSignature = new StringBuilder(methodName + "(");
+                var funcSignature = new StringBuilder(methodName + "(");
 
                 ParameterInfo[] pi = mb.GetParameters();
                 for (int i = 1; i < pi.Length; ++i)
@@ -1016,13 +987,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public override IScriptState ScriptState
-        {
-            get
-            {
-                return this;
-            }
-        }
+        public override IScriptState ScriptState => this;
 
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public override void ProcessEvent()
@@ -1230,7 +1195,7 @@ namespace SilverSim.Scripting.Lsl
                         Action<Script, IScriptEvent> evtDelegate;
                         if (StateEventHandlers.TryGetValue(evt, out evtDelegate))
                         {
-                            IScriptDetectedEvent detectedEv = ev as IScriptDetectedEvent;
+                            var detectedEv = ev as IScriptDetectedEvent;
                             if(detectedEv != null)
                             {
                                 m_Detected = detectedEv.Detected;
@@ -1315,9 +1280,11 @@ namespace SilverSim.Scripting.Lsl
 
         public override void ShoutError(string message)
         {
-            ListenEvent ev = new ListenEvent();
-            ev.Channel = 0x7FFFFFFF; /* DEBUG_CHANNEL */
-            ev.Type = ListenEvent.ChatType.DebugChannel;
+            var ev = new ListenEvent()
+            {
+                Channel = 0x7FFFFFFF, /* DEBUG_CHANNEL */
+                Type = ListenEvent.ChatType.DebugChannel
+            };
             ChatServiceInterface chatService;
             lock (m_Lock)
             {
@@ -1344,9 +1311,11 @@ namespace SilverSim.Scripting.Lsl
 
         public override void ShoutError(IListenEventLocalization localizedMessage)
         {
-            ListenEvent ev = new ListenEvent();
-            ev.Channel = 0x7FFFFFFF; /* DEBUG_CHANNEL */
-            ev.Type = ListenEvent.ChatType.DebugChannel;
+            var ev = new ListenEvent()
+            {
+                Channel = 0x7FFFFFFF, /* DEBUG_CHANNEL */
+                Type = ListenEvent.ChatType.DebugChannel
+            };
             ChatServiceInterface chatService;
             lock (m_Lock)
             {
@@ -1385,16 +1354,17 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                ObjectRezEvent ev = new ObjectRezEvent();
-                ev.ObjectID = new UUID(ep.Params[0].ToString());
-                return ev;
+                return new ObjectRezEvent()
+                {
+                    ObjectID = new UUID(ep.Params[0].ToString())
+                };
             }
             return null;
         }
 
         static void ObjectRezSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            ObjectRezEvent ev = (ObjectRezEvent)iev;
+            var ev = (ObjectRezEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "object_rez");
@@ -1411,20 +1381,21 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 5)
             {
-                EmailEvent ev = new EmailEvent();
-                ev.Time = ep.Params[0].ToString();
-                ev.Address = ep.Params[1].ToString();
-                ev.Subject = ep.Params[2].ToString();
-                ev.Message = ep.Params[3].ToString();
-                ev.NumberLeft = (int)ep.Params[4];
-                return ev;
+                return new EmailEvent()
+                {
+                    Time = ep.Params[0].ToString(),
+                    Address = ep.Params[1].ToString(),
+                    Subject = ep.Params[2].ToString(),
+                    Message = ep.Params[3].ToString(),
+                    NumberLeft = (int)ep.Params[4]
+                };
             }
             return null;
         }
 
         static void EmailSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            EmailEvent ev = (EmailEvent)iev;
+            var ev = (EmailEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "email");
@@ -1445,8 +1416,10 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                RuntimePermissionsEvent ev = new RuntimePermissionsEvent();
-                ev.Permissions = (ScriptPermissions)(int)ep.Params[0];
+                var ev = new RuntimePermissionsEvent()
+                {
+                    Permissions = (ScriptPermissions)(int)ep.Params[0]
+                };
                 if (ep.Params.Count > 1)
                 {
                     ev.PermissionsKey = new UUI(ep.Params[1].ToString());
@@ -1458,7 +1431,7 @@ namespace SilverSim.Scripting.Lsl
 
         static void RuntimePermissionsSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            RuntimePermissionsEvent ev = (RuntimePermissionsEvent)iev;
+            var ev = (RuntimePermissionsEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "run_time_permissions");
@@ -1476,19 +1449,20 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 4)
             {
-                LinkMessageEvent ev = new LinkMessageEvent();
-                ev.SenderNumber = (int)ep.Params[0];
-                ev.Number = (int)ep.Params[1];
-                ev.Data = ep.Params[2].ToString();
-                ev.Id = ep.Params[3].ToString();
-                return ev;
+                return new LinkMessageEvent()
+                {
+                    SenderNumber = (int)ep.Params[0],
+                    Number = (int)ep.Params[1],
+                    Data = ep.Params[2].ToString(),
+                    Id = ep.Params[3].ToString()
+                };
             }
             return null;
         }
 
         static void LinkMessageSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            LinkMessageEvent ev = (LinkMessageEvent)iev;
+            var ev = (LinkMessageEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "link_message");
@@ -1508,21 +1482,22 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 6)
             {
-                RemoteDataEvent ev = new RemoteDataEvent();
-                ev.Type = (int)ep.Params[0];
-                ev.Channel = new UUID(ep.Params[1].ToString());
-                ev.MessageID = new UUID(ep.Params[2].ToString());
-                ev.Sender = ep.Params[3].ToString();
-                ev.IData = (int)ep.Params[4];
-                ev.SData = ep.Params[5].ToString();
-                return ev;
+                return new RemoteDataEvent()
+                {
+                    Type = (int)ep.Params[0],
+                    Channel = new UUID(ep.Params[1].ToString()),
+                    MessageID = new UUID(ep.Params[2].ToString()),
+                    Sender = ep.Params[3].ToString(),
+                    IData = (int)ep.Params[4],
+                    SData = ep.Params[5].ToString()
+                };
             }
             return null;
         }
 
         static void RemoteDataSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            RemoteDataEvent ev = (RemoteDataEvent)iev;
+            var ev = (RemoteDataEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "remote_data");
@@ -1544,18 +1519,19 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                TransactionResultEvent ev = new TransactionResultEvent();
-                ev.TransactionID = ep.Params[0].ToString();
-                ev.Success = (int)ep.Params[1] != 0;
-                ev.ReplyData = ep.Params[2].ToString();
-                return ev;
+                return new TransactionResultEvent()
+                {
+                    TransactionID = ep.Params[0].ToString(),
+                    Success = (int)ep.Params[1] != 0,
+                    ReplyData = ep.Params[2].ToString()
+                };
             }
             return null;
         }
 
         static void TransactionResultSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            TransactionResultEvent ev = (TransactionResultEvent)iev;
+            var ev = (TransactionResultEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "transaction_result");
@@ -1574,17 +1550,18 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 2)
             {
-                MessageObjectEvent ev = new MessageObjectEvent();
-                ev.ObjectID = new UUID(ep.Params[0].ToString());
-                ev.Data = ep.Params[1].ToString();
-                return ev;
+                return new MessageObjectEvent()
+                {
+                    ObjectID = new UUID(ep.Params[0].ToString()),
+                    Data = ep.Params[1].ToString()
+                };
             }
             return null;
         }
 
         static void ObjectMessageSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            MessageObjectEvent ev = (MessageObjectEvent)iev;
+            var ev = (MessageObjectEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", script.UseMessageObjectEvent ? "object_message" : "dataserver");
@@ -1602,17 +1579,18 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 2)
             {
-                DataserverEvent ev = new DataserverEvent();
-                ev.QueryID = new UUID(ep.Params[0].ToString());
-                ev.Data = ep.Params[1].ToString();
-                return ev;
+                return new DataserverEvent()
+                {
+                    QueryID = new UUID(ep.Params[0].ToString()),
+                    Data = ep.Params[1].ToString()
+                };
             }
             return null;
         }
 
         static void DataserverSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            DataserverEvent ev = (DataserverEvent)iev;
+            var ev = (DataserverEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "dataserver");
@@ -1630,19 +1608,20 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 4)
             {
-                HttpResponseEvent ev = new HttpResponseEvent();
-                ev.RequestID = new UUID(ep.Params[0].ToString());
-                ev.Status = (int)ep.Params[1];
-                ev.Metadata = (AnArray)ep.Params[2];
-                ev.Body = ep.Params[3].ToString();
-                return ev;
+                return new HttpResponseEvent()
+                {
+                    RequestID = new UUID(ep.Params[0].ToString()),
+                    Status = (int)ep.Params[1],
+                    Metadata = (AnArray)ep.Params[2],
+                    Body = ep.Params[3].ToString()
+                };
             }
             return null;
         }
 
         static void HttpResponseSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            HttpResponseEvent ev = (HttpResponseEvent)iev;
+            var ev = (HttpResponseEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "http_response");
@@ -1662,19 +1641,20 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 4)
             {
-                ListenEvent ev = new ListenEvent();
-                ev.Channel = (int)ep.Params[0];
-                ev.Name = ep.Params[1].ToString();
-                ev.ID = new UUID(ep.Params[2].ToString());
-                ev.Message = ep.Params[3].ToString();
-                return ev;
+                return new ListenEvent()
+                {
+                    Channel = (int)ep.Params[0],
+                    Name = ep.Params[1].ToString(),
+                    ID = new UUID(ep.Params[2].ToString()),
+                    Message = ep.Params[3].ToString()
+                };
             }
             return null;
         }
 
         static void ListenSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            ListenEvent ev = (ListenEvent)iev;
+            var ev = (ListenEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "listen");
@@ -1694,16 +1674,17 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                OnRezEvent ev = new OnRezEvent();
-                ev.StartParam = (int)ep.Params[0];
-                return ev;
+                return new OnRezEvent()
+                {
+                    StartParam = (int)ep.Params[0]
+                };
             }
             return null;
         }
 
         static void OnRezSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            OnRezEvent ev = (OnRezEvent)iev;
+            var ev = (OnRezEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "on_rez");
@@ -1720,16 +1701,17 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                AttachEvent ev = new AttachEvent();
-                ev.ObjectID = new UUID(ep.Params[0].ToString());
-                return ev;
+                return new AttachEvent()
+                {
+                    ObjectID = new UUID(ep.Params[0].ToString())
+                };
             }
             return null;
         }
 
         static void AttachSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            AttachEvent ev = (AttachEvent)iev;
+            var ev = (AttachEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "attach");
@@ -1746,16 +1728,17 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                ChangedEvent ev = new ChangedEvent();
-                ev.Flags = (ChangedEvent.ChangedFlags)(int)ep.Params[0];
-                return ev;
+                return new ChangedEvent()
+                {
+                    Flags = (ChangedEvent.ChangedFlags)(int)ep.Params[0]
+                };
             }
             return null;
         }
 
         static void ChangedSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            ChangedEvent ev = (ChangedEvent)iev;
+            var ev = (ChangedEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "changed");
@@ -1772,17 +1755,18 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 2)
             {
-                MoneyEvent ev = new MoneyEvent();
-                ev.ID = new UUID(ep.Params[0].ToString());
-                ev.Amount = (int)ep.Params[1];
-                return ev;
+                return new MoneyEvent()
+                {
+                    ID = new UUID(ep.Params[0].ToString()),
+                    Amount = (int)ep.Params[1]
+                };
             }
             return null;
         }
 
         static void MoneySerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            MoneyEvent ev = (MoneyEvent)iev;
+            var ev = (MoneyEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "money");
@@ -1800,17 +1784,18 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                LandCollisionEvent ev = new LandCollisionEvent();
-                ev.Type = LandCollisionEvent.CollisionType.Start;
-                ev.Position = (Vector3)ep.Params[0];
-                return ev;
+                return new LandCollisionEvent()
+                {
+                    Type = LandCollisionEvent.CollisionType.Start,
+                    Position = (Vector3)ep.Params[0]
+                };
             }
             return null;
         }
 
         static void LandCollisionSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            LandCollisionEvent ev = (LandCollisionEvent)iev;
+            var ev = (LandCollisionEvent)iev;
             writer.WriteStartElement("Item");
             {
                 switch(ev.Type)
@@ -1840,10 +1825,11 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                LandCollisionEvent ev = new LandCollisionEvent();
-                ev.Type = LandCollisionEvent.CollisionType.Continuous;
-                ev.Position = (Vector3)ep.Params[0];
-                return ev;
+                return new LandCollisionEvent()
+                {
+                    Type = LandCollisionEvent.CollisionType.Continuous,
+                    Position = (Vector3)ep.Params[0]
+                };
             }
             return null;
         }
@@ -1852,10 +1838,11 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                LandCollisionEvent ev = new LandCollisionEvent();
-                ev.Type = LandCollisionEvent.CollisionType.End;
-                ev.Position = (Vector3)ep.Params[0];
-                return ev;
+                return new LandCollisionEvent()
+                {
+                    Type = LandCollisionEvent.CollisionType.End,
+                    Position = (Vector3)ep.Params[0]
+                };
             }
             return null;
         }
@@ -1864,18 +1851,19 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                ControlEvent ev = new ControlEvent();
-                ev.AgentID = new UUID(ep.Params[0].ToString());
-                ev.Level = (int)ep.Params[1];
-                ev.Flags = (int)ep.Params[2];
-                return ev;
+                return new ControlEvent()
+                {
+                    AgentID = new UUID(ep.Params[0].ToString()),
+                    Level = (int)ep.Params[1],
+                    Flags = (int)ep.Params[2]
+                };
             }
             return null;
         }
 
         static void ControlSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            ControlEvent ev = (ControlEvent)iev;
+            var ev = (ControlEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "control");
@@ -1894,18 +1882,19 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                AtTargetEvent ev = new AtTargetEvent();
-                ev.Handle = (int)ep.Params[0];
-                ev.TargetPosition = (Vector3)ep.Params[1];
-                ev.OurPosition = (Vector3)ep.Params[2];
-                return ev;
+                return new AtTargetEvent()
+                {
+                    Handle = (int)ep.Params[0],
+                    TargetPosition = (Vector3)ep.Params[1],
+                    OurPosition = (Vector3)ep.Params[2]
+                };
             }
             return null;
         }
 
         static void AtTargetSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            AtTargetEvent ev = (AtTargetEvent)iev;
+            var ev = (AtTargetEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "at_target");
@@ -1924,18 +1913,19 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                AtRotTargetEvent ev = new AtRotTargetEvent();
-                ev.Handle = (int)ep.Params[0];
-                ev.TargetRotation = (Quaternion)ep.Params[1];
-                ev.OurRotation = (Quaternion)ep.Params[2];
-                return ev;
+                return new AtRotTargetEvent()
+                {
+                    Handle = (int)ep.Params[0],
+                    TargetRotation = (Quaternion)ep.Params[1],
+                    OurRotation = (Quaternion)ep.Params[2]
+                };
             }
             return null;
         }
 
         static void AtRotTargetSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            AtRotTargetEvent ev = (AtRotTargetEvent)iev;
+            var ev = (AtRotTargetEvent)iev;
             writer.WriteStartElement("Item");
             {
                 writer.WriteAttributeString("event", "at_rot_target");
@@ -1999,7 +1989,7 @@ namespace SilverSim.Scripting.Lsl
 
         static void TouchSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            TouchEvent ev = (TouchEvent)iev;
+            var ev = (TouchEvent)iev;
             switch(ev.Type)
             {
                 case TouchEvent.TouchType.Start:
@@ -2016,7 +2006,7 @@ namespace SilverSim.Scripting.Lsl
 
         static void CollisionSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
-            CollisionEvent ev = (CollisionEvent)iev;
+            var ev = (CollisionEvent)iev;
             switch (ev.Type)
             {
                 case CollisionEvent.CollisionType.Start:
@@ -2031,44 +2021,12 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        static IScriptEvent HttpRequestDeserializer(SavedScriptState.EventParams ep)
-        {
-            if(ep.Params.Count >= 3)
-            {
-                HttpRequestEvent ev = new HttpRequestEvent();
-                ev.RequestID = UUID.Parse(ep.Params[0].ToString());
-                ev.Method = ep.Params[1].ToString();
-                ev.Body = ep.Params[2].ToString();
-                return ev;
-            }
-            return null;
-        }
-
-        static void HttpRequestSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            HttpRequestEvent ev = (HttpRequestEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "http_request");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.RequestID);
-                writer.WriteTypedValue("Param", ev.Method);
-                writer.WriteTypedValue("Param", ev.Body);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
         #region Event to function handlers
         static readonly Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>> EventSerializers = new Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>>();
         static readonly Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>>();
 
         static Script()
         {
-            EventDeserializers.Add("http_request", HttpRequestDeserializer);
-            EventSerializers.Add(typeof(HttpRequestEvent), HttpRequestSerializer);
             EventDeserializers.Add("land_collision_start", LandCollisionStartDeserializer);
             EventSerializers.Add(typeof(LandCollisionEvent), LandCollisionSerializer);
             EventDeserializers.Add("land_collision", LandCollisionDeserializer);
@@ -2099,15 +2057,10 @@ namespace SilverSim.Scripting.Lsl
             EventSerializers.Add(typeof(HttpResponseEvent), HttpResponseSerializer);
             EventDeserializers.Add("listen", ListenDeserializer);
             EventSerializers.Add(typeof(ListenEvent), ListenSerializer);
-            EventDeserializers.Add("sensor", delegate(SavedScriptState.EventParams ep)
-            {
-                SensorEvent ev = new SensorEvent();
-                ev.Detected = ep.Detected;
-                return ev;
-            });
+            EventDeserializers.Add("sensor", (SavedScriptState.EventParams ep) => new SensorEvent() { Detected = ep.Detected } );
             EventSerializers.Add(typeof(SensorEvent), delegate (Script script, IScriptEvent iev, XmlTextWriter writer)
             {
-                SensorEvent ev = (SensorEvent)iev;
+                var ev = (SensorEvent)iev;
                 DetectedSerializer(ev.Detected, "sensor", writer);
             });
             EventDeserializers.Add("on_rez", OnRezDeserializer);
@@ -2121,232 +2074,148 @@ namespace SilverSim.Scripting.Lsl
             EventSerializers.Add(typeof(ChangedEvent), ChangedSerializer);
             EventDeserializers.Add("money", MoneyDeserializer);
             EventSerializers.Add(typeof(MoneyEvent), MoneySerializer);
-            EventDeserializers.Add("no_sensor", delegate (SavedScriptState.EventParams ep)
-            {
-                return new NoSensorEvent();
-            });
-            EventSerializers.Add(typeof(NoSensorEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
-            {
-                NoParamSerializer(ev, "no_sensor", writer);
-            });
-            EventDeserializers.Add("timer", delegate (SavedScriptState.EventParams ep)
-            {
-                return new TimerEvent();
-            });
-            EventSerializers.Add(typeof(TimerEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
-            {
-                NoParamSerializer(ev, "timer", writer);
-            });
-            EventDeserializers.Add("touch_start", delegate (SavedScriptState.EventParams ep)
-            {
-                TouchEvent ev = new TouchEvent();
-                ev.Type = TouchEvent.TouchType.Start;
-                ev.Detected = ep.Detected;
-                return ev;
-            });
+            EventDeserializers.Add("no_sensor", (SavedScriptState.EventParams ep) => new NoSensorEvent());
+            EventSerializers.Add(typeof(NoSensorEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer(ev, "no_sensor", writer));
+            EventDeserializers.Add("timer", (SavedScriptState.EventParams ep) => new TimerEvent());
+            EventSerializers.Add(typeof(TimerEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer(ev, "timer", writer));
+            EventDeserializers.Add("touch_start", (SavedScriptState.EventParams ep) => new TouchEvent() { Type = TouchEvent.TouchType.Start, Detected = ep.Detected });
             EventSerializers.Add(typeof(TouchEvent), TouchSerializer);
-            EventDeserializers.Add("touch", delegate (SavedScriptState.EventParams ep)
-            {
-                TouchEvent ev = new TouchEvent();
-                ev.Type = TouchEvent.TouchType.Continuous;
-                ev.Detected = ep.Detected;
-                return ev;
-            });
-            EventDeserializers.Add("touch_end", delegate (SavedScriptState.EventParams ep)
-            {
-                TouchEvent ev = new TouchEvent();
-                ev.Type = TouchEvent.TouchType.End;
-                ev.Detected = ep.Detected;
-                return ev;
-            });
-            EventDeserializers.Add("collision_start", delegate (SavedScriptState.EventParams ep)
-            {
-                CollisionEvent ev = new CollisionEvent();
-                ev.Type = CollisionEvent.CollisionType.Start;
-                ev.Detected = ep.Detected;
-                return ev;
-            });
+            EventDeserializers.Add("touch", (SavedScriptState.EventParams ep) => new TouchEvent() { Type = TouchEvent.TouchType.Continuous, Detected = ep.Detected });
+            EventDeserializers.Add("touch_end", (SavedScriptState.EventParams ep) => new TouchEvent() { Type = TouchEvent.TouchType.End, Detected = ep.Detected });
+            EventDeserializers.Add("collision_start", (SavedScriptState.EventParams ep) => new CollisionEvent() { Type = CollisionEvent.CollisionType.Start, Detected = ep.Detected });
             EventSerializers.Add(typeof(CollisionEvent), CollisionSerializer);
-            EventDeserializers.Add("collision", delegate (SavedScriptState.EventParams ep)
-            {
-                CollisionEvent ev = new CollisionEvent();
-                ev.Type = CollisionEvent.CollisionType.Continuous;
-                ev.Detected = ep.Detected;
-                return ev;
-            });
-            EventDeserializers.Add("collision_end", delegate (SavedScriptState.EventParams ep)
-            {
-                CollisionEvent ev = new CollisionEvent();
-                ev.Type = CollisionEvent.CollisionType.End;
-                ev.Detected = ep.Detected;
-                return ev;
-            });
-            EventDeserializers.Add("not_at_target", delegate (SavedScriptState.EventParams ep)
-            {
-                return new NotAtTargetEvent();
-            });
-            EventSerializers.Add(typeof(NotAtTargetEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
-            {
-                NoParamSerializer(ev, "not_at_target", writer);
-            });
-            EventDeserializers.Add("moving_start", delegate (SavedScriptState.EventParams ep)
-            {
-                return new MovingStartEvent();
-            });
-            EventSerializers.Add(typeof(MovingStartEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
-            {
-                NoParamSerializer(ev, "moving_start", writer);
-            });
-            EventDeserializers.Add("moving_end", delegate (SavedScriptState.EventParams ep)
-            {
-                return new MovingEndEvent();
-            });
-            EventSerializers.Add(typeof(MovingEndEvent), delegate (Script script, IScriptEvent ev, XmlTextWriter writer)
-            {
-                NoParamSerializer(ev, "moving_end", writer);
-            });
+            EventDeserializers.Add("collision", (SavedScriptState.EventParams ep) => new CollisionEvent() { Type = CollisionEvent.CollisionType.Continuous, Detected = ep.Detected });
+            EventDeserializers.Add("collision_end", (SavedScriptState.EventParams ep) => new CollisionEvent() { Type = CollisionEvent.CollisionType.End, Detected = ep.Detected });
+            EventDeserializers.Add("not_at_target", (SavedScriptState.EventParams ep) => new NotAtTargetEvent());
+            EventSerializers.Add(typeof(NotAtTargetEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer(ev, "not_at_target", writer));
+            EventDeserializers.Add("moving_start", (SavedScriptState.EventParams ep) => new MovingStartEvent());
+            EventSerializers.Add(typeof(MovingStartEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer(ev, "moving_start", writer));
+            EventDeserializers.Add("moving_end", (SavedScriptState.EventParams ep) => new MovingEndEvent());
+            EventSerializers.Add(typeof(MovingEndEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer(ev, "moving_end", writer));
 
             #region Default state event handlers
-            StateEventHandlers.Add(typeof(AtRotTargetEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(AtRotTargetEvent), (Script script, IScriptEvent ev) =>
             {
-                AtRotTargetEvent e = (AtRotTargetEvent)ev;
+                var e = (AtRotTargetEvent)ev;
                 script.InvokeStateEvent("at_rot_target", e.TargetRotation, e.OurRotation);
             });
 
-            StateEventHandlers.Add(typeof(AttachEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(AttachEvent), (Script script, IScriptEvent ev) =>
             {
-                AttachEvent e = (AttachEvent)ev;
+                var e = (AttachEvent)ev;
                 script.InvokeStateEvent("attach", new LSLKey(e.ObjectID));
             });
 
-            StateEventHandlers.Add(typeof(AtTargetEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(AtTargetEvent), (Script script, IScriptEvent ev) =>
             {
-                AtTargetEvent e = (AtTargetEvent)ev;
+                var e = (AtTargetEvent)ev;
                 script.InvokeStateEvent("at_target", e.Handle, e.TargetPosition, e.OurPosition);
             });
 
-            StateEventHandlers.Add(typeof(ChangedEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(ChangedEvent), (Script script, IScriptEvent ev) =>
             {
-                ChangedEvent e = (ChangedEvent)ev;
+                var e = (ChangedEvent)ev;
                 script.InvokeStateEvent("changed", (int)e.Flags);
             });
 
             StateEventHandlers.Add(typeof(CollisionEvent), HandleCollision);
 
-            StateEventHandlers.Add(typeof(DataserverEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(DataserverEvent), (Script script, IScriptEvent ev) =>
             {
-                DataserverEvent e = (DataserverEvent)ev;
+                var e = (DataserverEvent)ev;
                 script.InvokeStateEvent("dataserver", new LSLKey(e.QueryID), e.Data);
             });
 
             StateEventHandlers.Add(typeof(MessageObjectEvent), HandleMessageObject);
 
-            StateEventHandlers.Add(typeof(EmailEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(EmailEvent), (Script script, IScriptEvent ev) =>
             {
-                EmailEvent e = (EmailEvent)ev;
+                var e = (EmailEvent)ev;
                 script.InvokeStateEvent("email", e.Time, e.Address, e.Subject, e.Message, e.NumberLeft);
             });
 
-            StateEventHandlers.Add(typeof(HttpResponseEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(HttpResponseEvent), (Script script, IScriptEvent ev) =>
             {
-                HttpResponseEvent e = (HttpResponseEvent)ev;
+                var e = (HttpResponseEvent)ev;
                 script.InvokeStateEvent("http_response", new LSLKey(e.RequestID), e.Status, e.Metadata, e.Body);
             });
 
-            StateEventHandlers.Add(typeof(HttpRequestEvent), delegate (Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(HttpRequestEvent), (Script script, IScriptEvent ev) =>
             {
-                HttpRequestEvent e = (HttpRequestEvent)ev;
+                var e = (HttpRequestEvent)ev;
                 script.InvokeStateEvent("http_request", new LSLKey(e.RequestID), e.Method, e.Body);
             });
 
             StateEventHandlers.Add(typeof(LandCollisionEvent), HandleLandCollision);
 
-            StateEventHandlers.Add(typeof(LinkMessageEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(LinkMessageEvent), (Script script, IScriptEvent ev) =>
             {
-                LinkMessageEvent e = (LinkMessageEvent)ev;
+                var e = (LinkMessageEvent)ev;
                 script.InvokeStateEvent("link_message", e.SenderNumber, e.Number, e.Data, new LSLKey(e.Id));
             });
 
-            StateEventHandlers.Add(typeof(ListenEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(ListenEvent), (Script script, IScriptEvent ev) =>
             {
-                ListenEvent e = (ListenEvent)ev;
+                var e = (ListenEvent)ev;
                 script.InvokeStateEvent("listen", e.Channel, e.Name, new LSLKey(e.ID), e.Message);
             });
 
-            StateEventHandlers.Add(typeof(MoneyEvent), delegate(Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(MoneyEvent), (Script script, IScriptEvent ev) =>
             {
-                MoneyEvent e = (MoneyEvent)ev;
+                var e = (MoneyEvent)ev;
                 script.InvokeStateEvent("money", e.ID, e.Amount);
             });
 
-            StateEventHandlers.Add(typeof(MovingStartEvent), delegate(Script script, IScriptEvent ev)
-            {
-                script.InvokeStateEvent("moving_start");
-            });
+            StateEventHandlers.Add(typeof(MovingStartEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("moving_start"));
 
-            StateEventHandlers.Add(typeof(MovingEndEvent), delegate(Script script, IScriptEvent ev)
-            {
-                script.InvokeStateEvent("moving_end");
-            });
+            StateEventHandlers.Add(typeof(MovingEndEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("moving_end"));
 
-            StateEventHandlers.Add(typeof(NoSensorEvent), delegate(Script script, IScriptEvent ev)
-            {
-                script.InvokeStateEvent("no_sensor");
-            });
+            StateEventHandlers.Add(typeof(NoSensorEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("no_sensor"));
 
-            StateEventHandlers.Add(typeof(NotAtRotTargetEvent), delegate(Script script, IScriptEvent ev)
-            {
-                script.InvokeStateEvent("not_at_rot_target");
-            });
+            StateEventHandlers.Add(typeof(NotAtRotTargetEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("not_at_rot_target"));
 
-            StateEventHandlers.Add(typeof(NotAtTargetEvent), delegate (Script script, IScriptEvent ev)
-            {
-                script.InvokeStateEvent("not_at_target");
-            });
+            StateEventHandlers.Add(typeof(NotAtTargetEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("not_at_target"));
 
-            StateEventHandlers.Add(typeof(ObjectRezEvent), delegate (Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(ObjectRezEvent), (Script script, IScriptEvent ev) =>
             {
-                ObjectRezEvent e = (ObjectRezEvent)ev;
+                var e = (ObjectRezEvent)ev;
                 script.InvokeStateEvent("object_rez", new LSLKey(e.ObjectID));
             });
 
-            StateEventHandlers.Add(typeof(OnRezEvent), delegate (Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(OnRezEvent), (Script script, IScriptEvent ev) =>
             {
-                OnRezEvent e = (OnRezEvent)ev;
+                var e = (OnRezEvent)ev;
                 script.StartParameter = new Integer(e.StartParam);
                 script.InvokeStateEvent("on_rez", e.StartParam);
             });
 
-            StateEventHandlers.Add(typeof(PathUpdateEvent), delegate (Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(PathUpdateEvent), (Script script, IScriptEvent ev) =>
             {
-                PathUpdateEvent e = (PathUpdateEvent)ev;
+                var e = (PathUpdateEvent)ev;
                 script.InvokeStateEvent("path_update", e.Type, e.Reserved);
             });
 
-            StateEventHandlers.Add(typeof(RemoteDataEvent), delegate (Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(RemoteDataEvent), (Script script, IScriptEvent ev) =>
             {
-                RemoteDataEvent e = (RemoteDataEvent)ev;
+                var e = (RemoteDataEvent)ev;
                 script.InvokeStateEvent("remote_data", e.Type, new LSLKey(e.Channel), new LSLKey(e.MessageID), e.Sender, e.IData, e.SData);
             });
 
-            StateEventHandlers.Add(typeof(ResetScriptEvent), delegate (Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(ResetScriptEvent), (Script script, IScriptEvent ev) =>
             {
                 throw new ResetScriptException();
             });
 
-            StateEventHandlers.Add(typeof(ItemSoldEvent), delegate (Script script, IScriptEvent ev)
+            StateEventHandlers.Add(typeof(ItemSoldEvent), (Script script, IScriptEvent ev) =>
             {
-                ItemSoldEvent e = (ItemSoldEvent)ev;
+                var e = (ItemSoldEvent)ev;
                 script.InvokeStateEvent("item_sold", e.Agent.FullName, new LSLKey(e.Agent.ID), e.ObjectName, new LSLKey(e.ObjectID));
             });
 
             StateEventHandlers.Add(typeof(SensorEvent), HandleSensor);
             StateEventHandlers.Add(typeof(RuntimePermissionsEvent), HandleRuntimePermissions);
             StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
-            StateEventHandlers.Add(typeof(TimerEvent), delegate (Script script, IScriptEvent ev)
-            {
-                script.InvokeStateEvent("timer");
-            });
+            StateEventHandlers.Add(typeof(TimerEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("timer"));
             #endregion
         }
 
@@ -2370,7 +2239,7 @@ namespace SilverSim.Scripting.Lsl
 
         static void HandleMessageObject(Script script, IScriptEvent ev)
         {
-            MessageObjectEvent e = (MessageObjectEvent)ev;
+            var e = (MessageObjectEvent)ev;
             if (script.UseMessageObjectEvent)
             {
                 script.InvokeStateEvent("object_message", new LSLKey(e.ObjectID), e.Data);
@@ -2383,7 +2252,7 @@ namespace SilverSim.Scripting.Lsl
 
         static void HandleLandCollision(Script script, IScriptEvent ev)
         {
-            LandCollisionEvent e = (LandCollisionEvent)ev;
+            var e = (LandCollisionEvent)ev;
             switch (e.Type)
             {
                 case LandCollisionEvent.CollisionType.Start:
@@ -2407,7 +2276,7 @@ namespace SilverSim.Scripting.Lsl
 
         static void HandleRuntimePermissions(Script script, IScriptEvent ev)
         {
-            RuntimePermissionsEvent e = (RuntimePermissionsEvent)ev;
+            var e = (RuntimePermissionsEvent)ev;
             if (e.PermissionsKey != script.Item.Owner)
             {
                 e.Permissions &= ~(ScriptPermissions.Debit | ScriptPermissions.SilentEstateManagement | ScriptPermissions.ChangeLinks);
@@ -2422,16 +2291,16 @@ namespace SilverSim.Scripting.Lsl
                 e.Permissions &= ~ScriptPermissions.Debit;
             }
 
-            ObjectPartInventoryItem.PermsGranterInfo grantinfo = new ObjectPartInventoryItem.PermsGranterInfo();
+            var grantinfo = new ObjectPartInventoryItem.PermsGranterInfo();
             grantinfo.PermsGranter = e.PermissionsKey;
-            grantinfo.PermsMask = (ScriptPermissions)e.Permissions;
+            grantinfo.PermsMask = e.Permissions;
             script.Item.PermsGranter = grantinfo;
-            script.InvokeStateEvent("run_time_permissions", (ScriptPermissions)e.Permissions);
+            script.InvokeStateEvent("run_time_permissions", (int)e.Permissions);
         }
 
         static void HandleTouch(Script script, IScriptEvent ev)
         {
-            TouchEvent e = (TouchEvent)ev;
+            var e = (TouchEvent)ev;
             switch (e.Type)
             {
                 case TouchEvent.TouchType.Start:
@@ -2468,13 +2337,10 @@ namespace SilverSim.Scripting.Lsl
         public static readonly RwLockedDictionaryAutoAdd<UUID, ThreatLevel> ThreatLevels = new RwLockedDictionaryAutoAdd<UUID, ThreatLevel>(delegate () { return DefaultThreatLevel; });
 
         public static readonly RwLockedDictionaryAutoAdd<string,
-            RwLockedDictionaryAutoAdd<UUID, Permissions>> OSSLPermissions = new RwLockedDictionaryAutoAdd<string, RwLockedDictionaryAutoAdd<UUID, Permissions>>(delegate ()
+            RwLockedDictionaryAutoAdd<UUID, Permissions>> OSSLPermissions = new RwLockedDictionaryAutoAdd<string, RwLockedDictionaryAutoAdd<UUID, Permissions>>(() =>
             {
                 return new RwLockedDictionaryAutoAdd<UUID, Permissions>(
-                    delegate ()
-                    {
-                        return new Permissions();
-                    });
+                    () => new Permissions());
             });
 
         bool TryOSSLAllowed(

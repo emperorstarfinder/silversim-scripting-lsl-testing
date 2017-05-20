@@ -32,13 +32,8 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
     [ScriptApiName("Permissions")]
     [LSLImplementation]
     [Description("LSL Permissions API")]
-    public partial class PermissionsApi : IScriptApi, IPlugin
+    public class PermissionsApi : IScriptApi, IPlugin
     {
-        public PermissionsApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

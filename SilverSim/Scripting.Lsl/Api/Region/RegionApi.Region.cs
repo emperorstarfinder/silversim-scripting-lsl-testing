@@ -195,10 +195,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osGetSimulatorVersion")]
-        public string GetSimulatorVersion(ScriptInstance instance)
-        {
-            return VersionInfo.SimulatorVersion;
-        }
+        public string GetSimulatorVersion(ScriptInstance instance) => VersionInfo.SimulatorVersion;
 
         [APILevel(APIFlags.OSSL, "osGetRegionSize")]
         public Vector3 GetRegionSize(ScriptInstance instance)
@@ -350,7 +347,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         {
             lock(instance)
             {
-                Uri uri = new Uri(instance.Part.ObjectGroup.Scene.ServerURI);
+                var uri = new Uri(instance.Part.ObjectGroup.Scene.ServerURI);
                 return uri.Host;
             }
         }
@@ -456,8 +453,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     if(scene.GridService.TryGetValue(scene.ScopeID, region, out ri))
                     {
                         UUID queryID = UUID.Random;
-                        DataserverEvent e = new DataserverEvent();
-                        e.QueryID = queryID;
+                        var e = new DataserverEvent()
+                        {
+                            QueryID = queryID
+                        };
                         switch (data)
                         {
                             case DATA_SIM_POS:
@@ -537,10 +536,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     double m = dir.Y / dir.X;
                     double b = pos.Y - m * pos.X;
 
-                    Vector3 e0 = new Vector3();
-                    Vector3 e1 = new Vector3();
-                    Vector3 e2 = new Vector3();
-                    Vector3 e3 = new Vector3();
+                    var e0 = new Vector3();
+                    var e1 = new Vector3();
+                    var e2 = new Vector3();
+                    var e3 = new Vector3();
                     e0.X = 0;
                     e0.Y = b;
 
@@ -691,8 +690,11 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 case "dynamic_pathfinding":
                     try
                     {
-                        IPathfindingService pathfinding = instance.Part.ObjectGroup.Scene.PathfindingService;
-                        return pathfinding.IsDynamicEnabled ? "enabled" : "disabled";
+                        lock (instance)
+                        {
+                            IPathfindingService pathfinding = instance.Part.ObjectGroup.Scene.PathfindingService;
+                            return pathfinding.IsDynamicEnabled ? "enabled" : "disabled";
+                        }
                     }
                     catch
                     {
@@ -712,7 +714,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     }
 
                 case "frame_number":
-                    return instance.Part.ObjectGroup.Scene.FrameNumber.ToString();
+                    lock (instance)
+                    {
+                        return instance.Part.ObjectGroup.Scene.FrameNumber.ToString();
+                    }
 
                 case "region_cpu_ratio":
                     return "1";
@@ -721,16 +726,28 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     return "0";
 
                 case "region_size_x":
-                    return instance.Part.ObjectGroup.Scene.GetRegionInfo().Size.X.ToString();
+                    lock (instance)
+                    {
+                        return instance.Part.ObjectGroup.Scene.GetRegionInfo().Size.X.ToString();
+                    }
 
                 case "region_size_y":
-                    return instance.Part.ObjectGroup.Scene.GetRegionInfo().Size.Y.ToString();
+                    lock (instance)
+                    {
+                        return instance.Part.ObjectGroup.Scene.GetRegionInfo().Size.Y.ToString();
+                    }
 
                 case "region_product_name":
-                    return instance.Part.ObjectGroup.Scene.ProductName;
+                    lock (instance)
+                    {
+                        return instance.Part.ObjectGroup.Scene.ProductName;
+                    }
 
                 case "region_start_time":
-                    return instance.Part.ObjectGroup.Scene.RegionStartTime.AsULong.ToString();
+                    lock (instance)
+                    {
+                        return instance.Part.ObjectGroup.Scene.RegionStartTime.AsULong.ToString();
+                    }
 
                 case "region_product_sku":
                 case "sim_channel":
@@ -743,7 +760,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     return GetSimulatorHostname(instance);
 
                 case "region_object_bonus":
-                    return instance.Part.ObjectGroup.Scene.RegionSettings.ObjectBonus.ToString();
+                    lock (instance)
+                    {
+                        return instance.Part.ObjectGroup.Scene.RegionSettings.ObjectBonus.ToString();
+                    }
 
                 default:
                     return string.Empty;

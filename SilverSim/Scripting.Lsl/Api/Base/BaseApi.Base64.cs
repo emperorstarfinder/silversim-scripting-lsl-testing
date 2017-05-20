@@ -74,7 +74,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             byte[] a = Convert.FromBase64String(str1);
             byte[] b = Convert.FromBase64String(str2);
-            byte[] o = new byte[a.Length];
+            var o = new byte[a.Length];
 
             for (int i = 0; i < a.Length; ++i)
             {

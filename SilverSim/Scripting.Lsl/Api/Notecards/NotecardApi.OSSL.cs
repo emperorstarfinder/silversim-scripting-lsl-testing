@@ -43,7 +43,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             [Description("Contents for the notecard. string is also allowed here.")]
             AnArray contents)
         {
-            StringBuilder nc = new StringBuilder();
+            var nc = new StringBuilder();
             bool first = true;
             foreach(IValue val in contents)
             {
@@ -70,16 +70,18 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             {
                 ObjectPart thisPart = instance.Part;
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
-                Notecard nc = new Notecard();
-                nc.Text = contents;
-                AssetData asset = nc;
+                AssetData asset = new Notecard()
+                {
+                    Text = contents
+                };
                 asset.ID = UUID.Random;
                 asset.Name = notecardName;
                 asset.Creator = thisGroup.Owner;
                 thisGroup.Scene.AssetService.Store(asset);
-                ObjectPartInventoryItem item = new ObjectPartInventoryItem(asset);
-                item.ParentFolderID = thisPart.ID;
-
+                var item = new ObjectPartInventoryItem(asset)
+                {
+                    ParentFolderID = thisPart.ID
+                };
                 for (uint i = 0; i < 1000; ++i)
                 {
                     item.Name = (i == 0) ?

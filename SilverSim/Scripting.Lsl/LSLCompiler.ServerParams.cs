@@ -57,8 +57,7 @@ namespace SilverSim.Scripting.Lsl
                 foreach(IScriptApi api in m_Apis)
                 {
                     Type instanceType = api.GetType();
-                    MethodInfo[] mis = instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public);
-                    foreach(MethodInfo mi in mis)
+                    foreach(MethodInfo mi in instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
                     {
                         if(Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) != null)
                         {

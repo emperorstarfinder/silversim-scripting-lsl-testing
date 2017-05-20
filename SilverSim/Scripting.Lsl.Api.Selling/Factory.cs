@@ -27,14 +27,7 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
     [PluginName("LSL_Selling")]
     public sealed class Factory : IPluginFactory
     {
-        public Factory()
-        {
-
-        }
-
-        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
-        {
-            return new SellingApi();
-        }
+        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection) =>
+            new SellingApi();
     }
 }

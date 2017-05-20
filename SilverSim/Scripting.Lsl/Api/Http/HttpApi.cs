@@ -38,11 +38,6 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         LSLHTTP m_HTTPHandler;
         LSLHTTPClient_RequestQueue m_LSLHTTPClient;
 
-        public HttpApi()
-        {
-            /* intentionally left empty */
-        }
-
         [APILevel(APIFlags.LSL)]
         public const string URL_REQUEST_GRANTED = "URL_REQUEST_GRANTED";
 

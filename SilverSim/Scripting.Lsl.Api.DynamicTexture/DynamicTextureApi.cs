@@ -57,47 +57,33 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         }
 
         [APILevel(APIFlags.OSSL, "osMovePen")]
-        public string MovePen(ScriptInstance instance, string drawList, int x, int y)
-        {
-            return drawList + "MoveTo " + x + "," + y + ";";
-        }
+        public string MovePen(ScriptInstance instance, string drawList, int x, int y) =>
+            drawList + "MoveTo " + x + "," + y + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawLine")]
-        public string DrawLine(ScriptInstance instance, string drawList, int startX, int startY, int endX, int endY)
-        {
-            return drawList + "MoveTo " + startX.ToString() + "," + startY.ToString() + ";" + 
+        public string DrawLine(ScriptInstance instance, string drawList, int startX, int startY, int endX, int endY) => 
+            drawList + "MoveTo " + startX.ToString() + "," + startY.ToString() + ";" +
                 "LineTo " + endX.ToString() + "," + endY.ToString() + ";";
-        }
 
         [APILevel(APIFlags.OSSL, "osDrawLine")]
-        public string DrawLine(ScriptInstance instance, string drawList, int endX, int endY)
-        {
-            return drawList + "LineTo " + endX.ToString() + "," + endY.ToString() + ";";
-        }
+        public string DrawLine(ScriptInstance instance, string drawList, int endX, int endY) =>
+            drawList + "LineTo " + endX.ToString() + "," + endY.ToString() + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawText")]
-        public string DrawText(ScriptInstance instance, string drawList, string text)
-        {
-            return drawList + "Text " + text + "; ";
-        }
+        public string DrawText(ScriptInstance instance, string drawList, string text) =>
+            drawList + "Text " + text + "; ";
 
         [APILevel(APIFlags.OSSL, "osDrawEllipse")]
-        public string DrawEllipse(ScriptInstance instance, string drawList, int width, int height)
-        {
-            return drawList + "Ellipse " + width.ToString() + "," + height.ToString() + ";";
-        }
+        public string DrawEllipse(ScriptInstance instance, string drawList, int width, int height) =>
+            drawList + "Ellipse " + width.ToString() + "," + height.ToString() + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawRectangle")]
-        public string DrawRectangle(ScriptInstance instance, string drawList, int width, int height)
-        {
-            return drawList + "Rectangle " + width.ToString() + "," + height.ToString() + ";";
-        }
+        public string DrawRectangle(ScriptInstance instance, string drawList, int width, int height) =>
+            drawList + "Rectangle " + width.ToString() + "," + height.ToString() + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawFilledRectangle")]
-        public string DrawFilledRectangle(ScriptInstance instance, string drawList, int width, int height)
-        {
-            return drawList + "FillRectangle " + width.ToString() + "," + height.ToString() + ";";
-        }
+        public string DrawFilledRectangle(ScriptInstance instance, string drawList, int width, int height) =>
+            drawList + "FillRectangle " + width.ToString() + "," + height.ToString() + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawFilledPolygon")]
         public string DrawFilledPolygon(ScriptInstance instance, string drawList, AnArray x, AnArray y)
@@ -107,7 +93,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             {
                 return "";
             }
-            StringBuilder drawBuild = new StringBuilder(drawList);
+            var drawBuild = new StringBuilder(drawList);
             drawBuild.AppendFormat("FillPolygon {0},{1}", x[0].AsReal.ToString(), y[0].AsReal.ToString());
             for (int i = 1; i < xCount; i++)
             {
@@ -125,7 +111,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             {
                 return "";
             }
-            StringBuilder drawBuild = new StringBuilder(drawList);
+            var drawBuild = new StringBuilder(drawList);
             drawBuild.AppendFormat("Polygon {0},{1}", x[0].AsReal.ToString(), y[0].AsReal.ToString());
             for (int i = 1; i < xCount; i++)
             {
@@ -136,48 +122,36 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         }
 
         [APILevel(APIFlags.OSSL, "osSetFontSize")]
-        public string SetFontSize(ScriptInstance instance, string drawList, int fontSize)
-        {
-            return drawList + "FontSize " + fontSize + ";";
-        }
+        public string SetFontSize(ScriptInstance instance, string drawList, int fontSize) =>
+            drawList + "FontSize " + fontSize + ";";
 
         [APILevel(APIFlags.OSSL, "osSetFontName")]
-        public string SetFontName(ScriptInstance instance, string drawList, string fontName)
-        {
-            return drawList + "FontName " + fontName + ";";
-        }
+        public string SetFontName(ScriptInstance instance, string drawList, string fontName) =>
+            drawList + "FontName " + fontName + ";";
 
         [APILevel(APIFlags.OSSL, "osSetPenSize")]
-        public string SetPenSize(ScriptInstance instance, string drawList, int penSize)
-        {
-            return drawList + "PenSize " + penSize + ";";
-        }
+        public string SetPenSize(ScriptInstance instance, string drawList, int penSize) =>
+            drawList + "PenSize " + penSize + ";";
 
         [APILevel(APIFlags.OSSL, "osSetPenColor")]
         [APILevel(APIFlags.OSSL, "osSetPenColour")]
-        public string SetPenColor(ScriptInstance instance, string drawList, string color)
-        {
-            return drawList + "PenColor " + color + ";";
-        }
+        public string SetPenColor(ScriptInstance instance, string drawList, string color) =>
+            drawList + "PenColor " + color + ";";
 
         [APILevel(APIFlags.OSSL, "osSetPenCap")]
-        public string SetPenCap(ScriptInstance instance, string drawList, string direction, string type)
-        {
-            return drawList + "PenCap " + direction + "," + type + ";";
-        }
+        public string SetPenCap(ScriptInstance instance, string drawList, string direction, string type) =>
+            drawList + "PenCap " + direction + "," + type + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawImage")]
-        public string DrawImage(ScriptInstance instance, string drawList, int width, int height, string imageUrl)
-        {
-            return drawList + "Image " + width + "," + height + "," + imageUrl + ";";
-        }
+        public string DrawImage(ScriptInstance instance, string drawList, int width, int height, string imageUrl) =>
+            drawList + "Image " + width + "," + height + "," + imageUrl + ";";
 
         [APILevel(APIFlags.OSSL, "osGetDrawStringSize")]
         public Vector3 GetDrawStringSize(ScriptInstance instance, string contentType, string text, string fontName, int fontSize)
         {
             lock (instance)
             {
-                using (Font myFont = new Font(fontName, fontSize))
+                using (var myFont = new Font(fontName, fontSize))
                 {
                     SizeF stringSize;
                     lock(m_FontRequestContext)
@@ -199,9 +173,8 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         public LSLKey SetDynamicTextureURL(
             ScriptInstance instance,
             string dynamicID, string contentType, string data, string extraParams,
-                                             int timer)
-        {
-            return AddDynamicTextureData(
+                                             int timer) =>
+            AddDynamicTextureData(
                 instance,
                 dynamicID,
                 contentType,
@@ -212,19 +185,17 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 DISP_TEMP | DISP_EXPIRE,
                 255,
                 ALL_SIDES);
-        }
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureURLBlend")]
         public LSLKey SetDynamicTextureURLBlend(
             ScriptInstance instance,
-            string dynamicID, 
-            string contentType, 
-            string data, 
+            string dynamicID,
+            string contentType,
+            string data,
             string extraParams,
-            int timer, 
-            int alpha)
-        {
-            return AddDynamicTextureData(
+            int timer,
+            int alpha) =>
+            AddDynamicTextureData(
                 instance,
                 dynamicID,
                 contentType,
@@ -235,22 +206,20 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 DISP_TEMP | DISP_EXPIRE,
                 (byte)alpha,
                 ALL_SIDES);
-        }
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureURLBlendFace")]
         public LSLKey SetDynamicTextureURLBlendFace(
             ScriptInstance instance,
-            string dynamicID, 
-            string contentType, 
-            string data, 
+            string dynamicID,
+            string contentType,
+            string data,
             string extraParams,
-            int blend, 
-            int disp, 
-            int timer, 
-            int alpha, 
-            int face)
-        {
-            return AddDynamicTextureData(
+            int blend,
+            int disp,
+            int timer,
+            int alpha,
+            int face) =>
+            AddDynamicTextureData(
                 instance,
                 dynamicID,
                 contentType,
@@ -261,18 +230,16 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 disp,
                 (byte)alpha,
                 face);
-        }
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureData")]
         public LSLKey SetDynamicTextureData(
             ScriptInstance instance,
-            string dynamicID, 
+            string dynamicID,
             string contentType,
             string data,
             string extraParams,
-            int timer)
-        {
-            return AddDynamicTextureData(
+            int timer) =>
+            AddDynamicTextureData(
                 instance,
                 dynamicID,
                 contentType,
@@ -283,19 +250,17 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 DISP_TEMP | DISP_EXPIRE,
                 255,
                 ALL_SIDES);
-        }
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataBlend")]
         public LSLKey SetDynamicTextureDataBlend(
             ScriptInstance instance,
-            string dynamicID, 
+            string dynamicID,
             string contentType,
             string data,
             string extraParams,
-            int timer, 
-            int alpha)
-        {
-            return AddDynamicTextureData(
+            int timer,
+            int alpha) =>
+            AddDynamicTextureData(
                 instance,
                 dynamicID,
                 contentType,
@@ -306,7 +271,6 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 DISP_TEMP | DISP_EXPIRE,
                 (byte)alpha,
                 ALL_SIDES);
-        }
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataBlendFace")]
         public LSLKey SetDynamicTextureDataBlendFace(
@@ -315,13 +279,12 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             string contentType,
             string data,
             string extraParams,
-            int blend, 
-            int disp, 
+            int blend,
+            int disp,
             int timer,
-            int alpha, 
-            int face)
-        {
-            return AddDynamicTextureData(
+            int alpha,
+            int face) =>
+            AddDynamicTextureData(
                 instance,
                 dynamicID,
                 contentType,
@@ -332,15 +295,14 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 disp,
                 (byte)alpha,
                 face);
-        }
 
         LSLKey AddDynamicTextureData(
-            ScriptInstance instance, 
+            ScriptInstance instance,
             string dynamicID,
-            string contentType, 
+            string contentType,
             string data,
             string extraParams, 
-            int updateTimer, 
+            int updateTimer,
             bool setBlending, 
             int disp, 
             byte AlphaValue, 

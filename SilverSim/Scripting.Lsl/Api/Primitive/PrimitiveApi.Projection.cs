@@ -39,7 +39,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osSetLinkProjectionParams")]
         public void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
         {
-            ObjectPart.ProjectionParam p = new ObjectPart.ProjectionParam();
+            var p = new ObjectPart.ProjectionParam();
             p.IsProjecting = projection != 0;
             p.ProjectionTextureID = instance.GetTextureAssetID(texture.ToString());
             p.ProjectionFOV = fov;
@@ -82,7 +82,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                 }
 
-                ObjectPart.ProjectionParam p = new ObjectPart.ProjectionParam();
+                var p = new ObjectPart.ProjectionParam();
                 p.IsProjecting = projection != 0;
                 p.ProjectionTextureID = instance.GetTextureAssetID(texture.ToString());
                 p.ProjectionFOV = fov;

@@ -37,11 +37,6 @@ namespace SilverSim.Scripting.Lsl.Api.Money
     [LSLImplementation]
     public class MoneyApi : IScriptApi, IPlugin
     {
-        public MoneyApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -59,11 +54,12 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         {
             EconomyServiceInterface sourceservice = null;
             EconomyServiceInterface destinationservice = null;
-            TransactionResultEvent ev = new TransactionResultEvent();
-            ev.Success = false;
-            ev.TransactionID = transactionID;
-
-            if(sourceservice == null ||
+            var ev = new TransactionResultEvent()
+            {
+                Success = false,
+                TransactionID = transactionID
+            };
+            if (sourceservice == null ||
                 destinationservice == null ||
                 destinationid == UUI.Unknown)
             {
@@ -77,10 +73,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                 try
                 {
                     sourceservice.ChargeAmount(sourceid, EconomyServiceInterface.TransactionType.ObjectPays, amount,
-                        delegate()
-                        {
-                            destinationservice.IncreaseAmount(destinationid, EconomyServiceInterface.TransactionType.ObjectPays, amount);
-                        });
+                        () => destinationservice.IncreaseAmount(destinationid, EconomyServiceInterface.TransactionType.ObjectPays, amount));
                     ev.Success = true;
                 }
                 catch
@@ -96,8 +89,8 @@ namespace SilverSim.Scripting.Lsl.Api.Money
 
         void TransferMoneyEnd(IAsyncResult ar)
         {
-            AsyncResult result = (AsyncResult)ar;
-            TransferMoneyDelegate caller = (TransferMoneyDelegate)result.AsyncDelegate;
+            var result = (AsyncResult)ar;
+            var caller = (TransferMoneyDelegate)result.AsyncDelegate;
             caller.EndInvoke(ar);
         }
 

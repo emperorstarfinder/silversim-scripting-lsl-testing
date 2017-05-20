@@ -37,11 +37,6 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
     [Description("OSSL LightShare API")]
     public class LightShareApi : IScriptApi, IPlugin
     {
-        public LightShareApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -125,7 +120,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
         [APIExtension(APIExtension.LightShare, "lsGetWindlightScene")]
         public AnArray GetWindlightScene(ScriptInstance instance, AnArray rules)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;

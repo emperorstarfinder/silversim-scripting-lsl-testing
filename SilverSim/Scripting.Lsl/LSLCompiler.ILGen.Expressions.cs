@@ -68,7 +68,7 @@ namespace SilverSim.Scripting.Lsl
             int lineNumber,
             Dictionary<string, object> localVars)
         {
-            List<IExpressionStackElement> expressionStack = new List<IExpressionStackElement>();
+            var expressionStack = new List<IExpressionStackElement>();
             Type innerExpressionReturn = null;
             bool first = true;
 
@@ -141,7 +141,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (functionTree.Value is ConstantValueRotation)
                     {
-                        ConstantValueRotation val = (ConstantValueRotation)functionTree.Value;
+                        var val = (ConstantValueRotation)functionTree.Value;
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);
@@ -151,7 +151,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else if (functionTree.Value is ConstantValueVector)
                     {
-                        ConstantValueVector val = (ConstantValueVector)functionTree.Value;
+                        var val = (ConstantValueVector)functionTree.Value;
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);
@@ -745,7 +745,7 @@ namespace SilverSim.Scripting.Lsl
                             if (null != functionTree.Value)
                             {
                                 /* constants */
-                                ConstantValueRotation val = (ConstantValueRotation)functionTree.Value;
+                                var val = (ConstantValueRotation)functionTree.Value;
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);
@@ -769,7 +769,7 @@ namespace SilverSim.Scripting.Lsl
                             /* value */
                             if (functionTree.Value is ConstantValueRotation)
                             {
-                                ConstantValueRotation v = (ConstantValueRotation)functionTree.Value;
+                                var v = (ConstantValueRotation)functionTree.Value;
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.X);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Y);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Z);
@@ -779,7 +779,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (functionTree.Value is ConstantValueVector)
                             {
-                                ConstantValueVector v = (ConstantValueVector)functionTree.Value;
+                                var v = (ConstantValueVector)functionTree.Value;
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.X);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Y);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, v.Value.Z);
@@ -812,7 +812,7 @@ namespace SilverSim.Scripting.Lsl
                             if (null != functionTree.Value)
                             {
                                 /* constants */
-                                ConstantValueVector val = (ConstantValueVector)functionTree.Value;
+                                var val = (ConstantValueVector)functionTree.Value;
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Y);
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.Z);

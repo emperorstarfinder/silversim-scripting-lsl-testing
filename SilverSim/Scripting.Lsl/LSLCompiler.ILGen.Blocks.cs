@@ -468,12 +468,13 @@ namespace SilverSim.Scripting.Lsl
                             Label endlabel = compileState.ILGen.DefineLabel();
                             Label looplabel = compileState.ILGen.DefineLabel();
 
-                            BreakContinueLabel bcLabel = new BreakContinueLabel();
-                            bcLabel.BreakTargetLabel = endlabel;
-                            bcLabel.ContinueTargetLabel = looplabel;
-                            bcLabel.HaveBreakTarget = true;
-                            bcLabel.HaveContinueTarget = true;
-                            compileState.m_BreakContinueLabels.Insert(0, bcLabel);
+                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel()
+                            {
+                                BreakTargetLabel = endlabel,
+                                ContinueTargetLabel = looplabel,
+                                HaveBreakTarget = true,
+                                HaveContinueTarget = true
+                            });
 
                             compileState.ILGen.MarkLabel(looplabel);
 
@@ -564,12 +565,13 @@ namespace SilverSim.Scripting.Lsl
                             Label looplabel = compileState.ILGen.DefineLabel();
                             Label endlabel = compileState.ILGen.DefineLabel();
 
-                            BreakContinueLabel bcLabel = new BreakContinueLabel();
-                            bcLabel.BreakTargetLabel = endlabel;
-                            bcLabel.ContinueTargetLabel = looplabel;
-                            bcLabel.HaveBreakTarget = true;
-                            bcLabel.HaveContinueTarget = true;
-                            compileState.m_BreakContinueLabels.Insert(0, bcLabel);
+                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel()
+                            {
+                                BreakTargetLabel = endlabel,
+                                ContinueTargetLabel = looplabel,
+                                HaveBreakTarget = true,
+                                HaveContinueTarget = true
+                            });
 
                             compileState.ILGen.MarkLabel(looplabel);
                             ProcessExpression(
@@ -618,13 +620,15 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         {
-                            BreakContinueLabel bcLabel = new BreakContinueLabel();
-                            compileState.m_BreakContinueLabels.Insert(0, bcLabel);
                             Label looplabel = compileState.ILGen.DefineLabel();
-                            bcLabel.ContinueTargetLabel = looplabel;
-                            bcLabel.BreakTargetLabel = compileState.ILGen.DefineLabel();
-                            bcLabel.HaveContinueTarget = true;
-                            bcLabel.HaveBreakTarget = true;
+                            var bcLabel = new BreakContinueLabel()
+                            {
+                                ContinueTargetLabel = looplabel,
+                                BreakTargetLabel = compileState.ILGen.DefineLabel(),
+                                HaveContinueTarget = true,
+                                HaveBreakTarget = true
+                            };
+                            compileState.m_BreakContinueLabels.Insert(0, bcLabel);
 
                             compileState.ILGen.MarkLabel(looplabel);
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
@@ -707,13 +711,14 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         compileState.ILGen.BeginScope();
-                        BreakContinueLabel switchBcLabel = new BreakContinueLabel();
+                        var switchBcLabel = new BreakContinueLabel()
+                        {
+                            CaseRequired = true,
+                            BreakTargetLabel = compileState.ILGen.DefineLabel(),
+                            NextCaseLabel = compileState.ILGen.DefineLabel(),
+                            HaveBreakTarget = true
+                        };
                         compileState.m_BreakContinueLabels.Insert(0, switchBcLabel);
-
-                        switchBcLabel.CaseRequired = true;
-                        switchBcLabel.BreakTargetLabel = compileState.ILGen.DefineLabel();
-                        switchBcLabel.NextCaseLabel = compileState.ILGen.DefineLabel();
-                        switchBcLabel.HaveBreakTarget = true;
 
                         Type switchVarType = ProcessExpressionToAnyType(
                                 compileState,
@@ -1143,7 +1148,7 @@ namespace SilverSim.Scripting.Lsl
 
             compileState.FunctionBody = functionBody;
             compileState.FunctionLineIndex = 1;
-            Dictionary<string, ILLabelInfo> labels = new Dictionary<string, ILLabelInfo>();
+            var labels = new Dictionary<string, ILLabelInfo>();
             ProcessBlock(
                 compileState,
                 mb.ReturnType,
@@ -1188,7 +1193,7 @@ namespace SilverSim.Scripting.Lsl
                 ilgen.Emit(OpCodes.Ret);
             }
 
-            Dictionary<int, string> labelsUndefined = new Dictionary<int, string>();
+            var labelsUndefined = new Dictionary<int, string>();
             foreach (KeyValuePair<string, ILLabelInfo> kvp in labels)
             {
                 if(!kvp.Value.IsDefined)

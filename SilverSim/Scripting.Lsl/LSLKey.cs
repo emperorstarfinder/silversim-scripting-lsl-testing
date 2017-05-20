@@ -31,21 +31,9 @@ namespace SilverSim.Scripting.Lsl
         readonly private string m_Value;
 
         #region Properties
-        public SilverSim.Types.ValueType Type
-        {
-            get
-            {
-                return SilverSim.Types.ValueType.String;
-            }
-        }
+        public Types.ValueType Type => Types.ValueType.String;
 
-        public LSLValueType LSL_Type
-        {
-            get
-            {
-                return LSLValueType.Key;
-            }
-        }
+        public LSLValueType LSL_Type => LSLValueType.Key;
         #endregion Properties
 
         public LSLKey()
@@ -63,48 +51,21 @@ namespace SilverSim.Scripting.Lsl
             m_Value = val;
         }
 
-        public int CompareTo(LSLKey v)
-        {
-            return m_Value.CompareTo(v.m_Value);
-        }
+        public int CompareTo(LSLKey v) => m_Value.CompareTo(v.m_Value);
 
-        public bool Equals(LSLKey v)
-        {
-            return m_Value.Equals(v.m_Value);
-        }
+        public bool Equals(LSLKey v) => m_Value.Equals(v.m_Value);
 
-        public int CompareTo(string v)
-        {
-            return m_Value.CompareTo(m_Value);
-        }
+        public int CompareTo(string v) => m_Value.CompareTo(m_Value);
 
-        public bool Equals(string v)
-        {
-            return m_Value.Equals(m_Value);
-        }
+        public bool Equals(string v) => m_Value.Equals(m_Value);
 
-        public override string ToString()
-        {
-            return m_Value;
-        }
+        public override string ToString() => m_Value;
 
-        public AString Substring(Int32 startIndex)
-        {
-            return new AString(m_Value.Substring(startIndex));
-        }
+        public AString Substring(Int32 startIndex) => new AString(m_Value.Substring(startIndex));
 
-        public AString Substring(Int32 startIndex, Int32 length)
-        {
-            return new AString(m_Value.Substring(startIndex, length));
-        }
+        public AString Substring(Int32 startIndex, Int32 length) => new AString(m_Value.Substring(startIndex, length));
 
-        public Integer Length
-        {
-            get
-            {
-                return new Integer(m_Value.Length);
-            }
-        }
+        public Integer Length => new Integer(m_Value.Length);
 
         public int IsLSLTrue
         {
@@ -120,15 +81,9 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Operators
-        public static implicit operator LSLKey(UUID u)
-        {
-            return new LSLKey(u);
-        }
+        public static implicit operator LSLKey(UUID u) => new LSLKey(u);
 
-        public static implicit operator LSLKey(string v)
-        {
-            return new LSLKey(v);
-        }
+        public static implicit operator LSLKey(string v) => new LSLKey(v);
 
         public static implicit operator UUID(LSLKey v)
         {
@@ -152,33 +107,35 @@ namespace SilverSim.Scripting.Lsl
 
         public static AnArray operator+(LSLKey k, AnArray a)
         {
-            AnArray b = new AnArray();
-            b.Add(k);
+            var b = new AnArray
+            {
+                k
+            };
             b.AddRange(a);
             return b;
         }
         #endregion Operators
 
         #region Helpers
-        public ABoolean AsBoolean { get { return new ABoolean(m_Value.Length != 0); } }
+        public ABoolean AsBoolean => new ABoolean(m_Value.Length != 0);
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public Integer AsInteger { get { return new Integer(Int32.Parse(m_Value)); } }
+        public Integer AsInteger => new Integer(Int32.Parse(m_Value));
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public Quaternion AsQuaternion { get { return Quaternion.Parse(m_Value); } }
+        public Quaternion AsQuaternion => Quaternion.Parse(m_Value);
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public Real AsReal { get { return Real.Parse(m_Value); } }
-        public AString AsString { get { return new AString(m_Value); } }
-        public UUID AsUUID { get { return new UUID(m_Value); } }
+        public Real AsReal => Real.Parse(m_Value);
+        public AString AsString => new AString(m_Value);
+        public UUID AsUUID => new UUID(m_Value);
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public Vector3 AsVector3 { get { return Vector3.Parse(m_Value); } }
+        public Vector3 AsVector3 => Vector3.Parse(m_Value);
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public uint AsUInt { get { return uint.Parse(m_Value); } }
+        public uint AsUInt => uint.Parse(m_Value);
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public int AsInt { get { return int.Parse(m_Value); } }
+        public int AsInt => int.Parse(m_Value);
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public ulong AsULong { get { return ulong.Parse(m_Value); } }
+        public ulong AsULong => ulong.Parse(m_Value);
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        public long AsLong { get { return long.Parse(m_Value); } }
+        public long AsLong => long.Parse(m_Value);
         #endregion
     }
 }

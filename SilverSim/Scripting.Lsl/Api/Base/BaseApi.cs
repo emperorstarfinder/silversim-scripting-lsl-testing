@@ -123,11 +123,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [StateEventDelegate]
         public delegate void PathUpdateDelegate(int type, AnArray reserved);
 
-        public BaseApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -152,7 +147,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             lock(instance)
             {
-                Script script = (Script)instance;
+                var script = (Script)instance;
                 script.ForcedSleepFactor = factor;
                 script.UseForcedSleep = flag != 0;
             }

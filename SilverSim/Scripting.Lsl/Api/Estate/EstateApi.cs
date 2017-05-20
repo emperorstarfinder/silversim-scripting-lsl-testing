@@ -61,11 +61,6 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
         SceneList m_Scenes;
 
-        public EstateApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             m_Scenes = loader.Scenes;
@@ -212,23 +207,25 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                     (grantInfo.PermsMask & Types.Script.ScriptPermissions.SilentEstateManagement) == 0)
                 {
                     /* send owner IM */
-                    GridInstantMessage im = new GridInstantMessage();
-                    im.FromAgent.ID = thisPart.Owner.ID;
-                    im.FromAgent.FullName = thisGroup.Name;
-                    im.IMSessionID = thisGroup.ID;
-                    im.ToAgent.ID = thisGroup.Owner.ID;
-                    im.Position = thisGroup.GlobalPosition;
-                    im.RegionID = scene.ID;
-                    im.Message = message;
-                    im.Dialog = GridInstantMessageDialog.MessageFromObject;
+                    Vector3 globPos = thisGroup.GlobalPosition;
                     string binBuck = string.Format("{0}/{1}/{2}/{3}\0",
                         scene.Name,
-                        (int)Math.Floor(im.Position.X),
-                        (int)Math.Floor(im.Position.Y),
-                        (int)Math.Floor(im.Position.Z));
-                    im.BinaryBucket = binBuck.ToUTF8Bytes();
-                    im.OnResult = delegate (GridInstantMessage imret, bool success) { };
+                        (int)Math.Floor(globPos.X),
+                        (int)Math.Floor(globPos.Y),
+                        (int)Math.Floor(globPos.Z));
 
+                    var im = new GridInstantMessage()
+                    {
+                        FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                        IMSessionID = thisGroup.ID,
+                        ToAgent = thisGroup.Owner,
+                        Position = globPos,
+                        RegionID = scene.ID,
+                        Message = message,
+                        Dialog = GridInstantMessageDialog.MessageFromObject,
+                        BinaryBucket = binBuck.ToUTF8Bytes(),
+                        OnResult = (GridInstantMessage imret, bool success) => { }
+                    };
                     IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
                     imservice.Send(im);
                 }

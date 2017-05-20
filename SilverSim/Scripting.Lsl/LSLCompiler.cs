@@ -217,11 +217,11 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (typeof(IScriptApi).IsAssignableFrom(type))
                 {
-                    ScriptApiNameAttribute scriptApiAttr = Attribute.GetCustomAttribute(type, typeof(ScriptApiNameAttribute)) as ScriptApiNameAttribute;
+                    var scriptApiAttr = Attribute.GetCustomAttribute(type, typeof(ScriptApiNameAttribute)) as ScriptApiNameAttribute;
                     Attribute impTagAttr = Attribute.GetCustomAttribute(type, typeof(LSLImplementationAttribute));
                     if (null != impTagAttr && null != scriptApiAttr)
                     {
-                        IPlugin factory = (IPlugin)Activator.CreateInstance(type);
+                        var factory = (IPlugin)Activator.CreateInstance(type);
                         loader.AddPlugin("LSL_API_" + scriptApiAttr.Name, factory);
                     }
                 }
@@ -257,8 +257,8 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (IsValidType(f.FieldType))
                     {
-                        var apiLevelAttrs = System.Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
-                        var apiExtensionAttrs = System.Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                        var apiLevelAttrs = Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                        var apiExtensionAttrs = Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                         if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                         {
                             foreach (APILevelAttribute attr in apiLevelAttrs)
@@ -652,8 +652,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     continue;
                 }
-                Type[] typeList;
-                typeList = (f.Attributes & FieldAttributes.Static) != 0 ?
+                Type[] typeList = (f.Attributes & FieldAttributes.Static) != 0 ?
                     (Type[])f.GetValue(null) :
                     (Type[])f.GetValue(api);
                 foreach (Type evt in typeList)

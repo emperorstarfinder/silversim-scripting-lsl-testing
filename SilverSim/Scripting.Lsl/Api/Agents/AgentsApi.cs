@@ -51,10 +51,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public class AgentsApi : IScriptApi, IPlugin
     {
         List<IUserAgentServicePlugin> m_UserAgentServicePlugins = new List<IUserAgentServicePlugin>();
-        public AgentsApi()
-        {
-            /* intentionally left empty */
-        }
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -409,7 +405,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     group != UGI.Unknown && 
                     (groupsService.GetAgentPowers(group, owner) & GroupPowers.Invite) == GroupPowers.Invite)
                 {
-                    GroupInvite invite = new GroupInvite()
+                    var invite = new GroupInvite()
                     {
                         Principal = agent.Owner,
                         RoleID = UUID.Zero,
@@ -425,7 +421,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         return 0;
                     }
 
-                    GridInstantMessage gim = new GridInstantMessage()
+                    var gim = new GridInstantMessage()
                     {
                         FromGroup = group,
                         FromAgent = owner,
@@ -472,7 +468,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     }
 
                     IAgent agent;
-                    GridInstantMessage gim = new GridInstantMessage()
+                    var gim = new GridInstantMessage()
                     {
                         Dialog = scene.Agents.TryGetValue(ejectee.ID, out agent) ?
                             GridInstantMessageDialog.MessageFromAgent :
@@ -483,7 +479,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         FromGroup = group,
                         RegionID = scene.ID,
                         Message = string.Format("You have been ejected from '{1}' by {0}.", owner.FullName, group.GroupName),
-                        OnResult = delegate (GridInstantMessage g, bool result) { }
+                        OnResult = (GridInstantMessage g, bool result) => { }
                     };
                     IMRouter router = scene.GetService<IMRouter>();
                     router.SendWithResultDelegate(gim);
@@ -497,7 +493,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         Message = string.Format("{2} has been ejected from '{1}' by {0}.", ejectee.FullName, group.GroupName, owner.FullName),
                         Dialog = GridInstantMessageDialog.MessageFromAgent,
                         RegionID = scene.ID,
-                        OnResult = delegate (GridInstantMessage g, bool result) { }
+                        OnResult = (GridInstantMessage g, bool result) => { }
                     };
                     router.SendWithResultDelegate(gim);
 
@@ -523,13 +519,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     {
                         displayname = agent.Owner.FullName;
                     }
-                    DataserverEvent ev = new DataserverEvent()
+                    UUID queryid = UUID.Random;
+                    instance.PostEvent(new DataserverEvent()
                     {
-                        QueryID = UUID.Random,
+                        QueryID = queryid,
                         Data = displayname
-                    };
-                    instance.PostEvent(ev);
-                    return ev.QueryID;
+                    });
+                    return queryid;
                 }
                 else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out agentid) && agentid.HomeURI != null)
                 {
@@ -550,13 +546,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         {
                             displayname = agentid.FullName;
                         }
-                        DataserverEvent ev = new DataserverEvent()
+                        UUID queryid = UUID.Random;
+                        instance.PostEvent(new DataserverEvent()
                         {
-                            QueryID = UUID.Random,
+                            QueryID = queryid,
                             Data = displayname
-                        };
-                        instance.PostEvent(ev);
-                        return ev.QueryID;
+                        });
+                        return queryid;
                     }
                 }
                 return UUID.Zero;
@@ -588,18 +584,22 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if(scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
-                    DataserverEvent ev = new DataserverEvent();
                     UUID queryid = UUID.Random;
-                    ev.QueryID = queryid;
-                    ev.Data = agent.Owner.FullName;
+                    instance.PostEvent(new DataserverEvent()
+                    {
+                        QueryID = queryid,
+                        Data = agent.Owner.FullName
+                    });
                     return queryid;
                 }
                 else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
                 {
-                    DataserverEvent ev = new DataserverEvent();
                     UUID queryid = UUID.Random;
-                    ev.QueryID = queryid;
-                    ev.Data = uui.FullName;
+                    instance.PostEvent(new DataserverEvent()
+                    {
+                        QueryID = queryid,
+                        Data = uui.FullName
+                    });
                     return queryid;
                 }
 
@@ -793,13 +793,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             SceneInterface scene = part.ObjectGroup.Scene;
             if (scene.RootAgents.TryGetValue(agentId.AsUUID, out agent))
             {
-                Notecard nc = (Notecard)agent.Appearance;
+                var nc = (Notecard)agent.Appearance;
                 AssetData asset = nc.Asset();
                 asset.Name = "Saved Appearance";
                 asset.ID = UUID.Random;
                 scene.AssetService.Store(asset);
 
-                ObjectPartInventoryItem item = new ObjectPartInventoryItem()
+                var item = new ObjectPartInventoryItem()
                 {
                     AssetID = asset.ID,
                     AssetType = AssetType.Notecard,
@@ -902,7 +902,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.OSSL, "osGetAvatarList")]
         public AnArray GetAvatarList(ScriptInstance instance)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
 
             lock (instance)
             {
@@ -927,7 +927,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.OSSL, "osGetAgents")]
         public AnArray GetAgents(ScriptInstance instance)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
 
             lock (instance)
             {

@@ -69,11 +69,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         CommandRegistry m_Commands;
 
-        public RegionApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             m_Commands = loader.CommandRegistry;

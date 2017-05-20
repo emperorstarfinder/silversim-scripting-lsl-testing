@@ -55,11 +55,6 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             readonly ReaderWriterLock m_RwLock = new ReaderWriterLock();
             readonly List<Email> m_Emails = new List<Email>();
 
-            public EmailQueue()
-            {
-
-            }
-
             public void Put(Email em)
             {
                 m_RwLock.AcquireWriterLock(-1);
@@ -115,10 +110,6 @@ namespace SilverSim.Scripting.Lsl.Api.Email
         SceneList m_Scenes;
         readonly RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>> m_Queues = new RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>>();
 
-        public LocalEmailService()
-        {
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             m_Scenes = loader.Scenes;
@@ -132,13 +123,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             m_Scenes.OnRegionRemove -= OnRegionRemove;
         }
 
-        public ShutdownOrder ShutdownOrder
-        {
-            get
-            {
-                return ShutdownOrder.LogoutDatabase;
-            }
-        }
+        public ShutdownOrder ShutdownOrder => ShutdownOrder.LogoutDatabase;
 
         void ISceneListener.ScheduleUpdate(ObjectUpdateInfo info, UUID fromSceneID)
         {

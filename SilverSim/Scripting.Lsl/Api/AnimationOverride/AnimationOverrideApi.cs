@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
     [ScriptApiName("AnimationOverride")]
     [LSLImplementation]
     [Description("LSL/OSSL AnimationOverride API")]
-    public partial class AnimationOverrideApi : IScriptApi, IPlugin
+    public class AnimationOverrideApi : IScriptApi, IPlugin
     {
         static readonly Dictionary<string, string> m_DefaultAnimationTranslate = new Dictionary<string, string>();
         static AnimationOverrideApi()
@@ -61,11 +61,6 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
             m_DefaultAnimationTranslate["turning left"] = "Turning Left";
             m_DefaultAnimationTranslate["turning right"] = "Turning Right";
             m_DefaultAnimationTranslate["walking"] = "Walking";
-        }
-
-        public AnimationOverrideApi()
-        {
-            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)

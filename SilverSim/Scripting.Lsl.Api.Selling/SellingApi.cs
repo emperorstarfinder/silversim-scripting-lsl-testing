@@ -32,11 +32,6 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
     [LSLImplementation]
     public class SellingApi : IScriptApi, IPlugin
     {
-        public SellingApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

@@ -87,19 +87,13 @@ namespace SilverSim.Scripting.Lsl.Expression
             }
 
             public ConstantValueInt(string str)
-            { 
+            {
                 Value = LSLCompiler.ConvToInt(str);
             }
 
-            public override string ToString()
-            {
-                return Value.ToString(CultureInfo.InvariantCulture);
-            }
+            public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
 
-            public override ValueBase Negate()
-            {
-                return new ConstantValueInt(-Value);
-            }
+            public override ValueBase Negate() => new ConstantValueInt(-Value);
         }
 
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
@@ -117,15 +111,9 @@ namespace SilverSim.Scripting.Lsl.Expression
                 Value = LSLCompiler.ConvToLong(str);
             }
 
-            public override string ToString()
-            {
-                return Value.ToString(CultureInfo.InvariantCulture);
-            }
+            public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
 
-            public override ValueBase Negate()
-            {
-                return new ConstantValueLong(-Value);
-            }
+            public override ValueBase Negate() => new ConstantValueLong(-Value);
         }
 
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
@@ -137,15 +125,9 @@ namespace SilverSim.Scripting.Lsl.Expression
                 Value = value;
             }
 
-            public override string ToString()
-            {
-                return LSLCompiler.TypecastDoubleToString(Value);
-            }
+            public override string ToString() => LSLCompiler.TypecastDoubleToString(Value);
 
-            public override ValueBase Negate()
-            {
-                return new ConstantValueFloat(-Value);
-            }
+            public override ValueBase Negate() => new ConstantValueFloat(-Value);
         }
 
         public class ConstantValueString : ConstantValue
@@ -156,10 +138,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 Value = value;
             }
 
-            public override string ToString()
-            {
-                return Value;
-            }
+            public override string ToString() => Value;
 
             public override ValueBase Negate()
             {
@@ -169,13 +148,7 @@ namespace SilverSim.Scripting.Lsl.Expression
 
         public ValueBase Value;
 
-        public Type ValueType
-        {
-            get
-            {
-                return Value != null ? Value.GetType() : null;
-            }
-        }
+        public Type ValueType => Value != null ? Value.GetType() : null;
 
 
         public Tree()
@@ -211,7 +184,7 @@ namespace SilverSim.Scripting.Lsl.Expression
         {
             int idx = 0;
             int slen = v.Length;
-            StringBuilder o = new StringBuilder();
+            var o = new StringBuilder();
             while(idx < v.Length)
             {
                 char c = v[idx++];

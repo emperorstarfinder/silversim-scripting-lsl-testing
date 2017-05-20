@@ -83,8 +83,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [ForcedSleep(0.2)]
         public void OffsetTexture(ScriptInstance instance, double u, double v, int face)
         {
-            float uf = (float)u.Clamp(-1, 1);
-            float vf = (float)v.Clamp(-1, 1);
+            var uf = (float)u.Clamp(-1, 1);
+            var vf = (float)v.Clamp(-1, 1);
             lock(instance)
             {
                 if (face == ALL_SIDES)
@@ -118,8 +118,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [ForcedSleep(0.2)]
         public void ScaleTexture(ScriptInstance instance, double u, double v, int face)
         {
-            float uf = (float)u;
-            float vf = (float)v;
+            var uf = (float)u;
+            var vf = (float)v;
             lock (instance)
             {
                 if (face == ALL_SIDES)
@@ -153,7 +153,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [ForcedSleep(0.2)]
         public void RotateTexture(ScriptInstance instance, double angle, int face)
         {
-            float anglef = (float)angle;
+            var anglef = (float)angle;
             lock (instance)
             {
                 if (face == ALL_SIDES)

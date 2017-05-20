@@ -126,11 +126,6 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
         [APILevel(APIFlags.LSL)]
         public const int PU_FAILURE_OTHER = 0xF4240;
 
-        public PathfindingApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -165,11 +160,10 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
             {
                 double radius = 20.0;
                 bool staticOnly = false;
-                CharacterType cType = CharacterType.None;
+                var cType = CharacterType.None;
                 for (int i = 0; i < options.Count - 1; ++i)
                 {
-                    int pType = options[i].AsInt;
-                    switch (pType)
+                    switch (options[i].AsInt)
                     {
                         case GCNP_RADIUS:
                             radius = options[i + 1].AsReal;
@@ -219,7 +213,7 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
                     return new AnArray();
                 }
                 Vector3 navPoint;
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 if (pathfindingService.TryGetClosestNavPoint(point, radius, staticOnly, cType, out navPoint))
                 {
                     res.Add(navPoint);
@@ -232,7 +226,7 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
         [APILevel(APIFlags.LSL, "llGetStaticPath")]
         public AnArray GetStaticPath(ScriptInstance instance, Vector3 start, Vector3 end, double radius, AnArray param)
         {
-            CharacterInfo cInfo = new CharacterInfo();
+            var cInfo = new CharacterInfo();
             cInfo.CollisionCapsuleRadius = radius;
             for (int i = 0; i < param.Count - 1; ++i)
             {
@@ -266,7 +260,7 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
                 }
             }
 
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock (instance)
             {
                 IPathfindingService pathfindingService = instance.Part.ObjectGroup.Scene.PathfindingService;

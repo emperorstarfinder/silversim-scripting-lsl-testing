@@ -34,11 +34,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
     {
         SceneList m_Scenes;
 
-        public XmlRpcApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             m_Scenes = loader.Scenes;
@@ -61,7 +56,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             ChannelInfo channel;
             if(m_ScriptChannels.TryGetValue(scriptid, out channel))
             {
-                m_Channels.RemoveIf(channel.ChannelID, delegate (ChannelInfo ci) { return ci == channel; });
+                m_Channels.RemoveIf(channel.ChannelID, (ChannelInfo ci) => ci == channel);
             }
         }
     }

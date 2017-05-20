@@ -62,7 +62,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL, "asGetSitTarget")]
         public AnArray GetSitTarget(ScriptInstance instance)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock(instance)
             {
                 res.Add(instance.Part.SitTargetOffset);
@@ -75,7 +75,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public AnArray GetLinkSitTarget(ScriptInstance instance, int link)
         {
             ObjectPart part;
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock (instance)
             {
                 if (link == LINK_THIS)
@@ -96,10 +96,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         #region Sit control
         [APILevel(APIFlags.LSL, "llAvatarOnSitTarget")]
-        public LSLKey AvatarOnSitTarget(ScriptInstance instance)
-        {
-            return AvatarOnLinkSitTarget(instance, LINK_THIS);
-        }
+        public LSLKey AvatarOnSitTarget(ScriptInstance instance) =>
+            AvatarOnLinkSitTarget(instance, LINK_THIS);
 
         [APILevel(APIFlags.LSL, "llAvatarOnLinkSitTarget")]
         public LSLKey AvatarOnLinkSitTarget(ScriptInstance instance, int link)

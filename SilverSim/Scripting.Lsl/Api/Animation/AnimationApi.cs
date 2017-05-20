@@ -35,11 +35,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
     [Description("LSL/OSSL Animation API")]
     public partial class AnimationApi : IScriptApi, IPlugin
     {
-        public AnimationApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -195,7 +190,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                 playingAnimations = agent.GetPlayingAnimations();
             }
 
-            AnArray res = new AnArray();
+            var res = new AnArray();
             foreach(UUID id in playingAnimations)
             {
                 res.Add(id);

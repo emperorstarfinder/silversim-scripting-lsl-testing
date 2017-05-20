@@ -33,11 +33,6 @@ namespace SilverSim.Scripting.Lsl.Api.AttachedForces
     [Description("AttachedForces API")]
     public class AttachedForcesApi : IScriptApi, IPlugin
     {
-        public AttachedForcesApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* nothing to do */
@@ -56,7 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.AttachedForces
         [APIExtension(APIExtension.AdvancedPhysics, "asSetAdvancedPhysics")]
         public void SetAdvancedPhysics(ScriptInstance instance, AnArray rules)
         {
-            List<UUID> linktargets = new List<UUID>();
+            var linktargets = new List<UUID>();
             lock(instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;

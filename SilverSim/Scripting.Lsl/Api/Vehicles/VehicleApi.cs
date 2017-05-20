@@ -34,11 +34,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
     [Description("LSL Vehicle API")]
     public class VehicleApi : IScriptApi, IPlugin
     {
-        public VehicleApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -81,13 +76,19 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
         {
-            instance.Part.ObjectGroup.SetVehicleFlags((VehicleFlags)flags);
+            lock (instance)
+            {
+                instance.Part.ObjectGroup.SetVehicleFlags((VehicleFlags)flags);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llRemoveVehicleFlags")]
         public void RemoveVehicleFlags(ScriptInstance instance, int flags)
         {
-            instance.Part.ObjectGroup.ClearVehicleFlags((VehicleFlags)flags);
+            lock (instance)
+            {
+                instance.Part.ObjectGroup.ClearVehicleFlags((VehicleFlags)flags);
+            }
         }
 
         [APILevel(APIFlags.LSL)]

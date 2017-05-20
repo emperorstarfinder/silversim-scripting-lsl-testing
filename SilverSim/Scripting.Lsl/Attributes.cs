@@ -175,7 +175,7 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
     public sealed class EnergyUsageAttribute : Attribute
     {
-        public double Energy { get; private set; }
+        public double Energy { get; }
 
         public EnergyUsageAttribute(double energy)
         {
@@ -193,7 +193,7 @@ namespace SilverSim.Scripting.Lsl
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class TranslatedScriptEventAttribute : Attribute
     {
-        public string EventName { get; private set; }
+        public string EventName { get; }
 
         public TranslatedScriptEventAttribute(string eventName)
         {

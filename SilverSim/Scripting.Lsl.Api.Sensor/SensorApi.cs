@@ -227,7 +227,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
             List<DetectInfo> GetDistanceSorted(Vector3 basePos, ICollection<DetectInfo> unsortedCollection)
             {
-                List<DetectInfo> list = new List<DetectInfo>();
+                var list = new List<DetectInfo>();
                 foreach (DetectInfo input_di in unsortedCollection)
                 {
                     double input_dist = (basePos - input_di.Position).LengthSquared;
@@ -277,14 +277,14 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                             kvp.Value.TimeoutToElapse += kvp.Value.Timeout;
                             if (kvp.Value.SensorHits.Count != 0)
                             {
-                                SensorEvent ev = new SensorEvent();
-                                ev.Detected = GetDistanceSorted(kvp.Value.SensePoint, kvp.Value.SensorHits.Values);
-                                kvp.Value.Instance.PostEvent(ev);
+                                kvp.Value.Instance.PostEvent(new SensorEvent()
+                                {
+                                    Detected = GetDistanceSorted(kvp.Value.SensePoint, kvp.Value.SensorHits.Values)
+                                });
                             }
                             else
                             {
-                                NoSensorEvent ev = new NoSensorEvent();
-                                kvp.Value.Instance.PostEvent(ev);
+                                kvp.Value.Instance.PostEvent(new NoSensorEvent());
                             }
 
                             /* re-evaluate sensor data */
@@ -383,14 +383,14 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
                 if (sensor.SensorHits.Count != 0)
                 {
-                    SensorEvent ev = new SensorEvent();
-                    ev.Detected = GetDistanceSorted(sensor.SensePoint, sensor.SensorHits.Values);
-                    sensor.Instance.PostEvent(ev);
+                    sensor.Instance.PostEvent(new SensorEvent()
+                    {
+                        Detected = GetDistanceSorted(sensor.SensePoint, sensor.SensorHits.Values)
+                    });
                 }
                 else
                 {
-                    NoSensorEvent ev = new NoSensorEvent();
-                    sensor.Instance.PostEvent(ev);
+                    sensor.Instance.PostEvent(new NoSensorEvent());
                 }
 
                 if (sensor.IsRepeating)
@@ -431,7 +431,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             {
                 if(CheckIfSensed(sensor, obj))
                 {
-                    DetectInfo detInfo = new DetectInfo();
+                    var detInfo = new DetectInfo();
                     detInfo.FillDetectInfoFromObject(obj);
                     sensor.SensorHits[obj.ID] = detInfo;
                 }
@@ -471,7 +471,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     return false;
                 }
 
-                ObjectGroup grp = obj as ObjectGroup;
+                var grp = obj as ObjectGroup;
                 if(grp != null)
                 {
                     if(grp.IsAttached)
@@ -496,7 +496,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     return CheckArcAndRange(sensor, obj);
                 }
 
-                IAgent agent = obj as IAgent;
+                var agent = obj as IAgent;
                 if (agent != null)
                 {
                     if((sensor.SearchType & SENSE_AGENTS) == 0)
@@ -516,13 +516,13 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     else if ((sensor.SearchType & AGENT) != 0 && sensor.SearchName.Length != 0 &&
                             (sensor.SearchName != agent.Owner.FullName ||
                             (sensor.SearchName != agent.Owner.FirstName + " Resident" && agent.Owner.LastName.Length == 0)))
-                    { 
+                    {
                         return false;
                     }
                     else if ((sensor.SearchType & AGENT_BY_USERNAME) != 0 && sensor.SearchName.Length != 0 &&
                             (sensor.SearchName != (agent.Owner.FirstName + ".resident").ToLower() && agent.Owner.LastName.Length == 0) ||
                             (sensor.SearchName != agent.Owner.FullName.Replace(' ', '.') && agent.Owner.LastName.Length != 0))
-                    { 
+                    {
                         return false;
                     }
 
@@ -575,11 +575,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         readonly RwLockedDictionary<UUID, SceneInfo> m_Scenes = new RwLockedDictionary<UUID, SceneInfo>();
         SceneList m_SceneList;
 
-        public SensorApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             m_SceneList = loader.Scenes;
@@ -593,13 +588,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             m_SceneList.OnRegionRemove -= Scenes_OnRegionRemove;
         }
 
-        public ShutdownOrder ShutdownOrder
-        {
-            get
-            {
-                return ShutdownOrder.Any;
-            }
-        }
+        public ShutdownOrder ShutdownOrder => ShutdownOrder.Any;
 
         void Scenes_OnRegionAdd(SceneInterface obj)
         {
@@ -694,7 +683,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             {
                 return;
             }
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock (script)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
@@ -702,7 +691,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SceneInfo sceneInfo;
                 if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
-                    SensorInfo info = new SensorInfo(instance, true,
+                    var info = new SensorInfo(instance, true,
                         (double)args[0],
                         (string)args[1],
                         (UUID)args[2],
@@ -718,7 +707,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         [ExecutedOnSerialization("sensor")]
         public void Serialize(ScriptInstance instance, List<object> res)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock(script)
             {
                 SceneInterface scene;

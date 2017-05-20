@@ -40,23 +40,26 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             Notecard nc = part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
             string[] lines = nc.Text.Split('\n');
-            DataserverEvent e = new DataserverEvent();
             if (line >= lines.Length || line < 0)
             {
-                e.Data = EOF;
-                e.QueryID = queryID;
-                part.PostEvent(e);
+                part.PostEvent(new DataserverEvent()
+                {
+                    Data = EOF,
+                    QueryID = queryID
+                });
             }
 
-            e.Data = lines[line];
-            e.QueryID = queryID;
-            part.PostEvent(e);
+            part.PostEvent(new DataserverEvent()
+            {
+                Data = lines[line],
+                QueryID = queryID
+            });
         }
 
         void GetNotecardLineEnd(IAsyncResult ar)
         {
-            AsyncResult r = (AsyncResult)ar;
-            Action<ObjectPart, UUID, UUID, int> caller = (Action<ObjectPart, UUID, UUID, int>)r.AsyncDelegate;
+            var r = (AsyncResult)ar;
+            var caller = (Action<ObjectPart, UUID, UUID, int>)r.AsyncDelegate;
             caller.EndInvoke(ar);
         }
 
@@ -84,7 +87,6 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         void GetNumberOfNotecardLines(ObjectPart part, UUID queryID, UUID assetID)
         {
             Notecard nc = part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
-            DataserverEvent e = new DataserverEvent();
             int n = 1;
             foreach (char c in nc.Text)
             {
@@ -93,15 +95,17 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                     ++n;
                 }
             }
-            e.Data = n.ToString();
-            e.QueryID = queryID;
-            part.PostEvent(e);
+            part.PostEvent(new DataserverEvent()
+            {
+                Data = n.ToString(),
+                QueryID = queryID
+            });
         }
 
         void GetNumberOfNotecardLinesEnd(IAsyncResult ar)
         {
-            AsyncResult r = (AsyncResult)ar;
-            Action<ObjectPart, UUID, UUID> caller = (Action<ObjectPart, UUID, UUID>)r.AsyncDelegate;
+            var r = (AsyncResult)ar;
+            var caller = (Action<ObjectPart, UUID, UUID>)r.AsyncDelegate;
             caller.EndInvoke(ar);
         }
 

@@ -38,11 +38,6 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
     {
         static readonly ILog m_Log = LogManager.GetLogger("LSL RAYCAST");
 
-        public RayCastApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -90,7 +85,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             Vector3 end, 
             AnArray options)
         {
-            AnArray resArray = new AnArray();
+            var resArray = new AnArray();
             RayTestHitFlags hitFlags = RayTestHitFlags.Avatar | RayTestHitFlags.NonPhysical | RayTestHitFlags.Physical;
             int i;
             int maxHits = 1;

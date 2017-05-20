@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
         {
-            ParticleSystem ps = new ParticleSystem();
+            var ps = new ParticleSystem();
 
             float tempf = 0;
             int tmpi = 0;

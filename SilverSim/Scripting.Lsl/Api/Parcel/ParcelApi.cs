@@ -63,11 +63,6 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL)]
         public const int PARCEL_FLAG_ALLOW_GROUP_OBJECT_ENTRY = 0x10000000;
 
-        public ParcelApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

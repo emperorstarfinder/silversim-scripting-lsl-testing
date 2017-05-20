@@ -185,16 +185,17 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     }
                     else
                     {
-                        ParcelMediaUpdate pmu = new ParcelMediaUpdate();
-                        pmu.MediaAutoScale = mediaAutoAlign;
-                        pmu.MediaDesc = mediaDescription;
-                        pmu.MediaHeight = mediaHeight;
-                        pmu.MediaID = mediaTexture;
-                        pmu.MediaLoop = sendCommand == PARCEL_MEDIA_COMMAND_LOOP;
-                        pmu.MediaType = mediaType;
-                        pmu.MediaURL = mediaUrl;
-                        pmu.MediaWidth = mediaWidth;
-
+                        var pmu = new ParcelMediaUpdate()
+                        {
+                            MediaAutoScale = mediaAutoAlign,
+                            MediaDesc = mediaDescription,
+                            MediaHeight = mediaHeight,
+                            MediaID = mediaTexture,
+                            MediaLoop = sendCommand == PARCEL_MEDIA_COMMAND_LOOP,
+                            MediaType = mediaType,
+                            MediaURL = mediaUrl,
+                            MediaWidth = mediaWidth
+                        };
                         if (agent != null)
                         {
                             /* per agent */
@@ -230,9 +231,11 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                         if (sendCommand >= 0)
                         {
-                            ParcelMediaCommandMessage pmc = new ParcelMediaCommandMessage();
-                            pmc.Flags = (uint)1 << sendCommand; /* Flags is a bit set of the commands to do */
-                            pmc.Command = (uint)sendCommand;
+                            var pmc = new ParcelMediaCommandMessage()
+                            {
+                                Flags = (uint)1 << sendCommand, /* Flags is a bit set of the commands to do */
+                                Command = (uint)sendCommand
+                            };
                             if (mediaStartTime >= 0)
                             {
                                 pmc.Flags |= 1 << PARCEL_MEDIA_COMMAND_TIME;
@@ -270,7 +273,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [ForcedSleep(2)]
         public AnArray ParcelMediaQuery(ScriptInstance instance, AnArray query)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock(instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
@@ -338,16 +341,17 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                         return;
                     }
                     parcelInfo.MediaURI = new URI(url);
-                    ParcelMediaUpdate pmu = new ParcelMediaUpdate();
-                    pmu.MediaAutoScale = parcelInfo.MediaAutoScale;
-                    pmu.MediaDesc = parcelInfo.MediaDescription;
-                    pmu.MediaHeight = parcelInfo.MediaHeight;
-                    pmu.MediaID = parcelInfo.MediaID;
-                    pmu.MediaLoop = parcelInfo.MediaLoop;
-                    pmu.MediaType = parcelInfo.MediaType;
-                    pmu.MediaURL = url;
-                    pmu.MediaWidth = parcelInfo.MediaWidth;
-
+                    var pmu = new ParcelMediaUpdate()
+                    {
+                        MediaAutoScale = parcelInfo.MediaAutoScale,
+                        MediaDesc = parcelInfo.MediaDescription,
+                        MediaHeight = parcelInfo.MediaHeight,
+                        MediaID = parcelInfo.MediaID,
+                        MediaLoop = parcelInfo.MediaLoop,
+                        MediaType = parcelInfo.MediaType,
+                        MediaURL = url,
+                        MediaWidth = parcelInfo.MediaWidth
+                    };
                     parcelInfo.MediaAutoScale = pmu.MediaAutoScale;
                     parcelInfo.MediaDescription = pmu.MediaDesc;
                     parcelInfo.MediaHeight = pmu.MediaHeight;

@@ -27,14 +27,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
     [PluginName("LSL_XMLRPC")]
     public sealed class Factory : IPluginFactory
     {
-        public Factory()
-        {
-
-        }
-
-        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
-        {
-            return new XmlRpcApi();
-        }
+        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection) => 
+            new XmlRpcApi();
     }
 }

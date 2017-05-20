@@ -36,11 +36,6 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
     [Description("LSL/OSSL Physics API")]
     public class PhysicsApi : IScriptApi, IPlugin
     {
-        public PhysicsApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -56,10 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         }
 
         [APILevel(APIFlags.LSL, "llGetMassMKS")]
-        public double GetMassMKS(ScriptInstance instance)
-        {
-            return GetMass(instance) * 100;
-        }
+        public double GetMassMKS(ScriptInstance instance) => GetMass(instance) * 100;
 
         [APILevel(APIFlags.LSL, "llVolumeDetect")]
         public void VolumeDetect(ScriptInstance instance, int enable)

@@ -70,7 +70,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if (start > end)
             {
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 for (int i = start; i <= end; ++i)
                 {
                     res.Add(src[i]);
@@ -463,7 +463,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("Index of the element of interest.")]
             int index)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             if (index < 0)
             {
                 index = src.Count - index;
@@ -1055,10 +1055,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     /* Elect an unrandomized chunk to swap */
                     int index = rand.Next(i + 1);
-                    int tmp;
 
                     /* and swap position with first unrandomized chunk */
-                    tmp = chunks[i];
+                    int tmp = chunks[i];
                     chunks[i] = chunks[index];
                     chunks[index] = tmp;
                 }
@@ -1258,7 +1257,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (IsValue(src[i], out entry))
                 {
-                    sum = sum + entry;
+                    sum += entry;
                     ++count;
                 }
             }

@@ -38,11 +38,6 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
         [APILevel(APIFlags.LSL)]
         public static readonly Vector3 TOUCH_INVALID_VECTOR = Vector3.Zero;
 
-        public DetectedApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

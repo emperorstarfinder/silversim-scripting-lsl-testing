@@ -32,11 +32,6 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
     [Description("LSL Experience API")]
     public partial class ExperienceApi : IScriptApi, IPlugin
     {
-        public ExperienceApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

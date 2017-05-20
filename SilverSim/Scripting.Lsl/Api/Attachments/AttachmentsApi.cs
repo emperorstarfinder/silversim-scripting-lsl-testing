@@ -39,11 +39,6 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
     [Description("LSL/OSSL Attachments API")]
     public class AttachmentsApi : IScriptApi, IPlugin
     {
-        public AttachmentsApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -181,7 +176,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
         [APILevel(APIFlags.OSSL, "osGetNumberOfAttachments")]
         public AnArray GetNumberOfAttachments(ScriptInstance instance, LSLKey avatar, AnArray attachmentPoints)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock (instance)
             {
                 IAgent agent;
@@ -205,7 +200,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             return res;
         }
 
-        static AttachmentPoint[] PublicAttachments = new AttachmentPoint[]
+        static readonly AttachmentPoint[] PublicAttachments = new AttachmentPoint[]
         {
             AttachmentPoint.Chest,
             AttachmentPoint.Head,
@@ -259,7 +254,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
         [APILevel(APIFlags.OSSL, "llGetAttachedList")]
         public AnArray GetAttachedList(ScriptInstance instance, LSLKey avatar)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock (instance)
             {
                 IAgent agent;

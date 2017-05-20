@@ -128,7 +128,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
             }
 
-            BlockingQueue<RemoteDataReplyEvent> repqueue = new BlockingQueue<RemoteDataReplyEvent>();
+            var repqueue = new BlockingQueue<RemoteDataReplyEvent>();
             UUID messageId = UUID.Random;
             try
             {
@@ -139,14 +139,15 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 throw new XmlRpcStructs.XmlRpcFaultException(2, "Unexpected error");
             }
 
-            RemoteDataEvent ev = new RemoteDataEvent();
-            ev.Channel = channelid;
-            ev.IData = intval.AsInt;
-            ev.SData = strval.ToString();
-            ev.Sender = string.Empty;
-            ev.Type = REMOTE_DATA_CHANNEL;
-            ev.MessageID = messageId;
-            instance.PostEvent(ev);
+            instance.PostEvent(new RemoteDataEvent()
+            {
+                Channel = channelid,
+                IData = intval.AsInt,
+                SData = strval.ToString(),
+                Sender = string.Empty,
+                Type = REMOTE_DATA_CHANNEL,
+                MessageID = messageId
+            });
 
             RemoteDataReplyEvent reply;
             try
@@ -160,10 +161,10 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             }
             channel.ActiveRequests.Remove(messageId);
 
-            Map res = new Map();
-            res.Add("StringValue", reply.SData);
-            res.Add("IntValue", reply.IData);
-            return new XmlRpcStructs.XmlRpcResponse { ReturnValue = res };
+            return new XmlRpcStructs.XmlRpcResponse { ReturnValue = new Map {
+                { "StringValue", reply.SData },
+                { "IntValue", reply.IData } }
+            };
         }
 
         [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]
@@ -217,14 +218,15 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 ScriptInstance instance = item.ScriptInstance;
                 if (null != instance)
                 {
-                    RemoteDataEvent ev = new RemoteDataEvent();
-                    ev.Channel = ci.ChannelID;
-                    ev.IData = 0;
-                    ev.MessageID = UUID.Zero;
-                    ev.SData = string.Empty;
-                    ev.Sender = string.Empty;
-                    ev.Type = REMOTE_DATA_REQUEST;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new RemoteDataEvent()
+                    {
+                        Channel = ci.ChannelID,
+                        IData = 0,
+                        MessageID = UUID.Zero,
+                        SData = string.Empty,
+                        Sender = string.Empty,
+                        Type = REMOTE_DATA_REQUEST
+                    });
                 }
             }
         }

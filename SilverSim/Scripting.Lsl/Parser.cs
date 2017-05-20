@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.Lsl
         public void ReadPass1(List<string> args)
         {
             char c;
-            StringBuilder token = new StringBuilder();
+            var token = new StringBuilder();
             Begin();
             args.Clear();
             bool is_preprocess = false;
@@ -483,7 +483,7 @@ redo:
                             {
                                 args.Insert(argi++, "+");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -586,7 +586,7 @@ redo:
                             {
                                 args.Insert(argi++, "-");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -625,7 +625,7 @@ redo:
                             {
                                 args.Insert(argi++, "*");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -664,7 +664,7 @@ redo:
                             {
                                 args.Insert(argi++, ":");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -703,7 +703,7 @@ redo:
                             {
                                 args.Insert(argi++, "/");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -742,7 +742,7 @@ redo:
                             {
                                 args.Insert(argi++, "%");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -801,7 +801,7 @@ redo:
                             {
                                 args.Insert(argi++, "<");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -860,7 +860,7 @@ redo:
                             {
                                 args.Insert(argi++, ">");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -913,7 +913,7 @@ redo:
                             {
                                 args.Insert(argi++, "=");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -952,7 +952,7 @@ redo:
                             {
                                 args.Insert(argi++, "!");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -991,7 +991,7 @@ redo:
                             {
                                 args.Insert(argi++, "^");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -1044,7 +1044,7 @@ redo:
                             {
                                 args.Insert(argi++, "&");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -1083,7 +1083,7 @@ redo:
                             {
                                 args.Insert(argi++, "#");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -1136,7 +1136,7 @@ redo:
                             {
                                 args.Insert(argi++, "|");
                                 args[argi] = args[argi].Substring(1, curlength - 1);
-                                curlength -= 1;
+                                --curlength;
                             }
                         }
                         else
@@ -1154,7 +1154,7 @@ redo:
 
         public void ReadPass2(List<string> arguments)
         {
-            List<string> inargs = new List<string>(arguments);
+            var inargs = new List<string>(arguments);
             arguments.Clear();
             foreach(string it in inargs)
             {

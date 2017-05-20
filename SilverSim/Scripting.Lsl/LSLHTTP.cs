@@ -99,6 +99,7 @@ namespace SilverSim.Scripting.Lsl
                 UrlID = urlID;
                 UrlName = string.Empty;
             }
+
             public HttpRequestData(HttpRequest req, string urlname, bool allowXss)
             {
                 AllowXss = allowXss;
@@ -142,7 +143,7 @@ namespace SilverSim.Scripting.Lsl
 
         void TimerEvent(object sender, ElapsedEventArgs e)
         {
-            List<UUID> RemoveList = new List<UUID>();
+            var RemoveList = new List<UUID>();
             foreach(KeyValuePair<UUID, HttpRequestData> kvp in m_HttpRequests)
             {
                 if(kvp.Value.ValidUntil < DateTime.UtcNow)
@@ -190,13 +191,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public ShutdownOrder ShutdownOrder
-        {
-            get
-            {
-                return ShutdownOrder.LogoutRegion;
-            }
-        }
+        public ShutdownOrder ShutdownOrder => ShutdownOrder.LogoutRegion;
 
         public void Shutdown()
         {
@@ -230,13 +225,7 @@ namespace SilverSim.Scripting.Lsl
                 return m_TotalUrls - UsedUrls;
             }
         }
-        public int UsedUrls
-        {
-            get
-            {
-                return m_UrlMap.Count;
-            }
-        }
+        public int UsedUrls => m_UrlMap.Count;
 
         public void LSLHttpRequestHandler(HttpRequest req)
         {
@@ -305,8 +294,7 @@ namespace SilverSim.Scripting.Lsl
             }
             req["x-remote-ip"] = req.CallerIP;
 
-            HttpRequestData data = new HttpRequestData(req, id, urlData.AllowXss);
-            LSLHttpRequestHandlerCommon(urlData, data);
+            LSLHttpRequestHandlerCommon(urlData, new HttpRequestData(req, id, urlData.AllowXss));
         }
 
         public void LSLNamedHttpRequestHandler(HttpRequest req)
@@ -375,8 +363,7 @@ namespace SilverSim.Scripting.Lsl
             }
             req["x-remote-ip"] = req.CallerIP;
 
-            HttpRequestData data = new HttpRequestData(req, parts[1], urlData.AllowXss);
-            LSLHttpRequestHandlerCommon(urlData, data);
+            LSLHttpRequestHandlerCommon(urlData, new HttpRequestData(req, parts[1], urlData.AllowXss));
         }
 
         void LSLHttpRequestHandlerCommon(URLData urlData, HttpRequestData data)
@@ -392,7 +379,7 @@ namespace SilverSim.Scripting.Lsl
                     data.Request.ErrorResponse(HttpStatusCode.InternalServerError, "script access error");
                     return;
                 }
-                byte[] buf = new byte[length];
+                var buf = new byte[length];
                 data.Request.Body.Read(buf, 0, length);
                 body = buf.FromUTF8Bytes();
             }
@@ -407,11 +394,12 @@ namespace SilverSim.Scripting.Lsl
                 return;
             }
 
-            HttpRequestEvent ev = new HttpRequestEvent();
-            ev.RequestID = reqid;
-            ev.Body = body;
-            ev.Method = data.Request.Method;
-
+            var ev = new HttpRequestEvent()
+            {
+                RequestID = reqid,
+                Body = body,
+                Method = data.Request.Method
+            };
             try
             {
                 SceneInterface scene = m_Scenes[urlData.SceneID];
@@ -460,7 +448,7 @@ namespace SilverSim.Scripting.Lsl
             if(m_HttpRequests.Remove(requestID, out reqdata))
             {
                 byte[] b = body.ToUTF8Bytes();
-                HttpStatusCode httpStatus = (HttpStatusCode)status;
+                var httpStatus = (HttpStatusCode)status;
                 using (HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType))
                 {
                     if (reqdata.AllowXss)
@@ -598,7 +586,7 @@ namespace SilverSim.Scripting.Lsl
 
                 if (m_UrlMap.Remove(urlid))
                 {
-                    List<UUID> RemoveList = new List<UUID>();
+                    var RemoveList = new List<UUID>();
                     foreach (KeyValuePair<UUID, HttpRequestData> kvp in m_HttpRequests)
                     {
                         if (kvp.Value.UrlID == urlid)
@@ -630,7 +618,7 @@ namespace SilverSim.Scripting.Lsl
 
                 if (m_NamedUrlMap.Remove(parts[1]))
                 {
-                    List<UUID> RemoveList = new List<UUID>();
+                    var RemoveList = new List<UUID>();
                     foreach (KeyValuePair<UUID, HttpRequestData> kvp in m_HttpRequests)
                     {
                         if (kvp.Value.UrlName == parts[1])

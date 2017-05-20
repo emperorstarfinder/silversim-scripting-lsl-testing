@@ -30,11 +30,6 @@ namespace SilverSim.Scripting.Lsl.Api.IM
     [Description("LSL/OSSL InstantMessage API")]
     public partial class InstantMessageApi : IScriptApi, IPlugin
     {
-        public InstantMessageApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

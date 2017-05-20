@@ -316,7 +316,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
         {
-            List<ObjectPart> list = new List<ObjectPart>();
+            var list = new List<ObjectPart>();
             ObjectPart thisPart = instance.Part;
             ObjectGroup thisGroup = thisPart.ObjectGroup;
             if (link == LINK_THIS)
@@ -347,11 +347,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
 
             return list;
-        }
-
-        public PrimitiveApi()
-        {
-            /* intentionally left empty */
         }
 
         public void Startup(ConfigurationLoader loader)

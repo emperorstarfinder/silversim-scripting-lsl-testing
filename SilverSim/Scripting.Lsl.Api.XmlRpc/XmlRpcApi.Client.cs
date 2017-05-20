@@ -66,7 +66,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             {
                 UUID key = UUID.Random;
                 ObjectPart part = instance.Part;
-                SendRemoteDataInfo rdi = new SendRemoteDataInfo(key, part.ObjectGroup.Scene.ID, part.ID, instance.Item.ID, channel.ToString(), dest, idata, sdata);
+                var rdi = new SendRemoteDataInfo(key, part.ObjectGroup.Scene.ID, part.ID, instance.Item.ID, channel.ToString(), dest, idata, sdata);
                 ThreadManager.CreateThread(SendRequest).Start(rdi);
                 return key;
             }
@@ -74,10 +74,10 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 
         void SendRequest(object o)
         {
-            SendRemoteDataInfo rdi = (SendRemoteDataInfo)o;
+            var rdi = (SendRemoteDataInfo)o;
 
-            XmlRpcStructs.XmlRpcRequest req = new XmlRpcStructs.XmlRpcRequest("llRemoteData");
-            Map m = new Map();
+            var req = new XmlRpcStructs.XmlRpcRequest("llRemoteData");
+            var m = new Map();
             m.Add("Channel", rdi.Channel);
             m.Add("StringValue", rdi.SData);
             m.Add("IntValue", rdi.IData);
@@ -89,10 +89,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             int idata = 0;
 
             using (Stream respstream = HttpClient.DoStreamRequest("POST", rdi.DestURI, null, "text/xml", reqdata.Length,
-                delegate (Stream s)
-                {
-                    s.Write(reqdata, 0, reqdata.Length);
-                }, false, 30000))
+                (Stream s) => s.Write(reqdata, 0, reqdata.Length), false, 30000))
             {
                 try
                 {
@@ -143,14 +140,15 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 ScriptInstance instance = item.ScriptInstance;
                 if (null != instance)
                 {
-                    RemoteDataEvent ev = new RemoteDataEvent();
-                    ev.Channel = UUID.Zero;
-                    ev.IData = idata;
-                    ev.MessageID = rdi.Key;
-                    ev.SData = sdata;
-                    ev.Sender = string.Empty;
-                    ev.Type = REMOTE_DATA_REPLY;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new RemoteDataEvent()
+                    {
+                        Channel = UUID.Zero,
+                        IData = idata,
+                        MessageID = rdi.Key,
+                        SData = sdata,
+                        Sender = string.Empty,
+                        Type = REMOTE_DATA_REPLY
+                    });
                 }
             }
         }

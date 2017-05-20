@@ -62,11 +62,6 @@ namespace SilverSim.Scripting.Lsl.Api.KeyframedMotion
         [APILevel(APIFlags.LSL)]
         public const int KFM_TRANSLATION = 0x2;
 
-        public KeyframedMotionApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -143,7 +138,7 @@ namespace SilverSim.Scripting.Lsl.Api.KeyframedMotion
                         return;
                     }
 
-                    KeyframeMotionList newMotion = new KeyframeMotionList();
+                    var newMotion = new KeyframeMotionList();
                     KeyframeMotionEntry entry;
 
                     switch(mode)

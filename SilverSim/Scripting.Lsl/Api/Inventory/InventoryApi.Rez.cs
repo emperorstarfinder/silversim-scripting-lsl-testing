@@ -294,18 +294,17 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             foreach (ObjectGroup sog in groups)
             {
                 scene.Add(sog);
-                ObjectRezEvent ev = new ObjectRezEvent();
-                ev.ObjectID = sog.ID;
-                rezzingpart.PostEvent(ev);
+                rezzingpart.PostEvent(new ObjectRezEvent()
+                {
+                    ObjectID = sog.ID
+                });
             }
 
             return true;
         }
 
-        public bool TryGetObjectInventory(ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory)
-        {
-            return TryGetObjectInventory(instance, instance.Part, name, out groups, out removeinventory);
-        }
+        public bool TryGetObjectInventory(ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory) =>
+            TryGetObjectInventory(instance, instance.Part, name, out groups, out removeinventory);
 
         public bool TryGetObjectInventory(ScriptInstance instance, ObjectPart linkpart, string name, out List<ObjectGroup> groups, out bool removeinventory)
         {

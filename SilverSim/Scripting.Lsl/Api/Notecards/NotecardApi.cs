@@ -30,11 +30,6 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
     [Description("LSL/OSSL Notecard API")]
     public partial class NotecardApi : IScriptApi, IPlugin
     {
-        public NotecardApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */

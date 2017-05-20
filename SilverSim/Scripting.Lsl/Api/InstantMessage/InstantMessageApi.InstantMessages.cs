@@ -41,25 +41,25 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 ObjectPart thisPart = instance.Part;
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
-                IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
-                GridInstantMessage im = new GridInstantMessage();
-                im.FromAgent.ID = thisPart.Owner.ID;
-                im.FromAgent.FullName = thisGroup.Name;
-                im.IMSessionID = thisGroup.ID;
-                im.ToAgent.ID = user;
-                im.Position = thisGroup.GlobalPosition;
-                im.RegionID = thisScene.ID;
-                im.Message = message;
-                im.Dialog = GridInstantMessageDialog.MessageFromObject;
+                var imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                Vector3 globPos = thisGroup.GlobalPosition;
                 string binBuck = string.Format("{0}/{1}/{2}/{3}\0",
                     thisScene.Name,
-                    (int)Math.Floor(im.Position.X),
-                    (int)Math.Floor(im.Position.Y),
-                    (int)Math.Floor(im.Position.Z));
-                im.BinaryBucket = binBuck.ToUTF8Bytes();
-                im.OnResult = delegate(GridInstantMessage imret, bool success) { };
-
-                imservice.Send(im);
+                    (int)Math.Floor(globPos.X),
+                    (int)Math.Floor(globPos.Y),
+                    (int)Math.Floor(globPos.Z));
+                imservice.Send(new GridInstantMessage()
+                {
+                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    IMSessionID = thisGroup.ID,
+                    ToAgent = new UUI(user),
+                    Position = globPos,
+                    RegionID = thisScene.ID,
+                    Message = message,
+                    Dialog = GridInstantMessageDialog.MessageFromObject,
+                    BinaryBucket = binBuck.ToUTF8Bytes(),
+                    OnResult = (GridInstantMessage imret, bool success) => { }
+                });
             }
         }
 
@@ -71,19 +71,18 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 ObjectPart thisPart = instance.Part;
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
-                IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
-                GridInstantMessage im = new GridInstantMessage();
-                im.FromAgent.ID = thisPart.Owner.ID;
-                im.FromAgent.FullName = thisGroup.Name;
-                im.IMSessionID = thisGroup.ID;
-                im.ToAgent.ID = user;
-                im.Position = thisGroup.GlobalPosition;
-                im.RegionID = thisScene.ID;
-                im.Message = message;
-                im.Dialog = GridInstantMessageDialog.MessageBox;
-                im.OnResult = delegate (GridInstantMessage imret, bool success) { };
-
-                imservice.Send(im);
+                var imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                imservice.Send(new GridInstantMessage()
+                {
+                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    IMSessionID = thisGroup.ID,
+                    ToAgent = new UUI(user),
+                    Position = thisGroup.GlobalPosition,
+                    RegionID = thisScene.ID,
+                    Message = message,
+                    Dialog = GridInstantMessageDialog.MessageBox,
+                    OnResult = (GridInstantMessage imret, bool success) => { }
+                });
             }
         }
 
@@ -96,19 +95,18 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
                 IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
-                GridInstantMessage im = new GridInstantMessage();
-                im.FromAgent.ID = thisPart.Owner.ID;
-                im.FromAgent.FullName = thisGroup.Name;
-                im.IMSessionID = thisGroup.ID;
-                im.ToAgent.ID = user;
-                im.Position = thisGroup.GlobalPosition;
-                im.RegionID = thisScene.ID;
-                im.Message = message;
-                im.BinaryBucket = (url + "\0").ToUTF8Bytes();
-                im.Dialog = GridInstantMessageDialog.GotoUrl;
-                im.OnResult = delegate (GridInstantMessage imret, bool success) { };
-
-                imservice.Send(im);
+                imservice.Send(new GridInstantMessage()
+                {
+                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    IMSessionID = thisGroup.ID,
+                    ToAgent = new UUI(user),
+                    Position = thisGroup.GlobalPosition,
+                    RegionID = thisScene.ID,
+                    Message = message,
+                    BinaryBucket = (url + "\0").ToUTF8Bytes(),
+                    Dialog = GridInstantMessageDialog.GotoUrl,
+                    OnResult = (GridInstantMessage imret, bool success) => { }
+                });
             }
         }
     }

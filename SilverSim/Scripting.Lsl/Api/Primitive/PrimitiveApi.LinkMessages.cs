@@ -53,13 +53,14 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                LinkMessageEvent ev = new LinkMessageEvent();
-                ev.SenderNumber = instance.Part.LinkNumber;
-                ev.TargetNumber = link;
-                ev.Number = num;
-                ev.Data = str;
-                ev.Id = id.ToString();
-
+                var ev = new LinkMessageEvent()
+                {
+                    SenderNumber = instance.Part.LinkNumber,
+                    TargetNumber = link,
+                    Number = num,
+                    Data = str,
+                    Id = id.ToString()
+                };
                 foreach (ObjectPart part in GetLinkTargets(instance, link))
                 {
                     EnqueueToScripts(part, ev);

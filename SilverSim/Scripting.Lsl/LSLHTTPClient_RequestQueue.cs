@@ -203,7 +203,7 @@ namespace SilverSim.Scripting.Lsl
 
         void ProcessThread(object o)
         {
-            UUID id = (UUID)o;
+            var id = (UUID)o;
             LSLHttpRequest req;
             for(;;)
             {
@@ -224,10 +224,12 @@ namespace SilverSim.Scripting.Lsl
                     continue;
                 }
 
-                HttpResponseEvent ev = new HttpResponseEvent();
-                ev.RequestID = req.RequestID;
-                ev.Body = string.Empty;
-                ev.Metadata = new AnArray();
+                var ev = new HttpResponseEvent()
+                {
+                    RequestID = req.RequestID,
+                    Body = string.Empty,
+                    Metadata = new AnArray()
+                };
                 if (IsURLAllowed(req.SceneID, req.Url))
                 {
                     try
@@ -284,13 +286,7 @@ namespace SilverSim.Scripting.Lsl
             /* intentionally left empty */
         }
 
-        public ShutdownOrder ShutdownOrder
-        {
-            get
-            {
-                return ShutdownOrder.LogoutRegion;
-            }
-        }
+        public ShutdownOrder ShutdownOrder => ShutdownOrder.LogoutRegion;
 
         public void Shutdown()
         {

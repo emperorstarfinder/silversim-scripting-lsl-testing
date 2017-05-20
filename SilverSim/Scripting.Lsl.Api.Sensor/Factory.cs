@@ -27,14 +27,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
     [PluginName("LSL_Sensor")]
     public sealed class Factory : IPluginFactory
     {
-        public Factory()
-        {
-
-        }
-
-        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
-        {
-            return new SensorApi();
-        }
+        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection) => 
+            new SensorApi();
     }
 }

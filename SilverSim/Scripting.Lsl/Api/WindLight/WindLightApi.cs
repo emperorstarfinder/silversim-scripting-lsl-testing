@@ -35,11 +35,6 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
     [Description("ASSL Agents API")]
     public class WindLightApi : IScriptApi, IPlugin
     {
-        public WindLightApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -118,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
         [APIExtension(APIExtension.WindLight_New, "rwlWindlightGetWaterSettings")]
         public AnArray WindlightGetWaterSettings(ScriptInstance instance, AnArray rules)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             EnvironmentSettings envsettings;
             lock(instance)
             {

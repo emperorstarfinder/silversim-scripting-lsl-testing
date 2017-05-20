@@ -51,11 +51,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         List<IAssetServicePlugin> m_AssetServicePlugins;
         List<IInventoryServicePlugin> m_InventoryServicePlugins;
 
-        public InventoryApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             m_UserAgentServicePlugins = loader.GetServicesByValue<IUserAgentServicePlugin>();
@@ -120,7 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         List<ObjectPart> DetermineLinks(ObjectPart thisPart, int link)
         {
-            List<ObjectPart> res = new List<ObjectPart>();
+            var res = new List<ObjectPart>();
             ObjectGroup grp = thisPart.ObjectGroup;
             switch(link)
             {
@@ -648,9 +643,11 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         return UUID.Zero;
                     }
 
-                    DataserverEvent e = new DataserverEvent();
-                    e.QueryID = UUID.Random;
-                    e.Data = landmark.LocalPos.ToString();
+                    var e = new DataserverEvent()
+                    {
+                        QueryID = UUID.Random,
+                        Data = landmark.LocalPos.ToString()
+                    };
                     instance.PostEvent(e);
                     return e.QueryID;
                 }
@@ -759,7 +756,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 IAgent targetAgent;
                 UUID id = destination.AsUUID;
                 UUI targetAgentId;
-                AnArray array = new AnArray();
+                var array = new AnArray();
                 InventoryServiceInterface inventoryService;
                 AssetServiceInterface assetService;
                 array.Add(inventory);
@@ -812,7 +809,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 IAgent targetAgent;
                 UUID id = destination.AsUUID;
                 UUI targetAgentId;
-                AnArray array = new AnArray();
+                var array = new AnArray();
                 InventoryServiceInterface inventoryService;
                 AssetServiceInterface assetService;
                 array.Add(inventory);
@@ -923,8 +920,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             ObjectPart origin,
             string folderName, AnArray inventoryitems, bool createFolderAndSkipNoCopy)
         {
-            List<InventoryItem> givenItems = new List<InventoryItem>();
-            List<UUID> assetIDs = new List<UUID>();
+            var givenItems = new List<InventoryItem>();
+            var assetIDs = new List<UUID>();
 
             foreach (IValue iv in inventoryitems)
             {
@@ -1013,7 +1010,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     agent = null;
                 }
 
-                Dictionary<AssetType, UUID> selectedFolder = new Dictionary<AssetType, UUID>();
+                var selectedFolder = new Dictionary<AssetType, UUID>();
 
                 if (m_CreateFolder)
                 {
@@ -1022,20 +1019,24 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         return;
                     }
                     UUID rootFolderID = folder.ID;
-                    folder = new InventoryFolder();
-                    folder.Owner = m_DestinationAgent;
-                    folder.ParentFolderID = rootFolderID;
-                    folder.InventoryType = InventoryType.Unknown;
-                    folder.Version = 1;
-                    folder.Name = m_DestinationFolder;
-                    folder.ID = UUID.Random;
+                    folder = new InventoryFolder()
+                    {
+                        Owner = m_DestinationAgent,
+                        ParentFolderID = rootFolderID,
+                        InventoryType = InventoryType.Unknown,
+                        Version = 1,
+                        Name = m_DestinationFolder,
+                        ID = UUID.Random
+                    };
                     m_InventoryService.Folder.Add(folder);
 
                     if (agent != null)
                     {
-                        BulkUpdateInventory msg = new BulkUpdateInventory();
-                        msg.AgentID = m_DestinationAgent.ID;
-                        msg.TransactionID = UUID.Zero;
+                        var msg = new BulkUpdateInventory()
+                        {
+                            AgentID = m_DestinationAgent.ID,
+                            TransactionID = UUID.Zero
+                        };
                         msg.AddInventoryFolder(folder);
                         agent.SendMessageAlways(msg, m_SceneID);
                     }
@@ -1049,8 +1050,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 foreach (InventoryItem sellItem in m_Items)
                 {
                     UUID folderID = UUID.Zero;
-                    AssetType[] assetTypes = new AssetType[] { sellItem.AssetType, AssetType.Object, AssetType.RootFolder };
-                    foreach (AssetType assetType in assetTypes)
+                    foreach (AssetType assetType in new AssetType[] { sellItem.AssetType, AssetType.Object, AssetType.RootFolder })
                     {
                         if (!selectedFolder.TryGetValue(assetType, out folderID))
                         {
@@ -1071,7 +1071,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         continue;
                     }
 
-                    InventoryItem item = new InventoryItem(sellItem);
+                    var item = new InventoryItem(sellItem);
                     item.LastOwner = item.Owner;
                     item.Owner = m_DestinationAgent;
                     item.ParentFolderID = folderID;
@@ -1079,10 +1079,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     m_InventoryService.Item.Add(item);
                     if (null != agent)
                     {
-                        UpdateCreateInventoryItem msg = new UpdateCreateInventoryItem();
-                        msg.AgentID = m_DestinationAgent.ID;
+                        var msg = new UpdateCreateInventoryItem()
+                        {
+                            AgentID = m_DestinationAgent.ID,
+                            SimApproved = true
+                        };
                         msg.AddItem(item, 0);
-                        msg.SimApproved = true;
                         agent.SendMessageAlways(msg, m_SceneID);
                     }
                     /* TODO: implement object InventoryOffered message */

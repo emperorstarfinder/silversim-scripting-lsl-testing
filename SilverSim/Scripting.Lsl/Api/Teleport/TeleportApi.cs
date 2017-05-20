@@ -41,11 +41,6 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
     [Description("LSL/OSSL Teleport API")]
     public class TeleportApi : IScriptApi, IPlugin
     {
-        public TeleportApi()
-        {
-
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -230,10 +225,11 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
 
-                    GridVector location = new GridVector();
-                    location.GridX = (ushort)globalCoordinates.X.Clamp(0, 65535);
-                    location.GridY = (ushort)globalCoordinates.Y.Clamp(0, 65535);
-                    TeleportAgentViaGlobalCoords(instance, agent, location, regionCoordinates, lookAt);
+                    TeleportAgentViaGlobalCoords(instance, agent, new GridVector()
+                    {
+                        GridX = (ushort)globalCoordinates.X.Clamp(0, 65535),
+                        GridY = (ushort)globalCoordinates.Y.Clamp(0, 65535)
+                    }, regionCoordinates, lookAt);
                 }
             }
         }
@@ -295,10 +291,11 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
 
-                    GridVector location = new GridVector();
-                    location.GridX = (ushort)regionX;
-                    location.GridY = (ushort)regionY;
-                    TeleportAgentViaGlobalCoords(instance, agent, location, position, lookAt);
+                    TeleportAgentViaGlobalCoords(instance, agent, new GridVector()
+                    {
+                        GridX = (ushort)regionX,
+                        GridY = (ushort)regionY
+                    }, position, lookAt);
                 }
             }
         }
@@ -360,10 +357,11 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
 
-                    GridVector location = new GridVector();
-                    location.X = (ushort)regionX.Clamp(0, 65535);
-                    location.Y = (ushort)regionY.Clamp(0, 65535);
-                    TeleportAgentViaGlobalCoords(instance, agent, location, position, lookAt);
+                    TeleportAgentViaGlobalCoords(instance, agent, new GridVector()
+                    {
+                        X = (ushort)regionX.Clamp(0, 65535),
+                        Y = (ushort)regionY.Clamp(0, 65535)
+                    }, position, lookAt);
                 }
             }
         }

@@ -574,14 +574,14 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (leftType == typeof(Tree.ConstantValueInt) && rightType == typeof(Tree.ConstantValueLong))
                             {
-                                ulong a = (ulong)((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value;
-                                ulong b = (ulong)((Tree.ConstantValueLong)(st.SubTree[1].Value)).Value;
+                                var a = (ulong)((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value;
+                                var b = (ulong)((Tree.ConstantValueLong)(st.SubTree[1].Value)).Value;
                                 st.Value = new Tree.ConstantValueLong((long)(a ^ b));
                             }
                             else if (leftType == typeof(Tree.ConstantValueLong) && rightType == typeof(Tree.ConstantValueInt))
                             {
-                                ulong a = (ulong)((Tree.ConstantValueLong)(st.SubTree[0].Value)).Value;
-                                ulong b = (ulong)((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value;
+                                var a = (ulong)((Tree.ConstantValueLong)(st.SubTree[0].Value)).Value;
+                                var b = (ulong)((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value;
                                 st.Value = new Tree.ConstantValueLong((long)(a ^ b));
                             }
                             else
@@ -678,8 +678,8 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 if (cs.UsesSinglePrecision)
                                 {
-                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
-                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    var l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    var r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
                                     st.Value = new Tree.ConstantValueInt(
                                         l > r ? 1 : 0);
                                 }
@@ -738,8 +738,8 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 if (cs.UsesSinglePrecision)
                                 {
-                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
-                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    var l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    var r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
                                     st.Value = new Tree.ConstantValueInt(
                                         l <
                                         r ? 1 : 0);
@@ -799,8 +799,8 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 if (cs.UsesSinglePrecision)
                                 {
-                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
-                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    var l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    var r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
                                     st.Value = new Tree.ConstantValueInt(
                                         l >=
                                         r ? 1 : 0);
@@ -860,8 +860,8 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 if (cs.UsesSinglePrecision)
                                 {
-                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
-                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    var l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    var r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
                                     st.Value = new Tree.ConstantValueInt(
                                         l <=
                                         r ? 1 : 0);
@@ -921,8 +921,8 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 if (cs.UsesSinglePrecision)
                                 {
-                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
-                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    var l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    var r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
                                     st.Value = new Tree.ConstantValueInt(
                                         l !=
                                         r ? 1 : 0);
@@ -994,8 +994,8 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 if (cs.UsesSinglePrecision)
                                 {
-                                    float l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
-                                    float r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
+                                    var l = (float)((Tree.ConstantValueFloat)(st.SubTree[0].Value)).Value;
+                                    var r = (float)((Tree.ConstantValueFloat)(st.SubTree[1].Value)).Value;
                                     st.Value = new Tree.ConstantValueInt(
                                         l ==
                                         r ? 1 : 0);
@@ -1091,14 +1091,14 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (leftType == typeof(Tree.ConstantValueLong) && rightType == typeof(Tree.ConstantValueInt))
                             {
-                                ulong a = (ulong)((Tree.ConstantValueLong)(st.SubTree[0].Value)).Value;
-                                ulong b = (ulong)((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value;
+                                var a = (ulong)((Tree.ConstantValueLong)(st.SubTree[0].Value)).Value;
+                                var b = (ulong)((Tree.ConstantValueInt)(st.SubTree[1].Value)).Value;
                                 st.Value = new Tree.ConstantValueLong((long)(a | b));
                             }
                             else if (leftType == typeof(Tree.ConstantValueInt) && rightType == typeof(Tree.ConstantValueLong))
                             {
-                                ulong a = (ulong)((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value;
-                                ulong b = (ulong)((Tree.ConstantValueLong)(st.SubTree[1].Value)).Value;
+                                var a = (ulong)((Tree.ConstantValueInt)(st.SubTree[0].Value)).Value;
+                                var b = (ulong)((Tree.ConstantValueLong)(st.SubTree[1].Value)).Value;
                                 st.Value = new Tree.ConstantValueLong((long)(a | b));
                             }
                             else
@@ -1363,7 +1363,7 @@ namespace SilverSim.Scripting.Lsl
 
                                     if (isConstant)
                                     {
-                                        StringBuilder o = new StringBuilder();
+                                        var o = new StringBuilder();
                                         foreach (Tree sst in st.SubTree[0].SubTree)
                                         {
                                             o.Append(sst.Value.ToString());
@@ -1505,16 +1505,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     return false;
                 }
-                return (++Position < Tree.SubTree.Count);
+                return ++Position < Tree.SubTree.Count;
             }
 
-            public Tree Current
-            {
-                get
-                {
-                    return Tree.SubTree[Position];
-                }
-            }
+            public Tree Current => Tree.SubTree[Position];
         }
 
         sealed class ListTreeEnumReverseState
@@ -1537,18 +1531,12 @@ namespace SilverSim.Scripting.Lsl
                 return (--Position >= 0);
             }
 
-            public Tree Current
-            {
-                get
-                {
-                    return Tree.SubTree[Position];
-                }
-            }
+            public Tree Current => Tree.SubTree[Position];
         }
 
         void SolveMaxNegValues(CompileState cs, Tree resolvetree)
         {
-            List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
+            var enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(resolvetree));
             while (enumeratorStack.Count != 0)
             {
@@ -1579,7 +1567,7 @@ namespace SilverSim.Scripting.Lsl
         #region Order Tree according to definitions
         void OrderOperators_ElementSelector(Tree tree, int lineNumber, CultureInfo currentCulture)
         {
-            List<Tree> enumeratorStack = new List<Tree>();
+            var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
             while (enumeratorStack.Count != 0)
             {
@@ -1655,7 +1643,7 @@ namespace SilverSim.Scripting.Lsl
 
         void OrderOperators_IncsDecs(Tree tree, int lineNumber, CultureInfo currentCulture)
         {
-            List<Tree> enumeratorStack = new List<Tree>();
+            var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
             while (enumeratorStack.Count != 0)
             {
@@ -1735,7 +1723,7 @@ namespace SilverSim.Scripting.Lsl
 
         void OrderOperators_Common(Tree tree, List<string> operators, int lineNumber, CultureInfo currentCulture)
         {
-            List<Tree> enumeratorStack = new List<Tree>();
+            var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
             while (enumeratorStack.Count != 0)
             {
@@ -1859,7 +1847,7 @@ namespace SilverSim.Scripting.Lsl
 
         void OrderOperators_Assignments(Tree tree, int lineNumber, CultureInfo currentCulture)
         {
-            List<Tree> enumeratorStack = new List<Tree>();
+            var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
             while (enumeratorStack.Count != 0)
             {
@@ -1989,7 +1977,7 @@ namespace SilverSim.Scripting.Lsl
 
         void OrderOperators_UnaryLefts(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
-            List<Tree> enumeratorStack = new List<Tree>();
+            var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
             while (enumeratorStack.Count != 0)
             {
@@ -2165,8 +2153,8 @@ namespace SilverSim.Scripting.Lsl
 
         void OrderBrackets_SeparateArguments(Tree resolvetree, string elemname, Tree.EntryType type, int lineNumber, CultureInfo currentCulture)
         { 
-            List<int> argBegin = new List<int>();
-            List<int> argEnd = new List<int>();
+            var argBegin = new List<int>();
+            var argEnd = new List<int>();
             int i;
             int n = resolvetree.SubTree.Count;
             bool paraLast = false;
@@ -2209,12 +2197,14 @@ namespace SilverSim.Scripting.Lsl
                 throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "0Invalid", "{ 0} invalid"), elemname));
             }
 
-            List<Tree> arguments = new List<Tree>();
+            var arguments = new List<Tree>();
             n = argBegin.Count;
             for(i = 0; i < n; ++i)
             {
-                Tree st = new Tree();
-                st.Type = type;
+                var st = new Tree()
+                {
+                    Type = type
+                };
                 st.SubTree.AddRange(resolvetree.SubTree.GetRange(argBegin[i], argEnd[i] - argBegin[i]));
                 arguments.Add(st);
             }
@@ -2232,7 +2222,7 @@ namespace SilverSim.Scripting.Lsl
             }
             cs.ILGen.Writer.WriteLine("  //** Tree Flat End");
 #endif
-            List<KeyValuePair<string, int>> parenStack = new List<KeyValuePair<string, int>>();
+            var parenStack = new List<KeyValuePair<string, int>>();
             int i = 0;
             
             while(i < resolvetree.SubTree.Count)
@@ -2681,7 +2671,7 @@ namespace SilverSim.Scripting.Lsl
         Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames, int lineNumber, CultureInfo currentCulture)
         {
             PreprocessLine(cs, expressionLine);
-            Tree expressionTree = new Tree(expressionLine);
+            var expressionTree = new Tree(expressionLine);
             IdentifyReservedWords(cs, expressionTree);
             IdentifyVariables(cs, expressionTree, localVarNames);
             IdentifyFunctions(cs, expressionTree, lineNumber, currentCulture);
@@ -2690,7 +2680,7 @@ namespace SilverSim.Scripting.Lsl
             IdentifyDeclarations(cs, expressionTree);
 
             int n = expressionTree.SubTree.Count;
-            StringBuilder msg = new StringBuilder();
+            var msg = new StringBuilder();
             for(int i = 0; i < n; ++i)
             {
                 Tree st = expressionTree.SubTree[i];

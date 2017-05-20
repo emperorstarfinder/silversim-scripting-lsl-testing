@@ -26,11 +26,9 @@ using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
 {
-    public partial class LSLCompiler 
+    public partial class LSLCompiler
     {
-        public IScriptState StateFromXml(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item)
-        {
-            return Script.SavedScriptState.FromXML(reader, attrs, item);
-        }
+        public IScriptState StateFromXml(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item) =>
+            Script.SavedScriptState.FromXML(reader, attrs, item);
     }
 }

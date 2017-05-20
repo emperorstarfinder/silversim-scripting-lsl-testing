@@ -80,6 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 return new RwLockedDictionary<int, AtTargetInfo>();
             });
         });
+
         public RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>> m_RotTargets = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>>(delegate ()
         {
             return new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>(delegate ()
@@ -87,6 +88,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 return new RwLockedDictionary<int, RotTargetInfo>();
             });
         });
+
         SceneList m_Scenes;
         public RwLockedDictionary<UUID, Timer> m_SceneTimers = new RwLockedDictionary<UUID, Timer>();
 
@@ -124,19 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             }
         }
 
-
-        public TargetingApi()
-        {
-
-        }
-
-        public ShutdownOrder ShutdownOrder
-        {
-            get
-            {
-                return ShutdownOrder.LogoutRegion;
-            }
-        }
+        public ShutdownOrder ShutdownOrder => ShutdownOrder.LogoutRegion;
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -151,10 +141,10 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
 
         void OnSceneAdd(SceneInterface scene)
         {
-            Timer t = new Timer(0.1); /* let's do 10Hz here */
+            var t = new Timer(0.1); /* let's do 10Hz here */
             m_SceneTimers.Add(scene.ID, t);
             UUID sceneId = scene.ID;
-            t.Elapsed += delegate (object sender, ElapsedEventArgs args)
+            t.Elapsed += (object sender, ElapsedEventArgs args) =>
             {
                 OnTimer(sender, sceneId);
             };
@@ -164,10 +154,10 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
         void OnTimer(object sender, UUID sceneID)
         {
             SceneInterface scene;
-            List<int> removeList = new List<int>();
+            var removeList = new List<int>();
             if (m_Scenes.TryGetValue(sceneID, out scene))
             {
-                Dictionary<UUID, bool> removeItems = new Dictionary<UUID, bool>();
+                var removeItems = new Dictionary<UUID, bool>();
 
                 #region AtTargets
                 RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>> atTargets = m_AtTargets[sceneID];
@@ -192,16 +182,16 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                             }
                             else if (pos.ApproxEquals(info.TargetPosition, info.Epsilon))
                             {
-                                AtTargetEvent ev = new AtTargetEvent();
-                                ev.Handle = kvpInner.Key;
-                                ev.OurPosition = pos;
-                                ev.TargetPosition = info.TargetPosition;
-                                item.ScriptInstance.PostEvent(ev);
+                                item.ScriptInstance.PostEvent(new AtTargetEvent()
+                                {
+                                    Handle = kvpInner.Key,
+                                    OurPosition = pos,
+                                    TargetPosition = info.TargetPosition
+                                });
                             }
                             else
                             {
-                                NotAtTargetEvent ev = new NotAtTargetEvent();
-                                item.ScriptInstance.PostEvent(ev);
+                                item.ScriptInstance.PostEvent(new NotAtTargetEvent());
                             }
                         }
                         catch
@@ -239,16 +229,16 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                             }
                             else if (rot.ApproxEquals(info.TargetRotation, info.Epsilon))
                             {
-                                AtRotTargetEvent ev = new AtRotTargetEvent();
-                                ev.Handle = kvpInner.Key;
-                                ev.OurRotation = rot;
-                                ev.TargetRotation = info.TargetRotation;
-                                item.ScriptInstance.PostEvent(ev);
+                                item.ScriptInstance.PostEvent(new AtRotTargetEvent()
+                                {
+                                    Handle = kvpInner.Key,
+                                    OurRotation = rot,
+                                    TargetRotation = info.TargetRotation
+                                });
                             }
                             else
                             {
-                                NotAtRotTargetEvent ev = new NotAtRotTargetEvent();
-                                item.ScriptInstance.PostEvent(ev);
+                                item.ScriptInstance.PostEvent(new NotAtRotTargetEvent());
                             }
                         }
                         catch
@@ -271,7 +261,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             }
             else
             {
-                Timer t = sender as Timer;
+                var t = sender as Timer;
                 if (t != null)
                 {
                     t.Stop();
@@ -370,13 +360,15 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
 
-                AtTargetInfo info = new AtTargetInfo();
-                info.ObjectGroup = grp;
-                info.SceneID = scene.ID;
-                info.PartID = part.ID;
-                info.ItemID = item.ID;
-                info.TargetPosition = position;
-                info.Epsilon = range;
+                var info = new AtTargetInfo()
+                {
+                    ObjectGroup = grp,
+                    SceneID = scene.ID,
+                    PartID = part.ID,
+                    ItemID = item.ID,
+                    TargetPosition = position,
+                    Epsilon = range
+                };
                 RwLockedDictionary<int, AtTargetInfo> targetList = m_AtTargets[info.SceneID][info.ItemID];
                 while(targetList.Count >= GetMaxPosTargets(info.SceneID))
                 {
@@ -427,13 +419,15 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
 
-                RotTargetInfo info = new RotTargetInfo();
-                info.ObjectGroup = grp;
-                info.SceneID = scene.ID;
-                info.PartID = part.ID;
-                info.ItemID = item.ID;
-                info.TargetRotation = rot;
-                info.Epsilon = error;
+                var info = new RotTargetInfo()
+                {
+                    ObjectGroup = grp,
+                    SceneID = scene.ID,
+                    PartID = part.ID,
+                    ItemID = item.ID,
+                    TargetRotation = rot,
+                    Epsilon = error
+                };
                 RwLockedDictionary<int, RotTargetInfo> targetList = m_RotTargets[info.SceneID][info.ItemID];
                 while (targetList.Count >= GetMaxRotTargets(info.SceneID))
                 {
@@ -495,7 +489,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             {
                 return;
             }
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock (script)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
@@ -503,15 +497,17 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>> atTargets;
                 if (m_AtTargets.TryGetValue(scene.ID, out atTargets))
                 {
-                    int handle = (int)args[0];
-                    AtTargetInfo info = new AtTargetInfo();
-                    info.SceneID = scene.ID;
-                    info.PartID = instance.Part.ID;
-                    info.ObjectGroup = grp;
-                    info.ItemID = instance.Item.ID;
-                    info.Created = Date.UnixTimeToDateTime((ulong)args[1]);
-                    info.TargetPosition = (Vector3)args[2];
-                    info.Epsilon = (double)args[3];
+                    var handle = (int)args[0];
+                    var info = new AtTargetInfo()
+                    {
+                        SceneID = scene.ID,
+                        PartID = instance.Part.ID,
+                        ObjectGroup = grp,
+                        ItemID = instance.Item.ID,
+                        Created = Date.UnixTimeToDateTime((ulong)args[1]),
+                        TargetPosition = (Vector3)args[2],
+                        Epsilon = (double)args[3]
+                    };
                     atTargets[info.ItemID][handle] = info;
                 }
             }
@@ -521,7 +517,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
         [ExecutedOnSerialization("target")]
         public void SerializeAtTarget(ScriptInstance instance, List<object> res)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock (script)
             {
                 SceneInterface scene;
@@ -563,7 +559,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             {
                 return;
             }
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock (script)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
@@ -571,15 +567,17 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>> rotTargets;
                 if (m_RotTargets.TryGetValue(scene.ID, out rotTargets))
                 {
-                    int handle = (int)args[0];
-                    RotTargetInfo info = new RotTargetInfo();
-                    info.SceneID = scene.ID;
-                    info.PartID = instance.Part.ID;
-                    info.ObjectGroup = grp;
-                    info.ItemID = instance.Item.ID;
-                    info.Created = Date.UnixTimeToDateTime((ulong)args[1]);
-                    info.TargetRotation = (Quaternion)args[2];
-                    info.Epsilon = (double)args[3];
+                    var handle = (int)args[0];
+                    var info = new RotTargetInfo()
+                    {
+                        SceneID = scene.ID,
+                        PartID = instance.Part.ID,
+                        ObjectGroup = grp,
+                        ItemID = instance.Item.ID,
+                        Created = Date.UnixTimeToDateTime((ulong)args[1]),
+                        TargetRotation = (Quaternion)args[2],
+                        Epsilon = (double)args[3]
+                    };
                     rotTargets[info.ItemID][handle] = info;
                 }
             }
@@ -589,7 +587,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
         [ExecutedOnSerialization("rot_target")]
         public void SerializeRotTarget(ScriptInstance instance, List<object> res)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock (script)
             {
                 SceneInterface scene;

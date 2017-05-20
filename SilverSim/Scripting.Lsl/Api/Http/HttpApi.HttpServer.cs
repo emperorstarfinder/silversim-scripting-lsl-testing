@@ -54,19 +54,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item);
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = urlID;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_GRANTED,
+                        Body = urlID
+                    });
                 }
                 catch
                 {
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = string.Empty;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_DENIED,
+                        Body = string.Empty
+                    });
                 }
                 return reqID;
             }
@@ -87,19 +89,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, allowXss);
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = urlID;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_GRANTED,
+                        Body = urlID
+                    });
                 }
                 catch
                 {
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = string.Empty;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_DENIED,
+                        Body = string.Empty
+                    });
                 }
                 return reqID;
             }
@@ -114,19 +118,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, itemname);
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = urlID;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_GRANTED,
+                        Body = urlID
+                    });
                 }
                 catch
                 {
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = string.Empty;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_DENIED,
+                        Body = string.Empty
+                    });
                 }
                 return reqID;
             }
@@ -150,19 +156,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item);
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = urlID;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_GRANTED,
+                        Body = urlID
+                    });
                 }
                 catch
                 {
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = string.Empty;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_DENIED,
+                        Body = string.Empty
+                    });
                 }
                 return reqID;
             }
@@ -183,19 +191,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, allowXss);
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = urlID;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_GRANTED,
+                        Body = urlID
+                    });
                 }
                 catch
                 {
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = string.Empty;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_DENIED,
+                        Body = string.Empty
+                    });
                 }
                 return reqID;
             }
@@ -210,19 +220,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, itemname);
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_GRANTED;
-                    ev.Body = urlID;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_GRANTED,
+                        Body = urlID
+                    });
                 }
                 catch
                 {
-                    HttpRequestEvent ev = new HttpRequestEvent();
-                    ev.RequestID = reqID;
-                    ev.Method = URL_REQUEST_DENIED;
-                    ev.Body = string.Empty;
-                    instance.PostEvent(ev);
+                    instance.PostEvent(new HttpRequestEvent()
+                    {
+                        RequestID = reqID,
+                        Method = URL_REQUEST_DENIED,
+                        Body = string.Empty
+                    });
                 }
                 return reqID;
             }
@@ -293,7 +305,6 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 switch(contenttype)
                 {
                     default:
-                    case CONTENT_TYPE_TEXT:
                         m_HTTPHandler.SetContentType(requestID, "text/plain");
                         break;
                     case CONTENT_TYPE_HTML:

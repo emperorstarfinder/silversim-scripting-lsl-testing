@@ -172,7 +172,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 BoundingBox box;
                 ObjectPart part;
                 ObjectGroup grp;
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 if(scene.Agents.TryGetValue(objectKey.AsUUID, out agent))
                 {
                     agent.GetBoundingBox(out box);
@@ -291,7 +291,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llGetObjectDetails")]
         public AnArray GetObjectDetails(ScriptInstance instance, LSLKey key, AnArray param)
         {
-            AnArray parout = new AnArray();
+            var parout = new AnArray();
             lock (instance)
             {
                 ObjectPart obj;
@@ -599,7 +599,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     case STATUS_BLOCK_GRAB_OBJECT:
                         throw new NotImplementedException("llGetStatus(STATUS_BLOCK_GRAB_OBJECT)");
 
-                    case STATUS_CAST_SHADOWS:
                     default:
                         return 0;
                 }
@@ -627,10 +626,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 IObject obj = instance.Part.ObjectGroup.Scene.Objects[objectUUID];
-                MessageObjectEvent ev = new MessageObjectEvent();
-                ev.Data = message;
-                ev.ObjectID = instance.Part.ObjectGroup.ID;
-                obj.PostEvent(ev);
+                obj.PostEvent(new MessageObjectEvent()
+                {
+                    Data = message,
+                    ObjectID = instance.Part.ObjectGroup.ID
+                });
             }
         }
 
@@ -643,7 +643,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 ObjectPart thisPart = instance.Part;
                 if(thisPart.ObjectGroup.Scene.RootAgents.TryGetValue(avatar.AsUUID, out agent))
                 {
-                    List<int> aps = new List<int>();
+                    var aps = new List<int>();
 
                     foreach(IValue iv in attachmentPoints)
                     {
@@ -653,9 +653,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     bool msgAll = aps.Contains(OS_ATTACH_MSG_ALL);
                     bool invert = (options & OS_ATTACH_MSG_INVERT_POINTS) != 0;
 
-                    MessageObjectEvent ev = new MessageObjectEvent();
-                    ev.Data = message;
-                    ev.ObjectID = instance.Part.ObjectGroup.ID;
+                    var ev = new MessageObjectEvent()
+                    {
+                        Data = message,
+                        ObjectID = instance.Part.ObjectGroup.ID
+                    };
 
                     foreach (AttachmentPoint ap in typeof(AttachmentPoint).GetEnumValues())
                     {

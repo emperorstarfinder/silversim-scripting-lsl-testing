@@ -67,11 +67,6 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.OSSL)]
         public const int OS_LISTEN_REGEX_MESSAGE = 0x2;
 
-        public ChatApi()
-        {
-            /* intentionally left empty */
-        }
-
         public void Startup(ConfigurationLoader loader)
         {
             /* nothing to do */

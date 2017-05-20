@@ -27,14 +27,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
     [PluginName("LSL_Terraform")]
     public sealed class Factory : IPluginFactory
     {
-        public Factory()
-        {
-
-        }
-
-        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
-        {
-            return new TerraformApi();
-        }
+        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection) =>
+            new TerraformApi();
     }
 }

@@ -203,7 +203,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         instance.Part.PassCollisionMode = PassEventMode.Never;
                         break;
 
-                    case PASS_IF_NOT_HANDLED:
                     default:
                         instance.Part.PassCollisionMode = PassEventMode.IfNotHandled;
                         break;
@@ -218,7 +217,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 switch (pass)
                 {
-                    case PASS_ALWAYS:
                     default:
                         instance.Part.PassCollisionMode = PassEventMode.Always;
                         break;
@@ -312,7 +310,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 ObjectPart thisPart = instance.Part;
                 SceneInterface scene = thisPart.ObjectGroup.Scene;
                 ObjectPart part;
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 if(!scene.Primitives.TryGetValue(key.AsUUID, out part))
                 {
                     return res;
@@ -385,7 +383,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetText")]
         public void SetText(ScriptInstance instance, string text, Vector3 color, double alpha)
         {
-            ObjectPart.TextParam tp = new ObjectPart.TextParam();
+            var tp = new ObjectPart.TextParam();
             tp.Text = text;
             tp.TextColor = new ColorAlpha(color, alpha);
             lock (instance)
@@ -406,7 +404,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llTargetOmega")]
         public void TargetOmega(ScriptInstance instance, Vector3 axis, double spinrate, double gain)
         {
-            ObjectPart.OmegaParam op = new ObjectPart.OmegaParam();
+            var op = new ObjectPart.OmegaParam();
             op.Axis = axis;
             op.Spinrate = spinrate;
             op.Gain = gain;

@@ -27,14 +27,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
     [PluginName("LSL_DynamicTexture")]
     public sealed class Factory : IPluginFactory
     {
-        public Factory()
-        {
-
-        }
-
-        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection)
-        {
-            return new DynamicTextureApi();
-        }
+        public IPlugin Initialize(ConfigurationLoader loader, IConfig ownSection) =>
+            new DynamicTextureApi();
     }
 }

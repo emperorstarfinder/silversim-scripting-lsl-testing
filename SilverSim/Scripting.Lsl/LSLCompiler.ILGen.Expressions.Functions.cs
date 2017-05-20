@@ -209,7 +209,7 @@ namespace SilverSim.Scripting.Lsl
                 Type t = o.GetType();
                 if(t == typeof(ApiMethodInfo))
                 {
-                    ApiMethodInfo methodInfo = (ApiMethodInfo)o;
+                    var methodInfo = (ApiMethodInfo)o;
                     ParameterInfo[] pi = methodInfo.Method.GetParameters();
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
@@ -223,7 +223,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if(t == typeof(FunctionInfo))
                 {
-                    FunctionInfo methodInfo = (FunctionInfo)o;
+                    var methodInfo = (FunctionInfo)o;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
@@ -249,7 +249,7 @@ namespace SilverSim.Scripting.Lsl
                 Type t = o.GetType();
                 if (t == typeof(ApiMethodInfo))
                 {
-                    ApiMethodInfo methodInfo = (ApiMethodInfo)o;
+                    var methodInfo = (ApiMethodInfo)o;
                     ParameterInfo[] pi = methodInfo.Method.GetParameters();
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
@@ -271,7 +271,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (t == typeof(FunctionInfo))
                 {
-                    FunctionInfo methodInfo = (FunctionInfo)o;
+                    var methodInfo = (FunctionInfo)o;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
@@ -301,7 +301,7 @@ namespace SilverSim.Scripting.Lsl
             Type GenerateFunctionCall(CompileState compileState)
             {
                 compileState.ILGen.BeginScope();
-                LocalBuilder[] lbs = new LocalBuilder[m_Parameters.Count];
+                var lbs = new LocalBuilder[m_Parameters.Count];
                 for (int i = 0; i < lbs.Length; ++i)
                 {
                     lbs[i] = compileState.ILGen.DeclareLocal(m_Parameters[i].ParameterType);
@@ -317,7 +317,7 @@ namespace SilverSim.Scripting.Lsl
                 Type ot = o.GetType();
                 if (ot == typeof(FunctionInfo))
                 {
-                    FunctionInfo funcInfo = o as FunctionInfo;
+                    var funcInfo = o as FunctionInfo;
                     /* load script instance reference */
                     if (null == compileState.StateTypeBuilder)
                     {
@@ -346,10 +346,10 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (ot == typeof(ApiMethodInfo))
                 {
-                    ApiMethodInfo apiMethod = (ApiMethodInfo)o;
+                    var apiMethod = (ApiMethodInfo)o;
                     MethodInfo methodInfo = apiMethod.Method;
-                    ScriptApiNameAttribute apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
-                    ThreatLevelRequiredAttribute threatLevelAttr = (ThreatLevelRequiredAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ThreatLevelRequiredAttribute));
+                    var apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
+                    var threatLevelAttr = (ThreatLevelRequiredAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ThreatLevelRequiredAttribute));
 
                     if (null != threatLevelAttr)
                     {
@@ -395,7 +395,7 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Call, apiMethod.Method);
                     GenDecCallDepthCount(compileState);
 
-                    ForcedSleepAttribute forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ForcedSleepAttribute));
+                    var forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ForcedSleepAttribute));
                     if (forcedSleep != null)
                     {
                         compileState.ILGen.Emit(OpCodes.Ldarg_0);

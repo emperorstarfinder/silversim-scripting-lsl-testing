@@ -177,7 +177,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     return new AnArray();
                 }
 
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 foreach (IValue iv in param)
                 {
                     switch (iv.AsInt)
@@ -263,10 +263,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llGetPrimMediaParams")]
         [ForcedSleep(1.0)]
-        public AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
-        {
-            return GetLinkMedia(instance, LINK_THIS, face, param);
-        }
+        public AnArray GetPrimMediaParams(ScriptInstance instance, int face, AnArray param) =>
+            GetLinkMedia(instance, LINK_THIS, face, param);
 
         [APILevel(APIFlags.LSL)]
         public const int STATUS_OK = 0;
@@ -476,10 +474,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llSetPrimMediaParams")]
         [ForcedSleep(1.0)]
-        public int SetPrimMediaParams(ScriptInstance instance, int face, AnArray param)
-        {
-            return SetLinkMedia(instance, LINK_THIS, face, param);
-        }
+        public int SetPrimMediaParams(ScriptInstance instance, int face, AnArray param) =>
+            SetLinkMedia(instance, LINK_THIS, face, param);
 
         [APILevel(APIFlags.LSL, "llSetPrimURL")]
         public void SetPrimURL(ScriptInstance instance, string url)
