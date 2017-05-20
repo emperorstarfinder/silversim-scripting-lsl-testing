@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
@@ -33,26 +35,26 @@ namespace SilverSim.Scripting.Lsl
     public partial class LSLCompiler
     {
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
-        sealed class BinaryOperatorExpression : IExpressionStackElement
+        private sealed class BinaryOperatorExpression : IExpressionStackElement
         {
-            readonly string m_Operator;
-            LocalBuilder m_LeftHandLocal;
-            LocalBuilder m_RightHandLocal;
-            readonly Tree m_LeftHand;
-            Type m_LeftHandType;
-            readonly Tree m_RightHand;
-            Type m_RightHandType;
-            readonly int m_LineNumber;
-            enum State
+            private readonly string m_Operator;
+            private LocalBuilder m_LeftHandLocal;
+            private LocalBuilder m_RightHandLocal;
+            private readonly Tree m_LeftHand;
+            private Type m_LeftHandType;
+            private readonly Tree m_RightHand;
+            private Type m_RightHandType;
+            private readonly int m_LineNumber;
+            private enum State
             {
                 LeftHand,
                 RightHand
             }
 
-            readonly List<State> m_ProcessOrder;
-            bool m_HaveBeginScope;
+            private readonly List<State> m_ProcessOrder;
+            private bool m_HaveBeginScope;
 
-            static readonly Dictionary<string, State[]> m_ProcessOrders = new Dictionary<string, State[]>();
+            private static readonly Dictionary<string, State[]> m_ProcessOrders = new Dictionary<string, State[]>();
 
             static BinaryOperatorExpression()
             {
@@ -84,7 +86,7 @@ namespace SilverSim.Scripting.Lsl
                 m_ProcessOrders.Add("%=", new State[] { State.RightHand, State.LeftHand });
             }
 
-            void BeginScope(CompileState compileState)
+            private void BeginScope(CompileState compileState)
             {
                 if(m_HaveBeginScope)
                 {
@@ -94,7 +96,7 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ILGen.BeginScope();
             }
 
-            LocalBuilder DeclareLocal(CompileState compileState, Type localType)
+            private LocalBuilder DeclareLocal(CompileState compileState, Type localType)
             {
                 if(!m_HaveBeginScope)
                 {
@@ -104,7 +106,7 @@ namespace SilverSim.Scripting.Lsl
                 return compileState.ILGen.DeclareLocal(localType);
             }
 
-            ReturnTypeException Return(CompileState compileState, Type t)
+            private ReturnTypeException Return(CompileState compileState, Type t)
             {
                 if(m_HaveBeginScope)
                 {
@@ -114,7 +116,6 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public BinaryOperatorExpression(
-                LSLCompiler lslCompiler,
                 CompileState compileState,
                 Tree functionTree,
                 int lineNumber,
@@ -227,14 +228,13 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-
             public Tree ProcessNextStep(
-                LSLCompiler lslCompiler, 
-                CompileState compileState, 
+                LSLCompiler lslCompiler,
+                CompileState compileState,
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
-                if(null != innerExpressionReturn)
+                if(innerExpressionReturn != null)
                 {
                     switch(m_ProcessOrder[0])
                     {
@@ -258,11 +258,10 @@ namespace SilverSim.Scripting.Lsl
 
                         default:
                             break;
-
                     }
                     m_ProcessOrder.RemoveAt(0);
                 }
-                
+
                 if(m_ProcessOrder.Count != 0)
                 {
                     switch(m_ProcessOrder[0])
@@ -281,10 +280,9 @@ namespace SilverSim.Scripting.Lsl
                 {
                     switch(m_Operator)
                     {
-                        case ".": 
+                        case ".":
                             ProcessOperator_Member(
-                                compileState,
-                                localVars);
+                                compileState);
                             break;
 
                         case "=":
@@ -322,8 +320,7 @@ namespace SilverSim.Scripting.Lsl
                         case "<<":
                         case ">>":
                             ProcessOperator_Return(
-                                compileState,
-                                localVars);
+                                compileState);
                             break;
 
                         default:
@@ -334,8 +331,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public void ProcessOperator_Member(
-                CompileState compileState,
-                Dictionary<string, object> localVars)
+                CompileState compileState)
             {
                 if (m_RightHand.Type != Tree.EntryType.Unknown &&
                     m_RightHand.Type != Tree.EntryType.Variable)
@@ -550,7 +546,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Addition", new Type[]{m_LeftHandType, m_RightHandType});
-                        if (null != mi)
+                        if (mi != null)
                         {
                             if (mi.ReturnType != m_LeftHandType)
                             {
@@ -572,7 +568,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
-                        if (null != mi)
+                        if (mi != null)
                         {
                             if (mi.ReturnType != m_LeftHandType)
                             {
@@ -599,7 +595,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
-                        if(null != mi)
+                        if(mi != null)
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
@@ -626,7 +622,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Division", new Type[]{m_LeftHandType, m_RightHandType});
-                        if(null != mi)
+                        if(mi != null)
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
@@ -653,7 +649,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Modulus", new Type[]{m_LeftHandType, m_RightHandType});
-                        if(null != mi)
+                        if(mi != null)
                         {
                             if(mi.ReturnType != m_LeftHandType)
                             {
@@ -720,8 +716,7 @@ namespace SilverSim.Scripting.Lsl
 
             [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule")]
             public void ProcessOperator_Return(
-                CompileState compileState,
-                Dictionary<string, object> localVars)
+                CompileState compileState)
             {
                 MethodInfo mi;
                 switch(m_Operator)
@@ -835,7 +830,7 @@ namespace SilverSim.Scripting.Lsl
                         if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
                         {
                             mi = m_LeftHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
-                            if (null != mi)
+                            if (mi != null)
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -850,7 +845,7 @@ namespace SilverSim.Scripting.Lsl
                         else if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType)
                         {
                             mi = m_RightHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
-                            if (null != mi)
+                            if (mi != null)
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -897,7 +892,7 @@ namespace SilverSim.Scripting.Lsl
                         else if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
                         {
                             mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
-                            if (null != mi)
+                            if (mi != null)
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -912,7 +907,7 @@ namespace SilverSim.Scripting.Lsl
                         if (typeof(double) != m_RightHandType && typeof(int) != m_RightHandType && typeof(string) != m_RightHandType)
                         {
                             mi = m_RightHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
-                            if (null != mi)
+                            if (mi != null)
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                                 compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -925,7 +920,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                         }
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusNotSupportedFor0And1", "operator '-' is not supported for '{0}' and '{1}'"), MapType(m_LeftHandType), MapType(m_RightHandType)));
-                        
+
                     case "*":
                         if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int) || m_LeftHandType == typeof(long)) &&
                             (m_RightHandType == typeof(double) || m_RightHandType == typeof(int) || m_RightHandType == typeof(long)) &&
@@ -961,7 +956,7 @@ namespace SilverSim.Scripting.Lsl
                             if (m_RightHandType == typeof(Vector3) || m_RightHandType == typeof(Quaternion))
                             {
                                 mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
-                                if (null != mi)
+                                if (mi != null)
                                 {
                                     compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                                     compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -996,7 +991,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
-                        if (null != mi)
+                        if (mi != null)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -1008,7 +1003,7 @@ namespace SilverSim.Scripting.Lsl
                             throw Return(compileState, mi.ReturnType);
                         }
                         mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
-                        if (null != mi)
+                        if (mi != null)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -1074,7 +1069,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_RightHandType });
-                        if (null != mi)
+                        if (mi != null)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -1128,7 +1123,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         mi = m_RightHandType.GetMethod("op_Modulus", new Type[] { m_LeftHandType, m_RightHandType });
-                        if (null != mi)
+                        if (mi != null)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -1148,7 +1143,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             compileState.ILGen.Emit(OpCodes.Shl);
                         }
-                        else if ((m_LeftHandType == typeof(long) || m_LeftHandType == typeof(int)) && 
+                        else if ((m_LeftHandType == typeof(long) || m_LeftHandType == typeof(int)) &&
                             (m_RightHandType == typeof(long) || m_RightHandType == typeof(int)))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
@@ -1567,7 +1562,7 @@ namespace SilverSim.Scripting.Lsl
 
                     case "&&":
                         /* DeMorgan helps here a lot to convert the operations nicely */
-                        if ((typeof(int) == m_LeftHandType || typeof(long) == m_LeftHandType) && 
+                        if ((typeof(int) == m_LeftHandType || typeof(long) == m_LeftHandType) &&
                             (typeof(int) == m_RightHandType || typeof(long) == m_RightHandType))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);

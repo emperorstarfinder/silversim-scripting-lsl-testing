@@ -29,18 +29,15 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        sealed class TypecastExpression : IExpressionStackElement
+        private sealed class TypecastExpression : IExpressionStackElement
         {
-            readonly Tree m_TypecastTree;
-            readonly Type m_TargetType;
-            readonly int m_LineNumber;
+            private readonly Tree m_TypecastTree;
+            private readonly Type m_TargetType;
+            private readonly int m_LineNumber;
 
             public TypecastExpression(
-                LSLCompiler lslCompiler,
-                CompileState compileState,
                 Tree functionTree,
-                int lineNumber,
-                Dictionary<string, object> localVars)
+                int lineNumber)
             {
                 m_LineNumber = lineNumber;
                 m_TypecastTree = functionTree.SubTree[0];
@@ -85,12 +82,12 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public Tree ProcessNextStep(
-                LSLCompiler lslCompiler, 
-                CompileState compileState, 
-                Dictionary<string, object> localVars, 
+                LSLCompiler lslCompiler,
+                CompileState compileState,
+                Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
-                if(null == innerExpressionReturn)
+                if(innerExpressionReturn == null)
                 {
                     return m_TypecastTree;
                 }

@@ -33,9 +33,9 @@ namespace SilverSim.Scripting.Lsl
     public partial class LSLCompiler
     {
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
-        sealed class FunctionExpression : IExpressionStackElement
+        private sealed class FunctionExpression : IExpressionStackElement
         {
-            sealed class FunctionParameterInfo
+            private sealed class FunctionParameterInfo
             {
                 public readonly string ParameterName = string.Empty;
 
@@ -49,17 +49,18 @@ namespace SilverSim.Scripting.Lsl
                     Position = position;
                 }
             }
-            readonly List<FunctionParameterInfo> m_Parameters = new List<FunctionParameterInfo>();
-            int m_ParameterPos;
-            readonly List<object> m_SelectedFunctions = new List<object>();
 
-            readonly string m_FunctionName;
-            readonly int m_LineNumber;
+            private readonly List<FunctionParameterInfo> m_Parameters = new List<FunctionParameterInfo>();
+            private int m_ParameterPos;
+            private readonly List<object> m_SelectedFunctions = new List<object>();
 
-            void GenIncCallDepthCount(CompileState compileState)
+            private readonly string m_FunctionName;
+            private readonly int m_LineNumber;
+
+            private void GenIncCallDepthCount(CompileState compileState)
             {
                 /* load script instance reference */
-                if (null == compileState.StateTypeBuilder)
+                if (compileState.StateTypeBuilder == null)
                 {
                     compileState.ILGen.Emit(OpCodes.Ldarg_0);
                 }
@@ -71,10 +72,10 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("IncCallDepthCount", Type.EmptyTypes));
             }
 
-            void GenDecCallDepthCount(CompileState compileState)
+            private void GenDecCallDepthCount(CompileState compileState)
             {
                 /* load script instance reference */
-                if (null == compileState.StateTypeBuilder)
+                if (compileState.StateTypeBuilder == null)
                 {
                     compileState.ILGen.Emit(OpCodes.Ldarg_0);
                 }
@@ -87,11 +88,9 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public FunctionExpression(
-                LSLCompiler lslCompiler,
                 CompileState compileState,
                 Tree functionTree,
-                int lineNumber,
-                Dictionary<string, object> localVars)
+                int lineNumber)
             {
                 List<FunctionInfo> funcInfos;
                 List<ApiMethodInfo> methods;
@@ -189,7 +188,7 @@ namespace SilverSim.Scripting.Lsl
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
-                if (null != innerExpressionReturn)
+                if (innerExpressionReturn != null)
                 {
                     m_Parameters[m_ParameterPos - 1].ParameterType = innerExpressionReturn;
                 }
@@ -204,7 +203,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            bool IsFunctionIdenticalMatch(object o)
+            private bool IsFunctionIdenticalMatch(object o)
             {
                 Type t = o.GetType();
                 if(t == typeof(ApiMethodInfo))
@@ -243,7 +242,7 @@ namespace SilverSim.Scripting.Lsl
                 return true;
             }
 
-            bool IsImplicitCastedMatch(object o, out int matchedCount)
+            private bool IsImplicitCastedMatch(object o, out int matchedCount)
             {
                 matchedCount = 0;
                 Type t = o.GetType();
@@ -261,7 +260,6 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 return false;
                             }
-                            
                         }
                         else
                         {
@@ -298,7 +296,7 @@ namespace SilverSim.Scripting.Lsl
                 return true;
             }
 
-            Type GenerateFunctionCall(CompileState compileState)
+            private Type GenerateFunctionCall(CompileState compileState)
             {
                 compileState.ILGen.BeginScope();
                 var lbs = new LocalBuilder[m_Parameters.Count];
@@ -313,13 +311,13 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Stloc, lbs[i]);
                 }
 
-                object o = SelectFunctionCall(compileState, lbs);
+                object o = SelectFunctionCall(compileState);
                 Type ot = o.GetType();
                 if (ot == typeof(FunctionInfo))
                 {
                     var funcInfo = o as FunctionInfo;
                     /* load script instance reference */
-                    if (null == compileState.StateTypeBuilder)
+                    if (compileState.StateTypeBuilder == null)
                     {
                         compileState.ILGen.Emit(OpCodes.Ldarg_0);
                     }
@@ -351,7 +349,7 @@ namespace SilverSim.Scripting.Lsl
                     var apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
                     var threatLevelAttr = (ThreatLevelRequiredAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ThreatLevelRequiredAttribute));
 
-                    if (null != threatLevelAttr)
+                    if (threatLevelAttr != null)
                     {
                         /* load ScriptInstance reference */
                         compileState.ILGen.Emit(OpCodes.Ldarg_0);
@@ -420,8 +418,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-
-            object SelectFunctionCall(CompileState compileState, LocalBuilder[] lbs)
+            private object SelectFunctionCall(CompileState compileState)
             {
                 /* search the identical match or closest match */
                 object closeMatch = null;
@@ -440,7 +437,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
-                if(null == closeMatch)
+                if(closeMatch == null)
                 {
                     if (m_Parameters.Count == 1)
                     {
@@ -450,7 +447,6 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters"), m_FunctionName, m_Parameters.Count));
                     }
-
                 }
 
                 return closeMatch;

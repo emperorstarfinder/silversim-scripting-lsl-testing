@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     [Description("LSL/OSSL Agents API")]
     public class AgentsApi : IScriptApi, IPlugin
     {
-        List<IUserAgentServicePlugin> m_UserAgentServicePlugins = new List<IUserAgentServicePlugin>();
+        private List<IUserAgentServicePlugin> m_UserAgentServicePlugins = new List<IUserAgentServicePlugin>();
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -97,7 +97,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetAgentList")]
         public AnArray GetAgentList(ScriptInstance instance, int scope, AnArray options)
         {
-            AnArray res = new AnArray();
+            var res = new AnArray();
             lock (instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
@@ -199,7 +199,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL)]
         public const int PAYMENT_INFO_USED = 0x2;
 
-        bool TryConnectUserAgent(string uri, out UserAgentServiceInterface uaservice)
+        private bool TryConnectUserAgent(string uri, out UserAgentServiceInterface uaservice)
         {
             uaservice = null;
             Dictionary<string, string> heloheaders = ServicePluginHelo.HeloRequest(uri);
@@ -251,7 +251,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                         case DATA_BORN:
                             UserAgentServiceInterface uaservice = agent.UserAgentService;
-                            if(null != uaservice)
+                            if(uaservice != null)
                             {
                                 UserAgentServiceInterface.UserInfo ui;
                                 try
@@ -402,7 +402,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 UGI group = grp.Group;
                 UUI owner = grp.Owner;
                 if(scene.Agents.TryGetValue(id.AsUUID, out agent) &&
-                    group != UGI.Unknown && 
+                    group != UGI.Unknown &&
                     (groupsService.GetAgentPowers(group, owner) & GroupPowers.Invite) == GroupPowers.Invite)
                 {
                     var invite = new GroupInvite()
@@ -970,7 +970,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         return agent.Owner.HomeURI.ToString();
                     }
                     GridInfoServiceInterface gridInfoService = scene.GetService<GridInfoServiceInterface>();
-                    if(null != gridInfoService)
+                    if(gridInfoService != null)
                     {
                         return gridInfoService.HomeURI;
                     }

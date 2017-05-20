@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        void WriteSyntaxElement(XmlTextWriter writer, string elem, string tooltip)
+        private void WriteSyntaxElement(XmlTextWriter writer, string elem, string tooltip)
         {
             writer.WriteNamedValue("key", elem);
             writer.WriteStartElement("map");
@@ -54,8 +54,8 @@ namespace SilverSim.Scripting.Lsl
             outstream.Write(LSLSyntaxFile, 0, LSLSyntaxFile.Length);
         }
 
-        byte[] LSLSyntaxFile = new byte[0];
-        UUID LSLSyntaxId = UUID.Zero;
+        private byte[] LSLSyntaxFile = new byte[0];
+        private UUID LSLSyntaxId = UUID.Zero;
 
         [SuppressMessage("Gendarme.Rules.Concurrency", "WriteStaticFieldFromInstanceMethodRule")]
         public void GenerateLSLSyntaxFile()
@@ -226,7 +226,7 @@ namespace SilverSim.Scripting.Lsl
                                                     writer.WriteNamedValue("string", MapType(pi.ParameterType));
                                                     var ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                     writer.WriteNamedValue("key", "tooltip");
-                                                    if (null != ptooltip)
+                                                    if (ptooltip != null)
                                                     {
                                                         writer.WriteNamedValue("string", ptooltip.Description.Replace("\n", "\\n"));
                                                     }
@@ -300,7 +300,7 @@ namespace SilverSim.Scripting.Lsl
                                             var energy = (EnergyUsageAttribute)Attribute.GetCustomAttribute(mi, typeof(EnergyUsageAttribute));
                                             var forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(mi, typeof(ForcedSleepAttribute));
                                             writer.WriteNamedValue("key", "energy");
-                                            if (null != energy)
+                                            if (energy != null)
                                             {
                                                 writer.WriteNamedValue("real", energy.Energy);
                                             }
@@ -309,7 +309,7 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("real", 10f);
                                             }
                                             writer.WriteNamedValue("key", "sleep");
-                                            if (null != forcedSleep)
+                                            if (forcedSleep != null)
                                             {
                                                 writer.WriteNamedValue("real", forcedSleep.Seconds);
                                             }
@@ -328,7 +328,7 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("string", MapType(pi.ParameterType));
                                                 var ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
-                                                if (null != ptooltip)
+                                                if (ptooltip != null)
                                                 {
                                                     writer.WriteNamedValue("string", ptooltip.Description.Replace("\n", "\\n"));
                                                 }
@@ -383,7 +383,7 @@ namespace SilverSim.Scripting.Lsl
                                             var energy = (EnergyUsageAttribute)Attribute.GetCustomAttribute(mi, typeof(EnergyUsageAttribute));
                                             var forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(mi, typeof(ForcedSleepAttribute));
                                             writer.WriteNamedValue("key", "energy");
-                                            if (null != energy)
+                                            if (energy != null)
                                             {
                                                 writer.WriteNamedValue("real", energy.Energy);
                                             }
@@ -392,7 +392,7 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("real", 10f);
                                             }
                                             writer.WriteNamedValue("key", "sleep");
-                                            if (null != forcedSleep)
+                                            if (forcedSleep != null)
                                             {
                                                 writer.WriteNamedValue("real", forcedSleep.Seconds);
                                             }
@@ -411,7 +411,7 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("string", MapType(pi.ParameterType));
                                                 var ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
-                                                if (null != ptooltip)
+                                                if (ptooltip != null)
                                                 {
                                                     writer.WriteNamedValue("string", ptooltip.Description.Replace("\n", "\\n"));
                                                 }

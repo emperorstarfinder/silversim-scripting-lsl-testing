@@ -36,7 +36,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
     [Description("LSL/OSSL AnimationOverride API")]
     public class AnimationOverrideApi : IScriptApi, IPlugin
     {
-        static readonly Dictionary<string, string> m_DefaultAnimationTranslate = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> m_DefaultAnimationTranslate = new Dictionary<string, string>();
         static AnimationOverrideApi()
         {
             m_DefaultAnimationTranslate["crouching"] = "Crouching";
@@ -103,7 +103,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
 
-                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.OverrideAnimations) ||
+                if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;
@@ -137,8 +137,8 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
             {
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if ((!grantinfo.PermsMask.HasFlag(ScriptPermissions.OverrideAnimations) &&
-                    !grantinfo.PermsMask.HasFlag(ScriptPermissions.TriggerAnimation)) ||
+                if (((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 &&
+                    (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0) ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return string.Empty;
@@ -165,7 +165,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
             {
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.OverrideAnimations) ||
+                if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;

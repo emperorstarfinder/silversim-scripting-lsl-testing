@@ -46,7 +46,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             /* intentionally left empty */
         }
 
-        void TeleportAgentViaLandmark(ScriptInstance instance, IAgent agent, string landmark, Vector3 lookAt)
+        private void TeleportAgentViaLandmark(ScriptInstance instance, IAgent agent, string landmark, Vector3 lookAt)
         {
             /* instance already locked */
             Landmark landmarkData;
@@ -69,7 +69,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     {
                         /* other region */
                         if (agent.SittingOnObject != null && !agent.UnSit())
-                        { 
+                        {
                             return;
                         }
 
@@ -99,7 +99,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             }
         }
 
-        void TeleportAgentViaGlobalCoords(ScriptInstance instance, IAgent agent, GridVector location, Vector3 position, Vector3 lookAt)
+        private void TeleportAgentViaGlobalCoords(ScriptInstance instance, IAgent agent, GridVector location, Vector3 position, Vector3 lookAt)
         {
             /* instance already locked */
             SceneInterface scene = instance.Part.ObjectGroup.Scene;
@@ -122,7 +122,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             }
         }
 
-        void TeleportAgentViaRegionName(ScriptInstance instance, IAgent agent, string regionName, Vector3 position, Vector3 lookAt)
+        private void TeleportAgentViaRegionName(ScriptInstance instance, IAgent agent, string regionName, Vector3 position, Vector3 lookAt)
         {
             /* instance already locked */
             SceneInterface scene = instance.Part.ObjectGroup.Scene;
@@ -144,7 +144,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
             }
         }
 
-        void TeleportAgentInRegion(ScriptInstance instance, IAgent agent, Vector3 position, Vector3 lookAt)
+        private void TeleportAgentInRegion(ScriptInstance instance, IAgent agent, Vector3 position, Vector3 lookAt)
         {
             /* instance already locked */
 
@@ -192,7 +192,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
 
                     if(!objectParcel.Owner.EqualsGrid(grp.Owner) &&
                         (!objectParcel.GroupOwned || !scene.HasGroupPower(grp.Owner, objectParcel.Group, GroupPowers.LandEjectAndFreeze)))
-                    { 
+                    {
                         return;
                     }
                     if(!agent.TeleportHome(scene))
@@ -250,7 +250,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
                     else if(!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
-                        !grantinfo.PermsMask.HasFlag(ScriptPermissions.Teleport))
+                        (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
                     {
                         instance.ShoutError(new LocalizedScriptMessage(this, "TeleportPermissionIsNotGrantedByAvatar", "Teleport permission is not granted by avatar"));
                         return;
@@ -285,7 +285,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
                     else if (!agent.Owner.EqualsGrid(grantinfo.PermsGranter) ||
-                        !grantinfo.PermsMask.HasFlag(ScriptPermissions.Teleport))
+                        (grantinfo.PermsMask & ScriptPermissions.Teleport) == 0)
                     {
                         instance.ShoutError(new LocalizedScriptMessage(this, "TeleportPermissionIsNotGrantedByAvatar", "Teleport permission is not granted by avatar"));
                         return;

@@ -399,7 +399,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
             return 0;
         }
 
-        void ModifyWindlightData(ScriptInstance instance, ref WindlightSkyData skyData, ref WindlightWaterData waterData, AnArray rules, string functionName)
+        private void ModifyWindlightData(ScriptInstance instance, ref WindlightSkyData skyData, ref WindlightWaterData waterData, AnArray rules, string functionName)
         {
             if(rules.Count % 2 != 0)
             {

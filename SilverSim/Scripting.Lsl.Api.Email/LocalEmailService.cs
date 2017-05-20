@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
@@ -33,9 +35,9 @@ using System.Threading;
 namespace SilverSim.Scripting.Lsl.Api.Email
 {
     [Description("Local Email Service")]
-    sealed class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
+    internal sealed class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
     {
-        class Email
+        private class Email
         {
             public Date Time = Date.Now;
             public string Address;
@@ -50,10 +52,10 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
-        sealed class EmailQueue
+        private sealed class EmailQueue
         {
-            readonly ReaderWriterLock m_RwLock = new ReaderWriterLock();
-            readonly List<Email> m_Emails = new List<Email>();
+            private readonly ReaderWriterLock m_RwLock = new ReaderWriterLock();
+            private readonly List<Email> m_Emails = new List<Email>();
 
             public void Put(Email em)
             {
@@ -105,10 +107,10 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
-        string m_LocalDomain = "lsl.local";
+        private readonly string m_LocalDomain = "lsl.local";
 
-        SceneList m_Scenes;
-        readonly RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>> m_Queues = new RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>>();
+        private SceneList m_Scenes;
+        private readonly RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>> m_Queues = new RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>>();
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -137,13 +139,13 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
-        void OnRegionAdd(SceneInterface scene)
+        private void OnRegionAdd(SceneInterface scene)
         {
-            m_Queues.Add(scene.ID, new RwLockedDictionaryAutoAdd<UUID, EmailQueue>(delegate () { return new EmailQueue(); }));
+            m_Queues.Add(scene.ID, new RwLockedDictionaryAutoAdd<UUID, EmailQueue>(() => new EmailQueue()));
             scene.SceneListeners.Add(this);
         }
 
-        void OnRegionRemove(SceneInterface scene)
+        private void OnRegionRemove(SceneInterface scene)
         {
             scene.SceneListeners.Remove(this);
             m_Queues.Remove(scene.ID);
@@ -160,12 +162,14 @@ namespace SilverSim.Scripting.Lsl.Api.Email
                 qList.TryGetValue(objectID, out eQueue) &&
                 eQueue.TryGetValue(sender, subject, out em, out remaining))
             {
-                ev = new EmailEvent();
-                ev.Message = em.Message;
-                ev.Subject = em.Subject;
-                ev.Time = em.Time.AsULong.ToString();
-                ev.NumberLeft = remaining;
-                ev.Address = em.Address;
+                ev = new EmailEvent()
+                {
+                    Message = em.Message,
+                    Subject = em.Subject,
+                    Time = em.Time.AsULong.ToString(),
+                    NumberLeft = remaining,
+                    Address = em.Address
+                };
             }
             else
             {
@@ -218,7 +222,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
                 }
             }
 
-            if(null == part)
+            if(part == null)
             {
                 return;
             }

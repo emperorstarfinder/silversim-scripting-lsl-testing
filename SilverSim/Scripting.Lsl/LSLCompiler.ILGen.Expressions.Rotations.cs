@@ -29,17 +29,14 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        sealed class RotationExpression : IExpressionStackElement
+        private sealed class RotationExpression : IExpressionStackElement
         {
-            readonly List<Tree> m_ListElements = new List<Tree>();
-            readonly int m_LineNumber;
+            private readonly List<Tree> m_ListElements = new List<Tree>();
+            private readonly int m_LineNumber;
 
             public RotationExpression(
-                LSLCompiler lslCompiler,
-                CompileState compileState,
                 Tree functionTree,
-                int lineNumber,
-                Dictionary<string, object> localVars)
+                int lineNumber)
             {
                 m_LineNumber = lineNumber;
                 for (int i = 0; i < 4; ++i)
@@ -61,7 +58,7 @@ namespace SilverSim.Scripting.Lsl
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
-                if (null != innerExpressionReturn)
+                if (innerExpressionReturn != null)
                 {
                     ProcessImplicitCasts(compileState, typeof(double), innerExpressionReturn, m_LineNumber);
                     m_ListElements.RemoveAt(0);

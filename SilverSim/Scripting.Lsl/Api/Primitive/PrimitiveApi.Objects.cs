@@ -125,7 +125,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL)]
         public const int OPT_EXCLUSION_VOLUME = 6;
 
-
         [APILevel(APIFlags.LSL)]
         public const int STATUS_PHYSICS = 0x00000001;
         [APILevel(APIFlags.LSL)]
@@ -214,6 +213,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     if (part != rootPart)
                     {
                         center += part.LocalPosition;
+                        ++primcount;
                     }
                 }
                 center /= primcount;
@@ -239,7 +239,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 if (!instance.Part.ObjectGroup.Scene.Primitives.TryGetValue(key.AsUUID, out obj))
                 {
                     ObjectGroup grp = obj.ObjectGroup;
-                    if(null != grp)
+                    if(grp != null)
                     {
                         if(grp.IsAttached)
                         {
@@ -514,7 +514,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                ObjectPart part = instance.Part.ObjectGroup.ValuesByKey1.FirstOrDefault(c => c.Name == name);
+                ObjectPart part = instance.Part.ObjectGroup.ValuesByKey1.Find(c => c.Name == name);
                 /* returns -1 if not found */
                 return part != null ? part.LinkNumber : -1;
             }

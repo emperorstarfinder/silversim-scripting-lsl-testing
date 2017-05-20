@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         public const int REGION_FLAGS_BLOCK_PARCEL_SEARCH = 0x20000000;
         public const int REGION_FLAGS_DENY_AGEUNVERIFIED = 0x40000000;
 
-        CommandRegistry m_Commands;
+        private CommandRegistry m_Commands;
 
         public void Startup(ConfigurationLoader loader)
         {

@@ -278,7 +278,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [ExecutedOnDeserialization("listener")]
         public void Deserialize(ScriptInstance instance, List<object> args)
         {
-            Script script = (Script)instance;
+            var script = (Script)instance;
             lock(script)
             {
                 ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
@@ -343,7 +343,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 {
                     kvp.Value.Serialize(res, kvp.Key);
                 }
-                res[idx] = (res.Count - countofs);
+                res[idx] = res.Count - countofs;
             }
         }
     }

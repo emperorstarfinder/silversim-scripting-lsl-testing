@@ -26,7 +26,6 @@ using SilverSim.Scripting.Common;
 using SilverSim.Types.Agent;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Inventory;
-using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -87,7 +86,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", name);
                     }
-                    else if (null == si)
+                    else if (si == null)
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotACompiledScript", "{0}: Inventory item {1} is not a compiled script.", "llResetOtherScript", name);
                     }
@@ -117,7 +116,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", script);
                     }
-                    else if (null == si)
+                    else if (si == null)
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotACompiledScript", "{0}: Inventory item {1} is not a compiled script.", "llResetOtherScript", script);
                     }
@@ -147,7 +146,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", script);
                     }
-                    else if (null == si)
+                    else if (si == null)
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotACompiledScript", "{0}: Inventory item {1} is not a compiled script.", "llResetOtherScript", script);
                     }

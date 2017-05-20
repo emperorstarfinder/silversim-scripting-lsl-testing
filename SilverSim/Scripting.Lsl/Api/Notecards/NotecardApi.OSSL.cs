@@ -37,9 +37,9 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         [APILevel(APIFlags.OSSL, "osMakeNotecard")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void MakeNotecard(
-            ScriptInstance instance, 
+            ScriptInstance instance,
             [Description("Name of notecard to be created")]
-            string notecardName, 
+            string notecardName,
             [Description("Contents for the notecard. string is also allowed here.")]
             AnArray contents)
         {
@@ -106,7 +106,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         [APILevel(APIFlags.OSSL, "osGetNotecard")]
         [Description("read the entire contents of a notecard directly.\nIt does not use the dataserver event.")]
         public string GetNotecard(
-            ScriptInstance instance, 
+            ScriptInstance instance,
             [Description("name of notecard in inventory")]
             string name)
         {
@@ -123,9 +123,9 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         [APILevel(APIFlags.OSSL, "osGetNotecardLine")]
         [Description("read a line of a notecard directly.\nIt does not use the dataserver event.")]
         public string OsGetNotecardLine(
-            ScriptInstance instance, 
+            ScriptInstance instance,
             [Description("name of notecard in inventory")]
-            string name, 
+            string name,
             [Description("line number (starting at 0)")]
             int line)
         {

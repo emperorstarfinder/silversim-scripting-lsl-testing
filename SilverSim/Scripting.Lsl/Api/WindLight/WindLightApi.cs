@@ -210,11 +210,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
             EnvironmentSettings envsettings;
             lock (instance)
             {
-                envsettings = instance.Part.ObjectGroup.Scene.EnvironmentSettings;
-                if(null == envsettings)
-                {
-                    envsettings = new EnvironmentSettings();
-                }
+                envsettings = instance.Part.ObjectGroup.Scene.EnvironmentSettings ?? new EnvironmentSettings();
             }
 
             if(rules.Count % 2 != 0)

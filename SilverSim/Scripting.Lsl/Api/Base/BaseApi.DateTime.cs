@@ -61,6 +61,5 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             return date.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         }
-
     }
 }

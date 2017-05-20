@@ -353,6 +353,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                     {
                         v += te[(uint)face].TextureColor.AsVector3;
+                        ++n;
                     }
                     v /= n;
                     return v;

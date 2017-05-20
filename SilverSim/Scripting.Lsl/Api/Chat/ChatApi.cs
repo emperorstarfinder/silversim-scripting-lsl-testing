@@ -42,7 +42,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL)]
         public const int DEBUG_CHANNEL = 0x7FFFFFFF;
 
-        UUID GetOwner(ScriptInstance instance)
+        private UUID GetOwner(ScriptInstance instance)
         {
             lock (instance)
             {
@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             }
         }
 
-        void SendChat(ScriptInstance instance, ListenEvent ev)
+        private void SendChat(ScriptInstance instance, ListenEvent ev)
         {
             lock (instance)
             {
@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             /* nothing to do */
         }
 
-        int GetMaxListenerHandles(UUID regionID)
+        private int GetMaxListenerHandles(UUID regionID)
         {
             int value;
             if(m_MaxListenerHandleParams.TryGetValue(regionID, out value) ||
@@ -83,7 +83,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             return 1000;
         }
 
-        readonly RwLockedDictionary<UUID, int> m_MaxListenerHandleParams = new RwLockedDictionary<UUID, int>();
+        private readonly RwLockedDictionary<UUID, int> m_MaxListenerHandleParams = new RwLockedDictionary<UUID, int>();
 
         [ServerParam("LSL.MaxListenersPerScript")]
         public void MaxListenersPerScriptUpdated(UUID regionID, string value)

@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Http.Client;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
@@ -33,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
     partial class XmlRpcApi
     {
-        class SendRemoteDataInfo
+        private class SendRemoteDataInfo
         {
             public UUID Key;
             public UUID SceneID;
@@ -72,15 +74,17 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             }
         }
 
-        void SendRequest(object o)
+        private void SendRequest(object o)
         {
             var rdi = (SendRemoteDataInfo)o;
 
             var req = new XmlRpcStructs.XmlRpcRequest("llRemoteData");
-            var m = new Map();
-            m.Add("Channel", rdi.Channel);
-            m.Add("StringValue", rdi.SData);
-            m.Add("IntValue", rdi.IData);
+            var m = new Map
+            {
+                { "Channel", rdi.Channel },
+                { "StringValue", rdi.SData },
+                { "IntValue", rdi.IData }
+            };
             req.Params.Add(m);
             byte[] reqdata = req.Serialize();
             XmlRpcStructs.XmlRpcResponse res;
@@ -109,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 }
             }
 
-            if (null != res)
+            if (res != null)
             {
                 m = res.ReturnValue as Map;
                 if (m == null)
@@ -138,9 +142,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 part.Inventory.TryGetValue(rdi.ItemID, out item))
             {
                 ScriptInstance instance = item.ScriptInstance;
-                if (null != instance)
-                {
-                    instance.PostEvent(new RemoteDataEvent()
+                instance?.PostEvent(new RemoteDataEvent()
                     {
                         Channel = UUID.Zero,
                         IData = idata,
@@ -149,7 +151,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                         Sender = string.Empty,
                         Type = REMOTE_DATA_REPLY
                     });
-                }
             }
         }
     }

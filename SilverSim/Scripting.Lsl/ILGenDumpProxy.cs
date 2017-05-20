@@ -31,11 +31,11 @@ namespace SilverSim.Scripting.Lsl
 {
     public class ILGenDumpProxy
     {
-        readonly ILGenerator m_ILGen;
+        private readonly ILGenerator m_ILGen;
 #if DEBUG
         public readonly StreamWriter Writer;
 #endif
-        readonly List<Label> m_DefinedLabels = new List<Label>();
+        private readonly List<Label> m_DefinedLabels = new List<Label>();
         public bool GeneratedRetAtLast;
         public ISymbolDocumentWriter DebugDocument;
 
@@ -203,7 +203,6 @@ namespace SilverSim.Scripting.Lsl
             GeneratedRetAtLast = false;
         }
 
-
         public void Emit(OpCode opcode, Label[] labels)
         {
 #if DEBUG
@@ -212,7 +211,6 @@ namespace SilverSim.Scripting.Lsl
             m_ILGen.Emit(opcode, labels);
             GeneratedRetAtLast = false;
         }
-
 
         public void Emit(OpCode opcode, LocalBuilder local)
         {

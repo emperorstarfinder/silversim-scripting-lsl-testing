@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             /* intentionally left empty */
         }
 
-        void StartAnimation(
+        private void StartAnimation(
             ScriptInstance instance,
             UUID agentid,
             string animation,
@@ -55,7 +55,6 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
 
             agent.PlayAnimation(animID, instance.Part.ID);
-
         }
 
         [APILevel(APIFlags.LSL, "llStartAnimation")]
@@ -67,7 +66,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.TriggerAnimation) ||
+                if ((grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0 ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;
@@ -80,9 +79,9 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         [Description("causes an animation to be played on the specified avatar.")]
         public void AvatarPlayAnimation(
-            ScriptInstance instance, 
+            ScriptInstance instance,
             [Description("UUID of the agent")]
-            LSLKey avatar, 
+            LSLKey avatar,
             [Description("animation to be played")]
             string animation)
         {
@@ -108,7 +107,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
         }
 
-        void StopAnimation(
+        private void StopAnimation(
             ScriptInstance instance,
             UUID agentid,
             string animation,
@@ -123,19 +122,18 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
 
             agent.StopAnimation(animID, instance.Part.ID);
-
         }
 
         [APILevel(APIFlags.LSL, "llStopAnimation")]
         public void StopAnimation(
-            ScriptInstance instance, 
+            ScriptInstance instance,
             [Description("animation to be stopped")]
             string anim)
         {
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.TriggerAnimation) ||
+                if ((grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0 ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;

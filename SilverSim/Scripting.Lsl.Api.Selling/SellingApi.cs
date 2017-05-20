@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
             lock (instance)
             {
                 ObjectPart part = instance.Part;
-                if (null == part)
+                if (part == null)
                 {
                     return;
                 }
@@ -57,10 +57,7 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
                     return;
                 }
                 SceneInterface scene = group.Scene;
-                if (scene != null)
-                {
-                    scene.AddObjectBuyListen(instance);
-                }
+                scene?.AddObjectBuyListen(instance);
             }
         }
 
@@ -72,7 +69,7 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
             lock (instance)
             {
                 ObjectPart part = instance.Part;
-                if (null == part)
+                if (part == null)
                 {
                     return;
                 }
@@ -82,10 +79,7 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
                     return;
                 }
                 SceneInterface scene = group.Scene;
-                if (scene != null)
-                {
-                    scene.RemoveObjectBuyListen(instance);
-                }
+                scene?.RemoveObjectBuyListen(instance);
             }
         }
     }

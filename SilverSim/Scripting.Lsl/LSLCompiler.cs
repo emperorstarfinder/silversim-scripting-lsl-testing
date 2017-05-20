@@ -108,18 +108,18 @@ namespace SilverSim.Scripting.Lsl
         internal Dictionary<APIFlags, ApiInfo> m_ApiInfos = new Dictionary<APIFlags, ApiInfo>();
         internal Dictionary<string, ApiInfo> m_ApiExtensions = new Dictionary<string, ApiInfo>();
 
-        readonly List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
-        readonly List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
-        readonly List<Action<ScriptInstance>> m_ScriptRemoveDelegates = new List<Action<ScriptInstance>>();
-        readonly Dictionary<string, Action<ScriptInstance, List<object>>> m_ScriptDeserializeDelegates = new Dictionary<string, Action<ScriptInstance, List<object>>>();
-        readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates = new 
+        private readonly List<Action<ScriptInstance>> m_StateChangeDelegates = new List<Action<ScriptInstance>>();
+        private readonly List<Action<ScriptInstance>> m_ScriptResetDelegates = new List<Action<ScriptInstance>>();
+        private readonly List<Action<ScriptInstance>> m_ScriptRemoveDelegates = new List<Action<ScriptInstance>>();
+        private readonly Dictionary<string, Action<ScriptInstance, List<object>>> m_ScriptDeserializeDelegates = new Dictionary<string, Action<ScriptInstance, List<object>>>();
+        private readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates = new
             List<Action<ScriptInstance, List<object>>>();
-        readonly List<string> m_ReservedWords = new List<string>();
-        readonly List<string> m_Typecasts = new List<string>();
-        readonly List<char> m_SingleOps = new List<char>();
-        readonly List<char> m_MultiOps = new List<char>();
-        readonly List<char> m_NumericChars = new List<char>();
-        readonly List<char> m_OpChars = new List<char>();
+        private readonly List<string> m_ReservedWords = new List<string>();
+        private readonly List<string> m_Typecasts = new List<string>();
+        private readonly List<char> m_SingleOps = new List<char>();
+        private readonly List<char> m_MultiOps = new List<char>();
+        private readonly List<char> m_NumericChars = new List<char>();
+        private readonly List<char> m_OpChars = new List<char>();
 
         public enum OperatorType
         {
@@ -219,7 +219,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     var scriptApiAttr = Attribute.GetCustomAttribute(type, typeof(ScriptApiNameAttribute)) as ScriptApiNameAttribute;
                     Attribute impTagAttr = Attribute.GetCustomAttribute(type, typeof(LSLImplementationAttribute));
-                    if (null != impTagAttr && null != scriptApiAttr)
+                    if (impTagAttr != null && scriptApiAttr != null)
                     {
                         var factory = (IPlugin)Activator.CreateInstance(type);
                         loader.AddPlugin("LSL_API_" + scriptApiAttr.Name, factory);
@@ -228,7 +228,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void CollectApis(ConfigurationLoader loader)
+        private void CollectApis(ConfigurationLoader loader)
         {
             foreach (IScriptApi api in loader.GetServicesByValue<IScriptApi>())
             {
@@ -248,7 +248,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void CollectApiConstants(IScriptApi api)
+        private void CollectApiConstants(IScriptApi api)
         {
             foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.Static))
             {
@@ -308,7 +308,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void CollectApiEvents(IScriptApi api)
+        private void CollectApiEvents(IScriptApi api)
         {
             foreach (Type t in api.GetType().GetNestedTypes(BindingFlags.Public).Where(t => t.BaseType == typeof(MulticastDelegate)))
             {
@@ -387,7 +387,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
-                else if (null != stateEventAttr)
+                else if (stateEventAttr != null)
                 {
                     MethodInfo mi = t.GetMethod("Invoke");
                     m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. APILevel attribute missing.",
@@ -397,7 +397,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void CollectApiFunctionsAndDelegates(IScriptApi api)
+        private void CollectApiFunctionsAndDelegates(IScriptApi api)
         {
             foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
             {
@@ -642,7 +642,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void CollectApiEventTranslations(IScriptApi api)
+        private void CollectApiEventTranslations(IScriptApi api)
         {
             foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
             {
@@ -766,13 +766,13 @@ namespace SilverSim.Scripting.Lsl
                             FieldInfo fi;
                             PropertyInfo pi;
 
-                            if (null != (fi = kvp.Value as FieldInfo))
+                            if ((fi = kvp.Value as FieldInfo) != null)
                             {
                                 ilgen.Emit(OpCodes.Ldloc, eventlb);
                                 ilgen.Emit(OpCodes.Ldfld, fi);
                                 retType = fi.FieldType;
                             }
-                            else if(null != (pi = kvp.Value as PropertyInfo))
+                            else if((pi = kvp.Value as PropertyInfo) != null)
                             {
                                 ilgen.Emit(OpCodes.Ldloc, eventlb);
                                 ilgen.Emit(OpCodes.Call, pi.GetGetMethod());
@@ -826,10 +826,10 @@ namespace SilverSim.Scripting.Lsl
 
         public void SyntaxCheck(UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1, CultureInfo cultureInfo = null)
         {
-            Preprocess(user, shbangs, reader, linenumber, cultureInfo);
+            Preprocess(shbangs, reader, linenumber, cultureInfo);
         }
 
-        void WriteIndent(TextWriter writer, int indent)
+        private void WriteIndent(TextWriter writer, int indent)
         {
             while(indent-- > 0)
             {
@@ -837,7 +837,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void WriteIndented(TextWriter writer, string s, ref int oldIndent)
+        private void WriteIndented(TextWriter writer, string s, ref int oldIndent)
         {
             if (s == "[")
             {
@@ -887,7 +887,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void WriteIndented(TextWriter writer, List<string> list, ref int oldIndent)
+        private void WriteIndented(TextWriter writer, List<string> list, ref int oldIndent)
         {
             foreach(string s in list)
             {
@@ -897,7 +897,7 @@ namespace SilverSim.Scripting.Lsl
 
         public void SyntaxCheckAndDump(Stream s, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileState cs = Preprocess(user, shbangs, reader, linenumber, cultureInfo);
+            CompileState cs = Preprocess(shbangs, reader, linenumber, cultureInfo);
             /* rewrite script */
             int indent = 0;
             using (TextWriter writer = new StreamWriter(s, new UTF8Encoding(false)))
@@ -975,7 +975,7 @@ namespace SilverSim.Scripting.Lsl
 
         public IScriptAssembly Compile(AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileState compileState = Preprocess(user, shbangs, reader, lineNumber, cultureInfo);
+            CompileState compileState = Preprocess(shbangs, reader, lineNumber, cultureInfo);
             return PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndCollect);
         }
 
@@ -986,15 +986,15 @@ namespace SilverSim.Scripting.Lsl
 
         public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, bool emitDebugSymbols, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
-            CompileState compileState = Preprocess(user, shbangs, reader, lineNumber);
+            CompileState compileState = Preprocess(shbangs, reader, lineNumber, cultureInfo);
             compileState.EmitDebugSymbols = emitDebugSymbols;
             var scriptAssembly = (LSLScriptAssembly)PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndSave, filename);
-            if(null == scriptAssembly)
+            if(scriptAssembly == null)
             {
                 throw new CompilerException();
             }
             var builder = (AssemblyBuilder)scriptAssembly.Assembly;
-            if(null == builder)
+            if(builder == null)
             {
                 throw new CompilerException();
             }

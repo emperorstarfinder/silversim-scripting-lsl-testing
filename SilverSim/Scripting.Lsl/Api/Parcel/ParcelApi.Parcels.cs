@@ -160,7 +160,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 SceneInterface scene = thisPart.ObjectGroup.Scene;
 
                 ParcelInfo pInfo;
-                return (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) && 
+                return (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) &&
                     pInfo.MusicURI != null && (pInfo.Owner.EqualsGrid(thisPart.Owner) || !pInfo.ObscureMusic)) ?
                     pInfo.MusicURI :
                     string.Empty;
@@ -256,7 +256,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 {
                     entry.RegionID = scene.ID;
                     entry.ParcelID = pInfo.ID;
-                    entry.ExpiresAt = (hours < double.Epsilon) ? 
+                    entry.ExpiresAt = (hours < double.Epsilon) ?
                         null :
                         Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
 
@@ -359,7 +359,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 ParcelInfo pInfo;
-                if (scene.Parcels.TryGetValue(grp.Position, out pInfo) && 
+                if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
                     (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned))))
                 {

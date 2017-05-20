@@ -314,7 +314,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL)]
         public const int PASS_NEVER = 2;
 
-        List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
+        private List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
         {
             var list = new List<ObjectPart>();
             ObjectPart thisPart = instance.Part;

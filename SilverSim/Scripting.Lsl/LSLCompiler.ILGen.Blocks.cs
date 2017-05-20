@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
@@ -29,7 +31,7 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        void ProcessBlock(
+        private void ProcessBlock(
             CompileState compileState,
             Type returnType,
             Dictionary<string, object> localVars,
@@ -520,7 +522,6 @@ namespace SilverSim.Scripting.Lsl
                                     localVars);
                             }
 
-
                             compileState.ILGen.Emit(OpCodes.Br, looplabel);
                             compileState.ILGen.MarkLabel(endlabel);
                             compileState.m_BreakContinueLabels.RemoveAt(0);
@@ -843,7 +844,6 @@ namespace SilverSim.Scripting.Lsl
                                     goto processnext;
                                 }
                             }
-
                         }
                         break;
 
@@ -1027,7 +1027,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void ProcessFunction(
+        private void ProcessFunction(
             CompileState compileState,
             TypeBuilder scriptTypeBuilder,
             TypeBuilder stateTypeBuilder,

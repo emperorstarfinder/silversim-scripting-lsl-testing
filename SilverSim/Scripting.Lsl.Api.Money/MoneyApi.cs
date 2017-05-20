@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
@@ -46,10 +48,10 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         [StateEventDelegate]
         public delegate void State_transaction_result(LSLKey id, int success, string data);
 
-        delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid, 
+        private delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance);
 
-        void TransferMoney(UUID transactionID, UUI sourceid,
+        private void TransferMoney(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance)
         {
             EconomyServiceInterface sourceservice = null;
@@ -63,10 +65,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                 destinationservice == null ||
                 destinationid == UUI.Unknown)
             {
-                if (instance != null)
-                {
-                    instance.PostEvent(ev);
-                }
+                instance?.PostEvent(ev);
             }
             else
             {
@@ -80,21 +79,18 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                 {
                     /* error intentionally ignored sine ev.Success holds the result status */
                 }
-                if (instance != null)
-                {
-                    instance.PostEvent(ev);
-                }
+                instance?.PostEvent(ev);
             }
         }
 
-        void TransferMoneyEnd(IAsyncResult ar)
+        private void TransferMoneyEnd(IAsyncResult ar)
         {
             var result = (AsyncResult)ar;
             var caller = (TransferMoneyDelegate)result.AsyncDelegate;
             caller.EndInvoke(ar);
         }
 
-        void InvokeTransferMoney(UUID transactionID, UUI sourceid,
+        private void InvokeTransferMoney(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance)
         {
             TransferMoneyDelegate d = TransferMoney;

@@ -34,8 +34,8 @@ namespace SilverSim.Scripting.Lsl.Api.Email
     [Description("LSL Email API")]
     public class EmailApi : IScriptApi, IPlugin
     {
-        readonly string m_ServiceName;
-        IEmailService m_Service;
+        private readonly string m_ServiceName;
+        private IEmailService m_Service;
 
         static EmailApi()
         {

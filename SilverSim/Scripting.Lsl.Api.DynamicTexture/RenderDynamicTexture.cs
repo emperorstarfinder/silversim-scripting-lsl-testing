@@ -33,19 +33,16 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 {
     public static class RenderDynamicTexture
     {
-        const string DefaultFontName = "Arial";
+        private const string DefaultFontName = "Arial";
 
-        public static AssetData ToTexture(this Bitmap bmp, bool lossless = false)
+        public static AssetData ToTexture(this Bitmap bmp, bool lossless = false) => new AssetData()
         {
-            AssetData data = new AssetData();
-            data.Type = AssetType.Texture;
-            data.Name = "Dynamic Texture";
-            data.Local = true;
-            data.Flags = AssetFlags.Collectable;
-            data.Data = J2cEncoder.Encode(bmp, lossless);
-
-            return data;
-        }
+            Type = AssetType.Texture,
+            Name = "Dynamic Texture",
+            Local = true,
+            Flags = AssetFlags.Collectable,
+            Data = J2cEncoder.Encode(bmp, lossless)
+        };
 
         public static Bitmap BlendTextures(Bitmap front, Bitmap back, bool setNewAlpha, byte newAlpha)
         {
@@ -65,9 +62,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
         public static Bitmap MergeBitmaps(Bitmap front, Bitmap back)
         {
-            Bitmap joint;
-
-            joint = new Bitmap(back.Width, back.Height, PixelFormat.Format32bppArgb);
+            var joint = new Bitmap(back.Width, back.Height, PixelFormat.Format32bppArgb);
             using (Graphics gfx = Graphics.FromImage(joint))
             {
                 gfx.DrawImage(back, 0, 0, back.Width, back.Height);
@@ -104,14 +99,14 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     case "width":
                         if (int.TryParse(value, out temp))
                         {
-                            width = SilverSim.Types.TypeExtensionMethods.Clamp(temp, 1, 2048);
+                            width = Types.TypeExtensionMethods.Clamp(temp, 1, 2048);
                         }
                         break;
 
                     case "height":
                         if (int.TryParse(value, out temp))
                         {
-                            height = SilverSim.Types.TypeExtensionMethods.Clamp(temp, 1, 2048);
+                            height = Types.TypeExtensionMethods.Clamp(temp, 1, 2048);
                         }
                         break;
 
@@ -194,7 +189,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     case "bgcolour":
                         int hex = 0;
                         backgroundColor = (Int32.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hex)) ?
-                            Color.FromArgb(hex) : 
+                            Color.FromArgb(hex) :
                             Color.FromName(value);
                         break;
 
@@ -241,13 +236,14 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         graphics.FillRectangle(fillBrush, 0, 0, width, height);
                     }
                 }
+                DrawToTexture(graphics, data, altDataDelim);
             }
             return bitmap;
         }
 
-        const char PartsDelimiter = ',';
+        private const char PartsDelimiter = ',';
 
-        static void GetParams(string line, int startLength, out Point p)
+        private static void GetParams(string line, int startLength, out Point p)
         {
             p = new Point();
             line = line.Remove(0, startLength);
@@ -262,7 +258,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             }
         }
 
-        static void GetParams(string line, int startLength, out float x, out float y, out string imgurl)
+        private static void GetParams(string line, int startLength, out float x, out float y, out string imgurl)
         {
             x = 0;
             y = 0;
@@ -284,7 +280,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             }
         }
 
-        static void GetParams(string line, int startLength, out PointF[] points)
+        private static void GetParams(string line, int startLength, out PointF[] points)
         {
             line = line.Remove(0, startLength);
             string[] parts = line.Split(PartsDelimiter);
@@ -292,14 +288,13 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             if (parts.Length > 1 && parts.Length % 2 == 0)
             {
                 points = new PointF[parts.Length / 2];
-                for (int i = 0; i < parts.Length; i = i + 2)
+                for (int i = 0; i < parts.Length; i += 2)
                 {
                     string xVal = parts[i].Trim();
                     string yVal = parts[i + 1].Trim();
                     float x = Convert.ToSingle(xVal, CultureInfo.InvariantCulture);
                     float y = Convert.ToSingle(yVal, CultureInfo.InvariantCulture);
-                    PointF point = new PointF(x, y);
-                    points[i / 2] = point;
+                    points[i / 2] = new PointF(x, y);
                 }
             }
             else
@@ -308,10 +303,10 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             }
         }
 
-        static void DrawToTexture(Graphics gfx, string graphdata, char dataDelim)
+        private static void DrawToTexture(Graphics gfx, string graphdata, char dataDelim)
         {
-            Point startPoint = new Point(0, 0);
-            Point endPoint = new Point(0, 0);
+            var startPoint = new Point(0, 0);
+            var endPoint = new Point(0, 0);
             Pen drawPen = null;
             Font drawFont = null;
             SolidBrush drawBrush = null;
@@ -355,7 +350,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         {
                             using (Stream imgStream = HttpClient.DoStreamGetRequest(imgurl, null, 20000))
                             {
-                                using (Bitmap image = new Bitmap(imgStream))
+                                using (var image = new Bitmap(imgStream))
                                 {
                                     gfx.DrawImage(image, (float)startPoint.X, (float)startPoint.Y, (float)endPoint.X, (float)endPoint.Y);
                                 }
@@ -363,7 +358,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         }
                         catch
                         {
-                            using (Font errorFont = new Font(DefaultFontName, 6))
+                            using (var errorFont = new Font(DefaultFontName, 6))
                             {
                                 gfx.DrawString("URL couldn't be resolved or is", errorFont,
                                                  drawBrush, startPoint);
@@ -426,10 +421,8 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     {
                         cmdLine = cmdLine.Remove(0, 8).Trim();
 
-                        string[] fprops = cmdLine.Split(PartsDelimiter);
-                        foreach (string prop in fprops)
+                        foreach (string prop in cmdLine.Split(PartsDelimiter))
                         {
-
                             switch (prop)
                             {
                                 case "B":
@@ -486,6 +479,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     {
                         cmdLine = cmdLine.Remove(0, 8).Trim();
                         drawFont.Dispose();
+                        fontName = cmdLine;
                         drawFont = new Font(fontName, fontSize);
                     }
                     else if (cmdLine.StartsWith("PenSize"))
@@ -506,35 +500,24 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         cmdLine = cmdLine.Remove(0, 9).Trim();
                         int hex = 0;
 
-                        Color newColor;
-                        newColor = (Int32.TryParse(cmdLine, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hex)) ?
+                        Color newColor = (Int32.TryParse(cmdLine, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hex)) ?
                             Color.FromArgb(hex) :
                             Color.FromName(cmdLine);
 
                         drawBrush.Color = newColor;
                         drawPen.Color = newColor;
-
                     }
                 }
             }
             finally
             {
-                if(drawFont != null)
-                {
-                    drawFont.Dispose();
-                }
-                if(drawBrush != null)
-                {
-                    drawBrush.Dispose();
-                }
-                if(drawPen != null)
-                {
-                    drawPen.Dispose();
-                }
+                drawFont?.Dispose();
+                drawBrush?.Dispose();
+                drawPen?.Dispose();
             }
         }
 
-        static void PenCap(Pen drawPen, string cmdLine)
+        private static void PenCap(Pen drawPen, string cmdLine)
         {
             bool start = true;
             bool end = true;

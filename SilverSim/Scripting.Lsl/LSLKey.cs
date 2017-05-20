@@ -55,9 +55,9 @@ namespace SilverSim.Scripting.Lsl
 
         public bool Equals(LSLKey v) => m_Value.Equals(v.m_Value);
 
-        public int CompareTo(string v) => m_Value.CompareTo(m_Value);
+        public int CompareTo(string v) => m_Value.CompareTo(v);
 
-        public bool Equals(string v) => m_Value.Equals(m_Value);
+        public bool Equals(string v) => m_Value.Equals(v);
 
         public override string ToString() => m_Value;
 

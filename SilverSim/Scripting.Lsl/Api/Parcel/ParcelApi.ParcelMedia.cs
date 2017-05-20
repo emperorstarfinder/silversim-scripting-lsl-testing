@@ -286,7 +286,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                         switch(iv.AsInt)
                         {
                             case PARCEL_MEDIA_COMMAND_URL:
-                                if (null != parcelInfo.MediaURI && !parcelInfo.ObscureMedia)
+                                if (parcelInfo.MediaURI != null && !parcelInfo.ObscureMedia)
                                 {
                                     res.Add(parcelInfo.MediaURI.ToString());
                                 }

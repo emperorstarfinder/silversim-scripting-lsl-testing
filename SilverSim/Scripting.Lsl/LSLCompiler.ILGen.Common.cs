@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -36,22 +38,21 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-
         public sealed class LSLScriptAssembly : IScriptAssembly
         {
             public readonly Assembly Assembly;
-            readonly Type m_ScriptType;
-            readonly Dictionary<string, Type> m_StateTypes;
-            readonly bool m_ForcedSleep;
-            readonly List<Action<ScriptInstance>> m_ScriptRemoveDelegates;
-            readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates;
-            readonly Dictionary<string, Action<ScriptInstance, List<object>>> m_ScriptDeserializeDelegates;
+            private readonly Type m_ScriptType;
+            private readonly Dictionary<string, Type> m_StateTypes;
+            private readonly bool m_ForcedSleep;
+            private readonly List<Action<ScriptInstance>> m_ScriptRemoveDelegates;
+            private readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates;
+            private readonly Dictionary<string, Action<ScriptInstance, List<object>>> m_ScriptDeserializeDelegates;
 
             public LSLScriptAssembly(
-                Assembly assembly, 
-                Type script, 
-                Dictionary<string, Type> stateTypes, 
-                bool forcedSleep, 
+                Assembly assembly,
+                Type script,
+                Dictionary<string, Type> stateTypes,
+                bool forcedSleep,
                 List<Action<ScriptInstance>> scriptRemoveDelegates,
                 List<Action<ScriptInstance, List<object>>> scriptSerializeDelegates,
                 Dictionary<string, Action<ScriptInstance, List<object>>> scriptDeserializeDelegates)
@@ -74,7 +75,7 @@ namespace SilverSim.Scripting.Lsl
                 foreach (KeyValuePair<string, Type> t in m_StateTypes)
                 {
                     ConstructorInfo info = t.Value.GetConstructor(new Type[1] { m_ScriptType });
-                    object[] param = new object[1];
+                    var param = new object[1];
                     param[0] = m_Script;
                     m_Script.AddState(t.Key, (ILSLState)info.Invoke(param));
                 }
@@ -82,7 +83,7 @@ namespace SilverSim.Scripting.Lsl
                 m_Script.ScriptRemoveDelegates = m_ScriptRemoveDelegates;
                 m_Script.SerializationDelegates = m_ScriptSerializeDelegates;
                 m_Script.DeserializationDelegates = m_ScriptDeserializeDelegates;
-                if (null != serializedState)
+                if (serializedState != null)
                 {
                     try
                     {
@@ -198,7 +199,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     try
                     {
-                        return -(long)(((ulong)v));
+                        return -(long)((ulong)v);
                     }
                     catch
                     {
@@ -327,7 +328,7 @@ namespace SilverSim.Scripting.Lsl
                     else if (t.StartsWith("-"))
                     {
                         uint m = int.MaxValue;
-                        m += 1;
+                        ++m;
                         return (pos == 1 || !ulong.TryParse(t.Substring(1), out i) || i > m) ? 1 : -(int)i;
                     }
                     else
@@ -376,7 +377,7 @@ namespace SilverSim.Scripting.Lsl
         #endregion
 
         #region Preprocessor for concatenated string constants
-        void CollapseStringConstants(List<string> args)
+        private void CollapseStringConstants(List<string> args)
         {
             int pos = 0;
             while(++pos < args.Count - 2)
@@ -393,7 +394,7 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        void CombineTypecastArguments(CompileState cs, List<string> args)
+        private void CombineTypecastArguments(CompileState cs, List<string> args)
         {
             for (int pos = 0; pos < args.Count - 2; ++pos)
             {
@@ -407,7 +408,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         /*  Process important things before solving operators */
-        void PreprocessLine(CompileState cs, List<string> args)
+        private void PreprocessLine(CompileState cs, List<string> args)
         {
             CombineTypecastArguments(cs, args);
             CollapseStringConstants(args);
@@ -454,6 +455,7 @@ namespace SilverSim.Scripting.Lsl
             }
             return false;
         }
+
         internal static string MapType(Type t)
         {
             if(t == typeof(long))
@@ -507,11 +509,11 @@ namespace SilverSim.Scripting.Lsl
             {
                 ProcessCasts(compileState, toType, fromType, lineNumber);
             }
-            else if(null == fromType)
+            else if(fromType == null)
             {
                 throw new CompilerException(lineNumber, "Internal Error! fromType is not set");
             }
-            else if (null == toType)
+            else if (toType == null)
             {
                 throw new CompilerException(lineNumber, "Internal Error! toType is not set");
             }
@@ -635,7 +637,7 @@ namespace SilverSim.Scripting.Lsl
 
         public static class SinglePrecision
         {
-            static string TypecastFloatToString(double v, int placesAfter)
+            private static string TypecastFloatToString(double v, int placesAfter)
             {
                 string val;
                 if (BitConverter.DoubleToInt64Bits(v) == BitConverter.DoubleToInt64Bits(NegativeZero))
@@ -716,11 +718,9 @@ namespace SilverSim.Scripting.Lsl
                 }
                 return sb.ToString();
             }
-
-
         }
 
-        static string TypecastDoubleToString(double v, int placesAfter)
+        private static string TypecastDoubleToString(double v, int placesAfter)
         {
             string val;
             if(BitConverter.DoubleToInt64Bits(v) == BitConverter.DoubleToInt64Bits(NegativeZero))
@@ -854,17 +854,17 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if(fromType == typeof(Vector3))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, 
+                    compileState.ILGen.Emit(OpCodes.Call,
                         (compileState.UsesSinglePrecision ? typeof(SinglePrecision) : typeof(LSLCompiler)).GetMethod("TypecastVectorToString5Places"));
                 }
                 else if (fromType == typeof(Quaternion))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, 
+                    compileState.ILGen.Emit(OpCodes.Call,
                         (compileState.UsesSinglePrecision ? typeof(SinglePrecision) : typeof(LSLCompiler)).GetMethod("TypecastRotationToString5Places"));
                 }
                 else if (fromType == typeof(double))
                 {
-                    compileState.ILGen.Emit(OpCodes.Call, 
+                    compileState.ILGen.Emit(OpCodes.Call,
                         compileState.UsesSinglePrecision ? typeof(SinglePrecision).GetMethod("TypecastFloatToString") : typeof(LSLCompiler).GetMethod("TypecastDoubleToString"));
                 }
                 else if(fromType == typeof(AnArray))
@@ -1121,25 +1121,25 @@ namespace SilverSim.Scripting.Lsl
             FieldInfo fi;
 
             ilpi = v as ILParameterInfo;
-            if (null != ilpi)
+            if (ilpi != null)
             {
                 return ilpi.ParameterType;
             }
 
             lb = v as LocalBuilder;
-            if (null != lb)
+            if (lb != null)
             {
                 return lb.LocalType;
             }
 
             fb = v as FieldBuilder;
-            if (null != fb)
+            if (fb != null)
             {
                 return fb.FieldType;
             }
 
             fi = v as FieldInfo;
-            if (null != fi)
+            if (fi != null)
             {
                 return fi.FieldType;
             }
@@ -1147,7 +1147,7 @@ namespace SilverSim.Scripting.Lsl
             throw new NotSupportedException();
         }
 
-        static Type EmitFieldRead(
+        private static Type EmitFieldRead(
             CompileState compileState,
             FieldInfo fi)
         {
@@ -1177,7 +1177,7 @@ namespace SilverSim.Scripting.Lsl
             else
             {
                 compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                if (null != compileState.StateTypeBuilder)
+                if (compileState.StateTypeBuilder != null)
                 {
                     compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                 }
@@ -1196,23 +1196,23 @@ namespace SilverSim.Scripting.Lsl
             FieldBuilder fb;
             FieldInfo fi;
 
-            if (null != (ilpi = v as ILParameterInfo))
+            if ((ilpi = v as ILParameterInfo) != null)
             {
                 compileState.ILGen.Emit(OpCodes.Ldarg, ilpi.Position);
                 retType = ilpi.ParameterType;
             }
-            else if (null != (lb = v as LocalBuilder))
+            else if ((lb = v as LocalBuilder) != null)
             {
                 compileState.ILGen.Emit(OpCodes.Ldloc, lb);
                 retType = lb.LocalType;
             }
-            else if (null != (fb = v as FieldBuilder))
+            else if ((fb = v as FieldBuilder) != null)
             {
                 retType = EmitFieldRead(
                     compileState,
                     fb);
             }
-            else if (null != (fi = v as FieldInfo))
+            else if ((fi = v as FieldInfo) != null)
             {
                 retType = EmitFieldRead(
                     compileState,
@@ -1241,21 +1241,21 @@ namespace SilverSim.Scripting.Lsl
             FieldInfo fi;
 
             ilpi = v as ILParameterInfo;
-            if (null != ilpi)
+            if (ilpi != null)
             {
                 compileState.ILGen.Emit(OpCodes.Starg, ilpi.Position);
                 return;
             }
 
             lb = v as LocalBuilder;
-            if (null != lb)
+            if (lb != null)
             {
                 compileState.ILGen.Emit(OpCodes.Stloc, lb);
                 return;
             }
 
             fb = v as FieldBuilder;
-            if (null != fb)
+            if (fb != null)
             {
                 if ((fb.Attributes & FieldAttributes.Static) != 0)
                 {
@@ -1265,7 +1265,7 @@ namespace SilverSim.Scripting.Lsl
                 LocalBuilder swapLb = compileState.ILGen.DeclareLocal(fb.FieldType);
                 compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
                 compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                if (null != compileState.StateTypeBuilder)
+                if (compileState.StateTypeBuilder != null)
                 {
                     compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                 }
@@ -1277,7 +1277,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             fi = v as FieldInfo;
-            if (null != fi)
+            if (fi != null)
             {
                 if ((fi.Attributes & FieldAttributes.Static) != 0)
                 {
@@ -1287,7 +1287,7 @@ namespace SilverSim.Scripting.Lsl
                 LocalBuilder swapLb = compileState.ILGen.DeclareLocal(fi.FieldType);
                 compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
                 compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                if (null != compileState.StateTypeBuilder)
+                if (compileState.StateTypeBuilder != null)
                 {
                     compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                 }
@@ -1303,7 +1303,7 @@ namespace SilverSim.Scripting.Lsl
         #endregion
 
         #region Constants collector for IL Generator
-        Dictionary<string, object> AddConstants(CompileState compileState, TypeBuilder typeBuilder, ILGenerator ilgen)
+        private Dictionary<string, object> AddConstants(CompileState compileState)
         {
             var localVars = new Dictionary<string, object>();
             foreach(KeyValuePair<string, FieldInfo> kvp in compileState.ApiInfo.Constants)
@@ -1320,7 +1320,6 @@ namespace SilverSim.Scripting.Lsl
                         m_Log.DebugFormat(compileState.GetLanguageString(compileState.CurrentCulture, "Field0HasUnsupportedAttributeFlags1", "Field {0} has unsupported attribute flags {1}"), kvp.Key, f.Attributes.ToString());
                     }
                 }
-
             }
             return localVars;
         }

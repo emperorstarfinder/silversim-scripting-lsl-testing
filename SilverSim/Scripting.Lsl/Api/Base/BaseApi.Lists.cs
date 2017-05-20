@@ -107,7 +107,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("number of entries per stride, if less than 1 it is assumed to be 1")]
             int stride)
         {
-
             var result = new AnArray();
             var si = new int[2];
             var ei = new int[2];
@@ -151,7 +150,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if (start != end)
             {
-
                 if (start <= end)
                 {
                     si[0] = start;
@@ -617,8 +615,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 Type t = val.GetType();
                 if (t == typeof(Real))
                 {
-                    sb.Append(script.UsesSinglePrecision ? 
-                        LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) : 
+                    sb.Append(script.UsesSinglePrecision ?
+                        LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
                         LSLCompiler.TypecastDoubleToString(val.AsReal));
                 }
                 else if (t == typeof(Vector3))
@@ -685,11 +683,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Description("Returns an integer that is the number of elements in the list src")]
         public int GetListLength(ScriptInstance instance, AnArray src) => src.Count;
 
-        AnArray ParseString2List(ScriptInstance instance, string src, AnArray separators, AnArray spacers, bool keepNulls)
+        private AnArray ParseString2List(ScriptInstance instance, string src, AnArray separators, AnArray spacers, bool keepNulls)
         {
             var res = new AnArray();
             string value = null;
-            
+
             while(src.Length != 0)
             {
                 IValue foundSpacer = null;
@@ -898,7 +896,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         (src + List2List(instance, dest, end + 1, -1)) :
                         src;
                 }
-                else 
+                else
                 {
                     return (end + 1 < dest.Count) ?
                         List2List(instance, dest, end + 1, -1) :
@@ -911,7 +909,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        static int ElementCompare(IValue left, IValue right)
+        private static int ElementCompare(IValue left, IValue right)
         {
             Type leftType = left.GetType();
             if (left.GetType() != right.GetType())
@@ -946,11 +944,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        static int ElementCompareDescending(IValue left, IValue right) => 0 - ElementCompare(left, right);
+        private static int ElementCompareDescending(IValue left, IValue right) => 0 - ElementCompare(left, right);
 
         [APILevel(APIFlags.LSL, "llListSort")]
         [Description("Returns a list that is src sorted by stride.")]
-        public AnArray ListSort(ScriptInstance instance, 
+        public AnArray ListSort(ScriptInstance instance,
             [Description("List to be sorted")]
             AnArray src,
             [Description("number of entries per stride. If it is less than 1, it is assumed to be 1.")]
@@ -1125,7 +1123,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         #region llListStatistics function implementation
-        bool IsValue(IValue iv, out double v)
+        private bool IsValue(IValue iv, out double v)
         {
             switch (iv.LSL_Type)
             {
@@ -1143,7 +1141,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        double ListMin(AnArray src)
+        private double ListMin(AnArray src)
         {
             double minimum = double.PositiveInfinity;
             double entry;
@@ -1160,7 +1158,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return minimum;
         }
 
-        double ListMax(AnArray src)
+        private double ListMax(AnArray src)
         {
             double maximum = double.NegativeInfinity;
             double entry;
@@ -1177,7 +1175,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return maximum;
         }
 
-        double ListRange(AnArray src)
+        private double ListRange(AnArray src)
         {
             double maximum = double.NegativeInfinity;
             double minimum = double.PositiveInfinity;
@@ -1191,9 +1189,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     {
                         maximum = entry;
                     }
-                    if (entry > maximum)
+                    if (entry < minimum)
                     {
-                        maximum = entry;
+                        minimum = entry;
                     }
                 }
             }
@@ -1201,7 +1199,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return maximum / minimum;
         }
 
-        int ListNumericLength(AnArray src)
+        private int ListNumericLength(AnArray src)
         {
             int count = 0;
             double entry;
@@ -1217,7 +1215,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return count;
         }
 
-        double ListSum(AnArray src)
+        private double ListSum(AnArray src)
         {
             double sum = 0;
             double entry;
@@ -1226,14 +1224,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (IsValue(src[i], out entry))
                 {
-                    sum = sum + entry;
+                    sum += entry;
                 }
             }
 
             return sum;
         }
 
-        double ListSumSquares(AnArray src)
+        private double ListSumSquares(AnArray src)
         {
             double sum = 0;
             double entry;
@@ -1241,13 +1239,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (IsValue(src[i], out entry))
                 {
-                    sum = sum + entry * entry;
+                    sum += entry * entry;
                 }
             }
             return sum;
         }
 
-        double ListMean(AnArray src)
+        private double ListMean(AnArray src)
         {
             double sum = 0;
             double entry;
@@ -1265,9 +1263,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return sum / count;
         }
 
-        double ListMedian(AnArray src) => ListQi(src, 0.5);
+        private double ListMedian(AnArray src) => ListQi(src, 0.5);
 
-        double ListGeometricMean(AnArray src)
+        private double ListGeometricMean(AnArray src)
         {
             double ret = 1.0;
             int count = 0;
@@ -1284,7 +1282,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return Math.Exp(Math.Log(ret) / count);
         }
 
-        double ListHarmonicMean(AnArray src)
+        private double ListHarmonicMean(AnArray src)
         {
             double ret = 0.0;
             double entry;
@@ -1302,7 +1300,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return count / ret;
         }
 
-        double ListVariance(AnArray src)
+        private double ListVariance(AnArray src)
         {
             double s = 0;
             int count = 0;
@@ -1321,12 +1319,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return (s - count * Math.Pow(sum / count, 2)) / (count - 1);
         }
 
-        double ListStdDev(AnArray src)
+        private double ListStdDev(AnArray src)
         {
             return Math.Sqrt(ListVariance(src));
         }
 
-        double[] NumericSort(AnArray src)
+        private double[] NumericSort(AnArray src)
         {
             var resList = new List<double>();
             double entry;
@@ -1344,7 +1342,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return resArray;
         }
 
-        double ListQi(AnArray src, double i)
+        private double ListQi(AnArray src, double i)
         {
             double[] j = NumericSort(src);
 

@@ -36,7 +36,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
     [Description("LSL RayCast API")]
     public class RayCastApi : IScriptApi, IPlugin
     {
-        static readonly ILog m_Log = LogManager.GetLogger("LSL RAYCAST");
+        private static readonly ILog m_Log = LogManager.GetLogger("LSL RAYCAST");
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -78,11 +78,11 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
         [APILevel(APIFlags.LSL, "llCastRay")]
         [Description("Cast a ray from start to end and report collision data for intersections with objects")]
         public AnArray CastRay(
-            ScriptInstance instance, 
+            ScriptInstance instance,
             [Description("starting location")]
             Vector3 start,
             [Description("ending location")]
-            Vector3 end, 
+            Vector3 end,
             AnArray options)
         {
             var resArray = new AnArray();

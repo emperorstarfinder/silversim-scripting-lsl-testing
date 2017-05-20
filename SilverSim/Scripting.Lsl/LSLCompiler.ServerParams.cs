@@ -31,12 +31,12 @@ namespace SilverSim.Scripting.Lsl
     [ServerParamStartsWith("OSSL.")]
     partial class LSLCompiler : IServerParamAnyListener
     {
-        void AddServerParam(Dictionary<string, ServerParamAttribute> resList, ServerParamAttribute attr)
+        private void AddServerParam(Dictionary<string, ServerParamAttribute> resList, ServerParamAttribute attr)
         {
             resList[attr.ParameterName] = attr;
         }
 
-        void AddServerParamBlock(Dictionary<string, ServerParamAttribute> resList, string name)
+        private void AddServerParamBlock(Dictionary<string, ServerParamAttribute> resList, string name)
         {
             AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".AllowedCreators") { Description = "Defines allowed creators for " + name });
             AddServerParam(resList, new ServerParamAttribute("OSSL." + name + ".AllowedOwners") { Description = "Defines allowed owners for " + name });
@@ -52,7 +52,7 @@ namespace SilverSim.Scripting.Lsl
         {
             get
             {
-                Dictionary<string, ServerParamAttribute> resList = new Dictionary<string, ServerParamAttribute>();
+                var resList = new Dictionary<string, ServerParamAttribute>();
                 AddServerParam(resList, new ServerParamAttribute("OSSL.ThreatLevel") { Description = "Defines threat level" });
                 foreach(IScriptApi api in m_Apis)
                 {

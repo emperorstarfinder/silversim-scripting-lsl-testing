@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
@@ -63,10 +65,10 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             public readonly RwLockedDictionary<UUID, BlockingQueue<RemoteDataReplyEvent>> ActiveRequests = new RwLockedDictionary<UUID, BlockingQueue<XmlRpcApi.RemoteDataReplyEvent>>();
         }
 
-        readonly RwLockedDictionary<UUID /* channelid */, ChannelInfo> m_Channels = new RwLockedDictionary<UUID, ChannelInfo>();
-        readonly RwLockedDictionary<UUID /* itemid */, ChannelInfo> m_ScriptChannels = new RwLockedDictionary<UUID, ChannelInfo>();
+        private readonly RwLockedDictionary<UUID /* channelid */, ChannelInfo> m_Channels = new RwLockedDictionary<UUID, ChannelInfo>();
+        private readonly RwLockedDictionary<UUID /* itemid */, ChannelInfo> m_ScriptChannels = new RwLockedDictionary<UUID, ChannelInfo>();
 
-        XmlRpcStructs.XmlRpcResponse RemoteDataXmlRpc(XmlRpcStructs.XmlRpcRequest req)
+        private XmlRpcStructs.XmlRpcResponse RemoteDataXmlRpc(XmlRpcStructs.XmlRpcRequest req)
         {
             if (req.Params.Count != 1)
             {
@@ -99,7 +101,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             if (!m_Scenes.TryGetValue(channel.SceneID, out scene))
             {
                 m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, delegate (ChannelInfo ci) { return ci == channel; });
+                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
                 throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
             }
 
@@ -109,14 +111,14 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             if (!scene.Primitives.TryGetValue(channel.ObjectID, out part))
             {
                 m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, delegate (ChannelInfo ci) { return ci == channel; });
+                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
                 throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
             }
 
             if (!part.Inventory.TryGetValue(channel.ItemID, out item))
             {
                 m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, delegate (ChannelInfo ci) { return ci == channel; });
+                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
                 throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
             }
 
@@ -124,7 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             if (instance == null)
             {
                 m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, delegate (ChannelInfo ci) { return ci == channel; });
+                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
                 throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
             }
 
@@ -199,13 +201,12 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                     ci = new ChannelInfo(scriptID, sceneID, objectID, scriptID);
                     m_ScriptChannels.Add(scriptID, ci);
                     m_Channels.Add(ci.ChannelID, ci);
-
                 }
                 RegisterDataChannel(ci);
             }
         }
 
-        void RegisterDataChannel(ChannelInfo ci)
+        private void RegisterDataChannel(ChannelInfo ci)
         {
             SceneInterface scene;
             ObjectPart part;
@@ -216,9 +217,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 part.Inventory.TryGetValue(ci.ItemID, out item))
             {
                 ScriptInstance instance = item.ScriptInstance;
-                if (null != instance)
-                {
-                    instance.PostEvent(new RemoteDataEvent()
+                instance?.PostEvent(new RemoteDataEvent()
                     {
                         Channel = ci.ChannelID,
                         IData = 0,
@@ -227,7 +226,6 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                         Sender = string.Empty,
                         Type = REMOTE_DATA_REQUEST
                     });
-                }
             }
         }
 

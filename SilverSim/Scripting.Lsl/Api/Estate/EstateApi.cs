@@ -59,7 +59,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
         [Description("Remove the agent from this estate's Banned residents list.")]
         public const int ESTATE_ACCESS_BANNED_AGENT_REMOVE = 0x80;
 
-        SceneList m_Scenes;
+        private SceneList m_Scenes;
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -107,9 +107,9 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
         [APILevel(APIFlags.LSL, "llManageEstateAccess")]
         [Description("Add or remove agents from the estate's agent access or ban lists or groups from the estate's group access list.")]
-        public int ManageEstateAccess(ScriptInstance instance, 
+        public int ManageEstateAccess(ScriptInstance instance,
             [Description("ESTATE_ACCESS_* flag")]
-            int action, 
+            int action,
             [Description("avatar or group UUID")]
             LSLKey avatar)
         {
@@ -141,7 +141,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
                     case ESTATE_ACCESS_ALLOWED_GROUP_ADD:
                     case ESTATE_ACCESS_ALLOWED_GROUP_REMOVE:
-                        if(null == groupsNameService ||
+                        if(groupsNameService == null ||
                             !groupsNameService.TryGetValue(avatar.AsUUID, out ugi))
                         {
                             return 0;

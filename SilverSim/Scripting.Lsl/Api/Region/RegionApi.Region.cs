@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 {
     public partial class RegionApi
     {
-        sealed class ConsoleCommandTTY : TTY
+        private sealed class ConsoleCommandTTY : TTY
         {
             public string OutputBuffer { get; private set; }
             public ConsoleCommandTTY()
@@ -56,11 +56,11 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
         [APILevel(APIFlags.OSSL, "osSetRegionSunSettings")]
         [Description("set new region sun settings (EM, EO or RO only)")]
-        public void SetRegionSunSettings(ScriptInstance instance, 
+        public void SetRegionSunSettings(ScriptInstance instance,
             [Description("set to TRUE if region uses estate sun parameters")]
-            int useEstateSun, 
+            int useEstateSun,
             [Description("set to TRUE if sun position is fixed see sunHour")]
-            int isFixed, 
+            int isFixed,
             [Description("position of sun when set to be fixed (0-24, 0 => sunrise, 6 => midday, 12 => dusk, 18 => midnight)")]
             double sunHour)
         {
@@ -393,10 +393,11 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             if (DATA_SIM_RELEASE == data)
             {
                 UUID queryID = UUID.Random;
-                DataserverEvent e = new DataserverEvent();
-                e.Data = VersionInfo.SimulatorVersion;
-                e.QueryID = queryID;
-                instance.PostEvent(e);
+                instance.PostEvent(new DataserverEvent()
+                {
+                    Data = VersionInfo.SimulatorVersion,
+                    QueryID = queryID
+                });
                 return queryID;
             }
 
@@ -404,11 +405,13 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
 
-                if(scene.Name.ToLower() == region.ToLower())
+                if(string.Equals(scene.Name, region, StringComparison.OrdinalIgnoreCase))
                 {
                     UUID queryID = UUID.Random;
-                    DataserverEvent e = new DataserverEvent();
-                    e.QueryID = queryID;
+                    var e = new DataserverEvent()
+                    {
+                        QueryID = queryID
+                    };
                     switch (data)
                     {
                         case DATA_SIM_POS:
@@ -465,7 +468,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                                 return queryID;
 
                             case DATA_SIM_STATUS:
-                                e.Data = ri.Flags.HasFlag(RegionFlags.RegionOnline) ? "up" : "down";
+                                e.Data = (ri.Flags & RegionFlags.RegionOnline) != 0 ? "up" : "down";
                                 instance.PostEvent(e);
                                 return queryID;
 
@@ -580,7 +583,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     swCorner.Y -= double.Epsilon;
                     neCorner.X += double.Epsilon;
                     neCorner.Y += double.Epsilon;
-                    if(swCorner.X <= edgeOfWorld.X && 
+                    if(swCorner.X <= edgeOfWorld.X &&
                         neCorner.X >= edgeOfWorld.X &&
                         swCorner.Y <= edgeOfWorld.Y &&
                         neCorner.Y >= edgeOfWorld.Y)

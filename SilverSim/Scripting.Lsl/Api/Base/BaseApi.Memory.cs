@@ -20,10 +20,6 @@
 // exception statement from your version.
 
 using SilverSim.Scene.Types.Script;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {

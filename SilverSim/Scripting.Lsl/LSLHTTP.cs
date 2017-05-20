@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using Nini.Config;
 using SilverSim.Main.Common;
 using SilverSim.Main.Common.HttpServer;
@@ -45,11 +47,11 @@ namespace SilverSim.Scripting.Lsl
     [ServerParam("LSL.MaxURLs", ParameterType = typeof(uint), DefaultValue = 15000)]
     public sealed class LSLHTTP : IPlugin, IPluginShutdown, IServerParamListener
     {
-        BaseHttpServer m_HttpServer;
-        BaseHttpServer m_HttpsServer;
-        readonly Timer m_HttpTimer;
-        int m_TotalUrls = 15000;
-        SceneList m_Scenes;
+        private BaseHttpServer m_HttpServer;
+        private BaseHttpServer m_HttpsServer;
+        private readonly Timer m_HttpTimer;
+        private int m_TotalUrls = 15000;
+        private SceneList m_Scenes;
 
         [ServerParam("LSL.MaxURLs")]
         public void MaxURLsUpdated(UUID regionID, string value)
@@ -67,21 +69,18 @@ namespace SilverSim.Scripting.Lsl
 
         public int TotalUrls
         {
-            get
-            {
-                return m_TotalUrls;
-            }
+            get { return m_TotalUrls; }
+
             set
             {
-                if(value > 0)
+                if (value > 0)
                 {
                     m_TotalUrls = value;
                 }
             }
         }
 
-
-        struct HttpRequestData
+        private struct HttpRequestData
         {
             public DateTime ValidUntil;
             public string ContentType;
@@ -111,10 +110,10 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        readonly RwLockedDictionary<UUID, HttpRequestData> m_HttpRequests = new RwLockedDictionary<UUID, HttpRequestData>();
+        private readonly RwLockedDictionary<UUID, HttpRequestData> m_HttpRequests = new RwLockedDictionary<UUID, HttpRequestData>();
 
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidLargeStructureRule")]
-        struct URLData
+        private struct URLData
         {
             public UUID SceneID;
             public UUID PrimID;
@@ -131,8 +130,9 @@ namespace SilverSim.Scripting.Lsl
                 AllowXss = allowXss;
             }
         }
-        readonly RwLockedDictionary<UUID, URLData> m_UrlMap = new RwLockedDictionary<UUID, URLData>();
-        readonly RwLockedDictionary<string, URLData> m_NamedUrlMap = new RwLockedDictionary<string, URLData>();
+
+        private readonly RwLockedDictionary<UUID, URLData> m_UrlMap = new RwLockedDictionary<UUID, URLData>();
+        private readonly RwLockedDictionary<string, URLData> m_NamedUrlMap = new RwLockedDictionary<string, URLData>();
 
         public LSLHTTP()
         {
@@ -141,7 +141,7 @@ namespace SilverSim.Scripting.Lsl
             m_HttpTimer.Start();
         }
 
-        void TimerEvent(object sender, ElapsedEventArgs e)
+        private void TimerEvent(object sender, ElapsedEventArgs e)
         {
             var RemoveList = new List<UUID>();
             foreach(KeyValuePair<UUID, HttpRequestData> kvp in m_HttpRequests)
@@ -178,14 +178,14 @@ namespace SilverSim.Scripting.Lsl
                 m_HttpsServer = null;
             }
 
-            if(null != m_HttpsServer)
+            if(m_HttpsServer != null)
             {
                 m_HttpsServer.StartsWithUriHandlers.Add("/lslhttps/", LSLHttpRequestHandler);
                 m_HttpsServer.StartsWithUriHandlers.Add("/lslhttps-named/", LSLNamedHttpRequestHandler);
             }
 
             IConfig lslConfig = loader.Config.Configs["LSL"];
-            if(null != lslConfig)
+            if(lslConfig != null)
             {
                 m_TotalUrls = lslConfig.GetInt("MaxUrlsPerSimulator", 15000);
             }
@@ -196,7 +196,7 @@ namespace SilverSim.Scripting.Lsl
         public void Shutdown()
         {
             m_HttpTimer.Stop();
-            if(null != m_HttpsServer)
+            if(m_HttpsServer != null)
             {
                 m_HttpsServer.StartsWithUriHandlers.Remove("/lslhttps/");
             }
@@ -211,7 +211,6 @@ namespace SilverSim.Scripting.Lsl
                     reqdata.Request.ErrorResponse(HttpStatusCode.InternalServerError, "Script shutdown");
                 }
             }
-
         }
 
         public int FreeUrls
@@ -225,6 +224,7 @@ namespace SilverSim.Scripting.Lsl
                 return m_TotalUrls - UsedUrls;
             }
         }
+
         public int UsedUrls => m_UrlMap.Count;
 
         public void LSLHttpRequestHandler(HttpRequest req)
@@ -366,7 +366,7 @@ namespace SilverSim.Scripting.Lsl
             LSLHttpRequestHandlerCommon(urlData, new HttpRequestData(req, parts[1], urlData.AllowXss));
         }
 
-        void LSLHttpRequestHandlerCommon(URLData urlData, HttpRequestData data)
+        private void LSLHttpRequestHandlerCommon(URLData urlData, HttpRequestData data)
         {
             UUID reqid = UUID.Random;
             string body = string.Empty;
@@ -463,9 +463,9 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        readonly object m_ReqUrlLock = new object();
+        private readonly object m_ReqUrlLock = new object();
 
-        bool IsValidNamedURL(string name)
+        private bool IsValidNamedURL(string name)
         {
             if(name.Length == 0)
             {
@@ -516,7 +516,7 @@ namespace SilverSim.Scripting.Lsl
 
         public string RequestSecureURL(ObjectPart part, ObjectPartInventoryItem item, bool allowXss = false)
         {
-            if(null == m_HttpsServer)
+            if(m_HttpsServer == null)
             {
                 throw new LocalizedScriptErrorException(this, "NoHTTPSSupport", "No HTTPS support");
             }
@@ -539,7 +539,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new LocalizedScriptErrorException(this, "InvalidNameForPredefinedName", "Invalid name for predefined name");
             }
-            if (null == m_HttpsServer)
+            if (m_HttpsServer == null)
             {
                 throw new LocalizedScriptErrorException(this, "NoHTTPSSupport", "No HTTPS support");
             }
@@ -569,7 +569,6 @@ namespace SilverSim.Scripting.Lsl
             string[] parts = uri.PathAndQuery.Substring(1).Split(new char[] { '/' }, 3);
             if (parts[0] == "lslhttp" || parts[0] == "lslhttps")
             {
-
                 UUID urlid;
                 if (!UUID.TryParse(parts[1], out urlid))
                 {

@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
@@ -53,7 +55,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        interface IExpressionStackElement
+        private interface IExpressionStackElement
         {
             Tree ProcessNextStep(
                 LSLCompiler lslCompiler,
@@ -62,7 +64,7 @@ namespace SilverSim.Scripting.Lsl
                 Type innerExpressionReturn);
         }
 
-        Type ProcessExpressionPart(
+        private Type ProcessExpressionPart(
             CompileState compileState,
             Tree functionTree,
             int lineNumber,
@@ -169,17 +171,14 @@ namespace SilverSim.Scripting.Lsl
                     {
                         case Tree.EntryType.Function:
                             expressionStack.Insert(0, new FunctionExpression(
-                                this,
                                 compileState,
                                 functionTree,
-                                lineNumber,
-                                localVars));
+                                lineNumber));
                             innerExpressionReturn = null;
                             break;
 
                         case Tree.EntryType.OperatorBinary:
                             expressionStack.Insert(0, new BinaryOperatorExpression(
-                                this,
                                 compileState,
                                 functionTree,
                                 lineNumber,
@@ -449,21 +448,15 @@ namespace SilverSim.Scripting.Lsl
                                 case "(quaternion)":
                                 case "(rotation)":
                                     expressionStack.Insert(0, new TypecastExpression(
-                                        this,
-                                        compileState,
                                         functionTree,
-                                        lineNumber,
-                                        localVars));
+                                        lineNumber));
                                     innerExpressionReturn = null;
                                     break;
 
                                 default:
                                     expressionStack.Insert(0, new LeftUnaryOperators(
-                                        this,
-                                        compileState,
                                         functionTree,
-                                        lineNumber,
-                                        localVars));
+                                        lineNumber));
                                     innerExpressionReturn = null;
                                     break;
                             }
@@ -742,7 +735,7 @@ namespace SilverSim.Scripting.Lsl
 
                         case Tree.EntryType.Rotation:
                             /* rotation */
-                            if (null != functionTree.Value)
+                            if (functionTree.Value != null)
                             {
                                 /* constants */
                                 var val = (ConstantValueRotation)functionTree.Value;
@@ -756,11 +749,8 @@ namespace SilverSim.Scripting.Lsl
                             else
                             {
                                 expressionStack.Insert(0, new RotationExpression(
-                                    this,
-                                    compileState,
                                     functionTree,
-                                    lineNumber,
-                                    localVars));
+                                    lineNumber));
                                 innerExpressionReturn = null;
                             }
                             break;
@@ -809,7 +799,7 @@ namespace SilverSim.Scripting.Lsl
 
                         case Tree.EntryType.Vector:
                             /* three components */
-                            if (null != functionTree.Value)
+                            if (functionTree.Value != null)
                             {
                                 /* constants */
                                 var val = (ConstantValueVector)functionTree.Value;
@@ -822,11 +812,8 @@ namespace SilverSim.Scripting.Lsl
                             else
                             {
                                 expressionStack.Insert(0, new VectorExpression(
-                                    this,
-                                    compileState,
                                     functionTree,
-                                    lineNumber,
-                                    localVars));
+                                    lineNumber));
                                 innerExpressionReturn = null;
                             }
                             break;
@@ -857,11 +844,9 @@ namespace SilverSim.Scripting.Lsl
                                 case "[":
                                     /* we got a list */
                                     expressionStack.Insert(0, new ListExpression(
-                                        this,
                                         compileState,
                                         functionTree,
-                                        lineNumber,
-                                        localVars));
+                                        lineNumber));
                                     innerExpressionReturn = null;
                                     break;
 

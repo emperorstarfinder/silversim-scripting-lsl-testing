@@ -87,6 +87,5 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 script.SetTimerEvent(0);
             }
         }
-
     }
 }

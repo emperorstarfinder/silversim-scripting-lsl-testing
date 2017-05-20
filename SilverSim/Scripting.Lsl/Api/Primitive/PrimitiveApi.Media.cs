@@ -172,7 +172,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     return new AnArray();
                 }
                 entry = mediaList[face];
-                if (null == entry)
+                if (entry == null)
                 {
                     return new AnArray();
                 }
@@ -307,8 +307,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 Types.Primitive.PrimitiveMedia mediaList = part.Media;
-                Types.Primitive.PrimitiveMedia.Entry entry;
-                entry =(mediaList == null || mediaList.Count <= face) ?
+                Types.Primitive.PrimitiveMedia.Entry entry = (mediaList == null || mediaList.Count <= face) ?
                      new Types.Primitive.PrimitiveMedia.Entry() :
                      mediaList[face];
 
@@ -362,7 +361,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             entry.IsAutoLoop = param[i + 1].AsBoolean;
                             break;
 
-                            
                         case PRIM_MEDIA_AUTO_PLAY:
                             if(param[i + 1].LSL_Type != LSLValueType.Integer)
                             {
@@ -394,7 +392,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             }
                             entry.IsInteractOnFirstClick = param[i + 1].AsBoolean;
                             break;
-
 
                         case PRIM_MEDIA_WIDTH_PIXELS:
                             if(param[i + 1].LSL_Type != LSLValueType.Integer)

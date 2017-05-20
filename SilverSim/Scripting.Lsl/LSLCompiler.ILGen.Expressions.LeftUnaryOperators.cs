@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
@@ -30,18 +32,15 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        sealed class LeftUnaryOperators : IExpressionStackElement
+        private sealed class LeftUnaryOperators : IExpressionStackElement
         {
-            readonly Tree m_ExpressionTree;
-            readonly string m_Operator;
-            readonly int m_LineNumber;
+            private readonly Tree m_ExpressionTree;
+            private readonly string m_Operator;
+            private readonly int m_LineNumber;
 
             public LeftUnaryOperators(
-                LSLCompiler lslCompiler,
-                CompileState compileState,
                 Tree functionTree,
-                int lineNumber,
-                Dictionary<string, object> localVars)
+                int lineNumber)
             {
                 m_Operator = functionTree.Entry;
                 m_ExpressionTree = functionTree.SubTree[0];
@@ -54,7 +53,7 @@ namespace SilverSim.Scripting.Lsl
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
-                if (null != innerExpressionReturn)
+                if (innerExpressionReturn != null)
                 {
                     switch (m_Operator)
                     {

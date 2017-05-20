@@ -73,8 +73,6 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
         [Description("permission to return object from parcels by llReturnObjectsByOwner and llReturnObjectsByID")]
         public const int PERMISSION_RETURN_OBJECTS = 0x10000;
 
-
-
         [APILevel(APIFlags.LSL, "run_time_permissions")]
         [StateEventDelegate]
         public delegate void State_run_time_permissions(int perm);
@@ -121,10 +119,11 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
                     ScriptPermissions perms = a.RequestPermissions(instance.Part, instance.Item.ID, (ScriptPermissions)permissions);
                     if (perms != ScriptPermissions.None)
                     {
-                        RuntimePermissionsEvent e = new RuntimePermissionsEvent();
-                        e.Permissions = perms;
-                        e.PermissionsKey = a.Owner;
-                        instance.PostEvent(e);
+                        instance.PostEvent(new RuntimePermissionsEvent()
+                        {
+                            Permissions = perms,
+                            PermissionsKey = a.Owner
+                        });
                     }
                 }
             }

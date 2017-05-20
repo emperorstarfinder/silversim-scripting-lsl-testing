@@ -41,8 +41,8 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
     public class DynamicTextureApi : IScriptApi, IPlugin
     {
         /* graphics context specifically used for GetDrawStringSize */
-        readonly Graphics m_FontRequestContext;
-        readonly Dictionary<string, Func<string, string, Bitmap>> m_Renderers = new Dictionary<string, Func<string, string, Bitmap>>();
+        private readonly Graphics m_FontRequestContext;
+        private readonly Dictionary<string, Func<string, string, Bitmap>> m_Renderers = new Dictionary<string, Func<string, string, Bitmap>>();
 
         public DynamicTextureApi()
         {
@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             drawList + "MoveTo " + x + "," + y + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawLine")]
-        public string DrawLine(ScriptInstance instance, string drawList, int startX, int startY, int endX, int endY) => 
+        public string DrawLine(ScriptInstance instance, string drawList, int startX, int startY, int endX, int endY) =>
             drawList + "MoveTo " + startX.ToString() + "," + startY.ToString() + ";" +
                 "LineTo " + endX.ToString() + "," + endY.ToString() + ";";
 
@@ -167,7 +167,6 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
         public const int DISP_EXPIRE = 1;
         public const int DISP_TEMP = 2;
-
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureURL")]
         public LSLKey SetDynamicTextureURL(
@@ -296,16 +295,16 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 (byte)alpha,
                 face);
 
-        LSLKey AddDynamicTextureData(
+        private LSLKey AddDynamicTextureData(
             ScriptInstance instance,
             string dynamicID,
             string contentType,
             string data,
-            string extraParams, 
+            string extraParams,
             int updateTimer,
-            bool setBlending, 
-            int disp, 
-            byte AlphaValue, 
+            bool setBlending,
+            int disp,
+            byte AlphaValue,
             int face)
         {
             Func<string, string, Bitmap> renderer;
@@ -339,7 +338,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         }
                     }
                 }
-                if(null != backImage)
+                if(backImage != null)
                 {
                     mergeImage = RenderDynamicTexture.BlendTextures(frontImage, backImage, false, AlphaValue);
                     textureAsset = mergeImage.ToTexture();
@@ -379,18 +378,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             }
             finally
             {
-                if(frontImage != null)
-                {
-                    frontImage.Dispose();
-                }
-                if(backImage != null)
-                {
-                    backImage.Dispose();
-                }
-                if(mergeImage != null)
-                {
-                    mergeImage.Dispose();
-                }
+                frontImage?.Dispose();
+                backImage?.Dispose();
+                mergeImage?.Dispose();
             }
             return textureAssetID;
         }

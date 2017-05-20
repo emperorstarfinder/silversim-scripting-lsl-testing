@@ -55,9 +55,10 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
                 Channel = channel;
             }
         }
-        bool m_ShutdownHandlerThread;
-        RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, LogListenInfo>> m_Listeners = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, LogListenInfo>>(delegate () { return new RwLockedDictionary<UUID, LogListenInfo>(); });
-        SceneList m_Scenes;
+
+        private bool m_ShutdownHandlerThread;
+        private readonly RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, LogListenInfo>> m_Listeners = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, LogListenInfo>>(() => new RwLockedDictionary<UUID, LogListenInfo>());
+        private SceneList m_Scenes;
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -74,14 +75,14 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
             m_ShutdownHandlerThread = true;
         }
 
-        void OnSceneRemove(SceneInterface scene)
+        private void OnSceneRemove(SceneInterface scene)
         {
             m_Listeners.Remove(scene.ID);
         }
 
         public ShutdownOrder ShutdownOrder => ShutdownOrder.LogoutDatabase;
 
-        readonly BlockingQueue<LoggingEvent> m_LogEventQueue = new BlockingQueue<LoggingEvent>();
+        private readonly BlockingQueue<LoggingEvent> m_LogEventQueue = new BlockingQueue<LoggingEvent>();
 
         [APIExtension(APIExtension.Admin, "asLogListen")]
         public void LogListen(ScriptInstance instance, int onChannel, int enable)
@@ -103,7 +104,7 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
             }
         }
 
-        void LogThread()
+        private void LogThread()
         {
             Thread.CurrentThread.Name = "asLogListen Thread";
             while (!m_ShutdownHandlerThread)
@@ -121,7 +122,7 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
                 string msg = string.Format("{0} - [{1}]: {2}",
                     logevent.TimeStamp.ToString(),
                     logevent.LoggerName,
-                    logevent.RenderedMessage.ToString());
+                    logevent.RenderedMessage);
                 foreach(RwLockedDictionary<UUID, LogListenInfo> listeners in m_Listeners.Values)
                 {
                     foreach(KeyValuePair<UUID, LogListenInfo> kvp in listeners)
@@ -137,13 +138,14 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
                             ScriptInstance instance = item.ScriptInstance;
                             if(instance != null)
                             {
-                                ListenEvent ev = new ListenEvent();
-                                ev.Channel = li.Channel;
-                                ev.ID = UUID.Zero;
-                                ev.Name = "System Log";
-                                ev.Message = msg;
-                                ev.SourceType = ListenEvent.ChatSourceType.System;
-                                instance.PostEvent(ev);
+                                instance.PostEvent(new ListenEvent()
+                                {
+                                    Channel = li.Channel,
+                                    ID = UUID.Zero,
+                                    Name = "System Log",
+                                    Message = msg,
+                                    SourceType = ListenEvent.ChatSourceType.System
+                                });
                             }
                             else
                             {

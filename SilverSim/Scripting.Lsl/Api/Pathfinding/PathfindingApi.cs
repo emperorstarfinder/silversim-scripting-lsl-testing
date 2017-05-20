@@ -34,7 +34,6 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
     [Description("LSL/ASSL Pathfinding Api")]
     public class PathfindingApi : IPlugin, IScriptApi
     {
-
         [APILevel(APIFlags.LSL)]
         public const int CHARACTER_DESIRED_SPEED = 1;
         [APILevel(APIFlags.LSL)]
@@ -144,7 +143,7 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
                 }
 
                 IPathfindingService pathfindingService = scene.PathfindingService;
-                if(null == pathfindingService)
+                if(pathfindingService == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "PathfindingIsNotAvailable", "Pathfinding is not available"));
                     return;
@@ -208,7 +207,7 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
 
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 IPathfindingService pathfindingService = scene.PathfindingService;
-                if (null == pathfindingService)
+                if (pathfindingService == null)
                 {
                     return new AnArray();
                 }
@@ -222,12 +221,13 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
             }
         }
 
-
         [APILevel(APIFlags.LSL, "llGetStaticPath")]
         public AnArray GetStaticPath(ScriptInstance instance, Vector3 start, Vector3 end, double radius, AnArray param)
         {
-            var cInfo = new CharacterInfo();
-            cInfo.CollisionCapsuleRadius = radius;
+            var cInfo = new CharacterInfo()
+            {
+                CollisionCapsuleRadius = radius
+            };
             for (int i = 0; i < param.Count - 1; ++i)
             {
                 if (param[i].AsInt == CHARACTER_TYPE)
@@ -264,7 +264,7 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
             lock (instance)
             {
                 IPathfindingService pathfindingService = instance.Part.ObjectGroup.Scene.PathfindingService;
-                if (null == pathfindingService)
+                if (pathfindingService == null)
                 {
                     res.Add(PU_FAILURE_NO_NAVMESH);
                 }

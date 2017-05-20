@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             "Vary", "Via", "Warning", "WWW-Authenticate"
         };
 
-        static readonly Regex m_AuthRegex = new Regex(@"^(https?:\/\/)(\w+):(\w+)@(.*)$");
+        private static readonly Regex m_AuthRegex = new Regex(@"^(https?:\/\/)(\w+):(\w+)@(.*)$");
 
         [APILevel(APIFlags.LSL, "llHTTPRequest")]
         [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
@@ -74,6 +74,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 req.SceneID = instance.Part.ObjectGroup.Scene.ID;
                 req.PrimID = instance.Part.ID;
                 req.ItemID = instance.Item.ID;
+                req.RequestBody = body;
                 req.Url = url;
             }
 
@@ -210,7 +211,6 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                             return UUID.Zero;
                         }
                 }
-                
             }
 
             lock (instance)

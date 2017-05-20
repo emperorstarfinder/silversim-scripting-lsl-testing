@@ -64,11 +64,6 @@ namespace SilverSim.Scripting.Lsl.Expression
 
         public abstract class ValueBase
         {
-            public ValueBase()
-            {
-                /* intentionally left empty */
-            }
-
             public abstract ValueBase Negate();
         }
 
@@ -148,8 +143,7 @@ namespace SilverSim.Scripting.Lsl.Expression
 
         public ValueBase Value;
 
-        public Type ValueType => Value != null ? Value.GetType() : null;
-
+        public Type ValueType => Value?.GetType();
 
         public Tree()
         {
@@ -165,22 +159,26 @@ namespace SilverSim.Scripting.Lsl.Expression
             {
                 if(arg.StartsWith("\""))
                 {
-                    nt = new Tree();
-                    nt.Type = EntryType.StringValue;
-                    nt.Entry = arg.Substring(1, arg.Length - 2);
+                    nt = new Tree()
+                    {
+                        Type = EntryType.StringValue,
+                        Entry = arg.Substring(1, arg.Length - 2)
+                    };
                     SubTree.Add(nt);
                 }
                 else
                 {
-                    nt = new Tree();
-                    nt.Type = EntryType.Unknown;
-                    nt.Entry = arg;
+                    nt = new Tree()
+                    {
+                        Type = EntryType.Unknown,
+                        Entry = arg
+                    };
                     SubTree.Add(nt);
                 }
             }
         }
 
-        static string ProcessCSlashes(string v)
+        private static string ProcessCSlashes(string v)
         {
             int idx = 0;
             int slen = v.Length;

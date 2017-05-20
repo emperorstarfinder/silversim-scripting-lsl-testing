@@ -32,7 +32,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
     [Description("LSL XMLRPC API")]
     public partial class XmlRpcApi : IScriptApi, IPlugin
     {
-        SceneList m_Scenes;
+        private SceneList m_Scenes;
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -51,7 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [StateEventDelegate]
         public delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
 
-        void Remove(UUID scriptid)
+        private void Remove(UUID scriptid)
         {
             ChannelInfo channel;
             if(m_ScriptChannels.TryGetValue(scriptid, out channel))

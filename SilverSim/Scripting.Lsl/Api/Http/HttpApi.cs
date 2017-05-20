@@ -33,10 +33,10 @@ namespace SilverSim.Scripting.Lsl.Api.Http
     public partial class HttpApi : IScriptApi, IPlugin
     {
 #if DEBUG
-        static readonly ILog m_Log = LogManager.GetLogger("HTTP LSL API");
+        private static readonly ILog m_Log = LogManager.GetLogger("HTTP LSL API");
 #endif
-        LSLHTTP m_HTTPHandler;
-        LSLHTTPClient_RequestQueue m_LSLHTTPClient;
+        private LSLHTTP m_HTTPHandler;
+        private LSLHTTPClient_RequestQueue m_LSLHTTPClient;
 
         [APILevel(APIFlags.LSL)]
         public const string URL_REQUEST_GRANTED = "URL_REQUEST_GRANTED";

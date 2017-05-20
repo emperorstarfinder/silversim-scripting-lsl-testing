@@ -94,8 +94,10 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [ForcedSleep(1)]
         public void TextBox(ScriptInstance instance, LSLKey avatar, string message, int channel)
         {
-            var buttons = new AnArray();
-            buttons.Add("!!llTextBox!!");
+            var buttons = new AnArray
+            {
+                "!!llTextBox!!"
+            };
             Dialog(instance, avatar, message, buttons, channel);
         }
 
@@ -107,7 +109,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
-                LoadURL m = new LoadURL()
+                var m = new LoadURL()
                 {
                     ObjectName = thisGroup.Name,
                     ObjectID = thisGroup.ID,
@@ -117,7 +119,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 };
                 IAgent agent;
                 if(thisScene.Agents.TryGetValue(avatar, out agent))
-                { 
+                {
                     agent.SendMessageAlways(m, thisScene.ID);
                 }
             }
@@ -129,7 +131,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             lock(instance)
             {
-                Script script = (Script)instance;
+                var script = (Script)instance;
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
 
@@ -138,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     IAgent agent;
                     if (thisScene.Agents.TryGetValue(detinfo.Key, out agent))
                     {
-                        ScriptTeleportRequest m = new ScriptTeleportRequest()
+                        var m = new ScriptTeleportRequest()
                         {
                             ObjectName = thisGroup.Name,
                             SimName = simname,

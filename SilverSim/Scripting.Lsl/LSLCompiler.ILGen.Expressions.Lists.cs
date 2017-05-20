@@ -40,18 +40,16 @@ namespace SilverSim.Scripting.Lsl
             array.Add(q);
         }
 
-        sealed class ListExpression : IExpressionStackElement
+        private sealed class ListExpression : IExpressionStackElement
         {
-            readonly LocalBuilder m_NewList;
-            readonly List<Tree> m_ListElements = new List<Tree>();
-            readonly int m_LineNumber;
+            private readonly LocalBuilder m_NewList;
+            private readonly List<Tree> m_ListElements = new List<Tree>();
+            private readonly int m_LineNumber;
 
             public ListExpression(
-                LSLCompiler lslCompiler,
                 CompileState compileState,
                 Tree functionTree,
-                int lineNumber,
-                Dictionary<string, object> localVars)
+                int lineNumber)
             {
                 m_LineNumber = lineNumber;
                 compileState.ILGen.BeginScope();
@@ -74,12 +72,12 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public Tree ProcessNextStep(
-                LSLCompiler lslCompiler, 
-                CompileState compileState, 
-                Dictionary<string, object> localVars, 
+                LSLCompiler lslCompiler,
+                CompileState compileState,
+                Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
-                if(null != innerExpressionReturn)
+                if(innerExpressionReturn != null)
                 {
                     if (innerExpressionReturn == typeof(void))
                     {

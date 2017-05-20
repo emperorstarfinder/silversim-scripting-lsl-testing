@@ -37,8 +37,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
     [ServerParam("LSL.RezDistanceMeterLimit", ParameterType = typeof(uint), DefaultValue = 10)]
     partial class InventoryApi
     {
-        readonly RwLockedDictionary<UUID, bool> m_EnforceRezDistanceLimitParams = new RwLockedDictionary<UUID, bool>();
-        readonly RwLockedDictionary<UUID, uint> m_RezDistanceMeterLimit = new RwLockedDictionary<UUID, uint>();
+        private readonly RwLockedDictionary<UUID, bool> m_EnforceRezDistanceLimitParams = new RwLockedDictionary<UUID, bool>();
+        private readonly RwLockedDictionary<UUID, uint> m_RezDistanceMeterLimit = new RwLockedDictionary<UUID, uint>();
 
         [ServerParam("LSL.EnforceRezDistanceLimit")]
         public void EnforceRezDistanceLimitUpdated(UUID regionID, string value)
@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        bool IsRezDistanceLimitEnforced(UUID regionID)
+        private bool IsRezDistanceLimitEnforced(UUID regionID)
         {
             bool value;
             if (m_EnforceRezDistanceLimitParams.TryGetValue(regionID, out value) ||
@@ -83,7 +83,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             return true;
         }
 
-        uint GetRezDistanceMeterLimit(UUID regionID)
+        private uint GetRezDistanceMeterLimit(UUID regionID)
         {
             uint value;
             if (m_RezDistanceMeterLimit.TryGetValue(regionID, out value) ||
@@ -94,7 +94,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             return 10;
         }
 
-        bool TryGetLink(ObjectPart part, int link, out ObjectPart linkedpart)
+        private bool TryGetLink(ObjectPart part, int link, out ObjectPart linkedpart)
         {
             ObjectGroup grp = part.ObjectGroup;
             if (LINK_THIS == link)
@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        Vector3 CalculateGeometricCenter(List<ObjectGroup> groups)
+        private Vector3 CalculateGeometricCenter(List<ObjectGroup> groups)
         {
             Vector3 geometriccenteroffset = Vector3.Zero;
             int primcount = 0;
@@ -160,6 +160,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
             }
         }
+
         [APILevel(APIFlags.LSL, "llRezObject")]
         [ForcedSleep(0.1)]
         public void RezObject(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param)
@@ -171,7 +172,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
                 bool removeinventory;
-                if (IsRezDistanceLimitEnforced(sceneid) && 
+                if (IsRezDistanceLimitEnforced(sceneid) &&
                     (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
                 {
                     /* silent fail as per definition */
@@ -274,15 +275,17 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         part.Inventory.ChangeKey(item.ID, oldID);
                         if(item.AssetType == AssetType.LSLText)
                         {
-                            SavedScriptState savedScriptState = item.ScriptState as SavedScriptState;
-                            if (null != savedScriptState)
+                            var savedScriptState = item.ScriptState as SavedScriptState;
+                            if (savedScriptState != null)
                             {
                                 savedScriptState.StartParameter = param;
                             }
                             else
                             {
-                                savedScriptState = new SavedScriptState();
-                                savedScriptState.StartParameter = param;
+                                savedScriptState = new SavedScriptState()
+                                {
+                                    StartParameter = param
+                                };
                                 item.ScriptState = savedScriptState;
                             }
                         }

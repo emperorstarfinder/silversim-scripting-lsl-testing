@@ -131,7 +131,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL)]
         public const int PSYS_SRC_PATTERN_ANGLE_CONE_EMPTY = 16;
 
-        static float ValidParticleScale(double value)
+        private static float ValidParticleScale(double value)
         {
             return (float)value.Clamp(0f, 4f);
         }
@@ -518,7 +518,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         instance.ShoutError(new LocalizedScriptMessage(this, "UnknownTypeParameter1AtIndex0", "Unknown type parameter {1} at index {0}", i, psystype));
                         return;
                 }
-
             }
             ps.CRC = 1;
 

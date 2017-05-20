@@ -28,12 +28,10 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        static CompilerException CompilerException(LineInfo p, string message)
-        {
-            return new CompilerException(p.LineNumber, message);
-        }
+        private static CompilerException CompilerException(LineInfo p, string message) =>
+            new CompilerException(p.LineNumber, message);
 
-        void ProcessExpression(
+        private void ProcessExpression(
             CompileState compileState,
             Type expectedType,
             int startAt,
@@ -50,14 +48,14 @@ namespace SilverSim.Scripting.Lsl
             Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber, compileState.CurrentCulture);
 
             ProcessExpression(
-                compileState, 
-                expectedType, 
+                compileState,
+                expectedType,
                 expressionTree,
                 functionLine.LineNumber,
                 localVars);
         }
 
-        void ProcessExpression(
+        private void ProcessExpression(
             CompileState compileState,
             Type expectedType,
             Tree functionTree,
@@ -76,7 +74,7 @@ namespace SilverSim.Scripting.Lsl
                 lineNumber);
         }
 
-        Type ProcessExpressionToAnyType(
+        private Type ProcessExpressionToAnyType(
             CompileState compileState,
             int startAt,
             int endAt,
@@ -97,6 +95,5 @@ namespace SilverSim.Scripting.Lsl
                 functionLine.LineNumber,
                 localVars);
         }
-
     }
 }

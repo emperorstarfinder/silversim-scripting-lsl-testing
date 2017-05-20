@@ -73,30 +73,20 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             }
         }
 
-        public RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>>> m_AtTargets = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>>>(delegate ()
-        {
-            return new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>>(delegate ()
-            {
-                return new RwLockedDictionary<int, AtTargetInfo>();
-            });
-        });
+        public RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>>> m_AtTargets = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>>>(() =>
+            new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, AtTargetInfo>>(() => new RwLockedDictionary<int, AtTargetInfo>()));
 
-        public RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>> m_RotTargets = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>>(delegate ()
-        {
-            return new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>(delegate ()
-            {
-                return new RwLockedDictionary<int, RotTargetInfo>();
-            });
-        });
+        public RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>> m_RotTargets = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>>(() =>
+            new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<int, RotTargetInfo>>(() => new RwLockedDictionary<int, RotTargetInfo>()));
 
-        SceneList m_Scenes;
+        private SceneList m_Scenes;
         public RwLockedDictionary<UUID, Timer> m_SceneTimers = new RwLockedDictionary<UUID, Timer>();
 
-        int m_NextAtTargetId;
-        int m_NextRotTargetId;
-        readonly object m_NextIdLock = new object();
+        private int m_NextAtTargetId;
+        private int m_NextRotTargetId;
+        private readonly object m_NextIdLock = new object();
 
-        int NextAtTargetId
+        private int NextAtTargetId
         {
             get
             {
@@ -111,7 +101,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             }
         }
 
-        int NextRotTargetId
+        private int NextRotTargetId
         {
             get
             {
@@ -139,19 +129,16 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             m_Scenes.OnRegionRemove -= OnSceneRemove;
         }
 
-        void OnSceneAdd(SceneInterface scene)
+        private void OnSceneAdd(SceneInterface scene)
         {
             var t = new Timer(0.1); /* let's do 10Hz here */
             m_SceneTimers.Add(scene.ID, t);
             UUID sceneId = scene.ID;
-            t.Elapsed += (object sender, ElapsedEventArgs args) =>
-            {
-                OnTimer(sender, sceneId);
-            };
+            t.Elapsed += (object sender, ElapsedEventArgs args) => OnTimer(sender, sceneId);
             t.Start();
         }
 
-        void OnTimer(object sender, UUID sceneID)
+        private void OnTimer(object sender, UUID sceneID)
         {
             SceneInterface scene;
             var removeList = new List<int>();
@@ -172,7 +159,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                             Vector3 pos = info.ObjectGroup.GlobalPosition;
                             ObjectPart part;
                             ObjectPartInventoryItem item;
-                            
+
                             if(!scene.Primitives.TryGetValue(info.PartID, out part) ||
                                 !part.Inventory.TryGetValue(info.ItemID, out item) ||
                                 item.ScriptInstance == null)
@@ -262,16 +249,13 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             else
             {
                 var t = sender as Timer;
-                if (t != null)
-                {
-                    t.Stop();
-                }
+                t?.Stop();
             }
         }
 
-        void OnSceneRemove(SceneInterface scene)
+        private void OnSceneRemove(SceneInterface scene)
         {
-            m_SceneTimers.RemoveIf(scene.ID, delegate (Timer t) 
+            m_SceneTimers.RemoveIf(scene.ID, (Timer t) =>
             {
                 t.Stop();
                 t.Dispose();
@@ -281,7 +265,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             m_RotTargets.Remove(scene.ID);
         }
 
-        int GetMaxPosTargets(UUID regionID)
+        private int GetMaxPosTargets(UUID regionID)
         {
             int value;
             if (m_MaxPosTargetHandleParams.TryGetValue(regionID, out value) ||
@@ -292,7 +276,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             return 8;
         }
 
-        int GetMaxRotTargets(UUID regionID)
+        private int GetMaxRotTargets(UUID regionID)
         {
             int value;
             if (m_MaxRotTargetHandleParams.TryGetValue(regionID, out value) ||
@@ -303,8 +287,8 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
             return 8;
         }
 
-        readonly RwLockedDictionary<UUID, int> m_MaxPosTargetHandleParams = new RwLockedDictionary<UUID, int>();
-        readonly RwLockedDictionary<UUID, int> m_MaxRotTargetHandleParams = new RwLockedDictionary<UUID, int>();
+        private readonly RwLockedDictionary<UUID, int> m_MaxPosTargetHandleParams = new RwLockedDictionary<UUID, int>();
+        private readonly RwLockedDictionary<UUID, int> m_MaxRotTargetHandleParams = new RwLockedDictionary<UUID, int>();
 
         [ServerParam("LSL.MaxTargetsPerScript")]
         public void MaxTargetsPerScriptUpdated(UUID regionID, string value)
@@ -405,7 +389,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 ObjectPartInventoryItem item = instance.Item;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 m_AtTargets[scene.ID][item.ID].Remove(handle);
-                m_AtTargets[scene.ID].RemoveIf(item.ID, delegate (RwLockedDictionary<int, AtTargetInfo> k) { return k.Count == 0; });
+                m_AtTargets[scene.ID].RemoveIf(item.ID, (RwLockedDictionary<int, AtTargetInfo> k) => k.Count == 0);
             }
         }
 
@@ -464,7 +448,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 ObjectPartInventoryItem item = instance.Item;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 m_RotTargets[scene.ID][item.ID].Remove(handle);
-                m_RotTargets[scene.ID].RemoveIf(item.ID, delegate (RwLockedDictionary<int, RotTargetInfo> k) { return k.Count == 0; });
+                m_RotTargets[scene.ID].RemoveIf(item.ID, (RwLockedDictionary<int, RotTargetInfo> k) => k.Count == 0);
             }
         }
 
@@ -511,7 +495,6 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                     atTargets[info.ItemID][handle] = info;
                 }
             }
-
         }
 
         [ExecutedOnSerialization("target")]
@@ -581,7 +564,6 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                     rotTargets[info.ItemID][handle] = info;
                 }
             }
-
         }
 
         [ExecutedOnSerialization("rot_target")]

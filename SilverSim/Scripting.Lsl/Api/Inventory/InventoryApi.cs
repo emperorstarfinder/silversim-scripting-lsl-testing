@@ -47,9 +47,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
     [Description("LSL/OSSL Inventory API")]
     public partial class InventoryApi : IScriptApi, IPlugin
     {
-        List<IUserAgentServicePlugin> m_UserAgentServicePlugins;
-        List<IAssetServicePlugin> m_AssetServicePlugins;
-        List<IInventoryServicePlugin> m_InventoryServicePlugins;
+        private List<IUserAgentServicePlugin> m_UserAgentServicePlugins;
+        private List<IAssetServicePlugin> m_AssetServicePlugins;
+        private List<IInventoryServicePlugin> m_InventoryServicePlugins;
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -83,7 +83,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.LSL)]
         public const int INVENTORY_GESTURE = 21;
 
-
         [APILevel(APIFlags.LSL)]
         public const int MASK_BASE = 0;
         [APILevel(APIFlags.LSL)]
@@ -107,13 +106,13 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         public const int PERM_ALL = 2147483647;
 
         /* private constants */
-        const int LINK_ROOT = 1;
-        const int LINK_SET = -1;
-        const int LINK_ALL_OTHERS = -2;
-        const int LINK_ALL_CHILDREN = -3;
-        const int LINK_THIS = -4;
+        private const int LINK_ROOT = 1;
+        private const int LINK_SET = -1;
+        private const int LINK_ALL_OTHERS = -2;
+        private const int LINK_ALL_CHILDREN = -3;
+        private const int LINK_THIS = -4;
 
-        List<ObjectPart> DetermineLinks(ObjectPart thisPart, int link)
+        private List<ObjectPart> DetermineLinks(ObjectPart thisPart, int link)
         {
             var res = new List<ObjectPart>();
             ObjectGroup grp = thisPart.ObjectGroup;
@@ -389,7 +388,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 int cnt = 0;
                 foreach (ObjectPart part in DetermineLinks(instance.Part, link))
                 {
-                    cnt += ((type == INVENTORY_ALL) ? part.Inventory.Count : part.Inventory.CountType((InventoryType)type));
+                    cnt += (type == INVENTORY_ALL) ? part.Inventory.Count : part.Inventory.CountType((InventoryType)type);
                 }
                 return cnt;
             }
@@ -694,7 +693,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
         #endregion
 
-        bool TryGetServices(UUI targetAgentId, out InventoryServiceInterface inventoryService, out AssetServiceInterface assetService)
+        private bool TryGetServices(UUI targetAgentId, out InventoryServiceInterface inventoryService, out AssetServiceInterface assetService)
         {
             inventoryService = null;
             assetService = null;
@@ -713,7 +712,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
             }
 
-            if (null == userAgentService)
+            if (userAgentService == null)
             {
                 return false;
             }
@@ -742,7 +741,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
             }
 
-            return null != inventoryService && null != assetService;
+            return inventoryService != null && assetService != null;
         }
 
         #region Give Inventory
@@ -833,7 +832,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 else if (scene.AvatarNameService.TryGetValue(id, out targetAgentId) &&
                     TryGetServices(targetAgentId, out inventoryService, out assetService))
-                { 
+                {
                     GiveInventoryToAgent(
                         instance,
                         targetAgentId,
@@ -852,7 +851,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        void GiveInventoryToPrim(ScriptInstance instance, ObjectPart target, ObjectPart origin, AnArray inventoryitems, bool skipNoCopy)
+        private void GiveInventoryToPrim(ScriptInstance instance, ObjectPart target, ObjectPart origin, AnArray inventoryitems, bool skipNoCopy)
         {
             if(!target.CheckPermissions(origin.Owner, origin.Group, InventoryPermissionsMask.Modify))
             {
@@ -890,10 +889,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     if(removeItem)
                     {
                         ScriptInstance oldInstance = sourceItem.RemoveScriptInstance;
-                        if(null != oldInstance)
-                        {
-                            oldInstance.Abort();
-                        }
+                        oldInstance?.Abort();
 
                         origin.Inventory.Remove(sourceItem.ID);
                         sourceItem.ID = UUID.Random;
@@ -904,15 +900,17 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     else
                     {
                         /* duplicate item */
-                        ObjectPartInventoryItem newItem = new ObjectPartInventoryItem(sourceItem);
-                        newItem.ID = UUID.Random;
+                        var newItem = new ObjectPartInventoryItem(sourceItem)
+                        {
+                            ID = UUID.Random
+                        };
                         target.Inventory.Add(newItem);
                     }
                 }
             }
         }
 
-        void GiveInventoryToAgent(
+        private void GiveInventoryToAgent(
             ScriptInstance instance,
             UUI agent,
             InventoryServiceInterface inventoryService, AssetServiceInterface assetService,
@@ -969,15 +967,15 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 createFolderAndSkipNoCopy).QueueWorkItem();
         }
 
-        sealed class InventoryTransferItem : AssetTransferWorkItem
+        private sealed class InventoryTransferItem : AssetTransferWorkItem
         {
-            readonly InventoryServiceInterface m_InventoryService;
-            readonly UUI m_DestinationAgent;
-            readonly UUID m_SceneID;
-            readonly List<InventoryItem> m_Items;
-            readonly string m_DestinationFolder = string.Empty;
-            readonly SceneInterface.TryGetSceneDelegate TryGetScene;
-            readonly bool m_CreateFolder;
+            private readonly InventoryServiceInterface m_InventoryService;
+            private readonly UUI m_DestinationAgent;
+            private readonly UUID m_SceneID;
+            private readonly List<InventoryItem> m_Items;
+            private readonly string m_DestinationFolder = string.Empty;
+            private readonly SceneInterface.TryGetSceneDelegate TryGetScene;
+            private readonly bool m_CreateFolder;
 
             public InventoryTransferItem(
                 UUI targetAgent,
@@ -1077,7 +1075,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     item.ParentFolderID = folderID;
                     item.IsGroupOwned = false;
                     m_InventoryService.Item.Add(item);
-                    if (null != agent)
+                    if (agent != null)
                     {
                         var msg = new UpdateCreateInventoryItem()
                         {

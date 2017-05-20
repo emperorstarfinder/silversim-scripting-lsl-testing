@@ -28,7 +28,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {
-        void EnqueueToScripts(ObjectPart part, LinkMessageEvent ev)
+        private void EnqueueToScripts(ObjectPart part, LinkMessageEvent ev)
         {
             /* check whether we actually have scripts in prim */
             if (part.IsScripted)
@@ -39,7 +39,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     {
                         ScriptInstance si = item.ScriptInstance;
 
-                        if (si != null && si.IsLinkMessageReceiver)
+                        if (si?.IsLinkMessageReceiver == true)
                         {
                             si.PostEvent(ev);
                         }

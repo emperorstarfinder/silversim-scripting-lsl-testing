@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using log4net;
 using SilverSim.Http.Client;
 using SilverSim.Main.Common;
@@ -45,7 +47,7 @@ namespace SilverSim.Scripting.Lsl
     public class LSLHTTPClient_RequestQueue : IPlugin, IPluginShutdown, IServerParamListener
     {
 #if DEBUG
-        static readonly ILog m_Log = LogManager.GetLogger("LSL HTTP CLIENT");
+        private static readonly ILog m_Log = LogManager.GetLogger("LSL HTTP CLIENT");
 #endif
 
         public class LSLHttpRequest
@@ -71,11 +73,11 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        readonly RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>> m_RequestQueues = new RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>>();
-        readonly SceneList m_Scenes;
-        readonly RwLockedDictionary<UUID, string[]> m_BlackLists = new RwLockedDictionary<UUID, string[]>();
-        readonly RwLockedDictionary<UUID, string[]> m_WhiteLists = new RwLockedDictionary<UUID, string[]>();
-        readonly RwLockedDictionary<UUID, bool> m_WhiteListOnly = new RwLockedDictionary<UUID, bool>();
+        private readonly RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>> m_RequestQueues = new RwLockedDictionary<UUID, BlockingQueue<LSLHttpRequest>>();
+        private readonly SceneList m_Scenes;
+        private readonly RwLockedDictionary<UUID, string[]> m_BlackLists = new RwLockedDictionary<UUID, string[]>();
+        private readonly RwLockedDictionary<UUID, string[]> m_WhiteLists = new RwLockedDictionary<UUID, string[]>();
+        private readonly RwLockedDictionary<UUID, bool> m_WhiteListOnly = new RwLockedDictionary<UUID, bool>();
 
         [ServerParam("LSL.HTTPClient.WhiteListOnly")]
         public void HandleWhiteListOnlyUpdated(UUID regionId, string value)
@@ -121,7 +123,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        bool IsURLAllowed(UUID regionId,  string url)
+        private bool IsURLAllowed(UUID regionId,  string url)
         {
             string[] blackList;
             if(m_BlackLists.TryGetValue(regionId, out blackList) ||
@@ -166,12 +168,12 @@ namespace SilverSim.Scripting.Lsl
             scenes.OnRegionRemove += RegionRemoved;
         }
 
-        void RegionRemoved(SceneInterface scene)
+        private void RegionRemoved(SceneInterface scene)
         {
             m_RequestQueues.Remove(scene.ID);
         }
 
-        void RegionAdded(SceneInterface scene)
+        private void RegionAdded(SceneInterface scene)
         {
             int i;
             try
@@ -201,7 +203,7 @@ namespace SilverSim.Scripting.Lsl
             return false;
         }
 
-        void ProcessThread(object o)
+        private void ProcessThread(object o)
         {
             var id = (UUID)o;
             LSLHttpRequest req;

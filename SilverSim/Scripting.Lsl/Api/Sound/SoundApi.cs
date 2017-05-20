@@ -46,7 +46,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             lock (instance)
             {
                 para.ImpactVolume = impact_volume.Clamp(0f, 1f);
-                if (impact_sound == string.Empty)
+                if (string.IsNullOrEmpty(impact_sound))
                 {
                     para.ImpactSound = UUID.Zero;
                     instance.Part.CollisionSound = para;
@@ -241,7 +241,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
-        void SendSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
+        private void SendSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
         {
             PrimitiveSoundFlags flags = paraflags;
             ObjectPart thisPart = instance.Part;
@@ -263,7 +263,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, soundparams.Radius, flags);
         }
 
-        void LoopSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
+        private void LoopSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
         {
             ObjectPart part = instance.Part;
             PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;

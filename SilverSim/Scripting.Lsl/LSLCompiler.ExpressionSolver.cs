@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
@@ -33,7 +35,7 @@ namespace SilverSim.Scripting.Lsl
     public partial class LSLCompiler
     {
         #region LSL specific constant types
-        sealed class ConstantValueVector : Tree.ConstantValue
+        private sealed class ConstantValueVector : Tree.ConstantValue
         {
             public Vector3 Value;
 
@@ -47,7 +49,7 @@ namespace SilverSim.Scripting.Lsl
             public override Tree.ValueBase Negate() => new ConstantValueVector(-Value);
         }
 
-        sealed class ConstantValueRotation : Tree.ConstantValue
+        private sealed class ConstantValueRotation : Tree.ConstantValue
         {
             public Quaternion Value;
 
@@ -63,10 +65,10 @@ namespace SilverSim.Scripting.Lsl
         #endregion
 
         [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-        void SolveConstantOperations(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void SolveConstantOperations(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
-            List<Tree> processNodes = new List<Tree>();
-            List<ListTreeEnumState> enumeratorStack = new List<ListTreeEnumState>();
+            var processNodes = new List<Tree>();
+            var enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(tree));
             processNodes.Add(tree);
             while (enumeratorStack.Count != 0)
@@ -95,7 +97,7 @@ namespace SilverSim.Scripting.Lsl
                         st.SubTree[1].SubTree[0].Value != null &&
                         st.SubTree[2].SubTree[0].Value != null)
                     {
-                        double[] v = new double[3];
+                        var v = new double[3];
                         for (int idx = 0; idx < 3; ++idx)
                         {
                             Type t = st.SubTree[idx].SubTree[0].ValueType;
@@ -142,7 +144,6 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         st.Value = new ConstantValueRotation(new Quaternion(v[0], v[1], v[2], v[3]));
-
                     }
                 }
 
@@ -151,7 +152,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     foreach (Tree ot in st.SubTree)
                     {
-                        if (ot.Type == Tree.EntryType.Value && null == ot.Value)
+                        if (ot.Type == Tree.EntryType.Value && ot.Value == null)
                         {
                             ot.Process(cs, lineNumber);
                         }
@@ -1489,7 +1490,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        sealed class ListTreeEnumState
+        private sealed class ListTreeEnumState
         {
             public int Position = -1;
             public Tree Tree;
@@ -1511,7 +1512,7 @@ namespace SilverSim.Scripting.Lsl
             public Tree Current => Tree.SubTree[Position];
         }
 
-        sealed class ListTreeEnumReverseState
+        private sealed class ListTreeEnumReverseState
         {
             public int Position;
             public Tree Tree;
@@ -1528,13 +1529,13 @@ namespace SilverSim.Scripting.Lsl
                 {
                     return false;
                 }
-                return (--Position >= 0);
+                return --Position >= 0;
             }
 
             public Tree Current => Tree.SubTree[Position];
         }
 
-        void SolveMaxNegValues(CompileState cs, Tree resolvetree)
+        private void SolveMaxNegValues(Tree resolvetree)
         {
             var enumeratorStack = new List<ListTreeEnumState>();
             enumeratorStack.Insert(0, new ListTreeEnumState(resolvetree));
@@ -1565,7 +1566,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Order Tree according to definitions
-        void OrderOperators_ElementSelector(Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_ElementSelector(Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1641,7 +1642,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void OrderOperators_IncsDecs(Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_IncsDecs(Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1721,7 +1722,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void OrderOperators_Common(Tree tree, List<string> operators, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_Common(Tree tree, List<string> operators, int lineNumber, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1816,8 +1817,8 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        readonly List<string> m_AssignmentOps = new List<string>(new string[] { "=", "+=", "-=", "/=", "%=", "*=" });
-        bool Assignments_ExtractLeftUnaryOnLValue(Tree tree, out Tree start, out Tree end, out Tree variable)
+        private readonly List<string> m_AssignmentOps = new List<string>(new string[] { "=", "+=", "-=", "/=", "%=", "*=" });
+        private bool Assignments_ExtractLeftUnaryOnLValue(Tree tree, out Tree start, out Tree end, out Tree variable)
         {
             variable = null;
             end = null;
@@ -1845,7 +1846,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void OrderOperators_Assignments(Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_Assignments(Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1964,7 +1965,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        readonly List<string> m_TypecastOperators = new List<string>(new string[] {
+        private readonly List<string> m_TypecastOperators = new List<string>(new string[] {
             "(string)",
             "(list)",
             "(float)",
@@ -1975,7 +1976,7 @@ namespace SilverSim.Scripting.Lsl
             "(key)"
             });
 
-        void OrderOperators_UnaryLefts(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_UnaryLefts(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -2123,18 +2124,17 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        readonly List<string> m_MulDivOps = new List<string>(new string[] { "*", "/", "%" });
-        readonly List<string> m_AddSubOps = new List<string>(new string[] { "+", "-" });
-        readonly List<string> m_BitwiseShiftOps = new List<string>(new string[] { "<<", ">>" });
-        readonly List<string> m_CompareOps = new List<string>(new string[] { "<", ">", "<=", ">=" });
-        readonly List<string> m_CompareEqualityOps = new List<string>(new string[] { "==", "!=" });
-        readonly List<string> m_BitwiseAndOps = new List<string>(new string[] { "&" });
-        readonly List<string> m_BitwiseXorOps = new List<string>(new string[] { "^" });
-        readonly List<string> m_BitwiseOrOps = new List<string>(new string[] { "|" });
-        readonly List<string> m_LogicalOps = new List<string>(new string[] { "&&", "||" });
+        private readonly List<string> m_MulDivOps = new List<string>(new string[] { "*", "/", "%" });
+        private readonly List<string> m_AddSubOps = new List<string>(new string[] { "+", "-" });
+        private readonly List<string> m_BitwiseShiftOps = new List<string>(new string[] { "<<", ">>" });
+        private readonly List<string> m_CompareOps = new List<string>(new string[] { "<", ">", "<=", ">=" });
+        private readonly List<string> m_CompareEqualityOps = new List<string>(new string[] { "==", "!=" });
+        private readonly List<string> m_BitwiseAndOps = new List<string>(new string[] { "&" });
+        private readonly List<string> m_BitwiseXorOps = new List<string>(new string[] { "^" });
+        private readonly List<string> m_BitwiseOrOps = new List<string>(new string[] { "|" });
+        private readonly List<string> m_LogicalOps = new List<string>(new string[] { "&&", "||" });
 
-
-        void OrderOperators(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             OrderOperators_ElementSelector(tree, lineNumber, currentCulture);
             OrderOperators_IncsDecs(tree, lineNumber, currentCulture);
@@ -2151,8 +2151,8 @@ namespace SilverSim.Scripting.Lsl
             OrderOperators_Assignments(tree, lineNumber, currentCulture);
         }
 
-        void OrderBrackets_SeparateArguments(Tree resolvetree, string elemname, Tree.EntryType type, int lineNumber, CultureInfo currentCulture)
-        { 
+        private void OrderBrackets_SeparateArguments(Tree resolvetree, string elemname, Tree.EntryType type, int lineNumber, CultureInfo currentCulture)
+        {
             var argBegin = new List<int>();
             var argEnd = new List<int>();
             int i;
@@ -2212,7 +2212,7 @@ namespace SilverSim.Scripting.Lsl
             resolvetree.SubTree = arguments;
         }
 
-        void OrderBrackets(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
+        private void OrderBrackets(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
         {
 #if DEBUG
             cs.ILGen.Writer.WriteLine(string.Format("  //** Tree Flat Begin (Line {0})", lineNumber));
@@ -2224,7 +2224,7 @@ namespace SilverSim.Scripting.Lsl
 #endif
             var parenStack = new List<KeyValuePair<string, int>>();
             int i = 0;
-            
+
             while(i < resolvetree.SubTree.Count)
             {
                 string v = resolvetree.SubTree[i].Entry;
@@ -2272,9 +2272,9 @@ namespace SilverSim.Scripting.Lsl
                                 resolvetree.SubTree[startPos - 1].SubTree = resolvetree.SubTree[startPos].SubTree;
                                 resolvetree.SubTree.RemoveRange(startPos, i - startPos + 1);
                                 OrderBrackets_SeparateArguments(
-                                    resolvetree.SubTree[startPos - 1], 
-                                    "parameter", 
-                                    Tree.EntryType.FunctionArgument, 
+                                    resolvetree.SubTree[startPos - 1],
+                                    "parameter",
+                                    Tree.EntryType.FunctionArgument,
                                     lineNumber,
                                     currentCulture);
                                 i = startPos;
@@ -2311,8 +2311,8 @@ namespace SilverSim.Scripting.Lsl
                             resolvetree.SubTree.RemoveRange(startPos + 1, i - startPos);
 
                             OrderBrackets_SeparateArguments(
-                                resolvetree.SubTree[startPos], 
-                                this.GetLanguageString(currentCulture, "VectorRotationElement", "vector/rotation element"), 
+                                resolvetree.SubTree[startPos],
+                                this.GetLanguageString(currentCulture, "VectorRotationElement", "vector/rotation element"),
                                 Tree.EntryType.DeclarationArgument,
                                 lineNumber,
                                 currentCulture);
@@ -2354,8 +2354,8 @@ namespace SilverSim.Scripting.Lsl
                             resolvetree.SubTree.RemoveRange(startPos + 1, i - startPos);
 
                             OrderBrackets_SeparateArguments(
-                                resolvetree.SubTree[startPos], 
-                                this.GetLanguageString(currentCulture, "ListElement", "list element"), 
+                                resolvetree.SubTree[startPos],
+                                this.GetLanguageString(currentCulture, "ListElement", "list element"),
                                 Tree.EntryType.DeclarationArgument,
                                 lineNumber,
                                 currentCulture);
@@ -2371,16 +2371,16 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-#endregion
+        #endregion
 
-        void SolveTree(CompileState cs, Tree resolvetree, ICollection<string> varNames, int lineNumber, CultureInfo currentCulture)
+        private void SolveTree(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
         {
-            SolveMaxNegValues(cs, resolvetree);
+            SolveMaxNegValues(resolvetree);
             SolveConstantOperations(cs, resolvetree, lineNumber, currentCulture);
         }
 
-#region Pre-Tree identifiers
-        void IdentifyDeclarations(CompileState cs, Tree resolvetree)
+        #region Pre-Tree identifiers
+        private void IdentifyDeclarations(Tree resolvetree)
         {
             int n = resolvetree.SubTree.Count;
             for (int i = 0; i < n; ++i)
@@ -2395,15 +2395,15 @@ namespace SilverSim.Scripting.Lsl
                 switch (ent)
                 {
                     case "<":
-                        if (0 == i || 
+                        if (0 == i ||
                             (resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown &&
-                            resolvetree.SubTree[i - 1].Entry != "++" && 
+                            resolvetree.SubTree[i - 1].Entry != "++" &&
                             resolvetree.SubTree[i - 1].Entry != "--") ||
                             resolvetree.SubTree[i - 1].Type == Tree.EntryType.Separator)
                         {
                             st.Type = Tree.EntryType.Declaration;
                         }
-                        else 
+                        else
                         {
                             switch (resolvetree.SubTree[i - 1].Entry)
                             {
@@ -2462,7 +2462,7 @@ namespace SilverSim.Scripting.Lsl
                                     break;
                             }
                         }
-                        else 
+                        else
                         {
                             switch(resolvetree.SubTree[i + 1].Entry)
                             {
@@ -2486,7 +2486,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void IdentifyNumericValues(CompileState cs, Tree resolvetree)
+        private void IdentifyNumericValues(Tree resolvetree)
         {
             int i = 0;
             while(i < resolvetree.SubTree.Count)
@@ -2508,7 +2508,7 @@ namespace SilverSim.Scripting.Lsl
                 if(st.Type == Tree.EntryType.Value)
                 {
                     /* let us find negation signs beforehand */
-                    if (i == 1 && 
+                    if (i == 1 &&
                         resolvetree.SubTree[i - 1].Entry == "-" &&
                         resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown)
                     {
@@ -2543,7 +2543,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void IdentifyReservedWords(CompileState cs, Tree resolvetree)
+        private void IdentifyReservedWords(CompileState cs, Tree resolvetree)
         {
             int n = resolvetree.SubTree.Count;
             for(int i = 0; i < n; ++i)
@@ -2565,7 +2565,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void IdentifyOperators(CompileState cs, Tree resolvetree)
+        private void IdentifyOperators(CompileState cs, Tree resolvetree)
         {
             int n = resolvetree.SubTree.Count;
             for (int i = 0; i < n; ++i)
@@ -2586,7 +2586,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     st.Type = c == ',' ? Tree.EntryType.Separator : Tree.EntryType.OperatorUnknown;
                 }
-                else 
+                else
                 {
                     switch (ent)
                     {
@@ -2616,7 +2616,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void IdentifyVariables(CompileState cs, Tree resolvetree, ICollection<string> localVarNames)
+        private void IdentifyVariables(Tree resolvetree, ICollection<string> localVarNames)
         {
             int n = resolvetree.SubTree.Count;
             for (int i = 0; i < n; ++i)
@@ -2636,7 +2636,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void IdentifyFunctions(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
+        private void IdentifyFunctions(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
         {
             int n = resolvetree.SubTree.Count;
             for (int i = 0; i < n; ++i)
@@ -2666,18 +2666,18 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
         }
-#endregion
+        #endregion
 
-        Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames, int lineNumber, CultureInfo currentCulture)
+        private Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames, int lineNumber, CultureInfo currentCulture)
         {
             PreprocessLine(cs, expressionLine);
             var expressionTree = new Tree(expressionLine);
             IdentifyReservedWords(cs, expressionTree);
-            IdentifyVariables(cs, expressionTree, localVarNames);
+            IdentifyVariables(expressionTree, localVarNames);
             IdentifyFunctions(cs, expressionTree, lineNumber, currentCulture);
             IdentifyOperators(cs, expressionTree);
-            IdentifyNumericValues(cs, expressionTree);
-            IdentifyDeclarations(cs, expressionTree);
+            IdentifyNumericValues(expressionTree);
+            IdentifyDeclarations(expressionTree);
 
             int n = expressionTree.SubTree.Count;
             var msg = new StringBuilder();
@@ -2690,7 +2690,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     string entry = st.Entry;
                     /* there should be no unknowns anymore */
-                    if(i + 1 < n && 
+                    if(i + 1 < n &&
                         expressionTree.SubTree[i + 1].Type == Tree.EntryType.Unknown &&
                         expressionTree.SubTree[i + 1].Entry == "(")
                     {
@@ -2700,7 +2700,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         msg.AppendFormat(this.GetLanguageString(currentCulture, "NoFunction0Defined", "no function '{0}' defined"), entry);
                     }
-                    else if(i > 0 && 
+                    else if(i > 0 &&
                         expressionTree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown &&
                         expressionTree.SubTree[i - 1].Entry == ".")
                     {
@@ -2728,7 +2728,7 @@ namespace SilverSim.Scripting.Lsl
 
             OrderOperators(cs, expressionTree, lineNumber, currentCulture);
 
-            SolveTree(cs, expressionTree, localVarNames, lineNumber, currentCulture);
+            SolveTree(cs, expressionTree, lineNumber, currentCulture);
             if (expressionTree.SubTree.Count != 1)
             {
                 throw new CompilerException(lineNumber, "Internal Error! Expression tree not solved");

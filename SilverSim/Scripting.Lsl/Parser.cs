@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
@@ -33,13 +35,13 @@ namespace SilverSim.Scripting.Lsl
     [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     public class Parser : ParserBase
     {
-        readonly CultureInfo m_CurrentCulture;
+        private readonly CultureInfo m_CurrentCulture;
         public Parser(CultureInfo currentCulture)
         {
             m_CurrentCulture = currentCulture;
         }
 
-        bool IsLSLWhitespace(char c)
+        private bool IsLSLWhitespace(char c)
         {
             if(char.IsWhiteSpace(c))
             {
@@ -143,7 +145,7 @@ redo:
                             throw new ArgumentException(this.GetLanguageString(m_CurrentCulture, "IncompleteStatementBeforeClosingBrace", "incomplete statement before '}'"));
                         }
                         return;
-                
+
                     case '\"':      /* string literal */
                         if (CurrentLineNumber < 0)
                         {
@@ -176,7 +178,7 @@ redo:
                         }
                         token.Clear();
                         break;
-            
+
                     case '\'':      /* string literal */
                         if (CurrentLineNumber < 0)
                         {
@@ -246,7 +248,7 @@ redo:
                             --parencount;
                         }
                         break;
-                
+
                     case '<':
                         if (CurrentLineNumber < 0)
                         {
@@ -255,7 +257,7 @@ redo:
                         if(is_preprocess &&
                             args.Count != 0 &&
                             (args[0] == "#include" || args[0] == "#include_once"))
-                        { 
+                        {
                             /* preprocessor literal */
                             if (0 != token.Length)
                             {
@@ -1206,6 +1208,5 @@ redo:
             EvalCompounds(args);
             ReadPass2(args);
         }
-
     }
 }

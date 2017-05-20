@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
@@ -64,7 +66,7 @@ namespace SilverSim.Scripting.Lsl
         {
             string ltype = type.Replace(" ", "");
             CheckValidName(cs, p, type, name);
-            if (m_ReservedWords.Contains(name) || 
+            if (m_ReservedWords.Contains(name) ||
                 (cs.LanguageExtensions.EnableSwitchBlock && (name == "switch" || name == "case" || name == "break")) ||
                 (cs.LanguageExtensions.EnableBreakContinueStatement && (name == "break" || name == "continue")) ||
                 (cs.LanguageExtensions.EnableLongIntegers && name == "long"))
@@ -107,7 +109,7 @@ namespace SilverSim.Scripting.Lsl
             public string Name;
         }
 
-        List<FuncParamInfo> CheckFunctionParameters(CompileState cs, Parser p, List<string> arguments)
+        private List<FuncParamInfo> CheckFunctionParameters(CompileState cs, Parser p, List<string> arguments)
         {
             var funcParams = new List<FuncParamInfo>();
             cs.m_LocalVariables.Add(new List<string>());
@@ -182,7 +184,7 @@ namespace SilverSim.Scripting.Lsl
             throw ParserException(p, this.GetLanguageString(cs.CurrentCulture, "MissingClosingParenthesisAtTheEndOfFunctionDeclaration", "Missing ')' at the end of function declaration"));
         }
 
-        int FindEndOfControlFlow(CompileState cs, List<string> line, int lineNumber)
+        private int FindEndOfControlFlow(CompileState cs, List<string> line, int lineNumber)
         {
             int i;
             var parenstack = new List<string>();
@@ -257,7 +259,7 @@ namespace SilverSim.Scripting.Lsl
             throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "CouldNotFindEndOf0", "Could not find end of '{0}'"), line[0]));
         }
 
-        void ParseBlockLine(CompileState compileState, Parser p, List<LineInfo> block, List<string> args, int lineNumber, bool inState)
+        private void ParseBlockLine(CompileState compileState, Parser p, List<LineInfo> block, List<string> args, int lineNumber, bool inState)
         {
             for (; ; )
             {
@@ -305,7 +307,7 @@ namespace SilverSim.Scripting.Lsl
                     block.Add(new LineInfo(args, lineNumber));
                     return;
                 }
-                else if (args[0] == "break" && 
+                else if (args[0] == "break" &&
                     (compileState.LanguageExtensions.EnableBreakContinueStatement ||
                      compileState.LanguageExtensions.EnableSwitchBlock))
                 {
@@ -412,7 +414,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void ParseBlock(CompileState compileState, Parser p, List<LineInfo> block, bool inState, bool addNewLocals = false)
+        private void ParseBlock(CompileState compileState, Parser p, List<LineInfo> block, bool inState, bool addNewLocals = false)
         {
             if (addNewLocals)
             {
@@ -462,7 +464,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void ParseState(CompileState compileState, Parser p, string stateName)
+        private void ParseState(CompileState compileState, Parser p, string stateName)
         {
             compileState.m_States.Add(stateName, new Dictionary<string, List<LineInfo>>());
             compileState.m_LocalVariables.Add(new List<string>());
@@ -558,7 +560,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.m_StateVariableInitValues[stateName].Add(args[1], new LineInfo(args.GetRange(3, args.Count - 4), lineNumber));
                         }
                         else if(args[2] != ";")
-                        { 
+                        {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "StateVarMustBeFollowedByOffendingState0", "State variable name must be followed by ';' or '='. Offending state {0}."), stateName));
                         }
                         if(!compileState.m_StateVariableDeclarations.ContainsKey(stateName))
@@ -617,7 +619,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        CompileState Preprocess(UUI user, Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
+        private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
             var compileState = new CompileState(cultureInfo);
             APIFlags acceptedFlags;
@@ -688,7 +690,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 compileState.LanguageExtensions.EnableExtendedTypecasts = true;
             }
-            
+
             if(apiExtensions.Contains(APIExtension.StateVariables))
             {
                 compileState.LanguageExtensions.EnableStateVariables = true;

@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
@@ -36,7 +38,7 @@ namespace SilverSim.Scripting.Lsl
     public partial class LSLCompiler
     {
 #if DEBUG
-        void DumpFunctionLines(StreamWriter dumpILGen, List<LineInfo> lines, int indentinit = 0, string indentBase = "")
+        private void DumpFunctionLines(StreamWriter dumpILGen, List<LineInfo> lines, int indentinit = 0, string indentBase = "")
         {
             int indent = indentinit;
             bool closebrace = false;
@@ -81,13 +83,12 @@ namespace SilverSim.Scripting.Lsl
         }
 #endif
 
-        IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault, AssemblyBuilderAccess access, string filename = "")
+        private IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault, AssemblyBuilderAccess access, string filename = "")
         {
 #if DEBUG
             Directory.CreateDirectory("../data/dumps");
             using (var dumpILGen = new StreamWriter("../data/dumps/ILGendump_" + assetID.ToString() + ".txt", false, Encoding.UTF8))
             {
-
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                 {
                     LineInfo initargs;
@@ -134,6 +135,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             dumpILGen.WriteLine("_____: ");
                         }
+                        first = false;
                         DumpFunctionLines(dumpILGen, eventKvp.Value, 1, "  ");
                     }
                     dumpILGen.WriteLine("_____: }");
@@ -172,7 +174,6 @@ namespace SilverSim.Scripting.Lsl
                     compileState.m_ApiFieldInfo.Add(apiAttr.Name, fb);
                 }
 
-
 #if DEBUG
                 dumpILGen.WriteLine("********************************************************************************");
                 dumpILGen.WriteLine("DefineConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) })");
@@ -206,14 +207,14 @@ namespace SilverSim.Scripting.Lsl
                 var stateTypes = new Dictionary<string, Type>();
 
 #region Globals generation
-                typeLocalsInited = AddConstants(compileState, scriptTypeBuilder, script_ilgen);
+                typeLocalsInited = AddConstants(compileState);
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                 {
 #if DEBUG
                     dumpILGen.WriteLine("********************************************************************************");
                     dumpILGen.WriteLine("DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName);
 #endif
-                    FieldBuilder fb = compileState.LanguageExtensions.EnableStateVariables ? 
+                    FieldBuilder fb = compileState.LanguageExtensions.EnableStateVariables ?
                         scriptTypeBuilder.DefineField("var_glob_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public) :
                         scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
                     compileState.m_VariableFieldInfo[variableKvp.Key] = fb;
@@ -273,7 +274,6 @@ namespace SilverSim.Scripting.Lsl
                             reset_ILGen.Emit(OpCodes.Ldarg_0);
                             reset_ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
                             reset_ILGen.Emit(OpCodes.Stfld, fb);
-
                         }
                         else if(fb.FieldType == typeof(string))
                         {
@@ -353,7 +353,6 @@ namespace SilverSim.Scripting.Lsl
                         reset_ilgen.Emit(OpCodes.Ldsfld, sfld);
                         reset_ILGen.Emit(OpCodes.Stfld, fb);
                     }
-
                 }
 
                 /* init state variables with default values */
@@ -371,7 +370,6 @@ namespace SilverSim.Scripting.Lsl
                             reset_ILGen.Emit(OpCodes.Ldarg_0);
                             reset_ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
                             reset_ILGen.Emit(OpCodes.Stfld, fb);
-
                         }
                         else if (fb.FieldType == typeof(string))
                         {
@@ -987,7 +985,7 @@ namespace SilverSim.Scripting.Lsl
                 }
 #endregion
 
-                return new LSLScriptAssembly(ab, t, stateTypes, forcedSleepDefault, 
+                return new LSLScriptAssembly(ab, t, stateTypes, forcedSleepDefault,
                     m_ScriptRemoveDelegates,
                     m_ScriptSerializeDelegates,
                     m_ScriptDeserializeDelegates);
@@ -996,7 +994,7 @@ namespace SilverSim.Scripting.Lsl
 #endif
         }
 
-        void StateEntryInitVars(string stateName, CompileState compileState, Dictionary<string, object> typeLocalIn)
+        private void StateEntryInitVars(string stateName, CompileState compileState, Dictionary<string, object> typeLocalIn)
         {
             Dictionary<string, FieldBuilder> stateVars;
             Dictionary<string, LineInfo> stateVarInitValues;
@@ -1115,7 +1113,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        bool AreAllVarReferencesSatisfied(CompileState cs, List<string> initedVars, Tree expressionTree)
+        private bool AreAllVarReferencesSatisfied(CompileState cs, List<string> initedVars, Tree expressionTree)
         {
             foreach (Tree st in expressionTree.SubTree)
             {

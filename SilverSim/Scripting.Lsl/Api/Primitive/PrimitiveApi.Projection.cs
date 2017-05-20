@@ -27,9 +27,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {
-        /// <summary>
-        /// Set parameters for light projection in host prim 
-        /// </summary>
         [APILevel(APIFlags.OSSL, "osSetProjectionParams")]
         public void SetProjectionParams(ScriptInstance instance, int projection, LSLKey texture, double fov, double focus, double amb)
         {
@@ -39,22 +36,20 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osSetLinkProjectionParams")]
         public void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
         {
-            var p = new ObjectPart.ProjectionParam();
-            p.IsProjecting = projection != 0;
-            p.ProjectionTextureID = instance.GetTextureAssetID(texture.ToString());
-            p.ProjectionFOV = fov;
-            p.ProjectionFocus = focus;
-            p.ProjectionAmbience = amb;
-
-            foreach(ObjectPart part in GetLinkTargets(instance, link))
+            var p = new ObjectPart.ProjectionParam()
+            {
+                IsProjecting = projection != 0,
+                ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),
+                ProjectionFOV = fov,
+                ProjectionFocus = focus,
+                ProjectionAmbience = amb
+            };
+            foreach (ObjectPart part in GetLinkTargets(instance, link))
             {
                 part.Projection = p;
             }
         }
 
-        /// <summary>
-        /// Set parameters for light projection with uuid of target prim
-        /// </summary>
         [APILevel(APIFlags.OSSL, "osSetProjectionParams")]
         public void SetProjectionParams(ScriptInstance instance, LSLKey prim, int projection, LSLKey texture, double fov, double focus, double amb)
         {
@@ -82,13 +77,14 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                 }
 
-                var p = new ObjectPart.ProjectionParam();
-                p.IsProjecting = projection != 0;
-                p.ProjectionTextureID = instance.GetTextureAssetID(texture.ToString());
-                p.ProjectionFOV = fov;
-                p.ProjectionFocus = focus;
-                p.ProjectionAmbience = amb;
-                part.Projection = p;
+                part.Projection = new ObjectPart.ProjectionParam()
+                {
+                    IsProjecting = projection != 0,
+                    ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),
+                    ProjectionFOV = fov,
+                    ProjectionFocus = focus,
+                    ProjectionAmbience = amb
+                };
             }
         }
     }

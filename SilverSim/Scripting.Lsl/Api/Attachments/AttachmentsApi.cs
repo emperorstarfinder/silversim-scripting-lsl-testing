@@ -51,7 +51,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = instance.Item.PermsGranter;
                 if (!grantInfo.PermsGranter.EqualsGrid(instance.Part.Owner) ||
-                    !grantInfo.PermsMask.HasFlag(ScriptPermissions.Attach))
+                    (grantInfo.PermsMask & ScriptPermissions.Attach) == 0)
                 {
                     return;
                 }
@@ -66,7 +66,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = instance.Item.PermsGranter;
                 if (!grantInfo.PermsGranter.EqualsGrid(instance.Part.Owner) ||
-                    !grantInfo.PermsMask.HasFlag(ScriptPermissions.Attach))
+                    (grantInfo.PermsMask & ScriptPermissions.Attach) == 0)
                 {
                     return;
                 }
@@ -81,7 +81,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = instance.Item.PermsGranter;
                 if(!grantInfo.PermsGranter.EqualsGrid(instance.Part.Owner) ||
-                    !grantInfo.PermsMask.HasFlag(ScriptPermissions.Attach))
+                    (grantInfo.PermsMask & ScriptPermissions.Attach) == 0)
                 {
                     return;
                 }
@@ -138,7 +138,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = instance.Item.PermsGranter;
                 if (!grantInfo.PermsGranter.EqualsGrid(instance.Part.Owner) ||
-                    !grantInfo.PermsMask.HasFlag(ScriptPermissions.Attach))
+                    (grantInfo.PermsMask & ScriptPermissions.Attach) == 0)
                 {
                     return;
                 }
@@ -153,7 +153,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = instance.Item.PermsGranter;
                 if (!grantInfo.PermsGranter.EqualsGrid(instance.Part.Owner) ||
-                    !grantInfo.PermsMask.HasFlag(ScriptPermissions.Attach))
+                    (grantInfo.PermsMask & ScriptPermissions.Attach) == 0)
                 {
                     return;
                 }
@@ -200,7 +200,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
             return res;
         }
 
-        static readonly AttachmentPoint[] PublicAttachments = new AttachmentPoint[]
+        private static readonly AttachmentPoint[] PublicAttachments = new AttachmentPoint[]
         {
             AttachmentPoint.Chest,
             AttachmentPoint.Head,

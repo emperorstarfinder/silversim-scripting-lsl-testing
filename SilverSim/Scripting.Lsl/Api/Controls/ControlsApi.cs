@@ -70,7 +70,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if (!grantinfo.PermsMask.HasFlag(ScriptPermissions.TakeControls) ||
+                if ((grantinfo.PermsMask & ScriptPermissions.TakeControls) == 0 ||
                     grantinfo.PermsGranter == UUI.Unknown)
                 {
                     return;
@@ -92,7 +92,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
             {
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                grantinfo.PermsMask &= (~ScriptPermissions.TakeControls);
+                grantinfo.PermsMask &= ~ScriptPermissions.TakeControls;
                 if(!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "Function0PermissionGranterNotInRegion", "{0}: permission granter not in region", "llReleaseControls"));

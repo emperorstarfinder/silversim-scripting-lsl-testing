@@ -84,7 +84,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL)]
         public const int STRING_TRIM = 0x3;
 
-        static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
+        private static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
 
         [APILevel(APIFlags.LSL, "llStringTrim")]
         public string StringTrim(ScriptInstance instance, string src, int type)
@@ -120,7 +120,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     return src + dest;
                 }
-
             }
 
             if (index >= dest.Length)

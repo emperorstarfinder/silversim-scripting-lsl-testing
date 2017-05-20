@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.Lsl
 {
     public static class ExtensionMethods
     {
-        static readonly Dictionary<string, UUID> m_InternalAnimations = new Dictionary<string, UUID>();
+        private static readonly Dictionary<string, UUID> m_InternalAnimations = new Dictionary<string, UUID>();
 
         static ExtensionMethods()
         {
@@ -175,16 +175,16 @@ namespace SilverSim.Scripting.Lsl
             m_InternalAnimations.Add("yoga_float", "42ecd00b-9947-a97c-400a-bbc9174c7aeb");
         }
 
-        const int AGENT = 1;
-        const int ACTIVE = 2;
-        const int PASSIVE = 4;
-        const int SCRIPTED = 8;
-        const int NPC = 0x20;
+        private const int AGENT = 1;
+        private const int ACTIVE = 2;
+        private const int PASSIVE = 4;
+        private const int SCRIPTED = 8;
+        private const int NPC = 0x20;
 
         public static bool FillDetectInfoFromObject(this DetectInfo detectInfo, IObject obj)
         {
             var agent = obj as IAgent;
-            if (null != agent)
+            if (agent != null)
             {
                 detectInfo.ObjType = agent.DetectedType;
                 detectInfo.Name = agent.Name;
@@ -197,7 +197,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             var grp = obj as ObjectGroup;
-            if (null != grp)
+            if (grp != null)
             {
                 detectInfo.ObjType = obj.DetectedType;
                 detectInfo.Name = grp.Name;
@@ -210,7 +210,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             var part = obj as ObjectPart;
-            if (null != part)
+            if (part != null)
             {
                 detectInfo.ObjType = part.DetectedType;
                 detectInfo.Name = part.Name;
@@ -272,6 +272,7 @@ namespace SilverSim.Scripting.Lsl
                     throw new ArgumentException("Unknown type in serialization");
             }
         }
+
         public static void WriteTypedValue(this XmlTextWriter writer, string tagname, object o)
         {
             if(o is bool)
@@ -309,7 +310,7 @@ namespace SilverSim.Scripting.Lsl
             }
             else
             {
-                throw new ArgumentOutOfRangeException("o");
+                throw new ArgumentOutOfRangeException(nameof(o));
             }
             writer.WriteEndElement();
         }

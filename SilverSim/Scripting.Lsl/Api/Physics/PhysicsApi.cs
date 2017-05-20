@@ -69,12 +69,12 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock (instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
                 }
-                
+
                 physobj.SetAppliedTorque((local != 0) ?
                     torque / instance.Part.ObjectGroup.GlobalRotation :
                     torque);
@@ -87,7 +87,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock(instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return Vector3.Zero;
@@ -103,7 +103,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock (instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return Vector3.Zero;
@@ -137,7 +137,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock (instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
@@ -156,7 +156,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 IPhysicsObject physobj = thisGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
@@ -186,7 +186,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock(instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
@@ -222,7 +222,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     rot = Quaternion.Identity;
                 }
 
-                if (null != physObj)
+                if (physObj != null)
                 {
                     if(local != 0)
                     {
@@ -289,10 +289,10 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         }
 
         /* private constants, public ones are in PrimitiveAPI */
-        const int DENSITY = 1;
-        const int FRICTION = 2;
-        const int RESTITUTION = 4;
-        const int GRAVITY_MULTIPLIER = 8;
+        private const int DENSITY = 1;
+        private const int FRICTION = 2;
+        private const int RESTITUTION = 4;
+        private const int GRAVITY_MULTIPLIER = 8;
 
         [APILevel(APIFlags.LSL, "llSetPhysicsMaterial")]
         public void SetPhysicsMaterial(ScriptInstance instance, int mask, double gravity_multiplier, double restitution, double friction, double density)
@@ -357,7 +357,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock (instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
@@ -373,7 +373,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock (instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;
@@ -389,7 +389,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             lock (instance)
             {
                 IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
-                if (null == physobj)
+                if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
                     return;

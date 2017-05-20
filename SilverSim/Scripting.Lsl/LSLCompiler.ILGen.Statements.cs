@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable RCS1029
+
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -34,7 +36,7 @@ namespace SilverSim.Scripting.Lsl
             throw new ChangeStateException(newState);
         }
 
-        void GenerateTypedEqualOperator(CompileState cs, LineInfo functionLine, Type t)
+        private void GenerateTypedEqualOperator(CompileState cs, LineInfo functionLine, Type t)
         {
             if(t == typeof(int) || t == typeof(double) || t == typeof(long))
             {
@@ -53,7 +55,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        void ProcessStatement(
+        private void ProcessStatement(
             CompileState compileState,
             Type returnType,
             int startAt,
@@ -117,7 +119,6 @@ namespace SilverSim.Scripting.Lsl
                 bc.HaveDefaultCase = true;
                 bc.CaseRequired = false;
                 compileState.ILGen.MarkLabel(ftLabel);
-
             }
             else if (compileState.m_BreakContinueLabels.Count != 0 &&
                 compileState.m_BreakContinueLabels[0].CaseRequired)

@@ -75,7 +75,11 @@ namespace SilverSim.Scripting.Lsl
     [Serializable]
     public class ChangeStateException : Exception
     {
-        public string NewState { get { return Message; } }
+        public string NewState
+        {
+            get { return Message; }
+        }
+
         public ChangeStateException(string message)
             : base(message)
         {

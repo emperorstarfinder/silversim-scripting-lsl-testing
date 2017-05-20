@@ -43,7 +43,7 @@ namespace SilverSim.Scripting.Lsl
             public double MinEventDelay;
             public int StartParameter;
 
-            static void ScriptPermissionsFromXML(XmlTextReader reader, ObjectPartInventoryItem item)
+            private static void ScriptPermissionsFromXML(XmlTextReader reader, ObjectPartInventoryItem item)
             {
                 for (; ; )
                 {
@@ -90,7 +90,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-            static void ListItemFromXml(XmlTextReader reader, AnArray array)
+            private static void ListItemFromXml(XmlTextReader reader, AnArray array)
             {
                 string type = string.Empty;
                 string attrname = string.Empty;
@@ -157,7 +157,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            static AnArray ListFromXml(XmlTextReader reader)
+            private static AnArray ListFromXml(XmlTextReader reader)
             {
                 var array = new AnArray();
                 for(;;)
@@ -201,7 +201,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
-            static void VariableFromXml(XmlTextReader reader, SavedScriptState state)
+            private static void VariableFromXml(XmlTextReader reader, SavedScriptState state)
             {
                 string type = string.Empty;
                 string varname = string.Empty;
@@ -273,7 +273,8 @@ namespace SilverSim.Scripting.Lsl
                         throw new InvalidObjectXmlException();
                 }
             }
-            static void VariablesFromXml(XmlTextReader reader, SavedScriptState state)
+
+            private static void VariablesFromXml(XmlTextReader reader, SavedScriptState state)
             {
                 for(;;)
                 {
@@ -306,7 +307,7 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return;
-                            
+
                         default:
                             break;
                     }
@@ -320,7 +321,7 @@ namespace SilverSim.Scripting.Lsl
                 public List<DetectInfo> Detected = new List<DetectInfo>();
             }
 
-            static EventParams EventFromXml(XmlTextReader reader)
+            private static EventParams EventFromXml(XmlTextReader reader)
             {
                 if(reader.IsEmptyElement)
                 {
@@ -396,7 +397,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            static DetectInfo DetectedObjectFromXml(XmlTextReader reader)
+            private static DetectInfo DetectedObjectFromXml(XmlTextReader reader)
             {
                 var di = new DetectInfo();
                 if (reader.MoveToFirstAttribute())
@@ -472,7 +473,7 @@ namespace SilverSim.Scripting.Lsl
                 return di;
             }
 
-            static List<DetectInfo> DetectedFromXml(XmlTextReader reader)
+            private static List<DetectInfo> DetectedFromXml(XmlTextReader reader)
             {
                 var res = new List<DetectInfo>();
                 for (;;)
@@ -515,7 +516,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            static List<object> ParamsFromXml(XmlTextReader reader)
+            private static List<object> ParamsFromXml(XmlTextReader reader)
             {
                 var res = new List<object>();
                 for (;;)
@@ -558,7 +559,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            static List<EventParams> EventsFromXml(XmlTextReader reader)
+            private static List<EventParams> EventsFromXml(XmlTextReader reader)
             {
                 var events = new List<EventParams>();
                 for (;;)
@@ -601,7 +602,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            static List<object> PluginsFromXml(XmlTextReader reader)
+            private static List<object> PluginsFromXml(XmlTextReader reader)
             {
                 var res = new List<object>();
                 for (;;)
@@ -648,7 +649,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            static SavedScriptState ScriptStateFromXML(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item)
+            private static SavedScriptState ScriptStateFromXML(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item)
             {
                 var state = new SavedScriptState();
                 for (; ;)
