@@ -185,7 +185,7 @@ namespace SilverSim.Scripting.Lsl
                     script_cb_params);
                 ILGenerator script_ilgen = script_cb.GetILGenerator();
                 {
-                    ConstructorInfo typeConstructor = typeof(Script).GetConstructor(script_cb_params);
+                    ConstructorInfo typeConstructor = typeof(Script).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, script_cb_params, null);
                     script_ilgen.Emit(OpCodes.Ldarg_0);
                     script_ilgen.Emit(OpCodes.Ldarg_1);
                     script_ilgen.Emit(OpCodes.Ldarg_2);
