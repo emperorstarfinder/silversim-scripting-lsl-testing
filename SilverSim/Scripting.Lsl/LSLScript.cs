@@ -554,14 +554,6 @@ namespace SilverSim.Scripting.Lsl
 
         public abstract void ResetVariables();
 
-        public void ForcedSleep(int forcedSleepMs)
-        {
-            if(UseForcedSleep)
-            {
-                System.Threading.Thread.Sleep(forcedSleepMs);
-            }
-        }
-
         private void OnPrimUpdate(ObjectPart part, UpdateChangedFlags flags)
         {
             var changedflags = (ChangedEvent.ChangedFlags)(uint)flags;

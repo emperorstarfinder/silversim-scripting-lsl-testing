@@ -401,8 +401,8 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                         }
-                        compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)(forcedSleep.Seconds * 1000));
-                        compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("ForcedSleep", new Type[] { typeof(int) }));
+                        compileState.ILGen.Emit(OpCodes.Ldc_R8, forcedSleep.Seconds);
+                        compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("ForcedSleep", new Type[] { typeof(double) }));
                     }
 
                     compileState.ILGen.EndScope();
