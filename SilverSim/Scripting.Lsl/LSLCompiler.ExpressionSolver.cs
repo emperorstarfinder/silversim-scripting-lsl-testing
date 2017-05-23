@@ -26,7 +26,6 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -64,7 +63,6 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         private void SolveConstantOperations(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             var processNodes = new List<Tree>();

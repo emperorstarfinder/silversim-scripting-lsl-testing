@@ -35,14 +35,12 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Timers;
 
 namespace SilverSim.Scripting.Lsl
 {
-    [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
     [Description("LSL HTTP Server Support")]
     [ServerParam("LSL.MaxURLs", ParameterType = typeof(uint), DefaultValue = 15000)]
     public sealed class LSLHTTP : IPlugin, IPluginShutdown, IServerParamListener
@@ -112,7 +110,6 @@ namespace SilverSim.Scripting.Lsl
 
         private readonly RwLockedDictionary<UUID, HttpRequestData> m_HttpRequests = new RwLockedDictionary<UUID, HttpRequestData>();
 
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidLargeStructureRule")]
         private struct URLData
         {
             public UUID SceneID;

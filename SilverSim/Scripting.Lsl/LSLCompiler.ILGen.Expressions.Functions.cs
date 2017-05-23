@@ -24,7 +24,6 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -32,7 +31,6 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         private sealed class FunctionExpression : IExpressionStackElement
         {
             private sealed class FunctionParameterInfo

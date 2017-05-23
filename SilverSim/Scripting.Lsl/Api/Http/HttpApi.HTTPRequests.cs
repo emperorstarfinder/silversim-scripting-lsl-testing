@@ -23,7 +23,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -64,8 +63,6 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         private static readonly Regex m_AuthRegex = new Regex(@"^(https?:\/\/)(\w+):(\w+)@(.*)$");
 
         [APILevel(APIFlags.LSL, "llHTTPRequest")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
-        [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
         public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
         {
             var req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();

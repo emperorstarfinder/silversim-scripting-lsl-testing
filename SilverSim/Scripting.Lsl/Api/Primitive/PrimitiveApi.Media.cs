@@ -23,7 +23,6 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -284,7 +283,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int STATUS_WHITELIST_FAILED = 2001;
 
         [APILevel(APIFlags.LSL, "llSetLinkMedia")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public int SetLinkMedia(ScriptInstance instance, int link, int face, AnArray param)
         {
             ObjectPart part;

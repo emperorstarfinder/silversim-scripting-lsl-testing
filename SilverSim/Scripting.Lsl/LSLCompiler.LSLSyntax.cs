@@ -23,7 +23,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -57,7 +56,6 @@ namespace SilverSim.Scripting.Lsl
         private byte[] LSLSyntaxFile = new byte[0];
         private UUID LSLSyntaxId = UUID.Zero;
 
-        [SuppressMessage("Gendarme.Rules.Concurrency", "WriteStaticFieldFromInstanceMethodRule")]
         public void GenerateLSLSyntaxFile()
         {
             using (var ms = new MemoryStream())

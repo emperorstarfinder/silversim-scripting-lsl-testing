@@ -26,7 +26,6 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -34,7 +33,6 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         private sealed class BinaryOperatorExpression : IExpressionStackElement
         {
             private readonly string m_Operator;
@@ -714,7 +712,6 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule")]
             public void ProcessOperator_Return(
                 CompileState compileState)
             {

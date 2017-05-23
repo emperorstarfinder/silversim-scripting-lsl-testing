@@ -22,13 +22,11 @@
 using SilverSim.Scene.Types.Script;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Expression
 {
-    [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
     public class Tree
     {
         public enum EntryType
@@ -71,7 +69,6 @@ namespace SilverSim.Scripting.Lsl.Expression
         {
         }
 
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public class ConstantValueInt : ConstantValue
         {
             public int Value;
@@ -91,7 +88,6 @@ namespace SilverSim.Scripting.Lsl.Expression
             public override ValueBase Negate() => new ConstantValueInt(-Value);
         }
 
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public class ConstantValueLong : ConstantValue
         {
             public long Value;
@@ -111,7 +107,6 @@ namespace SilverSim.Scripting.Lsl.Expression
             public override ValueBase Negate() => new ConstantValueLong(-Value);
         }
 
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public class ConstantValueFloat : ConstantValue
         {
             public double Value;

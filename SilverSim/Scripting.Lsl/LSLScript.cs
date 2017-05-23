@@ -35,7 +35,6 @@ using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -45,8 +44,6 @@ using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
 {
-    [SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule")]
-    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule")]
     public abstract partial class Script : ScriptInstance, IScriptState
     {
         private static readonly ILog m_Log = LogManager.GetLogger("LSLSCRIPT");
@@ -580,7 +577,6 @@ namespace SilverSim.Scripting.Lsl
 
         public override ObjectPart Part => m_Part;
 
-        [SuppressMessage("Gendarme.Rules.Design", "AvoidMultidimensionalIndexerRule")]
         public override ObjectPartInventoryItem Item { get; }
 
         public override void PostEvent(IScriptEvent e)
@@ -970,7 +966,6 @@ namespace SilverSim.Scripting.Lsl
 
         public override IScriptState ScriptState => this;
 
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public override void ProcessEvent()
         {
             IScriptEvent evgot;

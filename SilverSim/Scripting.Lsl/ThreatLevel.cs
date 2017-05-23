@@ -19,11 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace SilverSim.Scripting.Lsl
 {
-    [SuppressMessage("Gendarme.Rules.Design", "EnumsShouldUseInt32Rule")]
     public enum ThreatLevel : uint
     {
         None = 0,

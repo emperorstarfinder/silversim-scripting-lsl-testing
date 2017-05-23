@@ -26,7 +26,6 @@ using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Asset.Format;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Notecards
@@ -35,7 +34,6 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
     {
         #region osMakeNotecard
         [APILevel(APIFlags.OSSL, "osMakeNotecard")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void MakeNotecard(
             ScriptInstance instance,
             [Description("Name of notecard to be created")]
@@ -58,7 +56,6 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         }
 
         [APILevel(APIFlags.OSSL, "osMakeNotecard")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidUncalledPrivateCodeRule")]
         public void MakeNotecard(
             ScriptInstance instance,
             [Description("Name of notecard to be created")]

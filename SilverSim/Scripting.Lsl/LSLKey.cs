@@ -21,11 +21,9 @@
 
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl
 {
-    [SuppressMessage("Gendarme.Rules.Design", "EnsureSymmetryForOverloadedOperatorsRule")]
     public sealed class LSLKey : IEquatable<LSLKey>, IEquatable<string>, IValue
     {
         readonly private string m_Value;
@@ -118,23 +116,15 @@ namespace SilverSim.Scripting.Lsl
 
         #region Helpers
         public ABoolean AsBoolean => new ABoolean(m_Value.Length != 0);
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Integer AsInteger => new Integer(Int32.Parse(m_Value));
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Quaternion AsQuaternion => Quaternion.Parse(m_Value);
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Real AsReal => Real.Parse(m_Value);
         public AString AsString => new AString(m_Value);
         public UUID AsUUID => new UUID(m_Value);
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public Vector3 AsVector3 => Vector3.Parse(m_Value);
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public uint AsUInt => uint.Parse(m_Value);
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public int AsInt => int.Parse(m_Value);
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public ulong AsULong => ulong.Parse(m_Value);
-        [SuppressMessage("Gendarme.Rules.BadPractice", "PreferTryParseRule")]
         public long AsLong => long.Parse(m_Value);
         #endregion
     }

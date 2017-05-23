@@ -26,7 +26,6 @@ using SilverSim.Scene.Types.WindLight;
 using SilverSim.Types;
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.WindLight
 {
@@ -204,7 +203,6 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
         }
 
         [APIExtension(APIExtension.WindLight_New, "rwlWindlightSetWaterSettings")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public int WindlightSetWaterSettings(ScriptInstance instance, AnArray rules)
         {
             EnvironmentSettings envsettings;

@@ -29,7 +29,6 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -40,9 +39,6 @@ using System.Text;
 namespace SilverSim.Scripting.Lsl
 {
     [CompilerUsesRunAndCollectMode]
-    [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
-    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
-    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     [Description("LSL Compiler")]
     [ServerParam("LSL.CallDepthLimit", ParameterType = typeof(uint), DefaultValue = 40)]
     [ScriptEngineName("lsl")]

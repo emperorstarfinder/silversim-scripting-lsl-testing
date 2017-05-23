@@ -25,7 +25,6 @@ using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl.Api.Vehicles
 {
@@ -139,7 +138,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_INVERTED_BANKING_MODIFIER = 11006;
 
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
-        [SuppressMessage("Gendarme.Rules.Performance", "AvoidRepetitiveCallsToPropertiesRule")]
         public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
             lock (instance)

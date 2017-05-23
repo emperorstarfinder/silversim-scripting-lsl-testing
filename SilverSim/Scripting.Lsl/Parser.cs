@@ -25,14 +25,11 @@ using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
-    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidLackOfCohesionOfMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
-    [SuppressMessage("Gendarme.Rules.Maintainability", "AvoidComplexMethodsRule", Justification = "Ever seen a compiler source code without such warnings?")]
     public class Parser : ParserBase
     {
         private readonly CultureInfo m_CurrentCulture;

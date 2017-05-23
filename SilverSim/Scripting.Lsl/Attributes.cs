@@ -20,12 +20,10 @@
 // exception statement from your version.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SilverSim.Scripting.Lsl
 {
     [Flags]
-    [SuppressMessage("Gendarme.Rules.Design", "EnumsShouldUseInt32Rule")]
     public enum APIFlags : uint
     {
         None = 0,
@@ -64,33 +62,19 @@ namespace SilverSim.Scripting.Lsl
 
     public static class APIExtension
     {
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string LightShare = "LightShare";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string WindLight_New = "WindLight";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string WindLight_Aurora = "WindLight_Aurora";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Admin = "Admin";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string InWorldz = "InWorldz";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string ExtendedVehicle = "ExtendedVehicle";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string AdvancedPhysics = "AdvancedPhysics";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string ExtendedTypecasts = "ExtendedTypecasts";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string StateVariables = "StateVariables";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string BreakContinue = "BreakContinue";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string SwitchBlock = "Switch";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Selling = "Selling";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string Pathfinding = "Pathfinding";
-        [SuppressMessage("Gendarme.Rules.BadPractice", "AvoidVisibleConstantFieldRule")]
         public const string LongInteger = "LongInteger";
     }
 
