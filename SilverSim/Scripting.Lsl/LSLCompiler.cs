@@ -42,6 +42,7 @@ namespace SilverSim.Scripting.Lsl
     [Description("LSL Compiler")]
     [ServerParam("LSL.CallDepthLimit", ParameterType = typeof(uint), DefaultValue = 40)]
     [ScriptEngineName("lsl")]
+    [PluginName("ScriptEngine")]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory, IServerParamListener
     {
         internal struct ApiMethodInfo

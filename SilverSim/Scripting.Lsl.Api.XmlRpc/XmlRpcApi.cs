@@ -29,6 +29,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
     [ScriptApiName("XMLRPC")]
     [LSLImplementation]
+    [PluginName("LSL_XMLRPC")]
     [Description("LSL XMLRPC API")]
     public partial class XmlRpcApi : IScriptApi, IPlugin
     {

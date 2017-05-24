@@ -37,6 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 {
     [ScriptApiName("DynamicTexture")]
     [Description("Dynamic Texture OSSL API")]
+    [PluginName("LSL_DynamicTexture")]
     [LSLImplementation]
     public class DynamicTextureApi : IScriptApi, IPlugin
     {

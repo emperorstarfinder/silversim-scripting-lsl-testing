@@ -41,6 +41,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
     [ScriptApiName("Sensor")]
     [LSLImplementation]
     [Description("LSL Sensor API")]
+    [PluginName("LSL_Sensor")]
     public class SensorApi : IScriptApi, IPlugin, IPluginShutdown
     {
         /* excerpt from http://wiki.secondlife.com/wiki/LlSensor

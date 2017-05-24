@@ -35,7 +35,8 @@ using System.Threading;
 namespace SilverSim.Scripting.Lsl.Api.Email
 {
     [Description("Local Email Service")]
-    internal sealed class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
+    [PluginName("LSL_Email_LocalOnlyService")]
+    public sealed class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
     {
         private class Email
         {

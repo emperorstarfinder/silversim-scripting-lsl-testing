@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using Nini.Config;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
@@ -31,6 +32,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 {
     [ScriptApiName("Email")]
     [LSLImplementation]
+    [PluginName("LSL_Email")]
     [Description("LSL Email API")]
     public class EmailApi : IScriptApi, IPlugin
     {
@@ -45,9 +47,9 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
-        public EmailApi(string emailServiceName)
+        public EmailApi(IConfig ownSection)
         {
-            m_ServiceName = emailServiceName;
+            m_ServiceName = ownSection.GetString("EmailService", string.Empty);
         }
 
         public void Startup(ConfigurationLoader loader)

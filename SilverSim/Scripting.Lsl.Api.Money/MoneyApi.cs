@@ -36,6 +36,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
 {
     [ScriptApiName("Money")]
     [Description("LSL Money API")]
+    [PluginName("LSL_Money")]
     [LSLImplementation]
     public class MoneyApi : IScriptApi, IPlugin
     {

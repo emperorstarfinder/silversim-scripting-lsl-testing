@@ -32,6 +32,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
 {
     [ScriptApiName("Terraform")]
     [LSLImplementation]
+    [PluginName("LSL_Terraform")]
     [Description("LSL/OSSL Terraforming API")]
     public class TerraformApi : IScriptApi, IPlugin
     {

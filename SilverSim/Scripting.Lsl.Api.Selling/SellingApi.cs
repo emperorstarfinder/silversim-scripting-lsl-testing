@@ -29,6 +29,7 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
 {
     [ScriptApiName("Selling")]
     [Description("LSL Selling API")]
+    [PluginName("LSL_Selling")]
     [LSLImplementation]
     public class SellingApi : IScriptApi, IPlugin
     {
