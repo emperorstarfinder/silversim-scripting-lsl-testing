@@ -26,6 +26,8 @@ using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
@@ -266,10 +268,29 @@ namespace SilverSim.Scripting.Lsl
                         state.Variables[varname] = ListFromXml(reader);
                         break;
 
-#warning add serialization support for custom types
-
                     default:
-                        throw new InvalidObjectXmlException();
+                        Type customType;
+                        if (LSLCompiler.KnownSerializationTypes.TryGetValue(type, out customType) &&
+                            Attribute.GetCustomAttribute(customType, typeof(SerializableAttribute)) != null)
+                        {
+                            try
+                            {
+                                using (var ms = new MemoryStream(Convert.FromBase64String(reader.ReadElementValueAsString())))
+                                {
+                                    var formatter = new BinaryFormatter();
+                                    state.Variables[varname] = formatter.Deserialize(ms);
+                                }
+                            }
+                            catch
+                            {
+                                /* deserialization not possible */
+                            }
+                        }
+                        else
+                        {
+                            throw new InvalidObjectXmlException();
+                        }
+                        break;
                 }
             }
 

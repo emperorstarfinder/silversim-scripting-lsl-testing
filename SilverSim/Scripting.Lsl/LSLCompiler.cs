@@ -233,6 +233,8 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        internal static readonly Dictionary<string, Type> KnownSerializationTypes = new Dictionary<string, Type>();
+
         private void CollectApiTypes(IScriptApi api)
         {
             foreach (Type t in api.GetType().GetNestedTypes())
@@ -280,6 +282,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         apiInfo.Types.Add(typeName, t);
                         m_ValidTypes[t] = typeName;
+                        KnownSerializationTypes[t.FullName] = t;
                     }
                 }
                 else if(apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)

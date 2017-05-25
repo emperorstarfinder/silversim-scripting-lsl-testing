@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Timers;
 using System.Xml;
@@ -380,7 +381,27 @@ namespace SilverSim.Scripting.Lsl
                                     ListToXml(writer, varName, (AnArray)varValue);
                                     continue;
                                 }
-#warning Add serialization for custom types
+                                else if (Attribute.GetCustomAttribute(varType, typeof(SerializableAttribute)) != null)
+                                {
+                                    byte[] data;
+                                    try
+                                    {
+                                        using (var ms = new MemoryStream())
+                                        {
+                                            var formatter = new BinaryFormatter();
+                                            formatter.Serialize(ms, varValue);
+                                            data = ms.ToArray();
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        continue;
+                                    }
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", varType.FullName);
+                                    writer.WriteValue(Convert.ToBase64String(data));
+                                }
                                 else
                                 {
                                     continue;
