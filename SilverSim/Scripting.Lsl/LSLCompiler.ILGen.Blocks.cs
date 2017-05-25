@@ -727,10 +727,6 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldstr, string.Empty);
                             }
-                            else if (targetType == typeof(Vector3))
-                            {
-                                compileState.ILGen.Emit(OpCodes.Ldsfld, typeof(Vector3).GetField("Zero"));
-                            }
                             else if (targetType == typeof(Quaternion))
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldsfld, typeof(Quaternion).GetField("Identity"));
@@ -844,14 +840,6 @@ namespace SilverSim.Scripting.Lsl
                 else if (returnType == typeof(string))
                 {
                     ilgen.Emit(OpCodes.Ldstr, string.Empty);
-                }
-                else if (returnType == typeof(AnArray))
-                {
-                    ilgen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                }
-                else if (returnType == typeof(Vector3))
-                {
-                    ilgen.Emit(OpCodes.Ldsfld, typeof(Vector3).GetField("Zero"));
                 }
                 else if (returnType == typeof(Quaternion))
                 {

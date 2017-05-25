@@ -305,27 +305,6 @@ namespace SilverSim.Scripting.Lsl
                             reset_ILGen.Emit(OpCodes.Ldc_I4_0);
                             reset_ILGen.Emit(OpCodes.Stfld, fb);
                         }
-                        else if (fb.FieldType == typeof(AnArray))
-                        {
-                            script_ILGen.Emit(OpCodes.Ldarg_0);
-                            script_ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                            script_ILGen.Emit(OpCodes.Stfld, fb);
-
-                            reset_ILGen.Emit(OpCodes.Ldarg_0);
-                            reset_ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                            reset_ILGen.Emit(OpCodes.Stfld, fb);
-                        }
-                        else if (fb.FieldType == typeof(Vector3))
-                        {
-                            FieldInfo sfld = typeof(Vector3).GetField("Zero");
-                            script_ILGen.Emit(OpCodes.Ldarg_0);
-                            script_ILGen.Emit(OpCodes.Ldsfld, sfld);
-                            script_ILGen.Emit(OpCodes.Stfld, fb);
-
-                            reset_ILGen.Emit(OpCodes.Ldarg_0);
-                            reset_ILGen.Emit(OpCodes.Ldsfld, sfld);
-                            reset_ILGen.Emit(OpCodes.Stfld, fb);
-                        }
                         else if (fb.FieldType == typeof(Quaternion))
                         {
                             FieldInfo sfld = typeof(Quaternion).GetField("Identity");
@@ -339,19 +318,13 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (fb.FieldType.IsValueType)
                         {
-                            LocalBuilder lb = script_ILGen.DeclareLocal(fb.FieldType);
                             script_ILGen.Emit(OpCodes.Ldarg_0);
-                            script_ILGen.Emit(OpCodes.Ldloca, lb);
+                            script_ILGen.Emit(OpCodes.Ldflda, fb);
                             script_ILGen.Emit(OpCodes.Initobj, fb.FieldType);
-                            script_ILGen.Emit(OpCodes.Ldloc, lb);
-                            script_ILGen.Emit(OpCodes.Stfld, fb);
 
-                            lb = reset_ILGen.DeclareLocal(fb.FieldType);
                             reset_ILGen.Emit(OpCodes.Ldarg_0);
-                            reset_ILGen.Emit(OpCodes.Ldloca, lb);
+                            reset_ILGen.Emit(OpCodes.Ldflda, fb);
                             reset_ILGen.Emit(OpCodes.Initobj, fb.FieldType);
-                            reset_ILGen.Emit(OpCodes.Ldloc, lb);
-                            reset_ILGen.Emit(OpCodes.Stfld, fb);
                         }
                         else
                         {
@@ -377,17 +350,7 @@ namespace SilverSim.Scripting.Lsl
                     foreach(KeyValuePair<string, FieldBuilder> kvp in stateVarKvp.Value)
                     {
                         FieldBuilder fb = kvp.Value;
-                        if (fb.FieldType == typeof(LSLKey))
-                        {
-                            script_ILGen.Emit(OpCodes.Ldarg_0);
-                            script_ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
-                            script_ILGen.Emit(OpCodes.Stfld, fb);
-
-                            reset_ILGen.Emit(OpCodes.Ldarg_0);
-                            reset_ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
-                            reset_ILGen.Emit(OpCodes.Stfld, fb);
-                        }
-                        else if (fb.FieldType == typeof(string))
+                        if (fb.FieldType == typeof(string))
                         {
                             script_ILGen.Emit(OpCodes.Ldarg_0);
                             script_ILGen.Emit(OpCodes.Ldstr, string.Empty);
@@ -427,27 +390,6 @@ namespace SilverSim.Scripting.Lsl
                             reset_ILGen.Emit(OpCodes.Ldc_I4_0);
                             reset_ILGen.Emit(OpCodes.Stfld, fb);
                         }
-                        else if (fb.FieldType == typeof(AnArray))
-                        {
-                            script_ILGen.Emit(OpCodes.Ldarg_0);
-                            script_ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                            script_ILGen.Emit(OpCodes.Stfld, fb);
-
-                            reset_ILGen.Emit(OpCodes.Ldarg_0);
-                            reset_ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
-                            reset_ILGen.Emit(OpCodes.Stfld, fb);
-                        }
-                        else if (fb.FieldType == typeof(Vector3))
-                        {
-                            FieldInfo sfld = typeof(Vector3).GetField("Zero");
-                            script_ILGen.Emit(OpCodes.Ldarg_0);
-                            script_ILGen.Emit(OpCodes.Ldsfld, sfld);
-                            script_ILGen.Emit(OpCodes.Stfld, fb);
-
-                            reset_ILGen.Emit(OpCodes.Ldarg_0);
-                            reset_ILGen.Emit(OpCodes.Ldsfld, sfld);
-                            reset_ILGen.Emit(OpCodes.Stfld, fb);
-                        }
                         else if (fb.FieldType == typeof(Quaternion))
                         {
                             FieldInfo sfld = typeof(Quaternion).GetField("Identity");
@@ -461,19 +403,13 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if(fb.FieldType.IsValueType)
                         {
-                            LocalBuilder lb = script_ILGen.DeclareLocal(fb.FieldType);
                             script_ILGen.Emit(OpCodes.Ldarg_0);
-                            script_ILGen.Emit(OpCodes.Ldloca, lb);
+                            script_ILGen.Emit(OpCodes.Ldflda, fb);
                             script_ILGen.Emit(OpCodes.Initobj, fb.FieldType);
-                            script_ILGen.Emit(OpCodes.Ldloc, lb);
-                            script_ILGen.Emit(OpCodes.Stfld, fb);
 
-                            lb = reset_ILGen.DeclareLocal(fb.FieldType);
                             reset_ILGen.Emit(OpCodes.Ldarg_0);
-                            reset_ILGen.Emit(OpCodes.Ldloca, lb);
+                            reset_ILGen.Emit(OpCodes.Ldflda, fb);
                             reset_ILGen.Emit(OpCodes.Initobj, fb.FieldType);
-                            reset_ILGen.Emit(OpCodes.Ldloc, lb);
-                            reset_ILGen.Emit(OpCodes.Stfld, fb);
                         }
                         else
                         {
