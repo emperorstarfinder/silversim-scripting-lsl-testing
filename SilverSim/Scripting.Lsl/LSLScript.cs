@@ -19,7 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0018, IDE0019
 
 using log4net;
 using SilverSim.Scene.ServiceInterfaces.Chat;
@@ -1644,21 +1644,6 @@ namespace SilverSim.Scripting.Lsl
                 };
             }
             return null;
-        }
-
-        private static void OnRezSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (OnRezEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "on_rez");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.StartParam);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
         }
 
         private static IScriptEvent AttachDeserializer(SavedScriptState.EventParams ep)

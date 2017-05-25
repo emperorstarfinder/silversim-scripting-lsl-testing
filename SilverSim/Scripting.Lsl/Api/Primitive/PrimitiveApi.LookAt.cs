@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018, RCS1029
+
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -37,7 +39,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 Vector3 direction = target - instance.Part.GlobalPosition;
                 double z = Math.Atan2(direction.Y, direction.X);
-                double y = Math.Atan2(direction.Z, Math.Sqrt(direction.X * direction.X + direction.Y * direction.Y));
+                double y = Math.Atan2(direction.Z, Math.Sqrt((direction.X * direction.X) + (direction.Y * direction.Y)));
 
                 targetRotation = Quaternion.CreateFromEulers(new Vector3(0, y, 0)) * Quaternion.CreateFromEulers(new Vector3(0, 0, z));
             }

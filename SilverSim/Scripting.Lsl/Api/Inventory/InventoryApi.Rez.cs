@@ -19,6 +19,9 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018, IDE0019
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
@@ -35,7 +38,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
     [ServerParam("LSL.EnforceRezDistanceLimit", ParameterType = typeof(bool), DefaultValue = true)]
     [ServerParam("LSL.RezDistanceMeterLimit", ParameterType = typeof(uint), DefaultValue = 10)]
-    partial class InventoryApi
+    public partial class InventoryApi
     {
         private readonly RwLockedDictionary<UUID, bool> m_EnforceRezDistanceLimitParams = new RwLockedDictionary<UUID, bool>();
         private readonly RwLockedDictionary<UUID, uint> m_RezDistanceMeterLimit = new RwLockedDictionary<UUID, uint>();

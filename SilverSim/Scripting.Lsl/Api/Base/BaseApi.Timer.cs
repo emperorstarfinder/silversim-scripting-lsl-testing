@@ -71,7 +71,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     double interval = script.CurrentTimerInterval;
                     res.Add(interval);
                     int timeElapsed = Environment.TickCount - script.LastTimerEventTick;
-                    double timeToElapse = interval - timeElapsed / 1000f;
+                    double timeToElapse = interval - (timeElapsed / 1000f);
                     res.Add(timeToElapse);
                 }
             }

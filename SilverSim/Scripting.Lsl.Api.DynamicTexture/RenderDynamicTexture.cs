@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018, RCS1029, IDE0019
+
 using OpenJp2.Net;
 using SilverSim.Http.Client;
 using SilverSim.Types.Asset;

@@ -19,7 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0018
 
 using SilverSim.Http.Client;
 using SilverSim.Scene.Types.Object;
@@ -33,7 +33,7 @@ using XmlRpcStructs = SilverSim.Types.StructuredData.XmlRpc.XmlRpc;
 
 namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
-    partial class XmlRpcApi
+    public partial class XmlRpcApi
     {
         private class SendRemoteDataInfo
         {

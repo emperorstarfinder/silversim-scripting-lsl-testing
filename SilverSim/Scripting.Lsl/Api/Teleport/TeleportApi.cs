@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018, RCS1029
+
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
@@ -160,7 +162,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                 return;
             }
 
-            double minPos = scene.Terrain[position] + agent.Appearance.AvatarHeight / 2;
+            double minPos = scene.Terrain[position] + (agent.Appearance.AvatarHeight / 2);
             if(position.Z < minPos)
             {
                 position.Z = minPos;

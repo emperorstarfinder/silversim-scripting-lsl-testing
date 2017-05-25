@@ -19,10 +19,13 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018, RCS1029
+
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -473,13 +476,17 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             SetLinkMedia(instance, LINK_THIS, face, param);
 
         [APILevel(APIFlags.LSL, "llSetPrimURL")]
+#pragma warning disable RCS1163 // Unused parameter.
         public void SetPrimURL(ScriptInstance instance, string url)
+#pragma warning restore RCS1163 // Unused parameter.
         {
             /* noop function */
         }
 
         [APILevel(APIFlags.LSL, "llRefreshPrimURL")]
+#pragma warning disable RCS1163 // Unused parameter.
         public void RefreshPrimURL(ScriptInstance instance)
+#pragma warning restore RCS1163 // Unused parameter.
         {
             /* noop function */
         }

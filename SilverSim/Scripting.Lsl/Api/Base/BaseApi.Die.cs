@@ -19,6 +19,9 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018
+#pragma warning disable RCS1029
+
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;

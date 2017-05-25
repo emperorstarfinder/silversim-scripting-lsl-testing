@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018, RCS1029, RCS1163, IDE0019
+
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -352,16 +354,16 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             return new AString(value);
         }
 
-        interface ILevelAssignment
+        private interface ILevelAssignment
         {
             IValue Value { get; set; }
             void Remove();
         }
 
-        class LevelMapAssignment : ILevelAssignment
+        private class LevelMapAssignment : ILevelAssignment
         {
-            readonly Map m_Map;
-            readonly string m_Key;
+            private readonly Map m_Map;
+            private readonly string m_Key;
 
             public LevelMapAssignment(Map m, string key)
             {
@@ -382,10 +384,10 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             }
         }
 
-        class LevelArrayAssignment : ILevelAssignment
+        private class LevelArrayAssignment : ILevelAssignment
         {
-            readonly AnArray m_Array;
-            readonly int m_Index;
+            private readonly AnArray m_Array;
+            private readonly int m_Index;
 
             public LevelArrayAssignment(AnArray array, int index)
             {

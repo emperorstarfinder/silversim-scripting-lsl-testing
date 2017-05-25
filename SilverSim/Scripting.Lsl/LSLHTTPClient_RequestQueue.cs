@@ -19,7 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0018
 
 using log4net;
 using SilverSim.Http.Client;

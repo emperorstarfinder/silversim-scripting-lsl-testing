@@ -19,6 +19,10 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018
+#pragma warning disable RCS1029
+#pragma warning disable RCS1163
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
@@ -1316,7 +1320,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     ++count;
                 }
             }
-            return (s - count * Math.Pow(sum / count, 2)) / (count - 1);
+            return (s - (count * Math.Pow(sum / count, 2))) / (count - 1);
         }
 
         private double ListStdDev(AnArray src)
@@ -1347,7 +1351,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             double[] j = NumericSort(src);
 
             return Math.Abs(Math.Ceiling(j.Length * i) - (j.Length * i)) < Double.Epsilon ?
-                (j[(int)(j.Length * i - 1)] + j[(int)(j.Length * i)]) / 2 :
+                (j[(int)((j.Length * i) - 1)] + j[(int)(j.Length * i)]) / 2 :
                 j[(int)(Math.Ceiling(j.Length * i)) - 1];
         }
         #endregion

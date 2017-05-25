@@ -19,6 +19,10 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018
+#pragma warning disable RCS1029
+#pragma warning disable RCS1163
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
@@ -111,7 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             /* based on http://wiki.secondlife.com/wiki/LlRot2Angle */
             double s2 = r.Z * r.Z; // square of the s-element
-            double v2 = r.X * r.X + r.Y * r.Y + r.Z * r.Z; // sum of the squares of the v-elements
+            double v2 = (r.X * r.X) + (r.Y * r.Y) + (r.Z * r.Z); // sum of the squares of the v-elements
 
             if (s2 < v2)
             {   // compare the s-component to the v-component
@@ -139,7 +143,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {   /* based on http://wiki.secondlife.com/wiki/LlAngleBetween */
             Quaternion r = b / a;
             double s2 = r.W * r.W;
-            double v2 = r.X * r.X + r.Y * r.Y + r.Z * r.Z;
+            double v2 = (r.X * r.X) + (r.Y * r.Y) + (r.Z * r.Z);
             if (s2 < v2)
             {
                 return 2.0 * Math.Acos(Math.Sqrt(s2 / (s2 + v2)));
