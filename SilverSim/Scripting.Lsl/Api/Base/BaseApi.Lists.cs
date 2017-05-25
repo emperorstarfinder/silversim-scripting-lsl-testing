@@ -498,7 +498,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else
             {
-                return src[index].ToString();
+                return val.ToString();
             }
         }
 

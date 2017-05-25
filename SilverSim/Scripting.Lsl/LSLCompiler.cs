@@ -239,55 +239,58 @@ namespace SilverSim.Scripting.Lsl
         {
             foreach (Type t in api.GetType().GetNestedTypes())
             {
-                if(!t.IsClass || !t.IsValueType)
+                if(!t.IsClass && !t.IsValueType)
                 {
                     continue;
                 }
 
                 var apiLevelAttrs = Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
                 var apiExtensionAttrs = Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
-                var apiDisplayNameAttr = Attribute.GetCustomAttribute(t, typeof(APIDisplayNameAttribute));
-                if (apiDisplayNameAttr != null && (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0))
+                if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                 {
-                    foreach (APILevelAttribute attr in apiLevelAttrs)
+                    var apiDisplayNameAttr = Attribute.GetCustomAttribute(t, typeof(APIDisplayNameAttribute)) as APIDisplayNameAttribute;
+                    if (apiDisplayNameAttr != null)
                     {
-                        string typeName = attr.Name;
-                        if (string.IsNullOrEmpty(typeName))
+                        foreach (APILevelAttribute attr in apiLevelAttrs)
                         {
-                            typeName = t.Name;
-                        }
-                        foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                        {
-                            if ((kvp.Key & attr.Flags) != 0)
+                            string typeName = apiDisplayNameAttr.DisplayName;
+                            if (string.IsNullOrEmpty(typeName))
                             {
-                                kvp.Value.Types.Add(typeName, t);
-                                m_ValidTypes[t] = typeName;
+                                typeName = t.Name;
+                            }
+                            foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+                            {
+                                if ((kvp.Key & attr.Flags) != 0)
+                                {
+                                    kvp.Value.Types.Add(typeName, t);
+                                    m_ValidTypes[t] = typeName;
+                                }
                             }
                         }
-                    }
-                    foreach (APIExtensionAttribute attr in apiExtensionAttrs)
-                    {
-                        string typeName = attr.Name;
-                        if (string.IsNullOrEmpty(typeName))
+                        foreach (APIExtensionAttribute attr in apiExtensionAttrs)
                         {
-                            typeName = t.Name;
-                        }
+                            string typeName = apiDisplayNameAttr.DisplayName;
+                            if (string.IsNullOrEmpty(typeName))
+                            {
+                                typeName = t.Name;
+                            }
 
-                        ApiInfo apiInfo;
-                        string extensionName = attr.Extension.ToLower();
-                        if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
-                        {
-                            apiInfo = new ApiInfo();
-                            m_ApiExtensions.Add(extensionName, apiInfo);
+                            ApiInfo apiInfo;
+                            string extensionName = attr.Extension.ToLower();
+                            if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                            {
+                                apiInfo = new ApiInfo();
+                                m_ApiExtensions.Add(extensionName, apiInfo);
+                            }
+                            apiInfo.Types.Add(typeName, t);
+                            m_ValidTypes[t] = typeName;
+                            KnownSerializationTypes[t.FullName] = t;
                         }
-                        apiInfo.Types.Add(typeName, t);
-                        m_ValidTypes[t] = typeName;
-                        KnownSerializationTypes[t.FullName] = t;
                     }
-                }
-                else if(apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
-                {
-                    m_Log.DebugFormat("Type {0} does not have APIDisplayName attribute", t.Name);
+                    else
+                    {
+                        m_Log.DebugFormat("Type {0} does not have APIDisplayName attribute", t.Name);
+                    }
                 }
             }
         }
