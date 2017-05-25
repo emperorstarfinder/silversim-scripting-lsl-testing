@@ -942,7 +942,7 @@ namespace SilverSim.Scripting.Lsl
             if (apiLevel != null)
             {
                 string methodName = mb.Name;
-                if (!string.IsNullOrEmpty(apiLevel.Name))
+                if (apiLevel.Name?.Length != 0)
                 {
                     methodName = apiLevel.Name;
                 }

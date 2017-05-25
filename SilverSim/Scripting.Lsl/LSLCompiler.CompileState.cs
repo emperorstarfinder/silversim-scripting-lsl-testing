@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.Lsl
             #region Function Body access
             public LineInfo GetLine(string message = "")
             {
-                if(string.IsNullOrEmpty(message))
+                if(message?.Length == 0)
                 {
                     message = this.GetLanguageString(CurrentCulture, "PrematureEndOfFunctionBody", "Premature end of function body");
                 }
@@ -155,7 +155,7 @@ namespace SilverSim.Scripting.Lsl
 
             public LineInfo PeekLine(string message = "")
             {
-                if (string.IsNullOrEmpty(message))
+                if (message?.Length == 0)
                 {
                     message = this.GetLanguageString(CurrentCulture, "PrematureEndOfFunctionBody", "Premature end of function body");
                 }

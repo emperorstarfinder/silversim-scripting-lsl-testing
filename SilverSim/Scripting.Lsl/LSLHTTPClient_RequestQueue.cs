@@ -83,7 +83,7 @@ namespace SilverSim.Scripting.Lsl
         public void HandleWhiteListOnlyUpdated(UUID regionId, string value)
         {
             bool val;
-            if (string.IsNullOrEmpty(value))
+            if (value?.Length == 0)
             {
                 m_WhiteListOnly.Remove(regionId);
             }
@@ -100,7 +100,7 @@ namespace SilverSim.Scripting.Lsl
         [ServerParam("LSL.HTTPClient.WhiteList")]
         public void HandleWhiteListUpdated(UUID regionId, string value)
         {
-            if (string.IsNullOrEmpty(value))
+            if (value?.Length == 0)
             {
                 m_WhiteLists.Remove(regionId);
             }
@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl
         [ServerParam("LSL.HTTPClient.BlackList")]
         public void HandleBlackListUpdated(UUID regionId, string value)
         {
-            if (string.IsNullOrEmpty(value))
+            if (value?.Length == 0)
             {
                 m_BlackLists.Remove(regionId);
             }

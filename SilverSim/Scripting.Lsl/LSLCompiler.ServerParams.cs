@@ -63,11 +63,11 @@ namespace SilverSim.Scripting.Lsl
                         {
                             foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                             {
-                                AddServerParamBlock(resList, string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                                AddServerParamBlock(resList, attr.Name?.Length == 0 ? mi.Name : attr.Name);
                             }
                             foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                             {
-                                AddServerParamBlock(resList, string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                                AddServerParamBlock(resList, attr.Name?.Length == 0 ? mi.Name : attr.Name);
                             }
                         }
                     }

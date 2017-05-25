@@ -110,7 +110,7 @@ namespace SilverSim.Scripting.Lsl
                                         var apiExtensionAttrs = Attribute.GetCustomAttributes(fi, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
                                         foreach(APILevelAttribute level in apiLevelAttrs)
                                         {
-                                            if (string.IsNullOrEmpty(level.Name))
+                                            if (level.Name?.Length == 0)
                                             {
                                                 writer.WriteNamedValue("key", fi.Name);
                                             }
@@ -154,7 +154,7 @@ namespace SilverSim.Scripting.Lsl
 
                                         foreach (APIExtensionAttribute level in apiExtensionAttrs)
                                         {
-                                            if (string.IsNullOrEmpty(level.Name))
+                                            if (level.Name?.Length == 0)
                                             {
                                                 writer.WriteNamedValue("key", fi.Name);
                                             }
@@ -206,7 +206,7 @@ namespace SilverSim.Scripting.Lsl
                                     {
                                         foreach (APILevelAttribute level in apiLevelAttrs)
                                         {
-                                            if (string.IsNullOrEmpty(level.Name))
+                                            if (level.Name?.Length == 0)
                                             {
                                                 writer.WriteNamedValue("key", mi.Name);
                                             }
@@ -285,7 +285,7 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     foreach(APILevelAttribute level in (APILevelAttribute[])Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                                     {
-                                        if (string.IsNullOrEmpty(level.Name))
+                                        if (level.Name?.Length == 0)
                                         {
                                             writer.WriteNamedValue("key", mi.Name);
                                         }
@@ -368,7 +368,7 @@ namespace SilverSim.Scripting.Lsl
 
                                     foreach (APIExtensionAttribute level in (APIExtensionAttribute[])Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                                     {
-                                        if (string.IsNullOrEmpty(level.Name))
+                                        if (level.Name?.Length == 0)
                                         {
                                             writer.WriteNamedValue("key", mi.Name);
                                         }

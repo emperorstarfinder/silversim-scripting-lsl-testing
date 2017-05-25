@@ -356,7 +356,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                         }
                         compileState.ILGen.Emit(OpCodes.Castclass, typeof(Script));
-                        if (string.IsNullOrEmpty(threatLevelAttr.FunctionName))
+                        if (threatLevelAttr.FunctionName?.Length == 0)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldstr, m_FunctionName);
                         }
