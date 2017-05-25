@@ -144,10 +144,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
             extraParams = extraParams.Trim().ToLower();
 
-            string[] extraParamPairs = extraParams.Split(',');
-
             int temp = -1;
-            foreach(string pair in extraParamPairs)
+
+            foreach(string pair in extraParams.Split(','))
             {
                 string[] pairset = pair.Split(':');
                 string name = pairset[0];
@@ -215,7 +214,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             }
 
             /* no dispose of the bitmap we still need it */
-            Bitmap bitmap = new Bitmap(width, height,
+            var bitmap = new Bitmap(width, height,
                 alpha == 256 ? PixelFormat.Format32bppRgb : PixelFormat.Format32bppArgb);
 
             using (Graphics graphics = Graphics.FromImage(bitmap))
@@ -239,6 +238,35 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 DrawToTexture(graphics, data, altDataDelim);
             }
             return bitmap;
+        }
+
+        public static void RenderTexture(Bitmap bitmap, string data, string extraParams)
+        {
+            char altDataDelim = ';';
+
+            extraParams = extraParams.Trim().ToLower();
+
+            foreach (string pair in extraParams.Split(','))
+            {
+                string[] pairset = pair.Split(':');
+                string name = pairset[0];
+                string value = string.Empty;
+
+                if (pairset.Length > 1)
+                {
+                    value = pairset[1];
+                }
+
+                if (name == "altdatadelim")
+                {
+                    altDataDelim = value[0];
+                }
+            }
+
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                DrawToTexture(graphics, data, altDataDelim);
+            }
         }
 
         private const char PartsDelimiter = ',';

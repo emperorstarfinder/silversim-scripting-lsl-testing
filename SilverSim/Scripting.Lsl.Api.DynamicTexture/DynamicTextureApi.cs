@@ -44,12 +44,14 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         /* graphics context specifically used for GetDrawStringSize */
         private readonly Graphics m_FontRequestContext;
         private readonly Dictionary<string, Func<string, string, Bitmap>> m_Renderers = new Dictionary<string, Func<string, string, Bitmap>>();
+        private readonly Dictionary<string, Action<Bitmap, string, string>> m_ModifyRenderers = new Dictionary<string, Action<Bitmap, string, string>>();
 
         public DynamicTextureApi()
         {
             m_FontRequestContext = Graphics.FromImage(new Bitmap(256, 256, PixelFormat.Format24bppRgb));
             m_Renderers.Add("image", RenderDynamicTexture.LoadImage);
             m_Renderers.Add("vector", RenderDynamicTexture.RenderTexture);
+            m_ModifyRenderers.Add("vector", RenderDynamicTexture.RenderTexture);
         }
 
         public void Startup(ConfigurationLoader loader)
@@ -308,8 +310,17 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             byte AlphaValue,
             int face)
         {
-            Func<string, string, Bitmap> renderer;
-            if (!m_Renderers.TryGetValue(contentType, out renderer))
+            Func<string, string, Bitmap> renderer = null;
+            Action<Bitmap, string, string> modifyRenderer = null;
+
+            if (string.IsNullOrEmpty(dynamicID))
+            {
+                if (!m_Renderers.TryGetValue(contentType, out renderer))
+                {
+                    return UUID.Zero;
+                }
+            }
+            else if (!m_ModifyRenderers.TryGetValue(contentType, out modifyRenderer))
             {
                 return UUID.Zero;
             }
@@ -322,12 +333,34 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
             try
             {
-                frontImage = renderer(data, extraParams);
+                if (renderer != null)
+                {
+                    frontImage = renderer(data, extraParams);
+                }
+                else if(modifyRenderer != null)
+                {
+                    AssetData updatedata;
+                    if(!instance.Part.ObjectGroup.AssetService.TryGetValue(instance.GetTextureAssetID(dynamicID), out updatedata) ||
+                        updatedata.Type != AssetType.Texture)
+                    {
+                        return UUID.Zero;
+                    }
+
+                    using (Stream js2k = updatedata.InputStream)
+                    {
+                        using (Image j2k = J2kImage.FromStream(updatedata.InputStream))
+                        {
+                            frontImage = new Bitmap(j2k);
+                        }
+                    }
+                    modifyRenderer(frontImage, data, extraParams);
+                }
+
                 if (setBlending)
                 {
                     UUID oldTexture;
                     TextureEntry te = instance.Part.TextureEntry;
-                    oldTexture =(face == ALL_SIDES) ?
+                    oldTexture = (face == ALL_SIDES) ?
                         te.DefaultTexture.TextureID :
                         te[(uint)face].TextureID;
 
