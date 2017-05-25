@@ -19,7 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0018
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
@@ -95,11 +95,11 @@ namespace SilverSim.Scripting.Lsl
 
                     if (compileState.m_VariableInitValues.TryGetValue(variableKvp.Key, out initargs))
                     {
-                        dumpILGen.WriteLine(string.Format("_____: {0} {1} = {2};", MapType(variableKvp.Value), variableKvp.Key, string.Join(" ", initargs.Line)));
+                        dumpILGen.WriteLine(string.Format("_____: {0} {1} = {2};", compileState.MapType(variableKvp.Value), variableKvp.Key, string.Join(" ", initargs.Line)));
                     }
                     else
                     {
-                        dumpILGen.WriteLine(string.Format("_____: {0} {1};", MapType(variableKvp.Value), variableKvp.Key));
+                        dumpILGen.WriteLine(string.Format("_____: {0} {1};", compileState.MapType(variableKvp.Value), variableKvp.Key));
                     }
                 }
 
@@ -595,58 +595,16 @@ namespace SilverSim.Scripting.Lsl
                     foreach (FunctionInfo funcInfo in functionKvp.Value)
                     {
                         MethodBuilder method;
-                        Type returnType = typeof(void);
+                        Type returnType;
                         List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
                         int functionStart = 3;
 
-                        switch (functionDeclaration[0])
+                        if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
                         {
-                            case "long":
-                                if(!compileState.LanguageExtensions.EnableLongIntegers)
-                                {
-                                    goto default;
-                                }
-                                returnType = typeof(long);
-                                break;
-
-                            case "integer":
-                                returnType = typeof(int);
-                                break;
-
-                            case "vector":
-                                returnType = typeof(Vector3);
-                                break;
-
-                            case "list":
-                                returnType = typeof(AnArray);
-                                break;
-
-                            case "float":
-                                returnType = typeof(double);
-                                break;
-
-                            case "string":
-                                returnType = typeof(string);
-                                break;
-
-                            case "key":
-                                returnType = typeof(LSLKey);
-                                break;
-
-                            case "rotation":
-                            case "quaternion":
-                                returnType = typeof(Quaternion);
-                                break;
-
-                            case "void":
-                                returnType = typeof(void);
-                                break;
-
-                            default:
-                                functionName = functionDeclaration[0];
-                                functionStart = 2;
-                                break;
+                            functionName = functionDeclaration[0];
+                            functionStart = 2;
+                            returnType = typeof(void);
                         }
                         var paramTypes = new List<Type>();
                         var paramName = new List<string>();
@@ -656,48 +614,13 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 ++functionStart;
                             }
-                            switch (functionDeclaration[functionStart++])
+
+                            Type paramType;
+                            if(!compileState.TryGetValidVarType(functionDeclaration[functionStart++], out paramType))
                             {
-                                case "long":
-                                    if(!compileState.LanguageExtensions.EnableLongIntegers)
-                                    {
-                                        goto default;
-                                    }
-                                    paramTypes.Add(typeof(long));
-                                    break;
-
-                                case "integer":
-                                    paramTypes.Add(typeof(int));
-                                    break;
-
-                                case "vector":
-                                    paramTypes.Add(typeof(Vector3));
-                                    break;
-
-                                case "list":
-                                    paramTypes.Add(typeof(AnArray));
-                                    break;
-
-                                case "float":
-                                    paramTypes.Add(typeof(double));
-                                    break;
-
-                                case "string":
-                                    paramTypes.Add(typeof(string));
-                                    break;
-
-                                case "key":
-                                    paramTypes.Add(typeof(LSLKey));
-                                    break;
-
-                                case "rotation":
-                                case "quaternion":
-                                    paramTypes.Add(typeof(Quaternion));
-                                    break;
-
-                                default:
-                                    throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
+                                throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
                             }
+                            paramTypes.Add(paramType);
                             paramName.Add(functionDeclaration[functionStart++]);
                         }
 
@@ -724,58 +647,16 @@ namespace SilverSim.Scripting.Lsl
                         MethodBuilder method = funcInfo.Method;
 
 #if DEBUG
-                        Type returnType = typeof(void);
+                        Type returnType;
                         List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
                         int functionStart = 3;
 
-                        switch (functionDeclaration[0])
+                        if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
                         {
-                            case "long":
-                                if(!compileState.LanguageExtensions.EnableLongIntegers)
-                                {
-                                    goto default;
-                                }
-                                returnType = typeof(long);
-                                break;
-
-                            case "integer":
-                                returnType = typeof(int);
-                                break;
-
-                            case "vector":
-                                returnType = typeof(Vector3);
-                                break;
-
-                            case "list":
-                                returnType = typeof(AnArray);
-                                break;
-
-                            case "float":
-                                returnType = typeof(double);
-                                break;
-
-                            case "string":
-                                returnType = typeof(string);
-                                break;
-
-                            case "key":
-                                returnType = typeof(LSLKey);
-                                break;
-
-                            case "rotation":
-                            case "quaternion":
-                                returnType = typeof(Quaternion);
-                                break;
-
-                            case "void":
-                                returnType = typeof(void);
-                                break;
-
-                            default:
-                                functionName = functionDeclaration[0];
-                                functionStart = 2;
-                                break;
+                            functionName = functionDeclaration[0];
+                            functionStart = 2;
+                            returnType = typeof(void);
                         }
                         var paramTypes = new List<Type>();
                         var paramName = new List<string>();
@@ -785,48 +666,13 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 ++functionStart;
                             }
-                            switch (functionDeclaration[functionStart++])
+
+                            Type paramType;
+                            if(!compileState.TryGetValidVarType(functionDeclaration[functionStart++], out paramType))
                             {
-                                case "long":
-                                    if(!compileState.LanguageExtensions.EnableLongIntegers)
-                                    {
-                                        goto default;
-                                    }
-                                    paramTypes.Add(typeof(long));
-                                    break;
-
-                                case "integer":
-                                    paramTypes.Add(typeof(int));
-                                    break;
-
-                                case "vector":
-                                    paramTypes.Add(typeof(Vector3));
-                                    break;
-
-                                case "list":
-                                    paramTypes.Add(typeof(AnArray));
-                                    break;
-
-                                case "float":
-                                    paramTypes.Add(typeof(double));
-                                    break;
-
-                                case "string":
-                                    paramTypes.Add(typeof(string));
-                                    break;
-
-                                case "key":
-                                    paramTypes.Add(typeof(LSLKey));
-                                    break;
-
-                                case "rotation":
-                                case "quaternion":
-                                    paramTypes.Add(typeof(Quaternion));
-                                    break;
-
-                                default:
-                                    throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
+                                throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
                             }
+                            paramTypes.Add(paramType);
                             paramName.Add(functionDeclaration[functionStart++]);
                         }
 

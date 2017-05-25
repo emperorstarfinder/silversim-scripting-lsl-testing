@@ -380,6 +380,7 @@ namespace SilverSim.Scripting.Lsl
                                     ListToXml(writer, varName, (AnArray)varValue);
                                     continue;
                                 }
+#warning Add serialization for custom types
                                 else
                                 {
                                     continue;
@@ -2148,9 +2149,11 @@ namespace SilverSim.Scripting.Lsl
             });
 
             StateEventHandlers.Add(typeof(ResetScriptEvent), (Script script, IScriptEvent ev) =>
+#pragma warning disable RCS1021 // Simplify lambda expression.
             {
                 throw new ResetScriptException();
             });
+#pragma warning restore RCS1021 // Simplify lambda expression.
 
             StateEventHandlers.Add(typeof(ItemSoldEvent), (Script script, IScriptEvent ev) =>
             {

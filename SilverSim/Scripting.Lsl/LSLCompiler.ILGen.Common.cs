@@ -19,7 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0018
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
@@ -395,7 +395,7 @@ namespace SilverSim.Scripting.Lsl
         {
             for (int pos = 0; pos < args.Count - 2; ++pos)
             {
-                if (args[pos] == "(" && (m_Typecasts.Contains(args[pos + 1]) || (cs.LanguageExtensions.EnableLongIntegers && args[pos + 1] == "long")) && args[pos + 2] == ")")
+                if (args[pos] == "(" && cs.ApiInfo.Types.ContainsKey(args[pos + 1]) && args[pos + 2] == ")")
                 {
                     args[pos] = "(" + args[pos + 1] + ")";
                     args.RemoveAt(pos + 1);
@@ -412,86 +412,17 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Type validation and string representation
-        internal static bool IsValidType(Type t)
-        {
-            if(t == typeof(long))
-            {
-                return true;
-            }
-            if (t == typeof(string))
-            {
-                return true;
-            }
-            if (t == typeof(int))
-            {
-                return true;
-            }
-            if (t == typeof(double))
-            {
-                return true;
-            }
-            if (t == typeof(LSLKey))
-            {
-                return true;
-            }
-            if (t == typeof(Quaternion))
-            {
-                return true;
-            }
-            if (t == typeof(Vector3))
-            {
-                return true;
-            }
-            if (t == typeof(AnArray))
-            {
-                return true;
-            }
-            if (t == typeof(void))
-            {
-                return true;
-            }
-            return false;
-        }
+        private readonly Dictionary<Type, string> m_ValidTypes = new Dictionary<Type, string>();
 
-        internal static string MapType(Type t)
+        private bool IsValidType(Type t) => m_ValidTypes.ContainsKey(t);
+        private string MapTypeToString(Type t)
         {
-            if(t == typeof(long))
+            string typeName;
+            if(!m_ValidTypes.TryGetValue(t, out typeName))
             {
-                return "long";
+                typeName = "???";
             }
-            if (t == typeof(string))
-            {
-                return "string";
-            }
-            if (t == typeof(int))
-            {
-                return "integer";
-            }
-            if (t == typeof(double))
-            {
-                return "float";
-            }
-            if (t == typeof(LSLKey))
-            {
-                return "key";
-            }
-            if (t == typeof(Quaternion))
-            {
-                return "rotation";
-            }
-            if (t == typeof(Vector3))
-            {
-                return "vector";
-            }
-            if (t == typeof(AnArray))
-            {
-                return "list";
-            }
-            if (t == typeof(void))
-            {
-                return "void";
-            }
-            return "???";
+            return typeName;
         }
         #endregion
 
@@ -514,17 +445,17 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new CompilerException(lineNumber, "Internal Error! toType is not set");
             }
-            else if (!IsValidType(fromType))
+            else if (!compileState.IsValidType(fromType))
             {
                 throw new CompilerException(lineNumber, string.Format("Internal Error! {0} is not a LSL compatible type", fromType.FullName));
             }
-            else if (!IsValidType(toType))
+            else if (!compileState.IsValidType(toType))
             {
                 throw new CompilerException(lineNumber, string.Format("Internal Error! {0} is not a LSL compatible type", toType.FullName));
             }
             else
             {
-                throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedImplicitTypecastFrom0To1", "Unsupported implicit typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedImplicitTypecastFrom0To1", "Unsupported implicit typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
             }
         }
 
@@ -837,7 +768,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(string))
@@ -875,7 +806,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(long))
@@ -897,7 +828,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(int))
@@ -915,7 +846,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(bool))
@@ -981,7 +912,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(double))
@@ -1002,7 +933,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(Vector3))
@@ -1019,7 +950,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(Quaternion))
@@ -1036,7 +967,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(AnArray))
@@ -1098,12 +1029,12 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
                 }
             }
             else
             {
-                throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), MapType(fromType), MapType(toType)));
+                throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
             }
         }
         #endregion

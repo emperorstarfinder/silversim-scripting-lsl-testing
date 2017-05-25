@@ -19,12 +19,13 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0018
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
@@ -1004,20 +1005,98 @@ namespace SilverSim.Scripting.Lsl
                     #endregion
 
                     default:
-                        if (eoif_label.HasValue)
+                        Type targetType;
+                        if (compileState.TryGetValidVarType(functionLine.Line[0], out targetType))
                         {
-                            compileState.ILGen.MarkLabel(eoif_label.Value);
-                            eoif_label = null;
-                        }
+                            if (isImplicit)
+                            {
+                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "VariableDeclarationNotAllowedWithinConditionalStatementWithoutBlock", "variable declaration not allowed within conditional statement without block"));
+                            }
+                            if (compileState.m_BreakContinueLabels.Count != 0 &&
+                                compileState.m_BreakContinueLabels[0].CaseRequired)
+                            {
+                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            }
 
-                        ProcessStatement(
-                            compileState,
-                            returnType,
-                            0,
-                            functionLine.Line.Count - 2,
-                            functionLine,
-                            localVars,
-                            labels);
+                            if (eoif_label.HasValue)
+                            {
+                                compileState.ILGen.MarkLabel(eoif_label.Value);
+                                eoif_label = null;
+                            }
+
+                            lb = compileState.ILGen.DeclareLocal(targetType);
+                            if (compileState.EmitDebugSymbols)
+                            {
+                                lb.SetLocalSymInfo(functionLine.Line[1]);
+                            }
+                            localVars[functionLine.Line[1]] = lb;
+                            if (functionLine.Line[2] != ";")
+                            {
+                                ProcessExpression(
+                                    compileState,
+                                    targetType,
+                                    3,
+                                    functionLine.Line.Count - 2,
+                                    functionLine,
+                                    localVars);
+                            }
+                            else if(targetType == typeof(int))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                            }
+                            else if (targetType == typeof(long))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, (long)0);
+                            }
+                            else if (targetType == typeof(double))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                            }
+                            else if (targetType == typeof(string))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldstr, string.Empty);
+                            }
+                            else if (targetType == typeof(Vector3))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldsfld, typeof(Vector3).GetField("Zero"));
+                            }
+                            else if (targetType == typeof(Quaternion))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldsfld, typeof(Quaternion).GetField("Identity"));
+                            }
+                            else if(targetType.IsValueType)
+                            {
+#warning add support for value types
+                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                            }
+                            else
+                            {
+                                ConstructorInfo cInfo = targetType.GetConstructor(Type.EmptyTypes);
+                                if(cInfo == null)
+                                {
+                                    throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                                }
+                                compileState.ILGen.Emit(OpCodes.Newobj, cInfo);
+                            }
+                            compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                        }
+                        else
+                        {
+                            if (eoif_label.HasValue)
+                            {
+                                compileState.ILGen.MarkLabel(eoif_label.Value);
+                                eoif_label = null;
+                            }
+
+                            ProcessStatement(
+                                compileState,
+                                returnType,
+                                0,
+                                functionLine.Line.Count - 2,
+                                functionLine,
+                                localVars,
+                                labels);
+                        }
                         break;
                 }
             } while (!isImplicit);
@@ -1036,7 +1115,7 @@ namespace SilverSim.Scripting.Lsl
             List<LineInfo> functionBody,
             Dictionary<string, object> localVars)
         {
-            Type returnType = typeof(void);
+            Type returnType;
             List<string> functionDeclaration = functionBody[0].Line;
             int functionStart = 2;
             compileState.m_BreakContinueLabels.Clear();
@@ -1044,52 +1123,10 @@ namespace SilverSim.Scripting.Lsl
             compileState.StateTypeBuilder = stateTypeBuilder;
             compileState.ILGen = ilgen;
 
-            switch (functionDeclaration[0])
+            if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
             {
-                case "long":
-                    if(!compileState.LanguageExtensions.EnableLongIntegers)
-                    {
-                        goto default;
-                    }
-                    returnType = typeof(long);
-                    break;
-
-                case "integer":
-                    returnType = typeof(int);
-                    break;
-
-                case "vector":
-                    returnType = typeof(Vector3);
-                    break;
-
-                case "list":
-                    returnType = typeof(AnArray);
-                    break;
-
-                case "float":
-                    returnType = typeof(double);
-                    break;
-
-                case "string":
-                    returnType = typeof(string);
-                    break;
-
-                case "key":
-                    returnType = typeof(LSLKey);
-                    break;
-
-                case "rotation":
-                case "quaternion":
-                    returnType = typeof(Quaternion);
-                    break;
-
-                case "void":
-                    returnType = typeof(void);
-                    break;
-
-                default:
-                    functionStart = 1;
-                    break;
+                functionStart = 1;
+                returnType = typeof(void);
             }
 
             int paramidx = 0;
@@ -1100,47 +1137,9 @@ namespace SilverSim.Scripting.Lsl
                     ++functionStart;
                 }
                 Type t;
-                switch (functionDeclaration[functionStart++])
+                if (!compileState.TryGetValidVarType(functionDeclaration[functionStart++], out t))
                 {
-                    case "long":
-                        if(!compileState.LanguageExtensions.EnableLongIntegers)
-                        {
-                            goto default;
-                        }
-                        t = typeof(long);
-                        break;
-
-                    case "integer":
-                        t = typeof(int);
-                        break;
-
-                    case "vector":
-                        t = typeof(Vector3);
-                        break;
-
-                    case "list":
-                        t = typeof(AnArray);
-                        break;
-
-                    case "float":
-                        t = typeof(double);
-                        break;
-
-                    case "string":
-                        t = typeof(string);
-                        break;
-
-                    case "key":
-                        t = typeof(LSLKey);
-                        break;
-
-                    case "rotation":
-                    case "quaternion":
-                        t = typeof(Quaternion);
-                        break;
-
-                    default:
-                        throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                    throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
                 }
                 /* parameter name and type in order */
                 localVars[functionDeclaration[functionStart]] = new ILParameterInfo(t, ++paramidx);
@@ -1186,9 +1185,23 @@ namespace SilverSim.Scripting.Lsl
                 {
                     ilgen.Emit(OpCodes.Ldsfld, typeof(Quaternion).GetField("Identity"));
                 }
-                else if (returnType == typeof(LSLKey))
+                else if(returnType == typeof(void))
                 {
-                    ilgen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
+                    /* no return value */
+                }
+                else if(returnType.IsValueType)
+                {
+#warning add support for value types
+                    throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                }
+                else
+                {
+                    ConstructorInfo cInfo = returnType.GetConstructor(Type.EmptyTypes);
+                    if(cInfo == null)
+                    {
+                        throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                    }
+                    ilgen.Emit(OpCodes.Newobj, cInfo);
                 }
                 ilgen.Emit(OpCodes.Ret);
             }

@@ -76,6 +76,7 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, List<ApiMethodInfo>> Methods = new Dictionary<string, List<ApiMethodInfo>>();
             public Dictionary<string, FieldInfo> Constants = new Dictionary<string, FieldInfo>();
             public Dictionary<string, MethodInfo> EventDelegates = new Dictionary<string, MethodInfo>();
+            public Dictionary<string, Type> Types = new Dictionary<string, Type>();
 
             public void Add(ApiInfo info)
             {
@@ -98,6 +99,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     EventDelegates.Add(kvp.Key, kvp.Value);
                 }
+                foreach (KeyValuePair<string, Type> kvp in info.Types)
+                {
+                    Types.Add(kvp.Key, kvp.Value);
+                }
             }
         }
 
@@ -114,7 +119,6 @@ namespace SilverSim.Scripting.Lsl
         private readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates = new
             List<Action<ScriptInstance, List<object>>>();
         private readonly List<string> m_ReservedWords = new List<string>();
-        private readonly List<string> m_Typecasts = new List<string>();
         private readonly List<char> m_SingleOps = new List<char>();
         private readonly List<char> m_MultiOps = new List<char>();
         private readonly List<char> m_NumericChars = new List<char>();
@@ -141,13 +145,6 @@ namespace SilverSim.Scripting.Lsl
             m_ApiInfos.Add(APIFlags.LSL, new ApiInfo());
             m_ApiInfos.Add(APIFlags.OSSL, new ApiInfo());
 
-            m_ReservedWords.Add("integer");
-            m_ReservedWords.Add("vector");
-            m_ReservedWords.Add("list");
-            m_ReservedWords.Add("float");
-            m_ReservedWords.Add("string");
-            m_ReservedWords.Add("key");
-            m_ReservedWords.Add("rotation");
             m_ReservedWords.Add("if");
             m_ReservedWords.Add("while");
             m_ReservedWords.Add("jump");
@@ -155,18 +152,7 @@ namespace SilverSim.Scripting.Lsl
             m_ReservedWords.Add("do");
             m_ReservedWords.Add("return");
             m_ReservedWords.Add("state");
-            m_ReservedWords.Add("void");
-            m_ReservedWords.Add("quaternion");
             m_ReservedWords.Add("event");
-
-            m_Typecasts.Add("integer");
-            m_Typecasts.Add("vector");
-            m_Typecasts.Add("list");
-            m_Typecasts.Add("float");
-            m_Typecasts.Add("string");
-            m_Typecasts.Add("key");
-            m_Typecasts.Add("rotation");
-            m_Typecasts.Add("quaternion");
 
             m_MultiOps.Add('+');
             m_MultiOps.Add('-');
@@ -243,6 +229,62 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_Apis.Add(api);
                     }
+                }
+            }
+        }
+
+        private void CollectApiTypes(IScriptApi api)
+        {
+            foreach (Type t in api.GetType().GetNestedTypes())
+            {
+                if(!t.IsClass || !t.IsValueType)
+                {
+                    continue;
+                }
+
+                var apiLevelAttrs = Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
+                var apiExtensionAttrs = Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                var apiDisplayNameAttr = Attribute.GetCustomAttribute(t, typeof(APIDisplayNameAttribute));
+                if (apiDisplayNameAttr != null && (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0))
+                {
+                    foreach (APILevelAttribute attr in apiLevelAttrs)
+                    {
+                        string typeName = attr.Name;
+                        if (string.IsNullOrEmpty(typeName))
+                        {
+                            typeName = t.Name;
+                        }
+                        foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+                        {
+                            if ((kvp.Key & attr.Flags) != 0)
+                            {
+                                kvp.Value.Types.Add(typeName, t);
+                                m_ValidTypes[t] = typeName;
+                            }
+                        }
+                    }
+                    foreach (APIExtensionAttribute attr in apiExtensionAttrs)
+                    {
+                        string typeName = attr.Name;
+                        if (string.IsNullOrEmpty(typeName))
+                        {
+                            typeName = t.Name;
+                        }
+
+                        ApiInfo apiInfo;
+                        string extensionName = attr.Extension.ToLower();
+                        if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                        {
+                            apiInfo = new ApiInfo();
+                            m_ApiExtensions.Add(extensionName, apiInfo);
+                        }
+                        apiInfo.Types.Add(typeName, t);
+                        m_ValidTypes[t] = typeName;
+                    }
+                }
+                else if(apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
+                {
+                    m_Log.DebugFormat("Type {0} does not have APIDisplayName attribute", t.Name);
                 }
             }
         }
@@ -810,6 +852,21 @@ namespace SilverSim.Scripting.Lsl
             #region API Collection
             foreach (IScriptApi api in m_Apis)
             {
+                CollectApiTypes(api);
+            }
+
+            m_ValidTypes[typeof(int)] = "integer";
+            m_ValidTypes[typeof(long)] = "long";
+            m_ValidTypes[typeof(double)] = "float";
+            m_ValidTypes[typeof(string)] = "string";
+            m_ValidTypes[typeof(Quaternion)] = "rotation";
+            m_ValidTypes[typeof(Vector3)] = "vector";
+            m_ValidTypes[typeof(LSLKey)] = "key";
+            m_ValidTypes[typeof(AnArray)] = "list";
+            m_ValidTypes[typeof(void)] = "void";
+
+            foreach (IScriptApi api in m_Apis)
+            {
                 CollectApiConstants(api);
                 CollectApiEvents(api);
                 CollectApiEventTranslations(api);
@@ -905,7 +962,7 @@ namespace SilverSim.Scripting.Lsl
                 foreach (KeyValuePair<string, Type> kvp in cs.m_VariableDeclarations)
                 {
                     LineInfo li;
-                    WriteIndented(writer, MapType(kvp.Value), ref indent);
+                    WriteIndented(writer, cs.MapType(kvp.Value), ref indent);
                     WriteIndented(writer, kvp.Key, ref indent);
                     if (cs.m_VariableInitValues.TryGetValue(kvp.Key, out li))
                     {

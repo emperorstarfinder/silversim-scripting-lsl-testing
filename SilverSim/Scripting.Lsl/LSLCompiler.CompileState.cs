@@ -139,6 +139,58 @@ namespace SilverSim.Scripting.Lsl
                 CurrentCulture = currentCulture;
             }
 
+            private readonly Dictionary<Type, string> m_ReverseTypeDeclarations = new Dictionary<Type, string>();
+            private readonly Dictionary<string, Type> m_ValidVarTypes = new Dictionary<string, Type>();
+
+            public void FinalizeTypeList()
+            {
+                /* Built-in types get added last */
+                if (LanguageExtensions.EnableLongIntegers)
+                {
+                    ApiInfo.Types["long"] = typeof(long);
+                }
+                else
+                {
+                    ApiInfo.Types.Remove("long");
+                }
+
+                ApiInfo.Types["integer"] = typeof(int);
+                ApiInfo.Types["quaternion"] = typeof(Quaternion);
+                ApiInfo.Types["rotation"] = typeof(Quaternion);
+                ApiInfo.Types["key"] = typeof(LSLKey);
+                ApiInfo.Types["string"] = typeof(string);
+                ApiInfo.Types["float"] = typeof(double);
+                ApiInfo.Types["list"] = typeof(AnArray);
+                ApiInfo.Types["vector"] = typeof(Vector3);
+                ApiInfo.Types["void"] = typeof(void);
+
+                foreach (KeyValuePair<string, Type> kvp in ApiInfo.Types)
+                {
+                    m_ReverseTypeDeclarations[kvp.Value] = kvp.Key;
+                    if(kvp.Value != typeof(void))
+                    {
+                        m_ValidVarTypes.Add(kvp.Key, kvp.Value);
+                    }
+                }
+            }
+
+            #region Type validation and string representation
+            public bool IsValidType(Type t) => m_ReverseTypeDeclarations.ContainsKey(t);
+
+            public bool TryGetValidVarType(string typeName, out Type t) => m_ValidVarTypes.TryGetValue(typeName, out t);
+            public bool ContainsValidVarType(string typeName) => m_ValidVarTypes.ContainsKey(typeName);
+
+            public string MapType(Type t)
+            {
+                string res;
+                if(!m_ReverseTypeDeclarations.TryGetValue(t, out res))
+                {
+                    res = "???";
+                }
+                return res;
+            }
+            #endregion
+
             #region Function Body access
             public LineInfo GetLine(string message = "")
             {

@@ -90,9 +90,9 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorNotSupportedFor0", "Operator '!' not supported for {0}"), MapType(innerExpressionReturn)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorNotSupportedFor0", "Operator '!' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                             }
-                            throw new ReturnTypeException(typeof(int), m_LineNumber);
+                            throw new ReturnTypeException(compileState, typeof(int), m_LineNumber);
 
                         case "-":
                             if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(double) || innerExpressionReturn == typeof(long))
@@ -109,9 +109,9 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusSupportedFor0", "operator '-' not supported for {0}"), MapType(innerExpressionReturn)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusSupportedFor0", "operator '-' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                             }
-                            throw new ReturnTypeException(innerExpressionReturn, m_LineNumber);
+                            throw new ReturnTypeException(compileState, innerExpressionReturn, m_LineNumber);
 
                         case "~":
                             if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(long))
@@ -120,9 +120,9 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorBitNotSupportedFor0", "operator '~' not supported for {0}"), MapType(innerExpressionReturn)));
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorBitNotSupportedFor0", "operator '~' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                             }
-                            throw new ReturnTypeException(innerExpressionReturn, m_LineNumber);
+                            throw new ReturnTypeException(compileState, innerExpressionReturn, m_LineNumber);
 
                         default:
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "LeftUnaryOperator0NotSupported", "Left unary operator '{0}' not supported"), m_Operator));

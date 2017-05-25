@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl
                 if (m_ListElements.Count == 0)
                 {
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double) }));
-                    throw new ReturnTypeException(typeof(Vector3), m_LineNumber);
+                    throw new ReturnTypeException(compileState, typeof(Vector3), m_LineNumber);
                 }
                 else
                 {

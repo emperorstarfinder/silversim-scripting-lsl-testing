@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate | AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = true)]
     public sealed class APILevelAttribute : Attribute
     {
         public APIFlags Flags { get; }
@@ -57,6 +57,18 @@ namespace SilverSim.Scripting.Lsl
         {
             Flags = flags;
             Name = name;
+        }
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class APIDisplayNameAttribute : Attribute
+    {
+        public string DisplayName { get; }
+
+        public APIDisplayNameAttribute(string displayName)
+        {
+            DisplayName = displayName;
         }
     }
 
@@ -79,7 +91,7 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate, Inherited = false, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate | AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = true)]
     public sealed class APIExtensionAttribute : Attribute
     {
         public string Extension { get; }

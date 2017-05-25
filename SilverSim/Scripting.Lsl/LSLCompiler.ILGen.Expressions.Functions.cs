@@ -19,6 +19,8 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018
+
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
@@ -139,7 +141,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             bool methodValid = true;
 
-                            if (!IsValidType(method.Method.ReturnType))
+                            if (!compileState.IsValidType(method.Method.ReturnType))
                             {
                                 methodValid = false;
                                 m_Log.ErrorFormat("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name);
@@ -147,7 +149,7 @@ namespace SilverSim.Scripting.Lsl
 
                             for (int i = 0; i < functionTree.SubTree.Count; ++i)
                             {
-                                if (!IsValidType(pi[i + 1].ParameterType))
+                                if (!compileState.IsValidType(pi[i + 1].ParameterType))
                                 {
                                     m_Log.ErrorFormat("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
                                         pi[i + 1].Name, pi[i + 1].ParameterType.FullName, functionTree.Entry);
@@ -197,7 +199,7 @@ namespace SilverSim.Scripting.Lsl
                 else
                 {
                     Type returnType = GenerateFunctionCall(compileState);
-                    throw new ReturnTypeException(returnType, m_LineNumber);
+                    throw new ReturnTypeException(compileState, returnType, m_LineNumber);
                 }
             }
 

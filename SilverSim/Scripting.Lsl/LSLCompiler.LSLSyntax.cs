@@ -121,7 +121,7 @@ namespace SilverSim.Scripting.Lsl
                                             writer.WriteStartElement("map");
                                             {
                                                 writer.WriteNamedValue("key", "type");
-                                                writer.WriteNamedValue("string", MapType(fi.FieldType));
+                                                writer.WriteNamedValue("string", MapTypeToString(fi.FieldType));
                                                 writer.WriteNamedValue("key", "value");
                                                 writer.WriteNamedValue("string", fi.GetValue(null).ToString());
                                                 var tooltip = (DescriptionAttribute)System.Attribute.GetCustomAttribute(fi, typeof(DescriptionAttribute));
@@ -165,7 +165,7 @@ namespace SilverSim.Scripting.Lsl
                                             writer.WriteStartElement("map");
                                             {
                                                 writer.WriteNamedValue("key", "type");
-                                                writer.WriteNamedValue("string", MapType(fi.FieldType));
+                                                writer.WriteNamedValue("string", MapTypeToString(fi.FieldType));
                                                 writer.WriteNamedValue("key", "value");
                                                 writer.WriteNamedValue("string", fi.GetValue(null).ToString());
                                                 var tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(fi, typeof(DescriptionAttribute));
@@ -221,7 +221,7 @@ namespace SilverSim.Scripting.Lsl
                                                 foreach (ParameterInfo pi in mi.GetParameters())
                                                 {
                                                     writer.WriteNamedValue("key", pi.Name);
-                                                    writer.WriteNamedValue("string", MapType(pi.ParameterType));
+                                                    writer.WriteNamedValue("string", MapTypeToString(pi.ParameterType));
                                                     var ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                     writer.WriteNamedValue("key", "tooltip");
                                                     if (ptooltip != null)
@@ -316,14 +316,14 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("real", "0.0");
                                             }
                                             writer.WriteNamedValue("key", "return");
-                                            writer.WriteNamedValue("string", MapType(mi.ReturnType));
+                                            writer.WriteNamedValue("string", MapTypeToString(mi.ReturnType));
 
                                             writer.WriteNamedValue("key", "arguments");
                                             writer.WriteStartElement("map");
                                             foreach (ParameterInfo pi in mi.GetParameters())
                                             {
                                                 writer.WriteNamedValue("key", pi.Name);
-                                                writer.WriteNamedValue("string", MapType(pi.ParameterType));
+                                                writer.WriteNamedValue("string", MapTypeToString(pi.ParameterType));
                                                 var ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 if (ptooltip != null)
@@ -399,14 +399,14 @@ namespace SilverSim.Scripting.Lsl
                                                 writer.WriteNamedValue("real", "0.0");
                                             }
                                             writer.WriteNamedValue("key", "return");
-                                            writer.WriteNamedValue("string", MapType(mi.ReturnType));
+                                            writer.WriteNamedValue("string", MapTypeToString(mi.ReturnType));
 
                                             writer.WriteNamedValue("key", "arguments");
                                             writer.WriteStartElement("map");
                                             foreach (ParameterInfo pi in mi.GetParameters())
                                             {
                                                 writer.WriteNamedValue("key", pi.Name);
-                                                writer.WriteNamedValue("string", MapType(pi.ParameterType));
+                                                writer.WriteNamedValue("string", MapTypeToString(pi.ParameterType));
                                                 var ptooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(pi, typeof(DescriptionAttribute));
                                                 writer.WriteNamedValue("key", "tooltip");
                                                 if (ptooltip != null)

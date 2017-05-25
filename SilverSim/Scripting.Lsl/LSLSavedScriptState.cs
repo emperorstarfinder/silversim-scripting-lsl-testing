@@ -266,6 +266,8 @@ namespace SilverSim.Scripting.Lsl
                         state.Variables[varname] = ListFromXml(reader);
                         break;
 
+#warning add serialization support for custom types
+
                     default:
                         throw new InvalidObjectXmlException();
                 }

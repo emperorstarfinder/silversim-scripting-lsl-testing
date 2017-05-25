@@ -19,7 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0020
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Expression;
@@ -37,14 +37,14 @@ namespace SilverSim.Scripting.Lsl
         public class ReturnTypeException : Exception
         {
             public Type ReturnType;
-            public ReturnTypeException(Type t, int lineNumber)
+            internal ReturnTypeException(CompileState compileState, Type t, int lineNumber)
             {
                 ReturnType = t;
                 if(t == null)
                 {
                     throw new CompilerException(lineNumber, "Internal Error! returnType is not set");
                 }
-                else if (!IsValidType(t))
+                else if (!compileState.IsValidType(t))
                 {
                     throw new CompilerException(lineNumber, string.Format("Internal Error! '{0}' is not a LSL compatible type", t.FullName));
                 }
@@ -88,9 +88,9 @@ namespace SilverSim.Scripting.Lsl
                         expressionStack.RemoveAt(0);
                         if (expressionStack.Count == 0)
                         {
-                            if (!IsValidType(innerExpressionReturn))
+                            if (!compileState.IsValidType(innerExpressionReturn))
                             {
-                                throw new CompilerException(lineNumber, "Internal Error! Return type is not set to LSL compatible type");
+                                throw new CompilerException(lineNumber, "Internal Error! Return type is not set to LSL compatible type. (" + innerExpressionReturn.FullName + ")");
                             }
                             return innerExpressionReturn;
                         }
@@ -99,9 +99,9 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if(!first)
                 {
-                    if(!IsValidType(innerExpressionReturn))
+                    if(!compileState.IsValidType(innerExpressionReturn))
                     {
-                        throw new CompilerException(lineNumber, "Internal Error! Return type is not set to LSL compatible type");
+                        throw new CompilerException(lineNumber, "Internal Error! Return type is not set to LSL compatible type. (" + innerExpressionReturn.FullName + ")");
                     }
                     return innerExpressionReturn;
                 }
@@ -213,7 +213,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -299,7 +299,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();
@@ -338,7 +338,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -424,7 +424,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();
@@ -489,7 +489,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if(functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -575,7 +575,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "operator '.' not supported for '{0}'"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();
@@ -614,7 +614,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -700,7 +700,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), MapType(innerExpressionReturn)));
+                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();

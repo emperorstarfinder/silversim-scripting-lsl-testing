@@ -118,7 +118,7 @@ namespace SilverSim.Scripting.Lsl
                 if (m_ListElements.Count == 0)
                 {
                     compileState.ILGen.EndScope();
-                    throw new ReturnTypeException(typeof(AnArray), m_LineNumber);
+                    throw new ReturnTypeException(compileState, typeof(AnArray), m_LineNumber);
                 }
                 else
                 {

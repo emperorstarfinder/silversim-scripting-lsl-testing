@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl
                 if (m_ListElements.Count == 0)
                 {
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
-                    throw new ReturnTypeException(typeof(Quaternion), m_LineNumber);
+                    throw new ReturnTypeException(compileState, typeof(Quaternion), m_LineNumber);
                 }
                 else
                 {

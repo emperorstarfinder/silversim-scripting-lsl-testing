@@ -19,7 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable RCS1029
+#pragma warning disable RCS1029, IDE0018
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
@@ -68,10 +68,13 @@ namespace SilverSim.Scripting.Lsl
             CheckValidName(cs, p, type, name);
             if (m_ReservedWords.Contains(name) ||
                 (cs.LanguageExtensions.EnableSwitchBlock && (name == "switch" || name == "case" || name == "break")) ||
-                (cs.LanguageExtensions.EnableBreakContinueStatement && (name == "break" || name == "continue")) ||
-                (cs.LanguageExtensions.EnableLongIntegers && name == "long"))
+                (cs.LanguageExtensions.EnableBreakContinueStatement && (name == "break" || name == "continue")))
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAReservedWord", type + " cannot be declared as '{0}'. '{0}' is a reserved word."), name));
+            }
+            else if (cs.ApiInfo.Types.ContainsKey(name))
+            {
+                throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAType", type + " cannot be declared as '{0}'. '{0}' is a type."), name));
             }
             else if (cs.ApiInfo.Methods.ContainsKey(name))
             {
@@ -120,47 +123,9 @@ namespace SilverSim.Scripting.Lsl
             for (int i = 0; i < arguments.Count; i += 3)
             {
                 var fp = new FuncParamInfo();
-                switch (arguments[i])
+                if(!cs.TryGetValidVarType(arguments[i], out fp.Type))
                 {
-                    case "long":
-                        if(!cs.LanguageExtensions.EnableLongIntegers)
-                        {
-                            goto default;
-                        }
-                        fp.Type = typeof(long);
-                        break;
-
-                    case "integer":
-                        fp.Type = typeof(int);
-                        break;
-
-                    case "vector":
-                        fp.Type = typeof(Vector3);
-                        break;
-
-                    case "list":
-                        fp.Type = typeof(AnArray);
-                        break;
-
-                    case "float":
-                        fp.Type = typeof(double);
-                        break;
-
-                    case "string":
-                        fp.Type = typeof(string);
-                        break;
-
-                    case "key":
-                        fp.Type = typeof(LSLKey);
-                        break;
-
-                    case "rotation":
-                    case "quaternion":
-                        fp.Type = typeof(Quaternion);
-                        break;
-
-                    default:
-                        throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, "InvalidTypeForParameter0", "Invalid type for parameter {0}"), i / 3));
+                    throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, "InvalidTypeForParameter0", "Invalid type for parameter {0}"), i / 3));
                 }
 
                 CheckUsedName(cs, p, "Parameter", arguments[i + 1]);
@@ -377,36 +342,14 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    switch (args[0])
+                    if(compileState.ContainsValidVarType(args[0]))
                     {
-                        case "long":
-                            if(compileState.LanguageExtensions.EnableLongIntegers)
-                            {
-                                goto case "integer";
-                            }
-                            else
-                            {
-                                goto default;
-                            }
-
-                        case "integer":
-                        case "vector":
-                        case "list":
-                        case "float":
-                        case "string":
-                        case "key":
-                        case "rotation":
-                        case "quaternion":
-                            CheckUsedName(compileState, p, "Local Variable", args[1]);
-                            compileState.m_LocalVariables[compileState.m_LocalVariables.Count - 1].Add(args[1]);
-                            if (args[2] != ";" && args[2] != "=")
-                            {
-                                throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ExpectingEqualOrSemicolonAfterVarName0", "Expecting '=' or ';' after variable name {0}"), args[1]));
-                            }
-                            break;
-
-                        default:
-                            break;
+                        CheckUsedName(compileState, p, "Local Variable", args[1]);
+                        compileState.m_LocalVariables[compileState.m_LocalVariables.Count - 1].Add(args[1]);
+                        if (args[2] != ";" && args[2] != "=")
+                        {
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ExpectingEqualOrSemicolonAfterVarName0", "Expecting '=' or ';' after variable name {0}"), args[1]));
+                        }
                     }
                     block.Add(new LineInfo(args, lineNumber));
                     return;
@@ -503,47 +446,9 @@ namespace SilverSim.Scripting.Lsl
                     else if (args[args.Count - 1] == ";")
                     {
                         Type stateVarType = null;
-                        switch (args[0])
+                        if (!compileState.TryGetValidVarType(args[0], out stateVarType))
                         {
-                            case "long":
-                                if (!compileState.LanguageExtensions.EnableLongIntegers)
-                                {
-                                    goto default;
-                                }
-                                stateVarType = typeof(long);
-                                break;
-
-                            case "integer":
-                                stateVarType = typeof(int);
-                                break;
-
-                            case "float":
-                                stateVarType = typeof(double);
-                                break;
-
-                            case "vector":
-                                stateVarType = typeof(Vector3);
-                                break;
-
-                            case "quaternion":
-                            case "rotation":
-                                stateVarType = typeof(Quaternion);
-                                break;
-
-                            case "string":
-                                stateVarType = typeof(string);
-                                break;
-
-                            case "list":
-                                stateVarType = typeof(AnArray);
-                                break;
-
-                            case "key":
-                                stateVarType = typeof(LSLKey);
-                                break;
-
-                            default:
-                                throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NoStatementsOutsideofEventsOffendingState0", "No statements allowed outside of event functions. Offending state {0}."), stateName));
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NoStatementsOutsideofEventsOffendingState0", "No statements allowed outside of event functions. Offending state {0}."), stateName));
                         }
 
                         if (!compileState.LanguageExtensions.EnableStateVariables)
@@ -728,6 +633,8 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            compileState.FinalizeTypeList();
+
             var p = new Parser(cultureInfo);
             p.Push(reader, string.Empty, lineNumber);
 
@@ -766,87 +673,19 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidVariableDefinitionEitherSemicolonOrEqual", "Invalid variable definition. Either ';' or an expression preceeded by '='"));
                     }
-                    switch (args[0])
+                    Type varType;
+                    if (compileState.TryGetValidVarType(args[0], out varType))
                     {
-                        case "long":
-                            if(!compileState.LanguageExtensions.EnableLongIntegers)
-                            {
-                                goto default;
-                            }
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(long);
-                            if (args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        case "integer":
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(int);
-                            if (args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        case "vector":
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(Vector3);
-                            if (args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        case "list":
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(AnArray);
-                            if (args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        case "float":
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(double);
-                            if (args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        case "string":
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(string);
-                            if (args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        case "key":
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(LSLKey);
-                            if (args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        case "rotation":
-                        case "quaternion":
-                            CheckUsedName(compileState, p, "Variable", args[1]);
-                            compileState.m_VariableDeclarations[args[1]] = typeof(Quaternion);
-                            if(args[2] == "=")
-                            {
-                                compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
-                            }
-                            break;
-
-                        default:
-                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidVariableDefinitionWrongType0", "Invalid variable definition. Wrong type {0}."), args[0]));
+                        CheckUsedName(compileState, p, "Variable", args[1]);
+                        compileState.m_VariableDeclarations[args[1]] = varType;
+                        if (args[2] == "=")
+                        {
+                            compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
+                        }
+                    }
+                    else
+                    {
+                        throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidVariableDefinitionWrongType0", "Invalid variable definition. Wrong type {0}."), args[0]));
                     }
                 }
                 else if (args[args.Count - 1] == "{")
@@ -888,61 +727,41 @@ namespace SilverSim.Scripting.Lsl
                         List<FuncParamInfo> funcparam;
                         var funcList = new List<LineInfo>();
                         /* either type or function name */
-                        switch (args[0])
+                        if (compileState.ApiInfo.Types.ContainsKey(args[0]))
                         {
-                            case "long":
-                                if(compileState.LanguageExtensions.EnableLongIntegers)
-                                {
-                                    goto case "integer";
-                                }
-                                else
-                                {
-                                    goto default;
-                                }
-
-                            case "integer":
-                            case "vector":
-                            case "list":
-                            case "float":
-                            case "string":
-                            case "key":
-                            case "rotation":
-                            case "quaternion":
-                            case "void":
-                                CheckUsedName(compileState, p, "Function", args[1]);
-                                if (compileState.m_LocalVariables.Count != 0)
-                                {
-                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
-                                }
-                                funcparam = CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
-                                funcList.Add(new LineInfo(args, lineNumber));
-                                ParseBlock(compileState, p, funcList, false);
-                                if(!compileState.m_Functions.ContainsKey(args[1]))
-                                {
-                                    compileState.m_Functions.Add(args[1], new List<FunctionInfo>());
-                                }
-                                compileState.m_Functions[args[1]].Add(new FunctionInfo(funcparam, funcList));
-                                break;
-
-                            default:
-                                if(args.Count < 3)
-                                {
-                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidStateDeclaration", "Invalid state declaration"));
-                                }
-                                if (compileState.m_LocalVariables.Count != 0)
-                                {
-                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
-                                }
-                                funcparam = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
-                                args.Insert(0, "void");
-                                funcList.Add(new LineInfo(args, lineNumber));
-                                ParseBlock(compileState, p, funcList, false);
-                                if (!compileState.m_Functions.ContainsKey(args[1]))
-                                {
-                                    compileState.m_Functions.Add(args[1], new List<FunctionInfo>());
-                                }
-                                compileState.m_Functions[args[1]].Add(new FunctionInfo(funcparam, funcList));
-                                break;
+                            CheckUsedName(compileState, p, "Function", args[1]);
+                            if (compileState.m_LocalVariables.Count != 0)
+                            {
+                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
+                            }
+                            funcparam = CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
+                            funcList.Add(new LineInfo(args, lineNumber));
+                            ParseBlock(compileState, p, funcList, false);
+                            if (!compileState.m_Functions.ContainsKey(args[1]))
+                            {
+                                compileState.m_Functions.Add(args[1], new List<FunctionInfo>());
+                            }
+                            compileState.m_Functions[args[1]].Add(new FunctionInfo(funcparam, funcList));
+                        }
+                        else
+                        {
+                            if (args.Count < 3)
+                            {
+                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidStateDeclaration", "Invalid state declaration"));
+                            }
+                            if (compileState.m_LocalVariables.Count != 0)
+                            {
+                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
+                            }
+                            funcparam = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
+                            args.Insert(0, "void");
+                            funcList.Add(new LineInfo(args, lineNumber));
+                            ParseBlock(compileState, p, funcList, false);
+                            if (!compileState.m_Functions.ContainsKey(args[1]))
+                            {
+                                compileState.m_Functions.Add(args[1], new List<FunctionInfo>());
+                            }
+                            compileState.m_Functions[args[1]].Add(new FunctionInfo(funcparam, funcList));
                         }
                     }
                 }
