@@ -261,7 +261,7 @@ namespace SilverSim.Scripting.Lsl
                             foreach (APILevelAttribute attr in apiLevelAttrs)
                             {
                                 string constName = attr.Name;
-                                if (constName?.Length == 0)
+                                if (string.IsNullOrEmpty(constName))
                                 {
                                     constName = f.Name;
                                 }
@@ -276,7 +276,7 @@ namespace SilverSim.Scripting.Lsl
                             foreach (APIExtensionAttribute attr in apiExtensionAttrs)
                             {
                                 string constName = attr.Name;
-                                if (constName?.Length == 0)
+                                if (string.IsNullOrEmpty(constName))
                                 {
                                     constName = f.Name;
                                 }
@@ -352,7 +352,7 @@ namespace SilverSim.Scripting.Lsl
                         foreach (APILevelAttribute apiLevelAttr in apiLevelAttrs)
                         {
                             string funcName = apiLevelAttr.Name;
-                            if (funcName?.Length == 0)
+                            if (string.IsNullOrEmpty(funcName))
                             {
                                 funcName = mi.Name;
                             }
@@ -368,7 +368,7 @@ namespace SilverSim.Scripting.Lsl
                         foreach (APIExtensionAttribute apiExtensionAttr in apiExtensionAttrs)
                         {
                             string funcName = apiExtensionAttr.Name;
-                            if (funcName?.Length == 0)
+                            if (string.IsNullOrEmpty(funcName))
                             {
                                 funcName = mi.Name;
                             }
@@ -441,7 +441,7 @@ namespace SilverSim.Scripting.Lsl
                             foreach (APILevelAttribute funcNameAttr in funcNameAttrs)
                             {
                                 string funcName = funcNameAttr.Name;
-                                if (funcName?.Length == 0)
+                                if (string.IsNullOrEmpty(funcName))
                                 {
                                     funcName = m.Name;
                                 }
@@ -459,7 +459,7 @@ namespace SilverSim.Scripting.Lsl
                             foreach (APIExtensionAttribute funcNameAttr in apiExtensionAttrs)
                             {
                                 string funcName = funcNameAttr.Name;
-                                if (funcName?.Length == 0)
+                                if (string.IsNullOrEmpty(funcName))
                                 {
                                     funcName = m.Name;
                                 }

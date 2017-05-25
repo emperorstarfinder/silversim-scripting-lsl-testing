@@ -80,8 +80,8 @@ namespace SilverSim.Scripting.Lsl.Api.Email
                     for(int i = 0; i < c; ++i)
                     {
                         Email e = m_Emails[i];
-                        if((address?.Length == 0 || e.Address == address) &&
-                            (subject?.Length == 0 || e.Subject == subject))
+                        if((string.IsNullOrEmpty(address) || e.Address == address) &&
+                            (string.IsNullOrEmpty(subject) || e.Subject == subject))
                         {
                             em = e;
                             LockCookie lc = m_RwLock.UpgradeToWriterLock(-1);

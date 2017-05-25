@@ -54,7 +54,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
         public void Startup(ConfigurationLoader loader)
         {
-            if (m_ServiceName?.Length != 0)
+            if (!string.IsNullOrEmpty(m_ServiceName))
             {
                 m_Service = loader.GetService<IEmailService>(m_ServiceName);
             }

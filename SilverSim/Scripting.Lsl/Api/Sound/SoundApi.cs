@@ -46,7 +46,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             lock (instance)
             {
                 para.ImpactVolume = impact_volume.Clamp(0f, 1f);
-                if (impact_sound?.Length == 0)
+                if (string.IsNullOrEmpty(impact_sound))
                 {
                     para.ImpactSound = UUID.Zero;
                     instance.Part.CollisionSound = para;
