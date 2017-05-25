@@ -1066,8 +1066,9 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if(targetType.IsValueType)
                             {
-#warning add support for value types
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                                compileState.ILGen.Emit(OpCodes.Ldloca, lb);
+                                compileState.ILGen.Emit(OpCodes.Initobj, targetType);
+                                break;
                             }
                             else
                             {
@@ -1191,8 +1192,10 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if(returnType.IsValueType)
                 {
-#warning add support for value types
-                    throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                    LocalBuilder lb = compileState.ILGen.DeclareLocal(returnType);
+                    compileState.ILGen.Emit(OpCodes.Ldloca, lb);
+                    compileState.ILGen.Emit(OpCodes.Initobj, returnType);
+                    compileState.ILGen.Emit(OpCodes.Ldloc, lb);
                 }
                 else
                 {
