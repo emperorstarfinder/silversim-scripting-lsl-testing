@@ -87,7 +87,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetFloat")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, float s)
+        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, double s)
         {
             table[key] = new Real(s);
         }

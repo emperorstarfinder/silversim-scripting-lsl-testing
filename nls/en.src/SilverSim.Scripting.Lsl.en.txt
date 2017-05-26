@@ -290,3 +290,6 @@ DivisionByZeroEncountered=Division by zero encountered
 Function0NotAllowed=Function {0} not allowed
 Member1IsReadOnlyForType0AtVariable2=Member '{1}' of type '{0}' (Variable '{2}') is read only.
 Member1IsWriteOnlyForType0AtVariable2=Member '{1}' of type '{0}' (Variable '{2}') is write only.
+ValueContentsNotAssignedType0=Value contents not assigned. (Type {0})
+Type0IsNotSuitableForGlobalVariable=Type '{0}' is not suitable for global variable.
+Type0IsNotSuitableForStateVariable=Type '{0}' is not suitable for state variable.
