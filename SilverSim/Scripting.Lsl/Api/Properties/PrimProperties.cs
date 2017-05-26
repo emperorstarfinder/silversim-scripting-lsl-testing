@@ -27,11 +27,13 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
 using System;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
 {
     [LSLImplementation]
     [ScriptApiName("PrimProperties")]
+    [Description("Prim Properties API")]
     public class PrimProperties : IScriptApi, IPlugin
     {
         public const int LINK_INVALID = -1;
