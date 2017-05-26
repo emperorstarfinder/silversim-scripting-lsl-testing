@@ -391,6 +391,11 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
+        [APIExtension(APIExtension.Properties, "vehicle_verticalattraction")]
+        [APIDisplayName("vehicle_verticalattraction")]
+        [APIAccessibleMembers(
+            "Efficiency",
+            "Timescale")]
         public class VehicleVerticalAttractionData : VehicleBaseData
         {
             public VehicleVerticalAttractionData(ScriptInstance instance) : base(instance)
