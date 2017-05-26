@@ -461,7 +461,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NeitherVarDeclarationsNorStatementsOutsideofEventsOffendingState0", "Neither variable declarations nor statements allowed outside of event functions. Offending state {0}."), stateName));
                         }
-                        if(!BaseTypes.Contains(stateVarType) && !typeof(ISerializable).IsAssignableFrom(stateVarType))
+                        if(!BaseTypes.Contains(stateVarType) && Attribute.GetCustomAttribute(varType, typeof(SerializableAttribute)) == null)
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForStateVariable", "Type '{0}' is not suitable for state variable."), args[0]));
                         }
@@ -572,9 +572,13 @@ namespace SilverSim.Scripting.Lsl
                         compileState.LanguageExtensions.EnableBreakContinueStatement = true;
                         compileState.LanguageExtensions.EnableSwitchBlock = true;
                         compileState.ForcedSleepDefault = false;
-                        if (!apiExtensions.Contains(APIExtension.LongInteger))
+                        if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
                         {
-                            apiExtensions.Add(APIExtension.LongInteger);
+                            apiExtensions.Add(APIExtension.LongInteger.ToLower());
+                        }
+                        if (!apiExtensions.Contains(APIExtension.Properties.ToLower()))
+                        {
+                            apiExtensions.Add(APIExtension.Properties.ToLower());
                         }
                     }
                     else if (mode == "aurora" || mode == "whitecore")
@@ -598,27 +602,27 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            if(apiExtensions.Contains(APIExtension.LongInteger))
+            if(apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
             {
                 compileState.LanguageExtensions.EnableLongIntegers = true;
             }
 
-            if(apiExtensions.Contains(APIExtension.ExtendedTypecasts))
+            if(apiExtensions.Contains(APIExtension.ExtendedTypecasts.ToLower()))
             {
                 compileState.LanguageExtensions.EnableExtendedTypecasts = true;
             }
 
-            if(apiExtensions.Contains(APIExtension.StateVariables))
+            if(apiExtensions.Contains(APIExtension.StateVariables.ToLower()))
             {
                 compileState.LanguageExtensions.EnableStateVariables = true;
             }
 
-            if (apiExtensions.Contains(APIExtension.BreakContinue))
+            if (apiExtensions.Contains(APIExtension.BreakContinue.ToLower()))
             {
                 compileState.LanguageExtensions.EnableBreakContinueStatement = true;
             }
 
-            if(apiExtensions.Contains(APIExtension.SwitchBlock))
+            if(apiExtensions.Contains(APIExtension.SwitchBlock.ToLower()))
             {
                 compileState.LanguageExtensions.EnableSwitchBlock = true;
             }
@@ -631,9 +635,9 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            if(windLightApiType.Length != 0 && !apiExtensions.Contains(windLightApiType))
+            if(windLightApiType.Length != 0 && !apiExtensions.Contains(windLightApiType.ToLower()))
             {
-                apiExtensions.Add(windLightApiType);
+                apiExtensions.Add(windLightApiType.ToLower());
             }
 
             foreach(string extension in apiExtensions)
@@ -688,7 +692,7 @@ namespace SilverSim.Scripting.Lsl
                     Type varType;
                     if (compileState.TryGetValidVarType(args[0], out varType))
                     {
-                        if(!BaseTypes.Contains(varType) && !typeof(ISerializable).IsAssignableFrom(varType))
+                        if(!BaseTypes.Contains(varType) && Attribute.GetCustomAttribute(varType, typeof(SerializableAttribute)) == null)
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForGlobalVariable", "Type '{0}' is not suitable for global variable."), args[0]));
                         }

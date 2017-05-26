@@ -412,6 +412,32 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
 
+            public int isvolumedetect
+            {
+                get
+                {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
+                    {
+                        return Part.ObjectGroup.IsVolumeDetect.ToLSLBoolean();
+                    }
+                }
+                set
+                {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
+                    {
+                        Part.ObjectGroup.IsVolumeDetect = value != 0;
+                    }
+                }
+            }
+
             public int allowunsit
             {
                 get
