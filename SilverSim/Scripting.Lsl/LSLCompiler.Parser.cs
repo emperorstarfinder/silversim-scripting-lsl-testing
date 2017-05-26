@@ -461,7 +461,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NeitherVarDeclarationsNorStatementsOutsideofEventsOffendingState0", "Neither variable declarations nor statements allowed outside of event functions. Offending state {0}."), stateName));
                         }
-                        if(!BaseTypes.Contains(stateVarType) && Attribute.GetCustomAttribute(varType, typeof(SerializableAttribute)) == null)
+                        if(!BaseTypes.Contains(stateVarType) && Attribute.GetCustomAttribute(stateVarType, typeof(SerializableAttribute)) == null)
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForStateVariable", "Type '{0}' is not suitable for state variable."), args[0]));
                         }
