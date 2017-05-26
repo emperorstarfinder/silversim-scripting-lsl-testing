@@ -47,7 +47,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIExtension(APIExtension.Properties, "hovertext")]
         [APIDisplayName("hovertext")]
         [APIIsVariableType]
-        [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
             "Text",
             "Color",
@@ -78,7 +77,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIExtension(APIExtension.Properties, "pointlight")]
         [APIDisplayName("pointlight")]
         [APIIsVariableType]
-        [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
             "Enabled",
             "Color",
@@ -123,23 +121,28 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [Serializable]
         public sealed class Prim
         {
-            private ScriptInstance Instance { get; set; }
+            [NonSerialized]
+            private WeakReference<ScriptInstance> WeakInstance;
+
+            public int LinkNumber;
+
             private T WithPart<T>(Func<ObjectPart, T> getter)
             {
-                if (Instance == null)
+                ScriptInstance instance;
+                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance))
                 {
                     throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                 }
-                lock (Instance)
+                lock (instance)
                 {
                     if (LinkNumber == LINK_THIS)
                     {
-                        return getter(Instance.Part);
+                        return getter(instance.Part);
                     }
                     else
                     {
                         ObjectPart p;
-                        if (!Instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
                         {
                             throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                         }
@@ -150,29 +153,28 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             private void WithPart<T>(Action<ObjectPart, T> setter, T value)
             {
-                if (Instance == null)
+                ScriptInstance instance;
+                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance))
                 {
                     throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                 }
-                lock (Instance)
+                lock (instance)
                 {
                     if (LinkNumber == LINK_THIS)
                     {
-                        setter(Instance.Part, value);
+                        setter(instance.Part, value);
                     }
                     else
                     {
                         ObjectPart p;
-                        if (!Instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
                         {
                             throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                         }
-                        setter(Instance.Part, value);
+                        setter(instance.Part, value);
                     }
                 }
             }
-
-            public int LinkNumber;
 
             public Prim()
             {
@@ -181,13 +183,13 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public Prim(ScriptInstance instance, int linkNumber)
             {
-                Instance = instance;
+                WeakInstance = new WeakReference<ScriptInstance>(instance);
                 LinkNumber = linkNumber;
             }
 
             public void RestoreFromSerialization(ScriptInstance instance)
             {
-                Instance = instance;
+                WeakInstance = new WeakReference<ScriptInstance>(instance);
             }
 
             public LSLKey Key => WithPart((ObjectPart p) => p.ID);

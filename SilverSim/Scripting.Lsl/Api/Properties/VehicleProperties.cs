@@ -44,27 +44,36 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
         public abstract class VehicleBaseData
         {
-            protected readonly ScriptInstance Instance;
+            protected readonly WeakReference<ScriptInstance> WeakInstance;
 
             protected T With<T>(Func<ObjectGroup, T> getter)
             {
-                lock (Instance)
+                ScriptInstance instance;
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {
-                    return getter(Instance.Part.ObjectGroup);
+                    lock (instance)
+                    {
+                        return getter(instance.Part.ObjectGroup);
+                    }
                 }
+                return default(T);
             }
 
             protected void With<T>(Action<ObjectGroup, T> setter, T value)
             {
-                lock (Instance)
+                ScriptInstance instance;
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {
-                    setter(Instance.Part.ObjectGroup, value);
+                    lock (instance)
+                    {
+                        setter(instance.Part.ObjectGroup, value);
+                    }
                 }
             }
 
             protected VehicleBaseData(ScriptInstance instance)
             {
-                Instance = instance;
+                WeakInstance = new WeakReference<ScriptInstance>(instance);
             }
         }
 
@@ -213,46 +222,50 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 get { return With((ObjectGroup g) => (int)g.VehicleType); }
                 set
                 {
-                    lock (Instance)
+                    ScriptInstance instance;
+                    if (WeakInstance.TryGetTarget(out instance))
                     {
-                        ObjectGroup thisGroup = Instance.Part.ObjectGroup;
-                        switch (value)
+                        lock (instance)
                         {
-                            case VehicleApi.VEHICLE_TYPE_NONE:
-                                thisGroup.VehicleType = VehicleType.None;
-                                break;
+                            ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                            switch (value)
+                            {
+                                case VehicleApi.VEHICLE_TYPE_NONE:
+                                    thisGroup.VehicleType = VehicleType.None;
+                                    break;
 
-                            case VehicleApi.VEHICLE_TYPE_SLED:
-                                thisGroup.VehicleType = VehicleType.Sled;
-                                break;
+                                case VehicleApi.VEHICLE_TYPE_SLED:
+                                    thisGroup.VehicleType = VehicleType.Sled;
+                                    break;
 
-                            case VehicleApi.VEHICLE_TYPE_CAR:
-                                thisGroup.VehicleType = VehicleType.Car;
-                                break;
+                                case VehicleApi.VEHICLE_TYPE_CAR:
+                                    thisGroup.VehicleType = VehicleType.Car;
+                                    break;
 
-                            case VehicleApi.VEHICLE_TYPE_BOAT:
-                                thisGroup.VehicleType = VehicleType.Boat;
-                                break;
+                                case VehicleApi.VEHICLE_TYPE_BOAT:
+                                    thisGroup.VehicleType = VehicleType.Boat;
+                                    break;
 
-                            case VehicleApi.VEHICLE_TYPE_AIRPLANE:
-                                thisGroup.VehicleType = VehicleType.Airplane;
-                                break;
+                                case VehicleApi.VEHICLE_TYPE_AIRPLANE:
+                                    thisGroup.VehicleType = VehicleType.Airplane;
+                                    break;
 
-                            case VehicleApi.VEHICLE_TYPE_BALLOON:
-                                thisGroup.VehicleType = VehicleType.Balloon;
-                                break;
+                                case VehicleApi.VEHICLE_TYPE_BALLOON:
+                                    thisGroup.VehicleType = VehicleType.Balloon;
+                                    break;
 
-                            case VehicleApi.VEHICLE_TYPE_MOTORCYCLE:
-                                thisGroup.VehicleType = VehicleType.Motorcycle;
-                                break;
+                                case VehicleApi.VEHICLE_TYPE_MOTORCYCLE:
+                                    thisGroup.VehicleType = VehicleType.Motorcycle;
+                                    break;
 
-                            case VehicleApi.VEHICLE_TYPE_SAILBOAT:
-                                thisGroup.VehicleType = VehicleType.Sailboat;
-                                break;
+                                case VehicleApi.VEHICLE_TYPE_SAILBOAT:
+                                    thisGroup.VehicleType = VehicleType.Sailboat;
+                                    break;
 
-                            default:
-                                Instance.ShoutError(new LocalizedScriptMessage(this, "InvalidVehicleType", "Invalid vehicle type"));
-                                break;
+                                default:
+                                    instance.ShoutError(new LocalizedScriptMessage(this, "InvalidVehicleType", "Invalid vehicle type"));
+                                    break;
+                            }
                         }
                     }
                 }
