@@ -41,6 +41,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         [APIDisplayName("hashtable")]
         [APIAccessibleMembers("keys")]
         [APIIsVariableType]
+        [APICloneOnAssignment]
         public class Hashtable : Dictionary<string, IValue>
         {
 #pragma warning disable IDE1006 // Benennungsstile
