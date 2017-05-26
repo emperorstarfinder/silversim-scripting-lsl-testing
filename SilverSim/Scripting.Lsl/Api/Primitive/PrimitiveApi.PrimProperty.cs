@@ -90,6 +90,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             "Key",
             "Name",
             "Desc",
+            "Buoyancy",
             "PointLight",
             "LocalRot",
             "LocalPos",
