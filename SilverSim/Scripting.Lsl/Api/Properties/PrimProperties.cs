@@ -19,45 +19,57 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+#pragma warning disable IDE0018
+
+using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
 using System;
 
-namespace SilverSim.Scripting.Lsl.Api.Primitive
+namespace SilverSim.Scripting.Lsl.Api.Properties
 {
-    public partial class PrimitiveApi
+    [LSLImplementation]
+    [ScriptApiName("PrimProperties")]
+    public class PrimProperties : IScriptApi, IPlugin
     {
-#pragma warning disable IDE1006
+        public const int LINK_INVALID = -1;
+        public const int LINK_THIS = -4;
+
+        public void Startup(ConfigurationLoader loader)
+        {
+            /* intentionally left empty */
+        }
+
         [APIExtension(APIExtension.Properties, "hovertext")]
         [APIDisplayName("hovertext")]
         [APIIsVariableType]
         [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
-            "text",
-            "color",
-            "alpha")]
+            "Text",
+            "Color",
+            "Alpha")]
         [Serializable]
         [APICloneOnAssignment]
         public class Hovertext
         {
-            public string text;
-            public Vector3 color;
-            public double alpha;
+            public string Text;
+            public Vector3 Color;
+            public double Alpha;
 
             public Hovertext()
             {
-                text = string.Empty;
-                color = Vector3.One;
-                alpha = 0;
+                Text = string.Empty;
+                Color = Vector3.One;
+                Alpha = 0;
             }
 
             public Hovertext(Hovertext t)
             {
-                text = t.text;
-                color = t.color;
-                alpha = t.alpha;
+                Text = t.Text;
+                Color = t.Color;
+                Alpha = t.Alpha;
             }
         }
 
@@ -66,21 +78,20 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APIIsVariableType]
         [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
-            "enabled",
-            "color",
-            "intensity",
-            "radius",
-            "falloff")]
+            "Enabled",
+            "Color",
+            "Intensity",
+            "Radius",
+            "Falloff")]
         [Serializable]
         public struct Pointlight
         {
-            public int enabled;
-            public Vector3 color;
-            public double intensity;
-            public double radius;
-            public double falloff;
+            public int Enabled;
+            public Vector3 Color;
+            public double Intensity;
+            public double Radius;
+            public double Falloff;
         }
-
 
         [APIExtension(APIExtension.Properties, "link")]
         [APIDisplayName("link")]
@@ -112,11 +123,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             private ScriptInstance Instance { get; set; }
             private T WithPart<T>(Func<ObjectPart, T> getter)
             {
-                if(Instance == null)
+                if (Instance == null)
                 {
                     throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                 }
-                lock(Instance)
+                lock (Instance)
                 {
                     if (LinkNumber == LINK_THIS)
                     {
@@ -125,7 +136,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     else
                     {
                         ObjectPart p;
-                        if(!Instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        if (!Instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
                         {
                             throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                         }
@@ -162,7 +173,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
             public Prim()
             {
-                LinkNumber = LINK_SET;
+                LinkNumber = LINK_INVALID;
             }
 
             public Prim(ScriptInstance instance, int linkNumber)
@@ -176,7 +187,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 Instance = instance;
             }
 
-            public LSLKey key => WithPart((ObjectPart p) => p.ID);
+            public LSLKey Key => WithPart((ObjectPart p) => p.ID);
 
             public Hovertext HoverText
             {
@@ -187,9 +198,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         ObjectPart.TextParam text = p.Text;
                         return new Hovertext()
                         {
-                            text = text.Text,
-                            color = text.TextColor,
-                            alpha = text.TextColor.A
+                            Text = text.Text,
+                            Color = text.TextColor,
+                            Alpha = text.TextColor.A
                         };
                     });
                 }
@@ -197,8 +208,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     WithPart((ObjectPart p, ObjectPart.TextParam t) => p.Text = t, new ObjectPart.TextParam
                     {
-                        Text = value.text,
-                        TextColor = new ColorAlpha(value.color, value.alpha)
+                        Text = value.Text,
+                        TextColor = new ColorAlpha(value.Color, value.Alpha)
                     });
                 }
             }
@@ -212,11 +223,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         ObjectPart.PointLightParam light = p.PointLight;
                         return new Pointlight()
                         {
-                            enabled = light.IsLight.ToLSLBoolean(),
-                            color = light.LightColor,
-                            intensity = light.Intensity,
-                            radius = light.Radius,
-                            falloff = light.Falloff
+                            Enabled = light.IsLight.ToLSLBoolean(),
+                            Color = light.LightColor,
+                            Intensity = light.Intensity,
+                            Radius = light.Radius,
+                            Falloff = light.Falloff
                         };
                     });
                 }
@@ -224,11 +235,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     WithPart((ObjectPart p, ObjectPart.PointLightParam l) => p.PointLight = l, new ObjectPart.PointLightParam
                     {
-                        IsLight = value.enabled != 0,
-                        LightColor = new Color(value.color),
-                        Intensity = value.intensity,
-                        Radius = value.radius,
-                        Falloff = value.falloff
+                        IsLight = value.Enabled != 0,
+                        LightColor = new Color(value.Color),
+                        Intensity = value.Intensity,
+                        Radius = value.Radius,
+                        Falloff = value.Falloff
                     });
                 }
             }
@@ -236,64 +247,54 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             public string Desc
             {
                 get { return WithPart((ObjectPart p) => p.Description); }
-
                 set { WithPart((ObjectPart p, string d) => p.Description = d, value); }
             }
 
             public string Name
             {
                 get { return WithPart((ObjectPart p) => p.Name); }
-
-
                 set { WithPart((ObjectPart p, string d) => p.Name = d, value); }
             }
 
             public int AllowInventoryDrop
             {
                 get { return WithPart((ObjectPart p) => p.IsAllowedDrop.ToLSLBoolean()); }
-
                 set { WithPart((ObjectPart p, bool v) => p.IsAllowedDrop = v, value != 0); }
             }
 
             public Quaternion LocalRot
             {
                 get { return WithPart((ObjectPart p) => p.LocalRotation); }
-
                 set { WithPart((ObjectPart p, Quaternion q) => p.LocalRotation = q, value); }
             }
 
             public Vector3 Size
             {
                 get { return WithPart((ObjectPart p) => p.Size); }
-
                 set { WithPart((ObjectPart p, Vector3 v) => p.Size = v, value); }
             }
 
             public Vector3 LocalPos
             {
                 get { return WithPart((ObjectPart p) => p.LocalPosition); }
-
                 set { WithPart((ObjectPart p, Vector3 v) => p.LocalPosition = v, value); }
             }
 
             public Quaternion Rotation
             {
                 get { return WithPart((ObjectPart p) => p.Rotation); }
-
                 set { WithPart((ObjectPart p, Quaternion q) => p.Rotation = q, value); }
             }
 
             public Vector3 Position
             {
                 get { return WithPart((ObjectPart p) => p.Position); }
-
                 set { WithPart((ObjectPart p, Vector3 v) => p.Position = v, value); }
             }
 
             public int PhysicsShapeType
             {
                 get { return (int)WithPart((ObjectPart p) => p.PhysicsShapeType); }
-
                 set
                 {
                     if (value >= (int)PrimitivePhysicsShapeType.Prim && value <= (int)PrimitivePhysicsShapeType.Convex)
@@ -307,7 +308,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             public int Material
             {
                 get { return (int)WithPart((ObjectPart p) => p.Material); }
-
                 set
                 {
                     if (value >= (int)PrimitiveMaterial.Stone && value <= (int)PrimitiveMaterial.Light)
@@ -320,42 +320,36 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             public int IsPhantom
             {
                 get { return WithPart((ObjectPart p) => p.IsPhantom.ToLSLBoolean()); }
-
                 set { WithPart((ObjectPart p, bool v) => p.IsPhantom = v, value != 0); }
             }
 
             public int IsPhysics
             {
                 get { return WithPart((ObjectPart p) => p.IsPhysics.ToLSLBoolean()); }
-
                 set { WithPart((ObjectPart p, bool v) => p.IsPhysics = v, value != 0); }
             }
 
             public int IsTempOnRez
             {
                 get { return WithPart((ObjectPart p) => p.ObjectGroup.IsTempOnRez.ToLSLBoolean()); }
-
                 set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsTempOnRez = v, value != 0); }
             }
 
             public int IsVolumeDetect
             {
                 get { return WithPart((ObjectPart p) => p.ObjectGroup.IsVolumeDetect.ToLSLBoolean()); }
-
                 set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsVolumeDetect = v, value != 0); }
             }
 
             public int AllowUnsit
             {
                 get { return WithPart((ObjectPart p) => p.AllowUnsit.ToLSLBoolean()); }
-
                 set { WithPart((ObjectPart p, bool v) => p.AllowUnsit = v, value != 0); }
             }
 
             public int ScriptedSitOnly
             {
                 get { return WithPart((ObjectPart p) => p.IsScriptedSitOnly.ToLSLBoolean()); }
-
                 set { WithPart((ObjectPart p, bool v) => p.IsScriptedSitOnly = v, value != 0); }
             }
 
@@ -366,7 +360,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
 
             [APIExtension(APIExtension.Properties)]
-            public static implicit operator bool(Prim c) => c.LinkNumber > 0;
+            public static implicit operator bool(Prim c) => c.LinkNumber > 0 || c.LinkNumber == LINK_THIS;
 
             [APIExtension(APIExtension.Properties)]
             public static implicit operator int(Prim c) => c.LinkNumber;
@@ -377,7 +371,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "this")]
         public Prim GetThis(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return new Prim(instance, instance.Part.LinkNumber);
             }
@@ -400,10 +394,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     lock (Instance)
                     {
-                        if (linkno == LINK_ROOT)
-                        {
-                            linkno = 1;
-                        }
                         return new Prim(Instance, linkno);
                     }
                 }
@@ -413,11 +403,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    lock (Instance)
                     {
                         foreach (ObjectPart p in Instance.Part.ObjectGroup.ValuesByKey1)
                         {
-                            if(p.Name == name)
+                            if (p.Name == name)
                             {
                                 return new Prim(Instance, p.LinkNumber);
                             }
@@ -431,7 +421,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "LinkSet")]
         public LinkSetAccessor GetLink(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return new LinkSetAccessor(instance);
             }
