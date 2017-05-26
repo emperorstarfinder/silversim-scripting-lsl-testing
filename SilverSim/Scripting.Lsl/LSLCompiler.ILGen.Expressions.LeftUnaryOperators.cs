@@ -26,6 +26,7 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
@@ -53,6 +54,8 @@ namespace SilverSim.Scripting.Lsl
                 Dictionary<string, object> localVars,
                 Type innerExpressionReturn)
             {
+                Dictionary<Type, MethodInfo> typecastToDict;
+                MethodInfo typecastMethod;
                 if (innerExpressionReturn != null)
                 {
                     switch (m_Operator)
@@ -86,6 +89,14 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.ILGen.Emit(OpCodes.Call, innerExpressionReturn.GetProperty("Length").GetGetMethod());
                                 compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                                compileState.ILGen.Emit(OpCodes.Ceq);
+                            }
+                            else if(compileState.ApiInfo.Typecasts.TryGetValue(innerExpressionReturn, out typecastToDict) &&
+                                typecastToDict.TryGetValue(typeof(bool), out typecastMethod) &&
+                                typecastMethod.Name == "op_Implicit")
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, typecastMethod);
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                                 compileState.ILGen.Emit(OpCodes.Ceq);
                             }
                             else

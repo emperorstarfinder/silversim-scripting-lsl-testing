@@ -242,7 +242,7 @@ namespace SilverSim.Scripting.Lsl
                 return true;
             }
 
-            private bool IsImplicitCastedMatch(object o, out int matchedCount)
+            private bool IsImplicitCastedMatch(CompileState compileState, object o, out int matchedCount)
             {
                 matchedCount = 0;
                 Type t = o.GetType();
@@ -256,7 +256,7 @@ namespace SilverSim.Scripting.Lsl
                         Type destType = pi[i + 1].ParameterType;
                         if (sourceType != destType)
                         {
-                            if(!IsImplicitlyCastable(destType, sourceType))
+                            if(!IsImplicitlyCastable(compileState, destType, sourceType))
                             {
                                 return false;
                             }
@@ -277,7 +277,7 @@ namespace SilverSim.Scripting.Lsl
                         Type destType = pi[i].Value;
                         if (sourceType != destType)
                         {
-                            if (!IsImplicitlyCastable(destType, sourceType))
+                            if (!IsImplicitlyCastable(compileState, destType, sourceType))
                             {
                                 return false;
                             }
@@ -430,7 +430,7 @@ namespace SilverSim.Scripting.Lsl
                         return o;
                     }
                     int closeMatchCount;
-                    if (IsImplicitCastedMatch(o, out closeMatchCount) && closeMatchCount > closeMatchCountHighest)
+                    if (IsImplicitCastedMatch(compileState, o, out closeMatchCount) && closeMatchCount > closeMatchCountHighest)
                     {
                         closeMatch = o;
                         closeMatchCountHighest = closeMatchCount;

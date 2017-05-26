@@ -90,6 +90,7 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, MethodInfo> EventDelegates = new Dictionary<string, MethodInfo>();
             public Dictionary<string, Type> Types = new Dictionary<string, Type>();
             public Dictionary<string, PropertyInfo> Properties = new Dictionary<string, PropertyInfo>();
+            public Dictionary<Type, Dictionary<Type, MethodInfo>> Typecasts = new Dictionary<Type, Dictionary<Type, MethodInfo>>();
 
             public void Add(ApiInfo info)
             {
@@ -119,6 +120,10 @@ namespace SilverSim.Scripting.Lsl
                 foreach(KeyValuePair<string, PropertyInfo> kvp in info.Properties)
                 {
                     Properties.Add(kvp.Key, kvp.Value);
+                }
+                foreach(KeyValuePair<Type, Dictionary<Type, MethodInfo>> kvp in info.Typecasts)
+                {
+                    Typecasts.Add(kvp.Key, kvp.Value);
                 }
             }
         }
@@ -251,6 +256,70 @@ namespace SilverSim.Scripting.Lsl
         }
 
         internal static readonly Dictionary<string, Type> KnownSerializationTypes = new Dictionary<string, Type>();
+
+        private void CollectApiTypecasts()
+        {
+            foreach(Type t in m_ValidTypes.Keys)
+            {
+                if (Attribute.GetCustomAttribute(t, typeof(ImplementsCustomTypecastsAttribute)) != null)
+                {
+                    foreach (MethodInfo mi in t.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                    {
+                        if (mi.Name != "op_Explicit" && mi.Name != "op_Implicit")
+                        {
+                            continue;
+                        }
+
+                        Type fromType = mi.GetParameters()[0].ParameterType;
+                        Type toType = mi.ReturnType;
+                        if (fromType != t && toType != t)
+                        {
+                            continue;
+                        }
+
+                        var typecastLevelAttrs = Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)) as APILevelAttribute[];
+                        var typecastExtensionAttrs = Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+
+                        foreach (APILevelAttribute attr in typecastLevelAttrs)
+                        {
+                            foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+                            {
+                                if ((kvp.Key & attr.Flags) != 0)
+                                {
+                                    Dictionary<Type, MethodInfo> toDict;
+                                    if(!kvp.Value.Typecasts.TryGetValue(fromType, out toDict))
+                                    {
+                                        toDict = new Dictionary<Type, MethodInfo>();
+                                        kvp.Value.Typecasts.Add(fromType, toDict);
+                                    }
+                                    toDict.Add(toType, mi);
+                                }
+                            }
+                        }
+
+                        foreach (APIExtensionAttribute attr in typecastExtensionAttrs)
+                        {
+                            ApiInfo apiInfo;
+                            string extensionName = attr.Extension.ToLower();
+                            if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                            {
+                                apiInfo = new ApiInfo();
+                                m_ApiExtensions.Add(extensionName, apiInfo);
+                            }
+
+                            Dictionary<Type, MethodInfo> toDict;
+                            if (!apiInfo.Typecasts.TryGetValue(fromType, out toDict))
+                            {
+                                toDict = new Dictionary<Type, MethodInfo>();
+                                apiInfo.Typecasts.Add(fromType, toDict);
+                            }
+                            toDict.Add(toType, mi);
+                        }
+                    }
+                }
+
+            }
+        }
 
         private void CollectApiTypes(IScriptApi api)
         {
@@ -461,6 +530,95 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void CollectApiAddMethod(ApiInfo apiInfo, IAPIDeclaration funcNameAttr, IScriptApi api, MethodInfo m)
+        {
+            string funcName = funcNameAttr.Name;
+            if (string.IsNullOrEmpty(funcName))
+            {
+                funcName = m.Name;
+            }
+
+            switch (funcNameAttr.UseAs)
+            {
+                case APIUseAsEnum.Function:
+                    List<ApiMethodInfo> methodList;
+                    if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
+                    {
+                        methodList = new List<ApiMethodInfo>();
+                        apiInfo.Methods.Add(funcName, methodList);
+                    }
+                    methodList.Add(new ApiMethodInfo(funcName, api, m));
+                    break;
+
+                case APIUseAsEnum.Getter:
+                    if (m.GetParameters().Length != 1 || m.ReturnType == typeof(void))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid getter.",
+                            m.Name,
+                            m.DeclaringType.FullName,
+                            m.ReturnType.FullName);
+                    }
+                    else
+                    {
+                        ApiInfo.PropertyInfo prop;
+                        var apiMethod = new ApiMethodInfo(funcName, api, m);
+                        if (!apiInfo.Properties.TryGetValue(funcName, out prop))
+                        {
+                            apiInfo.Properties[funcName] = new ApiInfo.PropertyInfo(m.ReturnType)
+                            {
+                                Getter = apiMethod
+                            };
+                        }
+                        else if (prop.PropertyType != m.ReturnType)
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Getter return type mismatch.",
+                                m.Name,
+                                m.DeclaringType.FullName,
+                                m.ReturnType.FullName);
+                        }
+                        else
+                        {
+                            prop.Getter = apiMethod;
+                        }
+                    }
+                    break;
+
+                case APIUseAsEnum.Setter:
+                    if (m.GetParameters().Length != 2 || m.ReturnType != typeof(void))
+                    {
+                        m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid setter.",
+                            m.Name,
+                            m.DeclaringType.FullName,
+                            m.ReturnType.FullName);
+                    }
+                    else
+                    {
+                        ApiInfo.PropertyInfo prop;
+                        var apiMethod = new ApiMethodInfo(funcName, api, m);
+                        ParameterInfo param1 = m.GetParameters()[1];
+                        if (!apiInfo.Properties.TryGetValue(funcName, out prop))
+                        {
+                            apiInfo.Properties[funcName] = new ApiInfo.PropertyInfo(param1.ParameterType)
+                            {
+                                Setter = apiMethod
+                            };
+                        }
+                        else if (prop.PropertyType != param1.ParameterType)
+                        {
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Setter parameter type mismatch.",
+                                m.Name,
+                                m.DeclaringType.FullName,
+                                m.ReturnType.FullName);
+                        }
+                        else
+                        {
+                            prop.Getter = apiMethod;
+                        }
+                    }
+                    break;
+            }
+        }
+
         private void CollectApiFunctionsAndDelegates(IScriptApi api)
         {
             foreach (MethodInfo m in api.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
@@ -507,107 +665,16 @@ namespace SilverSim.Scripting.Lsl
                         {
                             foreach (APILevelAttribute funcNameAttr in funcNameAttrs)
                             {
-                                string funcName = funcNameAttr.Name;
-                                if (string.IsNullOrEmpty(funcName))
+                                foreach(KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                                 {
-                                    funcName = m.Name;
-                                }
-                                switch (funcNameAttr.UseAs)
-                                {
-                                    case APIUseAsEnum.Function:
-                                        foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                                        {
-                                            List<ApiMethodInfo> methodList;
-                                            if (!kvp.Value.Methods.TryGetValue(funcName, out methodList))
-                                            {
-                                                methodList = new List<ApiMethodInfo>();
-                                                kvp.Value.Methods.Add(funcName, methodList);
-                                            }
-                                            methodList.Add(new ApiMethodInfo(funcName, api, m));
-                                        }
-                                        break;
-
-                                    case APIUseAsEnum.Getter:
-                                        if(pi.Length != 1 || m.ReturnType == typeof(void))
-                                        {
-                                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid getter.",
-                                                m.Name,
-                                                m.DeclaringType.FullName,
-                                                m.ReturnType.FullName);
-                                        }
-                                        else
-                                        {
-                                            foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                                            {
-                                                ApiInfo.PropertyInfo prop;
-                                                var apiMethod = new ApiMethodInfo(funcName, api, m);
-                                                if(!kvp.Value.Properties.TryGetValue(funcName, out prop))
-                                                {
-                                                    kvp.Value.Properties[funcName] = new ApiInfo.PropertyInfo(m.ReturnType)
-                                                    {
-                                                        Getter = apiMethod
-                                                    };
-                                                }
-                                                else if (prop.PropertyType != m.ReturnType)
-                                                {
-                                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Getter return type mismatch.",
-                                                        m.Name,
-                                                        m.DeclaringType.FullName,
-                                                        m.ReturnType.FullName);
-                                                }
-                                                else
-                                                {
-                                                    prop.Getter = apiMethod;
-                                                }
-                                            }
-                                        }
-                                        break;
-
-                                    case APIUseAsEnum.Setter:
-                                        if (pi.Length != 2 || m.ReturnType != typeof(void))
-                                        {
-                                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid setter.",
-                                                m.Name,
-                                                m.DeclaringType.FullName,
-                                                m.ReturnType.FullName);
-                                        }
-                                        else
-                                        {
-                                            foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
-                                            {
-                                                ApiInfo.PropertyInfo prop;
-                                                var apiMethod = new ApiMethodInfo(funcName, api, m);
-                                                if (!kvp.Value.Properties.TryGetValue(funcName, out prop))
-                                                {
-                                                    kvp.Value.Properties[funcName] = new ApiInfo.PropertyInfo(pi[1].ParameterType)
-                                                    {
-                                                        Setter = apiMethod
-                                                    };
-                                                }
-                                                else if (prop.PropertyType != pi[1].ParameterType)
-                                                {
-                                                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Setter parameter type mismatch.",
-                                                        m.Name,
-                                                        m.DeclaringType.FullName,
-                                                        m.ReturnType.FullName);
-                                                }
-                                                else
-                                                {
-                                                    prop.Getter = apiMethod;
-                                                }
-                                            }
-                                        }
-                                        break;
+                                    if((kvp.Key & funcNameAttr.Flags) != 0)
+                                    {
+                                        CollectApiAddMethod(kvp.Value, funcNameAttr, api, m);
+                                    }
                                 }
                             }
                             foreach (APIExtensionAttribute funcNameAttr in apiExtensionAttrs)
                             {
-                                string funcName = funcNameAttr.Name;
-                                if (string.IsNullOrEmpty(funcName))
-                                {
-                                    funcName = m.Name;
-                                }
-
                                 ApiInfo apiInfo;
                                 string extensionName = funcNameAttr.Extension.ToLower();
                                 if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
@@ -616,84 +683,7 @@ namespace SilverSim.Scripting.Lsl
                                     m_ApiExtensions.Add(extensionName, apiInfo);
                                 }
 
-                                switch(funcNameAttr.UseAs)
-                                {
-                                    case APIUseAsEnum.Function:
-                                        List<ApiMethodInfo> methodList;
-                                        if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
-                                        {
-                                            methodList = new List<ApiMethodInfo>();
-                                            apiInfo.Methods.Add(funcName, methodList);
-                                        }
-                                        methodList.Add(new ApiMethodInfo(funcName, api, m));
-                                        break;
-
-                                    case APIUseAsEnum.Getter:
-                                        if (pi.Length != 1 || m.ReturnType == typeof(void))
-                                        {
-                                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid getter.",
-                                                m.Name,
-                                                m.DeclaringType.FullName,
-                                                m.ReturnType.FullName);
-                                        }
-                                        else
-                                        {
-                                            ApiInfo.PropertyInfo prop;
-                                            var apiMethod = new ApiMethodInfo(funcName, api, m);
-                                            if (!apiInfo.Properties.TryGetValue(funcName, out prop))
-                                            {
-                                                apiInfo.Properties[funcName] = new ApiInfo.PropertyInfo(m.ReturnType)
-                                                {
-                                                    Getter = apiMethod
-                                                };
-                                            }
-                                            else if (prop.PropertyType != m.ReturnType)
-                                            {
-                                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Getter return type mismatch.",
-                                                    m.Name,
-                                                    m.DeclaringType.FullName,
-                                                    m.ReturnType.FullName);
-                                            }
-                                            else
-                                            {
-                                                prop.Getter = apiMethod;
-                                            }
-                                        }
-                                        break;
-
-                                    case APIUseAsEnum.Setter:
-                                        if (pi.Length != 2 || m.ReturnType != typeof(void))
-                                        {
-                                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid setter.",
-                                                m.Name,
-                                                m.DeclaringType.FullName,
-                                                m.ReturnType.FullName);
-                                        }
-                                        else
-                                        {
-                                            ApiInfo.PropertyInfo prop;
-                                            var apiMethod = new ApiMethodInfo(funcName, api, m);
-                                            if (!apiInfo.Properties.TryGetValue(funcName, out prop))
-                                            {
-                                                apiInfo.Properties[funcName] = new ApiInfo.PropertyInfo(pi[1].ParameterType)
-                                                {
-                                                    Setter = apiMethod
-                                                };
-                                            }
-                                            else if (prop.PropertyType != pi[1].ParameterType)
-                                            {
-                                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension  attribute. Setter parameter type mismatch.",
-                                                    m.Name,
-                                                    m.DeclaringType.FullName,
-                                                    m.ReturnType.FullName);
-                                            }
-                                            else
-                                            {
-                                                prop.Getter = apiMethod;
-                                            }
-                                        }
-                                        break;
-                                }
+                                CollectApiAddMethod(apiInfo, funcNameAttr, api, m);
                             }
                         }
                     }
@@ -1036,6 +1026,8 @@ namespace SilverSim.Scripting.Lsl
             m_ValidTypes[typeof(LSLKey)] = "key";
             m_ValidTypes[typeof(AnArray)] = "list";
             m_ValidTypes[typeof(void)] = "void";
+
+            CollectApiTypecasts();
 
             foreach (IScriptApi api in m_Apis)
             {

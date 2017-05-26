@@ -23,6 +23,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
+using System;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -32,6 +33,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APIExtension(APIExtension.Properties, "link")]
         [APIDisplayName("link")]
         [APIIsVariableType]
+        [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
             "key",
             "name",
@@ -48,14 +50,31 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             "allowunsit",
             "scriptedsitonly",
             "allowinventorydrop")]
-        public class Prim
+        [Serializable]
+        public sealed class Prim
         {
-            public ScriptInstance Instance { get; }
-            public ObjectPart Part { get; }
+            public ScriptInstance Instance { get; private set; }
+            public ObjectPart Part { get; private set; }
+
+            public int LinkNumber;
+
+            public Prim()
+            {
+
+            }
 
             public Prim(ScriptInstance instance, ObjectPart part)
             {
                 Instance = instance;
+                Part = part;
+                LinkNumber = part.LinkNumber;
+            }
+
+            public void RestoreFromSerialization(ScriptInstance instance)
+            {
+                Instance = instance;
+                ObjectPart part;
+                instance.Part.ObjectGroup.TryGetValue(LinkNumber, out part);
                 Part = part;
             }
 
@@ -63,7 +82,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.ID;
                     }
@@ -74,14 +97,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.Description;
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.Description = value;
                     }
@@ -92,7 +123,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.Name;
                     }
@@ -100,7 +135,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.Name = value;
                     }
@@ -111,14 +150,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.IsAllowedDrop.ToLSLBoolean();
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.IsAllowedDrop = value != 0;
                     }
@@ -129,14 +176,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.LocalRotation;
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.LocalRotation = value;
                     }
@@ -147,14 +202,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.Size;
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.Size = value;
                     }
@@ -165,14 +228,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.LocalPosition;
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.LocalPosition = value;
                     }
@@ -183,14 +254,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.Rotation;
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.Rotation = value;
                     }
@@ -201,14 +280,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.Position;
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.Position = value;
                     }
@@ -219,13 +306,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return (int)Part.PhysicsShapeType;
                     }
                 }
                 set
                 {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
                     lock (Instance)
                     {
                         if (value >= (int)PrimitivePhysicsShapeType.Prim && value <= (int)PrimitivePhysicsShapeType.Convex)
@@ -240,16 +335,24 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return (int)Part.Material;
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
                     {
-                        if(value >= (int)PrimitiveMaterial.Stone && value <= (int)PrimitiveMaterial.Light)
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
+                    {
+                        if (value >= (int)PrimitiveMaterial.Stone && value <= (int)PrimitiveMaterial.Light)
                         {
                             Part.Material = (PrimitiveMaterial)value;
                         }
@@ -261,14 +364,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.IsPhysics.ToLSLBoolean();
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.IsPhysics = value != 0;
                     }
@@ -279,6 +390,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
                     lock (Instance)
                     {
                         return Part.ObjectGroup.IsTempOnRez.ToLSLBoolean();
@@ -286,6 +401,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 set
                 {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
                     lock (Instance)
                     {
                         Part.ObjectGroup.IsTempOnRez = value != 0;
@@ -297,14 +416,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.AllowUnsit.ToLSLBoolean();
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.AllowUnsit = value != 0;
                     }
@@ -315,20 +442,41 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         return Part.IsScriptedSitOnly.ToLSLBoolean();
                     }
                 }
                 set
                 {
-                    lock(Instance)
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
                     {
                         Part.IsScriptedSitOnly = value != 0;
                     }
                 }
             }
+
+            [APIExtension(APIExtension.Properties)]
+            public static implicit operator bool(Prim c)
+            {
+                return c.Part != null;
+            }
+
+            [APIExtension(APIExtension.Properties)]
+            public static implicit operator int(Prim c)
+            {
+                return c.Part != null ? c.Part.LinkNumber : 0;
+            }
         }
+
 #pragma warning restore IDE1006
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "this")]
@@ -337,6 +485,18 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock(instance)
             {
                 return new Prim(instance, instance.Part);
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "LINK")]
+        public Prim GetLink(ScriptInstance instance, int linkno)
+        {
+            lock(instance)
+            {
+                ObjectPart part;
+                return (instance.Part.ObjectGroup.TryGetValue(linkno, out part)) ?
+                    new Prim(instance, instance.Part) :
+                    new Prim();
             }
         }
     }

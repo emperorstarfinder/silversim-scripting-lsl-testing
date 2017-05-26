@@ -492,6 +492,11 @@ namespace SilverSim.Scripting.Lsl
                     continue;
                 }
                 fi.SetValue(this, kvp.Value);
+                MethodInfo initMi = fi.FieldType.GetMethod("RestoreFromSerialization", new Type[] { typeof(ScriptInstance) });
+                if(initMi != null)
+                {
+                    initMi.Invoke(kvp.Value, new object[] { this });
+                }
             }
 
             /* initialize state */

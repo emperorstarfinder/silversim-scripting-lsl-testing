@@ -203,7 +203,14 @@ namespace SilverSim.Scripting.Lsl
                 string res;
                 if(!m_ReverseTypeDeclarations.TryGetValue(t, out res))
                 {
-                    res = "???";
+                    if (t == typeof(bool))
+                    {
+                        res = "boolean";
+                    }
+                    else
+                    {
+                        res = "???";
+                    }
                 }
                 return res;
             }

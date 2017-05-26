@@ -54,8 +54,20 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class ImplementsCustomTypecastsAttribute : Attribute
+    {
+    }
+
+    public interface IAPIDeclaration
+    {
+        string Name { get; }
+        APIUseAsEnum UseAs { get; }
+    }
+
+    [Serializable]
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate | AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = true)]
-    public sealed class APILevelAttribute : Attribute
+    public sealed class APILevelAttribute : Attribute, IAPIDeclaration
     {
         public APIFlags Flags { get; }
         public string Name { get; }
@@ -133,7 +145,7 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Delegate | AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = true)]
-    public sealed class APIExtensionAttribute : Attribute
+    public sealed class APIExtensionAttribute : Attribute, IAPIDeclaration
     {
         public string Extension { get; }
         public string Name { get; }

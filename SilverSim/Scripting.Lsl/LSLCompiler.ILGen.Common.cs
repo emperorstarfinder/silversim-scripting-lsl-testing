@@ -433,7 +433,7 @@ namespace SilverSim.Scripting.Lsl
             Type fromType,
             int lineNumber)
         {
-            if(IsImplicitlyCastable(toType, fromType))
+            if(IsImplicitlyCastable(compileState, toType, fromType))
             {
                 ProcessCasts(compileState, toType, fromType, lineNumber);
             }
@@ -730,8 +730,9 @@ namespace SilverSim.Scripting.Lsl
             return sb.ToString();
         }
 
-        internal static bool IsImplicitlyCastable(Type toType, Type fromType) =>
-            fromType == toType ||
+        internal static bool IsImplicitlyCastable(CompileState compileState, Type toType, Type fromType)
+        {
+            if(fromType == toType ||
                 toType == typeof(void) ||
                 (fromType == typeof(string) && toType == typeof(LSLKey)) ||
                 (fromType == typeof(LSLKey) && toType == typeof(string)) ||
@@ -739,7 +740,17 @@ namespace SilverSim.Scripting.Lsl
                 (fromType == typeof(long) && toType == typeof(double)) ||
                 (fromType == typeof(int) && toType == typeof(long)) ||
                 toType == typeof(AnArray) ||
-                toType == typeof(bool);
+                toType == typeof(bool))
+            {
+                return true;
+            }
+
+            Dictionary<Type, MethodInfo> toDict;
+            MethodInfo mi;
+            return compileState.ApiInfo.Typecasts.TryGetValue(fromType, out toDict) &&
+                toDict.TryGetValue(toType, out mi) &&
+                mi.Name == "op_Implicit";
+        }
 
         internal static void ProcessCasts(
             CompileState compileState,
@@ -747,6 +758,8 @@ namespace SilverSim.Scripting.Lsl
             Type fromType,
             int lineNumber)
         {
+            Dictionary<Type, MethodInfo> targetDict;
+            MethodInfo typecastMethod;
             /* value is on stack before */
             if (toType == fromType)
             {
@@ -759,6 +772,10 @@ namespace SilverSim.Scripting.Lsl
             else if (fromType == typeof(void))
             {
                 throw new CompilerException(lineNumber, compileState.GetLanguageString(compileState.CurrentCulture, "FunctionDoesNotReturnAnything", "function does not return anything"));
+            }
+            else if(compileState.ApiInfo.Typecasts.TryGetValue(fromType, out targetDict) && targetDict.TryGetValue(toType, out typecastMethod))
+            {
+                compileState.ILGen.Emit(OpCodes.Call, typecastMethod);
             }
             else if (toType == typeof(LSLKey))
             {
@@ -912,7 +929,15 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
+                    throw new CompilerException(
+                        lineNumber,
+                        string.Format(
+                            compileState.GetLanguageString(
+                                compileState.CurrentCulture,
+                                "UnsupportedTypecastFrom0To1",
+                                "unsupported typecast from {0} to {1}"),
+                            compileState.MapType(fromType),
+                            compileState.MapType(toType)));
                 }
             }
             else if (toType == typeof(double))

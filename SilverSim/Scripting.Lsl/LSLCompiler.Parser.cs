@@ -28,7 +28,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -459,6 +461,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NeitherVarDeclarationsNorStatementsOutsideofEventsOffendingState0", "Neither variable declarations nor statements allowed outside of event functions. Offending state {0}."), stateName));
                         }
+                        if(!BaseTypes.Contains(stateVarType) && !typeof(ISerializable).IsAssignableFrom(stateVarType))
+                        {
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForStateVariable", "Type '{0}' is not suitable for state variable."), args[0]));
+                        }
                         CheckUsedName(compileState, p, "State Variable", args[1]);
                         if (args[2] == "=")
                         {
@@ -527,6 +533,8 @@ namespace SilverSim.Scripting.Lsl
                 compileState.m_LocalVariables.RemoveAt(compileState.m_LocalVariables.Count - 1);
             }
         }
+
+        private readonly Type[] BaseTypes = new Type[] { typeof(int), typeof(long), typeof(string), typeof(double), typeof(Vector3), typeof(AnArray), typeof(Quaternion), typeof(LSLKey) };
 
         private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
         {
@@ -680,6 +688,10 @@ namespace SilverSim.Scripting.Lsl
                     Type varType;
                     if (compileState.TryGetValidVarType(args[0], out varType))
                     {
+                        if(!BaseTypes.Contains(varType) && !typeof(ISerializable).IsAssignableFrom(varType))
+                        {
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForGlobalVariable", "Type '{0}' is not suitable for global variable."), args[0]));
+                        }
                         CheckUsedName(compileState, p, "Variable", args[1]);
                         compileState.m_VariableDeclarations[args[1]] = varType;
                         if (args[2] == "=")
