@@ -30,6 +30,58 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     public partial class PrimitiveApi
     {
 #pragma warning disable IDE1006
+        [APIExtension(APIExtension.Properties, "hovertext")]
+        [APIDisplayName("hovertext")]
+        [APIIsVariableType]
+        [ImplementsCustomTypecasts]
+        [APIAccessibleMembers(
+            "text",
+            "color",
+            "alpha")]
+        [Serializable]
+        [APICloneOnAssignment]
+        public class Hovertext
+        {
+            public string text;
+            public Vector3 color;
+            public double alpha;
+
+            public Hovertext()
+            {
+                text = string.Empty;
+                color = Vector3.One;
+                alpha = 0;
+            }
+
+            public Hovertext(Hovertext t)
+            {
+                text = t.text;
+                color = t.color;
+                alpha = t.alpha;
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "pointlight")]
+        [APIDisplayName("pointlight")]
+        [APIIsVariableType]
+        [ImplementsCustomTypecasts]
+        [APIAccessibleMembers(
+            "enabled",
+            "color",
+            "intensity",
+            "radius",
+            "falloff")]
+        [Serializable]
+        public struct Pointlight
+        {
+            public int enabled;
+            public Vector3 color;
+            public double intensity;
+            public double radius;
+            public double falloff;
+        }
+
+
         [APIExtension(APIExtension.Properties, "link")]
         [APIDisplayName("link")]
         [APIIsVariableType]
@@ -47,6 +99,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             "isphysics",
             "istemponrez",
             "size",
+            "hovertext",
             "allowunsit",
             "scriptedsitonly",
             "allowinventorydrop")]
@@ -89,6 +142,85 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     lock (Instance)
                     {
                         return Part.ID;
+                    }
+                }
+            }
+
+            public Hovertext hovertext
+            {
+                get
+                {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
+                    {
+                        ObjectPart.TextParam text = Part.Text;
+                        return new Hovertext()
+                        {
+                            text = text.Text,
+                            color = text.TextColor,
+                            alpha = text.TextColor.A
+                        };
+                    }
+                }
+                set
+                {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    var text = new ObjectPart.TextParam
+                    {
+                        Text = value.text,
+                        TextColor = new ColorAlpha(value.color, value.alpha)
+                    };
+                    lock(Instance)
+                    {
+                        Part.Text = text;
+                    }
+                }
+            }
+
+            public Pointlight pointlight
+            {
+                get
+                {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    lock (Instance)
+                    {
+                        ObjectPart.PointLightParam light = Part.PointLight;
+                        return new Pointlight()
+                        {
+                            enabled = light.IsLight.ToLSLBoolean(),
+                            color = light.LightColor,
+                            intensity = light.Intensity,
+                            radius = light.Radius,
+                            falloff = light.Falloff
+                        };
+                    }
+                }
+                set
+                {
+                    if (Part == null || Instance == null)
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                    var light = new ObjectPart.PointLightParam
+                    {
+                        IsLight = value.enabled != 0,
+                        LightColor = new Color(value.color),
+                        Intensity = value.intensity,
+                        Radius = value.radius,
+                        Falloff = value.falloff
+                    };
+                    lock (Instance)
+                    {
+                        Part.PointLight = light;
                     }
                 }
             }
