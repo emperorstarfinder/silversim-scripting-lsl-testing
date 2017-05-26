@@ -175,7 +175,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 Instance = instance;
             }
 
-            public LSLKey key => WithPart<UUID>((ObjectPart p) => p.ID);
+            public LSLKey key => WithPart((ObjectPart p) => p.ID);
 
             public Hovertext HoverText
             {
@@ -356,6 +356,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 get { return WithPart((ObjectPart p) => p.IsScriptedSitOnly.ToLSLBoolean()); }
 
                 set { WithPart((ObjectPart p, bool v) => p.IsScriptedSitOnly = v, value != 0); }
+            }
+
+            public double Buoyancy
+            {
+                get { return WithPart((ObjectPart p) => p.Buoyancy); }
+                set { WithPart((ObjectPart p, double v) => p.Buoyancy = v, value); }
             }
 
             [APIExtension(APIExtension.Properties)]
