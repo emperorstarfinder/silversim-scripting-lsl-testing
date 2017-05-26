@@ -99,6 +99,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
             "Key",
+            "Inventory",
             "Name",
             "Desc",
             "Buoyancy",
@@ -151,6 +152,31 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            private T WithPart<T>(Func<ScriptInstance, ObjectPart, T> getter)
+            {
+                ScriptInstance instance;
+                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance))
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                }
+                lock (instance)
+                {
+                    if (LinkNumber == LINK_THIS)
+                    {
+                        return getter(instance, instance.Part);
+                    }
+                    else
+                    {
+                        ObjectPart p;
+                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        {
+                            throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                        }
+                        return getter(instance, p);
+                    }
+                }
+            }
+
             private void WithPart<T>(Action<ObjectPart, T> setter, T value)
             {
                 ScriptInstance instance;
@@ -199,6 +225,9 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 get { return WithPart((ObjectPart p) => p.Velocity); }
                 set { WithPart((ObjectPart p, Vector3 v) => p.Velocity = v, value); }
             }
+
+            public InventoryProperties.PrimInventory Inventory =>
+                WithPart((ScriptInstance instance, ObjectPart p) => new InventoryProperties.PrimInventory(instance, p));
 
             public Hovertext HoverText
             {
