@@ -99,6 +99,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
             "Key",
+            "Owner",
+            "Creator",
             "Inventory",
             "Name",
             "Desc",
@@ -217,6 +219,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 WeakInstance = new WeakReference<ScriptInstance>(instance);
             }
+
+            public LSLKey Creator => WithPart((ObjectPart p) => p.Creator.ID);
+
+            public LSLKey Owner => WithPart((ObjectPart p) => p.Owner.ID);
 
             public LSLKey Key => WithPart((ObjectPart p) => p.ID);
 

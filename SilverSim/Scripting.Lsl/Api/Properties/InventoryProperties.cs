@@ -33,12 +33,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
     [LSLImplementation]
     [ScriptApiName("PrimInventoryProperties")]
     [Description("PrimInventory Properties API")]
-    [APIAccessibleMembers(
-        "Key",
-        "Name",
-        "Desc",
-        "Owner",
-        "Type")]
     public class InventoryProperties : IPlugin, IScriptApi
     {
         public void Startup(ConfigurationLoader loader)
@@ -48,7 +42,15 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
         [APIExtension(APIExtension.Properties, "inventoryitem")]
         [APIDisplayName("inventoryitem")]
+        [APIAccessibleMembers(
+            "Key",
+            "Name",
+            "Desc",
+            "Owner",
+            "Creator",
+            "Type")]
         [APIIsVariableType]
+        [ImplementsCustomTypecasts]
         public class PrimInventoryItem
         {
             private readonly WeakReference<ScriptInstance> WeakInstance;
@@ -110,7 +112,26 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public LSLKey Owner => With((ObjectPartInventoryItem item) => item.Owner.ID);
 
+            public LSLKey Creator => With((ObjectPartInventoryItem item) => item.Creator.ID);
+
             public LSLKey Key => With((ObjectPartInventoryItem item) => item.AssetID);
+
+            public static implicit operator bool(PrimInventoryItem c)
+            {
+                ScriptInstance instance;
+                ObjectPart part;
+                ObjectPartInventoryItem item;
+                return c.WeakInstance.TryGetTarget(out instance) && c.WeakPart.TryGetTarget(out part) && c.WeakItem.TryGetTarget(out item);
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Script")]
+        public PrimInventoryItem GetScript(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return new PrimInventoryItem(instance, instance.Part, instance.Item);
+            }
         }
 
         [APIExtension(APIExtension.Properties, "inventory")]
