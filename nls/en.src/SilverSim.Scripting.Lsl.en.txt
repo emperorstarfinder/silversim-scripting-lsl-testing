@@ -282,3 +282,5 @@ NoHTTPSSupport=No HTTPS support
 ScriptCalledUnimplementedFunction0=Script called unimplemented function {0}
 DivisionByZeroEncountered=Division by zero encountered
 Function0NotAllowed=Function {0} not allowed
+Member1IsReadOnlyForType0AtVariable2=Member '{1}' of type '{0}' (Variable '{2}') is read only.
+Member1IsWriteOnlyForType0AtVariable2=Member '{1}' of type '{0}' (Variable '{2}') is write only.

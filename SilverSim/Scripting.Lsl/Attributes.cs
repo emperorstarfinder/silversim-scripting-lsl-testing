@@ -72,6 +72,30 @@ namespace SilverSim.Scripting.Lsl
         }
     }
 
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class APIAccessibleMembersAttribute : Attribute
+    {
+        public string[] Members { get; }
+
+        public APIAccessibleMembersAttribute(params string[] members)
+        {
+            Members = members;
+        }
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class APICloneOnAssignmentAttribute : Attribute
+    {
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class APIIsVariableTypeAttribute : Attribute
+    {
+    }
+
     public static class APIExtension
     {
         public const string LightShare = "LightShare";

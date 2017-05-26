@@ -39,8 +39,24 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
     {
         [APILevel(APIFlags.ASSL)]
         [APIDisplayName("hashtable")]
+        [APIAccessibleMembers("keys")]
+        [APIIsVariableType]
         public class Hashtable : Dictionary<string, IValue>
         {
+#pragma warning disable IDE1006 // Benennungsstile
+            public AnArray keys
+#pragma warning restore IDE1006 // Benennungsstile
+            {
+                get
+                {
+                    var res = new AnArray();
+                    foreach(string k in Keys)
+                    {
+                        res.Add(k);
+                    }
+                    return res;
+                }
+            }
         }
 
         public void Startup(ConfigurationLoader loader)
@@ -94,17 +110,6 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         public void HashtableSet(ScriptInstance instance, Hashtable table, string key, LSLKey s)
         {
             table[key] = s;
-        }
-
-        [APILevel(APIFlags.ASSL, "asGetKeys")]
-        public AnArray GetKeys(ScriptInstance instance, Hashtable table)
-        {
-            AnArray res = new AnArray();
-            foreach(string k in table.Keys)
-            {
-                res.Add(k);
-            }
-            return res;
         }
 
         [APILevel(APIFlags.ASSL, "asHash2String")]

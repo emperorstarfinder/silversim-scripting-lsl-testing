@@ -154,6 +154,14 @@ namespace SilverSim.Scripting.Lsl
                     ApiInfo.Types.Remove("long");
                 }
 
+                foreach(KeyValuePair<string, Type> kvp in ApiInfo.Types)
+                {
+                    if(Attribute.GetCustomAttribute(kvp.Value, typeof(APIIsVariableTypeAttribute)) != null)
+                    {
+                        m_ValidVarTypes.Add(kvp.Key, kvp.Value);
+                    }
+                }
+
                 ApiInfo.Types["integer"] = typeof(int);
                 ApiInfo.Types["quaternion"] = typeof(Quaternion);
                 ApiInfo.Types["rotation"] = typeof(Quaternion);
@@ -164,13 +172,23 @@ namespace SilverSim.Scripting.Lsl
                 ApiInfo.Types["vector"] = typeof(Vector3);
                 ApiInfo.Types["void"] = typeof(void);
 
+                m_ValidVarTypes["integer"] = typeof(int);
+                m_ValidVarTypes["quaternion"] = typeof(Quaternion);
+                m_ValidVarTypes["rotation"] = typeof(Quaternion);
+                m_ValidVarTypes["key"] = typeof(LSLKey);
+                m_ValidVarTypes["string"] = typeof(string);
+                m_ValidVarTypes["float"] = typeof(double);
+                m_ValidVarTypes["list"] = typeof(AnArray);
+                m_ValidVarTypes["vector"] = typeof(Vector3);
+
+                if(LanguageExtensions.EnableLongIntegers)
+                {
+                    m_ValidVarTypes["long"] = typeof(long);
+                }
+
                 foreach (KeyValuePair<string, Type> kvp in ApiInfo.Types)
                 {
                     m_ReverseTypeDeclarations[kvp.Value] = kvp.Key;
-                    if(kvp.Value != typeof(void))
-                    {
-                        m_ValidVarTypes.Add(kvp.Key, kvp.Value);
-                    }
                 }
             }
 

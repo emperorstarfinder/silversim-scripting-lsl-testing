@@ -26,6 +26,7 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -134,28 +135,55 @@ namespace SilverSim.Scripting.Lsl
                         }
                         object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
                         m_LeftHandType = GetVarType(varInfo);
-                        if(m_LeftHandType != typeof(Vector3) && m_LeftHandType != typeof(Quaternion))
+                        APIAccessibleMembersAttribute membersAttr;
+                        if (m_LeftHandType == typeof(Vector3) || m_LeftHandType == typeof(Quaternion))
+                        {
+                            switch (m_LeftHand.SubTree[1].Entry)
+                            {
+                                case "x":
+                                case "y":
+                                case "z":
+                                    break;
+
+                                case "s":
+                                    if (m_LeftHandType != typeof(Quaternion))
+                                    {
+                                        throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccessSToVector", "Invalid member access 's' to vector"));
+                                    }
+                                    break;
+
+                                default:
+                                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                            }
+                            m_LeftHandType = typeof(double);
+                        }
+                        else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                        {
+                            string memberName = m_LeftHand.SubTree[1].Entry;
+                            PropertyInfo pi;
+                            FieldInfo fi;
+                            if(!membersAttr.Members.Contains(memberName))
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                            }
+
+                            if((fi = m_LeftHandType.GetField(memberName)) != null)
+                            {
+                                m_LeftHandType = fi.FieldType;
+                            }
+                            else if((pi = m_LeftHandType.GetProperty(memberName)) != null && pi.GetGetMethod() != null)
+                            {
+                                m_LeftHandType = pi.PropertyType;
+                            }
+                            else
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                            }
+                        }
+                        else
                         {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), compileState.MapType(m_LeftHandType)));
                         }
-                        switch(m_LeftHand.SubTree[1].Entry)
-                        {
-                            case "x":
-                            case "y":
-                            case "z":
-                                break;
-
-                            case "s":
-                                if(m_LeftHandType != typeof(Quaternion))
-                                {
-                                    throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccessSToVector", "Invalid member access 's' to vector"));
-                                }
-                                break;
-
-                            default:
-                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
-                        }
-                        m_LeftHandType = typeof(double);
                     }
                     else if (m_LeftHand.Type != Tree.EntryType.Variable)
                     {
@@ -186,28 +214,59 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
                                 m_LeftHandType = GetVarType(varInfo);
-                                if (m_LeftHandType != typeof(Vector3) && m_LeftHandType != typeof(Quaternion))
+                                APIAccessibleMembersAttribute membersAttr;
+                                if (m_LeftHandType == typeof(Vector3) || m_LeftHandType == typeof(Quaternion))
+                                {
+                                    switch (m_LeftHand.SubTree[1].Entry)
+                                    {
+                                        case "x":
+                                        case "y":
+                                        case "z":
+                                            break;
+
+                                        case "s":
+                                            if (m_LeftHandType != typeof(Quaternion))
+                                            {
+                                                throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccessSToVector", "invalid member access 's' to vector"));
+                                            }
+                                            break;
+
+                                        default:
+                                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                                    }
+                                    m_LeftHandType = typeof(double);
+                                }
+                                else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                                {
+                                    string memberName = m_LeftHand.SubTree[1].Entry;
+                                    PropertyInfo pi;
+                                    FieldInfo fi;
+                                    if (!membersAttr.Members.Contains(memberName))
+                                    {
+                                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                                    }
+
+                                    if ((fi = m_LeftHandType.GetField(memberName)) != null)
+                                    {
+                                        m_LeftHandType = fi.FieldType;
+                                    }
+                                    else if ((pi = m_LeftHandType.GetProperty(memberName)) != null && pi.GetGetMethod() != null)
+                                    {
+                                        m_LeftHandType = pi.PropertyType;
+                                        if(pi.GetSetMethod() == null)
+                                        {
+                                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is read only."), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType), m_LeftHand.SubTree[0].Entry));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                                    }
+                                }
+                                else
                                 {
                                     throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), compileState.MapType(m_LeftHandType)));
                                 }
-                                switch (m_LeftHand.SubTree[1].Entry)
-                                {
-                                    case "x":
-                                    case "y":
-                                    case "z":
-                                        break;
-
-                                    case "s":
-                                        if (m_LeftHandType != typeof(Quaternion))
-                                        {
-                                            throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccessSToVector", "invalid member access 's' to vector"));
-                                        }
-                                        break;
-
-                                    default:
-                                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
-                                }
-                                m_LeftHandType = typeof(double);
                             }
                             else if (m_LeftHand.Type != Tree.EntryType.Variable)
                             {
@@ -336,6 +395,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Entry, compileState.MapType(m_LeftHandType)));
                 }
+                APIAccessibleMembersAttribute membersAttr;
                 if (m_LeftHandType == typeof(Vector3))
                 {
                     LocalBuilder lb = DeclareLocal(compileState, m_LeftHandType);
@@ -388,9 +448,57 @@ namespace SilverSim.Scripting.Lsl
                     }
                     throw Return(compileState, typeof(double));
                 }
+                else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                {
+                    string memberName = m_LeftHand.SubTree[1].Entry;
+                    PropertyInfo pi;
+                    FieldInfo fi;
+                    MethodInfo mi;
+                    if (!membersAttr.Members.Contains(memberName))
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                    }
+
+                    if(m_LeftHandType.IsValueType)
+                    {
+                        LocalBuilder lb = DeclareLocal(compileState, m_LeftHandType);
+                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                        compileState.ILGen.Emit(OpCodes.Ldloca, lb);
+                    }
+
+                    if ((fi = m_LeftHandType.GetField(memberName)) != null)
+                    {
+                        if(fi.IsStatic)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Pop);
+                        }
+                        compileState.ILGen.Emit(OpCodes.Ldfld, fi);
+                        throw Return(compileState, fi.FieldType);
+                    }
+                    else if ((pi = m_LeftHandType.GetProperty(memberName)) != null && (mi = pi.GetGetMethod()) != null)
+                    {
+                        if(mi.IsStatic)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Pop);
+                        }
+                        if (mi.IsVirtual)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                        }
+                        else
+                        {
+                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                        }
+                        throw Return(compileState, pi.PropertyType);
+                    }
+                    else
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                    }
+                }
                 else
                 {
-                    throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "OperatorDotCanOnlyBeUsedOnTypeVectorOrRotation", "operator '.' can only be used on type vector or rotation"));
+                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), compileState.MapType(m_LeftHandType)));
                 }
             }
 
@@ -402,47 +510,134 @@ namespace SilverSim.Scripting.Lsl
                 {
                     object varInfo = localVars[m_LeftHand.SubTree[0].Entry];
                     Type varType = GetVarType(varInfo);
-                    ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
-                    compileState.ILGen.Emit(OpCodes.Dup);
-                    compileState.ILGen.BeginScope();
-                    LocalBuilder structLb = compileState.ILGen.DeclareLocal(varType);
-                    LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
-                    compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
-                    GetVarToStack(compileState, varInfo);
-                    compileState.ILGen.Emit(OpCodes.Stloc, structLb);
-                    compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
-                    compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
-                    FieldInfo fi;
-                    switch(m_LeftHand.SubTree[1].Entry)
+                    APIAccessibleMembersAttribute membersAttr;
+                    if (varType == typeof(Vector3) || varType == typeof(Quaternion))
                     {
-                        case "x":
-                            fi = varType.GetField("X");
-                            break;
+                        ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
+                        compileState.ILGen.Emit(OpCodes.Dup);
+                        compileState.ILGen.BeginScope();
+                        LocalBuilder structLb = compileState.ILGen.DeclareLocal(varType);
+                        LocalBuilder copyLb = compileState.ILGen.DeclareLocal(typeof(double));
+                        compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                        GetVarToStack(compileState, varInfo);
+                        compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                        compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                        compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+                        FieldInfo fi;
+                        switch (m_LeftHand.SubTree[1].Entry)
+                        {
+                            case "x":
+                                fi = varType.GetField("X");
+                                break;
 
-                        case "y":
-                            fi = varType.GetField("Y");
-                            break;
+                            case "y":
+                                fi = varType.GetField("Y");
+                                break;
 
-                        case "z":
-                            fi = varType.GetField("Z");
-                            break;
+                            case "z":
+                                fi = varType.GetField("Z");
+                                break;
 
-                        case "s":
-                            fi = varType.GetField("W");
-                            break;
+                            case "s":
+                                fi = varType.GetField("W");
+                                break;
 
-                        default:
-                            fi = null;
-                            break;
+                            default:
+                                fi = null;
+                                break;
+                        }
+                        compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                        compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                        SetVarFromStack(
+                            compileState,
+                            varInfo,
+                            m_LineNumber);
+                        compileState.ILGen.EndScope();
+                        throw Return(compileState, typeof(double));
                     }
-                    compileState.ILGen.Emit(OpCodes.Stfld, fi);
-                    compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                    SetVarFromStack(
-                        compileState,
-                        varInfo,
-                        m_LineNumber);
-                    compileState.ILGen.EndScope();
-                    throw Return(compileState, m_LeftHandType);
+                    else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                    {
+                        string memberName = m_LeftHand.SubTree[1].Entry;
+                        PropertyInfo pi;
+                        FieldInfo fi;
+                        MethodInfo mi = null;
+                        if (!membersAttr.Members.Contains(memberName))
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                        }
+
+                        Type memberType;
+                        if ((fi = m_LeftHandType.GetField(memberName)) != null)
+                        {
+                            /* found field */
+                            memberType = fi.FieldType;
+                        }
+                        else if ((pi = m_LeftHandType.GetProperty(memberName)) != null && (mi = pi.GetGetMethod()) != null)
+                        {
+                            /* found property */
+                            memberType = pi.PropertyType;
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                        }
+
+                        ProcessImplicitCasts(compileState, memberType, m_RightHandType, m_LineNumber);
+                        compileState.ILGen.Emit(OpCodes.Dup);
+                        compileState.ILGen.BeginScope();
+                        LocalBuilder structLb = compileState.ILGen.DeclareLocal(varType);
+                        LocalBuilder copyLb = compileState.ILGen.DeclareLocal(memberType);
+                        compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
+                        GetVarToStack(compileState, varInfo);
+                        if (m_LeftHandType.IsValueType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Stloc, structLb);
+                            compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
+                        }
+                        else if (Attribute.GetCustomAttribute(m_LeftHandType, typeof(APICloneOnAssignmentAttribute)) != null)
+                        {
+                            ConstructorInfo copyConstructor = m_LeftHandType.GetConstructor(new Type[] { m_LeftHandType });
+                            if(copyConstructor == null)
+                            {
+                                throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                            }
+                            compileState.ILGen.Emit(OpCodes.Newobj, copyConstructor);
+                            compileState.ILGen.Emit(OpCodes.Dup);
+                            SetVarFromStack(
+                                compileState,
+                                varInfo,
+                                m_LineNumber);
+                        }
+
+                        compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
+
+                        if (fi != null)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                        }
+                        else if(mi.IsVirtual)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                        }
+                        else
+                        {
+                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                        }
+                        if (m_LeftHandType.IsValueType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
+                            SetVarFromStack(
+                                compileState,
+                                varInfo,
+                                m_LineNumber);
+                        }
+                        compileState.ILGen.EndScope();
+                        throw Return(compileState, memberType);
+                    }
+                    else
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), compileState.MapType(m_LeftHandType)));
+                    }
                 }
                 else
                 {
@@ -465,14 +660,45 @@ namespace SilverSim.Scripting.Lsl
                 LocalBuilder componentLocal = null;
                 object varInfo;
                 bool isComponentAccess = false;
+                APIAccessibleMembersAttribute membersAttr;
+                FieldInfo memberField = null;
+                PropertyInfo memberProperty = null;
+                Type memberCompoundType = null;
                 if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
                 {
                     varInfo = localVars[m_LeftHand.SubTree[0].Entry];
-                    m_LeftHandType = typeof(double);
                     Type varType = GetVarToStack(compileState, varInfo);
+                    memberCompoundType = varType;
                     componentLocal = DeclareLocal(compileState, varType);
                     compileState.ILGen.Emit(OpCodes.Stloc, componentLocal);
                     isComponentAccess = true;
+                    if(m_LeftHandType == typeof(Vector3) || m_LeftHandType == typeof(Quaternion))
+                    {
+                        m_LeftHandType = typeof(double);
+                    }
+                    else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                    {
+                        if((memberField = m_LeftHandType.GetField(m_LeftHand.SubTree[1].Entry)) != null)
+                        {
+                            m_LeftHandType = memberField.FieldType;
+                        }
+                        else if((memberProperty = m_LeftHandType.GetProperty(m_LeftHand.SubTree[1].Entry)) != null)
+                        {
+                            m_LeftHandType = memberProperty.PropertyType;
+                            if(memberProperty.GetGetMethod() == null)
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsWriteOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is write only."), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType), m_LeftHand.SubTree[0].Entry));
+                            }
+                            if (memberProperty.GetSetMethod() == null)
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is read only."), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType), m_LeftHand.SubTree[0].Entry));
+                            }
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                        }
+                    }
                 }
                 else
                 {
@@ -668,42 +894,101 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ILGen.Emit(OpCodes.Dup);
                 if(isComponentAccess)
                 {
-                    Type varType = GetVarType(varInfo);
-                    LocalBuilder resultLocal = DeclareLocal(compileState, m_LeftHandType);
-                    compileState.ILGen.Emit(OpCodes.Stloc, resultLocal);
-                    compileState.ILGen.Emit(OpCodes.Ldloca, componentLocal);
-                    compileState.ILGen.Emit(OpCodes.Ldloc, resultLocal);
-                    string fieldName;
-                    switch(m_LeftHand.SubTree[1].Entry)
+                    if (memberCompoundType == typeof(Vector3) || memberCompoundType == typeof(Quaternion))
                     {
-                        case "x":
-                            fieldName = "X";
-                            break;
+                        compileState.ILGen.BeginScope();
+                        LocalBuilder resultLocal = DeclareLocal(compileState, m_LeftHandType);
+                        compileState.ILGen.Emit(OpCodes.Stloc, resultLocal);
+                        compileState.ILGen.Emit(OpCodes.Ldloca, componentLocal);
+                        compileState.ILGen.Emit(OpCodes.Ldloc, resultLocal);
+                        string fieldName;
+                        switch (m_LeftHand.SubTree[1].Entry)
+                        {
+                            case "x":
+                                fieldName = "X";
+                                break;
 
-                        case "y":
-                            fieldName = "Y";
-                            break;
+                            case "y":
+                                fieldName = "Y";
+                                break;
 
-                        case "z":
-                            fieldName = "Z";
-                            break;
+                            case "z":
+                                fieldName = "Z";
+                                break;
 
-                        case "s":
-                            if(typeof(Quaternion) != varType)
-                            {
-                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "VectorDoesNothaveA0Member", "'vector' does not have a '{0}' member"), m_LeftHand.SubTree[1].Entry));
-                            }
-                            fieldName = "W";
-                            break;
+                            case "s":
+                                if (typeof(Quaternion) != memberCompoundType)
+                                {
+                                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "VectorDoesNothaveA0Member", "'vector' does not have a '{0}' member"), m_LeftHand.SubTree[1].Entry));
+                                }
+                                fieldName = "W";
+                                break;
 
-                        default:
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0DoesNotHaveA1Member", "'{0}' does not have a '{1}' member"), compileState.MapType(varType), m_LeftHand.SubTree[1].Entry));
+                            default:
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0DoesNotHaveA1Member", "'{0}' does not have a '{1}' member"), compileState.MapType(memberCompoundType), m_LeftHand.SubTree[1].Entry));
+                        }
+
+                        compileState.ILGen.Emit(OpCodes.Stfld, memberCompoundType.GetField(fieldName));
+                        compileState.ILGen.Emit(OpCodes.Ldloc, componentLocal);
+                        SetVarFromStack(compileState, varInfo, m_LineNumber);
+                        compileState.ILGen.EndScope();
+                        throw Return(compileState, typeof(double));
                     }
+                    else if(memberField != null || memberProperty != null)
+                    {
+                        compileState.ILGen.BeginScope();
+                        LocalBuilder resultLocal = DeclareLocal(compileState, m_LeftHandType);
+                        compileState.ILGen.Emit(OpCodes.Stloc, resultLocal);
+                        if(memberCompoundType.IsValueType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloca, componentLocal);
+                        }
+                        else
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, componentLocal);
+                            if(Attribute.GetCustomAttribute(memberCompoundType, typeof(APICloneOnAssignmentAttribute)) != null)
+                            {
+                                ConstructorInfo copyConstructor = memberCompoundType.GetConstructor(new Type[] { memberCompoundType });
+                                if(copyConstructor == null)
+                                {
+                                    throw new CompilerException(m_LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                                }
+                                compileState.ILGen.Emit(OpCodes.Newobj, copyConstructor);
+                                compileState.ILGen.Emit(OpCodes.Dup);
+                                SetVarFromStack(compileState, varInfo, m_LineNumber);
+                            }
+                        }
+                        compileState.ILGen.Emit(OpCodes.Ldloc, resultLocal);
 
-                    compileState.ILGen.Emit(OpCodes.Stfld, varType.GetField(fieldName));
-                    compileState.ILGen.Emit(OpCodes.Ldloc, componentLocal);
-                    SetVarFromStack(compileState, varInfo, m_LineNumber);
-                    throw Return(compileState, typeof(double));
+                        if (memberField != null)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Stfld, memberField);
+                        }
+                        else if (memberProperty != null)
+                        {
+                            MethodInfo setterMethod = memberProperty.GetSetMethod();
+                            if (setterMethod.IsVirtual)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Callvirt, setterMethod);
+                            }
+                            else
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, setterMethod);
+                            }
+                        }
+
+                        if(memberCompoundType.IsValueType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, componentLocal);
+                            SetVarFromStack(compileState, varInfo, m_LineNumber);
+                        }
+                        compileState.ILGen.EndScope();
+                        throw Return(compileState, m_LeftHandType);
+                    }
+                    else
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), compileState.MapType(m_LeftHandType)));
+                    }
                 }
                 else
                 {
