@@ -36,19 +36,17 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
     {
         [APILevel(APIFlags.ASSL)]
         [APIDisplayName("hashtable")]
-        [APIAccessibleMembers("keys")]
+        [APIAccessibleMembers("Keys")]
         [APIIsVariableType]
         [APICloneOnAssignment]
         public class Hashtable : Dictionary<string, IValue>
         {
-#pragma warning disable IDE1006 // Benennungsstile
-            public AnArray keys
-#pragma warning restore IDE1006 // Benennungsstile
+            public new AnArray Keys
             {
                 get
                 {
                     var res = new AnArray();
-                    foreach(string k in Keys)
+                    foreach(string k in base.Keys)
                     {
                         res.Add(k);
                     }

@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Globalization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -171,7 +172,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 m_LeftHandType = fi.FieldType;
                             }
-                            else if((pi = m_LeftHandType.GetProperty(memberName)) != null && pi.GetGetMethod() != null)
+                            else if((pi = m_LeftHandType.GetMemberProperty(compileState, memberName)) != null && pi.GetGetMethod() != null)
                             {
                                 m_LeftHandType = pi.PropertyType;
                             }
@@ -250,7 +251,7 @@ namespace SilverSim.Scripting.Lsl
                                     {
                                         m_LeftHandType = fi.FieldType;
                                     }
-                                    else if ((pi = m_LeftHandType.GetProperty(memberName)) != null && pi.GetGetMethod() != null)
+                                    else if ((pi = m_LeftHandType.GetMemberProperty(compileState, memberName)) != null && pi.GetGetMethod() != null)
                                     {
                                         m_LeftHandType = pi.PropertyType;
                                         if(pi.GetSetMethod() == null)
@@ -476,7 +477,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                         throw Return(compileState, fi.FieldType);
                     }
-                    else if ((pi = m_LeftHandType.GetProperty(memberName)) != null && (mi = pi.GetGetMethod()) != null)
+                    else if ((pi = m_LeftHandType.GetMemberProperty(compileState, memberName)) != null && (mi = pi.GetGetMethod()) != null)
                     {
                         if(mi.IsStatic)
                         {
@@ -573,7 +574,7 @@ namespace SilverSim.Scripting.Lsl
                             /* found field */
                             memberType = fi.FieldType;
                         }
-                        else if ((pi = varType.GetProperty(memberName)) != null && (mi = pi.GetSetMethod()) != null)
+                        else if ((pi = varType.GetMemberProperty(compileState, memberName)) != null && (mi = pi.GetSetMethod()) != null)
                         {
                             /* found property */
                             memberType = pi.PropertyType;
@@ -684,7 +685,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             m_LeftHandType = memberField.FieldType;
                         }
-                        else if((memberProperty = m_LeftHandType.GetProperty(m_LeftHand.SubTree[1].Entry)) != null)
+                        else if((memberProperty = m_LeftHandType.GetMemberProperty(compileState, m_LeftHand.SubTree[1].Entry)) != null)
                         {
                             m_LeftHandType = memberProperty.PropertyType;
                             if(memberProperty.GetGetMethod() == null)

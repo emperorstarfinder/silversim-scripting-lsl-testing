@@ -30,7 +30,9 @@ using SilverSim.Types.Asset;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
 using System.Xml;
+using static SilverSim.Scripting.Lsl.LSLCompiler.ApiInfo;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -461,6 +463,30 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
             return assetID;
+        }
+
+        internal static System.Reflection.PropertyInfo GetMemberProperty(this Type t, LSLCompiler.CompileState cs, string name)
+        {
+            try
+            {
+                return t.GetProperty(name);
+            }
+            catch
+            {
+                foreach (System.Reflection.PropertyInfo prop in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    if (prop.Name != name)
+                    {
+                        continue;
+                    }
+
+                    if (cs.IsValidType(prop.PropertyType))
+                    {
+                        return prop;
+                    }
+                }
+                return null;
+            }
         }
     }
 }
