@@ -98,6 +98,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             "material",
             "isphysics",
             "istemponrez",
+            "isphantom",
             "size",
             "hovertext",
             "allowunsit",
@@ -106,80 +107,97 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [Serializable]
         public sealed class Prim
         {
-            public ScriptInstance Instance { get; private set; }
-            public ObjectPart Part { get; private set; }
+            private ScriptInstance Instance { get; set; }
+            private T WithPart<T>(Func<ObjectPart, T> getter)
+            {
+                if(Instance == null)
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                }
+                lock(Instance)
+                {
+                    if (LinkNumber == LINK_THIS)
+                    {
+                        return getter(Instance.Part);
+                    }
+                    else
+                    {
+                        ObjectPart p;
+                        if(!Instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        {
+                            throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                        }
+                        return getter(p);
+                    }
+                }
+            }
+
+            private void WithPart<T>(Action<ObjectPart, T> setter, T value)
+            {
+                if (Instance == null)
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                }
+                lock (Instance)
+                {
+                    if (LinkNumber == LINK_THIS)
+                    {
+                        setter(Instance.Part, value);
+                    }
+                    else
+                    {
+                        ObjectPart p;
+                        if (!Instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        {
+                            throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                        }
+                        setter(Instance.Part, value);
+                    }
+                }
+            }
 
             public int LinkNumber;
 
             public Prim()
             {
-
+                LinkNumber = LINK_SET;
             }
 
-            public Prim(ScriptInstance instance, ObjectPart part)
+            public Prim(ScriptInstance instance, int linkNumber)
             {
                 Instance = instance;
-                Part = part;
-                LinkNumber = part.LinkNumber;
+                LinkNumber = linkNumber;
             }
 
             public void RestoreFromSerialization(ScriptInstance instance)
             {
                 Instance = instance;
-                ObjectPart part;
-                instance.Part.ObjectGroup.TryGetValue(LinkNumber, out part);
-                Part = part;
             }
 
-            public LSLKey key
-            {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.ID;
-                    }
-                }
-            }
+            public LSLKey key => WithPart<UUID>((ObjectPart p) => p.ID);
 
             public Hovertext hovertext
             {
                 get
                 {
-                    if (Part == null || Instance == null)
+                    return WithPart((ObjectPart p) =>
                     {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        ObjectPart.TextParam text = Part.Text;
+                        ObjectPart.TextParam text = p.Text;
                         return new Hovertext()
                         {
                             text = text.Text,
                             color = text.TextColor,
                             alpha = text.TextColor.A
                         };
-                    }
+                    });
                 }
                 set
                 {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    var text = new ObjectPart.TextParam
+                    WithPart((ObjectPart p, ObjectPart.TextParam t) => p.Text = t, new ObjectPart.TextParam
                     {
                         Text = value.text,
                         TextColor = new ColorAlpha(value.color, value.alpha)
-                    };
-                    lock(Instance)
-                    {
-                        Part.Text = text;
-                    }
+                    });
                 }
             }
 
@@ -187,13 +205,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 get
                 {
-                    if (Part == null || Instance == null)
+                    return WithPart((ObjectPart p) =>
                     {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        ObjectPart.PointLightParam light = Part.PointLight;
+                        ObjectPart.PointLightParam light = p.PointLight;
                         return new Pointlight()
                         {
                             enabled = light.IsLight.ToLSLBoolean(),
@@ -202,437 +216,152 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             radius = light.Radius,
                             falloff = light.Falloff
                         };
-                    }
+                    });
                 }
                 set
                 {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    var light = new ObjectPart.PointLightParam
+                    WithPart((ObjectPart p, ObjectPart.PointLightParam l) => p.PointLight = l, new ObjectPart.PointLightParam
                     {
                         IsLight = value.enabled != 0,
                         LightColor = new Color(value.color),
                         Intensity = value.intensity,
                         Radius = value.radius,
                         Falloff = value.falloff
-                    };
-                    lock (Instance)
-                    {
-                        Part.PointLight = light;
-                    }
+                    });
                 }
             }
 
             public string desc
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.Description;
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.Description = value;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.Description); }
+
+                set { WithPart((ObjectPart p, string d) => p.Description = d, value); }
             }
 
             public string name
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.Name;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.Name); }
 
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.Name = value;
-                    }
-                }
+
+                set { WithPart((ObjectPart p, string d) => p.Name = d, value); }
             }
 
             public int allowinventorydrop
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.IsAllowedDrop.ToLSLBoolean();
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.IsAllowedDrop = value != 0;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.IsAllowedDrop.ToLSLBoolean()); }
+
+                set { WithPart((ObjectPart p, bool v) => p.IsAllowedDrop = v, value != 0); }
             }
 
             public Quaternion localrot
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.LocalRotation;
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.LocalRotation = value;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.LocalRotation); }
+
+                set { WithPart((ObjectPart p, Quaternion q) => p.LocalRotation = q, value); }
             }
 
             public Vector3 size
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.Size;
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.Size = value;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.Size); }
+
+                set { WithPart((ObjectPart p, Vector3 v) => p.Size = v, value); }
             }
 
             public Vector3 localpos
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.LocalPosition;
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.LocalPosition = value;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.LocalPosition); }
+
+                set { WithPart((ObjectPart p, Vector3 v) => p.LocalPosition = v, value); }
             }
 
             public Quaternion rotation
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.Rotation;
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.Rotation = value;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.Rotation); }
+
+                set { WithPart((ObjectPart p, Quaternion q) => p.Rotation = q, value); }
             }
 
             public Vector3 position
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.Position;
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.Position = value;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.Position); }
+
+                set { WithPart((ObjectPart p, Vector3 v) => p.Position = v, value); }
             }
 
             public int physicsshapetype
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return (int)Part.PhysicsShapeType;
-                    }
-                }
+                get { return (int)WithPart((ObjectPart p) => p.PhysicsShapeType); }
+
                 set
                 {
-                    if (Part == null || Instance == null)
+                    if (value >= (int)PrimitivePhysicsShapeType.Prim && value <= (int)PrimitivePhysicsShapeType.Convex)
                     {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        if (value >= (int)PrimitivePhysicsShapeType.Prim && value <= (int)PrimitivePhysicsShapeType.Convex)
-                        {
-                            Part.PhysicsShapeType = (PrimitivePhysicsShapeType)value;
-                        }
+                        WithPart((ObjectPart p, PrimitivePhysicsShapeType s) => p.PhysicsShapeType = s,
+                            (PrimitivePhysicsShapeType)value);
                     }
                 }
             }
 
             public int material
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return (int)Part.Material;
-                    }
-                }
+                get { return (int)WithPart((ObjectPart p) => p.Material); }
+
                 set
                 {
-                    if (Part == null || Instance == null)
+                    if (value >= (int)PrimitiveMaterial.Stone && value <= (int)PrimitiveMaterial.Light)
                     {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        if (value >= (int)PrimitiveMaterial.Stone && value <= (int)PrimitiveMaterial.Light)
-                        {
-                            Part.Material = (PrimitiveMaterial)value;
-                        }
+                        WithPart((ObjectPart p, PrimitiveMaterial m) => p.Material = m, (PrimitiveMaterial)value);
                     }
                 }
+            }
+
+            public int isphantom
+            {
+                get { return WithPart((ObjectPart p) => p.IsPhantom.ToLSLBoolean()); }
+
+                set { WithPart((ObjectPart p, bool v) => p.IsPhantom = v, value != 0); }
             }
 
             public int isphysics
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.IsPhysics.ToLSLBoolean();
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.IsPhysics = value != 0;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.IsPhysics.ToLSLBoolean()); }
+
+                set { WithPart((ObjectPart p, bool v) => p.IsPhysics = v, value != 0); }
             }
 
             public int istemponrez
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.ObjectGroup.IsTempOnRez.ToLSLBoolean();
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.ObjectGroup.IsTempOnRez = value != 0;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.ObjectGroup.IsTempOnRez.ToLSLBoolean()); }
+
+                set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsTempOnRez = v, value != 0); }
             }
 
             public int isvolumedetect
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.ObjectGroup.IsVolumeDetect.ToLSLBoolean();
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.ObjectGroup.IsVolumeDetect = value != 0;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.ObjectGroup.IsVolumeDetect.ToLSLBoolean()); }
+
+                set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsVolumeDetect = v, value != 0); }
             }
 
             public int allowunsit
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.AllowUnsit.ToLSLBoolean();
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.AllowUnsit = value != 0;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.AllowUnsit.ToLSLBoolean()); }
+
+                set { WithPart((ObjectPart p, bool v) => p.AllowUnsit = v, value != 0); }
             }
 
             public int scriptedsitonly
             {
-                get
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        return Part.IsScriptedSitOnly.ToLSLBoolean();
-                    }
-                }
-                set
-                {
-                    if (Part == null || Instance == null)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
-                    }
-                    lock (Instance)
-                    {
-                        Part.IsScriptedSitOnly = value != 0;
-                    }
-                }
+                get { return WithPart((ObjectPart p) => p.IsScriptedSitOnly.ToLSLBoolean()); }
+
+                set { WithPart((ObjectPart p, bool v) => p.IsScriptedSitOnly = v, value != 0); }
             }
 
             [APIExtension(APIExtension.Properties)]
-            public static implicit operator bool(Prim c)
-            {
-                return c.Part != null;
-            }
+            public static implicit operator bool(Prim c) => c.LinkNumber > 0;
 
             [APIExtension(APIExtension.Properties)]
-            public static implicit operator int(Prim c)
-            {
-                return c.Part != null ? c.Part.LinkNumber : 0;
-            }
+            public static implicit operator int(Prim c) => c.LinkNumber;
         }
 
 #pragma warning restore IDE1006
@@ -642,19 +371,61 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                return new Prim(instance, instance.Part);
+                return new Prim(instance, instance.Part.LinkNumber);
             }
         }
 
-        [APIExtension(APIExtension.Properties, "LINK")]
-        public Prim GetLink(ScriptInstance instance, int linkno)
+        [APIExtension(APIExtension.Properties, "linkset")]
+        [APIDisplayName("linkset")]
+        public class LinkSetAccessor
+        {
+            private readonly ScriptInstance Instance;
+
+            public LinkSetAccessor(ScriptInstance instance)
+            {
+                Instance = instance;
+            }
+
+            public Prim this[int linkno]
+            {
+                get
+                {
+                    lock (Instance)
+                    {
+                        if (linkno == LINK_ROOT)
+                        {
+                            linkno = 1;
+                        }
+                        return new Prim(Instance, linkno);
+                    }
+                }
+            }
+
+            public Prim this[string name]
+            {
+                get
+                {
+                    lock(Instance)
+                    {
+                        foreach (ObjectPart p in Instance.Part.ObjectGroup.ValuesByKey1)
+                        {
+                            if(p.Name == name)
+                            {
+                                return new Prim(Instance, p.LinkNumber);
+                            }
+                        }
+                    }
+                    return new Prim();
+                }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "LinkSet")]
+        public LinkSetAccessor GetLink(ScriptInstance instance)
         {
             lock(instance)
             {
-                ObjectPart part;
-                return (instance.Part.ObjectGroup.TryGetValue(linkno, out part)) ?
-                    new Prim(instance, instance.Part) :
-                    new Prim();
+                return new LinkSetAccessor(instance);
             }
         }
     }

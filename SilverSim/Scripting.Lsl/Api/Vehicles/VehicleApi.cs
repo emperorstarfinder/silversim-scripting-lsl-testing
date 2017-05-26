@@ -410,5 +410,197 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 }
             }
         }
+
+        [APIExtension(APIExtension.Properties, "vehicle_angular")]
+        [APIDisplayName("vehicle_angular")]
+        [APIAccessibleMembers(
+            "deflectionefficency",
+            "deflectiontimescale",
+            "motordecaytimescale")]
+        public class VehicleAngularData
+        {
+            private readonly ScriptInstance Instance;
+
+            public VehicleAngularData(ScriptInstance instance)
+            {
+                Instance = instance;
+            }
+
+            /*
+                    case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularFrictionTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_DIRECTION:
+                        thisGroup[VehicleVectorParamId.AngularMotorDirection] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorDecayTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorTimescale] = vec;
+                        break;
+
+             */
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_linear")]
+        [APIDisplayName("vehicle_linear")]
+        [APIAccessibleMembers(
+            "frictiontimescale",
+            "motordirection",
+            "motoroffset",
+            "motordecaytimescale",
+            "motortimescale")]
+        public class VehicleLinearData
+        {
+            private readonly ScriptInstance Instance;
+
+            public VehicleLinearData(ScriptInstance instance)
+            {
+                Instance = instance;
+            }
+
+            public Vector3 frictiontimescale
+            {
+                get
+                {
+                    lock(Instance)
+                    {
+                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale];
+                    }
+                }
+                set
+                {
+                    lock(Instance)
+                    {
+                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale] = value;
+                    }
+                }
+            }
+
+            public Vector3 motordirection
+            {
+                get
+                {
+                    lock(Instance)
+                    {
+                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection];
+                    }
+                }
+                set
+                {
+                    lock(Instance)
+                    {
+                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection] = value;
+                    }
+                }
+            }
+
+            public Vector3 motoroffset
+            {
+                get
+                {
+                    lock(Instance)
+                    {
+                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset];
+                    }
+                }
+                set
+                {
+                    lock(Instance)
+                    {
+                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset] = value;
+                    }
+                }
+            }
+
+            public Vector3 motordecaytimescale
+            {
+                get
+                {
+                    lock(Instance)
+                    {
+                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDecayTimescale];
+                    }
+                }
+                set
+                {
+                    lock(Instance)
+                    {
+                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDecayTimescale] = value;
+                    }
+                }
+            }
+
+            public Vector3 motortimescale
+            {
+                get
+                {
+                    lock(Instance)
+                    {
+                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorTimescale];
+                    }
+                }
+                set
+                {
+                    lock(Instance)
+                    {
+                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorTimescale] = value;
+                    }
+                }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle")]
+        [APIDisplayName("vehicle")]
+        [APIAccessibleMembers(
+            "type")]
+        public class VehicleData
+        {
+            private readonly ScriptInstance Instance;
+            private readonly VehicleApi m_Api;
+
+            public VehicleData(VehicleApi api, ScriptInstance instance)
+            {
+                m_Api = api;
+                Instance = instance;
+            }
+
+            public int type
+            {
+                get
+                {
+                    lock (Instance)
+                    {
+                        return (int)Instance.Part.ObjectGroup.VehicleType;
+                    }
+                }
+                set
+                {
+                    m_Api.SetVehicleType(Instance, value);
+                }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Vehicle")]
+        public VehicleData GetVehicle(ScriptInstance instance)
+        {
+            return new VehicleData(this, instance);
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleLinear")]
+        public VehicleLinearData GetVehicleLinear(ScriptInstance instance)
+        {
+            return new VehicleLinearData(instance);
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleAngular")]
+        public VehicleLinearData GetVehicleAngular(ScriptInstance instance)
+        {
+            return new VehicleLinearData(instance);
+        }
     }
 }

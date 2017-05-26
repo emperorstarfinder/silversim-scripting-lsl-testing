@@ -182,6 +182,12 @@ namespace SilverSim.Scripting.Lsl
                             innerExpressionReturn = null;
                             break;
 
+                        case Tree.EntryType.ThisOperator:
+                            expressionStack.Insert(0, new ThisOperatorExpression(
+                                functionTree,
+                                lineNumber));
+                            break;
+
                         case Tree.EntryType.OperatorLeftUnary:
                             switch (functionTree.Entry)
                             {

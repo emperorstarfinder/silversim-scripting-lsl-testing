@@ -53,7 +53,8 @@ namespace SilverSim.Scripting.Lsl.Expression
             LevelEnd, /* intermediate step */
             Level,
             ExpressionTree,
-            Variable
+            Variable,
+            ThisOperator
         }
 
         public bool ProcessedOpSort;

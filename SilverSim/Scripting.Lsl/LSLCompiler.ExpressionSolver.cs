@@ -1588,6 +1588,7 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.DeclarationArgument:
                             case Tree.EntryType.Vector:
                             case Tree.EntryType.Rotation:
+                            case Tree.EntryType.ThisOperator:
                                 enumeratorStack.Add(elem);
                                 break;
 
@@ -1612,6 +1613,7 @@ namespace SilverSim.Scripting.Lsl
                         case Tree.EntryType.Function:
                         case Tree.EntryType.Vector:
                         case Tree.EntryType.Rotation:
+                        case Tree.EntryType.ThisOperator:
                             break;
 
                         default:
@@ -1749,6 +1751,7 @@ namespace SilverSim.Scripting.Lsl
                             case Tree.EntryType.OperatorBinary:
                             case Tree.EntryType.OperatorLeftUnary:
                             case Tree.EntryType.OperatorRightUnary:
+                            case Tree.EntryType.ThisOperator:
                                 enumeratorStack.Add(elem);
                                 break;
 
@@ -1932,6 +1935,7 @@ namespace SilverSim.Scripting.Lsl
                         case Tree.EntryType.OperatorRightUnary:
                         case Tree.EntryType.Vector:
                         case Tree.EntryType.Rotation:
+                        case Tree.EntryType.ThisOperator:
                             break;
 
                         default:
@@ -2350,16 +2354,39 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 resolvetree.SubTree[startPos].SubTree.AddRange(resolvetree.SubTree.GetRange(startPos + 1, i - startPos - 1));
                             }
-                            resolvetree.SubTree.RemoveRange(startPos + 1, i - startPos);
 
-                            OrderBrackets_SeparateArguments(
-                                resolvetree.SubTree[startPos],
-                                this.GetLanguageString(currentCulture, "ListElement", "list element"),
-                                Tree.EntryType.DeclarationArgument,
-                                lineNumber,
-                                currentCulture);
+                            if (startPos > 0 && resolvetree.SubTree[startPos - 1].Type == Tree.EntryType.Variable)
+                            {
+                                var thisOpTree = new Tree();
+                                Tree varTree = resolvetree.SubTree[startPos - 1];
+                                thisOpTree.Type = Tree.EntryType.ThisOperator;
+                                resolvetree.SubTree[startPos - 1] = thisOpTree;
+                                resolvetree.SubTree[startPos - 1].SubTree = resolvetree.SubTree[startPos].SubTree;
+                                resolvetree.SubTree.RemoveRange(startPos, i - startPos + 1);
+                                OrderBrackets_SeparateArguments(
+                                    resolvetree.SubTree[startPos - 1],
+                                    "parameter",
+                                    Tree.EntryType.FunctionArgument,
+                                    lineNumber,
+                                    currentCulture);
+                                thisOpTree.SubTree.Insert(0, varTree);
 
-                            i = startPos + 1;
+                                i = startPos;
+                            }
+                            else
+                            {
+                                resolvetree.SubTree.RemoveRange(startPos + 1, i - startPos);
+
+                                OrderBrackets_SeparateArguments(
+                                    resolvetree.SubTree[startPos],
+                                    this.GetLanguageString(currentCulture, "ListElement", "list element"),
+                                    Tree.EntryType.DeclarationArgument,
+                                    lineNumber,
+                                    currentCulture);
+
+
+                                i = startPos + 1;
+                            }
                         }
                         break;
 
