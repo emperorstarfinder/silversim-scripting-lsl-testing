@@ -473,6 +473,7 @@ namespace SilverSim.Scripting.Lsl
             }
             catch
             {
+                System.Reflection.PropertyInfo pInfo = null;
                 foreach (System.Reflection.PropertyInfo prop in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                 {
                     if (prop.Name != name)
@@ -482,10 +483,14 @@ namespace SilverSim.Scripting.Lsl
 
                     if (cs.IsValidType(prop.PropertyType))
                     {
-                        return prop;
+                        if(pInfo != null)
+                        {
+                            throw new AmbiguousMatchException();
+                        }
+                        pInfo = prop;
                     }
                 }
-                return null;
+                return pInfo;
             }
         }
     }
