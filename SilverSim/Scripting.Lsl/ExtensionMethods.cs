@@ -471,7 +471,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return t.GetProperty(name);
             }
-            catch
+            catch(AmbiguousMatchException)
             {
                 System.Reflection.PropertyInfo pInfo = null;
                 foreach (System.Reflection.PropertyInfo prop in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
