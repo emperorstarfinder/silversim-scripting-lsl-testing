@@ -115,6 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             "IsTempOnRez",
             "IsPhantom",
             "Size",
+            "Velocity",
             "HoverText",
             "AllowUnsit",
             "ScriptedSitOnly",
@@ -190,6 +191,12 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
 
             public LSLKey Key => WithPart((ObjectPart p) => p.ID);
+
+            public Vector3 Velocity
+            {
+                get { return WithPart((ObjectPart p) => p.Velocity); }
+                set { WithPart((ObjectPart p, Vector3 v) => p.Velocity = v, value); }
+            }
 
             public Hovertext HoverText
             {
