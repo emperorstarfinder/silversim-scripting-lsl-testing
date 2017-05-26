@@ -1618,6 +1618,7 @@ namespace SilverSim.Scripting.Lsl
                             throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
                     }
 
+                    /*
                     switch (tree.SubTree[pos + 1].Entry)
                     {
                         case "x":
@@ -1628,7 +1629,7 @@ namespace SilverSim.Scripting.Lsl
 
                         default:
                             throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidElementSelector0", "invalid element selector '{0}'"), tree.SubTree[pos + 1].Entry));
-                    }
+                    }*/
 
                     enumeratorStack.Add(tree.SubTree[pos - 1]);
                     elem.SubTree.Add(tree.SubTree[pos - 1]);

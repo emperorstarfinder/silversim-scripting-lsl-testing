@@ -391,9 +391,10 @@ namespace SilverSim.Scripting.Lsl
                 CompileState compileState)
             {
                 if (m_RightHand.Type != Tree.EntryType.Unknown &&
-                    m_RightHand.Type != Tree.EntryType.Variable)
+                    m_RightHand.Type != Tree.EntryType.Variable &&
+                    m_RightHand.Type != Tree.EntryType.ReservedWord)
                 {
-                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Entry, compileState.MapType(m_LeftHandType)));
+                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Entry + m_RightHand.Type, compileState.MapType(m_LeftHandType)));
                 }
                 APIAccessibleMembersAttribute membersAttr;
                 if (m_LeftHandType == typeof(Vector3))
@@ -450,13 +451,13 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
                 {
-                    string memberName = m_LeftHand.SubTree[1].Entry;
+                    string memberName = m_RightHand.Entry;
                     PropertyInfo pi;
                     FieldInfo fi;
                     MethodInfo mi;
                     if (!membersAttr.Members.Contains(memberName))
                     {
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_RightHand.Entry, compileState.MapType(m_LeftHandType)));
                     }
 
                     if(m_LeftHandType.IsValueType)
@@ -493,7 +494,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_LeftHand.SubTree[1].Entry, compileState.MapType(m_LeftHandType)));
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_RightHand.Entry, compileState.MapType(m_LeftHandType)));
                     }
                 }
                 else
@@ -555,7 +556,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.EndScope();
                         throw Return(compileState, typeof(double));
                     }
-                    else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                    else if((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
                     {
                         string memberName = m_LeftHand.SubTree[1].Entry;
                         PropertyInfo pi;
@@ -567,12 +568,12 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         Type memberType;
-                        if ((fi = m_LeftHandType.GetField(memberName)) != null)
+                        if ((fi = varType.GetField(memberName)) != null)
                         {
                             /* found field */
                             memberType = fi.FieldType;
                         }
-                        else if ((pi = m_LeftHandType.GetProperty(memberName)) != null && (mi = pi.GetGetMethod()) != null)
+                        else if ((pi = varType.GetProperty(memberName)) != null && (mi = pi.GetSetMethod()) != null)
                         {
                             /* found property */
                             memberType = pi.PropertyType;
@@ -585,12 +586,13 @@ namespace SilverSim.Scripting.Lsl
                         ProcessImplicitCasts(compileState, memberType, m_RightHandType, m_LineNumber);
                         compileState.ILGen.Emit(OpCodes.Dup);
                         compileState.ILGen.BeginScope();
-                        LocalBuilder structLb = compileState.ILGen.DeclareLocal(varType);
                         LocalBuilder copyLb = compileState.ILGen.DeclareLocal(memberType);
                         compileState.ILGen.Emit(OpCodes.Stloc, copyLb);
                         GetVarToStack(compileState, varInfo);
-                        if (m_LeftHandType.IsValueType)
+                        LocalBuilder structLb = null;
+                        if (varType.IsValueType)
                         {
+                            structLb = compileState.ILGen.DeclareLocal(varType);
                             compileState.ILGen.Emit(OpCodes.Stloc, structLb);
                             compileState.ILGen.Emit(OpCodes.Ldloca, structLb);
                         }
@@ -623,7 +625,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
-                        if (m_LeftHandType.IsValueType)
+                        if (varType.IsValueType)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
                             SetVarFromStack(

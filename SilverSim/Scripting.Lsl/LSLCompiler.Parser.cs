@@ -76,6 +76,10 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAType", type + " cannot be declared as '{0}'. '{0}' is a type."), name));
             }
+            else if (cs.ApiInfo.Properties.ContainsKey(name))
+            {
+                throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAProperty", type + " cannot be declared as '{0}'. '{0}' is a property."), name));
+            }
             else if (cs.ApiInfo.Methods.ContainsKey(name))
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsADefinedFunc", type + " cannot be declared as '{0}'. '{0}' is an already defined function name."), name));

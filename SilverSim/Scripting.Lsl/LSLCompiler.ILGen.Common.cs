@@ -1047,6 +1047,7 @@ namespace SilverSim.Scripting.Lsl
             LocalBuilder lb;
             FieldBuilder fb;
             FieldInfo fi;
+            ApiInfo.PropertyInfo apiProperty;
 
             ilpi = v as ILParameterInfo;
             if (ilpi != null)
@@ -1070,6 +1071,12 @@ namespace SilverSim.Scripting.Lsl
             if (fi != null)
             {
                 return fi.FieldType;
+            }
+
+            apiProperty = v as ApiInfo.PropertyInfo;
+            if(apiProperty != null)
+            {
+                return apiProperty.PropertyType;
             }
 
             throw new NotSupportedException();
@@ -1123,6 +1130,7 @@ namespace SilverSim.Scripting.Lsl
             LocalBuilder lb;
             FieldBuilder fb;
             FieldInfo fi;
+            ApiInfo.PropertyInfo apiProperty;
 
             if ((ilpi = v as ILParameterInfo) != null)
             {
@@ -1146,14 +1154,44 @@ namespace SilverSim.Scripting.Lsl
                     compileState,
                     fi);
             }
+            else if((apiProperty = v as ApiInfo.PropertyInfo) != null)
+            {
+                retType = apiProperty.PropertyType;
+                ApiMethodInfo apiMethod = apiProperty.Getter;
+                if (apiMethod.Method == null)
+                {
+                    throw new NotSupportedException();
+                }
+
+                var apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
+
+                /* load ScriptApi reference */
+                compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
+
+                /* load ScriptInstance reference */
+                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                if (compileState.StateTypeBuilder != null)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                }
+
+                if(apiMethod.Method.IsVirtual)
+                {
+                    compileState.ILGen.Emit(OpCodes.Callvirt, apiMethod.Method);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, apiMethod.Method);
+                }
+            }
             else
             {
                 throw new NotSupportedException();
             }
             if (retType == typeof(AnArray))
             {
-                /* list has deep copying */
-                compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { retType }));
+                /* type has deep copying */
+                compileState.ILGen.Emit(OpCodes.Newobj, retType.GetConstructor(new Type[] { retType }));
             }
             return retType;
         }
@@ -1167,6 +1205,7 @@ namespace SilverSim.Scripting.Lsl
             LocalBuilder lb;
             FieldBuilder fb;
             FieldInfo fi;
+            ApiInfo.PropertyInfo apiProperty;
 
             ilpi = v as ILParameterInfo;
             if (ilpi != null)
@@ -1226,6 +1265,43 @@ namespace SilverSim.Scripting.Lsl
                 return;
             }
 
+            apiProperty = v as ApiInfo.PropertyInfo;
+            if(apiProperty != null)
+            {
+                compileState.ILGen.BeginScope();
+                LocalBuilder swapLb = compileState.ILGen.DeclareLocal(apiProperty.PropertyType);
+                compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
+                ApiMethodInfo apiMethod = apiProperty.Setter;
+                if (apiMethod.Method == null)
+                {
+                    throw new NotSupportedException();
+                }
+
+                var apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
+
+                /* load ScriptApi reference */
+                compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
+
+                /* load ScriptInstance reference */
+                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                if (compileState.StateTypeBuilder != null)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                }
+
+                compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
+                if (apiMethod.Method.IsVirtual)
+                {
+                    compileState.ILGen.Emit(OpCodes.Callvirt, apiMethod.Method);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, apiMethod.Method);
+                }
+                compileState.ILGen.EndScope();
+                return;
+            }
+
             throw new NotSupportedException();
         }
         #endregion
@@ -1248,6 +1324,10 @@ namespace SilverSim.Scripting.Lsl
                         m_Log.DebugFormat(compileState.GetLanguageString(compileState.CurrentCulture, "Field0HasUnsupportedAttributeFlags1", "Field {0} has unsupported attribute flags {1}"), kvp.Key, f.Attributes.ToString());
                     }
                 }
+            }
+            foreach(KeyValuePair<string, ApiInfo.PropertyInfo> kvp in compileState.ApiInfo.Properties)
+            {
+                localVars[kvp.Key] = kvp.Value;
             }
             return localVars;
         }

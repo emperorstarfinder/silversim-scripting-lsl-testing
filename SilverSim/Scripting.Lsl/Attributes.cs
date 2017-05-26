@@ -33,6 +33,13 @@ namespace SilverSim.Scripting.Lsl
         Any = 0xFFFFFFFF
     }
 
+    public enum APIUseAsEnum
+    {
+        Function = 0,
+        Getter = 1,
+        Setter = 2
+    }
+
     [Serializable]
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ThreatLevelRequiredAttribute : Attribute
@@ -52,11 +59,20 @@ namespace SilverSim.Scripting.Lsl
     {
         public APIFlags Flags { get; }
         public string Name { get; }
+        public APIUseAsEnum UseAs { get; }
 
         public APILevelAttribute(APIFlags flags, string name = "")
         {
             Flags = flags;
             Name = name;
+            UseAs = APIUseAsEnum.Function;
+        }
+
+        public APILevelAttribute(APIFlags flags, APIUseAsEnum useAs, string name = "")
+        {
+            Flags = flags;
+            Name = name;
+            UseAs = useAs;
         }
     }
 
@@ -112,6 +128,7 @@ namespace SilverSim.Scripting.Lsl
         public const string Selling = "Selling";
         public const string Pathfinding = "Pathfinding";
         public const string LongInteger = "LongInteger";
+        public const string Properties = "Properties";
     }
 
     [Serializable]
@@ -120,11 +137,20 @@ namespace SilverSim.Scripting.Lsl
     {
         public string Extension { get; }
         public string Name { get; }
+        public APIUseAsEnum UseAs { get; }
 
         public APIExtensionAttribute(string extension, string name = "")
         {
             Extension = extension;
             Name = name;
+            UseAs = APIUseAsEnum.Function;
+        }
+
+        public APIExtensionAttribute(string extension, APIUseAsEnum useAs, string name = "")
+        {
+            Extension = extension;
+            Name = name;
+            UseAs = useAs;
         }
     }
 
