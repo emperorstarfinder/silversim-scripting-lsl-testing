@@ -598,9 +598,9 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         }
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleAngular")]
-        public VehicleLinearData GetVehicleAngular(ScriptInstance instance)
+        public VehicleAngularData GetVehicleAngular(ScriptInstance instance)
         {
-            return new VehicleLinearData(instance);
+            return new VehicleAngularData(instance);
         }
     }
 }
