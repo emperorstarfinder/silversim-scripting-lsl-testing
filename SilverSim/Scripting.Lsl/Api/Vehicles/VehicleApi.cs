@@ -24,6 +24,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Vehicles
@@ -411,177 +412,317 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
             }
         }
 
-        [APIExtension(APIExtension.Properties, "vehicle_angular")]
-        [APIDisplayName("vehicle_angular")]
-        [APIAccessibleMembers(
-            "deflectionefficency",
-            "deflectiontimescale",
-            "motordecaytimescale")]
-        public class VehicleAngularData
+        public abstract class VehicleBaseData
         {
-            private readonly ScriptInstance Instance;
+            protected readonly ScriptInstance Instance;
 
-            public VehicleAngularData(ScriptInstance instance)
+            protected T With<T>(Func<ObjectGroup, T> getter)
+            {
+                lock (Instance)
+                {
+                    return getter(Instance.Part.ObjectGroup);
+                }
+            }
+
+            protected void With<T>(Action<ObjectGroup, T> setter, T value)
+            {
+                lock (Instance)
+                {
+                    setter(Instance.Part.ObjectGroup, value);
+                }
+            }
+
+            protected VehicleBaseData(ScriptInstance instance)
             {
                 Instance = instance;
             }
+        }
 
-            /*
-                    case VEHICLE_ANGULAR_FRICTION_TIMESCALE:
-                        thisGroup[VehicleVectorParamId.AngularFrictionTimescale] = vec;
-                        break;
+        [APIExtension(APIExtension.Properties, "vehicle_angular")]
+        [APIDisplayName("vehicle_angular")]
+        [APIAccessibleMembers(
+            "FrictionTimescale",
+            "MotorDirection",
+            "MotorDecayTimescale",
+            "MotorTimescale",
+            "WindEfficiency",
+            "DeflectionEfficiency",
+            "DeflectionTimescale")]
+        public class VehicleAngularData : VehicleBaseData
+        {
+            public VehicleAngularData(ScriptInstance instance) : base(instance)
+            {
+            }
 
-                    case VEHICLE_ANGULAR_MOTOR_DIRECTION:
-                        thisGroup[VehicleVectorParamId.AngularMotorDirection] = vec;
-                        break;
+            public Vector3 FrictionTimescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.AngularFrictionTimescale]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.AngularFrictionTimescale] = v, value); }
+            }
 
-                    case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
-                        thisGroup[VehicleVectorParamId.AngularMotorDecayTimescale] = vec;
-                        break;
+            public Vector3 MotorDirection
+            {
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.AngularMotorDirection]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.AngularMotorDirection] = v, value); }
+            }
 
-                    case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
-                        thisGroup[VehicleVectorParamId.AngularMotorTimescale] = vec;
-                        break;
+            public Vector3 MotorDecayTimescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.AngularMotorDecayTimescale]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.AngularMotorDecayTimescale] = v, value); }
+            }
 
-             */
+            public Vector3 MotorTimescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.AngularWindEfficiency]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.AngularMotorTimescale] = v, value); }
+            }
+
+            public Vector3 WindEfficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.AngularWindEfficiency]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.AngularWindEfficiency] = v, value); }
+            }
+
+            public double DeflectionEfficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.AngularDeflectionEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.AngularDeflectionEfficiency] = v, value); }
+            }
+
+            public double DeflectionTimescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.AngularDeflectionTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.AngularDeflectionTimescale] = v, value); }
+            }
         }
 
         [APIExtension(APIExtension.Properties, "vehicle_linear")]
         [APIDisplayName("vehicle_linear")]
         [APIAccessibleMembers(
-            "frictiontimescale",
-            "motordirection",
-            "motoroffset",
-            "motordecaytimescale",
-            "motortimescale")]
-        public class VehicleLinearData
+            "FrictionTimescale",
+            "MotorDirection",
+            "MotorOffset",
+            "MotorDecayTimescale",
+            "MotorTimescale",
+            "WindEfficiency",
+            "DeflectionEfficiency",
+            "DeflectionTimescale")]
+        public class VehicleLinearData : VehicleBaseData
         {
-            private readonly ScriptInstance Instance;
-
-            public VehicleLinearData(ScriptInstance instance)
+            public VehicleLinearData(ScriptInstance instance) : base(instance)
             {
-                Instance = instance;
             }
 
-            public Vector3 frictiontimescale
+            public Vector3 FrictionTimescale
             {
-                get
-                {
-                    lock(Instance)
-                    {
-                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale];
-                    }
-                }
-                set
-                {
-                    lock(Instance)
-                    {
-                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearFrictionTimescale] = value;
-                    }
-                }
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.LinearFrictionTimescale]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.LinearFrictionTimescale] = v, value); }
             }
 
-            public Vector3 motordirection
+            public Vector3 MotorDirection
             {
-                get
-                {
-                    lock(Instance)
-                    {
-                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection];
-                    }
-                }
-                set
-                {
-                    lock(Instance)
-                    {
-                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDirection] = value;
-                    }
-                }
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.LinearMotorDirection]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.LinearMotorDirection] = v, value); }
             }
 
-            public Vector3 motoroffset
+            public Vector3 MotorOffset
             {
-                get
-                {
-                    lock(Instance)
-                    {
-                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset];
-                    }
-                }
-                set
-                {
-                    lock(Instance)
-                    {
-                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorOffset] = value;
-                    }
-                }
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.LinearMotorOffset]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.LinearMotorOffset] = v, value); }
             }
 
-            public Vector3 motordecaytimescale
+            public Vector3 MotorDecayTimescale
             {
-                get
-                {
-                    lock(Instance)
-                    {
-                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDecayTimescale];
-                    }
-                }
-                set
-                {
-                    lock(Instance)
-                    {
-                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorDecayTimescale] = value;
-                    }
-                }
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.LinearMotorDecayTimescale]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.LinearMotorDecayTimescale] = value, value); }
             }
 
-            public Vector3 motortimescale
+            public Vector3 MotorTimescale
             {
-                get
-                {
-                    lock(Instance)
-                    {
-                        return Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorTimescale];
-                    }
-                }
-                set
-                {
-                    lock(Instance)
-                    {
-                        Instance.Part.ObjectGroup[VehicleVectorParamId.LinearMotorTimescale] = value;
-                    }
-                }
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.LinearMotorTimescale]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.LinearMotorTimescale] = v, value); }
+            }
+
+            public Vector3 WindEfficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleVectorParamId.LinearWindEfficiency]); }
+                set { With((ObjectGroup g, Vector3 v) => g[VehicleVectorParamId.LinearWindEfficiency] = v, value); }
+            }
+
+            public double DeflectionEfficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.LinearDeflectionEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.LinearDeflectionEfficiency] = v, value); }
+            }
+
+            public double DeflectionTimescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.LinearDeflectionTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.LinearDeflectionTimescale] = v, value); }
             }
         }
 
         [APIExtension(APIExtension.Properties, "vehicle")]
         [APIDisplayName("vehicle")]
         [APIAccessibleMembers(
-            "type")]
-        public class VehicleData
+            "Type",
+            "ReferenceFrame",
+            "MouselookAzimuth",
+            "MouselookAltitude",
+            "DisableMotorsAbove",
+            "DisableMotorsAfter")]
+        public class VehicleData : VehicleBaseData
         {
-            private readonly ScriptInstance Instance;
             private readonly VehicleApi m_Api;
 
-            public VehicleData(VehicleApi api, ScriptInstance instance)
+            public VehicleData(VehicleApi api, ScriptInstance instance) : base(instance)
             {
                 m_Api = api;
-                Instance = instance;
             }
 
-            public int type
+            public int Type
             {
-                get
-                {
-                    lock (Instance)
-                    {
-                        return (int)Instance.Part.ObjectGroup.VehicleType;
-                    }
-                }
-                set
-                {
-                    m_Api.SetVehicleType(Instance, value);
-                }
+                get { return With((ObjectGroup g) => (int)g.VehicleType); }
+                set { m_Api.SetVehicleType(Instance, value); }
+            }
+
+            public int Flags
+            {
+                get { return With((ObjectGroup g) => (int)g.VehicleFlags); }
+                set { With((ObjectGroup g, int v) => g.VehicleFlags = (VehicleFlags)v, value); }
+            }
+
+            public Quaternion ReferenceFrame
+            {
+                get { return With((ObjectGroup g) => g[VehicleRotationParamId.ReferenceFrame]); }
+                set { With((ObjectGroup g, Quaternion v) => g[VehicleRotationParamId.ReferenceFrame] = v, value); }
+            }
+
+            public double MouselookAzimuth
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.MouselookAzimuth]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.MouselookAzimuth] = v, value); }
+            }
+
+            public double MouselookAltitude
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.MouselookAltitude]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.MouselookAltitude] = v, value); }
+            }
+
+            public double DisableMotorsAbove
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.DisableMotorsAbove]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.DisableMotorsAbove] = v, value); }
+            }
+
+            public double DisableMotorsAfter
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.DisableMotorsAfter]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.DisableMotorsAfter] = v, value); }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_banking")]
+        [APIDisplayName("vehicle_banking")]
+        [APIAccessibleMembers(
+            "Efficiency",
+            "Mix",
+            "Timescale",
+            "Azimuth",
+            "InvertedModifier")]
+        public class VehicleBankingData : VehicleBaseData
+        {
+            public VehicleBankingData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public double Efficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingEfficiency] = v, value); }
+            }
+
+            public double Mix
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingMix]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingMix] = v, value); }
+            }
+
+            public double Timescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingTimescale] = v, value); }
+            }
+
+            public double Azimuth
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingAzimuth]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingAzimuth] = v, value); }
+            }
+
+            public double InvertedModifier
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.InvertedBankingModifier]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.InvertedBankingModifier] = v, value); }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_hover")]
+        [APIDisplayName("vehicle_hover")]
+        [APIAccessibleMembers(
+            "Buoyancy",
+            "Height",
+            "Efficiency",
+            "Timescale")]
+        public class VehicleHoverData : VehicleBaseData
+        {
+            public VehicleHoverData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public double Buoyancy
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.Buoyancy]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.Buoyancy] = v, value); }
+            }
+
+            public double Height
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverHeight]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverHeight] = v, value); }
+            }
+
+            public double Efficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverEfficiency] = v, value); }
+            }
+
+            public double Timescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverTimescale] = v, value); }
+            }
+        }
+
+        public class VehicleVerticalAttractionData : VehicleBaseData
+        {
+            public VehicleVerticalAttractionData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public double Efficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.VerticalAttractionEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.VerticalAttractionEfficiency] = v, value); }
+            }
+
+            public double Timescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.VerticalAttractionTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.VerticalAttractionTimescale] = v, value); }
             }
         }
 
@@ -601,6 +742,24 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public VehicleAngularData GetVehicleAngular(ScriptInstance instance)
         {
             return new VehicleAngularData(instance);
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleBanking")]
+        public VehicleBankingData GetVehicleBanking(ScriptInstance instance)
+        {
+            return new VehicleBankingData(instance);
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleHover")]
+        public VehicleHoverData GetVehicleHover(ScriptInstance instance)
+        {
+            return new VehicleHoverData(instance);
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleVerticalAttraction")]
+        public VehicleVerticalAttractionData GetVehicleVerticalAttraction(ScriptInstance instance)
+        {
+            return new VehicleVerticalAttractionData(instance);
         }
     }
 }

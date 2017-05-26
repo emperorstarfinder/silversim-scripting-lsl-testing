@@ -87,23 +87,24 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APIIsVariableType]
         [ImplementsCustomTypecasts]
         [APIAccessibleMembers(
-            "key",
-            "name",
-            "desc",
-            "localrot",
-            "localpos",
-            "rotation",
-            "position",
-            "physicsshapetype",
-            "material",
-            "isphysics",
-            "istemponrez",
-            "isphantom",
-            "size",
-            "hovertext",
-            "allowunsit",
-            "scriptedsitonly",
-            "allowinventorydrop")]
+            "Key",
+            "Name",
+            "Desc",
+            "PointLight",
+            "LocalRot",
+            "LocalPos",
+            "Rotation",
+            "Position",
+            "PhysicsShapeType",
+            "Material",
+            "IsPhysics",
+            "IsTempOnRez",
+            "IsPhantom",
+            "Size",
+            "HoverText",
+            "AllowUnsit",
+            "ScriptedSitOnly",
+            "AllowInventoryDrop")]
         [Serializable]
         public sealed class Prim
         {
@@ -176,7 +177,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
             public LSLKey key => WithPart<UUID>((ObjectPart p) => p.ID);
 
-            public Hovertext hovertext
+            public Hovertext HoverText
             {
                 get
                 {
@@ -201,7 +202,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
 
-            public Pointlight pointlight
+            public Pointlight PointLight
             {
                 get
                 {
@@ -231,14 +232,14 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
 
-            public string desc
+            public string Desc
             {
                 get { return WithPart((ObjectPart p) => p.Description); }
 
                 set { WithPart((ObjectPart p, string d) => p.Description = d, value); }
             }
 
-            public string name
+            public string Name
             {
                 get { return WithPart((ObjectPart p) => p.Name); }
 
@@ -246,49 +247,49 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 set { WithPart((ObjectPart p, string d) => p.Name = d, value); }
             }
 
-            public int allowinventorydrop
+            public int AllowInventoryDrop
             {
                 get { return WithPart((ObjectPart p) => p.IsAllowedDrop.ToLSLBoolean()); }
 
                 set { WithPart((ObjectPart p, bool v) => p.IsAllowedDrop = v, value != 0); }
             }
 
-            public Quaternion localrot
+            public Quaternion LocalRot
             {
                 get { return WithPart((ObjectPart p) => p.LocalRotation); }
 
                 set { WithPart((ObjectPart p, Quaternion q) => p.LocalRotation = q, value); }
             }
 
-            public Vector3 size
+            public Vector3 Size
             {
                 get { return WithPart((ObjectPart p) => p.Size); }
 
                 set { WithPart((ObjectPart p, Vector3 v) => p.Size = v, value); }
             }
 
-            public Vector3 localpos
+            public Vector3 LocalPos
             {
                 get { return WithPart((ObjectPart p) => p.LocalPosition); }
 
                 set { WithPart((ObjectPart p, Vector3 v) => p.LocalPosition = v, value); }
             }
 
-            public Quaternion rotation
+            public Quaternion Rotation
             {
                 get { return WithPart((ObjectPart p) => p.Rotation); }
 
                 set { WithPart((ObjectPart p, Quaternion q) => p.Rotation = q, value); }
             }
 
-            public Vector3 position
+            public Vector3 Position
             {
                 get { return WithPart((ObjectPart p) => p.Position); }
 
                 set { WithPart((ObjectPart p, Vector3 v) => p.Position = v, value); }
             }
 
-            public int physicsshapetype
+            public int PhysicsShapeType
             {
                 get { return (int)WithPart((ObjectPart p) => p.PhysicsShapeType); }
 
@@ -302,7 +303,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
 
-            public int material
+            public int Material
             {
                 get { return (int)WithPart((ObjectPart p) => p.Material); }
 
@@ -315,42 +316,42 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
 
-            public int isphantom
+            public int IsPhantom
             {
                 get { return WithPart((ObjectPart p) => p.IsPhantom.ToLSLBoolean()); }
 
                 set { WithPart((ObjectPart p, bool v) => p.IsPhantom = v, value != 0); }
             }
 
-            public int isphysics
+            public int IsPhysics
             {
                 get { return WithPart((ObjectPart p) => p.IsPhysics.ToLSLBoolean()); }
 
                 set { WithPart((ObjectPart p, bool v) => p.IsPhysics = v, value != 0); }
             }
 
-            public int istemponrez
+            public int IsTempOnRez
             {
                 get { return WithPart((ObjectPart p) => p.ObjectGroup.IsTempOnRez.ToLSLBoolean()); }
 
                 set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsTempOnRez = v, value != 0); }
             }
 
-            public int isvolumedetect
+            public int IsVolumeDetect
             {
                 get { return WithPart((ObjectPart p) => p.ObjectGroup.IsVolumeDetect.ToLSLBoolean()); }
 
                 set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsVolumeDetect = v, value != 0); }
             }
 
-            public int allowunsit
+            public int AllowUnsit
             {
                 get { return WithPart((ObjectPart p) => p.AllowUnsit.ToLSLBoolean()); }
 
                 set { WithPart((ObjectPart p, bool v) => p.AllowUnsit = v, value != 0); }
             }
 
-            public int scriptedsitonly
+            public int ScriptedSitOnly
             {
                 get { return WithPart((ObjectPart p) => p.IsScriptedSitOnly.ToLSLBoolean()); }
 
