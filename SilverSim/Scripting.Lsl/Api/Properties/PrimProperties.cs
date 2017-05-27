@@ -586,6 +586,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         };
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Color")]
+        [APIDisplayName("Color")]
         public class ColorSet
         {
             // Red tones
