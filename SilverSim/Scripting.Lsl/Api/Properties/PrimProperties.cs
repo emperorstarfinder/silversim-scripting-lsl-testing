@@ -410,9 +410,29 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             [APIExtension(APIExtension.Properties)]
             public static implicit operator int(Prim c) => c.LinkNumber;
-        }
 
-#pragma warning restore IDE1006
+            public FaceProperties.TextureFace this[int faceNo]
+            {
+                get
+                {
+                    return WithPart((ScriptInstance instance, ObjectPart p) =>
+                    {
+                        if(faceNo == FaceProperties.ALL_SIDES)
+                        {
+                            return new FaceProperties.TextureFace(instance, p, LinkNumber, faceNo);
+                        }
+                        else if(faceNo >= 0 && faceNo < p.NumberOfSides)
+                        {
+                            return new FaceProperties.TextureFace(instance, p, LinkNumber, faceNo);
+                        }
+                        else
+                        {
+                            return new FaceProperties.TextureFace();
+                        }
+                    });
+                }
+            }
+        }
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "this")]
         public Prim GetThis(ScriptInstance instance)

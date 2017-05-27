@@ -116,6 +116,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public LSLKey Key => With((ObjectPartInventoryItem item) => item.AssetID);
 
+            [APIExtension(APIExtension.Properties)]
             public static implicit operator bool(PrimInventoryItem c)
             {
                 ScriptInstance instance;
