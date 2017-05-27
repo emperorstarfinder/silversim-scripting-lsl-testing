@@ -778,73 +778,8 @@ namespace SilverSim.Scripting.Lsl
                 {
                     throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Entry + m_RightHand.Type, compileState.MapType(m_LeftHandType)));
                 }
-                APIAccessibleMembersAttribute membersAttr;
-                if (m_LeftHandType == typeof(Vector3) || m_LeftHandType == typeof(Quaternion))
-                {
-                    LocalBuilder lb = DeclareLocal(compileState, m_LeftHandType);
-                    compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                    compileState.ILGen.Emit(OpCodes.Ldloca, lb);
-                    FieldInfo fi = GetVectorOrQuaternionField(compileState, m_LeftHandType, m_RightHand.Entry);
-                    compileState.ILGen.Emit(OpCodes.Ldfld, fi);
-                    throw Return(compileState, fi.FieldType);
-                }
-                else if((membersAttr = Attribute.GetCustomAttribute(m_LeftHandType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
-                {
-                    string memberName = m_RightHand.Entry;
-                    PropertyInfo pi;
-                    FieldInfo fi;
-                    MethodInfo mi;
-                    if (!membersAttr.Members.Contains(memberName))
-                    {
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_RightHand.Entry, compileState.MapType(m_LeftHandType)));
-                    }
-
-                    if(m_LeftHandType.IsValueType)
-                    {
-                        LocalBuilder lb = DeclareLocal(compileState, m_LeftHandType);
-                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                        compileState.ILGen.Emit(OpCodes.Ldloca, lb);
-                    }
-
-                    if ((fi = m_LeftHandType.GetField(memberName)) != null)
-                    {
-                        if (fi.IsStatic)
-                        {
-                            compileState.ILGen.Emit(OpCodes.Pop);
-                            compileState.ILGen.Emit(OpCodes.Ldsfld, fi);
-                        }
-                        else
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldfld, fi);
-                        }
-                        throw Return(compileState, fi.FieldType);
-                    }
-                    else if ((pi = m_LeftHandType.GetMemberProperty(compileState, memberName)) != null && (mi = pi.GetGetMethod()) != null)
-                    {
-                        if(mi.IsStatic)
-                        {
-                            compileState.ILGen.Emit(OpCodes.Pop);
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                        }
-                        if (mi.IsVirtual)
-                        {
-                            compileState.ILGen.Emit(OpCodes.Callvirt, mi);
-                        }
-                        else
-                        {
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                        }
-                        throw Return(compileState, pi.PropertyType);
-                    }
-                    else
-                    {
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"), m_RightHand.Entry, compileState.MapType(m_LeftHandType)));
-                    }
-                }
-                else
-                {
-                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"), compileState.MapType(m_LeftHandType)));
-                }
+                Type t = GetMemberSelectorToStack(compileState, m_LeftHandType, m_RightHand.Entry);
+                throw Return(compileState, t);
             }
 
             public void ProcessOperator_Assignment(
