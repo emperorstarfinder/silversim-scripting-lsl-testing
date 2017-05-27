@@ -399,11 +399,20 @@ namespace SilverSim.Scripting.Lsl
 
                     if ((fi = varType.GetField(memberName)) != null)
                     {
+                        if(fi.IsStatic || fi.IsInitOnly)
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is read only."), memberName, compileState.MapType(varType), string.Empty));
+                        }
                         varType = fi.FieldType;
                         compileState.ILGen.Emit(OpCodes.Stfld, fi);
                     }
-                    else if ((pi = varType.GetMemberProperty(compileState, memberName)) != null && (mi = pi.GetSetMethod()) != null)
+                    else if ((pi = varType.GetMemberProperty(compileState, memberName)) != null)
                     {
+                        mi = pi.GetSetMethod();
+                        if(mi == null)
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is read only."), memberName, compileState.MapType(varType), string.Empty));
+                        }
                         varType = pi.PropertyType;
                         if(mi.IsStatic)
                         {

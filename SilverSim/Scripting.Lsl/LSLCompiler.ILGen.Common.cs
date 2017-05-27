@@ -1271,7 +1271,8 @@ namespace SilverSim.Scripting.Lsl
             fi = v as FieldInfo;
             if (fi != null)
             {
-                if ((fi.Attributes & FieldAttributes.Static) != 0)
+                if ((fi.Attributes & FieldAttributes.Static) != 0 ||
+                    (fi.Attributes & FieldAttributes.InitOnly) != 0)
                 {
                     throw new CompilerException(lineNumber, compileState.GetLanguageString(compileState.CurrentCulture, "SettingConstantsIsNotAllowed", "Setting constants is not allowed"));
                 }
