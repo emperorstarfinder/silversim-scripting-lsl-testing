@@ -71,6 +71,23 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            protected T With<T>(Func<ScriptInstance, T> getter, T defvalue)
+            {
+                ScriptInstance instance;
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
+                {
+                    lock (instance)
+                    {
+                        return getter(instance);
+                    }
+                }
+                return defvalue;
+            }
+
+            protected VehicleBaseData()
+            {
+            }
+
             protected VehicleBaseData(ScriptInstance instance)
             {
                 WeakInstance = new WeakReference<ScriptInstance>(instance);
@@ -89,6 +106,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             "DeflectionTimescale")]
         public class VehicleAngularData : VehicleBaseData
         {
+            public VehicleAngularData()
+            {
+            }
+
             public VehicleAngularData(ScriptInstance instance) : base(instance)
             {
             }
@@ -149,6 +170,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             "DeflectionTimescale")]
         public class VehicleLinearData : VehicleBaseData
         {
+            public VehicleLinearData()
+            {
+            }
+
             public VehicleLinearData(ScriptInstance instance) : base(instance)
             {
             }
@@ -202,15 +227,168 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
+        [APIExtension(APIExtension.Properties, "vehicle_banking")]
+        [APIDisplayName("vehicle_banking")]
+        [APIAccessibleMembers(
+            "Efficiency",
+            "Mix",
+            "Timescale",
+            "Azimuth",
+            "InvertedModifier")]
+        public class VehicleBankingData : VehicleBaseData
+        {
+            public VehicleBankingData()
+            {
+
+            }
+
+            public VehicleBankingData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public double Efficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingEfficiency] = v, value); }
+            }
+
+            public double Mix
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingMix]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingMix] = v, value); }
+            }
+
+            public double Timescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingTimescale] = v, value); }
+            }
+
+            public double Azimuth
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingAzimuth]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingAzimuth] = v, value); }
+            }
+
+            public double InvertedModifier
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.InvertedBankingModifier]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.InvertedBankingModifier] = v, value); }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_hover")]
+        [APIDisplayName("vehicle_hover")]
+        [APIAccessibleMembers(
+            "Buoyancy",
+            "Height",
+            "Efficiency",
+            "Timescale")]
+        public class VehicleHoverData : VehicleBaseData
+        {
+            public VehicleHoverData()
+            {
+
+            }
+
+            public VehicleHoverData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public double Buoyancy
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.Buoyancy]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.Buoyancy] = v, value); }
+            }
+
+            public double Height
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverHeight]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverHeight] = v, value); }
+            }
+
+            public double Efficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverEfficiency] = v, value); }
+            }
+
+            public double Timescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverTimescale] = v, value); }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_verticalattraction")]
+        [APIDisplayName("vehicle_verticalattraction")]
+        [APIAccessibleMembers(
+            "Efficiency",
+            "Timescale")]
+        public class VehicleVerticalAttractionData : VehicleBaseData
+        {
+            public VehicleVerticalAttractionData()
+            {
+            }
+
+            public VehicleVerticalAttractionData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public double Efficiency
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.VerticalAttractionEfficiency]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.VerticalAttractionEfficiency] = v, value); }
+            }
+
+            public double Timescale
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.VerticalAttractionTimescale]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.VerticalAttractionTimescale] = v, value); }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_mouselook")]
+        [APIDisplayName("vehicle_mouselook")]
+        [APIAccessibleMembers(
+            "Azimuth",
+            "Altitude")]
+        public class VehicleMouselookData : VehicleBaseData
+        {
+            public VehicleMouselookData()
+            {
+            }
+
+            public VehicleMouselookData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public double Azimuth
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.MouselookAzimuth]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.MouselookAzimuth] = v, value); }
+            }
+
+            public double Altitude
+            {
+                get { return With((ObjectGroup g) => g[VehicleFloatParamId.MouselookAltitude]); }
+                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.MouselookAltitude] = v, value); }
+            }
+        }
+
         [APIExtension(APIExtension.Properties, "vehicle")]
         [APIDisplayName("vehicle")]
         [APIAccessibleMembers(
             "Type",
             "ReferenceFrame",
-            "MouselookAzimuth",
-            "MouselookAltitude",
             "DisableMotorsAbove",
-            "DisableMotorsAfter")]
+            "DisableMotorsAfter",
+            "Linear",
+            "Angular",
+            "Banking",
+            "Mouselook",
+            "Hover",
+            "VerticalAttract")]
         public class VehicleData : VehicleBaseData
         {
             public VehicleData(ScriptInstance instance) : base(instance)
@@ -306,149 +484,30 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 get { return With((ObjectGroup g) => g[VehicleFloatParamId.DisableMotorsAfter]); }
                 set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.DisableMotorsAfter] = v, value); }
             }
-        }
 
-        [APIExtension(APIExtension.Properties, "vehicle_banking")]
-        [APIDisplayName("vehicle_banking")]
-        [APIAccessibleMembers(
-            "Efficiency",
-            "Mix",
-            "Timescale",
-            "Azimuth",
-            "InvertedModifier")]
-        public class VehicleBankingData : VehicleBaseData
-        {
-            public VehicleBankingData(ScriptInstance instance) : base(instance)
-            {
-            }
+            public VehicleLinearData Linear =>
+                With((ScriptInstance instance) => new VehicleLinearData(instance), new VehicleLinearData());
 
-            public double Efficiency
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingEfficiency]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingEfficiency] = v, value); }
-            }
+            public VehicleAngularData Angular =>
+                With((ScriptInstance instance) => new VehicleAngularData(instance), new VehicleAngularData());
 
-            public double Mix
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingMix]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingMix] = v, value); }
-            }
+            public VehicleBankingData Banking =>
+                With((ScriptInstance instance) => new VehicleBankingData(instance), new VehicleBankingData());
 
-            public double Timescale
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingTimescale]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingTimescale] = v, value); }
-            }
+            public VehicleHoverData Hover =>
+                With((ScriptInstance instance) => new VehicleHoverData(instance), new VehicleHoverData());
 
-            public double Azimuth
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.BankingAzimuth]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.BankingAzimuth] = v, value); }
-            }
+            public VehicleVerticalAttractionData VerticalAttract =>
+                With((ScriptInstance instance) => new VehicleVerticalAttractionData(instance), new VehicleVerticalAttractionData());
 
-            public double InvertedModifier
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.InvertedBankingModifier]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.InvertedBankingModifier] = v, value); }
-            }
-        }
-
-        [APIExtension(APIExtension.Properties, "vehicle_hover")]
-        [APIDisplayName("vehicle_hover")]
-        [APIAccessibleMembers(
-            "Buoyancy",
-            "Height",
-            "Efficiency",
-            "Timescale")]
-        public class VehicleHoverData : VehicleBaseData
-        {
-            public VehicleHoverData(ScriptInstance instance) : base(instance)
-            {
-            }
-
-            public double Buoyancy
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.Buoyancy]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.Buoyancy] = v, value); }
-            }
-
-            public double Height
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverHeight]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverHeight] = v, value); }
-            }
-
-            public double Efficiency
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverEfficiency]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverEfficiency] = v, value); }
-            }
-
-            public double Timescale
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.HoverTimescale]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.HoverTimescale] = v, value); }
-            }
-        }
-
-        [APIExtension(APIExtension.Properties, "vehicle_verticalattraction")]
-        [APIDisplayName("vehicle_verticalattraction")]
-        [APIAccessibleMembers(
-            "Efficiency",
-            "Timescale")]
-        public class VehicleVerticalAttractionData : VehicleBaseData
-        {
-            public VehicleVerticalAttractionData(ScriptInstance instance) : base(instance)
-            {
-            }
-
-            public double Efficiency
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.VerticalAttractionEfficiency]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.VerticalAttractionEfficiency] = v, value); }
-            }
-
-            public double Timescale
-            {
-                get { return With((ObjectGroup g) => g[VehicleFloatParamId.VerticalAttractionTimescale]); }
-                set { With((ObjectGroup g, double v) => g[VehicleFloatParamId.VerticalAttractionTimescale] = v, value); }
-            }
+            public VehicleMouselookData Mouselook =>
+                With((ScriptInstance instance) => new VehicleMouselookData(instance), new VehicleMouselookData());
         }
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Vehicle")]
         public VehicleData GetVehicle(ScriptInstance instance)
         {
             return new VehicleData(instance);
-        }
-
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleLinear")]
-        public VehicleLinearData GetVehicleLinear(ScriptInstance instance)
-        {
-            return new VehicleLinearData(instance);
-        }
-
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleAngular")]
-        public VehicleAngularData GetVehicleAngular(ScriptInstance instance)
-        {
-            return new VehicleAngularData(instance);
-        }
-
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleBanking")]
-        public VehicleBankingData GetVehicleBanking(ScriptInstance instance)
-        {
-            return new VehicleBankingData(instance);
-        }
-
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleHover")]
-        public VehicleHoverData GetVehicleHover(ScriptInstance instance)
-        {
-            return new VehicleHoverData(instance);
-        }
-
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "VehicleVerticalAttraction")]
-        public VehicleVerticalAttractionData GetVehicleVerticalAttraction(ScriptInstance instance)
-        {
-            return new VehicleVerticalAttractionData(instance);
         }
     }
 }
