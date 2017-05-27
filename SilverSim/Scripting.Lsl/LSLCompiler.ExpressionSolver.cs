@@ -1858,8 +1858,12 @@ namespace SilverSim.Scripting.Lsl
                 tree = tree.SubTree[0];
             }
 
-            if(tree.Type == Tree.EntryType.Variable ||
-                (tree.Type == Tree.EntryType.OperatorBinary && tree.Entry == "."))
+            while(tree.Type == Tree.EntryType.OperatorBinary && tree.Entry == ".")
+            {
+                tree = tree.SubTree[0];
+            }
+
+            if (tree.Type == Tree.EntryType.Variable)
             {
                 variable = tree;
                 return true;
@@ -1868,6 +1872,19 @@ namespace SilverSim.Scripting.Lsl
             {
                 return false;
             }
+        }
+
+        private bool Assignments_HasVariableTree(Tree tree)
+        {
+            while(tree.Entry == "." && tree.Type == Tree.EntryType.OperatorBinary)
+            {
+                if(tree.SubTree.Count < 1)
+                {
+                    return false;
+                }
+                tree = tree.SubTree[0];
+            }
+            return tree.Type == Tree.EntryType.Variable;
         }
 
         private void OrderOperators_Assignments(Tree tree, int lineNumber, CultureInfo currentCulture)
@@ -1926,7 +1943,7 @@ namespace SilverSim.Scripting.Lsl
 
                         case Tree.EntryType.OperatorBinary:
                             if(tree.SubTree[pos - 1].Entry != "." ||
-                                tree.SubTree[pos - 1].SubTree[0].Type != Tree.EntryType.Variable)
+                                Assignments_HasVariableTree(tree.SubTree[1]))
                             {
                                 throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
                             }
