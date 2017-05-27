@@ -7,11 +7,7 @@ using SilverSim.Types;
 using SilverSim.Types.Asset.Format;
 using SilverSim.Types.Primitive;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
 {
@@ -79,7 +75,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public double Rotation;
             public Vector3 Color = Vector3.One;
             public double Alpha = 1;
-            public int Glossiness;
+            public int Glossiness = (int)(0.2f * 255);
             public int Environment;
 
             public SpecularMap()
@@ -110,11 +106,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         public class AlphaMode
         {
             public int DiffuseMode;
-            public int MaskCutoff;
+            public int MaskCutoff = 1;
 
             public AlphaMode()
             {
-
             }
 
             public AlphaMode(AlphaMode m)
@@ -324,7 +319,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     face.MaterialID = mat.MaterialID;
                 }, value);
             }
-
 
             public LSLKey Texture
             {
