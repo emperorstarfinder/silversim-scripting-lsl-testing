@@ -252,6 +252,12 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 set { WithPart((ObjectPart p, Vector3 v) => p.Velocity = v, value); }
             }
 
+            public Vector3 AngularVelocity
+            {
+                get { return WithPart((ObjectPart p) => p.AngularVelocity); }
+                set { WithPart((ObjectPart p, Vector3 v) => p.AngularVelocity = v, value); }
+            }
+
             public InventoryProperties.PrimInventory Inventory =>
                 WithPart((ScriptInstance instance, ObjectPart p) => new InventoryProperties.PrimInventory(instance, p));
 
