@@ -492,5 +492,193 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 return new LinkSetAccessor(instance);
             }
         }
+
+        [APIExtension(APIExtension.Properties, "HoverText")]
+        public Hovertext GetHovertext(ScriptInstance instance, string text, Vector3 color, double alpha) => new Hovertext
+        {
+            Text = text,
+            Color = color,
+            Alpha = alpha
+        };
+
+        [APIExtension(APIExtension.Properties, "PointLight")]
+        public Pointlight GetPointlight(ScriptInstance instance, int enabled, Vector3 color, double intensity, double radius, double falloff) => new Pointlight
+        {
+            Enabled = enabled,
+            Color = color,
+            Intensity = intensity,
+            Radius = radius,
+            Falloff = falloff
+        };
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Color")]
+        public class ColorSet
+        {
+            // Red tones
+            public Vector3 IndianRed => new Vector3(205, 92, 92) / 255;
+            public Vector3 LightCoral => new Vector3(240, 128, 128) / 255;
+            public Vector3 Salmon => new Vector3(250, 128, 114) / 255;
+            public Vector3 DarkSalmon => new Vector3(233, 150, 122) / 255;
+            public Vector3 LightSalmon => new Vector3(255, 160, 122) / 255;
+            public Vector3 Crimson => new Vector3(220, 20, 60) / 255;
+            public Vector3 Red => new Vector3(255, 0, 0) / 255;
+            public Vector3 FireBrick => new Vector3(178, 34, 34) / 255;
+            public Vector3 DarkRed => new Vector3(139, 0, 0) / 255;
+
+            //Pink tones
+            public Vector3 Pink => new Vector3(255, 192, 203) / 255;
+            public Vector3 LightPink => new Vector3(255, 182, 193) / 255;
+            public Vector3 HotPink => new Vector3(255, 105, 180) / 255;
+            public Vector3 DeepPink => new Vector3(255, 20, 147) / 255;
+            public Vector3 MediumVioletRed => new Vector3(199, 21, 133) / 255;
+            public Vector3 PaleVioletRed => new Vector3(219, 112, 147) / 255;
+
+            //Orange tones
+            public Vector3 Coral => new Vector3(255, 127, 80) / 255;
+            public Vector3 Tomato => new Vector3(255, 99, 71) / 255;
+            public Vector3 OrangeRed => new Vector3(255, 69, 0) / 255;
+            public Vector3 DarkOrange => new Vector3(255, 140, 0) / 255;
+            public Vector3 Orange => new Vector3(255, 165, 0) / 255;
+
+            //Yellow tones
+            public Vector3 Gold => new Vector3(255, 215, 0) / 255;
+            public Vector3 Yellow => new Vector3(255, 255, 0) / 255;
+            public Vector3 LightYellow => new Vector3(255, 255, 224) / 255;
+            public Vector3 LemonChiffon => new Vector3(255, 250, 205) / 255;
+            public Vector3 LightGoldenrodYellow => new Vector3(250, 250, 210) / 255;
+            public Vector3 PapayaWhip => new Vector3(255, 239, 213) / 255;
+            public Vector3 Moccasin => new Vector3(255, 228, 181) / 255;
+            public Vector3 PeachPuff => new Vector3(255, 218, 185) / 255;
+            public Vector3 PaleGoldenrod => new Vector3(238, 232, 170) / 255;
+            public Vector3 Khaki => new Vector3(240, 230, 140) / 255;
+            public Vector3 DarkKhaki => new Vector3(189, 183, 107) / 255;
+
+            //Purple tones
+            public Vector3 Lavender => new Vector3(230, 230, 250) / 255;
+            public Vector3 Thistle => new Vector3(216, 191, 216) / 255;
+            public Vector3 Plum => new Vector3(221, 160, 221) / 255;
+            public Vector3 Violet => new Vector3(238, 130, 238) / 255;
+            public Vector3 Orchid => new Vector3(218, 112, 214) / 255;
+            public Vector3 Fuchsia => new Vector3(255, 0, 255) / 255;
+            public Vector3 Magenta => new Vector3(255, 0, 255) / 255;
+            public Vector3 MediumOrchid => new Vector3(186, 85, 211) / 255;
+            public Vector3 MediumPurple => new Vector3(147, 112, 219) / 255;
+            public Vector3 RebeccaPurple => new Vector3(102, 51, 153) / 255;
+            public Vector3 BlueViolet => new Vector3(138, 43, 226) / 255;
+            public Vector3 DarkViolet => new Vector3(148, 0, 211) / 255;
+            public Vector3 DarkOrchid => new Vector3(153, 50, 204) / 255;
+            public Vector3 DarkMagenta => new Vector3(139, 0, 139) / 255;
+            public Vector3 Purple => new Vector3(128, 0, 128) / 255;
+            public Vector3 Indigo => new Vector3(75, 0, 130) / 255;
+            public Vector3 SlateBlue => new Vector3(106, 90, 205) / 255;
+            public Vector3 DarkSlateBlue => new Vector3(72, 61, 139) / 255;
+
+            //Green tones
+            public Vector3 GreenYellow => new Vector3(173, 255, 47) / 255;
+            public Vector3 Chartreuse => new Vector3(127, 255, 0) / 255;
+            public Vector3 LawnGreen => new Vector3(124, 252, 0) / 255;
+            public Vector3 Lime => new Vector3(0, 255, 0) / 255;
+            public Vector3 LimeGreen => new Vector3(50, 205, 50) / 255;
+            public Vector3 PaleGreen => new Vector3(152, 251, 152) / 255;
+            public Vector3 LightGreen => new Vector3(144, 238, 144) / 255;
+            public Vector3 MediumSpringGreen => new Vector3(0, 250, 154) / 255;
+            public Vector3 SpringGreen => new Vector3(0, 255, 127) / 255;
+            public Vector3 MediumSeaGreen => new Vector3(60, 179, 113) / 255;
+            public Vector3 SeaGreen => new Vector3(46, 139, 87) / 255;
+            public Vector3 ForestGreen => new Vector3(34, 139, 34) / 255;
+            public Vector3 Green => new Vector3(0, 128, 0) / 255;
+            public Vector3 DarkGreen => new Vector3(0, 100, 0) / 255;
+            public Vector3 YellowGreen => new Vector3(154, 205, 50) / 255;
+            public Vector3 OliveDrab => new Vector3(107, 142, 35) / 255;
+            public Vector3 Olive => new Vector3(128, 128, 0) / 255;
+            public Vector3 DarkOliveGreen => new Vector3(85, 107, 47) / 255;
+            public Vector3 MediumAquamarine => new Vector3(102, 205, 170) / 255;
+            public Vector3 DarkSeaGreen => new Vector3(143, 188, 139) / 255;
+            public Vector3 LightSeaGreen => new Vector3(32, 178, 170) / 255;
+            public Vector3 DarkCyan => new Vector3(0, 139, 139) / 255;
+            public Vector3 Teal => new Vector3(0, 128, 128) / 255;
+
+            //Blue tones
+            public Vector3 Aqua => new Vector3(0, 255, 255) / 255;
+            public Vector3 Cyan => new Vector3(0, 255, 255) / 255;
+            public Vector3 LightCyan => new Vector3(224, 255, 255) / 255;
+            public Vector3 PaleTurquoise => new Vector3(175, 238, 238) / 255;
+            public Vector3 Aquamarine => new Vector3(127, 255, 212) / 255;
+            public Vector3 Turquoise => new Vector3(64, 224, 208) / 255;
+            public Vector3 MediumTurquoise => new Vector3(72, 209, 204) / 255;
+            public Vector3 DarkTurquoise => new Vector3(0, 206, 209) / 255;
+            public Vector3 CadetBlue => new Vector3(95, 158, 160) / 255;
+            public Vector3 SteelBlue => new Vector3(70, 130, 180) / 255;
+            public Vector3 LightSteelBlue => new Vector3(176, 196, 222) / 255;
+            public Vector3 PowderBlue => new Vector3(176, 224, 230) / 255;
+            public Vector3 LightBlue => new Vector3(173, 216, 230) / 255;
+            public Vector3 SkyBlue => new Vector3(135, 206, 235) / 255;
+            public Vector3 LightSkyBlue => new Vector3(135, 206, 250) / 255;
+            public Vector3 DeepSkyBlue => new Vector3(0, 191, 255) / 255;
+            public Vector3 DodgerBlue => new Vector3(30, 144, 255) / 255;
+            public Vector3 CornflowerBlue => new Vector3(100, 149, 237) / 255;
+            public Vector3 MediumSlateBlue => new Vector3(123, 104, 238) / 255;
+            public Vector3 RoyalBlue => new Vector3(65, 105, 225) / 255;
+            public Vector3 Blue => new Vector3(0, 0, 255) / 255;
+            public Vector3 MediumBlue => new Vector3(0, 0, 205) / 255;
+            public Vector3 DarkBlue => new Vector3(0, 0, 139) / 255;
+            public Vector3 Navy => new Vector3(0, 0, 128) / 255;
+            public Vector3 MidnightBlue => new Vector3(25, 25, 112) / 255;
+
+            //Brown tones
+            public Vector3 Cornsilk => new Vector3(255, 248, 220) / 255;
+            public Vector3 BlanchedAlmond => new Vector3(255, 235, 205) / 255;
+            public Vector3 Bisque => new Vector3(255, 228, 196) / 255;
+            public Vector3 NavajoWhite => new Vector3(255, 222, 173) / 255;
+            public Vector3 Wheat => new Vector3(245, 222, 179) / 255;
+            public Vector3 BurlyWood => new Vector3(222, 184, 135) / 255;
+            public Vector3 Tan => new Vector3(210, 180, 140) / 255;
+            public Vector3 RosyBrown => new Vector3(188, 143, 143) / 255;
+            public Vector3 SandyBrown => new Vector3(244, 164, 96) / 255;
+            public Vector3 Goldenrod => new Vector3(218, 165, 32) / 255;
+            public Vector3 DarkGoldenrod => new Vector3(184, 134, 11) / 255;
+            public Vector3 Peru => new Vector3(205, 133, 63) / 255;
+            public Vector3 Chocolate => new Vector3(210, 105, 30) / 255;
+            public Vector3 SaddleBrown => new Vector3(139, 69, 19) / 255;
+            public Vector3 Sienna => new Vector3(160, 82, 45) / 255;
+            public Vector3 Brown => new Vector3(165, 42, 42) / 255;
+            public Vector3 Maroon => new Vector3(128, 0, 0) / 255;
+
+            //White tones
+            public Vector3 White => new Vector3(255, 255, 255) / 255;
+            public Vector3 Snow => new Vector3(255, 250, 250) / 255;
+            public Vector3 HoneyDew => new Vector3(240, 255, 240) / 255;
+            public Vector3 MintCream => new Vector3(245, 255, 250) / 255;
+            public Vector3 Azure => new Vector3(240, 255, 255) / 255;
+            public Vector3 AliceBlue => new Vector3(240, 248, 255) / 255;
+            public Vector3 GhostWhite => new Vector3(248, 248, 255) / 255;
+            public Vector3 WhiteSmoke => new Vector3(245, 245, 245) / 255;
+            public Vector3 SeaShell => new Vector3(255, 245, 238) / 255;
+            public Vector3 Beige => new Vector3(245, 245, 220) / 255;
+            public Vector3 OldLace => new Vector3(253, 245, 230) / 255;
+            public Vector3 FloralWhite => new Vector3(255, 250, 240) / 255;
+            public Vector3 Ivory => new Vector3(255, 255, 240) / 255;
+            public Vector3 AntiqueWhite => new Vector3(250, 235, 215) / 255;
+            public Vector3 Linen => new Vector3(250, 240, 230) / 255;
+            public Vector3 LavenderBlush => new Vector3(255, 240, 245) / 255;
+            public Vector3 MistyRose => new Vector3(255, 228, 225) / 255;
+
+            //Gray tones
+            public Vector3 Gainsboro => new Vector3(220, 220, 220) / 255;
+            public Vector3 LightGray => new Vector3(211, 211, 211) / 255;
+            public Vector3 Silver => new Vector3(192, 192, 192) / 255;
+            public Vector3 DarkGray => new Vector3(169, 169, 169) / 255;
+            public Vector3 Gray => new Vector3(128, 128, 128) / 255;
+            public Vector3 DimGray => new Vector3(105, 105, 105) / 255;
+            public Vector3 LightSlateGray => new Vector3(119, 136, 153) / 255;
+            public Vector3 SlateGray => new Vector3(112, 128, 144) / 255;
+            public Vector3 DarkSlateGray => new Vector3(47, 79, 79) / 255;
+            public Vector3 Black => new Vector3(0, 0, 0) / 255;
+        }     
+
+        private static readonly ColorSet Colors = new ColorSet();
+
+        [APIExtension(APIExtension.Properties, "Color")]
+        public ColorSet GetColors(ScriptInstance instance) => Colors;
     }
 }
