@@ -93,6 +93,25 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public double Falloff;
         }
 
+        [APIExtension(APIExtension.Properties, "projector")]
+        [APIDisplayName("projector")]
+        [APIIsVariableType]
+        [APIAccessibleMembers(
+            "Enabled",
+            "Texture",
+            "FieldOfView",
+            "Focus",
+            "Ambience")]
+        [Serializable]
+        public struct Projector
+        {
+            public int Enabled;
+            public LSLKey Texture;
+            public double FieldOfView;
+            public double Focus;
+            public double Ambience;
+        }
+
         [APIExtension(APIExtension.Properties, "link")]
         [APIDisplayName("link")]
         [APIIsVariableType]
@@ -106,6 +125,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             "Desc",
             "Buoyancy",
             "PointLight",
+            "Projector",
             "LocalRot",
             "LocalPos",
             "Rotation",
@@ -287,6 +307,44 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                         Radius = value.Radius,
                         Falloff = value.Falloff
                     });
+                }
+            }
+
+            public Projector Projector
+            {
+                get
+                {
+                    return WithPart((ObjectPart p) =>
+                    {
+                        ObjectPart.ProjectionParam param = p.Projection;
+                        return new Projector
+                        {
+                            Enabled = param.IsProjecting.ToLSLBoolean(),
+                            Texture = param.ProjectionTextureID,
+                            FieldOfView = param.ProjectionFOV,
+                            Focus = param.ProjectionFocus,
+                            Ambience = param.ProjectionAmbience
+                        };
+                    });
+                }
+                set
+                {
+                    ScriptInstance instance;
+                    if(WeakInstance.TryGetTarget(out instance))
+                    {
+                        value.Texture = instance.GetTextureAssetID(value.Texture.ToString());
+                    }
+                    WithPart((ObjectPart p, Projector param) =>
+                    {
+                        p.Projection = new ObjectPart.ProjectionParam
+                        {
+                            IsProjecting = param.Enabled != 0,
+                            ProjectionTextureID = param.Texture,
+                            ProjectionFOV = param.FieldOfView,
+                            ProjectionFocus = param.Focus,
+                            ProjectionAmbience = param.Ambience
+                        };
+                    }, value);
                 }
             }
 
@@ -509,6 +567,16 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             Intensity = intensity,
             Radius = radius,
             Falloff = falloff
+        };
+
+        [APIExtension(APIExtension.Properties, "Projector")]
+        public Projector GetProjector(ScriptInstance instance, int enabled, LSLKey texture, double fov, double focus, double ambience) => new Projector
+        {
+            Enabled = enabled,
+            Texture = texture,
+            FieldOfView = fov,
+            Focus = focus,
+            Ambience = ambience
         };
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Color")]
