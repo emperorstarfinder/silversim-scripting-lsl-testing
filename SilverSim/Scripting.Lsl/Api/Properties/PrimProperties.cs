@@ -749,7 +749,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public Vector3 SlateGray => new Vector3(112, 128, 144) / 255;
             public Vector3 DarkSlateGray => new Vector3(47, 79, 79) / 255;
             public Vector3 Black => new Vector3(0, 0, 0) / 255;
-        }     
+        }
 
         private static readonly ColorSet Colors = new ColorSet();
 

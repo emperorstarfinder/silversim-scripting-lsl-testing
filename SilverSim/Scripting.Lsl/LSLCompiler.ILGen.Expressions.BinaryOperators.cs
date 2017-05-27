@@ -188,7 +188,6 @@ namespace SilverSim.Scripting.Lsl
                             compileState.CurrentCulture,
                             "InvalidMemberAccess0To1",
                             "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
-
                     }
                     else if((fi = varType.GetField(member)) != null)
                     {
@@ -201,7 +200,7 @@ namespace SilverSim.Scripting.Lsl
                             varType = pi.PropertyType;
                         }
                         else
-                        { 
+                        {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
                                 compileState.CurrentCulture,
                                 "Member1IsReadOnlyForType0AtVariable2",
