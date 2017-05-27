@@ -121,7 +121,8 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                                 break;
 
                             case PARCEL_DETAILS_SEE_AVATARS:
-                                throw new NotImplementedException("PARCEL_DETAILS_SEE_AVATARS in llGetParcelDetails");
+                                res.Add(pinfo.SeeAvatars.ToLSLBoolean());
+                                break;
 
                             default:
                                 res.Add(string.Empty);
