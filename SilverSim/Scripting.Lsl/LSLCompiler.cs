@@ -325,7 +325,7 @@ namespace SilverSim.Scripting.Lsl
         {
             foreach (Type t in api.GetType().GetNestedTypes())
             {
-                if(!t.IsClass && !t.IsValueType)
+                if((!t.IsClass && !t.IsValueType))
                 {
                     continue;
                 }
