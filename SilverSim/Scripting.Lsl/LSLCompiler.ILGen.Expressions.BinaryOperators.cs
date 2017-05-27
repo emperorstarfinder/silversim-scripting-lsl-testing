@@ -391,9 +391,7 @@ namespace SilverSim.Scripting.Lsl
             public void ProcessOperator_Member(
                 CompileState compileState)
             {
-                if (m_RightHand.Type != Tree.EntryType.Unknown &&
-                    m_RightHand.Type != Tree.EntryType.Variable &&
-                    m_RightHand.Type != Tree.EntryType.ReservedWord)
+                if (m_RightHand.Type != Tree.EntryType.MemberName)
                 {
                     throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Entry + m_RightHand.Type, compileState.MapType(m_LeftHandType)));
                 }

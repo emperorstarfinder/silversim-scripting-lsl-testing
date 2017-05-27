@@ -1564,6 +1564,36 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Order Tree according to definitions
+        private int FindBeginOfElementSelectors(Tree tree, int startPos, int lineNumber, CultureInfo currentCulture)
+        {
+            while(startPos >= 0)
+            {
+                switch (tree.SubTree[startPos].Type)
+                {
+                    case Tree.EntryType.Variable:
+                    case Tree.EntryType.Declaration:
+                    case Tree.EntryType.Function:
+                    case Tree.EntryType.Vector:
+                    case Tree.EntryType.Rotation:
+                    case Tree.EntryType.ThisOperator:
+                        return startPos;
+
+                    case Tree.EntryType.MemberName:
+                        if(startPos < 2)
+                        {
+                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
+                        }
+                        startPos -= 2;
+                        break;
+
+                    default:
+                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
+                }
+            }
+
+            return -1;
+        }
+
         private void OrderOperators_ElementSelector(Tree tree, int lineNumber, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
@@ -1606,39 +1636,31 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
                     }
 
-                    switch (tree.SubTree[pos - 1].Type)
+                    int startPos = FindBeginOfElementSelectors(tree, pos - 1, lineNumber, currentCulture);
+                    if(startPos < 0)
                     {
-                        case Tree.EntryType.Variable:
-                        case Tree.EntryType.Declaration:
-                        case Tree.EntryType.Function:
-                        case Tree.EntryType.Vector:
-                        case Tree.EntryType.Rotation:
-                        case Tree.EntryType.ThisOperator:
-                            break;
-
-                        default:
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
+                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
                     }
 
-                    /*
-                    switch (tree.SubTree[pos + 1].Entry)
+                    if(tree.SubTree[pos + 1].Type != Tree.EntryType.MemberName)
                     {
-                        case "x":
-                        case "y":
-                        case "z":
-                        case "s":
-                            break;
+                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
+                    }
 
-                        default:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidElementSelector0", "invalid element selector '{0}'"), tree.SubTree[pos + 1].Entry));
-                    }*/
 
-                    enumeratorStack.Add(tree.SubTree[pos - 1]);
-                    elem.SubTree.Add(tree.SubTree[pos - 1]);
-                    elem.SubTree.Add(tree.SubTree[pos + 1]);
-                    elem.Type = Tree.EntryType.OperatorBinary;
-                    tree.SubTree.RemoveAt(pos + 1);
-                    tree.SubTree.RemoveAt(--pos);
+                    enumeratorStack.Add(tree.SubTree[startPos]);
+                    int elemPos = startPos + 1;
+                    while (elemPos <= pos)
+                    {
+                        elem = tree.SubTree[elemPos];
+                        elem.SubTree.Add(tree.SubTree[elemPos - 1]);
+                        elem.SubTree.Add(tree.SubTree[elemPos + 1]);
+                        elem.Type = Tree.EntryType.OperatorBinary;
+                        tree.SubTree.RemoveAt(elemPos + 1);
+                        tree.SubTree.RemoveAt(elemPos - 1);
+                        pos -= 2;
+                    }
+                    pos = startPos;
                 }
             }
         }
@@ -2662,6 +2684,25 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void IdentifyMemberAccessors(Tree resolvetree)
+        {
+            int n = resolvetree.SubTree.Count;
+            for (int i = 0; i < n; ++i)
+            {
+                Tree st = resolvetree.SubTree[i];
+                string ent = st.Entry;
+                if(st.Type != Tree.EntryType.Unknown)
+                {
+                    continue;
+                }
+
+                if(ent == "." && i + 1 < n)
+                {
+                    resolvetree.SubTree[i + 1].Type = Tree.EntryType.MemberName;
+                }
+            }
+        }
+
         private void IdentifyFunctions(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
         {
             int n = resolvetree.SubTree.Count;
@@ -2699,6 +2740,7 @@ namespace SilverSim.Scripting.Lsl
             PreprocessLine(cs, expressionLine);
             var expressionTree = new Tree(expressionLine);
             IdentifyReservedWords(cs, expressionTree);
+            IdentifyMemberAccessors(expressionTree);
             IdentifyVariables(expressionTree, localVarNames);
             IdentifyFunctions(cs, expressionTree, lineNumber, currentCulture);
             IdentifyOperators(cs, expressionTree);

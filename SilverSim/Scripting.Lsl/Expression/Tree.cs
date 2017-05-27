@@ -54,7 +54,8 @@ namespace SilverSim.Scripting.Lsl.Expression
             Level,
             ExpressionTree,
             Variable,
-            ThisOperator
+            ThisOperator,
+            MemberName
         }
 
         public bool ProcessedOpSort;
