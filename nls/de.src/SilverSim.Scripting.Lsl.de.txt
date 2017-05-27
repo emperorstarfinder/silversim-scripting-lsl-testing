@@ -293,3 +293,5 @@ Member1IsWriteOnlyForType0AtVariable2=Der Zugriff auf '{1}' des Typs '{0}' (Vari
 ValueContentsNotAssignedType0=Wert nicht zugewiesen. (Typ {0})
 Type0IsNotSuitableForGlobalVariable=Typ '{0}' ist nicht als globale Variable geeignet.
 Type0IsNotSuitableForStateVariable=Typ '{0}' ist nich als globale Variable geeignet.
+Member1IsReadOnlyForType0=Der Zugriff auf '{1}' des Typs '{0}' ist schreibgeschützt.
+Member1IsWriteOnlyForType0=Der Zugriff auf '{1}' des Typs '{0}' ist lesegeschützt.

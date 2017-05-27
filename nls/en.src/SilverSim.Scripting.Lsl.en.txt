@@ -293,3 +293,5 @@ Member1IsWriteOnlyForType0AtVariable2=Member '{1}' of type '{0}' (Variable '{2}'
 ValueContentsNotAssignedType0=Value contents not assigned. (Type {0})
 Type0IsNotSuitableForGlobalVariable=Type '{0}' is not suitable for global variable.
 Type0IsNotSuitableForStateVariable=Type '{0}' is not suitable for state variable.
+Member1IsReadOnlyForType0=Member '{1}' of type '{0}' is read only.
+Member1IsWriteOnlyForType0=Member '{1}' of type '{0}' is write only.

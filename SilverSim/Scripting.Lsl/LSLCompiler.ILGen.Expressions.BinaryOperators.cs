@@ -296,7 +296,7 @@ namespace SilverSim.Scripting.Lsl
                         MethodInfo mi;
                         if ((mi = pi.GetGetMethod()) == null)
                         {
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsWriteOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is write only."), memberName, compileState.MapType(varType), string.Empty));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsWriteOnlyForType0", "Member '{1}' of type '{0}' is write only."), memberName, compileState.MapType(varType)));
                         }
                         else if (mi.IsStatic)
                         {
@@ -401,7 +401,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if(fi.IsStatic || fi.IsInitOnly)
                         {
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is read only."), memberName, compileState.MapType(varType), string.Empty));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0", "Member '{1}' of type '{0}' is read only."), memberName, compileState.MapType(varType)));
                         }
                         varType = fi.FieldType;
                         compileState.ILGen.Emit(OpCodes.Stfld, fi);
@@ -411,7 +411,7 @@ namespace SilverSim.Scripting.Lsl
                         mi = pi.GetSetMethod();
                         if(mi == null)
                         {
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0AtVariable2", "Member '{1}' of type '{0}' (Variable '{2}') is read only."), memberName, compileState.MapType(varType), string.Empty));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0", "Member '{1}' of type '{0}' is read only."), memberName, compileState.MapType(varType)));
                         }
                         varType = pi.PropertyType;
                         if(mi.IsStatic)
