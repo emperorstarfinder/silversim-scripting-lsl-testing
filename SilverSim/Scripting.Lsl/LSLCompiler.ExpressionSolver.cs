@@ -1578,6 +1578,13 @@ namespace SilverSim.Scripting.Lsl
                     case Tree.EntryType.ThisOperator:
                         return startPos;
 
+                    case Tree.EntryType.OperatorBinary:
+                        if(tree.SubTree[startPos].Entry == ".")
+                        {
+                            return startPos;
+                        }
+                        goto default;
+
                     case Tree.EntryType.MemberName:
                         if(startPos < 2)
                         {
@@ -2403,7 +2410,7 @@ namespace SilverSim.Scripting.Lsl
                                 resolvetree.SubTree[startPos - 1].SubTree = resolvetree.SubTree[startPos].SubTree;
                                 resolvetree.SubTree.RemoveRange(startPos, i - startPos + 1);
                                 OrderBrackets_SeparateArguments(
-                                    resolvetree.SubTree[startPos - 1],
+                                    thisOpTree,
                                     "parameter",
                                     Tree.EntryType.FunctionArgument,
                                     lineNumber,
@@ -2411,6 +2418,37 @@ namespace SilverSim.Scripting.Lsl
                                 thisOpTree.SubTree.Insert(0, varTree);
 
                                 i = startPos;
+                            }
+                            else if(startPos > 0 && resolvetree.SubTree[startPos - 1].Type == Tree.EntryType.MemberName)
+                            {
+                                var thisOpTree = resolvetree.SubTree[startPos];
+                                thisOpTree.Type = Tree.EntryType.ThisOperator;
+                                resolvetree.SubTree.RemoveRange(startPos, i - startPos + 1);
+                                OrderBrackets_SeparateArguments(
+                                    thisOpTree,
+                                    "parameter",
+                                    Tree.EntryType.FunctionArgument,
+                                    lineNumber,
+                                    currentCulture);
+
+                                int endPos = startPos - 1;
+                                startPos = FindBeginOfElementSelectors(resolvetree, endPos, lineNumber, currentCulture);
+                                i = startPos;
+
+                                int elemPos = startPos + 1;
+                                while (elemPos <= endPos)
+                                {
+                                    Tree elem = resolvetree.SubTree[elemPos];
+                                    elem.SubTree.Add(resolvetree.SubTree[elemPos - 1]);
+                                    elem.SubTree.Add(resolvetree.SubTree[elemPos + 1]);
+                                    elem.Type = Tree.EntryType.OperatorBinary;
+                                    resolvetree.SubTree.RemoveAt(elemPos + 1);
+                                    resolvetree.SubTree.RemoveAt(elemPos - 1);
+                                    endPos -= 2;
+                                }
+                                thisOpTree.SubTree.Insert(0, resolvetree.SubTree[startPos]);
+                                resolvetree.SubTree[startPos] = thisOpTree;
+                                i = startPos + 1;
                             }
                             else
                             {
