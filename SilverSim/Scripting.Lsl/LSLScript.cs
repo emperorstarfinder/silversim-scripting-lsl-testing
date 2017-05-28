@@ -1271,7 +1271,7 @@ namespace SilverSim.Scripting.Lsl
             public string Localize(ListenEvent le, CultureInfo currentCulture)
             {
                 return string.Format(this.GetLanguageString(currentCulture, "ShoutErrorAtRegion0", "At region {0}:") + "\n", m_RegionName) +
-                    m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message;
+                    (m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message);
             }
         }
 
