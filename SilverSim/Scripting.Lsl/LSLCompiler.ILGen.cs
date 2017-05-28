@@ -81,7 +81,8 @@ namespace SilverSim.Scripting.Lsl
                 retType,
                 lineNumber);
 
-            if(functionTree.SubTree[0].Type == Tree.EntryType.Variable)
+            if(functionTree.SubTree[0].Type == Tree.EntryType.Variable ||
+                functionTree.SubTree[0].Type == Tree.EntryType.ThisOperator)
             {
                 /* variables are unmodified */
             }
@@ -90,7 +91,8 @@ namespace SilverSim.Scripting.Lsl
                     functionTree.SubTree[0].Entry == "-=" ||
                     functionTree.SubTree[0].Entry == "*=" ||
                     functionTree.SubTree[0].Entry == "/=" ||
-                    functionTree.SubTree[0].Entry == "%="))
+                    functionTree.SubTree[0].Entry == "%=" ||
+                    functionTree.SubTree[0].Entry == "."))
             {
                 isModified = ResultIsModifiedEnum.Yes;
             }
