@@ -482,7 +482,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public static implicit operator bool(Prim c) => c.LinkNumbers.Length > 0;
 
             [APIExtension(APIExtension.Properties)]
-            public static implicit operator int(Prim c) => c.LinkNumbers.Length > 0 ? c.LinkNumbers[0] : 0;
+            public static implicit operator int(Prim c) => c.LinkNumbers.Length;
+
+            [APIExtension(APIExtension.Properties)]
+            public static explicit operator string(Prim c) => c.LinkNumbers.Length.ToString();
 
             public FaceProperties.TextureFace this[int faceNo]
             {
@@ -589,6 +592,64 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            public Prim this[AnArray linklist]
+            {
+                get
+                {
+                    lock (Instance)
+                    {
+                        var links = new List<int>();
+                        foreach(IValue val in linklist)
+                        {
+                            int linkno = val.AsInt;
+
+                            if (linkno == PrimitiveApi.LINK_ALL_CHILDREN)
+                            {
+                                Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                                {
+                                    if (kvp.Key != PrimitiveApi.LINK_ROOT && !links.Contains(kvp.Key))
+                                    {
+                                        links.Add(kvp.Key);
+                                    }
+                                });
+                            }
+                            else if (linkno == PrimitiveApi.LINK_ALL_OTHERS)
+                            {
+                                Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                                {
+                                    if (kvp.Value != Instance.Part && !links.Contains(kvp.Key))
+                                    {
+                                        links.Add(kvp.Key);
+                                    }
+                                });
+                            }
+                            else if (linkno == PrimitiveApi.LINK_ROOT)
+                            {
+                                if (!links.Contains(linkno))
+                                {
+                                    links.Add(linkno);
+                                }
+                            }
+                            else if (linkno == PrimitiveApi.LINK_SET)
+                            {
+                                foreach (int l in Instance.Part.ObjectGroup.Keys1)
+                                {
+                                    if(!links.Contains(l))
+                                    {
+                                        links.Add(l);
+                                    }
+                                }
+                            }
+                            else if (!links.Contains(linkno))
+                            {
+                                links.Add(linkno);
+                            }
+                        }
+                        return new Prim(Instance, links.ToArray());
+                    }
+                }
+            }
+
             public Prim this[string name]
             {
                 get
@@ -615,6 +676,15 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             lock (instance)
             {
                 return new LinkSetAccessor(instance);
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Root")]
+        public Prim GetRoot(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return new Prim(instance, new int[] { PrimitiveApi.LINK_ROOT });
             }
         }
 
