@@ -31,7 +31,13 @@ namespace SilverSim.Scripting.Lsl
         private static CompilerException CompilerException(LineInfo p, string message) =>
             new CompilerException(p.LineNumber, message);
 
-        private void ProcessExpression(
+        public enum ResultIsModifiedEnum
+        {
+            No,
+            Yes
+        }
+
+        private ResultIsModifiedEnum ProcessExpression(
             CompileState compileState,
             Type expectedType,
             int startAt,
@@ -47,7 +53,7 @@ namespace SilverSim.Scripting.Lsl
             List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
             Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber, compileState.CurrentCulture);
 
-            ProcessExpression(
+            return ProcessExpression(
                 compileState,
                 expectedType,
                 expressionTree,
@@ -55,13 +61,15 @@ namespace SilverSim.Scripting.Lsl
                 localVars);
         }
 
-        private void ProcessExpression(
+        private ResultIsModifiedEnum ProcessExpression(
             CompileState compileState,
             Type expectedType,
             Tree functionTree,
             int lineNumber,
             Dictionary<string, object> localVars)
         {
+            var isModified = ResultIsModifiedEnum.No;
+
             Type retType = ProcessExpressionPart(
                 compileState,
                 functionTree,
@@ -72,6 +80,26 @@ namespace SilverSim.Scripting.Lsl
                 expectedType,
                 retType,
                 lineNumber);
+
+            if(functionTree.SubTree[0].Type == Tree.EntryType.Variable)
+            {
+                /* variables are unmodified */
+            }
+            else if(functionTree.SubTree[0].Type != Tree.EntryType.OperatorBinary ||
+                    !(functionTree.SubTree[0].Entry == "+=" ||
+                    functionTree.SubTree[0].Entry == "-=" ||
+                    functionTree.SubTree[0].Entry == "*=" ||
+                    functionTree.SubTree[0].Entry == "/=" ||
+                    functionTree.SubTree[0].Entry == "%="))
+            {
+                isModified = ResultIsModifiedEnum.Yes;
+            }
+
+            if (expectedType != retType)
+            {
+                isModified = ResultIsModifiedEnum.Yes;
+            }
+            return isModified;
         }
 
         private Type ProcessExpressionToAnyType(

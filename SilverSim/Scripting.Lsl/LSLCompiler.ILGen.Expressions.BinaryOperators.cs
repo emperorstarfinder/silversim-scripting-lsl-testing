@@ -1029,6 +1029,11 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                     }
                     ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                    if(m_LeftHandType == m_RightHandType && m_RightHandType == typeof(AnArray))
+                    {
+                        /* duplicate array to adhere to LSL language features */
+                        compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
+                    }
                     compileState.ILGen.Emit(OpCodes.Dup);
                     SetMemberVarTreeFromStack(lslCompiler, compileState, m_LeftHand, localVars);
                     throw Return(compileState, m_LeftHandType);
@@ -1038,6 +1043,11 @@ namespace SilverSim.Scripting.Lsl
                     object varInfo = localVars[m_LeftHand.Entry];
                     m_LeftHandType = GetVarType(varInfo);
                     ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                    if (m_LeftHandType == m_RightHandType && m_RightHandType == typeof(AnArray))
+                    {
+                        /* duplicate array to adhere to LSL language features */
+                        compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
+                    }
                     compileState.ILGen.Emit(OpCodes.Dup);
                     SetVarFromStack(
                         compileState,
@@ -1065,6 +1075,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     varInfo = localVars[m_LeftHand.Entry];
                     GetVarToStack(compileState, varInfo);
+                    if(m_Operator == "+=" && m_LeftHandType == typeof(AnArray) && typeof(AnArray).GetMethod("Add", new Type[] { m_RightHandType }) != null)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Dup);
+                    }
                 }
 
                 compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -1123,11 +1137,32 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
                             break;
                         }
-                        if(typeof(AnArray) == m_LeftHandType && typeof(LSLKey) == m_RightHandType)
+                        else if(typeof(AnArray) == m_LeftHandType)
                         {
-                            mi = typeof(LSLCompiler).GetMethod("AddKeyToList", new Type[] { m_LeftHandType, m_RightHandType });
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                            break;
+                            if (typeof(AnArray) == m_RightHandType)
+                            {
+                                mi = typeof(AnArray).GetMethod("AddRange", new Type[] { m_RightHandType });
+                            }
+                            else
+                            {
+                                mi = typeof(AnArray).GetMethod("Add", new Type[] { m_RightHandType });
+                            }
+                            if (mi != null)
+                            {
+                                if(m_RightHandType.IsValueType && mi.GetParameters()[0].ParameterType == typeof(IValue))
+                                {
+                                    compileState.ILGen.Emit(OpCodes.Box, m_RightHandType);
+                                }
+                                if (mi.IsVirtual)
+                                {
+                                    compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                                }
+                                else
+                                {
+                                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                                }
+                                break;
+                            }
                         }
 
                         mi = m_LeftHandType.GetMethod("op_Addition", new Type[]{m_LeftHandType, m_RightHandType});

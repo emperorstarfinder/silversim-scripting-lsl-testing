@@ -703,13 +703,22 @@ namespace SilverSim.Scripting.Lsl
                             localVars[functionLine.Line[1]] = lb;
                             if (functionLine.Line[2] != ";")
                             {
-                                ProcessExpression(
+                                ResultIsModifiedEnum modified = ProcessExpression(
                                     compileState,
                                     targetType,
                                     3,
                                     functionLine.Line.Count - 2,
                                     functionLine,
                                     localVars);
+                                if(modified == ResultIsModifiedEnum.Yes)
+                                {
+                                    /* skip operation as it is modified */
+                                }
+                                else if(targetType == typeof(AnArray) || Attribute.GetCustomAttribute(targetType, typeof(APICloneOnAssignmentAttribute)) != null)
+                                {
+                                    /* keep LSL semantics valid */
+                                    compileState.ILGen.Emit(OpCodes.Newobj, targetType.GetConstructor(new Type[] { targetType }));
+                                }
                             }
                             else if(targetType == typeof(int))
                             {

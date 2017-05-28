@@ -457,22 +457,40 @@ namespace SilverSim.Scripting.Lsl
 
                             compileState.ILGen = script_ILGen;
                             compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                            ProcessExpression(
+                            ResultIsModifiedEnum modified = ProcessExpression(
                                 compileState,
                                 fb.FieldType,
                                 expressionTree,
                                 initargs.LineNumber,
                                 typeLocals);
+                            if (modified == ResultIsModifiedEnum.Yes)
+                            {
+                                /* skip operation as it is modified */
+                            }
+                            else if (fb.FieldType == typeof(AnArray) || Attribute.GetCustomAttribute(fb.FieldType, typeof(APICloneOnAssignmentAttribute)) != null)
+                            {
+                                /* keep LSL semantics valid */
+                                compileState.ILGen.Emit(OpCodes.Newobj, fb.FieldType.GetConstructor(new Type[] { fb.FieldType }));
+                            }
                             compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
                             compileState.ILGen = reset_ILGen;
                             compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                            ProcessExpression(
+                            modified = ProcessExpression(
                                 compileState,
                                 fb.FieldType,
                                 expressionTree,
                                 initargs.LineNumber,
                                 typeLocals);
+                            if (modified == ResultIsModifiedEnum.Yes)
+                            {
+                                /* skip operation as it is modified */
+                            }
+                            else if (fb.FieldType == typeof(AnArray) || Attribute.GetCustomAttribute(fb.FieldType, typeof(APICloneOnAssignmentAttribute)) != null)
+                            {
+                                /* keep LSL semantics valid */
+                                compileState.ILGen.Emit(OpCodes.Newobj, fb.FieldType.GetConstructor(new Type[] { fb.FieldType }));
+                            }
                             compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
                             varIsInited.Add(varName);
@@ -786,12 +804,21 @@ namespace SilverSim.Scripting.Lsl
 #endif
                         compileState.ILGen.Emit(OpCodes.Ldarg_0);
                         compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                        ProcessExpression(
+                        ResultIsModifiedEnum modified = ProcessExpression(
                             compileState,
                             fb.FieldType,
                             expressionTree,
                             initargs.LineNumber,
                             typeLocals);
+                        if (modified == ResultIsModifiedEnum.Yes)
+                        {
+                            /* skip operation as it is modified */
+                        }
+                        else if (fb.FieldType == typeof(AnArray) || Attribute.GetCustomAttribute(fb.FieldType, typeof(APICloneOnAssignmentAttribute)) != null)
+                        {
+                            /* keep LSL semantics valid */
+                            compileState.ILGen.Emit(OpCodes.Newobj, fb.FieldType.GetConstructor(new Type[] { fb.FieldType }));
+                        }
                         compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
                         varIsInited.Add(varName);

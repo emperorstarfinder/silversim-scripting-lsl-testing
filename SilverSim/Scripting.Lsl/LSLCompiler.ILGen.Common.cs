@@ -1213,11 +1213,6 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new NotSupportedException();
             }
-            if (retType == typeof(AnArray))
-            {
-                /* type has deep copying */
-                compileState.ILGen.Emit(OpCodes.Newobj, retType.GetConstructor(new Type[] { retType }));
-            }
             return retType;
         }
 
