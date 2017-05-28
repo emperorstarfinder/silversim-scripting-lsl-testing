@@ -96,6 +96,10 @@ namespace SilverSim.Scripting.Lsl
             {
                 isModified = ResultIsModifiedEnum.Yes;
             }
+            if(functionTree.SubTree[0].Value != null)
+            {
+                isModified = ResultIsModifiedEnum.Yes;
+            }
 
             if (expectedType != retType)
             {
