@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -78,11 +79,11 @@ namespace SilverSim.Scripting.Lsl
                 m_ProcessOrders.Add(".", new State[] { State.LeftHand });
 
                 m_ProcessOrders.Add("=", new State[] { State.RightHand });
-                m_ProcessOrders.Add("+=", new State[] { State.RightHand, State.LeftHand });
-                m_ProcessOrders.Add("-=", new State[] { State.RightHand, State.LeftHand });
-                m_ProcessOrders.Add("*=", new State[] { State.RightHand, State.LeftHand });
-                m_ProcessOrders.Add("/=", new State[] { State.RightHand, State.LeftHand });
-                m_ProcessOrders.Add("%=", new State[] { State.RightHand, State.LeftHand });
+                m_ProcessOrders.Add("+=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("-=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("*=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("/=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("%=", new State[] { State.RightHand });
             }
 
             private void BeginScope(CompileState compileState)
@@ -143,11 +144,11 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            private Type GetMemberVarTreeType(CompileState compileState, Tree t, Dictionary<string, object> localVars)
+            private Type GetMemberVarTreeType(LSLCompiler compiler, CompileState compileState, Tree t, Dictionary<string, object> localVars)
             {
                 APIAccessibleMembersAttribute membersAttr;
                 var selectorStack = new List<Tree>();
-                while (t.Type == Tree.EntryType.OperatorBinary)
+                while (t.Type == Tree.EntryType.OperatorBinary || t.Type == Tree.EntryType.ThisOperator)
                 {
                     selectorStack.Insert(0, t);
                     t = t.SubTree[0];
@@ -164,57 +165,61 @@ namespace SilverSim.Scripting.Lsl
                 object varInfo = localVars[t.Entry];
                 Type varType = GetVarType(varInfo);
 
-                string varNameWithSelectors = t.Entry;
-
                 foreach (Tree selector in selectorStack)
                 {
-                    FieldInfo fi;
-                    PropertyInfo pi;
-                    string member = selector.SubTree[1].Entry;
-                    if(varType == typeof(Vector3) || varType == typeof(Quaternion))
+                    if (selector.Type == Tree.EntryType.ThisOperator)
                     {
-                        varType = GetVectorOrQuaternionField(compileState, varType, member).FieldType;
+                        varType = GetThisOperatorType(compiler, compileState, varType, selector, localVars);
                     }
-                    else if((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) == null)
+                    else
                     {
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
-                            compileState.CurrentCulture,
-                            "OperatorDorNotSupportedFor",
-                            "operator '.' not supported for {0}"), compileState.MapType(varType)));
-                    }
-                    else if(!membersAttr.Members.Contains(member))
-                    {
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
-                            compileState.CurrentCulture,
-                            "InvalidMemberAccess0To1",
-                            "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
-                    }
-                    else if((fi = varType.GetField(member)) != null)
-                    {
-                        varType = fi.FieldType;
-                    }
-                    else if((pi = varType.GetMemberProperty(compileState, member)) != null)
-                    {
-                        if (pi.GetGetMethod() != null)
+                        FieldInfo fi;
+                        PropertyInfo pi;
+                        string member = selector.SubTree[1].Entry;
+                        if (varType == typeof(Vector3) || varType == typeof(Quaternion))
                         {
-                            varType = pi.PropertyType;
+                            varType = GetVectorOrQuaternionField(compileState, varType, member).FieldType;
+                        }
+                        else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) == null)
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
+                                compileState.CurrentCulture,
+                                "OperatorDorNotSupportedFor",
+                                "operator '.' not supported for {0}"), compileState.MapType(varType)));
+                        }
+                        else if (!membersAttr.Members.Contains(member))
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
+                                compileState.CurrentCulture,
+                                "InvalidMemberAccess0To1",
+                                "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
+                        }
+                        else if ((fi = varType.GetField(member)) != null)
+                        {
+                            varType = fi.FieldType;
+                        }
+                        else if ((pi = varType.GetMemberProperty(compileState, member)) != null)
+                        {
+                            if (pi.GetGetMethod() != null)
+                            {
+                                varType = pi.PropertyType;
+                            }
+                            else
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
+                                    compileState.CurrentCulture,
+                                    "Member1IsReadOnlyForType0",
+                                    "Member '{1}' of type '{0}' is read only."), compileState.MapType(varType), member));
+                            }
                         }
                         else
                         {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
                                 compileState.CurrentCulture,
-                                "Member1IsReadOnlyForType0AtVariable2",
-                                "Member '{1}' of type '{0}' (Variable '{2}') is read only."), member, compileState.MapType(varType), varNameWithSelectors));
+                                "InvalidMemberAccess0To1",
+                                "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
                         }
                     }
-                    else
-                    {
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
-                            compileState.CurrentCulture,
-                            "InvalidMemberAccess0To1",
-                            "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
-                    }
-                    varNameWithSelectors += "." + member;
                 }
 
                 return varType;
@@ -263,6 +268,162 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            private readonly Dictionary<Tree, LocalBuilder> m_CachedLeftSideValues = new Dictionary<Tree, LocalBuilder>();
+
+            private Type[] GetParametersTypes(LSLCompiler compiler, CompileState compileState, Tree arguments, Dictionary<string, object> localVars)
+            {
+                var paramTypes = new List<Type>();
+                for(int i = 1; i < arguments.SubTree.Count; ++i)
+                {
+                    Tree s = arguments.SubTree[i];
+                    LocalBuilder lb;
+                    Type retType;
+                    if (m_CachedLeftSideValues.TryGetValue(s, out lb))
+                    {
+                        retType = lb.LocalType;
+                    }
+                    else
+                    {
+#if DEBUG
+                        compileState.ILGen.Writer.WriteLine("++++ Processing this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+#endif
+                        retType = compiler.ProcessExpressionPart(
+                            compileState,
+                            s,
+                            m_LineNumber,
+                            localVars);
+                        if (retType == typeof(void))
+                        {
+                            throw new CompilerException(m_LineNumber, this.GetLanguageString(
+                                compileState.CurrentCulture,
+                                "ExpressionForThisOperatorHasNoReturnValue",
+                                "Expression for this operator has no return value"));
+                        }
+                        lb = DeclareLocal(compileState, retType);
+                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                        m_CachedLeftSideValues.Add(s, lb);
+#if DEBUG
+                        compileState.ILGen.Writer.WriteLine("++++ Processed this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+#endif
+                    }
+
+                    paramTypes.Add(retType);
+                }
+                return paramTypes.ToArray();
+            }
+
+            private void GetParametersToStack(LSLCompiler compiler, CompileState compileState, Tree arguments, Dictionary<string, object> localVars)
+            {
+                for (int i = 1; i < arguments.SubTree.Count; ++i)
+                {
+                    Tree s = arguments.SubTree[i];
+                    LocalBuilder lb;
+                    Type retType;
+                    if (m_CachedLeftSideValues.TryGetValue(s, out lb))
+                    {
+#if DEBUG
+                        compileState.ILGen.Writer.WriteLine("++++ Getting cached this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+#endif
+                        retType = lb.LocalType;
+                        compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                    }
+                    else
+                    {
+#if DEBUG
+                        compileState.ILGen.Writer.WriteLine("++++ Processing this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+#endif
+                        retType = compiler.ProcessExpressionPart(
+                            compileState,
+                            s,
+                            m_LineNumber,
+                            localVars);
+                        if (retType == typeof(void))
+                        {
+                            throw new CompilerException(m_LineNumber, this.GetLanguageString(
+                                compileState.CurrentCulture,
+                                "ExpressionForThisOperatorHasNoReturnValue",
+                                "Expression for this operator has no return value"));
+                        }
+                        lb = DeclareLocal(compileState, retType);
+                        compileState.ILGen.Emit(OpCodes.Dup);
+                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                        m_CachedLeftSideValues.Add(s, lb);
+#if DEBUG
+                        compileState.ILGen.Writer.WriteLine("++++ Processed this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+#endif
+                    }
+                }
+            }
+
+            private string GetThisParameterTypeString(CompileState compileState, Type[] paramTypes)
+            {
+                StringBuilder res = new StringBuilder();
+                foreach(Type paramType in paramTypes)
+                {
+                    if(res.Length != 0)
+                    {
+                        res.Append(", ");
+                    }
+                    res.Append(compileState.MapType(paramType));
+                }
+                return res.ToString();
+            }
+
+            private Type GetThisOperatorType(LSLCompiler compiler, CompileState compileState, Type varType, Tree arguments, Dictionary<string, object> localVars)
+            {
+                Type[] paramTypes = GetParametersTypes(compiler, compileState, arguments, localVars);
+                PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
+                if(pInfo == null)
+                {
+                    throw new CompilerException(m_LineNumber, string.Format(
+                        this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                        compileState.MapType(varType),
+                        GetThisParameterTypeString(compileState, paramTypes)));
+                }
+
+                return pInfo.PropertyType;
+            }
+
+            private Type GetThisOperatorToStack(LSLCompiler compiler, CompileState compileState, Type varType, Tree arguments, Dictionary<string, object> localVars)
+            {
+                Type[] paramTypes = GetParametersTypes(compiler, compileState, arguments, localVars);
+                PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
+                MethodInfo mi;
+                if (pInfo == null)
+                {
+                    throw new CompilerException(m_LineNumber, string.Format(
+                        this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                        compileState.MapType(varType),
+                        GetThisParameterTypeString(compileState, paramTypes)));
+                }
+                mi = pInfo.GetGetMethod();
+                if (mi == null)
+                {
+                    throw new CompilerException(m_LineNumber, string.Format(
+                        this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsWriteOnlyForType0", "This[{1}] operator is write only for type '{0}'."),
+                        compileState.MapType(varType),
+                        GetThisParameterTypeString(compileState, paramTypes)));
+                }
+
+                if(mi.IsStatic)
+                {
+                    compileState.ILGen.Emit(OpCodes.Pop);
+                }
+
+                GetParametersToStack(compiler, compileState, arguments, localVars);
+
+                if (mi.IsVirtual)
+                {
+                    compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                }
+
+                return pInfo.PropertyType;
+            }
+
             private Type GetMemberSelectorToStack(CompileState compileState, Type varType, string memberName)
             {
                 APIAccessibleMembersAttribute membersAttr;
@@ -294,7 +455,7 @@ namespace SilverSim.Scripting.Lsl
                         MethodInfo mi;
                         if ((mi = pi.GetGetMethod()) == null)
                         {
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsWriteOnlyForType0", "Member '{1}' of type '{0}' is write only."), memberName, compileState.MapType(varType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsWriteOnlyForType0", "Member '{1}' of type '{0}' is write only."), compileState.MapType(varType), memberName));
                         }
                         else if (mi.IsStatic)
                         {
@@ -329,10 +490,10 @@ namespace SilverSim.Scripting.Lsl
                 return varType;
             }
 
-            private Type GetMemberVarTreeToStack(CompileState compileState, Tree t, Dictionary<string, object> localVars)
+            private Type GetMemberVarTreeToStack(LSLCompiler compiler, CompileState compileState, Tree t, Dictionary<string, object> localVars)
             {
                 var selectorStack = new List<Tree>();
-                while(t.Type == Tree.EntryType.OperatorBinary)
+                while(t.Type == Tree.EntryType.OperatorBinary || t.Type == Tree.EntryType.ThisOperator)
                 {
                     selectorStack.Insert(0, t);
                     t = t.SubTree[0];
@@ -346,41 +507,91 @@ namespace SilverSim.Scripting.Lsl
                 object varInfo = localVars[t.Entry];
                 Type varType = GetVarToStack(compileState, varInfo);
 
-                compileState.ILGen.BeginScope();
-
                 var locals = new Dictionary<Type, LocalBuilder>();
 
                 foreach (Tree selector in selectorStack)
                 {
-                    string member = selector.SubTree[1].Entry;
-                    if(varType.IsValueType)
+                    switch (selector.Type)
                     {
-                        LocalBuilder lb;
-                        if(!locals.TryGetValue(varType, out lb))
-                        {
-                            lb = compileState.ILGen.DeclareLocal(varType);
-                            locals.Add(varType, lb);
-                        }
-                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                        compileState.ILGen.Emit(OpCodes.Ldloca, lb);
+                        case Tree.EntryType.OperatorBinary:
+                            string member = selector.SubTree[1].Entry;
+                            if (varType.IsValueType)
+                            {
+                                LocalBuilder lb;
+                                if (!locals.TryGetValue(varType, out lb))
+                                {
+                                    lb = DeclareLocal(compileState, varType);
+                                    locals.Add(varType, lb);
+                                }
+                                compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                                compileState.ILGen.Emit(OpCodes.Ldloca, lb);
+                            }
+
+                            varType = GetMemberSelectorToStack(compileState, varType, member);
+                            break;
+
+                        case Tree.EntryType.ThisOperator:
+                            varType = GetThisOperatorToStack(compiler, compileState, varType, selector, localVars);
+                            break;
                     }
-
-                    varType = GetMemberSelectorToStack(compileState, varType, member);
                 }
-
-                compileState.ILGen.EndScope();
 
                 return varType;
             }
 
-            private Type SetMemberSelectorFromStack(CompileState compileState, Type varType, string memberName)
+            private Type SetThisOperatorFromStack(LSLCompiler compiler, CompileState compileState, Type varType, Type valueArgument, Tree arguments, Dictionary<string, object> localVars)
+            {
+                Type[] paramTypes = GetParametersTypes(compiler, compileState, arguments, localVars);
+                PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
+                MethodInfo mi;
+                if (pInfo == null)
+                {
+                    throw new CompilerException(m_LineNumber, string.Format(
+                        this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", ""),
+                        "This[{1}] operator is not supported for type '{0}'.",
+                        compileState.MapType(varType),
+                        GetThisParameterTypeString(compileState, paramTypes)));
+                }
+                mi = pInfo.GetSetMethod();
+                if (mi == null)
+                {
+                    throw new CompilerException(m_LineNumber, string.Format(
+                        this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsReadOnlyForType0", ""),
+                        "This[{1}] operator is read only for type '{0}'.",
+                        compileState.MapType(varType),
+                        GetThisParameterTypeString(compileState, paramTypes)));
+                }
+
+                LocalBuilder swapLb = DeclareLocal(compileState, valueArgument);
+                compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
+
+                if (mi.IsStatic)
+                {
+                    compileState.ILGen.Emit(OpCodes.Pop);
+                }
+
+                GetParametersToStack(compiler, compileState, arguments, localVars);
+                compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
+
+                if (mi.IsVirtual)
+                {
+                    compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                }
+
+                return pInfo.PropertyType;
+            }
+
+            private void SetMemberSelectorFromStack(CompileState compileState, Type varType, string memberName)
             {
                 APIAccessibleMembersAttribute membersAttr;
                 if (varType == typeof(Vector3) || varType == typeof(Quaternion))
                 {
                     FieldInfo fi = GetVectorOrQuaternionField(compileState, varType, memberName);
                     compileState.ILGen.Emit(OpCodes.Stfld, fi);
-                    varType = fi.FieldType;
                 }
                 else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
                 {
@@ -399,9 +610,8 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if(fi.IsStatic || fi.IsInitOnly)
                         {
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0", "Member '{1}' of type '{0}' is read only."), memberName, compileState.MapType(varType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0", "Member '{1}' of type '{0}' is read only."), compileState.MapType(varType), memberName));
                         }
-                        varType = fi.FieldType;
                         compileState.ILGen.Emit(OpCodes.Stfld, fi);
                     }
                     else if ((pi = varType.GetMemberProperty(compileState, memberName)) != null)
@@ -409,19 +619,20 @@ namespace SilverSim.Scripting.Lsl
                         mi = pi.GetSetMethod();
                         if(mi == null)
                         {
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0", "Member '{1}' of type '{0}' is read only."), memberName, compileState.MapType(varType)));
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Member1IsReadOnlyForType0", "Member '{1}' of type '{0}' is read only."), compileState.MapType(varType), memberName));
                         }
-                        varType = pi.PropertyType;
+
                         if(mi.IsStatic)
                         {
                             compileState.ILGen.BeginScope();
-                            LocalBuilder swapLb = compileState.ILGen.DeclareLocal(varType);
+                            LocalBuilder swapLb = compileState.ILGen.DeclareLocal(pi.PropertyType);
                             compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
                             compileState.ILGen.Emit(OpCodes.Pop);
                             compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            compileState.ILGen.EndScope();
                         }
-                        else if(mi.IsVirtual)
+
+                        if (mi.IsVirtual)
                         {
                             compileState.ILGen.Emit(OpCodes.Callvirt, mi);
                         }
@@ -444,26 +655,26 @@ namespace SilverSim.Scripting.Lsl
                         this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"),
                         compileState.MapType(varType)));
                 }
-
-                return varType;
             }
 
             public class SelectorTree
             {
+                public Tree.EntryType Operator;
                 public LocalBuilder Local;
                 public Type Type;
                 public string Member;
                 public bool RequiredToSet;
+                public Tree Arguments;
             }
 
-            private void SetMemberVarTreeFromStack(CompileState compileState, Tree t, Dictionary<string, object> localVars)
+            private void SetMemberVarTreeFromStack(LSLCompiler lslCompiler, CompileState compileState, Tree t, Dictionary<string, object> localVars)
             {
 #if DEBUG
                 compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Begin ========");
 #endif
 
                 var selectorStack = new List<Tree>();
-                while (t.Type == Tree.EntryType.OperatorBinary)
+                while (t.Type == Tree.EntryType.OperatorBinary || t.Type == Tree.EntryType.ThisOperator)
                 {
                     selectorStack.Insert(0, t);
                     t = t.SubTree[0];
@@ -481,9 +692,7 @@ namespace SilverSim.Scripting.Lsl
 
                 object varInfo = localVars[t.Entry];
 
-                compileState.ILGen.BeginScope();
-
-                LocalBuilder swapLb = compileState.ILGen.DeclareLocal(m_LeftHandType);
+                LocalBuilder swapLb = DeclareLocal(compileState, m_LeftHandType);
                 compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
 #if DEBUG
                 compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Fetch reference ========");
@@ -514,19 +723,21 @@ namespace SilverSim.Scripting.Lsl
 #endif
 
                     Tree sel = selectorStack[i];
-                    LocalBuilder lb = compileState.ILGen.DeclareLocal(varType);
+                    LocalBuilder lb = DeclareLocal(compileState, varType);
                     varLb = varLb ?? lb;
                     selectorTree.Insert(0, new SelectorTree
                     {
+                        Operator = sel.Type,
                         Type = varType,
                         Local = lb,
-                        Member = sel.SubTree[1].Entry,
+                        Member = sel.SubTree.Count > 1 ? sel.SubTree[1].Entry : string.Empty,
+                        Arguments = sel
                     });
 
                     if(varType.IsValueType)
                     {
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                        compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                        compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     }
                     else if(Attribute.GetCustomAttribute(varType, typeof(APICloneOnAssignmentAttribute)) != null)
                     {
@@ -540,7 +751,14 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                     }
 
-                    varType = GetMemberSelectorToStack(compileState, varType, selectorStack[i].SubTree[1].Entry);
+                    if (sel.Type == Tree.EntryType.ThisOperator)
+                    {
+                        varType = GetThisOperatorToStack(lslCompiler, compileState, varType, sel, localVars);
+                    }
+                    else
+                    {
+                        varType = GetMemberSelectorToStack(compileState, varType, sel.SubTree[1].Entry);
+                    }
                     if(varType.IsValueType || Attribute.GetCustomAttribute(varType, typeof(APICloneOnAssignmentAttribute)) != null)
                     {
                         firstRequiredSelector = true;
@@ -548,7 +766,7 @@ namespace SilverSim.Scripting.Lsl
                     selectorTree[0].RequiredToSet = firstRequiredSelector;
                 }
 
-                LocalBuilder refLb = compileState.ILGen.DeclareLocal(varType);
+                LocalBuilder refLb = DeclareLocal(compileState, varType);
                 varLb = varLb ?? refLb;
                 if (varType.IsValueType)
                 {
@@ -567,7 +785,15 @@ namespace SilverSim.Scripting.Lsl
 
                 compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
 
-                SetMemberSelectorFromStack(compileState, varType, selectorStack[selectorStack.Count - 1].SubTree[1].Entry);
+                Tree finalSel = selectorStack[selectorStack.Count - 1];
+                if (finalSel.Type == Tree.EntryType.ThisOperator)
+                {
+                    SetThisOperatorFromStack(lslCompiler, compileState, varType, swapLb.LocalType, finalSel, localVars);
+                }
+                else
+                {
+                    SetMemberSelectorFromStack(compileState, varType, finalSel.SubTree[1].Entry);
+                }
 
 #if DEBUG
                 compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Save back necessary locals ========");
@@ -593,8 +819,15 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Ldloc, sel.Local);
                     }
                     compileState.ILGen.Emit(OpCodes.Ldloc, refLb);
+                    if (sel.Operator == Tree.EntryType.ThisOperator)
+                    {
+                        SetThisOperatorFromStack(lslCompiler, compileState, sel.Type, refLb.LocalType, sel.Arguments, localVars);
+                    }
+                    else
+                    {
+                        SetMemberSelectorFromStack(compileState, sel.Type, sel.Member);
+                    }
                     refLb = sel.Local;
-                    SetMemberSelectorFromStack(compileState, sel.Type, sel.Member);
                 }
 
                 if (storeBackVar)
@@ -603,13 +836,13 @@ namespace SilverSim.Scripting.Lsl
                     SetVarFromStack(compileState, varInfo, m_LineNumber);
                 }
 
-                compileState.ILGen.EndScope();
 #if DEBUG
                 compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Finished ========");
 #endif
             }
 
             public BinaryOperatorExpression(
+                LSLCompiler lslCompiler,
                 CompileState compileState,
                 Tree functionTree,
                 int lineNumber,
@@ -624,7 +857,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
                     {
-                        m_LeftHandType = GetMemberVarTreeType(compileState, m_LeftHand, localVars);
+                        m_LeftHandType = GetMemberVarTreeType(lslCompiler, compileState, m_LeftHand, localVars);
                     }
                     else if (m_LeftHand.Type != Tree.EntryType.Variable)
                     {
@@ -649,7 +882,7 @@ namespace SilverSim.Scripting.Lsl
                         case "%=":
                             if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
                             {
-                                m_LeftHandType = GetMemberVarTreeType(compileState, m_LeftHand, localVars);
+                                m_LeftHandType = GetMemberVarTreeType(lslCompiler, compileState, m_LeftHand, localVars);
                             }
                             else if (m_LeftHand.Type != Tree.EntryType.Variable)
                             {
@@ -727,6 +960,7 @@ namespace SilverSim.Scripting.Lsl
 
                         case "=":
                             ProcessOperator_Assignment(
+                                lslCompiler,
                                 compileState,
                                 localVars);
                             break;
@@ -737,6 +971,7 @@ namespace SilverSim.Scripting.Lsl
                         case "/=":
                         case "%=":
                             ProcessOperator_ModifyAssignment(
+                                lslCompiler,
                                 compileState,
                                 localVars);
                             break;
@@ -782,14 +1017,20 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public void ProcessOperator_Assignment(
+                LSLCompiler lslCompiler,
                 CompileState compileState,
                 Dictionary<string, object> localVars)
             {
-                if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                if ((m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".") ||
+                    m_LeftHand.Type == Tree.EntryType.ThisOperator)
                 {
+                    if (null != m_RightHandLocal)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                    }
                     ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
                     compileState.ILGen.Emit(OpCodes.Dup);
-                    SetMemberVarTreeFromStack(compileState, m_LeftHand, localVars);
+                    SetMemberVarTreeFromStack(lslCompiler, compileState, m_LeftHand, localVars);
                     throw Return(compileState, m_LeftHandType);
                 }
                 else
@@ -807,23 +1048,25 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public void ProcessOperator_ModifyAssignment(
+                LSLCompiler lslCompiler,
                 CompileState compileState,
                 Dictionary<string, object> localVars)
             {
                 object varInfo;
                 bool isComponentAccess = false;
-                if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                if ((m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".") ||
+                    m_LeftHand.Type == Tree.EntryType.ThisOperator)
                 {
-                    m_LeftHandType = GetMemberVarTreeType(compileState, m_LeftHand, localVars);
+                    m_LeftHandType = GetMemberVarTreeToStack(lslCompiler, compileState, m_LeftHand, localVars);
                     isComponentAccess = true;
                     varInfo = null;
                 }
                 else
                 {
                     varInfo = localVars[m_LeftHand.Entry];
+                    GetVarToStack(compileState, varInfo);
                 }
 
-                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                 compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
 
                 if((m_LeftHandType == typeof(Vector3) && m_RightHandType == typeof(double)) ||
@@ -1012,7 +1255,7 @@ namespace SilverSim.Scripting.Lsl
                 compileState.ILGen.Emit(OpCodes.Dup);
                 if(isComponentAccess)
                 {
-                    SetMemberVarTreeFromStack(compileState, m_LeftHand, localVars);
+                    SetMemberVarTreeFromStack(lslCompiler, compileState, m_LeftHand, localVars);
                 }
                 else
                 {

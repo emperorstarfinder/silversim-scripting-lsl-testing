@@ -175,6 +175,7 @@ namespace SilverSim.Scripting.Lsl
 
                         case Tree.EntryType.OperatorBinary:
                             expressionStack.Insert(0, new BinaryOperatorExpression(
+                                this,
                                 compileState,
                                 functionTree,
                                 lineNumber,

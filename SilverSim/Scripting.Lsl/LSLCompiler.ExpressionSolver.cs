@@ -1654,7 +1654,6 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
                     }
 
-
                     enumeratorStack.Add(tree.SubTree[startPos]);
                     int elemPos = startPos + 1;
                     while (elemPos <= pos)
@@ -2460,7 +2459,6 @@ namespace SilverSim.Scripting.Lsl
                                     Tree.EntryType.DeclarationArgument,
                                     lineNumber,
                                     currentCulture);
-
 
                                 i = startPos + 1;
                             }
