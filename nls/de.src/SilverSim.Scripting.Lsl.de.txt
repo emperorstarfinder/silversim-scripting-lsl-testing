@@ -298,3 +298,4 @@ Member1IsWriteOnlyForType0=Der Zugriff auf '{1}' des Typs '{0}' ist nicht lesbar
 ThisOperator1IsReadOnlyForType0=Der Zugriff auf den this[{1}]-Operator des Typs '{0}' ist nicht schreibbar.
 ThisOperator1IsWriteOnlyForType0=Der Zugriff auf den this[{1}]-Operator des Typs '{0}' ist nicht lesbar.
 ThisOperator1IsNotSupportedForType0=Der Zugriff auf this[{1}]-Operator ist bei '{0}' nicht unterstützt.
+MultipleLinksCannotBeRead=Lesen von Eigenschaften nur mit einem Link möglich.

@@ -299,3 +299,4 @@ ThisOperator1IsReadOnlyForType0=This[{1}] operator is read only for type '{0}'.
 ThisOperator1IsWriteOnlyForType0=This[{1}] operator is write only for type '{0}'.
 ThisOperator1IsNotSupportedForType0=This[{1}] operator is not supported for type '{0}'.
 ExpressionForThisOperatorHasNoReturnValue=Expression for this operator has no return value
+MultipleLinksCannotBeRead=Multiple links cannot be read.

@@ -24,9 +24,11 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.Primitive;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
@@ -36,9 +38,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
     [Description("Prim Properties API")]
     public class PrimProperties : IScriptApi, IPlugin
     {
-        public const int LINK_INVALID = -1;
-        public const int LINK_THIS = -4;
-
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
@@ -147,25 +146,29 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [NonSerialized]
             private WeakReference<ScriptInstance> WeakInstance;
 
-            public int LinkNumber;
+            public int[] LinkNumbers = new int[0];
 
             private T WithPart<T>(Func<ObjectPart, T> getter)
             {
                 ScriptInstance instance;
-                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance))
+                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance) || LinkNumbers.Length == 0)
                 {
                     throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                 }
+                if(LinkNumbers.Length != 1)
+                {
+                    throw new LocalizedScriptErrorException(this, "MultipleLinksCannotBeRead", "Multiple links cannot be read.");
+                }
                 lock (instance)
                 {
-                    if (LinkNumber == LINK_THIS)
+                    if (LinkNumbers[0] == PrimitiveApi.LINK_THIS)
                     {
                         return getter(instance.Part);
                     }
                     else
                     {
                         ObjectPart p;
-                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumbers[0], out p))
                         {
                             throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                         }
@@ -177,20 +180,24 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             private T WithPart<T>(Func<ScriptInstance, ObjectPart, T> getter)
             {
                 ScriptInstance instance;
-                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance))
+                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance) || LinkNumbers.Length == 0)
                 {
                     throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                 }
+                if (LinkNumbers.Length != 1)
+                {
+                    throw new LocalizedScriptErrorException(this, "MultipleLinksCannotBeRead", "Multiple links cannot be read.");
+                }
                 lock (instance)
                 {
-                    if (LinkNumber == LINK_THIS)
+                    if (LinkNumbers[0] == PrimitiveApi.LINK_THIS)
                     {
                         return getter(instance, instance.Part);
                     }
                     else
                     {
                         ObjectPart p;
-                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumbers[0], out p))
                         {
                             throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                         }
@@ -202,37 +209,39 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             private void WithPart<T>(Action<ObjectPart, T> setter, T value)
             {
                 ScriptInstance instance;
-                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance))
+                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance) || LinkNumbers.Length == 0)
                 {
                     throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
                 }
                 lock (instance)
                 {
-                    if (LinkNumber == LINK_THIS)
+                    foreach (int linkNumber in LinkNumbers)
                     {
-                        setter(instance.Part, value);
-                    }
-                    else
-                    {
-                        ObjectPart p;
-                        if (!instance.Part.ObjectGroup.TryGetValue(LinkNumber, out p))
+                        if (linkNumber == PrimitiveApi.LINK_THIS)
                         {
-                            throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                            setter(instance.Part, value);
                         }
-                        setter(instance.Part, value);
+                        else
+                        {
+                            ObjectPart p;
+                            if (!instance.Part.ObjectGroup.TryGetValue(linkNumber, out p))
+                            {
+                                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                            }
+                            setter(instance.Part, value);
+                        }
                     }
                 }
             }
 
             public Prim()
             {
-                LinkNumber = LINK_INVALID;
             }
 
-            public Prim(ScriptInstance instance, int linkNumber)
+            public Prim(ScriptInstance instance, int[] linkNumbers)
             {
                 WeakInstance = new WeakReference<ScriptInstance>(instance);
-                LinkNumber = linkNumber;
+                LinkNumbers = linkNumbers;
             }
 
             public void RestoreFromSerialization(ScriptInstance instance)
@@ -470,30 +479,48 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
 
             [APIExtension(APIExtension.Properties)]
-            public static implicit operator bool(Prim c) => c.LinkNumber > 0 || c.LinkNumber == LINK_THIS;
+            public static implicit operator bool(Prim c) => c.LinkNumbers.Length > 0;
 
             [APIExtension(APIExtension.Properties)]
-            public static implicit operator int(Prim c) => c.LinkNumber;
+            public static implicit operator int(Prim c) => c.LinkNumbers.Length > 0 ? c.LinkNumbers[0] : 0;
 
             public FaceProperties.TextureFace this[int faceNo]
             {
                 get
                 {
-                    return WithPart((ScriptInstance instance, ObjectPart p) =>
+                    ScriptInstance instance;
+                    if(WeakInstance.TryGetTarget(out instance) && LinkNumbers.Length > 0)
                     {
-                        if(faceNo == FaceProperties.ALL_SIDES)
+                        lock(instance)
                         {
-                            return new FaceProperties.TextureFace(instance, p, LinkNumber, faceNo);
+                            var parts = new List<ObjectPart>();
+                            var links = new List<int>();
+                            foreach(int linkNumber in LinkNumbers)
+                            {
+                                ObjectPart p;
+                                if(linkNumber == PrimitiveApi.LINK_THIS)
+                                {
+                                    p = instance.Part;
+                                }
+                                else if(!instance.Part.ObjectGroup.TryGetValue(linkNumber, out p))
+                                {
+                                    continue;
+                                }
+                                if(faceNo == FaceProperties.ALL_SIDES ||
+                                    (faceNo >= 0 && faceNo < p.NumberOfSides))
+                                {
+                                    parts.Add(p);
+                                    links.Add(linkNumber);
+                                }
+                            }
+
+                            return new FaceProperties.TextureFace(instance, parts.ToArray(), links.ToArray(), faceNo);
                         }
-                        else if(faceNo >= 0 && faceNo < p.NumberOfSides)
-                        {
-                            return new FaceProperties.TextureFace(instance, p, LinkNumber, faceNo);
-                        }
-                        else
-                        {
-                            return new FaceProperties.TextureFace();
-                        }
-                    });
+                    }
+                    else
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
                 }
             }
         }
@@ -503,7 +530,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         {
             lock (instance)
             {
-                return new Prim(instance, instance.Part.LinkNumber);
+                return new Prim(instance, new int[] { instance.Part.LinkNumber });
             }
         }
 
@@ -524,7 +551,40 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     lock (Instance)
                     {
-                        return new Prim(Instance, linkno);
+                        var links = new List<int>();
+                        if (linkno == PrimitiveApi.LINK_ALL_CHILDREN)
+                        {
+                            Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                            {
+                                if (kvp.Key != PrimitiveApi.LINK_ROOT)
+                                {
+                                    links.Add(kvp.Key);
+                                }
+                            });
+                        }
+                        else if (linkno == PrimitiveApi.LINK_ALL_OTHERS)
+                        {
+                            Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                            {
+                                if(kvp.Value != Instance.Part)
+                                {
+                                    links.Add(kvp.Key);
+                                }
+                            });
+                        }
+                        else if (linkno == PrimitiveApi.LINK_ROOT)
+                        {
+                            links.Add(PrimitiveApi.LINK_ROOT);
+                        }
+                        else if (linkno == PrimitiveApi.LINK_SET)
+                        {
+                            links.AddRange(Instance.Part.ObjectGroup.Keys1);
+                        }
+                        else
+                        {
+                            links.Add(linkno);
+                        }
+                        return new Prim(Instance, links.ToArray());
                     }
                 }
             }
@@ -535,15 +595,16 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     lock (Instance)
                     {
-                        foreach (ObjectPart p in Instance.Part.ObjectGroup.ValuesByKey1)
+                        var links = new List<int>();
+                        Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
                         {
-                            if (p.Name == name)
+                            if (kvp.Value.Name == name)
                             {
-                                return new Prim(Instance, p.LinkNumber);
+                                links.Add(kvp.Key);
                             }
-                        }
+                        });
+                        return new Prim(Instance, links.ToArray());
                     }
-                    return new Prim();
                 }
             }
         }

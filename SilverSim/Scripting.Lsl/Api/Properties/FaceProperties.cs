@@ -7,6 +7,7 @@ using SilverSim.Types;
 using SilverSim.Types.Asset.Format;
 using SilverSim.Types.Primitive;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
@@ -144,53 +145,78 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [NonSerialized]
             public WeakReference<ScriptInstance> WeakInstance;
             [NonSerialized]
-            public WeakReference<ObjectPart> WeakPart;
-            public int LinkNumber;
+            public List<WeakReference<ObjectPart>> WeakParts = new List<WeakReference<ObjectPart>>();
+            public int[] LinkNumbers;
             public int FaceNumber;
 
             public TextureFace()
             {
-                LinkNumber = PrimProperties.LINK_INVALID;
+                LinkNumbers = new int[0];
             }
 
-            public TextureFace(ScriptInstance instance, ObjectPart part, int linkNumber, int faceNumber)
+            public TextureFace(ScriptInstance instance, ObjectPart[] parts, int[] linkNumbers, int faceNumber)
             {
                 WeakInstance = new WeakReference<ScriptInstance>(instance);
-                WeakPart = new WeakReference<ObjectPart>(part);
-                LinkNumber = linkNumber;
+                foreach (ObjectPart part in parts)
+                {
+                    WeakParts.Add(new WeakReference<ObjectPart>(part));
+                }
+                LinkNumbers = linkNumbers;
                 FaceNumber = faceNumber;
             }
 
             public void RestoreFromSerialization(ScriptInstance instance)
             {
                 WeakInstance = new WeakReference<ScriptInstance>(instance);
-                if (LinkNumber == PrimProperties.LINK_THIS)
+                var parts = new List<WeakReference<ObjectPart>>();
+                foreach (int linkNumber in LinkNumbers)
                 {
-                    WeakPart = new WeakReference<ObjectPart>(instance.Part);
-                }
-                else
-                {
-                    ObjectPart part;
-                    if(instance.Part.ObjectGroup.TryGetValue(LinkNumber, out part))
+                    if (linkNumber == PrimitiveApi.LINK_THIS)
                     {
-                        WeakPart = new WeakReference<ObjectPart>(part);
+                        parts.Add(new WeakReference<ObjectPart>(instance.Part));
+                    }
+                    else
+                    {
+                        ObjectPart part;
+                        if (instance.Part.ObjectGroup.TryGetValue(linkNumber, out part))
+                        {
+                            parts.Add(new WeakReference<ObjectPart>(part));
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
+                WeakParts = parts;
             }
 
             private T With<T>(Func<ObjectPart, T> getter)
             {
                 ScriptInstance instance;
                 ObjectPart part;
-                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance) &&
-                    WeakPart != null && WeakPart.TryGetTarget(out part))
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {
-                    lock (instance)
+                    if (WeakParts.Count == 1 && WeakParts[0].TryGetTarget(out part))
                     {
-                        return getter(part);
+                        lock (instance)
+                        {
+                            return getter(part);
+                        }
+                    }
+                    else if (WeakParts.Count > 1)
+                    {
+                        throw new LocalizedScriptErrorException(this, "MultipleLinksCannotBeRead", "Multiple links cannot be read.");
+                    }
+                    else
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
                     }
                 }
-                return default(T);
+                else
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
+                }
             }
 
             private T With<T>(Func<Material, T> getter) => With(getter, default(T));
@@ -199,32 +225,45 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 ScriptInstance instance;
                 ObjectPart part;
-                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance) &&
-                    WeakPart != null && WeakPart.TryGetTarget(out part))
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {
-                    lock (instance)
+                    if (WeakParts.Count == 1 && WeakParts[0].TryGetTarget(out part))
                     {
-                        try
+                        lock (instance)
                         {
-                            TextureEntryFace face = part.TextureEntry[(uint)FaceNumber];
-                            Material mat;
                             try
                             {
-                                mat = part.ObjectGroup.Scene.GetMaterial(face.MaterialID);
+                                TextureEntryFace face = part.TextureEntry[(uint)FaceNumber];
+                                Material mat;
+                                try
+                                {
+                                    mat = part.ObjectGroup.Scene.GetMaterial(face.MaterialID);
+                                }
+                                catch
+                                {
+                                    mat = new Material();
+                                }
+                                return getter(mat);
                             }
                             catch
                             {
-                                mat = new Material();
+                                return defvalue;
                             }
-                            return getter(mat);
-                        }
-                        catch
-                        {
-                            /* intentionally ignored */
                         }
                     }
+                    else if (WeakParts.Count > 1)
+                    {
+                        throw new LocalizedScriptErrorException(this, "MultipleLinksCannotBeRead", "Multiple links cannot be read.");
+                    }
+                    else
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
+                    }
                 }
-                return defvalue;
+                else
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
+                }
             }
 
             private T With<T>(Func<TextureEntryFace, T> getter) => With(getter, default(T));
@@ -233,35 +272,57 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 ScriptInstance instance;
                 ObjectPart part;
-                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance) &&
-                    WeakPart != null && WeakPart.TryGetTarget(out part))
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {
-                    lock (instance)
+                    if (WeakParts.Count == 1 && WeakParts[0].TryGetTarget(out part))
                     {
-                        try
+                        lock (instance)
                         {
-                            return getter(part.TextureEntry[(uint)FaceNumber]);
-                        }
-                        catch
-                        {
-                            /* intentionally ignored */
+                            try
+                            {
+                                return getter(part.TextureEntry[(uint)FaceNumber]);
+                            }
+                            catch
+                            {
+                                return defvalue;
+                            }
                         }
                     }
+                    else if (WeakParts.Count > 1)
+                    {
+                        throw new LocalizedScriptErrorException(this, "MultipleLinksCannotBeRead", "Multiple links cannot be read.");
+                    }
+                    else
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
+                    }
                 }
-                return defvalue;
+                else
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
+                }
             }
 
             private void With<T>(Action<ObjectPart, T> setter, T value)
             {
                 ScriptInstance instance;
                 ObjectPart part;
-                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance) &&
-                    WeakPart != null && WeakPart.TryGetTarget(out part))
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {
-                    lock (instance)
+                    foreach (WeakReference<ObjectPart> weakPart in WeakParts)
                     {
-                        setter(part, value);
+                        if (weakPart.TryGetTarget(out part))
+                        {
+                            lock (instance)
+                            {
+                                setter(part, value);
+                            }
+                        }
                     }
+                }
+                else
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
                 }
             }
 
@@ -274,28 +335,37 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 ScriptInstance instance;
                 ObjectPart part;
-                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance) &&
-                    WeakPart != null && WeakPart.TryGetTarget(out part))
+                if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {
-                    lock (instance)
+                    foreach (WeakReference<ObjectPart> weakPart in WeakParts)
                     {
-                        if (FaceNumber == ALL_SIDES)
+                        if (weakPart.TryGetTarget(out part))
                         {
-                            TextureEntry te = part.TextureEntry;
-                            for (int face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < part.NumberOfSides; ++face)
+                            lock (instance)
                             {
-                                setter(instance, te[(uint)face], value);
+                                if (FaceNumber == ALL_SIDES)
+                                {
+                                    TextureEntry te = part.TextureEntry;
+                                    for (int face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < part.NumberOfSides; ++face)
+                                    {
+                                        setter(instance, te[(uint)face], value);
+                                    }
+                                    part.TextureEntry = te;
+                                }
+                                else
+                                {
+                                    TextureEntry te = part.TextureEntry;
+                                    TextureEntryFace face = te[(uint)FaceNumber];
+                                    setter(instance, face, value);
+                                    part.TextureEntry = te;
+                                }
                             }
-                            part.TextureEntry = te;
-                        }
-                        else
-                        {
-                            TextureEntry te = part.TextureEntry;
-                            TextureEntryFace face = te[(uint)FaceNumber];
-                            setter(instance, face, value);
-                            part.TextureEntry = te;
                         }
                     }
+                }
+                else
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "linkface");
                 }
             }
 
