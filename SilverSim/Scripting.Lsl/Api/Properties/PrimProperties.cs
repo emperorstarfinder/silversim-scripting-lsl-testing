@@ -765,8 +765,9 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             Ambience = ambience
         };
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Color")]
+        [APIExtension(APIExtension.Properties, "Color")]
         [APIDisplayName("Color")]
+        [APIAccessibleMembers]
         public class ColorSet
         {
             // Red tones

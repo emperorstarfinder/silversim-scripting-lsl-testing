@@ -187,7 +187,7 @@ namespace SilverSim.Scripting.Lsl
                                 "OperatorDorNotSupportedFor",
                                 "operator '.' not supported for {0}"), compileState.MapType(varType)));
                         }
-                        else if (!membersAttr.Members.Contains(member))
+                        else if (membersAttr.Members.Length != 0 && !membersAttr.Members.Contains(member))
                         {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
                                 compileState.CurrentCulture,
@@ -236,7 +236,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     PropertyInfo pi;
                     FieldInfo fi;
-                    if (!membersAttr.Members.Contains(memberName))
+                    if (membersAttr.Members.Length != 0 && !membersAttr.Members.Contains(memberName))
                     {
                         throw new CompilerException(m_LineNumber, string.Format(
                             this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
@@ -437,7 +437,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     PropertyInfo pi;
                     FieldInfo fi;
-                    if (!membersAttr.Members.Contains(memberName))
+                    if (membersAttr.Members.Length != 0 && !membersAttr.Members.Contains(memberName))
                     {
                         throw new CompilerException(m_LineNumber, string.Format(
                             this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
@@ -598,7 +598,7 @@ namespace SilverSim.Scripting.Lsl
                     PropertyInfo pi;
                     FieldInfo fi;
                     MethodInfo mi;
-                    if (!membersAttr.Members.Contains(memberName))
+                    if (membersAttr.Members.Length != 0 && !membersAttr.Members.Contains(memberName))
                     {
                         throw new CompilerException(m_LineNumber, string.Format(
                             this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),

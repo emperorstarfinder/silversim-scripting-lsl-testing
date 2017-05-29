@@ -362,6 +362,118 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             }
 
             public AgentInventoryFolder this[LSLKey key] => new AgentInventoryFolder(m_Instance, m_InventoryService, m_Owner, key.AsUUID, m_IsLibrary);
+
+            private AgentInventoryFolder GetFolderType(AssetType type)
+            {
+                InventoryFolder folder;
+                if (m_Instance != null && m_InventoryService.Folder.TryGetValue(m_Owner.ID, type, out folder))
+                {
+                    return new AgentInventoryFolder(m_Instance, m_InventoryService, m_Owner, folder.ID, m_IsLibrary);
+                }
+                return new AgentInventoryFolder();
+            }
+
+            public AgentInventoryFolder Root => GetFolderType(AssetType.RootFolder);
+            public AgentInventoryFolder Trash => GetFolderType(AssetType.TrashFolder);
+            public AgentInventoryFolder CurrentOutfit => GetFolderType(AssetType.CurrentOutfitFolder);
+            public AgentInventoryFolder Notecards => GetFolderType(AssetType.Notecard);
+            public AgentInventoryFolder Scripts => GetFolderType(AssetType.LSLText);
+            public AgentInventoryFolder Textures => GetFolderType(AssetType.Texture);
+            public AgentInventoryFolder Clothing => GetFolderType(AssetType.Clothing);
+            public AgentInventoryFolder Bodyparts => GetFolderType(AssetType.Bodypart);
+            public AgentInventoryFolder Animations => GetFolderType(AssetType.Animation);
+            public AgentInventoryFolder Callingcards => GetFolderType(AssetType.CallingCard);
+            public AgentInventoryFolder Landmarks => GetFolderType(AssetType.Landmark);
+            public AgentInventoryFolder Sounds => GetFolderType(AssetType.Sound);
+            public AgentInventoryFolder Objects => GetFolderType(AssetType.Object);
+            public AgentInventoryFolder Snapshots => GetFolderType(AssetType.SnapshotFolder);
+            public AgentInventoryFolder LostAndFound => GetFolderType(AssetType.LostAndFoundFolder);
+            public AgentInventoryFolder Gestures => GetFolderType(AssetType.Gesture);
+            public AgentInventoryFolder Favorites => GetFolderType(AssetType.FavoriteFolder);
+            public AgentInventoryFolder MyOutfits => GetFolderType(AssetType.MyOutfitsFolder);
+            public AgentInventoryFolder Inbox => GetFolderType(AssetType.Inbox);
+            public AgentInventoryFolder Outbox => GetFolderType(AssetType.Outbox);
+        }
+
+        [APIExtension(APIExtension.AgentInventory, "AssetType")]
+        [APIDisplayName("AssetType")]
+        [APIAccessibleMembers]
+        public class AgentAssetType
+        {
+            public const int Unknown = -1;
+            public const int Texture = 0;
+            public const int Sound = 1;
+            public const int CallingCard = 2;
+            public const int Landmark = 3;
+            public const int Clothing = 5;
+            public const int Object = 6;
+            public const int Notecard = 7;
+            public const int RootFolder = 8;
+            public const int LSLText = 10;
+            public const int LSLBytecode = 11;
+            public const int TextureTGA = 12;
+            public const int Bodypart = 13;
+            public const int TrashFolder = 14;
+            public const int SnapshotFolder = 15;
+            public const int LostAndFoundFolder = 16;
+            public const int SoundWAV = 17;
+            public const int ImageTGA = 18;
+            public const int ImageJPEG = 19;
+            public const int Animation = 20;
+            public const int Gesture = 21;
+            public const int Simstate = 22;
+            public const int FavoriteFolder = 23;
+            public const int Link = 24;
+            public const int LinkFolder = 25;
+            public const int EnsembleStart = 26;
+            public const int EnsembleEnd = 45;
+            public const int CurrentOutfitFolder = 46;
+            public const int OutfitFolder = 47;
+            public const int MyOutfitsFolder = 48;
+            public const int Mesh = 49;
+            public const int Inbox = 50;
+            public const int Outbox = 51;
+            public const int BasicRoot = 52;
+            public const int MarketplaceListings = 53;
+            public const int MarketplaceStock = 54;
+        }
+
+        [APIExtension(APIExtension.AgentInventory, "InventoryType")]
+        [APIDisplayName("InventoryType")]
+        [APIAccessibleMembers]
+        public class AgentInventoryType
+        {
+            public const int Unknown = -1;
+            public const int Texture = 0;
+            public const int Sound = 1;
+            public const int CallingCard = 2;
+            public const int Landmark = 3;
+            public const int Clothing = 5;
+            public const int Object = 6;
+            public const int Notecard = 7;
+            public const int Folder = 8;
+            public const int RootFolder = 9;
+            public const int LSLText = 10;
+            public const int LSLBytecode = 11;
+            public const int TextureTGA = 12;
+            public const int Bodypart = 13;
+            public const int TrashFolder = 14;
+            public const int SnapshotFolder = 15;
+            public const int Snapshot = 15;
+            public const int LostAndFoundFolder = 16;
+            public const int Attachable = 17;
+            public const int Wearable = 18;
+            public const int Animation = 20;
+            public const int Gesture = 21;
+            public const int Simstate = 22;
+            public const int FavoriteFolder = 23;
+            public const int CurrentOutfitFolder = 46;
+            public const int OutfitFolder = 47;
+            public const int MyOutfitsFolder = 48;
+            public const int Mesh = 49;
+            public const int Inbox = 50;
+            public const int Outbox = 51;
+            public const int BasicRoot = 51;
         }
 
         [APIExtension(APIExtension.AgentInventory, "agentinventoryitemaccessor")]
@@ -408,6 +520,11 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
 
             public AgentInventoryFolderAccessor Folders => new AgentInventoryFolderAccessor(m_Instance, m_InventoryService, m_Owner, m_IsLibrary);
             public AgentInventoryItemAccessor Items => new AgentInventoryItemAccessor(m_Instance, m_InventoryService, m_Owner, m_IsLibrary);
+
+            [APIExtension(APIExtension.AgentInventory, "agentinventory")]
+            public static implicit operator bool(AgentInventory inv) => inv.m_Instance != null;
+            [APIExtension(APIExtension.AgentInventory, "agentinventory")]
+            public static implicit operator int(AgentInventory inv) => ((bool)inv).ToLSLBoolean();
         }
 
         [APIExtension(APIExtension.AgentInventory, "invIncrementFolderVersion")]
