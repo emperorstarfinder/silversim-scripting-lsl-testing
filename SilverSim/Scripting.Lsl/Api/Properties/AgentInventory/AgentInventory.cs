@@ -508,6 +508,11 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             private readonly InventoryServiceInterface m_InventoryService;
             private readonly bool m_IsLibrary;
 
+            public AgentInventory()
+            {
+                m_Owner = UUI.Unknown;
+            }
+
             public AgentInventory(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, bool isLibrary)
             {
                 m_Instance = instance;
