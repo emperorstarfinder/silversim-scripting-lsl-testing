@@ -175,7 +175,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             "Creator",
             "Inventory",
             "Name",
-            "Desc",
+            "Description",
             "Buoyancy",
             "PointLight",
             "Projector",
@@ -418,7 +418,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
-            public string Desc
+            public string Description
             {
                 get { return WithPart((ObjectPart p) => p.Description); }
                 set { WithPart((ObjectPart p, string d) => p.Description = d, value); }

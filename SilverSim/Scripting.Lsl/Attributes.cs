@@ -141,6 +141,7 @@ namespace SilverSim.Scripting.Lsl
         public const string Pathfinding = "Pathfinding";
         public const string LongInteger = "LongInteger";
         public const string Properties = "Properties";
+        public const string AgentInventory = "AgentInventory";
     }
 
     [Serializable]
