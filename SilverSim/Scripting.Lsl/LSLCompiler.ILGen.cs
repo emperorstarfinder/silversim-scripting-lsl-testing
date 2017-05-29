@@ -84,7 +84,11 @@ namespace SilverSim.Scripting.Lsl
             if(functionTree.SubTree[0].Type == Tree.EntryType.Variable ||
                 functionTree.SubTree[0].Type == Tree.EntryType.ThisOperator)
             {
-                /* variables are unmodified */
+                /* variables are unmodified (original variables shown) */
+            }
+            else if(functionTree.SubTree[0].Type == Tree.EntryType.OperatorRightUnary)
+            {
+                /* right unary operators are unmodified (original variable shown) */
             }
             else if(functionTree.SubTree[0].Type != Tree.EntryType.OperatorBinary ||
                     !(functionTree.SubTree[0].Entry == "+=" ||

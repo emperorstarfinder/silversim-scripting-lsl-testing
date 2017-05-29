@@ -111,6 +111,60 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public double Ambience;
         }
 
+        [APIExtension(APIExtension.Properties, "linkfaceaccess")]
+        [APIDisplayName("linkfaceaccess")]
+        public class FaceAccessor
+        {
+            private ScriptInstance Instance;
+            private int[] LinkNumbers;
+
+            public FaceAccessor(ScriptInstance instance, int[] linkNumbers)
+            {
+                Instance = instance;
+                LinkNumbers = linkNumbers;
+            }
+
+            public FaceProperties.TextureFace this[int faceNo]
+            {
+                get
+                {
+                    if (LinkNumbers.Length > 0)
+                    {
+                        lock (Instance)
+                        {
+                            var parts = new List<ObjectPart>();
+                            var links = new List<int>();
+                            foreach (int linkNumber in LinkNumbers)
+                            {
+                                ObjectPart p;
+                                if (linkNumber == PrimitiveApi.LINK_THIS)
+                                {
+                                    p = Instance.Part;
+                                }
+                                else if (!Instance.Part.ObjectGroup.TryGetValue(linkNumber, out p))
+                                {
+                                    continue;
+                                }
+                                if (faceNo == FaceProperties.ALL_SIDES ||
+                                    (faceNo >= 0 && faceNo < p.NumberOfSides))
+                                {
+                                    parts.Add(p);
+                                    links.Add(linkNumber);
+                                }
+                            }
+
+                            return new FaceProperties.TextureFace(Instance, parts.ToArray(), links.ToArray(), faceNo);
+                        }
+                    }
+                    else
+                    {
+                        throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    }
+                }
+            }
+
+        }
+
         [APIExtension(APIExtension.Properties, "link")]
         [APIDisplayName("link")]
         [APIIsVariableType]
@@ -139,7 +193,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             "HoverText",
             "AllowUnsit",
             "ScriptedSitOnly",
-            "AllowInventoryDrop")]
+            "AllowInventoryDrop",
+            "Faces")]
         [Serializable]
         public sealed class Prim
         {
@@ -487,37 +542,31 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [APIExtension(APIExtension.Properties)]
             public static explicit operator string(Prim c) => c.LinkNumbers.Length.ToString();
 
-            public FaceProperties.TextureFace this[int faceNo]
+            public FaceAccessor Faces
             {
                 get
                 {
                     ScriptInstance instance;
-                    if(WeakInstance.TryGetTarget(out instance) && LinkNumbers.Length > 0)
+                    if (WeakInstance.TryGetTarget(out instance) && LinkNumbers.Length > 0)
                     {
-                        lock(instance)
+                        lock (instance)
                         {
-                            var parts = new List<ObjectPart>();
                             var links = new List<int>();
-                            foreach(int linkNumber in LinkNumbers)
+                            foreach (int linkNumber in LinkNumbers)
                             {
                                 ObjectPart p;
-                                if(linkNumber == PrimitiveApi.LINK_THIS)
+                                if (linkNumber == PrimitiveApi.LINK_THIS)
                                 {
                                     p = instance.Part;
                                 }
-                                else if(!instance.Part.ObjectGroup.TryGetValue(linkNumber, out p))
+                                else if (!instance.Part.ObjectGroup.TryGetValue(linkNumber, out p))
                                 {
                                     continue;
                                 }
-                                if(faceNo == FaceProperties.ALL_SIDES ||
-                                    (faceNo >= 0 && faceNo < p.NumberOfSides))
-                                {
-                                    parts.Add(p);
-                                    links.Add(linkNumber);
-                                }
+                                links.Add(linkNumber);
                             }
 
-                            return new FaceProperties.TextureFace(instance, parts.ToArray(), links.ToArray(), faceNo);
+                            return new FaceAccessor(instance, links.ToArray());
                         }
                     }
                     else
