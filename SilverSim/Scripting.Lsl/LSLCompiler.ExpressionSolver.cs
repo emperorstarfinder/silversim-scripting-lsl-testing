@@ -1791,7 +1791,74 @@ namespace SilverSim.Scripting.Lsl
 
                     if(pos == 0)
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingLValueTo0", "missing l-value to '{0}'"), ent));
+                        if(tree.SubTree.Count == 1)
+                        {
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingRValueTo0", "missing r-value to '{0}'"), ent));
+                        }
+                        switch (elem.Entry)
+                        {
+                            case "-":
+                                switch (tree.SubTree[pos + 1].Type)
+                                {
+                                    case Tree.EntryType.Variable:
+                                    case Tree.EntryType.Value:
+                                    case Tree.EntryType.Function:
+                                    case Tree.EntryType.Level:
+                                    case Tree.EntryType.OperatorBinary:
+                                    case Tree.EntryType.OperatorLeftUnary:
+                                    case Tree.EntryType.OperatorRightUnary:
+                                    case Tree.EntryType.Vector:
+                                    case Tree.EntryType.Rotation:
+                                        elem.SubTree.Add(tree.SubTree[pos + 1]);
+                                        elem.Type = Tree.EntryType.OperatorLeftUnary;
+                                        tree.SubTree.RemoveAt(pos + 1);
+                                        continue;
+
+                                    default:
+                                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
+                                }
+
+                            case "!":
+                                switch (tree.SubTree[pos + 1].Type)
+                                {
+                                    case Tree.EntryType.Variable:
+                                    case Tree.EntryType.Value:
+                                    case Tree.EntryType.Function:
+                                    case Tree.EntryType.Level:
+                                    case Tree.EntryType.OperatorBinary:
+                                    case Tree.EntryType.OperatorLeftUnary:
+                                    case Tree.EntryType.OperatorRightUnary:
+                                        elem.SubTree.Add(tree.SubTree[pos + 1]);
+                                        elem.Type = Tree.EntryType.OperatorLeftUnary;
+                                        tree.SubTree.RemoveAt(pos + 1);
+                                        continue;
+
+                                    default:
+                                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
+                                }
+
+                            case "~":
+                                switch (tree.SubTree[pos + 1].Type)
+                                {
+                                    case Tree.EntryType.Variable:
+                                    case Tree.EntryType.Value:
+                                    case Tree.EntryType.Function:
+                                    case Tree.EntryType.Level:
+                                    case Tree.EntryType.OperatorBinary:
+                                    case Tree.EntryType.OperatorLeftUnary:
+                                    case Tree.EntryType.OperatorRightUnary:
+                                        elem.SubTree.Add(tree.SubTree[pos + 1]);
+                                        elem.Type = Tree.EntryType.OperatorLeftUnary;
+                                        tree.SubTree.RemoveAt(pos + 1);
+                                        continue;
+
+                                    default:
+                                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
+                                }
+
+                            default:
+                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingLValueTo0", "missing l-value to '{0}'"), ent));
+                        }
                     }
                     else if(pos + 1 >= tree.SubTree.Count)
                     {
