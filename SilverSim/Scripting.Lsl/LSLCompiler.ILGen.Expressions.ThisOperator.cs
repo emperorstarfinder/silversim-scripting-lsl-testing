@@ -22,6 +22,7 @@
 #pragma warning disable IDE0018
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.Base;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
@@ -56,36 +57,6 @@ namespace SilverSim.Scripting.Lsl
 
             private readonly string m_FunctionName;
             private readonly int m_LineNumber;
-
-            private void GenIncCallDepthCount(CompileState compileState)
-            {
-                /* load script instance reference */
-                if (compileState.StateTypeBuilder == null)
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                }
-                else
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                }
-                compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("IncCallDepthCount", Type.EmptyTypes));
-            }
-
-            private void GenDecCallDepthCount(CompileState compileState)
-            {
-                /* load script instance reference */
-                if (compileState.StateTypeBuilder == null)
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                }
-                else
-                {
-                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                }
-                compileState.ILGen.Emit(OpCodes.Call, typeof(Script).GetMethod("DecCallDepthCount", Type.EmptyTypes));
-            }
 
             public ThisOperatorExpression(
                 Tree functionTree,
@@ -149,16 +120,53 @@ namespace SilverSim.Scripting.Lsl
             private Type GenerateFunctionCall(CompileState compileState)
             {
                 List<Type> exactTypes = new List<Type>();
-                for(int i = 1; i < m_Parameters.Count; ++i)
+                MethodInfo mi;
+
+                if (m_Parameters[0].ParameterType == typeof(AnArray))
+                {
+                    exactTypes.Add(typeof(AnArray));
+                    for (int i = 1; i < m_Parameters.Count; ++i)
+                    {
+                        exactTypes.Add(m_Parameters[i].ParameterType);
+                    }
+                    if(!compileState.LanguageExtensions.EnableArrayThisOperator)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ThisOperatorNotSupportedForType0", "This operator not supported for type {0}"), compileState.MapType(m_Parameters[0].ParameterType)));
+                    }
+
+                    mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, exactTypes.ToArray(), null);
+                    if(mi == null)
+                    {
+                        if (exactTypes.Count == 2)
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtThisOperator0Parameter", "Parameter mismatch at this operator {0}: no this variant takes {1} parameter"), m_FunctionName, m_Parameters.Count));
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtThisOperator0Parameters", "Parameter mismatch at this operator {0}: no this variant takes {1} parameters"), m_FunctionName, m_Parameters.Count));
+                        }
+                    }
+
+                    if (mi.IsVirtual)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                    }
+                    else
+                    {
+                        compileState.ILGen.Emit(OpCodes.Call, mi);
+                    }
+                    return mi.ReturnType;
+                }
+
+                for (int i = 1; i < m_Parameters.Count; ++i)
                 {
                     exactTypes.Add(m_Parameters[i].ParameterType);
                 }
 
                 PropertyInfo pInfo = m_Parameters[0].ParameterType.GetProperty("Item", exactTypes.ToArray());
-                MethodInfo mi;
                 if(pInfo != null && (mi = pInfo.GetGetMethod()) != null)
                 {
-                    if(mi.IsVirtual)
+                    if (mi.IsVirtual)
                     {
                         compileState.ILGen.Emit(OpCodes.Callvirt, mi);
                     }
@@ -191,9 +199,14 @@ namespace SilverSim.Scripting.Lsl
                     ProcessImplicitCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
                 }
 
-                GenIncCallDepthCount(compileState);
-                compileState.ILGen.Emit(OpCodes.Call, mi);
-                GenDecCallDepthCount(compileState);
+                if (mi.IsVirtual)
+                {
+                    compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                }
+                else
+                {
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                }
 
                 compileState.ILGen.EndScope();
                 return mi.ReturnType;

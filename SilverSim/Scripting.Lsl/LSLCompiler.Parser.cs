@@ -571,6 +571,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.LanguageExtensions.EnableBreakContinueStatement = true;
                         compileState.LanguageExtensions.EnableSwitchBlock = true;
                         compileState.ForcedSleepDefault = false;
+                        compileState.LanguageExtensions.EnableArrayThisOperator = true;
                         if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
                         {
                             apiExtensions.Add(APIExtension.LongInteger.ToLower());

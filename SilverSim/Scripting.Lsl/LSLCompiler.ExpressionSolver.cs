@@ -1963,6 +1963,9 @@ namespace SilverSim.Scripting.Lsl
                             }
                             break;
 
+                        case Tree.EntryType.ThisOperator:
+                            break;
+
                         default:
                             throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
                     }

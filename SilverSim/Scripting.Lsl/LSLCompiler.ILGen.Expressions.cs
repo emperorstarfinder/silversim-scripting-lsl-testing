@@ -187,6 +187,7 @@ namespace SilverSim.Scripting.Lsl
                             expressionStack.Insert(0, new ThisOperatorExpression(
                                 functionTree,
                                 lineNumber));
+                            innerExpressionReturn = null;
                             break;
 
                         case Tree.EntryType.OperatorLeftUnary:

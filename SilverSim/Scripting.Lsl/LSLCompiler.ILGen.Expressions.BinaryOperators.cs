@@ -22,6 +22,7 @@
 #pragma warning disable RCS1029
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.Base;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
@@ -35,6 +36,63 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
+        public static void SetArrayElement(AnArray array, int index, BaseApi.Variant v)
+        {
+            if (index < 0)
+            {
+                index = array.Count + index;
+            }
+
+            if(index >= 0 && index < array.Count)
+            {
+                array[index] = v.Value;
+            }
+        }
+
+        public static BaseApi.Variant GetArrayElement(AnArray array, int index)
+        {
+            if(index < 0)
+            {
+                index = array.Count + index;
+            }
+
+            IValue v;
+            if(array.TryGetValue(index, out v))
+            {
+                Type t = v.GetType();
+                if(t == typeof(AString))
+                {
+                    return v.ToString();
+                }
+                else if(t == typeof(LSLKey))
+                {
+                    return (LSLKey)v;
+                }
+                else if (t == typeof(Quaternion))
+                {
+                    return (Quaternion)v;
+                }
+                else if (t == typeof(Vector3))
+                {
+                    return (Vector3)v;
+                }
+                else if (t == typeof(Integer))
+                {
+                    return v.AsInt;
+                }
+                else if (t == typeof(LongInteger))
+                {
+                    return v.AsLong;
+                }
+                else if (t == typeof(Real))
+                {
+                    return (double)(Real)v;
+                }
+            }
+
+            return string.Empty;
+        }
+
         private sealed class BinaryOperatorExpression : IExpressionStackElement
         {
             private readonly string m_Operator;
@@ -372,6 +430,29 @@ namespace SilverSim.Scripting.Lsl
             private Type GetThisOperatorType(LSLCompiler compiler, CompileState compileState, Type varType, Tree arguments, Dictionary<string, object> localVars)
             {
                 Type[] paramTypes = GetParametersTypes(compiler, compileState, arguments, localVars);
+                if(varType == typeof(AnArray))
+                {
+                    if (!compileState.LanguageExtensions.EnableArrayThisOperator)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    List<Type> staticParamTypes = new List<Type> { typeof(AnArray) };
+                    staticParamTypes.AddRange(paramTypes);
+                    MethodInfo mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    if (mi == null || mi.ReturnType != typeof(BaseApi.Variant))
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+                    return typeof(BaseApi.Variant);
+                }
+
                 PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
                 if(pInfo == null)
                 {
@@ -386,9 +467,36 @@ namespace SilverSim.Scripting.Lsl
 
             private Type GetThisOperatorToStack(LSLCompiler compiler, CompileState compileState, Type varType, Tree arguments, Dictionary<string, object> localVars)
             {
-                Type[] paramTypes = GetParametersTypes(compiler, compileState, arguments, localVars);
-                PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
                 MethodInfo mi;
+                Type[] paramTypes = GetParametersTypes(compiler, compileState, arguments, localVars);
+                if (varType == typeof(AnArray))
+                {
+                    if (!compileState.LanguageExtensions.EnableArrayThisOperator)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    List<Type> staticParamTypes = new List<Type> { typeof(AnArray) };
+                    staticParamTypes.AddRange(paramTypes);
+                    mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    if (mi == null || mi.ReturnType != typeof(BaseApi.Variant))
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    GetParametersToStack(compiler, compileState, arguments, localVars);
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+
+                    return typeof(BaseApi.Variant);
+                }
+
+                PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
                 if (pInfo == null)
                 {
                     throw new CompilerException(m_LineNumber, string.Format(
@@ -542,8 +650,41 @@ namespace SilverSim.Scripting.Lsl
             private Type SetThisOperatorFromStack(LSLCompiler compiler, CompileState compileState, Type varType, Type valueArgument, Tree arguments, Dictionary<string, object> localVars)
             {
                 Type[] paramTypes = GetParametersTypes(compiler, compileState, arguments, localVars);
-                PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
+                LocalBuilder swapLb = DeclareLocal(compileState, valueArgument);
+                compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
+
                 MethodInfo mi;
+                if (varType == typeof(AnArray))
+                {
+                    if (!compileState.LanguageExtensions.EnableArrayThisOperator)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    List<Type> staticParamTypes = new List<Type> { typeof(AnArray) };
+                    staticParamTypes.AddRange(paramTypes);
+                    staticParamTypes.Add(typeof(BaseApi.Variant));
+                    mi = typeof(LSLCompiler).GetMethod("SetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    if (mi == null)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    GetParametersToStack(compiler, compileState, arguments, localVars);
+                    compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
+                    ProcessImplicitCasts(compileState, typeof(BaseApi.Variant), valueArgument, m_LineNumber);
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+
+                    return typeof(BaseApi.Variant);
+                }
+
+                PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
                 if (pInfo == null)
                 {
                     throw new CompilerException(m_LineNumber, string.Format(
@@ -561,9 +702,6 @@ namespace SilverSim.Scripting.Lsl
                         compileState.MapType(varType),
                         GetThisParameterTypeString(compileState, paramTypes)));
                 }
-
-                LocalBuilder swapLb = DeclareLocal(compileState, valueArgument);
-                compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
 
                 if (mi.IsStatic)
                 {
@@ -855,7 +993,8 @@ namespace SilverSim.Scripting.Lsl
                 m_ProcessOrder = new List<State>(m_ProcessOrders[m_Operator]);
                 if(m_Operator == "=")
                 {
-                    if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                    if ((m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".") ||
+                        m_LeftHand.Type == Tree.EntryType.ThisOperator)
                     {
                         m_LeftHandType = GetMemberVarTreeType(lslCompiler, compileState, m_LeftHand, localVars);
                     }
@@ -880,7 +1019,8 @@ namespace SilverSim.Scripting.Lsl
                         case "*=":
                         case "/=":
                         case "%=":
-                            if (m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".")
+                            if ((m_LeftHand.Type == Tree.EntryType.OperatorBinary && m_LeftHand.Entry == ".") ||
+                                m_LeftHand.Type == Tree.EntryType.ThisOperator)
                             {
                                 m_LeftHandType = GetMemberVarTreeType(lslCompiler, compileState, m_LeftHand, localVars);
                             }

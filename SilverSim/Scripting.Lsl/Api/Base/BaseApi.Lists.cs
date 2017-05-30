@@ -35,6 +35,47 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {
+        [APILevel(APIFlags.ASSL, "variant")]
+        [APIDisplayName("variant")]
+        [ImplementsCustomTypecasts]
+        [APIAccessibleMembers("Type")]
+        public struct Variant
+        {
+            public IValue Value { get; private set; }
+
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(int v) => new Variant { Value = new Integer(v) };
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(long v) => new Variant { Value = new LongInteger(v) };
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(double v) => new Variant { Value = new Real(v) };
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(string v) => new Variant { Value = new AString(v) };
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(LSLKey v) => new Variant { Value = new LSLKey(v) };
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(Vector3 v) => new Variant { Value = v };
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(Quaternion v) => new Variant { Value = v };
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator bool(Variant v) => v.Value.AsBoolean;
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator int(Variant v) => v.Value.AsInt;
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator long(Variant v) => v.Value.AsLong;
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator double(Variant v) => v.Value.AsReal;
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator string(Variant v) => v.Value.ToString();
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator LSLKey(Variant v) => new LSLKey(v.ToString());
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Vector3(Variant v) => v.Value.AsVector3;
+            [APILevel(APIFlags.ASSL)]
+            public static implicit operator Quaternion(Variant v) => v.Value.AsQuaternion;
+            public int Type => (int)Value.LSL_Type;
+        }
+
         [APILevel(APIFlags.LSL, "llDeleteSubList")]
         [Description("Returns a list that is a copy of src but with the slice from start to end removed.")]
         public AnArray DeleteSubList(ScriptInstance instance,
