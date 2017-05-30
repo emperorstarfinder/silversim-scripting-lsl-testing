@@ -1878,6 +1878,7 @@ namespace SilverSim.Scripting.Lsl
                         case Tree.EntryType.OperatorRightUnary:
                         case Tree.EntryType.Vector:
                         case Tree.EntryType.Rotation:
+                        case Tree.EntryType.ThisOperator:
                             break;
 
                         default:
@@ -1897,6 +1898,7 @@ namespace SilverSim.Scripting.Lsl
                         case Tree.EntryType.OperatorRightUnary:
                         case Tree.EntryType.Vector:
                         case Tree.EntryType.Rotation:
+                        case Tree.EntryType.ThisOperator:
                             break;
 
                         default:
@@ -2147,6 +2149,7 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.StringValue:
                                 case Tree.EntryType.Vector:
                                 case Tree.EntryType.Rotation:
+                                case Tree.EntryType.ThisOperator:
                                     break;
 
                                 default:
@@ -2185,6 +2188,7 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.Value:
                                 case Tree.EntryType.Variable:
                                 case Tree.EntryType.Vector:
+                                case Tree.EntryType.ThisOperator:
                                     hasValidLeftHand = true;
                                     break;
 
@@ -2214,6 +2218,7 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.StringValue:
                                 case Tree.EntryType.Vector:
                                 case Tree.EntryType.Rotation:
+                                case Tree.EntryType.ThisOperator:
                                     hasValidRightHand = true;
                                     break;
 
