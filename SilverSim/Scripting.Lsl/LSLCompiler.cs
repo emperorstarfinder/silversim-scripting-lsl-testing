@@ -89,6 +89,7 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, FieldInfo> Constants = new Dictionary<string, FieldInfo>();
             public Dictionary<string, MethodInfo> EventDelegates = new Dictionary<string, MethodInfo>();
             public Dictionary<string, Type> Types = new Dictionary<string, Type>();
+            public List<string> VariableTypes = new List<string>();
             public Dictionary<string, PropertyInfo> Properties = new Dictionary<string, PropertyInfo>();
             public Dictionary<Type, Dictionary<Type, MethodInfo>> Typecasts = new Dictionary<Type, Dictionary<Type, MethodInfo>>();
 
@@ -125,6 +126,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     Typecasts.Add(kvp.Key, kvp.Value);
                 }
+                VariableTypes.AddRange(info.VariableTypes);
             }
         }
 
@@ -334,6 +336,7 @@ namespace SilverSim.Scripting.Lsl
                 if (apiLevelAttrs.Length != 0 || apiExtensionAttrs.Length != 0)
                 {
                     var apiDisplayNameAttr = Attribute.GetCustomAttribute(t, typeof(APIDisplayNameAttribute)) as APIDisplayNameAttribute;
+                    bool isVariableType = Attribute.GetCustomAttribute(t, typeof(APIIsVariableTypeAttribute)) != null;
                     if (apiDisplayNameAttr != null)
                     {
                         foreach (APILevelAttribute attr in apiLevelAttrs)
@@ -348,6 +351,10 @@ namespace SilverSim.Scripting.Lsl
                                 if ((kvp.Key & attr.Flags) != 0)
                                 {
                                     kvp.Value.Types.Add(typeName, t);
+                                    if(isVariableType)
+                                    {
+                                        kvp.Value.VariableTypes.Add(typeName);
+                                    }
                                     m_ValidTypes[t] = typeName;
                                 }
                             }
@@ -368,6 +375,10 @@ namespace SilverSim.Scripting.Lsl
                                 m_ApiExtensions.Add(extensionName, apiInfo);
                             }
                             apiInfo.Types.Add(typeName, t);
+                            if (isVariableType)
+                            {
+                                apiInfo.VariableTypes.Add(typeName);
+                            }
                             m_ValidTypes[t] = typeName;
                             KnownSerializationTypes[t.FullName] = t;
                         }

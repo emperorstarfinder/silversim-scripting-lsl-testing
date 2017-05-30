@@ -2727,7 +2727,7 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 if(m_ReservedWords.Contains(ent) ||
-                    (cs.ApiInfo.Types.ContainsKey(ent)) ||
+                    (cs.ApiInfo.VariableTypes.Contains(ent)) ||
                     ((ent == "switch" || ent == "case" || ent == "break") && cs.LanguageExtensions.EnableSwitchBlock) ||
                     ((ent == "break" || ent == "continue") && cs.LanguageExtensions.EnableBreakContinueStatement))
                 {
