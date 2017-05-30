@@ -117,7 +117,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (t1 == typeof(AString) || t2 == typeof(AString) ||
                     t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
                 {
-                    return (string)v1 + v2;
+                    return (string)v1 + (string)v2;
                 }
                 else if (t1 == t2)
                 {
