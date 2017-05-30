@@ -60,20 +60,398 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [APILevel(APIFlags.ASSL)]
             public static implicit operator bool(Variant v) => v.Value.AsBoolean;
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator int(Variant v) => v.Value.AsInt;
+            public static implicit operator int(Variant v) => ConvertToInt(v.Value);
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator long(Variant v) => v.Value.AsLong;
+            public static implicit operator long(Variant v) => ConvertToLong(v.Value);
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator double(Variant v) => v.Value.AsReal;
+            public static implicit operator double(Variant v) => ConvertToFloat(v.Value);
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator string(Variant v) => v.Value.ToString();
+            public static implicit operator string(Variant v) => ConvertToString(v.Value);
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator LSLKey(Variant v) => new LSLKey(v.ToString());
+            public static implicit operator LSLKey(Variant v) => ConvertToKey(v.Value);
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator Vector3(Variant v) => v.Value.AsVector3;
+            public static implicit operator Vector3(Variant v) => ConvertToVector(v.Value);
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator Quaternion(Variant v) => v.Value.AsQuaternion;
+            public static implicit operator Quaternion(Variant v) => ConvertToRot(v.Value);
             public int Type => (int)Value.LSL_Type;
+            private static string MapVariantType(Type t)
+            {
+                if(t == typeof(AString))
+                {
+                    return "string";
+                }
+                else if(t == typeof(Real))
+                {
+                    return "float";
+                }
+                else if(t == typeof(LSLKey))
+                {
+                    return "key";
+                }
+                else if(t == typeof(Quaternion))
+                {
+                    return "rotation";
+                }
+                else if(t == typeof(Vector3))
+                {
+                    return "vector";
+                }
+                else if(t == typeof(LongInteger))
+                {
+                    return "long";
+                }
+                else if(t == typeof(Integer))
+                {
+                    return "int";
+                }
+                else
+                {
+                    return "???";
+                }
+            }
+
+            public static Variant operator+(Variant v1, Variant v2)
+            {
+                Type t1 = v1.Value.GetType();
+                Type t2 = v2.Value.GetType();
+                if (t1 == typeof(AString) || t2 == typeof(AString) ||
+                    t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
+                {
+                    return (string)v1 + v2;
+                }
+                else if (t1 == t2)
+                {
+                    if(t1 == typeof(Integer))
+                    {
+                        return v1.Value.AsInt + v2.Value.AsInt;
+                    }
+                    else if(t1 == typeof(LongInteger))
+                    {
+                        return v1.Value.AsLong + v2.Value.AsLong;
+                    }
+                    else if(t1 == typeof(Real))
+                    {
+                        return (double)v1.Value.AsReal + v2.Value.AsReal;
+                    }
+                    else if(t1 == typeof(Vector3))
+                    {
+                        return v1.Value.AsVector3 + v2.Value.AsVector3;
+                    }
+                    else if (t1 == typeof(Quaternion))
+                    {
+                        return v1.Value.AsQuaternion + v2.Value.AsQuaternion;
+                    }
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsReal + v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsReal + v2.Value.AsLong;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsInt + v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsLong + v2.Value.AsReal;
+                }
+                else if(t1 == typeof(LongInteger) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsLong + v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsInt + v2.Value.AsLong;
+                }
+                throw new LocalizedScriptErrorException(
+                    new Variant(),
+                    "IncompatibleTypes1And2ForOperator0",
+                    "Incompatible types '{1}' and '{2}' at operator '{0}' at this-operator for type 'list'.",
+                    "+=", MapVariantType(t1), MapVariantType(t2));
+            }
+
+            public static Variant operator -(Variant v1, Variant v2)
+            {
+                Type t1 = v1.Value.GetType();
+                Type t2 = v2.Value.GetType();
+                if (t1 == typeof(AString) || t2 == typeof(AString) ||
+                    t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
+                {
+                }
+                else if (t1 == t2)
+                {
+                    if (t1 == typeof(Integer))
+                    {
+                        return v1.Value.AsInt - v2.Value.AsInt;
+                    }
+                    else if (t1 == typeof(LongInteger))
+                    {
+                        return v1.Value.AsLong - v2.Value.AsLong;
+                    }
+                    else if (t1 == typeof(Real))
+                    {
+                        return (double)v1.Value.AsReal - v2.Value.AsReal;
+                    }
+                    else if (t1 == typeof(Vector3))
+                    {
+                        return v1.Value.AsVector3 - v2.Value.AsVector3;
+                    }
+                    else if (t1 == typeof(Quaternion))
+                    {
+                        return v1.Value.AsQuaternion - v2.Value.AsQuaternion;
+                    }
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsReal - v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsReal - v2.Value.AsLong;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsInt - v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsLong - v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsLong - v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsInt - v2.Value.AsLong;
+                }
+                throw new LocalizedScriptErrorException(
+                    new Variant(),
+                    "IncompatibleTypes1And2ForOperator0",
+                    "Incompatible types '{1}' and '{2}' at operator '{0}' at this-operator for type 'list'.",
+                    "-=", MapVariantType(t1), MapVariantType(t2));
+            }
+
+            public static Variant operator *(Variant v1, Variant v2)
+            {
+                Type t1 = v1.Value.GetType();
+                Type t2 = v2.Value.GetType();
+                if (t1 == typeof(AString) || t2 == typeof(AString) ||
+                    t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
+                {
+                }
+                else if (t1 == t2)
+                {
+                    if (t1 == typeof(Integer))
+                    {
+                        return LSLCompiler.LSL_IntegerMultiply(v1.Value.AsInt,  v2.Value.AsInt);
+                    }
+                    else if (t1 == typeof(LongInteger))
+                    {
+                        return v1.Value.AsLong * v2.Value.AsLong;
+                    }
+                    else if (t1 == typeof(Real))
+                    {
+                        return (double)v1.Value.AsReal * v2.Value.AsReal;
+                    }
+                    else if (t1 == typeof(Vector3))
+                    {
+                        return v1.Value.AsVector3 * v2.Value.AsVector3;
+                    }
+                    else if (t1 == typeof(Quaternion))
+                    {
+                        return v1.Value.AsQuaternion * v2.Value.AsQuaternion;
+                    }
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsReal * v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsReal * v2.Value.AsLong;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsInt * v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsLong * v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsLong * v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsInt * v2.Value.AsLong;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(Quaternion))
+                {
+                    return v2.Value.AsVector3 * v1.Value.AsQuaternion;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(Integer))
+                {
+                    return v2.Value.AsVector3 * v1.Value.AsInt;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(LongInteger))
+                {
+                    return v2.Value.AsVector3 * v1.Value.AsLong;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(Real))
+                {
+                    return v2.Value.AsVector3 * v1.Value.AsReal;
+                }
+                else if (t1 == typeof(Quaternion) && t2 == typeof(Integer))
+                {
+                    return v2.Value.AsQuaternion * v1.Value.AsInt;
+                }
+                else if (t1 == typeof(Quaternion) && t2 == typeof(LongInteger))
+                {
+                    return v2.Value.AsQuaternion * v1.Value.AsLong;
+                }
+                else if (t1 == typeof(Quaternion) && t2 == typeof(Real))
+                {
+                    return v2.Value.AsQuaternion * v1.Value.AsReal;
+                }
+                throw new LocalizedScriptErrorException(
+                    new Variant(),
+                    "IncompatibleTypes1And2ForOperator0",
+                    "Incompatible types '{1}' and '{2}' at operator '{0}' at this-operator for type 'list'.",
+                    "*=", MapVariantType(t1), MapVariantType(t2));
+            }
+
+            public static Variant operator /(Variant v1, Variant v2)
+            {
+                Type t1 = v1.Value.GetType();
+                Type t2 = v2.Value.GetType();
+                if (t1 == typeof(AString) || t2 == typeof(AString) ||
+                    t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
+                {
+                }
+                else if (t1 == t2)
+                {
+                    if (t1 == typeof(Integer))
+                    {
+                        return LSLCompiler.LSL_IntegerDivision(v1.Value.AsInt, v2.Value.AsInt);
+                    }
+                    else if (t1 == typeof(LongInteger))
+                    {
+                        return v1.Value.AsLong / v2.Value.AsLong;
+                    }
+                    else if (t1 == typeof(Real))
+                    {
+                        return (double)v1.Value.AsReal / v2.Value.AsReal;
+                    }
+                    else if (t1 == typeof(Quaternion))
+                    {
+                        return LSLCompiler.LSLQuaternionDivision(v1.Value.AsQuaternion, v2.Value.AsQuaternion);
+                    }
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsReal / v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsReal / v2.Value.AsLong;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsInt / v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsLong / v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsLong / v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsInt / v2.Value.AsLong;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(Quaternion))
+                {
+                    return v2.Value.AsVector3 / v1.Value.AsQuaternion;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(Integer))
+                {
+                    return v2.Value.AsVector3 / v1.Value.AsInt;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(LongInteger))
+                {
+                    return v2.Value.AsVector3 / v1.Value.AsLong;
+                }
+                else if (t1 == typeof(Vector3) && t2 == typeof(Real))
+                {
+                    return v2.Value.AsVector3 / v1.Value.AsReal;
+                }
+                throw new LocalizedScriptErrorException(
+                    new Variant(),
+                    "IncompatibleTypes1And2ForOperator0",
+                    "Incompatible types '{1}' and '{2}' at operator '{0}' at this-operator for type 'list'.",
+                    "/=", MapVariantType(t1), MapVariantType(t2));
+            }
+
+            public static Variant operator %(Variant v1, Variant v2)
+            {
+                Type t1 = v1.Value.GetType();
+                Type t2 = v2.Value.GetType();
+                if (t1 == typeof(AString) || t2 == typeof(AString) ||
+                    t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
+                {
+                }
+                else if (t1 == t2)
+                {
+                    if (t1 == typeof(Integer))
+                    {
+                        return LSLCompiler.LSL_IntegerModulus(v1.Value.AsInt, v2.Value.AsInt);
+                    }
+                    else if (t1 == typeof(LongInteger))
+                    {
+                        return v1.Value.AsLong % v2.Value.AsLong;
+                    }
+                    else if (t1 == typeof(Real))
+                    {
+                        return (double)v1.Value.AsReal % v2.Value.AsReal;
+                    }
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsReal % v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Real) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsReal % v2.Value.AsLong;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsInt % v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Real))
+                {
+                    return v1.Value.AsLong % v2.Value.AsReal;
+                }
+                else if (t1 == typeof(LongInteger) && t2 == typeof(Integer))
+                {
+                    return v1.Value.AsLong % v2.Value.AsInt;
+                }
+                else if (t1 == typeof(Integer) && t2 == typeof(LongInteger))
+                {
+                    return v1.Value.AsInt % v2.Value.AsLong;
+                }
+                throw new LocalizedScriptErrorException(
+                    new Variant(),
+                    "IncompatibleTypes1And2ForOperator0",
+                    "Incompatible types '{1}' and '{2}' at operator '{0}' at this-operator for type 'list'.",
+                    "%=", MapVariantType(t1), MapVariantType(t2));
+            }
         }
 
         [APILevel(APIFlags.LSL, "llDeleteSubList")]
@@ -316,6 +694,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        private static double ConvertToFloat(IValue iv)
+        {
+            try
+            {
+                return iv.AsReal;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llList2Float")]
         public double List2Float(ScriptInstance instance, AnArray src, int index)
         {
@@ -329,14 +719,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
 
-            try
-            {
-                return src[index].AsReal;
-            }
-            catch
-            {
-                return 0;
-            }
+            return ConvertToFloat(src[index]);
         }
 
         [APILevel(APIFlags.LSL, "llListInsertList")]
@@ -420,6 +803,29 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return index;
         }
 
+        internal static long ConvertToLong(IValue iv)
+        {
+            if (iv is Real)
+            {
+                return LSLCompiler.ConvToLong((Real)iv);
+            }
+            else if (iv is AString || iv is LSLKey)
+            {
+                return LSLCompiler.ConvToLong(iv.ToString());
+            }
+            else
+            {
+                try
+                {
+                    return iv.AsLong;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+
         [APIExtension(APIExtension.LongInteger, "llList2Long")]
         [Description("Returns an integer that is at index in src")]
         public long List2Long(ScriptInstance instance,
@@ -438,19 +844,24 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
 
-            if (src[index] is Real)
+            return ConvertToLong(src[index]);
+        }
+
+        internal static int ConvertToInt(IValue iv)
+        {
+            if (iv is Real)
             {
-                return LSLCompiler.ConvToLong((Real)src[index]);
+                return LSLCompiler.ConvToInt((Real)iv);
             }
-            else if (src[index] is AString)
+            else if (iv is AString || iv is LSLKey)
             {
-                return LSLCompiler.ConvToLong(src[index].ToString());
+                return LSLCompiler.ConvToInt(iv.ToString());
             }
             else
             {
                 try
                 {
-                    return src[index].AsLong;
+                    return iv.AsInteger;
                 }
                 catch
                 {
@@ -477,24 +888,33 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
 
-            if(src[index] is Real)
+            return ConvertToInt(src[index]);
+        }
+
+        internal static LSLKey ConvertToKey(IValue val, bool singlePrecision = false)
+        {
+            Type t = val.GetType();
+            if (t == typeof(Real))
             {
-                return LSLCompiler.ConvToInt((Real)src[index]);
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
+                    LSLCompiler.TypecastDoubleToString(val.AsReal);
             }
-            else if (src[index] is AString)
+            else if (t == typeof(Vector3))
             {
-                return LSLCompiler.ConvToInt(src[index].ToString());
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
+                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
+            }
+            else if (t == typeof(Quaternion))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
+                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
             }
             else
             {
-                try
-                {
-                    return src[index].AsInteger;
-                }
-                catch
-                {
-                    return 0;
-                }
+                return val.ToString();
             }
         }
 
@@ -517,29 +937,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return UUID.Zero;
             }
 
-            IValue val = src[index];
-            Type t = val.GetType();
-            if (t == typeof(Real))
+            return ConvertToKey(src[index], script.UsesSinglePrecision);
+        }
+
+        internal static Quaternion ConvertToRot(IValue iv)
+        {
+            try
             {
-                return script.UsesSinglePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
-                    LSLCompiler.TypecastDoubleToString(val.AsReal);
+                return iv.AsQuaternion;
             }
-            else if (t == typeof(Vector3))
+            catch
             {
-                return script.UsesSinglePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
-                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
-            }
-            else if (t == typeof(Quaternion))
-            {
-                return script.UsesSinglePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
-                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
-            }
-            else
-            {
-                return val.ToString();
+                return Quaternion.Identity;
             }
         }
 
@@ -561,13 +970,33 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return Quaternion.Identity;
             }
 
-            try
+            return ConvertToRot(src[index]);
+        }
+
+        internal static string ConvertToString(IValue val, bool singlePrecision = false)
+        {
+            Type t = val.GetType();
+            if (t == typeof(Real))
             {
-                return src[index].AsQuaternion;
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
+                    LSLCompiler.TypecastDoubleToString(val.AsReal);
             }
-            catch
+            else if (t == typeof(Vector3))
             {
-                return Quaternion.Identity;
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
+                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
+            }
+            else if (t == typeof(Quaternion))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
+                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
+            }
+            else
+            {
+                return val.ToString();
             }
         }
 
@@ -590,29 +1019,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return string.Empty;
             }
 
-            IValue val = src[index];
-            Type t = val.GetType();
-            if (t == typeof(Real))
+            return ConvertToString(src[index], script.UsesSinglePrecision);
+        }
+
+        internal static Vector3 ConvertToVector(IValue iv)
+        {
+            try
             {
-                return script.UsesSinglePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
-                    LSLCompiler.TypecastDoubleToString(val.AsReal);
+                return iv.AsVector3;
             }
-            else if (t == typeof(Vector3))
+            catch
             {
-                return script.UsesSinglePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
-                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
-            }
-            else if (t == typeof(Quaternion))
-            {
-                return script.UsesSinglePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
-                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
-            }
-            else
-            {
-                return val.ToString();
+                return Vector3.Zero;
             }
         }
 
@@ -634,14 +1052,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return Vector3.Zero;
             }
 
-            try
-            {
-                return src[index].AsVector3;
-            }
-            catch
-            {
-                return Vector3.Zero;
-            }
+            return ConvertToVector(src[index]);
         }
 
         [APILevel(APIFlags.LSL, "llDumpList2String")]
