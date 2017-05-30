@@ -1128,6 +1128,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int TYPE_VECTOR = 5;
         [APILevel(APIFlags.LSL)]
         public const int TYPE_ROTATION = 6;
+        [APIExtension(APIExtension.LongInteger)]
+        public const int TYPE_LONGINTEGER = 7;
         [APILevel(APIFlags.LSL)]
         public const int TYPE_INVALID = 0;
 
