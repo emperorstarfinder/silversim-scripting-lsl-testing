@@ -38,6 +38,7 @@ namespace SilverSim.Scripting.Lsl
     {
         public static void SetArrayElement(AnArray array, int index, BaseApi.Variant v)
         {
+            int origIndex = index;
             if (index < 0)
             {
                 index = array.Count + index;
@@ -47,10 +48,15 @@ namespace SilverSim.Scripting.Lsl
             {
                 array[index] = v.Value;
             }
+            else
+            {
+                throw new LocalizedScriptErrorException(new BaseApi.Variant(), "ListIndex0IsOutOfBounds", "'list' index '{0}' is out of bounds.", origIndex);
+            }
         }
 
         public static BaseApi.Variant GetArrayElement(AnArray array, int index)
         {
+            int origIndex = index;
             if(index < 0)
             {
                 index = array.Count + index;
@@ -88,6 +94,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     return (double)(Real)v;
                 }
+            }
+            else
+            {
+                throw new LocalizedScriptErrorException(new BaseApi.Variant(), "ListIndex0IsOutOfBounds", "'list' index '{0}' is out of bounds.", origIndex);
             }
 
             return string.Empty;
