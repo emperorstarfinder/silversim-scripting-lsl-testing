@@ -137,7 +137,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
                 InventoryItem item;
                 if (m_Instance == null)
                 {
-                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryitem");
                 }
                 if (IsLibrary)
                 {
@@ -215,6 +215,131 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             public static implicit operator int(AgentInventoryItem item) => ((bool)item).ToLSLBoolean();
         }
 
+        [APIExtension(APIExtension.AgentInventory, "agentinventorychildfolderaccessor")]
+        [APIDisplayName("agentinventorychildfolderaccessor")]
+        public class AgentInventoryChildFolderAccessor
+        {
+            private readonly ScriptInstance m_Instance;
+            private readonly UUI m_InventoryOwner;
+            private readonly InventoryServiceInterface m_InventoryService;
+            private readonly UUID m_FolderID;
+            private readonly bool m_IsLibrary;
+
+            public AgentInventoryChildFolderAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, UUID folderID, bool isLibrary)
+            {
+                m_Instance = instance;
+                m_InventoryOwner = owner;
+                m_InventoryService = inventoryService;
+                m_FolderID = folderID;
+                m_IsLibrary = isLibrary;
+            }
+
+            [APIExtension(APIExtension.AgentInventory)]
+            public static explicit operator AnArray(AgentInventoryChildFolderAccessor acc)
+            {
+                AnArray res = new AnArray();
+                if (acc.m_Instance == null || acc.m_InventoryService == null)
+                {
+                    return res;
+                }
+                foreach (InventoryFolder folder in acc.m_InventoryService.Folder.GetFolders(acc.m_InventoryOwner.ID, acc.m_FolderID))
+                {
+                    res.Add(new LSLKey(folder.ID));
+                }
+                return res;
+            }
+
+            public AgentInventoryFolder this[string name, int index]
+            {
+                get
+                {
+                    if (m_Instance == null || m_InventoryService == null)
+                    {
+                        return new AgentInventoryFolder();
+                    }
+
+                    lock (m_Instance)
+                    {
+                        int idx = index;
+                        foreach(InventoryFolder folder in m_InventoryService.Folder.GetFolders(m_InventoryOwner.ID, m_FolderID))
+                        {
+                            if(string.Compare(folder.Name, name, true) == 0 && idx-- == 0)
+                            {
+                                return new AgentInventoryFolder(m_Instance, m_InventoryService, m_InventoryOwner, folder.ID, m_IsLibrary);
+                            }
+                        }
+                    }
+
+                    return new AgentInventoryFolder();
+                }
+            }
+
+            public AgentInventoryFolder this[string name] => this[name, 0];
+        }
+
+        [APIExtension(APIExtension.AgentInventory, "agentinventorychilditemaccessor")]
+        [APIDisplayName("agentinventorychilditemaccessor")]
+        [ImplementsCustomTypecasts]
+        public class AgentInventoryChildItemAccessor
+        {
+            private readonly ScriptInstance m_Instance;
+            private readonly UUI m_InventoryOwner;
+            private readonly InventoryServiceInterface m_InventoryService;
+            private readonly UUID m_FolderID;
+            private readonly bool m_IsLibrary;
+
+            public AgentInventoryChildItemAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, UUID folderID, bool isLibrary)
+            {
+                m_Instance = instance;
+                m_InventoryOwner = owner;
+                m_InventoryService = inventoryService;
+                m_FolderID = folderID;
+                m_IsLibrary = isLibrary;
+            }
+
+            [APIExtension(APIExtension.AgentInventory)]
+            public static explicit operator AnArray(AgentInventoryChildItemAccessor acc)
+            {
+                AnArray res = new AnArray();
+                if (acc.m_Instance == null || acc.m_InventoryService == null)
+                {
+                    return res;
+                }
+                foreach (InventoryItem item in acc.m_InventoryService.Folder.GetItems(acc.m_InventoryOwner.ID, acc.m_FolderID))
+                {
+                    res.Add(new LSLKey(item.ID));
+                }
+                return res;
+            }
+
+            public AgentInventoryItem this[string name, int index]
+            {
+                get
+                {
+                    if (m_Instance == null || m_InventoryService == null)
+                    {
+                        return new AgentInventoryItem();
+                    }
+
+                    lock (m_Instance)
+                    {
+                        int idx = index;
+                        foreach (InventoryItem item in m_InventoryService.Folder.GetItems(m_InventoryOwner.ID, m_FolderID))
+                        {
+                            if (string.Compare(item.Name, name, true) == 0 && idx-- == 0)
+                            {
+                                return new AgentInventoryItem(m_Instance, m_InventoryService, m_InventoryOwner, item.ID, m_IsLibrary);
+                            }
+                        }
+                    }
+
+                    return new AgentInventoryItem();
+                }
+            }
+
+            public AgentInventoryItem this[string name] => this[name, 0];
+        }
+
         [APIExtension(APIExtension.AgentInventory, "agentinventoryfolder")]
         [APIDisplayName("agentinventoryfolder")]
         [APIIsVariableType]
@@ -226,7 +351,9 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             "InventoryType",
             "ItemKeys",
             "FolderKeys",
-            "ParentFolder")]
+            "ParentFolder",
+            "ChildFolders",
+            "ChildItems")]
         public class AgentInventoryFolder
         {
             private readonly ScriptInstance m_Instance;
@@ -272,7 +399,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
                 InventoryFolder folder;
                 if (m_Instance == null)
                 {
-                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryfolder");
                 }
                 lock (m_Instance)
                 {
@@ -342,6 +469,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
 
             public int Version => With((folder) => folder.Version, 0);
             public int InventoryType => (int)With((folder) => folder.InventoryType, Types.Inventory.InventoryType.Unknown);
+            public AgentInventoryChildFolderAccessor ChildFolders => new AgentInventoryChildFolderAccessor(m_Instance, InventoryService, InventoryOwner, Key, IsLibrary);
+            public AgentInventoryChildItemAccessor ChildItems => new AgentInventoryChildItemAccessor(m_Instance, InventoryService, InventoryOwner, Key, IsLibrary);
         }
 
         [APIExtension(APIExtension.AgentInventory, "agentinventoryfolderaccessor")]
@@ -543,7 +672,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         {
             if(folder.InventoryService == null)
             {
-                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventory");
             }
             lock (instance)
             {
@@ -565,9 +694,13 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         {
             lock (instance)
             {
-                if (toFolder.InventoryService == null || originalItem.InventoryService == null)
+                if (toFolder.InventoryService == null)
                 {
-                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryfolder");
+                }
+                if(originalItem.InventoryService == null)
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryitem");
                 }
                 if (toFolder.IsLibrary || originalItem.IsLibrary)
                 {
@@ -613,7 +746,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             {
                 if (toFolder.InventoryService == null || originalFolder.InventoryService == null)
                 {
-                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryfolder");
                 }
                 if (toFolder.IsLibrary || originalFolder.IsLibrary)
                 {
@@ -653,7 +786,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         {
             if (folder.InventoryService == null)
             {
-                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryfolder");
             }
             if (folder.IsLibrary)
             {
@@ -670,7 +803,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         {
             if (folder.InventoryService == null)
             {
-                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryfolder");
             }
             if(folder.IsLibrary)
             {
@@ -687,7 +820,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         {
             if (item.InventoryService == null)
             {
-                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryitem");
             }
             if (item.IsLibrary)
             {
@@ -704,7 +837,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         {
             if (folder.InventoryService == null || toFolder.InventoryService == null)
             {
-                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryfolder");
             }
             if (folder.IsLibrary || toFolder.IsLibrary)
             {
@@ -723,9 +856,13 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         [APIExtension(APIExtension.AgentInventory, "invMove")]
         public void Move(ScriptInstance instance, AgentInventoryFolder toFolder, AgentInventoryItem item)
         {
-            if (item.InventoryService == null || toFolder.InventoryService == null)
+            if (item.InventoryService == null)
             {
-                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryitem");
+            }
+            if (toFolder.InventoryService == null)
+            {
+                throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "agentinventoryfolder");
             }
             if (item.IsLibrary || toFolder.IsLibrary)
             {
