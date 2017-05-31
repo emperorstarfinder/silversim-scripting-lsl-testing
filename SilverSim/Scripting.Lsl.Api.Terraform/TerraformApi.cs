@@ -146,7 +146,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                 SceneInterface scene = grp.Scene;
                 if (scene.CanTerraform(grp.Owner, grp.GlobalPosition))
                 {
-                    scene.Terrain.UpdateTerrainDataToClients();
+                    scene.Terrain.Flush();
                 }
             }
         }
