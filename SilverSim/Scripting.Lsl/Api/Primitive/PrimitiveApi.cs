@@ -36,6 +36,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     {
         [APILevel(APIFlags.LSL)]
         public const int PAY_HIDE = -1;
+        [APILevel(APIFlags.LSL)]
+        public const int PAY_DEFAULT = -2;
 
         [APILevel(APIFlags.LSL)]
         public const int LINK_ROOT = 1;
