@@ -443,25 +443,23 @@ namespace SilverSim.Scripting.Lsl
                                     }
                                     break;
 
-                                case "(string)":
-                                case "(integer)":
-                                case "(float)":
-                                case "(vector)":
-                                case "(list)":
-                                case "(key)":
-                                case "(quaternion)":
-                                case "(rotation)":
-                                    expressionStack.Insert(0, new TypecastExpression(
-                                        functionTree,
-                                        lineNumber));
-                                    innerExpressionReturn = null;
-                                    break;
-
                                 default:
-                                    expressionStack.Insert(0, new LeftUnaryOperators(
-                                        functionTree,
-                                        lineNumber));
-                                    innerExpressionReturn = null;
+                                    if (functionTree.Entry.StartsWith("(") &&
+                                        functionTree.Entry.EndsWith(")") &&
+                                        compileState.ContainsValidVarType(functionTree.Entry.Substring(1, functionTree.Entry.Length - 2)))
+                                    {
+                                        expressionStack.Insert(0, new TypecastExpression(
+                                            functionTree,
+                                            lineNumber));
+                                        innerExpressionReturn = null;
+                                    }
+                                    else
+                                    {
+                                        expressionStack.Insert(0, new LeftUnaryOperators(
+                                            functionTree,
+                                            lineNumber));
+                                        innerExpressionReturn = null;
+                                    }
                                     break;
                             }
                             break;

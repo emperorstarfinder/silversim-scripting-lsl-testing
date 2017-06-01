@@ -333,6 +333,13 @@ namespace SilverSim.Scripting.Lsl
                     {
                         compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
                         ProcessImplicitCasts(compileState, parameters[i].Value, m_Parameters[i].ParameterType, m_LineNumber);
+                        if(parameters[i].Value == m_Parameters[i].ParameterType &&
+                            m_Parameters[i].ParameterType == typeof(AnArray) &&
+                            compileState.LanguageExtensions.EnableArrayThisOperator)
+                        {
+                            /* duplicate array to adhere to LSL language features */
+                            compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
+                        }
                     }
 
                     GenIncCallDepthCount(compileState);
