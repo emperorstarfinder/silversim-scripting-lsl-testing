@@ -302,3 +302,7 @@ ExpressionForThisOperatorHasNoReturnValue=Expression for this operator has no re
 MultipleLinksCannotBeRead=Multiple links cannot be read.
 IncompatibleTypes1And2ForOperator0=Incompatible types '{1}' and '{2}' at operator '{0}' at this-operator for type 'list'.
 ListIndex0IsOutOfBounds='list' index '{0}' is out of bounds.
+DelinkFailedDueNoEditPerms=Delink failed because you do not have edit permission
+OnlyOwnerIsAbleToDelinkObjectByScript=Only owner is able to delink by script
+LinkFailedDueNoEditPerms=Linking failed because you do not have edit permission
+OnlyOwnerIsAbleToLinkObjectByScript=Only owner is able to link by script
