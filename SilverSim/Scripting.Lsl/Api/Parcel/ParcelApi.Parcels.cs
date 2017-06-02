@@ -452,5 +452,29 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 }
             }
         }
+
+        [APILevel(APIFlags.OSSL, "osParcelJoin")]
+        public void ParcelJoin(ScriptInstance instance, Vector3 pos1, Vector3 pos2)
+        {
+            Vector3 min = pos1.ComponentMin(pos2);
+            Vector3 max = pos1.ComponentMax(pos2);
+
+            lock (instance)
+            {
+                instance.Part.ObjectGroup.Scene.JoinParcels(instance.Part.Owner, (int)min.X, (int)min.Y, (int)max.X, (int)max.Y);
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osParcelSubdivide")]
+        public void ParcelSubdivide(ScriptInstance instance, Vector3 pos1, Vector3 pos2)
+        {
+            Vector3 min = pos1.ComponentMin(pos2);
+            Vector3 max = pos1.ComponentMax(pos2);
+
+            lock (instance)
+            {
+                instance.Part.ObjectGroup.Scene.DivideParcel(instance.Part.Owner, (int)min.X, (int)min.Y, (int)max.X, (int)max.Y);
+            }
+        }
     }
 }
