@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                 {
                     estate.UseGlobalTime = isFixed != 0;
                     estate.SunPosition = sunHour.Clamp(0, 24);
-                    estateService[estateID] = estate;
+                    estateService.Update(estate);
                     foreach(UUID regionID in estateService.RegionMap[estateID])
                     {
                         SceneInterface estateScene;
