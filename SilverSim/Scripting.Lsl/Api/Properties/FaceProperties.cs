@@ -467,9 +467,11 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     With((TextureEntryFace f, Vector3 v) =>
                     {
-                        f.TextureColor.R = v.X;
-                        f.TextureColor.G = v.Y;
-                        f.TextureColor.B = v.Z;
+                        ColorAlpha c = f.TextureColor;
+                        c.R = v.X;
+                        c.G = v.Y;
+                        c.B = v.Z;
+                        f.TextureColor = c;
                     }, value);
                 }
             }

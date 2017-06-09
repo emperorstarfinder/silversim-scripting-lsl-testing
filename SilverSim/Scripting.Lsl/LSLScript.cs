@@ -815,6 +815,7 @@ namespace SilverSim.Scripting.Lsl
 
             if (mi != null)
             {
+                IncrementScriptEventCounter();
                 try
                 {
                     foreach(object p in param)
