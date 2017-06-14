@@ -1256,7 +1256,11 @@ namespace SilverSim.Scripting.Lsl
 
         internal void OnListen(ListenEvent ev)
         {
-            PostEvent(ev);
+            /* do not receive own messages */
+            if (ev.ID != Part?.ID)
+            {
+                PostEvent(ev);
+            }
         }
 
         private sealed class AtRegionMessageLocalization : IListenEventLocalization
