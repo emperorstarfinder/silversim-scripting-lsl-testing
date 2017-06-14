@@ -220,6 +220,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                             msg,
                             () => instance.Part.ID,
                             () => instance.Part.GlobalPosition,
+                            () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                             script.OnListen);
                         try
                         {
@@ -301,6 +302,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                             regexBitfield,
                             () => instance.Part.ID,
                             () => instance.Part.GlobalPosition,
+                            () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                             script.OnListen);
                         try
                         {
@@ -371,6 +373,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                                 message,
                                 () => instance.Part.ID,
                                 () => instance.Part.GlobalPosition,
+                                () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                                 script.OnListen) :
                             chatservice.AddListenRegex(
                                 channel,
@@ -380,6 +383,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                                 regexBitfield,
                                 () => instance.Part.ID,
                                 () => instance.Part.GlobalPosition,
+                                () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                                 script.OnListen);
                         l.IsActive = isActive;
 
