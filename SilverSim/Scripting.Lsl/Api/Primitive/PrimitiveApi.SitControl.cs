@@ -31,13 +31,27 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     public partial class PrimitiveApi
     {
         #region Sit Targets
+        private void SetSitTarget(ObjectPart part, Vector3 offset, Quaternion rot)
+        {
+            bool sitTargetActive = !(offset.ApproxEquals(Vector3.Zero, double.Epsilon) && rot.ApproxEquals(Quaternion.Identity, double.Epsilon));
+            if (!sitTargetActive)
+            {
+                part.IsSitTargetActive = false;
+            }
+            part.SitTargetOffset = offset;
+            part.SitTargetOrientation = rot;
+            if (sitTargetActive)
+            {
+                part.IsSitTargetActive = true;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llSitTarget")]
         public void SitTarget(ScriptInstance instance, Vector3 offset, Quaternion rot)
         {
             lock (instance)
             {
-                instance.Part.SitTargetOffset = offset;
-                instance.Part.SitTargetOrientation = rot;
+                SetSitTarget(instance.Part, offset, rot);
             }
         }
 
@@ -56,8 +70,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     return;
                 }
 
-                part.SitTargetOffset = offset;
-                part.SitTargetOrientation = rot;
+                SetSitTarget(part, offset, rot);
             }
         }
 
@@ -67,6 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             var res = new AnArray();
             lock(instance)
             {
+                res.Add(instance.Part.IsSitTargetActive);
                 res.Add(instance.Part.SitTargetOffset);
                 res.Add(instance.Part.SitTargetOrientation);
             }
@@ -89,6 +103,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     return res;
                 }
 
+                res.Add(part.IsSitTargetActive);
                 res.Add(part.SitTargetOffset);
                 res.Add(part.SitTargetOrientation);
             }
