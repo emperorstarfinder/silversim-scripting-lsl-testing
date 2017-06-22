@@ -312,12 +312,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public LSLKey Key => WithPart((ObjectPart p) => p.ID);
 
+            [XmlIgnore]
             public Vector3 Velocity
             {
                 get { return WithPart((ObjectPart p) => p.Velocity); }
                 set { WithPart((ObjectPart p, Vector3 v) => p.Velocity = v, value); }
             }
 
+            [XmlIgnore]
             public Vector3 AngularVelocity
             {
                 get { return WithPart((ObjectPart p) => p.AngularVelocity); }
@@ -327,6 +329,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public InventoryProperties.PrimInventory Inventory =>
                 WithPart((ScriptInstance instance, ObjectPart p) => new InventoryProperties.PrimInventory(instance, p));
 
+            [XmlIgnore]
             public Hovertext HoverText
             {
                 get
@@ -352,6 +355,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public Pointlight PointLight
             {
                 get
@@ -382,6 +386,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public Projector Projector
             {
                 get
@@ -420,54 +425,63 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public string Description
             {
                 get { return WithPart((ObjectPart p) => p.Description); }
                 set { WithPart((ObjectPart p, string d) => p.Description = d, value); }
             }
 
+            [XmlIgnore]
             public string Name
             {
                 get { return WithPart((ObjectPart p) => p.Name); }
                 set { WithPart((ObjectPart p, string d) => p.Name = d, value); }
             }
 
+            [XmlIgnore]
             public int AllowInventoryDrop
             {
                 get { return WithPart((ObjectPart p) => p.IsAllowedDrop.ToLSLBoolean()); }
                 set { WithPart((ObjectPart p, bool v) => p.IsAllowedDrop = v, value != 0); }
             }
 
+            [XmlIgnore]
             public Quaternion LocalRot
             {
                 get { return WithPart((ObjectPart p) => p.LocalRotation); }
                 set { WithPart((ObjectPart p, Quaternion q) => p.LocalRotation = q, value); }
             }
 
+            [XmlIgnore]
             public Vector3 Size
             {
                 get { return WithPart((ObjectPart p) => p.Size); }
                 set { WithPart((ObjectPart p, Vector3 v) => p.Size = v, value); }
             }
 
+            [XmlIgnore]
             public Vector3 LocalPos
             {
                 get { return WithPart((ObjectPart p) => p.LocalPosition); }
                 set { WithPart((ObjectPart p, Vector3 v) => p.LocalPosition = v, value); }
             }
 
+            [XmlIgnore]
             public Quaternion Rotation
             {
                 get { return WithPart((ObjectPart p) => p.Rotation); }
                 set { WithPart((ObjectPart p, Quaternion q) => p.Rotation = q, value); }
             }
 
+            [XmlIgnore]
             public Vector3 Position
             {
                 get { return WithPart((ObjectPart p) => p.Position); }
                 set { WithPart((ObjectPart p, Vector3 v) => p.Position = v, value); }
             }
 
+            [XmlIgnore]
             public int PhysicsShapeType
             {
                 get { return (int)WithPart((ObjectPart p) => p.PhysicsShapeType); }
@@ -481,6 +495,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public int Material
             {
                 get { return (int)WithPart((ObjectPart p) => p.Material); }
@@ -493,42 +508,49 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public int IsPhantom
             {
                 get { return WithPart((ObjectPart p) => p.IsPhantom.ToLSLBoolean()); }
                 set { WithPart((ObjectPart p, bool v) => p.IsPhantom = v, value != 0); }
             }
 
+            [XmlIgnore]
             public int IsPhysics
             {
                 get { return WithPart((ObjectPart p) => p.IsPhysics.ToLSLBoolean()); }
                 set { WithPart((ObjectPart p, bool v) => p.IsPhysics = v, value != 0); }
             }
 
+            [XmlIgnore]
             public int IsTempOnRez
             {
                 get { return WithPart((ObjectPart p) => p.ObjectGroup.IsTempOnRez.ToLSLBoolean()); }
                 set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsTempOnRez = v, value != 0); }
             }
 
+            [XmlIgnore]
             public int IsVolumeDetect
             {
                 get { return WithPart((ObjectPart p) => p.ObjectGroup.IsVolumeDetect.ToLSLBoolean()); }
                 set { WithPart((ObjectPart p, bool v) => p.ObjectGroup.IsVolumeDetect = v, value != 0); }
             }
 
+            [XmlIgnore]
             public int AllowUnsit
             {
                 get { return WithPart((ObjectPart p) => p.AllowUnsit.ToLSLBoolean()); }
                 set { WithPart((ObjectPart p, bool v) => p.AllowUnsit = v, value != 0); }
             }
 
+            [XmlIgnore]
             public int ScriptedSitOnly
             {
                 get { return WithPart((ObjectPart p) => p.IsScriptedSitOnly.ToLSLBoolean()); }
                 set { WithPart((ObjectPart p, bool v) => p.IsScriptedSitOnly = v, value != 0); }
             }
 
+            [XmlIgnore]
             public double Buoyancy
             {
                 get { return WithPart((ObjectPart p) => p.Buoyancy); }

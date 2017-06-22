@@ -393,6 +393,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }, value);
             }
 
+            [XmlIgnore]
             public LSLKey Texture
             {
                 get { return With((TextureEntryFace f) => new LSLKey(f.TextureID), new LSLKey()); }
@@ -408,6 +409,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public Vector3 TextureOffset
             {
                 get { return With((TextureEntryFace f) => new Vector3(f.OffsetU, f.OffsetV, 0)); }
@@ -421,6 +423,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public Vector3 TextureScale
             {
                 get { return With((TextureEntryFace f) => new Vector3(f.RepeatU, f.RepeatV, 0)); }
@@ -434,12 +437,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public double TextureRotation
             {
                 get { return With((TextureEntryFace f) => f.Rotation); }
                 set { With((TextureEntryFace f, float v) => f.Rotation = v, (float)value); }
             }
 
+            [XmlIgnore]
             public Vector3 Color
             {
                 get
@@ -479,12 +484,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public double Alpha
             {
                 get { return With((TextureEntryFace f) => f.TextureColor.A); }
                 set { With((TextureEntryFace f, double v) => f.TextureColor.A = v, value); }
             }
 
+            [XmlIgnore]
             public int Bump
             {
                 get { return With((TextureEntryFace f) => (int)f.Bump); }
@@ -497,6 +504,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public int Shiny
             {
                 get { return With((TextureEntryFace f) => (int)f.Shiny); }
@@ -509,12 +517,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public int FullBright
             {
                 get { return With((TextureEntryFace f) => f.FullBright.ToLSLBoolean()); }
                 set { With((TextureEntryFace f, bool v) => f.FullBright = v, value != 0); }
             }
 
+            [XmlIgnore]
             public int TexGen
             {
                 get { return With((TextureEntryFace f) => (int)f.TexMapType); }
@@ -527,12 +537,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public double Glow
             {
                 get { return With((TextureEntryFace f) => f.Glow); }
                 set { With((TextureEntryFace f, float v) => f.Glow = v, (float)value); }
             }
 
+            [XmlIgnore]
             public NormalMap NormalMap
             {
                 get
@@ -567,6 +579,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public SpecularMap SpecularMap
             {
                 get
@@ -612,6 +625,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
 
+            [XmlIgnore]
             public AlphaMode AlphaMode
             {
                 get
