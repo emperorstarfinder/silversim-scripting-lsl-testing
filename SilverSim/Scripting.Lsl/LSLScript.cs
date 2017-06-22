@@ -42,6 +42,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Timers;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -388,8 +389,11 @@ namespace SilverSim.Scripting.Lsl
                                     {
                                         using (var ms = new MemoryStream())
                                         {
-                                            var formatter = new BinaryFormatter();
-                                            formatter.Serialize(ms, varValue);
+                                            using (XmlTextWriter innerWriter = ms.UTF8XmlTextWriter())
+                                            {
+                                                var formatter = new XmlSerializer(varValue.GetType());
+                                                formatter.Serialize(innerWriter, varValue);
+                                            }
                                             data = ms.ToArray();
                                         }
                                     }

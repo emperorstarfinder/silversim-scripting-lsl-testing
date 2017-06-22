@@ -30,6 +30,7 @@ using SilverSim.Types.Primitive;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
 {
@@ -198,6 +199,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [Serializable]
         public sealed class Prim
         {
+            [XmlIgnore]
             [NonSerialized]
             private WeakReference<ScriptInstance> WeakInstance;
 

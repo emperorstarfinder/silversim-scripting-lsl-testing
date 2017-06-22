@@ -9,6 +9,7 @@ using SilverSim.Types.Primitive;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
 {
@@ -143,8 +144,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         public class TextureFace
         {
             [NonSerialized]
+            [XmlIgnore]
             public WeakReference<ScriptInstance> WeakInstance;
             [NonSerialized]
+            [XmlIgnore]
             public List<WeakReference<ObjectPart>> WeakParts = new List<WeakReference<ObjectPart>>();
             public int[] LinkNumbers;
             public int FaceNumber;

@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -277,7 +278,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 using (var ms = new MemoryStream(Convert.FromBase64String(reader.ReadElementValueAsString())))
                                 {
-                                    var formatter = new BinaryFormatter();
+                                    var formatter = new XmlSerializer(customType);
                                     state.Variables[varname] = formatter.Deserialize(ms);
                                 }
                             }
