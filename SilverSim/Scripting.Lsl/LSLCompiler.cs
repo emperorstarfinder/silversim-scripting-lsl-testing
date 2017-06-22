@@ -249,6 +249,10 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_Log.FatalFormat("LSLImplementation derived {0} is not set to public", apiType.FullName);
                     }
+                    else if(Attribute.GetCustomAttribute(apiType, typeof(ScriptApiNameAttribute)) == null)
+                    {
+                        m_Log.FatalFormat("ScriptApiNameAttribute missing on {0}", apiType.FullName);
+                    }
                     else
                     {
                         m_Apis.Add(api);
