@@ -47,10 +47,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIExtension(APIExtension.Properties, "hovertext")]
         [APIDisplayName("hovertext")]
         [APIIsVariableType]
-        [APIAccessibleMembers(
-            "Text",
-            "Color",
-            "Alpha")]
+        [APIAccessibleMembers]
         [Serializable]
         [APICloneOnAssignment]
         public class Hovertext
@@ -77,12 +74,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIExtension(APIExtension.Properties, "pointlight")]
         [APIDisplayName("pointlight")]
         [APIIsVariableType]
-        [APIAccessibleMembers(
-            "Enabled",
-            "Color",
-            "Intensity",
-            "Radius",
-            "Falloff")]
+        [APIAccessibleMembers]
         [Serializable]
         public struct Pointlight
         {
@@ -96,12 +88,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIExtension(APIExtension.Properties, "projector")]
         [APIDisplayName("projector")]
         [APIIsVariableType]
-        [APIAccessibleMembers(
-            "Enabled",
-            "Texture",
-            "FieldOfView",
-            "Focus",
-            "Ambience")]
+        [APIAccessibleMembers]
         [Serializable]
         public struct Projector
         {
@@ -110,6 +97,17 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public double FieldOfView;
             public double Focus;
             public double Ambience;
+        }
+
+        [APIExtension(APIExtension.Properties, "linksittarget")]
+        [APIDisplayName("linksittarget")]
+        [APIAccessibleMembers]
+        [Serializable]
+        public struct LinksitTarget
+        {
+            public int Enabled;
+            public Vector3 Offset;
+            public Quaternion Orientation;
         }
 
         [APIExtension(APIExtension.Properties, "linkfaceaccess")]
@@ -163,7 +161,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     }
                 }
             }
-
         }
 
         [APIExtension(APIExtension.Properties, "link")]
@@ -328,6 +325,27 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public InventoryProperties.PrimInventory Inventory =>
                 WithPart((ScriptInstance instance, ObjectPart p) => new InventoryProperties.PrimInventory(instance, p));
+
+            [XmlIgnore]
+            public LinksitTarget SitTarget
+            {
+                get
+                {
+                    return WithPart((ObjectPart p) =>
+                    {
+                        return new LinksitTarget { Enabled = p.IsSitTargetActive ? 1 : 0, Offset = p.SitTargetOffset, Orientation = p.SitTargetOrientation };
+                    });
+                }
+                set
+                {
+                    WithPart((ObjectPart p, LinksitTarget t) =>
+                    {
+                        p.SitTargetOffset = t.Offset;
+                        p.SitTargetOrientation = t.Orientation;
+                        p.IsSitTargetActive = t.Enabled != 0;
+                    }, value);
+                }
+            }
 
             [XmlIgnore]
             public Hovertext HoverText
