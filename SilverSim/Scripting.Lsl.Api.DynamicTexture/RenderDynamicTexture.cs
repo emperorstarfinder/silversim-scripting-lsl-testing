@@ -435,6 +435,13 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         startPoint.X += endPoint.X;
                         startPoint.Y += endPoint.Y;
                     }
+                    else if(cmdLine.StartsWith("FillEllipse"))
+                    {
+                        GetParams(cmdLine, 11, out endPoint);
+                        gfx.FillEllipse(drawBrush, startPoint.X, startPoint.Y, endPoint.X, endPoint.Y);
+                        startPoint.X += endPoint.X;
+                        startPoint.Y += endPoint.Y;
+                    }
                     else if (cmdLine.StartsWith("FontSize"))
                     {
                         cmdLine = cmdLine.Remove(0, 8).Trim();

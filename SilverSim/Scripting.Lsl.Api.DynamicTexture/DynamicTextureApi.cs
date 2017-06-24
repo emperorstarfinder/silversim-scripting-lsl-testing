@@ -82,6 +82,10 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         public string DrawEllipse(ScriptInstance instance, string drawList, int width, int height) =>
             drawList + "Ellipse " + width.ToString() + "," + height.ToString() + ";";
 
+        [APILevel(APIFlags.OSSL, "osDrawFilledEllipse")]
+        public string DrawFilledEllipse(ScriptInstance instance, string drawList, int width, int height) =>
+            drawList + "FillEllipse " + width.ToString() + "," + height.ToString() + ";";
+
         [APILevel(APIFlags.OSSL, "osDrawRectangle")]
         public string DrawRectangle(ScriptInstance instance, string drawList, int width, int height) =>
             drawList + "Rectangle " + width.ToString() + "," + height.ToString() + ";";
