@@ -20,21 +20,17 @@
 // exception statement from your version.
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
+using EnvironmentController = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController;
 using WindlightSkyData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightSkyData;
 using WindlightWaterData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightWaterData;
-using EnvironmentController = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController;
-using SilverSim.Types;
-using System.Xml.Serialization;
-using WLVector4 = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WLVector4;
 using WLVector2 = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WLVector2;
-using SilverSim.Scene.Types.Scene;
+using WLVector4 = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WLVector4;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
 {
