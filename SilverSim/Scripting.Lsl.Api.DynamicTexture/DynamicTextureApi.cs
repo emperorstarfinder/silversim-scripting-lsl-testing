@@ -255,6 +255,27 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 255,
                 ALL_SIDES);
 
+        [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataFace")]
+        public LSLKey SetDynamicTextureDataFace(
+            ScriptInstance instance,
+            string dynamicID,
+            string contentType,
+            string data,
+            string extraParams,
+            int timer,
+            int face) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                false,
+                DISP_TEMP | DISP_EXPIRE,
+                255,
+                face);
+
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataBlend")]
         public LSLKey SetDynamicTextureDataBlend(
             ScriptInstance instance,
