@@ -206,9 +206,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 data,
                 extraParams,
                 timer,
-                true,
+                alpha < 256,
                 DISP_TEMP | DISP_EXPIRE,
-                (byte)alpha,
+                (byte)alpha.Clamp(0, 255),
                 ALL_SIDES);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureURLBlendFace")]
@@ -232,7 +232,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 timer,
                 blend != 0,
                 disp,
-                (byte)alpha,
+                (byte)alpha.Clamp(0, 255),
                 face);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureData")]
@@ -292,9 +292,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 data,
                 extraParams,
                 timer,
-                true,
+                alpha < 256,
                 DISP_TEMP | DISP_EXPIRE,
-                (byte)alpha,
+                (byte)alpha.Clamp(0, 255),
                 ALL_SIDES);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataBlendFace")]
@@ -318,7 +318,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 timer,
                 blend != 0,
                 disp,
-                (byte)alpha,
+                (byte)alpha.Clamp(0, 255),
                 face);
 
         private LSLKey AddDynamicTextureData(
