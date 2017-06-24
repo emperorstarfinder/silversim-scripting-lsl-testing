@@ -273,6 +273,13 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 
         private const char PartsDelimiter = ',';
 
+        private static void GetParams(string line, int startLength, out float f)
+        {
+            f = 0;
+            line = line.Remove(0, 9).Trim();
+            f = Convert.ToSingle(line, CultureInfo.InvariantCulture);
+        }
+
         private static void GetParams(string line, int startLength, out Point p)
         {
             p = new Point();
@@ -353,7 +360,22 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 {
                     string cmdLine = line.Trim();
 
-                    if(cmdLine.StartsWith("MoveTo"))
+                    if(cmdLine.StartsWith("ResetTransf"))
+                    {
+                        gfx.ResetTransform();
+                    }
+                    else if(cmdLine.StartsWith("TransTransf"))
+                    {
+                        GetParams(cmdLine, 11, out endPoint);
+                        gfx.TranslateTransform(endPoint.X, endPoint.Y);
+                    }
+                    else if(cmdLine.StartsWith("RotTransf"))
+                    {
+                        float rotation;
+                        GetParams(cmdLine, 9, out rotation);
+                        gfx.RotateTransform(rotation);
+                    }
+                    else if(cmdLine.StartsWith("MoveTo"))
                     {
                         GetParams(cmdLine, 6, out startPoint);
                     }
@@ -521,12 +543,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     }
                     else if (cmdLine.StartsWith("PenSize"))
                     {
-                        cmdLine = cmdLine.Remove(0, 7).Trim();
                         float size;
-                        if (float.TryParse(cmdLine, NumberStyles.Float, CultureInfo.InvariantCulture, out size))
-                        {
-                            drawPen.Width = size;
-                        }
+                        GetParams(cmdLine, 7, out size);
+                        drawPen.Width = size;
                     }
                     else if (cmdLine.StartsWith("PenCap"))
                     {
