@@ -26,6 +26,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Parcel;
+using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -220,16 +221,93 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
             }
         }
 
+        private int ReturnObjects(SceneInterface scene, UUI returningAgent, List<UUID> returnids)
+        {
+            foreach (UUID objectid in returnids)
+            {
+                ObjectGroup o;
+                if (!scene.ObjectGroups.TryGetValue(objectid, out o))
+                {
+                    continue;
+                }
+                if (o.IsAttached)
+                {
+                    continue;
+                }
+                if (!scene.CanReturn(returningAgent, o, o.GlobalPosition))
+                {
+                    return ERR_PARCEL_PERMISSIONS;
+                }
+            }
+
+            return scene.ReturnObjects(returningAgent, returnids).Count;
+        }
+
         [APILevel(APIFlags.LSL, "llReturnObjectsByID")]
         public int ReturnObjectsByID(ScriptInstance instance, AnArray objects)
         {
-            throw new NotImplementedException("llReturnObjectsByID(list)");
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ObjectPartInventoryItem item = instance.Item;
+                ObjectPartInventoryItem.PermsGranterInfo permsgranter = item.PermsGranter;
+
+                if (!permsgranter.PermsGranter.EqualsGrid(instance.Item.Owner) ||
+                    0 == (permsgranter.PermsMask & ScriptPermissions.ReturnObjects))
+                {
+                    return ERR_RUNTIME_PERMISSIONS;
+                }
+
+                List<UUID> returnids = new List<UUID>();
+
+                foreach(IValue iv in objects)
+                {
+                    UUID objectid;
+                    if(!UUID.TryParse(iv.ToString(), out objectid))
+                    {
+                        return ERR_MALFORMED_PARAMS;
+                    }
+                    if(returnids.Contains(objectid))
+                    {
+                        return ERR_MALFORMED_PARAMS;
+                    }
+                    returnids.Add(objectid);
+                }
+
+                return ReturnObjects(scene, item.Owner, returnids);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llReturnObjectsByOwner")]
         public int ReturnObjectsByOwner(ScriptInstance instance, LSLKey owner, int scope)
         {
-            throw new NotImplementedException("llReturnObjectsByOwner(key, integer)");
+            lock (instance)
+            {
+                ParcelInfo parcel;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out parcel))
+                {
+                    /* a lot faster to go by ObjectGroups then to go by prims here */
+                    List<UUID> returnids = new List<UUID>();
+                    foreach (ObjectGroup o in instance.Part.ObjectGroup.Scene.ObjectGroups)
+                    {
+                        if (o.IsAttached)
+                        {
+                            continue;
+                        }
+                        if (!parcel.LandBitmap.ContainsLocation(o.GlobalPosition))
+                        {
+                            continue;
+                        }
+                        if(o.Owner.ID.Equals(owner.AsUUID))
+                        {
+                            returnids.Add(o.ID);
+                        }
+                    }
+                    return ReturnObjects(scene, instance.Item.Owner, returnids);
+                }
+                return ERR_GENERIC;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetLandOwnerAt")]

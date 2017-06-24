@@ -557,8 +557,26 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     grp.IsRotateZEnabled = boolval;
                 }
-
-                /* TODO: more to implement see llGetStatus(integer) */
+                if((status & STATUS_SANDBOX) != 0)
+                {
+                    grp.IsSandbox = boolval;
+                }
+                if((status & STATUS_DIE_AT_EDGE) != 0)
+                {
+                    grp.IsDieAtEdge = boolval;
+                }
+                if((status & STATUS_RETURN_AT_EDGE) != 0)
+                {
+                    grp.IsReturnAtEdge = boolval;
+                }
+                if((status & STATUS_BLOCK_GRAB) != 0)
+                {
+                    grp.IsBlockGrab = boolval;
+                }
+                if((status & STATUS_BLOCK_GRAB_OBJECT) != 0)
+                {
+                    grp.IsBlockGrabObject = boolval;
+                }
             }
         }
 
@@ -571,34 +589,34 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 switch (status)
                 {
                     case STATUS_PHYSICS:
-                        return grp.IsPhysics ? 1 : 0;
+                        return grp.IsPhysics.ToLSLBoolean();
 
                     case STATUS_ROTATE_X:
-                        return grp.IsRotateXEnabled ? 1 : 0;
+                        return grp.IsRotateXEnabled.ToLSLBoolean();
 
                     case STATUS_ROTATE_Y:
-                        return grp.IsRotateYEnabled ? 1 : 0;
+                        return grp.IsRotateYEnabled.ToLSLBoolean();
 
                     case STATUS_ROTATE_Z:
-                        return grp.IsRotateZEnabled ? 1 : 0;
+                        return grp.IsRotateZEnabled.ToLSLBoolean();
 
                     case STATUS_PHANTOM:
-                        return grp.IsPhantom ? 1 : 0;
+                        return grp.IsPhantom.ToLSLBoolean();
 
                     case STATUS_SANDBOX:
-                        throw new NotImplementedException("llGetStatus(STATUS_SANDBOX)");
+                        return grp.IsSandbox.ToLSLBoolean();
 
                     case STATUS_BLOCK_GRAB:
-                        throw new NotImplementedException("llGetStatus(STATUS_BLOCK_GRAB)");
+                        return grp.IsBlockGrab.ToLSLBoolean();
 
                     case STATUS_DIE_AT_EDGE:
-                        throw new NotImplementedException("llGetStatus(STATUS_DIE_AT_EDGE)");
+                        return grp.IsDieAtEdge.ToLSLBoolean();
 
                     case STATUS_RETURN_AT_EDGE:
-                        throw new NotImplementedException("llGetStatus(STATUS_RETURN_AT_EDGE)");
+                        return grp.IsReturnAtEdge.ToLSLBoolean();
 
                     case STATUS_BLOCK_GRAB_OBJECT:
-                        throw new NotImplementedException("llGetStatus(STATUS_BLOCK_GRAB_OBJECT)");
+                        return grp.IsBlockGrabObject.ToLSLBoolean();
 
                     default:
                         return 0;

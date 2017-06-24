@@ -299,6 +299,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
             foreach (ObjectGroup sog in groups)
             {
+                sog.IsDieAtEdge = true; /* as per definition of llRezObject and llRezAtRoot */
                 scene.Add(sog);
                 rezzingpart.PostEvent(new ObjectRezEvent()
                 {

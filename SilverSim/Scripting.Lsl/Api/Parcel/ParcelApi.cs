@@ -63,6 +63,17 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL)]
         public const int PARCEL_FLAG_ALLOW_GROUP_OBJECT_ENTRY = 0x10000000;
 
+        [APILevel(APIFlags.LSL)]
+        public const int ERR_GENERIC = -1;
+        [APILevel(APIFlags.LSL)]
+        public const int ERR_PARCEL_PERMISSIONS = -2;
+        [APILevel(APIFlags.LSL)]
+        public const int ERR_MALFORMED_PARAMS = -3;
+        [APILevel(APIFlags.LSL)]
+        public const int ERR_RUNTIME_PERMISSIONS = -4;
+        [APILevel(APIFlags.LSL)]
+        public const int ERR_THROTTLED = -5;
+        
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
