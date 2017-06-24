@@ -77,13 +77,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llPointAt")]
         public void PointAt(ScriptInstance instance, Vector3 pos)
         {
-            throw new NotImplementedException("llPointAt(vector)");
+            throw new DeprecatedFunctionCalledException("llPointAt(vector)");
         }
 
         [APILevel(APIFlags.LSL, "llStopPointAt")]
         public void StopPointAt(ScriptInstance instance)
         {
-            throw new NotImplementedException("llStopPointAt()");
+            throw new DeprecatedFunctionCalledException("llStopPointAt()");
         }
     }
 }

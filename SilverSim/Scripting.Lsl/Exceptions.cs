@@ -49,6 +49,29 @@ namespace SilverSim.Scripting.Lsl
     }
 
     [Serializable]
+    public class DeprecatedFunctionCalledException : Exception
+    {
+        public DeprecatedFunctionCalledException()
+        {
+        }
+
+        public DeprecatedFunctionCalledException(string message)
+            : base(message)
+        {
+        }
+
+        protected DeprecatedFunctionCalledException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+        public DeprecatedFunctionCalledException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+    }
+
+    [Serializable]
     public class CallDepthLimitViolationException : Exception
     {
         public CallDepthLimitViolationException()

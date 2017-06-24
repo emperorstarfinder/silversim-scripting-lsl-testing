@@ -114,8 +114,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                 });
             }
-
-            throw new NotImplementedException("llCreateLink(key, integer)");
         }
 
         [APILevel(APIFlags.LSL, "llBreakLink")]

@@ -873,6 +873,11 @@ namespace SilverSim.Scripting.Lsl
                         ShoutUnimplementedException(e.InnerException as NotImplementedException);
                         return;
                     }
+                    else if(innerType == typeof(DeprecatedFunctionCalledException))
+                    {
+                        ShoutDeprecatedException(e.InnerException as DeprecatedFunctionCalledException);
+                        return;
+                    }
                     else if (innerType == typeof(ChangeStateException) ||
                         innerType == typeof(ResetScriptException) ||
                         innerType == typeof(LocalizedScriptErrorException) ||
@@ -886,6 +891,10 @@ namespace SilverSim.Scripting.Lsl
                 catch (NotImplementedException e)
                 {
                     ShoutUnimplementedException(e);
+                }
+                catch (DeprecatedFunctionCalledException e)
+                {
+                    ShoutDeprecatedException(e);
                 }
                 catch (InvalidProgramException e)
                 {
@@ -964,6 +973,35 @@ namespace SilverSim.Scripting.Lsl
             else
             {
                 return "???";
+            }
+        }
+
+        private void ShoutDeprecatedException(DeprecatedFunctionCalledException e)
+        {
+            MethodBase mb = e.TargetSite;
+            var apiLevel = (APILevelAttribute)Attribute.GetCustomAttribute(mb, typeof(APILevelAttribute));
+            if (apiLevel != null)
+            {
+                string methodName = mb.Name;
+                if (!string.IsNullOrEmpty(apiLevel.Name))
+                {
+                    methodName = apiLevel.Name;
+                }
+
+                var funcSignature = new StringBuilder(methodName + "(");
+
+                ParameterInfo[] pi = mb.GetParameters();
+                for (int i = 1; i < pi.Length; ++i)
+                {
+                    if (i > 1)
+                    {
+                        funcSignature.Append(", ");
+                    }
+                    funcSignature.Append(MapTypeToString(pi[i].ParameterType));
+                }
+                funcSignature.Append(")");
+
+                ShoutError(new LocalizedScriptMessage(apiLevel, "ScriptCalledDeprecatedFunction0", "Script called deprecated function {0}", funcSignature.ToString()));
             }
         }
 
