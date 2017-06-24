@@ -306,3 +306,4 @@ DelinkFailedDueNoEditPerms=Delink fehlgeschlagen aufgrund fehlender Änderungsber
 OnlyOwnerIsAbleToDelinkObjectByScript=Nur der Objekteigentümer kann das Objekt per Skript entlinken.
 LinkFailedDueNoEditPerms=Verlinken fehlgeschlagen aufgrund fehlender Änderungsberechtigung.
 OnlyOwnerIsAbleToLinkObjectByScript=Nur der Objekteigentümer kann das Objekt per Skript verlinken.
+HitSandboxLimit=Sandbox-Begrenzung überschritten.

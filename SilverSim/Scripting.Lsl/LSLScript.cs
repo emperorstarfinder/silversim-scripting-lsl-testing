@@ -878,6 +878,10 @@ namespace SilverSim.Scripting.Lsl
                         ShoutDeprecatedException(e.InnerException as DeprecatedFunctionCalledException);
                         return;
                     }
+                    else if(innerType == typeof(HitSandboxLimitException))
+                    {
+                        ShoutError(new LocalizedScriptMessage(this, "HitSandboxLimit", "Hit Sandbox Limit"));
+                    }
                     else if (innerType == typeof(ChangeStateException) ||
                         innerType == typeof(ResetScriptException) ||
                         innerType == typeof(LocalizedScriptErrorException) ||
@@ -901,7 +905,11 @@ namespace SilverSim.Scripting.Lsl
                     LogInvokeException(name, e);
                     ShoutError(e.Message);
                 }
-                catch(CallDepthLimitViolationException e)
+                catch(HitSandboxLimitException)
+                {
+                    ShoutError(new LocalizedScriptMessage(this, "HitSandboxLimit", "Hit Sandbox Limit"));
+                }
+                catch (CallDepthLimitViolationException e)
                 {
                     LogInvokeException(name, e);
                     ShoutError(new LocalizedScriptMessage(this, "FunctionCallDepthLimitViolation", "Function call depth limit violation"));

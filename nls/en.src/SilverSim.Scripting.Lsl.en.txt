@@ -307,3 +307,4 @@ DelinkFailedDueNoEditPerms=Delink failed because you do not have edit permission
 OnlyOwnerIsAbleToDelinkObjectByScript=Only owner is able to delink by script
 LinkFailedDueNoEditPerms=Linking failed because you do not have edit permission
 OnlyOwnerIsAbleToLinkObjectByScript=Only owner is able to link by script
+HitSandboxLimit=Hit Sandbox Limit
