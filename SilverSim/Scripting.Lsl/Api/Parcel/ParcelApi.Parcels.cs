@@ -27,6 +27,8 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Parcel;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SilverSim.Scripting.Lsl.Api.Parcel
 {
@@ -151,7 +153,29 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
         public int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
         {
-            throw new NotImplementedException("llGetParcelMaxPrims(vector, integer)");
+            List<ParcelInfo> parcels = new List<ParcelInfo>();
+            ParcelInfo locatedparcel;
+
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if(scene.Parcels.TryGetValue(pos, out locatedparcel))
+                {
+                    parcels.Add(locatedparcel);
+                }
+                if(sim_wide != 0)
+                {
+                    parcels.AddRange(from p in scene.Parcels where p.Owner.EqualsGrid(locatedparcel.Owner) select p);
+                }
+
+                int maxPrims = 0;
+                foreach(ParcelInfo p in parcels)
+                {
+                    maxPrims += scene.CalcMaxTotalParcelPrims(p);
+                }
+
+                return maxPrims;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelMusicURL")]
@@ -224,14 +248,68 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelPrimCount")]
         public int GetParcelPrimCount(ScriptInstance instance, Vector3 pos, int category, int sim_wide)
         {
-            throw new NotImplementedException("llGetParcelPrimCount(vector, integer, integer)");
+            lock (instance)
+            {
+                int primCount = 0;
+                ParcelInfo parcel;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.Parcels.TryGetValue(pos, out parcel))
+                {
+                    /* a lot faster to go by ObjectGroups then to go by prims here */
+                    foreach (ObjectGroup o in instance.Part.ObjectGroup.Scene.ObjectGroups)
+                    {
+                        if (o.IsAttached)
+                        {
+                            continue;
+                        }
+                        if (!parcel.LandBitmap.ContainsLocation(o.GlobalPosition))
+                        {
+                            continue;
+                        }
+
+                        primCount += o.Count;
+                    }
+                }
+                return primCount;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelPrimOwners")]
         [ForcedSleep(2)]
         public AnArray GetParcelPrimOwners(ScriptInstance instance, Vector3 pos)
         {
-            throw new NotImplementedException("llGetParcelPrimOwners(vector)");
+            lock (instance)
+            {
+                AnArray res = new AnArray();
+                ParcelInfo parcel;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                if (scene.Parcels.TryGetValue(pos, out parcel))
+                {
+                    List<UUID> owners = new List<UUID>();
+                    foreach (ObjectGroup o in instance.Part.ObjectGroup.Scene.ObjectGroups)
+                    {
+                        if(o.IsAttached)
+                        {
+                            continue;
+                        }
+                        if(!parcel.LandBitmap.ContainsLocation(o.GlobalPosition))
+                        {
+                            continue;
+                        }
+
+                        UUID ownerId = o.Owner.ID;
+                        if (!owners.Contains(ownerId))
+                        {
+                            owners.Add(ownerId);
+                        }
+                    }
+                    foreach (UUID owner in owners)
+                    {
+                        res.Add(new LSLKey(owner));
+                    }
+                }
+                return res;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llEjectFromLand")]

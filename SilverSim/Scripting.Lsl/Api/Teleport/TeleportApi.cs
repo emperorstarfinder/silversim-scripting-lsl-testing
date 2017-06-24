@@ -342,7 +342,6 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                     TeleportAgentInRegion(instance, agent, position, lookAt);
                 }
             }
-            throw new NotImplementedException("osTeleportAgent(key, vector, vector)");
         }
 
         [APILevel(APIFlags.OSSL, "osTeleportOwner")]
