@@ -66,7 +66,7 @@ namespace SilverSim.Scripting.Lsl
                                 compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                                 compileState.ILGen.Emit(OpCodes.Ceq);
                             }
-                            else if (innerExpressionReturn == typeof(int))
+                            else if (innerExpressionReturn == typeof(long))
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldc_I8, 0L);
                                 compileState.ILGen.Emit(OpCodes.Ceq);

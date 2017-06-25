@@ -534,12 +534,17 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
-                else if (stateEventAttr != null)
+                else
                 {
-                    MethodInfo mi = t.GetMethod("Invoke");
-                    m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel attribute. APILevel attribute missing.",
-                        mi.Name,
-                        mi.DeclaringType.FullName);
+                    var apiLevelAttrs = Attribute.GetCustomAttributes(t, typeof(APILevelAttribute)) as APILevelAttribute[];
+                    var apiExtensionAttrs = Attribute.GetCustomAttributes(t, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                    if (apiExtensionAttrs.Length != 0 || apiLevelAttrs.Length != 0)
+                    {
+                        MethodInfo mi = t.GetMethod("Invoke");
+                        m_Log.DebugFormat("Invalid delegate '{0}' in '{1}' has APILevel or APIExtension attribute. StateEventDelegate attribute missing.",
+                            mi.Name,
+                            mi.DeclaringType.FullName);
+                    }
                 }
             }
         }
