@@ -33,7 +33,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 {
@@ -41,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
     [Description("Dynamic Texture OSSL API")]
     [PluginName("LSL_DynamicTexture")]
     [LSLImplementation]
-    public class DynamicTextureApi : IScriptApi, IPlugin
+    public partial class DynamicTextureApi : IScriptApi, IPlugin
     {
         /* graphics context specifically used for GetDrawStringSize */
         private readonly Graphics m_FontRequestContext;
@@ -60,100 +59,6 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         {
             /* intentionally left empty */
         }
-
-        [APILevel(APIFlags.OSSL, "osMovePen")]
-        public string MovePen(ScriptInstance instance, string drawList, int x, int y) =>
-            drawList + "MoveTo " + x + "," + y + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawLine")]
-        public string DrawLine(ScriptInstance instance, string drawList, int startX, int startY, int endX, int endY) =>
-            drawList + "MoveTo " + startX.ToString() + "," + startY.ToString() + ";" +
-                "LineTo " + endX.ToString() + "," + endY.ToString() + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawLine")]
-        public string DrawLine(ScriptInstance instance, string drawList, int endX, int endY) =>
-            drawList + "LineTo " + endX.ToString() + "," + endY.ToString() + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawText")]
-        public string DrawText(ScriptInstance instance, string drawList, string text) =>
-            drawList + "Text " + text + "; ";
-
-        [APILevel(APIFlags.OSSL, "osDrawEllipse")]
-        public string DrawEllipse(ScriptInstance instance, string drawList, int width, int height) =>
-            drawList + "Ellipse " + width.ToString() + "," + height.ToString() + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawFilledEllipse")]
-        public string DrawFilledEllipse(ScriptInstance instance, string drawList, int width, int height) =>
-            drawList + "FillEllipse " + width.ToString() + "," + height.ToString() + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawRectangle")]
-        public string DrawRectangle(ScriptInstance instance, string drawList, int width, int height) =>
-            drawList + "Rectangle " + width.ToString() + "," + height.ToString() + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawFilledRectangle")]
-        public string DrawFilledRectangle(ScriptInstance instance, string drawList, int width, int height) =>
-            drawList + "FillRectangle " + width.ToString() + "," + height.ToString() + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawFilledPolygon")]
-        public string DrawFilledPolygon(ScriptInstance instance, string drawList, AnArray x, AnArray y)
-        {
-            int xCount = x.Count;
-            if (xCount != y.Count || xCount < 3)
-            {
-                return "";
-            }
-            var drawBuild = new StringBuilder(drawList);
-            drawBuild.AppendFormat("FillPolygon {0},{1}", x[0].AsReal.ToString(), y[0].AsReal.ToString());
-            for (int i = 1; i < xCount; i++)
-            {
-                drawBuild.AppendFormat(",{0},{1}", x[i].AsReal.ToString(), y[i].AsReal.ToString());
-            }
-            drawBuild.Append(";");
-            return drawBuild.ToString();
-        }
-
-        [APILevel(APIFlags.OSSL, "osDrawPolygon")]
-        public string DrawPolygon(ScriptInstance instance, string drawList, AnArray x, AnArray y)
-        {
-            int xCount = x.Count;
-            if (xCount != y.Count || xCount < 3)
-            {
-                return "";
-            }
-            var drawBuild = new StringBuilder(drawList);
-            drawBuild.AppendFormat("Polygon {0},{1}", x[0].AsReal.ToString(), y[0].AsReal.ToString());
-            for (int i = 1; i < xCount; i++)
-            {
-                drawBuild.AppendFormat(",{0},{1}", x[i].AsReal.ToString(), y[i].AsReal.ToString());
-            }
-            drawBuild.AppendFormat(";");
-            return drawBuild.ToString();
-        }
-
-        [APILevel(APIFlags.OSSL, "osSetFontSize")]
-        public string SetFontSize(ScriptInstance instance, string drawList, int fontSize) =>
-            drawList + "FontSize " + fontSize + ";";
-
-        [APILevel(APIFlags.OSSL, "osSetFontName")]
-        public string SetFontName(ScriptInstance instance, string drawList, string fontName) =>
-            drawList + "FontName " + fontName + ";";
-
-        [APILevel(APIFlags.OSSL, "osSetPenSize")]
-        public string SetPenSize(ScriptInstance instance, string drawList, int penSize) =>
-            drawList + "PenSize " + penSize + ";";
-
-        [APILevel(APIFlags.OSSL, "osSetPenColor")]
-        [APILevel(APIFlags.OSSL, "osSetPenColour")]
-        public string SetPenColor(ScriptInstance instance, string drawList, string color) =>
-            drawList + "PenColor " + color + ";";
-
-        [APILevel(APIFlags.OSSL, "osSetPenCap")]
-        public string SetPenCap(ScriptInstance instance, string drawList, string direction, string type) =>
-            drawList + "PenCap " + direction + "," + type + ";";
-
-        [APILevel(APIFlags.OSSL, "osDrawImage")]
-        public string DrawImage(ScriptInstance instance, string drawList, int width, int height, string imageUrl) =>
-            drawList + "Image " + width + "," + height + "," + imageUrl + ";";
 
         [APILevel(APIFlags.OSSL, "osGetDrawStringSize")]
         public Vector3 GetDrawStringSize(ScriptInstance instance, string contentType, string text, string fontName, int fontSize)

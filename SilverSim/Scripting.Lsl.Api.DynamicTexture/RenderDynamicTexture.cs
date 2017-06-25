@@ -295,6 +295,22 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             }
         }
 
+        private static void GetParams(string line, int startLength, out float a, out float b)
+        {
+            a = 0;
+            b = 0;
+            line = line.Remove(0, startLength);
+            string[] parts = line.Split(PartsDelimiter);
+
+            if (parts.Length >= 2)
+            {
+                string xVal = parts[0].Trim();
+                string yVal = parts[1].Trim();
+                a = Convert.ToSingle(xVal, CultureInfo.InvariantCulture);
+                b = Convert.ToSingle(yVal, CultureInfo.InvariantCulture);
+            }
+        }
+
         private static void GetParams(string line, int startLength, out float x, out float y, out string imgurl)
         {
             x = 0;
@@ -366,10 +382,19 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                     }
                     else if(cmdLine.StartsWith("TransTransf"))
                     {
-                        GetParams(cmdLine, 11, out endPoint);
-                        gfx.TranslateTransform(endPoint.X, endPoint.Y);
+                        float x;
+                        float y;
+                        GetParams(cmdLine, 11, out x, out y);
+                        gfx.TranslateTransform(x, y);
                     }
-                    else if(cmdLine.StartsWith("RotTransf"))
+                    else if (cmdLine.StartsWith("ScaleTransf"))
+                    {
+                        float x;
+                        float y;
+                        GetParams(cmdLine, 11, out x, out y);
+                        gfx.ScaleTransform(x, y);
+                    }
+                    else if (cmdLine.StartsWith("RotTransf"))
                     {
                         float rotation;
                         GetParams(cmdLine, 9, out rotation);
