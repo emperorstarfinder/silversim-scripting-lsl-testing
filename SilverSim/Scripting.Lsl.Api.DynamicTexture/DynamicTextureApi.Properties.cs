@@ -28,8 +28,8 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
 {
     public partial class DynamicTextureApi
     {
-        [APIExtension(APIExtension.Properties, "drawlist")]
-        [APIDisplayName("drawlist")]
+        [APIExtension(APIExtension.Properties, "vectordrawlist")]
+        [APIDisplayName("vectordrawlist")]
         [APIIsVariableType]
         [ImplementsCustomTypecasts]
         [APICloneOnAssignment]
