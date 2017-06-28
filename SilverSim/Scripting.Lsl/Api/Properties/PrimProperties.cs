@@ -648,23 +648,23 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                         var links = new List<int>();
                         if (linkno == PrimitiveApi.LINK_ALL_CHILDREN)
                         {
-                            Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                            foreach(KeyValuePair<int, ObjectPart> kvp in Instance.Part.ObjectGroup.Key1ValuePairs)
                             {
                                 if (kvp.Key != PrimitiveApi.LINK_ROOT)
                                 {
                                     links.Add(kvp.Key);
                                 }
-                            });
+                            }
                         }
                         else if (linkno == PrimitiveApi.LINK_ALL_OTHERS)
                         {
-                            Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                            foreach (KeyValuePair<int, ObjectPart> kvp in Instance.Part.ObjectGroup.Key1ValuePairs)
                             {
-                                if(kvp.Value != Instance.Part)
+                                if (kvp.Value != Instance.Part)
                                 {
                                     links.Add(kvp.Key);
                                 }
-                            });
+                            }
                         }
                         else if (linkno == PrimitiveApi.LINK_ROOT)
                         {
@@ -696,23 +696,23 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
                             if (linkno == PrimitiveApi.LINK_ALL_CHILDREN)
                             {
-                                Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                                foreach (KeyValuePair<int, ObjectPart> kvp in Instance.Part.ObjectGroup.Key1ValuePairs)
                                 {
                                     if (kvp.Key != PrimitiveApi.LINK_ROOT && !links.Contains(kvp.Key))
                                     {
                                         links.Add(kvp.Key);
                                     }
-                                });
+                                }
                             }
                             else if (linkno == PrimitiveApi.LINK_ALL_OTHERS)
                             {
-                                Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                                foreach (KeyValuePair<int, ObjectPart> kvp in Instance.Part.ObjectGroup.Key1ValuePairs)
                                 {
                                     if (kvp.Value != Instance.Part && !links.Contains(kvp.Key))
                                     {
                                         links.Add(kvp.Key);
                                     }
-                                });
+                                }
                             }
                             else if (linkno == PrimitiveApi.LINK_ROOT)
                             {
@@ -748,13 +748,13 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     lock (Instance)
                     {
                         var links = new List<int>();
-                        Instance.Part.ObjectGroup.ForEach((KeyValuePair<int, ObjectPart> kvp) =>
+                        foreach (KeyValuePair<int, ObjectPart> kvp in Instance.Part.ObjectGroup.Key1ValuePairs)
                         {
                             if (kvp.Value.Name == name)
                             {
                                 links.Add(kvp.Key);
                             }
-                        });
+                        }
                         return new Prim(Instance, links.ToArray());
                     }
                 }
