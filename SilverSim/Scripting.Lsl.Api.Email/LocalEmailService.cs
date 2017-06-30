@@ -128,7 +128,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
         public ShutdownOrder ShutdownOrder => ShutdownOrder.LogoutDatabase;
 
-        void ISceneListener.ScheduleUpdate(ObjectUpdateInfo info, UUID fromSceneID)
+        public void ScheduleUpdate(ObjectUpdateInfo info, UUID fromSceneID)
         {
             if(info.IsKilled)
             {
@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
-        void ISceneListener.ScheduleUpdate(ObjectInventoryUpdateInfo info, UUID fromSceneID)
+        public void ScheduleUpdate(ObjectInventoryUpdateInfo info, UUID fromSceneID)
         {
             /* intentionally ignored */
         }
