@@ -77,7 +77,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                 thisGroup.Scene.AssetService.Store(asset);
                 var item = new ObjectPartInventoryItem(asset)
                 {
-                    ParentFolderID = thisPart.ID
+                    ParentFolderID = thisPart.ID,
                 };
                 for (uint i = 0; i < 1000; ++i)
                 {

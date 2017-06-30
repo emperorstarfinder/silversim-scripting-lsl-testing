@@ -174,6 +174,11 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 m_ObjectUpdates.Enqueue(info);
             }
 
+            public void ScheduleUpdate(ObjectInventoryUpdateInfo info, UUID fromSceneID)
+            {
+                /* intentionally ignored */
+            }
+
             private void SensorUpdateThread()
             {
                 Thread.CurrentThread.Name = "Sensor Repeat Thread for " + Scene.ID.ToString();

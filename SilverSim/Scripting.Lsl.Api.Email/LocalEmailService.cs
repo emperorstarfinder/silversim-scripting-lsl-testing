@@ -140,6 +140,11 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
+        void ISceneListener.ScheduleUpdate(ObjectInventoryUpdateInfo info, UUID fromSceneID)
+        {
+            /* intentionally ignored */
+        }
+
         private void OnRegionAdd(SceneInterface scene)
         {
             m_Queues.Add(scene.ID, new RwLockedDictionaryAutoAdd<UUID, EmailQueue>(() => new EmailQueue()));
