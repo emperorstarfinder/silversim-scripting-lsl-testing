@@ -268,14 +268,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 sog.RezzingObjectID = rezzingpart.ID;
                 foreach (ObjectPart part in sog.ValuesByKey1)
                 {
-                    UUID oldID = part.ID;
-                    part.ID = UUID.Random;
-                    sog.ChangeKey(part.ID, oldID);
                     foreach (ObjectPartInventoryItem item in part.Inventory.ValuesByKey2)
                     {
-                        oldID = item.ID;
-                        item.ID = UUID.Random;
-                        part.Inventory.ChangeKey(item.ID, oldID);
                         if(item.AssetType == AssetType.LSLText)
                         {
                             var savedScriptState = item.ScriptState as SavedScriptState;

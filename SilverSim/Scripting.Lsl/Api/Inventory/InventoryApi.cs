@@ -895,7 +895,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         oldInstance?.Abort();
 
                         origin.Inventory.Remove(sourceItem.ID);
-                        sourceItem.ID = UUID.Random;
+                        sourceItem.SetNewID(UUID.Random);
                         /* reset script if set */
                         sourceItem.ScriptState = null;
                         target.Inventory.Add(sourceItem);
@@ -903,10 +903,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     else
                     {
                         /* duplicate item */
-                        var newItem = new ObjectPartInventoryItem(sourceItem)
-                        {
-                            ID = UUID.Random
-                        };
+                        var newItem = new ObjectPartInventoryItem(UUID.Random, sourceItem);
                         target.Inventory.Add(newItem);
                     }
                 }

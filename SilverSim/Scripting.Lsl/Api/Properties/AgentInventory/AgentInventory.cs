@@ -720,7 +720,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
                     }
                     var linkitem = new InventoryItem
                     {
-                        ID = UUID.Random,
                         AssetID = originalItem.Key,
                         Name = name,
                         Description = description,
@@ -762,7 +761,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
                 {
                     var linkitem = new InventoryItem
                     {
-                        ID = UUID.Random,
                         AssetID = originalFolder.Key,
                         Name = name,
                         Description = description,
