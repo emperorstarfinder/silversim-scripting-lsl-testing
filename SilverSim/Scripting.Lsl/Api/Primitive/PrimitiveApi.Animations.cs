@@ -27,7 +27,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {
-        [APILevel(APIFlags.LSL, "llStartObjectAnimtion")]
+        [APILevel(APIFlags.LSL, "llStartObjectAnimation")]
         public void StartObjectAnimation(
             ScriptInstance instance,
             [Description("animation to be played")]
@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
-        [APILevel(APIFlags.LSL, "llStopObjectAnimtion")]
+        [APILevel(APIFlags.LSL, "llStopObjectAnimation")]
         public void StopObjectAnimation(
             ScriptInstance instance,
             [Description("animation to be stopped")]
