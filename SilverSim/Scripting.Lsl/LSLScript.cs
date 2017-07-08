@@ -2244,6 +2244,8 @@ namespace SilverSim.Scripting.Lsl
 
             StateEventHandlers.Add(typeof(SensorEvent), HandleSensor);
             StateEventHandlers.Add(typeof(RuntimePermissionsEvent), HandleRuntimePermissions);
+            StateEventHandlers.Add(typeof(ExperiencePermissionsEvent), HandleExperiencePermissions);
+            StateEventHandlers.Add(typeof(ExperiencePermissionsDeniedEvent), HandleExperiencePermissionsDenied);
             StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
             StateEventHandlers.Add(typeof(TimerEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("timer"));
             #endregion
@@ -2327,6 +2329,24 @@ namespace SilverSim.Scripting.Lsl
                 PermsMask = e.Permissions
             };
             script.InvokeStateEvent("run_time_permissions", (int)e.Permissions);
+        }
+
+        private static void HandleExperiencePermissions(Script script, IScriptEvent ev)
+        {
+            var e = (ExperiencePermissionsEvent)ev;
+
+            script.Item.PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo()
+            {
+                PermsGranter = e.PermissionsKey,
+                PermsMask = ScriptPermissions.TakeControls | ScriptPermissions.TriggerAnimation | ScriptPermissions.Attach | ScriptPermissions.TrackCamera | ScriptPermissions.ControlCamera | ScriptPermissions.Teleport
+            };
+            script.InvokeStateEvent("experience_permissions", new LSLKey(e.PermissionsKey.ID), string.Empty);
+        }
+
+        private static void HandleExperiencePermissionsDenied(Script script, IScriptEvent ev)
+        {
+            var e = (ExperiencePermissionsDeniedEvent)ev;
+            script.InvokeStateEvent("experience_permissions_denied", new LSLKey(e.AgentId.ID), e.Reason);
         }
 
         private static void HandleTouch(Script script, IScriptEvent ev)

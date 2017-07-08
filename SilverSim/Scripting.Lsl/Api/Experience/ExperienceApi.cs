@@ -20,8 +20,14 @@
 // exception statement from your version.
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Agent;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
+using SilverSim.ServiceInterfaces.Experience;
 using SilverSim.Types;
+using SilverSim.Types.Experience;
+using SilverSim.Types.Script;
 using System;
 using System.ComponentModel;
 
@@ -98,31 +104,107 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         [APILevel(APIFlags.LSL, "llAgentInExperience")]
         public int AgentInExperience(ScriptInstance instance, LSLKey agent)
         {
-            throw new NotImplementedException("llAgentInExperience(key)");
+            lock(instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ExperienceServiceInterface experienceService = scene.ExperienceService;
+                if(experienceService == null)
+                {
+                    return 0;
+                }
+                UUID experienceid = instance.Item.ExperienceID;
+                if(experienceid == UUID.Zero)
+                {
+                    return 0;
+                }
+
+                UUI uui;
+                return (scene.AvatarNameService.TryGetValue(new UUI(agent.AsUUID), out uui) && 
+                    experienceService.Permissions[experienceid, uui]).ToLSLBoolean();
+            }
         }
 
-        [APILevel(APIFlags.LSL, "llCreateKeyValue")]
-        public LSLKey CreateKeyValue(ScriptInstance instance, string k, string v)
+        private UUID SendExperienceError(ScriptInstance instance, int error)
         {
-            throw new NotImplementedException("llCreateKeyValue(string, string)");
+            DataserverEvent e = new DataserverEvent
+            {
+                QueryID = UUID.Random,
+                Data = string.Format("0,{0}", XP_ERROR_INVALID_EXPERIENCE)
+            };
+            instance.PostEvent(e);
+            return e.QueryID;
         }
 
-        [APILevel(APIFlags.LSL, "llDataSizeKeyValue")]
-        public LSLKey DataSizeKeyValue(ScriptInstance instance)
+        private UUID CheckExperienceStatus(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
         {
-            throw new NotImplementedException("llDataSizeKeyValue()");
-        }
+            if (experienceid == UUID.Zero)
+            {
+                return SendExperienceError(instance, XP_ERROR_NO_EXPERIENCE);
+            }
 
-        [APILevel(APIFlags.LSL, "llDeleteKeyValue")]
-        public LSLKey DeleteKeyValue(ScriptInstance instance, string k)
-        {
-            throw new NotImplementedException("llDeleteKeyValue(string)");
+            ExperienceInfo info;
+            if(!experienceService.TryGetValue(experienceid, out info))
+            {
+                return SendExperienceError(instance, XP_ERROR_INVALID_EXPERIENCE);
+            }
+
+            if((info.Properties & ExperiencePropertyFlags.Disabled) != 0)
+            {
+                return SendExperienceError(instance, XP_ERROR_EXPERIENCE_DISABLED);
+            }
+
+            if ((info.Properties & ExperiencePropertyFlags.Suspended) != 0)
+            {
+                return SendExperienceError(instance, XP_ERROR_EXPERIENCE_SUSPENDED);
+            }
+
+            if(info.Maturity > instance.Part.ObjectGroup.Scene.GetRegionInfo().Access)
+            {
+                return SendExperienceError(instance, XP_ERROR_MATURITY_EXCEEDED);
+            }
+
+#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND
+
+            return UUID.Zero;
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceDetails")]
         public AnArray GetExperienceDetails(ScriptInstance instance, LSLKey experience_id)
         {
-            throw new NotImplementedException("llGetExperienceDetails(key)");
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                ExperienceServiceInterface experienceService = scene.ExperienceService;
+                if (experienceService == null)
+                {
+                    return new AnArray();
+                }
+                UUID experienceid = experience_id.AsUUID;
+
+                if (experienceid == UUID.Zero)
+                {
+                    experienceid = instance.Item.ExperienceID;
+                }
+
+                if(experienceid == UUID.Zero)
+                {
+                    return new AnArray();
+                }
+
+                ExperienceInfo experienceInfo;
+                AnArray res = new AnArray();
+                if(experienceService.TryGetValue(experienceid, out experienceInfo))
+                {
+                    res.Add(experienceInfo.Name);
+                    res.Add(experienceInfo.Owner.ID);
+                    res.Add(experienceInfo.ID);
+                    res.Add(0); /* state unclear */
+                    res.Add(string.Empty); /* state message unclear */
+                    res.Add(experienceInfo.Group.ID);
+                }
+
+                return res;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetExperienceErrorMessage")]
@@ -151,34 +233,129 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             }
         }
 
-        [APILevel(APIFlags.LSL, "llKeyCountKeyValue")]
-        public LSLKey KeyCountKeyValue(ScriptInstance instance)
-        {
-            throw new NotImplementedException("llKeyCountKeyValue()");
-        }
-
-        [APILevel(APIFlags.LSL, "llKeysKeyValue")]
-        public LSLKey KeysKeyValue(ScriptInstance instance, int first, int count)
-        {
-            throw new NotImplementedException("llKeysKeyValue(integer, integer)");
-        }
-
-        [APILevel(APIFlags.LSL, "llReadKeyValue")]
-        public LSLKey ReadKeyValue(ScriptInstance instance, string k)
-        {
-            throw new NotImplementedException("llReadKeyValue(string)");
-        }
-
         [APILevel(APIFlags.LSL, "llRequestExperiencePermissions")]
-        public void RequestExperiencePermissions(ScriptInstance instance, LSLKey agent, string name /* unused */)
+        public void RequestExperiencePermissions(ScriptInstance instance, LSLKey agentID, string name /* unused */)
         {
-            throw new NotImplementedException("llRequestExperiencePermissions(key, string)");
-        }
+            lock (instance)
+            {
+                IAgent a;
+                try
+                {
+                    a = instance.Part.ObjectGroup.Scene.Agents[agentID];
+                }
+                catch
+                {
+                    instance.Item.PermsGranter = null;
+                    return;
+                }
 
-        [APILevel(APIFlags.LSL, "llUpdateKeyValue")]
-        public LSLKey UpdateKeyValue(ScriptInstance instance, string k, string v, int checked_orig, string original_value)
-        {
-            throw new NotImplementedException("llUpdateKeyValue(string, string, integer, string)");
+                ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
+                if(experienceService == null)
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_EXPERIENCES_DISABLED
+                    });
+                    return;
+                }
+
+                UUID experienceid = instance.Item.ExperienceID;
+                if(experienceid == UUID.Zero)
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_NO_EXPERIENCE
+                    });
+                    return;
+                }
+
+                ExperienceInfo info;
+                if(!experienceService.TryGetValue(experienceid, out info))
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_INVALID_EXPERIENCE
+                    });
+                    return;
+                }
+
+                if((info.Properties & ExperiencePropertyFlags.Disabled) != 0)
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_EXPERIENCE_DISABLED
+                    });
+                    return;
+                }
+
+                if ((info.Properties & ExperiencePropertyFlags.Disabled) != 0)
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_EXPERIENCE_SUSPENDED
+                    });
+                    return;
+                }
+
+                if(info.Maturity > instance.Part.ObjectGroup.Scene.GetRegionInfo().Access)
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_MATURITY_EXCEEDED
+                    });
+                    return;
+                }
+
+                if(instance.Part.ObjectGroup.IsAttached && instance.Part.Owner.EqualsGrid(a.Owner))
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_NOT_PERMITTED
+                    });
+                    return;
+                }
+
+#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND check
+
+                bool allowed;
+                ScriptPermissions perms = ScriptPermissions.TakeControls | ScriptPermissions.TriggerAnimation | ScriptPermissions.Attach | ScriptPermissions.TrackCamera | ScriptPermissions.ControlCamera | ScriptPermissions.Teleport;
+                if (!a.IsActiveGod && experienceService.Permissions.TryGetValue(experienceid, a.Owner, out allowed))
+                {
+                    if (allowed)
+                    {
+                        instance.PostEvent(new ExperiencePermissionsEvent()
+                        {
+                            PermissionsKey = a.Owner
+                        });
+                    }
+                    else
+                    {
+                        instance.PostEvent(new ExperiencePermissionsDeniedEvent()
+                        {
+                            AgentId = a.Owner,
+                            Reason = XP_ERROR_NOT_PERMITTED
+                        });
+                    }
+                }
+                else
+                {
+                    perms = a.RequestPermissions(instance.Part, instance.Item.ID, perms, experienceid);
+                    if (perms != ScriptPermissions.None)
+                    {
+                        instance.PostEvent(new ExperiencePermissionsEvent()
+                        {
+                            PermissionsKey = a.Owner
+                        });
+                    }
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSitOnLink")]
