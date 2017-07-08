@@ -27,6 +27,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.Experience;
 using SilverSim.Types;
 using SilverSim.Types.Experience;
+using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
 using System;
 using System.ComponentModel;
@@ -77,6 +78,10 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         public const int XP_ERROR_RETRY_UPDATE = 15;
         [APILevel(APIFlags.LSL)]
         public const int XP_ERROR_MATURITY_EXCEEDED = 16;
+        [APILevel(APIFlags.LSL)]
+        public const int XP_ERROR_NOT_PERMITTED_LAND = 17;
+        [APILevel(APIFlags.LSL)]
+        public const int XP_ERROR_REQUEST_PERM_TIMEOUT = 18;
 
         [APILevel(APIFlags.LSL)]
         public const int SIT_NOT_EXPERIENCE = -1;
@@ -143,6 +148,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             }
 
             ExperienceInfo info;
+            SceneInterface scene = instance.Part.ObjectGroup.Scene;
             if(!experienceService.TryGetValue(experienceid, out info))
             {
                 return SendExperienceError(instance, XP_ERROR_INVALID_EXPERIENCE);
@@ -158,12 +164,36 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 return SendExperienceError(instance, XP_ERROR_EXPERIENCE_SUSPENDED);
             }
 
-            if(info.Maturity > instance.Part.ObjectGroup.Scene.GetRegionInfo().Access)
+            if(info.Maturity > scene.GetRegionInfo().Access)
             {
                 return SendExperienceError(instance, XP_ERROR_MATURITY_EXCEEDED);
             }
 
-#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND
+            RegionExperienceInfo reginfo;
+            if(scene.RegionExperiences.TryGetValue(scene.ID, experienceid, out reginfo))
+            {
+                if(!reginfo.IsAllowed)
+                {
+                    return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+                }
+            }
+
+            ParcelInfo pInfo;
+            if (!scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out pInfo))
+            {
+                return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+            }
+
+            ParcelExperienceEntry parcelExperience;
+            if (scene.Parcels.Experiences.TryGetValue(scene.ID, pInfo.ID, experienceid, out parcelExperience))
+            {
+                if (!parcelExperience.IsAllowed)
+                {
+                    return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+                }
+            }
+
+#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND check if there is a whitelist mode
 
             return UUID.Zero;
         }
@@ -239,9 +269,10 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock (instance)
             {
                 IAgent a;
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 try
                 {
-                    a = instance.Part.ObjectGroup.Scene.Agents[agentID];
+                    a = scene.Agents[agentID];
                 }
                 catch
                 {
@@ -249,7 +280,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return;
                 }
 
-                ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
+                ExperienceServiceInterface experienceService = scene.ExperienceService;
                 if(experienceService == null)
                 {
                     instance.PostEvent(new ExperiencePermissionsDeniedEvent
@@ -322,7 +353,46 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return;
                 }
 
-#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND check
+                RegionExperienceInfo reginfo;
+                if(scene.RegionExperiences.TryGetValue(scene.ID, experienceid, out reginfo))
+                {
+                    if(!reginfo.IsAllowed)
+                    {
+                        instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                        {
+                            AgentId = a.Owner,
+                            Reason = XP_ERROR_NOT_PERMITTED_LAND
+                        });
+                        return;
+                    }
+                }
+
+                ParcelInfo pInfo;
+                if (!scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out pInfo))
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_NOT_PERMITTED_LAND
+                    });
+                    return;
+                }
+
+                ParcelExperienceEntry parcelExperience;
+                if (scene.Parcels.Experiences.TryGetValue(scene.ID, pInfo.ID, experienceid, out parcelExperience))
+                {
+                    if (!parcelExperience.IsAllowed)
+                    {
+                        instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                        {
+                            AgentId = a.Owner,
+                            Reason = XP_ERROR_NOT_PERMITTED_LAND
+                        });
+                        return;
+                    }
+                }
+
+#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND check if there is a whitelist mode
 
                 bool allowed;
                 ScriptPermissions perms = ScriptPermissions.TakeControls | ScriptPermissions.TriggerAnimation | ScriptPermissions.Attach | ScriptPermissions.TrackCamera | ScriptPermissions.ControlCamera | ScriptPermissions.Teleport;
