@@ -23,7 +23,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.Experience;
 using SilverSim.Types;
-using System;
 using System.Collections.Generic;
 
 namespace SilverSim.Scripting.Lsl.Api.Experience
