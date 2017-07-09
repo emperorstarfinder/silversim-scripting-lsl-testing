@@ -140,52 +140,69 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             return e.QueryID;
         }
 
-        private UUID CheckExperienceStatus(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
+        private int CheckExperienceAllowed(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
         {
             if (experienceid == UUID.Zero)
             {
-                return SendExperienceError(instance, XP_ERROR_NO_EXPERIENCE);
+                return XP_ERROR_NO_EXPERIENCE;
             }
 
             ExperienceInfo info;
             SceneInterface scene = instance.Part.ObjectGroup.Scene;
-            if(!experienceService.TryGetValue(experienceid, out info))
+            if (!experienceService.TryGetValue(experienceid, out info))
             {
-                return SendExperienceError(instance, XP_ERROR_INVALID_EXPERIENCE);
+                return XP_ERROR_INVALID_EXPERIENCE;
             }
 
-            if((info.Properties & ExperiencePropertyFlags.Disabled) != 0)
+            if ((info.Properties & ExperiencePropertyFlags.Disabled) != 0)
             {
-                return SendExperienceError(instance, XP_ERROR_EXPERIENCE_DISABLED);
+                return XP_ERROR_EXPERIENCE_DISABLED;
             }
 
             if ((info.Properties & ExperiencePropertyFlags.Suspended) != 0)
             {
-                return SendExperienceError(instance, XP_ERROR_EXPERIENCE_SUSPENDED);
+                return XP_ERROR_EXPERIENCE_SUSPENDED;
             }
 
-            if(info.Maturity > scene.GetRegionInfo().Access)
+            if (info.Maturity > scene.GetRegionInfo().Access)
             {
-                return SendExperienceError(instance, XP_ERROR_MATURITY_EXCEEDED);
+                return XP_ERROR_MATURITY_EXCEEDED;
             }
 
-            RegionExperienceInfo reginfo;
-            if(scene.RegionExperiences.TryGetValue(scene.ID, experienceid, out reginfo))
+            bool allowedbefore = false;
+
+            EstateExperienceInfo estateExperience;
+            if (scene.EstateService.Experiences.TryGetValue(scene.ParentEstateID, experienceid, out estateExperience))
             {
-                if(!reginfo.IsAllowed)
+                if (!estateExperience.IsAllowed)
                 {
-                    return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+                    return XP_ERROR_NOT_PERMITTED_LAND;
                 }
+                allowedbefore = true;
             }
             else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0)
             {
-                return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+                return XP_ERROR_NOT_PERMITTED_LAND;
+            }
+
+            RegionExperienceInfo reginfo;
+            if (scene.RegionExperiences.TryGetValue(scene.ID, experienceid, out reginfo))
+            {
+                if (!reginfo.IsAllowed)
+                {
+                    return XP_ERROR_NOT_PERMITTED_LAND;
+                }
+                allowedbefore = true;
+            }
+            else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0 && !allowedbefore)
+            {
+                return XP_ERROR_NOT_PERMITTED_LAND;
             }
 
             ParcelInfo pInfo;
             if (!scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out pInfo))
             {
-                return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+                return XP_ERROR_NOT_PERMITTED_LAND;
             }
 
             ParcelExperienceEntry parcelExperience;
@@ -193,12 +210,23 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             {
                 if (!parcelExperience.IsAllowed)
                 {
-                    return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+                    return XP_ERROR_NOT_PERMITTED_LAND;
                 }
             }
-            else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0)
+            else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0 && !allowedbefore)
             {
-                return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+                return XP_ERROR_NOT_PERMITTED_LAND;
+            }
+
+            return XP_ERROR_NONE;
+        }
+
+        private UUID CheckExperienceStatus(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
+        {
+            int result = CheckExperienceAllowed(instance, experienceService, experienceid);
+            if(result != XP_ERROR_NONE)
+            {
+                return SendExperienceError(instance, result);
             }
 
             return UUID.Zero;
@@ -298,120 +326,13 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 }
 
                 UUID experienceid = instance.Item.ExperienceID;
-                if(experienceid == UUID.Zero)
+                int reason = CheckExperienceAllowed(instance, experienceService, experienceid);
+                if (reason != XP_ERROR_NONE)
                 {
                     instance.PostEvent(new ExperiencePermissionsDeniedEvent
                     {
                         AgentId = a.Owner,
-                        Reason = XP_ERROR_NO_EXPERIENCE
-                    });
-                    return;
-                }
-
-                ExperienceInfo info;
-                if(!experienceService.TryGetValue(experienceid, out info))
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_INVALID_EXPERIENCE
-                    });
-                    return;
-                }
-
-                if((info.Properties & ExperiencePropertyFlags.Disabled) != 0)
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_EXPERIENCE_DISABLED
-                    });
-                    return;
-                }
-
-                if ((info.Properties & ExperiencePropertyFlags.Disabled) != 0)
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_EXPERIENCE_SUSPENDED
-                    });
-                    return;
-                }
-
-                if(info.Maturity > instance.Part.ObjectGroup.Scene.GetRegionInfo().Access)
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_MATURITY_EXCEEDED
-                    });
-                    return;
-                }
-
-                if(instance.Part.ObjectGroup.IsAttached && instance.Part.Owner.EqualsGrid(a.Owner))
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_NOT_PERMITTED
-                    });
-                    return;
-                }
-
-                RegionExperienceInfo reginfo;
-                if(scene.RegionExperiences.TryGetValue(scene.ID, experienceid, out reginfo))
-                {
-                    if(!reginfo.IsAllowed)
-                    {
-                        instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                        {
-                            AgentId = a.Owner,
-                            Reason = XP_ERROR_NOT_PERMITTED_LAND
-                        });
-                        return;
-                    }
-                }
-                else if((info.Properties & ExperiencePropertyFlags.Grid) == 0)
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_NOT_PERMITTED_LAND
-                    });
-                    return;
-                }
-
-                ParcelInfo pInfo;
-                if (!scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out pInfo))
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_NOT_PERMITTED_LAND
-                    });
-                    return;
-                }
-
-                ParcelExperienceEntry parcelExperience;
-                if (scene.Parcels.Experiences.TryGetValue(scene.ID, pInfo.ID, experienceid, out parcelExperience))
-                {
-                    if (!parcelExperience.IsAllowed)
-                    {
-                        instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                        {
-                            AgentId = a.Owner,
-                            Reason = XP_ERROR_NOT_PERMITTED_LAND
-                        });
-                        return;
-                    }
-                }
-                else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0)
-                {
-                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
-                    {
-                        AgentId = a.Owner,
-                        Reason = XP_ERROR_NOT_PERMITTED_LAND
+                        Reason = reason
                     });
                     return;
                 }
