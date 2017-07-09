@@ -177,6 +177,10 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
                 }
             }
+            else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0)
+            {
+                return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+            }
 
             ParcelInfo pInfo;
             if (!scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out pInfo))
@@ -192,8 +196,10 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
                 }
             }
-
-#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND check if there is a whitelist mode
+            else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0)
+            {
+                return SendExperienceError(instance, XP_ERROR_NOT_PERMITTED_LAND);
+            }
 
             return UUID.Zero;
         }
@@ -366,6 +372,15 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                         return;
                     }
                 }
+                else if((info.Properties & ExperiencePropertyFlags.Grid) == 0)
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_NOT_PERMITTED_LAND
+                    });
+                    return;
+                }
 
                 ParcelInfo pInfo;
                 if (!scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out pInfo))
@@ -391,8 +406,15 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                         return;
                     }
                 }
-
-#warning TODO: add XP_ERROR_NOT_PERMITTED_LAND check if there is a whitelist mode
+                else if ((info.Properties & ExperiencePropertyFlags.Grid) == 0)
+                {
+                    instance.PostEvent(new ExperiencePermissionsDeniedEvent
+                    {
+                        AgentId = a.Owner,
+                        Reason = XP_ERROR_NOT_PERMITTED_LAND
+                    });
+                    return;
+                }
 
                 bool allowed;
                 ScriptPermissions perms = ScriptPermissions.TakeControls | ScriptPermissions.TriggerAnimation | ScriptPermissions.Attach | ScriptPermissions.TrackCamera | ScriptPermissions.ControlCamera | ScriptPermissions.Teleport;
