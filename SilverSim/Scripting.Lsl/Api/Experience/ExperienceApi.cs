@@ -338,7 +338,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 }
 
                 bool allowed;
-                ScriptPermissions perms = ScriptPermissions.TakeControls | ScriptPermissions.TriggerAnimation | ScriptPermissions.Attach | ScriptPermissions.TrackCamera | ScriptPermissions.ControlCamera | ScriptPermissions.Teleport;
+                ScriptPermissions perms = ScriptPermissions.ExperienceGrantedPermissions;
                 if (!a.IsActiveGod && experienceService.Permissions.TryGetValue(experienceid, a.Owner, out allowed))
                 {
                     if (allowed)
