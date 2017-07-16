@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL)]
         public const int PARCEL_DETAILS_ID = 5;
         [APILevel(APIFlags.LSL)]
-        public const int PARCEL_DETAILS_SEE_AVATARS = 6; // not implemented
+        public const int PARCEL_DETAILS_SEE_AVATARS = 6;
 
         //osSetParcelDetails
         [APILevel(APIFlags.OSSL)]
@@ -586,7 +586,9 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                                 break;
 
                             case PARCEL_DETAILS_GROUP:
-                                if(!scene.GroupsNameService.TryGetValue(rules[idx++].AsUUID, out groupId))
+                                UUID grpId = rules[idx++].AsUUID;
+                                groupId = UGI.Unknown;
+                                if(grpId != UUID.Zero && !scene.GroupsNameService.TryGetValue(grpId, out groupId))
                                 {
                                     throw new LocalizedScriptErrorException(this, "Parameter0Parameter1DoesNotResolveToAnAgent", "{0} parameter '{1}' does not resolve to an agent", "PARCEL_DETAILS_GROUP", rules[idx++].ToString());
                                 }
@@ -595,6 +597,10 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                             case PARCEL_DETAILS_CLAIMDATE:
                                 pInfo.ClaimDate = Date.UnixTimeToDateTime(rules[idx++].AsULong);
+                                break;
+
+                            case PARCEL_DETAILS_SEE_AVATARS:
+                                pInfo.SeeAvatars = rules[idx++].AsBoolean;
                                 break;
 
                             default:
