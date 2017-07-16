@@ -2340,7 +2340,7 @@ namespace SilverSim.Scripting.Lsl
                 PermsGranter = e.PermissionsKey,
                 PermsMask = ScriptPermissions.TakeControls | ScriptPermissions.TriggerAnimation | ScriptPermissions.Attach | ScriptPermissions.TrackCamera | ScriptPermissions.ControlCamera | ScriptPermissions.Teleport
             };
-            script.InvokeStateEvent("experience_permissions", new LSLKey(e.PermissionsKey.ID), string.Empty);
+            script.InvokeStateEvent("experience_permissions", new LSLKey(e.PermissionsKey.ID));
         }
 
         private static void HandleExperiencePermissionsDenied(Script script, IScriptEvent ev)
