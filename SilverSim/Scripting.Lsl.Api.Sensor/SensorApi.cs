@@ -676,11 +676,15 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
         [ExecutedOnScriptReset]
         public void RemoveSensors(ScriptInstance instance)
         {
-            SceneInterface scene = instance.Part.ObjectGroup.Scene;
+            SceneInterface scene = instance.Part?.ObjectGroup?.Scene;
+            if(scene == null)
+            {
+                return;
+            }
             SceneInfo sceneInfo;
             if(m_Scenes.TryGetValue(scene.ID, out sceneInfo))
             {
-                sceneInfo.SensorRepeats.Remove(instance);
+                sceneInfo.SensorRepeats?.Remove(instance);
             }
         }
 
