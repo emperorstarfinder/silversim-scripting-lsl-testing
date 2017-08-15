@@ -268,6 +268,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 sog.RezzingObjectID = rezzingpart.ID;
                 foreach (ObjectPart part in sog.ValuesByKey1)
                 {
+                    part.RezDate = Date.Now;
                     foreach (ObjectPartInventoryItem item in part.Inventory.ValuesByKey2)
                     {
                         if(item.AssetType == AssetType.LSLText)
