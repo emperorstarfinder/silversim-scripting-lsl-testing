@@ -108,6 +108,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int OBJECT_TEMP_ATTACHED = 34;
         [APILevel(APIFlags.LSL)]
         public const int OBJECT_ATTACHED_SLOTS_AVAILABLE = 35;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_CREATION_TIME = 36;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_SELECT_COUNT = 37;
+        [APILevel(APIFlags.LSL)]
+        public const int OBJECT_SIT_COUNT = 38;
 
         [APILevel(APIFlags.LSL)]
         public const int OPT_OTHER = -1;
