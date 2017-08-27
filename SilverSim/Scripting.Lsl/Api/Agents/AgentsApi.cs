@@ -689,11 +689,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 IAgent agent;
                 if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
                 {
-                    byte[] vp = agent.VisualParams;
-                    if(vp.Length > 31)
-                    {
-                        return vp[31] > 128 ? "male" : "female";
-                    }
+                    return agent.GenderVp > 0.5 ? "male" : "female";
                 }
                 return "unknown";
             }
