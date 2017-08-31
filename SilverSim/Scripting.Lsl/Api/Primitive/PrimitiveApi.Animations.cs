@@ -19,8 +19,10 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
@@ -51,6 +53,42 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 UUID animID = instance.GetAnimationAssetID(animation);
                 instance.Part.AnimationController.StopAnimation(animID);
             }
+        }
+
+        [APILevel(APIFlags.LSL, "llGetObjectAnimationNames")]
+        public AnArray GetObjectAnimationNames(
+            ScriptInstance instance)
+        {
+            var anims = new List<UUID>();
+            var animinvs = new Dictionary<UUID, ObjectPartInventoryItem>();
+            lock(instance)
+            {
+                anims = instance.Part.AnimationController.GetPlayingAnimations();
+                foreach(ObjectPartInventoryItem item in instance.Part.Inventory.Values)
+                {
+                    if(item.AssetType == Types.Asset.AssetType.Animation &&
+                        !animinvs.ContainsKey(item.AssetID))
+                    {
+                        animinvs.Add(item.AssetID, item);
+                    }
+                }
+            }
+
+            /* no need to do the following in the lock */
+            var res = new AnArray();
+            foreach(UUID animid in anims)
+            {
+                ObjectPartInventoryItem item;
+                if(animinvs.TryGetValue(animid, out item))
+                {
+                    res.Add(item.Name);
+                }
+                else
+                {
+                    res.Add(animid);
+                }
+            }
+            return res;
         }
     }
 }
