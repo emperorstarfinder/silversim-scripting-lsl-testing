@@ -47,6 +47,10 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         public const int HTTP_CUSTOM_HEADER = 5;
         [APILevel(APIFlags.LSL)]
         public const int HTTP_PRAGMA_NO_CACHE = 6;
+        [APILevel(APIFlags.LSL)]
+        public const int HTTP_USER_AGENT = 7;
+        [APILevel(APIFlags.LSL)]
+        public const int HTTP_ACCEPT = 8;
 
         private readonly string[] m_AllowedHttpHeaders =
         {
@@ -202,6 +206,38 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         }
 
                         req.SendPragmaNoCache = parameters[++i].AsBoolean;
+                        break;
+
+                    case HTTP_USER_AGENT:
+                        if (i + 1 >= parameters.Count)
+                        {
+                            lock (instance)
+                            {
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_USER_AGENT"));
+                                return UUID.Zero;
+                            }
+                        }
+
+                        string append = parameters[++i].ToString();
+                        if(append.Contains(" "))
+                        {
+                            return UUID.Zero;
+                        }
+
+                        req.Headers["User-Agent"] += " " + append;
+                        break;
+
+                    case HTTP_ACCEPT:
+                        if (i + 1 >= parameters.Count)
+                        {
+                            lock (instance)
+                            {
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_ACCEPT"));
+                                return UUID.Zero;
+                            }
+                        }
+
+                        req.Headers["Accept"] = parameters[++i].ToString();
                         break;
 
                     default:

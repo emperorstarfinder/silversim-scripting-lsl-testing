@@ -70,6 +70,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 Headers.Add("User-Agent", string.Format("{0} {1}", VersionInfo.ProductName, VersionInfo.Version));
                 Headers.Add("X-SecondLife-Shard", VersionInfo.Shard);
+                Headers.Add("Accept", "text/plain;charset=utf-8");
             }
         }
 
