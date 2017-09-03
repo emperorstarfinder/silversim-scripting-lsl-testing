@@ -488,7 +488,15 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public double Alpha
             {
                 get { return With((TextureEntryFace f) => f.TextureColor.A); }
-                set { With((TextureEntryFace f, double v) => f.TextureColor.A = v, value); }
+                set
+                {
+                    With((TextureEntryFace f, double v) =>
+                    {
+                        ColorAlpha c = f.TextureColor;
+                        c.A = v;
+                        f.TextureColor = c;
+                    }, value);
+                }
             }
 
             [XmlIgnore]

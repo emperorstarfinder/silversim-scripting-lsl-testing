@@ -203,7 +203,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         TextureEntry te = part.TextureEntry;
                         for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                         {
-                            te[(uint)face].TextureColor.A = alpha;
+                            ColorAlpha c = te[(uint)face].TextureColor;
+                            c.A = alpha;
+                            te[(uint)face].TextureColor = c;
                         }
                         part.TextureEntry = te;
                     }
@@ -215,7 +217,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         try
                         {
                             TextureEntry te = part.TextureEntry;
-                            te[(uint)face].TextureColor.A = alpha;
+                            ColorAlpha c = te[(uint)face].TextureColor;
+                            c.A = alpha;
+                            te[(uint)face].TextureColor = c;
                             part.TextureEntry = te;
                         }
                         catch
