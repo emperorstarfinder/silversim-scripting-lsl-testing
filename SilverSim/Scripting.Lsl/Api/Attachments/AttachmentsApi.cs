@@ -58,8 +58,17 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
                 {
                     return;
                 }
+
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                IAgent agent;
+                if (!scene.RootAgents.TryGetValue(grantInfo.PermsGranter.ID, out agent))
+                {
+                    return;
+                }
+
+                agent.AttachObject(grp, (AttachmentPoint)attach_point);
             }
-            throw new NotImplementedException("llAttachToAvatar(integer)");
         }
 
         [APILevel(APIFlags.LSL, "llAttachToAvatarTemp")]
@@ -73,8 +82,17 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
                 {
                     return;
                 }
+
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                IAgent agent;
+                if (!scene.RootAgents.TryGetValue(grantInfo.PermsGranter.ID, out agent))
+                {
+                    return;
+                }
+
+                agent.AttachObjectTemp(grp, (AttachmentPoint)attach_point);
             }
-            throw new NotImplementedException("llAttachToAvatarTemp(integer)");
         }
 
         [APILevel(APIFlags.LSL, "llDetachFromAvatar")]
@@ -108,19 +126,14 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
 
                 if (group.FromItemID != UUID.Zero)
                 {
-                    AssetData data = group.Asset(XmlSerializationOptions.WriteXml2);
-                    data.ID = UUID.Random;
-                    agent.AssetService.Store(data);
-                    InventoryItem item;
-                    if(agent.InventoryService.Item.TryGetValue(group.FromItemID, out item) && item.AssetType == AssetType.Object)
-                    {
-                        item.AssetID = data.ID;
-                        agent.InventoryService.Item.Update(item);
-                    }
+                    agent.DetachAttachment(group.FromItemID);
                 }
-
-                agent.Attachments.Remove(group.ID);
-                scene.Remove(group);
+                else
+                {
+                    /* temp attachment consequence is similar to a llDie */
+                    agent.Attachments.Remove(group.ID);
+                    scene.Remove(group);
+                }
             }
         }
 
@@ -167,13 +180,29 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
         [APILevel(APIFlags.OSSL, "osForceDropAttachment")]
         public void ForceDropAttachment(ScriptInstance instance)
         {
-            throw new NotImplementedException("osForceDropAttachment()");
+            lock(instance)
+            {
+                IAgent agent;
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                if(grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
+                {
+                    agent.DropAttachment(grp);
+                }
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osForceDropAttachmentAt")]
         public void ForceDropAttachmentAt(ScriptInstance instance, Vector3 pos, Quaternion rot)
         {
-            throw new NotImplementedException("osForceDropAttachmentAt(vector, rotation)");
+            lock (instance)
+            {
+                IAgent agent;
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                if (grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
+                {
+                    agent.DropAttachment(grp, pos, rot);
+                }
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetNumberOfAttachments")]
