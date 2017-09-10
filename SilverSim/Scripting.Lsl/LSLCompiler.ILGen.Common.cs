@@ -82,6 +82,7 @@ namespace SilverSim.Scripting.Lsl
                 m_Script.ScriptRemoveDelegates = m_ScriptRemoveDelegates;
                 m_Script.SerializationDelegates = m_ScriptSerializeDelegates;
                 m_Script.DeserializationDelegates = m_ScriptDeserializeDelegates;
+                var attachedScriptState = item.ScriptState as Script.SavedScriptState;
                 if (serializedState != null)
                 {
                     try
@@ -95,6 +96,19 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                     catch(Exception e)
+                    {
+                        m_Log.WarnFormat("Failed to restore script state for {0} ({1}): {2} ({3}): {4}: {5}\n{6}", objpart.Name, objpart.ID, item.Name, item.ID,
+                            e.GetType().FullName, e.Message, e.StackTrace);
+                        m_Script.IsResetRequired = true;
+                    }
+                }
+                else if(attachedScriptState != null)
+                {
+                    try
+                    {
+                        m_Script.LoadScriptState(attachedScriptState);
+                    }
+                    catch (Exception e)
                     {
                         m_Log.WarnFormat("Failed to restore script state for {0} ({1}): {2} ({3}): {4}: {5}\n{6}", objpart.Name, objpart.ID, item.Name, item.ID,
                             e.GetType().FullName, e.Message, e.StackTrace);
