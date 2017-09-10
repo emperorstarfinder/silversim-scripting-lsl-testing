@@ -560,8 +560,7 @@ namespace SilverSim.Scripting.Lsl
                 int pos = 0;
                 foreach(object o in state.PluginData)
                 {
-                    disp.Append((pos++).ToString() + ":" + o.ToString());
-                    disp.Append(" ");
+                    disp.Append((pos++).ToString()).Append(":").Append(o.ToString()).Append(" ");
                 }
                 m_Log.WarnFormat("Deserialization of state failed at position {0}: {1}\n=> {2}: {3}\n{4}", pluginpos, disp.ToString(), e.GetType().FullName, e.Message, e.StackTrace);
                 throw;
