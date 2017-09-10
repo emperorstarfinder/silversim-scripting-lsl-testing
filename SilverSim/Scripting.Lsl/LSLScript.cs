@@ -423,13 +423,16 @@ namespace SilverSim.Scripting.Lsl
                                 }
                             }
                             writer.WriteEndElement();
-                            writer.WriteStartElement("Permissions");
                             {
                                 ObjectPartInventoryItem.PermsGranterInfo grantInfo = PermsGranter;
-                                writer.WriteNamedValue("mask", (uint)grantInfo.PermsMask);
-                                writer.WriteNamedValue("granter", grantInfo.PermsGranter.ID);
+                                if (grantInfo.PermsGranter.ID != UUID.Zero)
+                                {
+                                    writer.WriteStartElement("Permissions");
+                                    writer.WriteAttributeString("mask", ((uint)grantInfo.PermsMask).ToString());
+                                    writer.WriteAttributeString("granter", grantInfo.PermsGranter.ID.ToString());
+                                    writer.WriteEndElement();
+                                }
                             }
-                            writer.WriteEndElement();
                             writer.WriteStartElement("Plugins");
                             foreach (object o in PluginSerialization)
                             {

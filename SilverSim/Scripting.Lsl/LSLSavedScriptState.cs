@@ -47,6 +47,37 @@ namespace SilverSim.Scripting.Lsl
 
             private static void ScriptPermissionsFromXML(XmlTextReader reader, ObjectPartInventoryItem item)
             {
+                string attrname = string.Empty;
+                bool isEmptyElement = reader.IsEmptyElement;
+                while (reader.ReadAttributeValue())
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Attribute:
+                            attrname = reader.Value;
+                            break;
+
+                        case XmlNodeType.Text:
+                            switch (attrname)
+                            {
+                                case "granter":
+                                    item.PermsGranter.PermsGranter.ID = reader.ReadContentAsUUID();
+                                    break;
+
+                                case "mask":
+                                    var mask = (uint)reader.ReadElementValueAsLong();
+                                    item.PermsGranter.PermsMask = (ScriptPermissions)mask;
+                                    break;
+                            }
+                            break;
+                    }
+                }
+
+                if(isEmptyElement)
+                {
+                    return;
+                }
+
                 for (; ; )
                 {
                     if (!reader.Read())
@@ -57,25 +88,7 @@ namespace SilverSim.Scripting.Lsl
                     switch (reader.NodeType)
                     {
                         case XmlNodeType.Element:
-                            if (reader.IsEmptyElement)
-                            {
-                                break;
-                            }
-
-                            switch (reader.Name)
-                            {
-                                case "mask":
-                                    uint mask = (uint)reader.ReadElementValueAsLong();
-                                    item.PermsGranter.PermsMask = (ScriptPermissions)mask;
-                                    break;
-
-                                case "granter":
-                                    item.PermsGranter.PermsGranter.ID = reader.ReadContentAsUUID();
-                                    break;
-
-                                default:
-                                    break;
-                            }
+                            reader.ReadToEndElement();
                             break;
 
                         case XmlNodeType.EndElement:
@@ -84,9 +97,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -109,13 +119,7 @@ namespace SilverSim.Scripting.Lsl
                                 case "type":
                                     type = reader.Value;
                                     break;
-
-                                default:
-                                    break;
                             }
-                            break;
-
-                        default:
                             break;
                     }
                 }
@@ -411,9 +415,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return ev;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -483,9 +484,6 @@ namespace SilverSim.Scripting.Lsl
                             case "touchface":
                                 di.TouchFace = int.Parse(reader.Value);
                                 break;
-
-                            default:
-                                break;
                         }
                     } while (reader.MoveToNextAttribute());
                 }
@@ -530,9 +528,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return res;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -573,9 +568,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return res;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -616,9 +608,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return events;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -663,9 +652,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return res;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -734,9 +720,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return state;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -777,9 +760,6 @@ namespace SilverSim.Scripting.Lsl
                                 throw new InvalidObjectXmlException();
                             }
                             return state;
-
-                        default:
-                            break;
                     }
                 }
             }
@@ -824,9 +804,6 @@ namespace SilverSim.Scripting.Lsl
                                     reader.ReadToEndElement();
                                     break;
                             }
-                            break;
-
-                        default:
                             break;
                     }
                 }
