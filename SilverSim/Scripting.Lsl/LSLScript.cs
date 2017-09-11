@@ -568,6 +568,10 @@ namespace SilverSim.Scripting.Lsl
 
             IsRunning = state.IsRunning;
 
+#if DEBUG
+            m_Log.DebugFormat("Set script to IsRunning={0} from IsRunning={1}", IsRunning, state.IsRunning);
+#endif
+
             lock(this) /* really needed to prevent aborting here */
             {
                 m_TransactionedState.UpdateFromScript(this);

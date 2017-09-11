@@ -69,6 +69,10 @@ namespace SilverSim.Scripting.Lsl
             {
                 ConstructorInfo scriptconstructor = m_ScriptType.
                     GetConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) });
+                var attachedScriptState = item.ScriptState as Script.SavedScriptState;
+#if DEBUG
+                m_Log.DebugFormat("Instantiate: HasState={0} HasCorrectState={1}", item.ScriptState != null, attachedScriptState != null);
+#endif
                 var m_Script = (Script)scriptconstructor.Invoke(new object[3] { objpart, item, m_ForcedSleep });
 
                 foreach (KeyValuePair<string, Type> t in m_StateTypes)
@@ -82,7 +86,6 @@ namespace SilverSim.Scripting.Lsl
                 m_Script.ScriptRemoveDelegates = m_ScriptRemoveDelegates;
                 m_Script.SerializationDelegates = m_ScriptSerializeDelegates;
                 m_Script.DeserializationDelegates = m_ScriptDeserializeDelegates;
-                var attachedScriptState = item.ScriptState as Script.SavedScriptState;
                 if (serializedState != null)
                 {
                     try
