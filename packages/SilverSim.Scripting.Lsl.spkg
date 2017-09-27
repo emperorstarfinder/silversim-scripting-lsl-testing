@@ -11,7 +11,7 @@
 		<dependency name="SilverSim.Meta.Core"/>
 	</dependencies>
 	<files>
-		<file name="bin/plugins/SilverSim.Scripting.Lsl.dll"/>
+		<file name="bin/plugins/SilverSim.Scripting.Lsl.dll" is-version-src="true"/>
 		<file name="bin/languages/de/SilverSim.Scripting.Lsl.de.resources"/>
 		<file name="bin/languages/en/SilverSim.Scripting.Lsl.en.resources"/>
 	</files>

@@ -11,6 +11,6 @@
 		<dependency name="SilverSim.Meta.Core"/>
 	</dependencies>
 	<files>
-		<file name="bin/plugins/SilverSim.Scripting.Lsl.Api.DynamicTexture.dll"/>
+		<file name="bin/plugins/SilverSim.Scripting.Lsl.Api.DynamicTexture.dll" is-version-src="true"/>
 	</files>
 </package>
