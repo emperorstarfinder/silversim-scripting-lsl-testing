@@ -125,9 +125,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 }
             }
 
-            using (Stream imgStream = HttpClient.DoStreamGetRequest(data, null, 10000))
+            using (Stream imgStream = new HttpClient.Get(data).ExecuteStreamRequest())
             {
-                using (Bitmap img = new Bitmap(imgStream))
+                using (var img = new Bitmap(imgStream))
                 {
                     return new Bitmap(img, new Size(width, height));
                 }
@@ -425,7 +425,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                         endPoint.Y = (int)y;
                         try
                         {
-                            using (Stream imgStream = HttpClient.DoStreamGetRequest(imgurl, null, 20000))
+                            using (Stream imgStream = new HttpClient.Get(imgurl).ExecuteStreamRequest())
                             {
                                 using (var image = new Bitmap(imgStream))
                                 {

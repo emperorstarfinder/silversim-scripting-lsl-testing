@@ -92,8 +92,11 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
             string sdata = string.Empty;
             int idata = 0;
 
-            using (Stream respstream = HttpClient.DoStreamRequest("POST", rdi.DestURI, null, "text/xml", reqdata.Length,
-                (Stream s) => s.Write(reqdata, 0, reqdata.Length), false, 30000))
+            using (Stream respstream = new HttpClient.Post(rdi.DestURI, "text/xml", reqdata.Length,
+                (Stream s) => s.Write(reqdata, 0, reqdata.Length))
+            {
+                TimeoutMs = 30000
+            }.ExecuteStreamRequest())
             {
                 try
                 {

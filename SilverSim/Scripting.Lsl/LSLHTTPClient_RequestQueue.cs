@@ -63,7 +63,7 @@ namespace SilverSim.Scripting.Lsl
             public bool VerboseThrottle = true;
             public bool SendPragmaNoCache = true;
             public int MaxBodyLength = 2048;
-            public string RequestBody = string.Empty;
+            public string RequestBody;
             public Dictionary<string, string> Headers = new Dictionary<string, string>();
 
             public LSLHttpRequest()
@@ -237,7 +237,19 @@ namespace SilverSim.Scripting.Lsl
                 {
                     try
                     {
-                        ev.Body = HttpClient.DoRequest(req.Method, req.Url, null, req.MimeType, req.RequestBody, false, 30000);
+                        var httpreq = new HttpClient.Request(req.Url)
+                        {
+                            Method = req.Method,
+                            RequestContentType = req.MimeType,
+                            TimeoutMs = 30000
+                        };
+
+                        if (req.Method == "POST" || req.Method == "PUT")
+                        {
+                            httpreq.RequestBody = req.RequestBody;
+                        }
+
+                        ev.Body = httpreq.ExecuteRequest();
                         ev.Status = (int)HttpStatusCode.OK;
                     }
                     catch (HttpClient.BadHttpResponseException e)
