@@ -73,11 +73,13 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                 };
                 asset.ID = UUID.Random;
                 asset.Name = notecardName;
-                asset.Creator = thisGroup.Owner;
                 thisGroup.Scene.AssetService.Store(asset);
                 var item = new ObjectPartInventoryItem(asset)
                 {
                     ParentFolderID = thisPart.ID,
+                    Creator = thisGroup.Owner,
+                    Owner = thisGroup.Owner,
+                    LastOwner = thisGroup.Owner
                 };
                 for (uint i = 0; i < 1000; ++i)
                 {
