@@ -19,9 +19,13 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -38,6 +42,45 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 UUID animID = instance.GetAnimationAssetID(animation);
+
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                AssetServiceInterface assetService = scene.AssetService;
+                AssetMetadata metadata;
+                AssetData data;
+                if (!assetService.Metadata.TryGetValue(animID, out metadata))
+                {
+                    if (grp.IsAttached) /* on attachments, we have to fetch from agent eventually */
+                    {
+                        IAgent owner;
+                        if (!grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out owner))
+                        {
+                            return;
+                        }
+                        if (!owner.AssetService.TryGetValue(animID, out data))
+                        {
+                            /* not found */
+                            return;
+                        }
+                        assetService.Store(data);
+                        if (data.Type != AssetType.Animation)
+                        {
+                            /* ignore wrong asset here */
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        /* ignore missing asset here */
+                        return;
+                    }
+                }
+                else if (metadata.Type != AssetType.Animation)
+                {
+                    /* ignore wrong asset here */
+                    return;
+                }
+
                 instance.Part.AnimationController.PlayAnimation(animID);
             }
         }

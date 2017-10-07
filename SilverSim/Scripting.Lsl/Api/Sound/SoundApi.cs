@@ -20,9 +20,13 @@
 // exception statement from your version.
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using SilverSim.Types.Primitive;
 using System.ComponentModel;
 
@@ -36,6 +40,49 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
+        }
+
+        private bool TryFetchSound(ScriptInstance instance, UUID soundID)
+        {
+            ObjectGroup grp = instance.Part.ObjectGroup;
+            SceneInterface scene = grp.Scene;
+            AssetServiceInterface assetService = scene.AssetService;
+            AssetMetadata metadata;
+            AssetData data;
+            if (!assetService.Metadata.TryGetValue(soundID, out metadata))
+            {
+                if (grp.IsAttached) /* on attachments, we have to fetch from agent eventually */
+                {
+                    IAgent owner;
+                    if (!grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out owner))
+                    {
+                        return false;
+                    }
+                    if (!owner.AssetService.TryGetValue(soundID, out data))
+                    {
+                        /* not found */
+                        return false;
+                    }
+                    assetService.Store(data);
+                    if (data.Type != AssetType.Sound)
+                    {
+                        /* ignore wrong asset here */
+                        return false;
+                    }
+                }
+                else
+                {
+                    /* ignore missing asset here */
+                    return false;
+                }
+            }
+            else if (metadata.Type != AssetType.Sound)
+            {
+                /* ignore wrong asset here */
+                return false;
+            }
+
+            return true;
         }
 
         [APILevel(APIFlags.LSL, "llCollisionSound")]
@@ -56,7 +103,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     try
                     {
                         para.ImpactSound = instance.GetSoundAssetID(impact_sound);
-                        instance.Part.CollisionSound = para;
+                        if (TryFetchSound(instance, para.ImpactSound))
+                        {
+                            instance.Part.CollisionSound = para;
+                        }
                     }
                     catch
                     {
@@ -134,7 +184,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                thisPart.ObjectGroup.Scene.SendPreloadSound(thisPart, soundID);
+                if (TryFetchSound(instance, soundID))
+                {
+                    thisPart.ObjectGroup.Scene.SendPreloadSound(thisPart, soundID);
+                }
             }
         }
 
@@ -186,7 +239,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, 20);
+                if (TryFetchSound(instance, soundID))
+                {
+                    thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, 20);
+                }
             }
         }
 
@@ -206,7 +262,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                     return;
                 }
-                thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
+                if (TryFetchSound(instance, soundID))
+                {
+                    thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
+                }
             }
         }
 
@@ -260,7 +319,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 flags |= PrimitiveSoundFlags.Queue;
             }
             ObjectPart.SoundParam soundparams = thisPart.Sound;
-            thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, soundparams.Radius, flags);
+            if (TryFetchSound(instance, soundID))
+            {
+                thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, soundparams.Radius, flags);
+            }
         }
 
         private void LoopSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
@@ -288,7 +350,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             soundparams.SoundID = soundID;
             soundparams.Gain = volume.Clamp(0, 1);
             soundparams.Flags = flags;
-            part.Sound = soundparams;
+            if (TryFetchSound(instance, soundID))
+            {
+                part.Sound = soundparams;
+            }
         }
     }
 }
