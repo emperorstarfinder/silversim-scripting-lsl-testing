@@ -143,6 +143,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetSubString")]
         public string GetSubstring(ScriptInstance instance, string src, int start, int end)
         {
+            if(src.Length == 0)
+            {
+                return src;
+            }
+
             if(start < 0)
             {
                 start = src.Length - start;
