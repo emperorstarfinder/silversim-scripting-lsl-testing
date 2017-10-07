@@ -126,12 +126,12 @@ namespace SilverSim.Scripting.Lsl
                 switch (type)
                 {
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion":
-                        array.Add(LSLCompiler.ParseStringToQuaternion(reader.ReadElementValueAsString()));
+                        array.Add(LSLCompiler.ParseStringToQuaternion(reader.ReadElementValueAsString("ListItem")));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector":
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3":
-                        array.Add(LSLCompiler.ParseStringToVector(reader.ReadElementValueAsString()));
+                        array.Add(LSLCompiler.ParseStringToVector(reader.ReadElementValueAsString("ListItem")));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
@@ -139,7 +139,7 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
-                        array.Add(LSLCompiler.ParseStringToDouble(reader.ReadElementContentAsString()));
+                        array.Add(LSLCompiler.ParseStringToDouble(reader.ReadElementValueAsString("ListItem")));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
@@ -149,7 +149,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            array.Add(reader.ReadElementValueAsString());
+                            array.Add(reader.ReadElementValueAsString("ListItem"));
                         }
                         break;
 
@@ -161,12 +161,19 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            array.Add(new LSLKey(reader.ReadElementValueAsString()));
+                            array.Add(new LSLKey(reader.ReadElementValueAsString("ListItem")));
                         }
                         break;
 
                     case "long":
-                        array.Add(reader.ReadElementValueAsLong());
+                        if (isEmptyElement)
+                        {
+                            array.Add((long)0);
+                        }
+                        else
+                        {
+                            array.Add(long.Parse(reader.ReadElementValueAsString("ListItem")));
+                        }
                         break;
 
                     default:
