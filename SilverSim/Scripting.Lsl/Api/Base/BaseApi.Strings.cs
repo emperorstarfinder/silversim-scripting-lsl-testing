@@ -181,7 +181,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else
             {
-                string a = src.Substring(start);
+                string a = start < src.Length ? src.Substring(start) : string.Empty;
                 string b = src.Substring(0, end + 1);
                 return b + a;
             }
