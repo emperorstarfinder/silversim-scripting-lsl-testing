@@ -269,6 +269,9 @@ namespace SilverSim.Scripting.Lsl
                 case "System.Int32":
                     return int.Parse(data);
 
+                case "System.Int64":
+                    return long.Parse(data);
+
                 case "OpenMetaverse.UUID":
                     return UUID.Parse(data);
 
@@ -303,7 +306,13 @@ namespace SilverSim.Scripting.Lsl
                 writer.WriteAttributeString("type", "System.Int32");
                 writer.WriteValue(o.ToString());
             }
-            else if(o is UUID)
+            else if (o is long)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "System.Int64");
+                writer.WriteValue(o.ToString());
+            }
+            else if (o is UUID)
             {
                 writer.WriteStartElement(tagname);
                 /* people want compatibility with their creations so we have to understand to what

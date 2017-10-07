@@ -101,32 +101,26 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            private static void ListItemFromXml(XmlTextReader reader, AnArray array)
+            private static void ListItemFromXml(XmlTextReader reader, AnArray array, string varname, bool isEmptyElement)
             {
                 string type = string.Empty;
-                string attrname = string.Empty;
-                while (reader.ReadAttributeValue())
+                if (reader.MoveToFirstAttribute())
                 {
-                    switch (reader.NodeType)
+                    do
                     {
-                        case XmlNodeType.Attribute:
-                            attrname = reader.Value;
-                            break;
-
-                        case XmlNodeType.Text:
-                            switch (attrname)
-                            {
-                                case "type":
-                                    type = reader.Value;
-                                    break;
-                            }
-                            break;
+                        switch (reader.Name)
+                        {
+                            case "type":
+                                type = reader.Value;
+                                break;
+                        }
                     }
+                    while (reader.MoveToNextAttribute());
                 }
 
                 if (type.Length == 0)
                 {
-                    throw new InvalidObjectXmlException();
+                    throw new InvalidObjectXmlException("Missing type for element of list variable " + varname);
                 }
 
                 switch (type)
@@ -149,41 +143,58 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
-                        array.Add(reader.ReadElementValueAsString());
+                        if (isEmptyElement)
+                        {
+                            array.Add(string.Empty);
+                        }
+                        else
+                        {
+                            array.Add(reader.ReadElementValueAsString());
+                        }
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
                     case "OpenMetaverse.UUID":
-                        array.Add(new LSLKey(reader.ReadElementValueAsString()));
+                        if (isEmptyElement)
+                        {
+                            array.Add(new LSLKey(string.Empty));
+                        }
+                        else
+                        {
+                            array.Add(new LSLKey(reader.ReadElementValueAsString()));
+                        }
+                        break;
+
+                    case "long":
+                        array.Add(reader.ReadElementValueAsLong());
                         break;
 
                     default:
-                        throw new InvalidObjectXmlException();
+                        throw new InvalidObjectXmlException("Unknown type " + type + " encountered");
                 }
             }
 
-            private static AnArray ListFromXml(XmlTextReader reader)
+            private static AnArray ListFromXml(XmlTextReader reader, string varname, bool isEmptyElement)
             {
                 var array = new AnArray();
+                if(isEmptyElement)
+                {
+                    return array;
+                }
                 for(;;)
                 {
                     if(!reader.Read())
                     {
-                        throw new InvalidObjectXmlException();
+                        throw new InvalidObjectXmlException("Error at parsing variable data for " + varname);
                     }
 
                     switch(reader.NodeType)
                     {
                         case XmlNodeType.Element:
-                            if(reader.IsEmptyElement)
-                            {
-                                break;
-                            }
-
                             switch(reader.Name)
                             {
                                 case "ListItem":
-                                    ListItemFromXml(reader, array);
+                                    ListItemFromXml(reader, array, varname, reader.IsEmptyElement);
                                     break;
 
                                 default:
@@ -209,6 +220,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 string type = string.Empty;
                 string varname = string.Empty;
+                bool isEmptyElement = reader.IsEmptyElement;
                 if(reader.MoveToFirstAttribute())
                 {
                     do
@@ -270,7 +282,7 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "list":
-                        state.Variables[varname] = ListFromXml(reader);
+                        state.Variables[varname] = ListFromXml(reader, varname, isEmptyElement);
                         break;
 
                     default:
@@ -388,19 +400,17 @@ namespace SilverSim.Scripting.Lsl
                             switch (reader.Name)
                             {
                                 case "Params":
-                                    if (reader.IsEmptyElement)
+                                    if (!reader.IsEmptyElement)
                                     {
-                                        throw new InvalidObjectXmlException();
+                                        ev.Params = ParamsFromXml(reader);
                                     }
-                                    ev.Params = ParamsFromXml(reader);
                                     break;
 
                                 case "Detected":
-                                    if (reader.IsEmptyElement)
+                                    if (!reader.IsEmptyElement)
                                     {
-                                        break;
+                                        ev.Detected = DetectedFromXml(reader);
                                     }
-                                    ev.Detected = DetectedFromXml(reader);
                                     break;
 
                                 default:
