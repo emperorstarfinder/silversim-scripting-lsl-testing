@@ -492,7 +492,8 @@ namespace SilverSim.Scripting.Lsl
                 FieldInfo fi = scriptType.GetField(kvp.Key);
                 if (fi == null)
                 {
-                    m_Log.ErrorFormat("Restoring variable {0} failed", kvp.Key);
+                    m_Log.ErrorFormat("Restoring variable {0} failed for {1}", kvp.Key, scriptType.FullName);
+                    continue;
                 }
                 else if (fi.IsLiteral || fi.IsInitOnly || fi.FieldType != kvp.Value.GetType())
                 {

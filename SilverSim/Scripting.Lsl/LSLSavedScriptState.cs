@@ -135,7 +135,8 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
-                        array.Add(reader.ReadElementValueAsInt());
+                    case "System.Int32":
+                        array.Add(int.Parse(reader.ReadElementValueAsString("ListItem")));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
@@ -257,35 +258,35 @@ namespace SilverSim.Scripting.Lsl
                 switch(type)
                 {
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion":
-                        vardata = reader.ReadElementValueAsString();
+                        vardata = reader.ReadElementValueAsString("Variable");
                         state.Variables[varname] = Quaternion.Parse(vardata);
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3":
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector":
-                        vardata = reader.ReadElementValueAsString();
+                        vardata = reader.ReadElementValueAsString("Variable");
                         state.Variables[varname] = Vector3.Parse(vardata);
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
-                        state.Variables[varname] = reader.ReadElementValueAsInt();
+                        state.Variables[varname] = int.Parse(reader.ReadElementValueAsString("Variable"));
                         break;
 
                     case "long":
-                        state.Variables[varname] = reader.ReadElementValueAsLong();
+                        state.Variables[varname] = long.Parse(reader.ReadElementValueAsString("Variable"));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
-                        state.Variables[varname] = reader.ReadElementValueAsFloat();
+                        state.Variables[varname] = double.Parse(reader.ReadElementValueAsString("Variable"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
-                        state.Variables[varname] = reader.ReadElementValueAsString();
+                        state.Variables[varname] = reader.ReadElementValueAsString("Variable");
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
                     case "OpenMetaverse.UUID":
-                        state.Variables[varname] = new LSLKey(reader.ReadElementValueAsString());
+                        state.Variables[varname] = new LSLKey(reader.ReadElementValueAsString("Variable"));
                         break;
 
                     case "list":
