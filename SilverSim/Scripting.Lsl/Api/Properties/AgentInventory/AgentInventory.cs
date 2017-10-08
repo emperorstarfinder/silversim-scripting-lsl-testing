@@ -348,7 +348,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             "Key",
             "Name",
             "Version",
-            "InventoryType",
+            "DefaultType",
             "ItemKeys",
             "FolderKeys",
             "ParentFolder",
@@ -421,7 +421,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             {
                 get
                 {
-                    AnArray res = new AnArray();
+                    var res = new AnArray();
                     if (m_Instance == null)
                     {
                         return res;
@@ -439,7 +439,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             {
                 get
                 {
-                    AnArray res = new AnArray();
+                    var res = new AnArray();
                     if (m_Instance == null)
                     {
                         return res;
@@ -468,7 +468,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             public AgentInventoryFolder ParentFolder => With((item) => new AgentInventoryFolder(m_Instance, InventoryService, InventoryOwner, item.ParentFolderID, IsLibrary), new AgentInventoryFolder());
 
             public int Version => With((folder) => folder.Version, 0);
-            public int InventoryType => (int)With((folder) => folder.InventoryType, Types.Inventory.InventoryType.Unknown);
+            public int DefaultType => (int)With((folder) => folder.DefaultType, Types.Asset.AssetType.Unknown);
             public AgentInventoryChildFolderAccessor ChildFolders => new AgentInventoryChildFolderAccessor(m_Instance, InventoryService, InventoryOwner, Key, IsLibrary);
             public AgentInventoryChildItemAccessor ChildItems => new AgentInventoryChildItemAccessor(m_Instance, InventoryService, InventoryOwner, Key, IsLibrary);
         }
@@ -676,11 +676,11 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             }
             lock (instance)
             {
-                InventoryFolder newfolder = new InventoryFolder
+                var newfolder = new InventoryFolder
                 {
                     ParentFolderID = folder.Key,
                     Name = name,
-                    InventoryType = (InventoryType)type,
+                    DefaultType = (AssetType)type,
                     Owner = folder.InventoryOwner,
                     ID = UUID.Random
                 };
@@ -767,7 +767,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
                         Creator = toFolder.InventoryOwner,
                         Owner = toFolder.InventoryOwner,
                         LastOwner = toFolder.InventoryOwner,
-                        InventoryType = linktofolder.InventoryType,
+                        InventoryType = InventoryType.Folder,
                         AssetType = AssetType.LinkFolder,
                         ParentFolderID = toFolder.Key,
                         Flags = 0

@@ -86,7 +86,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (instance.Part.Inventory.TryGetValue(name, out item))
                 {
                     si = item.ScriptInstance;
-                    if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
+                    if (item.InventoryType != InventoryType.LSL)
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", name);
                     }
@@ -116,7 +116,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (instance.Part.Inventory.TryGetValue(script, out item))
                 {
                     si = item.ScriptInstance;
-                    if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
+                    if (item.InventoryType != InventoryType.LSL)
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", script);
                     }
@@ -146,7 +146,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (instance.Part.Inventory.TryGetValue(script, out item))
                 {
                     si = item.ScriptInstance;
-                    if (item.InventoryType != InventoryType.LSLText && item.InventoryType != InventoryType.LSLBytecode)
+                    if (item.InventoryType != InventoryType.LSL)
                     {
                         throw new LocalizedScriptErrorException(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item {1} is not a script", "llResetOtherScript", script);
                     }
@@ -214,7 +214,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     return;
                 }
 
-                if(scriptitem.InventoryType != InventoryType.LSLText)
+                if(scriptitem.InventoryType != InventoryType.LSL)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item '{1}' is not a script", "llRemoteLoadScriptPin", name));
                     return;
