@@ -214,7 +214,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     return;
                 }
 
-                if(scriptitem.InventoryType != InventoryType.LSL)
+                if(scriptitem.InventoryType != InventoryType.LSL || scriptitem.AssetType != AssetType.LSLText)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item '{1}' is not a script", "llRemoteLoadScriptPin", name));
                     return;

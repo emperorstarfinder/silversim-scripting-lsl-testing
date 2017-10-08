@@ -21,9 +21,12 @@
 
 #pragma warning disable IDE0018, RCS1029
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -38,17 +41,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.OSSL, "osSetLinkProjectionParams")]
         public void SetLinkProjectionParams(ScriptInstance instance, int link, int projection, LSLKey texture, double fov, double focus, double amb)
         {
-            var p = new ObjectPart.ProjectionParam()
+            lock (instance)
             {
-                IsProjecting = projection != 0,
-                ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),
-                ProjectionFOV = fov,
-                ProjectionFocus = focus,
-                ProjectionAmbience = amb
-            };
-            foreach (ObjectPart part in GetLinkTargets(instance, link))
-            {
-                part.Projection = p;
+                var p = new ObjectPart.ProjectionParam()
+                {
+                    IsProjecting = projection != 0,
+                    ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),
+                    ProjectionFOV = fov,
+                    ProjectionFocus = focus,
+                    ProjectionAmbience = amb
+                };
+
+                foreach (ObjectPart part in GetLinkTargets(instance, link))
+                {
+                    part.Projection = p;
+                }
             }
         }
 
