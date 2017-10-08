@@ -489,7 +489,7 @@ namespace SilverSim.Scripting.Lsl
             /* initialize variables */
             foreach (KeyValuePair<string, object> kvp in state.Variables)
             {
-                FieldInfo fi = scriptType.GetField(kvp.Key);
+                FieldInfo fi = scriptType.GetField("var_" + kvp.Key);
                 if (fi == null)
                 {
                     m_Log.ErrorFormat("Restoring variable {0} failed for {1}", kvp.Key, scriptType.FullName);
