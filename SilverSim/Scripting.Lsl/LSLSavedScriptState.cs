@@ -136,45 +136,24 @@ namespace SilverSim.Scripting.Lsl
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
                     case "System.Int32":
-                        array.Add(int.Parse(reader.ReadElementValueAsString("ListItem")));
+                        array.Add(reader.ReadElementValueAsInt("ListItem"));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
-                        array.Add(LSLCompiler.ParseStringToDouble(reader.ReadElementValueAsString("ListItem")));
+                        array.Add(reader.ReadElementValueAsDouble("ListItem"));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
-                        if (isEmptyElement)
-                        {
-                            array.Add(string.Empty);
-                        }
-                        else
-                        {
-                            array.Add(reader.ReadElementValueAsString("ListItem"));
-                        }
+                        array.Add(isEmptyElement ? string.Empty : reader.ReadElementValueAsString("ListItem"));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
                     case "OpenMetaverse.UUID":
-                        if (isEmptyElement)
-                        {
-                            array.Add(new LSLKey(string.Empty));
-                        }
-                        else
-                        {
-                            array.Add(new LSLKey(reader.ReadElementValueAsString("ListItem")));
-                        }
+                        array.Add(isEmptyElement ? new LSLKey(string.Empty) : new LSLKey(reader.ReadElementValueAsString("ListItem")));
                         break;
 
                     case "long":
-                        if (isEmptyElement)
-                        {
-                            array.Add((long)0);
-                        }
-                        else
-                        {
-                            array.Add(long.Parse(reader.ReadElementValueAsString("ListItem")));
-                        }
+                        array.Add(isEmptyElement ? (long)0 : long.Parse(reader.ReadElementValueAsString("ListItem")));
                         break;
 
                     default:
@@ -269,24 +248,24 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
-                        state.Variables[varname] = int.Parse(reader.ReadElementValueAsString("Variable"));
+                        state.Variables[varname] = reader.ReadElementValueAsInt("Variable");
                         break;
 
                     case "long":
-                        state.Variables[varname] = long.Parse(reader.ReadElementValueAsString("Variable"));
+                        state.Variables[varname] = reader.ReadElementValueAsLong("Variable");
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
-                        state.Variables[varname] = double.Parse(reader.ReadElementValueAsString("Variable"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+                        state.Variables[varname] = reader.ReadElementValueAsDouble("Variable");
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
-                        state.Variables[varname] = reader.ReadElementValueAsString("Variable");
+                        state.Variables[varname] = isEmptyElement ? string.Empty : reader.ReadElementValueAsString("Variable");
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
                     case "OpenMetaverse.UUID":
-                        state.Variables[varname] = new LSLKey(reader.ReadElementValueAsString("Variable"));
+                        state.Variables[varname] = isEmptyElement ? new LSLKey(string.Empty) : new LSLKey(reader.ReadElementValueAsString("Variable"));
                         break;
 
                     case "list":
