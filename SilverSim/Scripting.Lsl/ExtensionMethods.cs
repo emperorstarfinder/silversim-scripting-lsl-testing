@@ -23,6 +23,7 @@
 
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
@@ -468,6 +469,26 @@ namespace SilverSim.Scripting.Lsl
                     else
                     {
                         throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
+                    }
+                }
+            }
+            else
+            {
+                lock (instance)
+                {
+                    ObjectGroup grp = instance.Part.ObjectGroup;
+                    SceneInterface scene = grp.Scene;
+                    if (grp.IsAttached && !scene.AssetService.Exists(assetID))
+                    {
+                        IAgent agent;
+                        if (scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
+                        {
+                            AssetData data;
+                            if (agent.AssetService.TryGetValue(assetID, out data))
+                            {
+                                scene.AssetService.Store(data);
+                            }
+                        }
                     }
                 }
             }
