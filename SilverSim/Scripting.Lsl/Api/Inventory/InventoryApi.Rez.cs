@@ -252,11 +252,13 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         public bool RealRezObject(SceneInterface scene, UUI rezzingowner, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
             Quaternion rotOff = rot / groups[0].GlobalRotation;
+            Vector3 coalesced = groups[0].CoalescedRestoreOffset;
             foreach (ObjectGroup sog in groups)
             {
                 sog.RezzingObjectID = rezzingpart.ID;
                 sog.GlobalRotation *= rotOff;
-                sog.GlobalPosition += (sog.GlobalPosition - pos) * rotOff;
+                sog.GlobalPosition = pos;
+                sog.GlobalPosition += (sog.CoalescedRestoreOffset - coalesced) * rotOff;
                 if(!scene.CanRez(rezzingowner, sog.GlobalPosition))
                 {
                     return false;
