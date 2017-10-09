@@ -478,8 +478,14 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 {
                     return false;
                 }
+                if(obj.ID == sensor.OwnerID && sensor.Instance.Part.ObjectGroup.IsAttached)
+                {
+                    /* attachments cannot detect their wearers */
+                    return false;
+                }
                 if (obj.ID == sensor.OwnObjectID)
                 {
+                    /* objects cannot detect themselves */
                     return false;
                 }
 
