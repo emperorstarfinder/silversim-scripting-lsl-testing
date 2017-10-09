@@ -388,6 +388,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 {
                     SensorRepeats[sensor.Instance] = sensor;
                 }
+                else
+                {
+                    EvalSensor(sensor);
+                }
 
                 if (sensor.SensorHits.Count != 0)
                 {
@@ -474,7 +478,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 {
                     return false;
                 }
-                if (obj.Owner.ID == sensor.OwnerID || obj.Owner.ID == sensor.OwnObjectID)
+                if (obj.ID == sensor.OwnObjectID)
                 {
                     return false;
                 }
@@ -634,7 +638,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SceneInfo sceneInfo;
                 if (m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
-                    sceneInfo.StartSensor(new SensorInfo(instance, false, 0, name, id, type, radius, arc));
+                    sceneInfo.StartSensor(new SensorInfo(instance, false, 0, name, id, type, radius, arc) { OwnObjectID = grp.ID });
                 }
             }
         }
@@ -653,7 +657,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SceneInfo sceneInfo;
                 if(m_Scenes.TryGetValue(scene.ID, out sceneInfo))
                 {
-                    sceneInfo.StartSensor(new SensorInfo(instance, true, rate, name, id, type, range, arc));
+                    sceneInfo.StartSensor(new SensorInfo(instance, true, rate, name, id, type, range, arc) { OwnObjectID = grp.ID });
                 }
             }
         }
@@ -709,7 +713,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                         (UUID)args[2],
                         (int)args[3],
                         (double)args[4],
-                        (double)args[5]);
+                        (double)args[5])
+                    { OwnObjectID = grp.ID };
                     sceneInfo.StartSensor(info);
                 }
             }
