@@ -186,7 +186,7 @@ namespace SilverSim.Scripting.Lsl
         private const int SCRIPTED = 8;
         private const int NPC = 0x20;
 
-        public static bool FillDetectInfoFromObject(this DetectInfo detectInfo, IObject obj)
+        public static bool FillDetectInfoFromObject(ref DetectInfo detectInfo, IObject obj)
         {
             var agent = obj as IAgent;
             if (agent != null)

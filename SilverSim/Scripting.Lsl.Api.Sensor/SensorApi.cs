@@ -339,7 +339,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     if (KnownAgents.TryGetValue(kvp.Key, out agent))
                     {
                         DetectInfo di = kvp.Value;
-                        di.FillDetectInfoFromObject(agent);
+                        ExtensionMethods.FillDetectInfoFromObject(ref di, agent);
                         if (CheckIfSensed(sensor, agent))
                         {
                             newSensorHits.Add(di);
@@ -348,7 +348,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     else if (KnownObjects.TryGetValue(kvp.Key, out objgrp))
                     {
                         DetectInfo di = kvp.Value;
-                        di.FillDetectInfoFromObject(objgrp);
+                        ExtensionMethods.FillDetectInfoFromObject(ref di, objgrp);
                         if (CheckIfSensed(sensor, objgrp))
                         {
                             newSensorHits.Add(di);
@@ -444,7 +444,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 if(CheckIfSensed(sensor, obj))
                 {
                     var detInfo = new DetectInfo();
-                    detInfo.FillDetectInfoFromObject(obj);
+                    ExtensionMethods.FillDetectInfoFromObject(ref detInfo, obj);
                     sensor.SensorHits[obj.ID] = detInfo;
                 }
             }
