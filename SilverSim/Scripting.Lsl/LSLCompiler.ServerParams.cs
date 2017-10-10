@@ -80,7 +80,8 @@ namespace SilverSim.Scripting.Lsl
 
         private void ShowPermissionsReq(HttpRequest req, Map jsondata)
         {
-            var resdata = new Map();
+            var resdata = new AnArray();
+            var encountered = new List<string>();
             foreach (IScriptApi api in m_Apis)
             {
                 Type instanceType = api.GetType();
@@ -91,23 +92,31 @@ namespace SilverSim.Scripting.Lsl
                         foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                         {
                             string name = string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name;
-                            resdata[name] = new Map
+                            if(!encountered.Contains(name))
                             {
-                                { "name", name }
-                            };
+                                encountered.Add(name);
+                                resdata.Add(new Map
+                                {
+                                    { "name", name }
+                                });
+                            }
                         }
                         foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                         {
                             string name = string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name;
-                            resdata[name] = new Map
+                            if (!encountered.Contains(name))
                             {
-                                { "name", name }
-                            };
+                                encountered.Add(name);
+                                resdata.Add(new Map
+                                {
+                                    { "name", name }
+                                });
+                            }
                         }
                     }
                 }
             }
-            m_AdminWebIF.SuccessResponse(req, resdata);
+            m_AdminWebIF.SuccessResponse(req, new Map { { "list", resdata } });
         }
 
         public void TriggerParameterUpdated(UUID regionID, string parametername, string value)
