@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using SilverSim.Main.Common.HttpServer;
 using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Types;
@@ -74,6 +75,29 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 return resList;
+            }
+        }
+
+        private void ShowPermissionsReq(HttpRequest req, Map jsondata)
+        {
+            var resdata = new AnArray();
+            foreach (IScriptApi api in m_Apis)
+            {
+                Type instanceType = api.GetType();
+                foreach (MethodInfo mi in instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    if (Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) != null)
+                    {
+                        foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
+                        {
+                            resdata.Add(string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                        }
+                        foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
+                        {
+                            resdata.Add(string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                        }
+                    }
+                }
             }
         }
 

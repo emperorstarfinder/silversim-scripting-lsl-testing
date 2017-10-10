@@ -147,6 +147,7 @@ namespace SilverSim.Scripting.Lsl
         private readonly List<char> m_MultiOps = new List<char>();
         private readonly List<char> m_NumericChars = new List<char>();
         private readonly List<char> m_OpChars = new List<char>();
+        private IAdminWebIF m_AdminWebIF;
 
         public enum OperatorType
         {
@@ -1061,6 +1062,13 @@ namespace SilverSim.Scripting.Lsl
 
             CompilerRegistry.ScriptCompilers["lsl"] = this;
             CompilerRegistry.ScriptCompilers["XEngine"] = this; /* we won't be supporting anything beyond LSL compatibility */
+
+            List<IAdminWebIF> adminwebif = loader.GetServicesByValue<IAdminWebIF>();
+            if(adminwebif.Count > 0)
+            {
+                m_AdminWebIF = adminwebif[0];
+                m_AdminWebIF.JsonMethods.Add("lsl.controlledperms", ShowPermissionsReq);
+            }
         }
 
         public void SyntaxCheck(UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int linenumber = 1, CultureInfo cultureInfo = null)
