@@ -85,6 +85,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             public double SearchArcCosine;
             public Vector3 SensePoint;
             public Quaternion SenseRotation;
+            public Vector3 SenseForwardVector = Vector3.UnitX;
             public UUID SearchKey;
 
             public readonly RwLockedDictionary<UUID, DetectInfo> SensorHits = new RwLockedDictionary<UUID, DetectInfo>();
@@ -125,6 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                     SensePoint = part.GlobalPosition;
                     SenseRotation = part.GlobalRotation;
                 }
+                SenseForwardVector = Vector3.UnitX * SenseRotation;
             }
         }
 
@@ -462,7 +464,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 {
                     return false;
                 }
-                return object_direction.DirectionToCosine(sensor.SenseRotation) >= sensor.SearchArcCosine;
+                return object_direction.DirectionToCosine(sensor.SenseForwardVector) >= sensor.SearchArcCosine;
             }
 
             private bool CheckIfSensed(SensorInfo sensor, IObject obj)
