@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.Lsl
 
         private void ShowPermissionsReq(HttpRequest req, Map jsondata)
         {
-            var resdata = new AnArray();
+            var resdata = new Map();
             foreach (IScriptApi api in m_Apis)
             {
                 Type instanceType = api.GetType();
@@ -90,22 +90,18 @@ namespace SilverSim.Scripting.Lsl
                     {
                         foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                         {
-                            resdata.Add(new Map
-                            {
-                                { "name", string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name }
-                            });
+                            string name = string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name;
+                            resdata[name] = new Map { { "name", name } };
                         }
                         foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                         {
-                            resdata.Add(new Map
-                            {
-                                { "name", string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name }
-                            });
+                            string name = string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name;
+                            resdata[name] = new Map { { "name", name } };
                         }
                     }
                 }
             }
-            m_AdminWebIF.SuccessResponse(req, new Map { { "functions", resdata } });
+            m_AdminWebIF.SuccessResponse(req, resdata);
         }
 
         public void TriggerParameterUpdated(UUID regionID, string parametername, string value)
