@@ -395,7 +395,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
                 if (sensor.SensorHits.Count != 0)
                 {
-                    sensor.Instance.PostEvent(new SensorEvent()
+                    sensor.Instance.PostEvent(new SensorEvent
                     {
                         Detected = GetDistanceSorted(sensor.SensePoint, sensor.SensorHits.Values)
                     });
