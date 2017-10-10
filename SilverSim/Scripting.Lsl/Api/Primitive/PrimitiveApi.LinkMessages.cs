@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                var ev = new LinkMessageEvent()
+                var ev = new LinkMessageEvent
                 {
                     SenderNumber = instance.Part.LinkNumber,
                     TargetNumber = link,

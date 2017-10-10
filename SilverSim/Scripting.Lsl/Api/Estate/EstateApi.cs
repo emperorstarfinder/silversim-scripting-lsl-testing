@@ -217,7 +217,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                         (int)Math.Floor(globPos.Y),
                         (int)Math.Floor(globPos.Z));
 
-                    var im = new GridInstantMessage()
+                    var im = new GridInstantMessage
                     {
                         FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                         IMSessionID = thisGroup.ID,

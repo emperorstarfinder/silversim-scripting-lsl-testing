@@ -86,7 +86,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             {
                 lock (instance)
                 {
-                    var e = new HttpResponseEvent()
+                    var e = new HttpResponseEvent
                     {
                         RequestID = UUID.Random,
                         Status = 499

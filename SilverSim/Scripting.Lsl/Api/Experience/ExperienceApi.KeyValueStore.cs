@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 {
                     return SendExperienceError(instance, XP_ERROR_STORAGE_EXCEPTION);
                 }
-                DataserverEvent e = new DataserverEvent
+                var e = new DataserverEvent
                 {
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", v)
@@ -89,7 +89,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return SendExperienceError(instance, XP_ERROR_STORAGE_EXCEPTION);
                 }
 
-                DataserverEvent e = new DataserverEvent
+                var e = new DataserverEvent
                 {
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0},{1}", used, quota)
@@ -127,7 +127,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return SendExperienceError(instance, XP_ERROR_STORAGE_EXCEPTION);
                 }
 
-                DataserverEvent e = new DataserverEvent
+                var e = new DataserverEvent
                 {
                     QueryID = UUID.Random,
                     Data = "1"
@@ -161,7 +161,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return SendExperienceError(instance, XP_ERROR_STORAGE_EXCEPTION);
                 }
 
-                DataserverEvent e = new DataserverEvent
+                var e = new DataserverEvent
                 {
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", keys.Count)
@@ -209,7 +209,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     count = keys.Count - first;
                 }
 
-                DataserverEvent e = new DataserverEvent
+                var e = new DataserverEvent
                 {
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", string.Join(",", keys.GetRange(first, count)))
@@ -246,7 +246,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
 
                 if (s)
                 {
-                    DataserverEvent e = new DataserverEvent
+                    var e = new DataserverEvent
                     {
                         QueryID = UUID.Random,
                         Data = string.Format("1,{0}", val)
@@ -295,7 +295,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return SendExperienceError(instance, XP_ERROR_STORAGE_EXCEPTION);
                 }
 
-                DataserverEvent e = new DataserverEvent
+                var e = new DataserverEvent
                 {
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", v)

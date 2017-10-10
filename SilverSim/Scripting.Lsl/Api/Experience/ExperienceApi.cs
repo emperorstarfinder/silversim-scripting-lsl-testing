@@ -131,7 +131,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
 
         private UUID SendExperienceError(ScriptInstance instance, int error)
         {
-            DataserverEvent e = new DataserverEvent
+            var e = new DataserverEvent
             {
                 QueryID = UUID.Random,
                 Data = string.Format("0,{0}", XP_ERROR_INVALID_EXPERIENCE)
@@ -256,7 +256,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 }
 
                 ExperienceInfo experienceInfo;
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 if(experienceService.TryGetValue(experienceid, out experienceInfo))
                 {
                     res.Add(experienceInfo.Name);
@@ -338,19 +338,19 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 }
 
                 bool allowed;
-                ScriptPermissions perms = ScriptPermissions.ExperienceGrantedPermissions;
+                var perms = ScriptPermissions.ExperienceGrantedPermissions;
                 if (!a.IsActiveGod && experienceService.Permissions.TryGetValue(experienceid, a.Owner, out allowed))
                 {
                     if (allowed)
                     {
-                        instance.PostEvent(new ExperiencePermissionsEvent()
+                        instance.PostEvent(new ExperiencePermissionsEvent
                         {
                             PermissionsKey = a.Owner
                         });
                     }
                     else
                     {
-                        instance.PostEvent(new ExperiencePermissionsDeniedEvent()
+                        instance.PostEvent(new ExperiencePermissionsDeniedEvent
                         {
                             AgentId = a.Owner,
                             Reason = XP_ERROR_NOT_PERMITTED
@@ -362,7 +362,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     perms = a.RequestPermissions(instance.Part, instance.Item.ID, perms, experienceid);
                     if (perms != ScriptPermissions.None)
                     {
-                        instance.PostEvent(new ExperiencePermissionsEvent()
+                        instance.PostEvent(new ExperiencePermissionsEvent
                         {
                             PermissionsKey = a.Owner
                         });

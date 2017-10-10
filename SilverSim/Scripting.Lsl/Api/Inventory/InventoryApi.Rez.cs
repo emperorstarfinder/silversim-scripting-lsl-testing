@@ -298,7 +298,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             {
                 sog.IsDieAtEdge = true; /* as per definition of llRezObject and llRezAtRoot */
                 scene.Add(sog);
-                rezzingpart.PostEvent(new ObjectRezEvent()
+                rezzingpart.PostEvent(new ObjectRezEvent
                 {
                     ObjectID = sog.ID
                 });

@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             {
                 ObjectPart thisPart = instance.Part;
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
-                AssetData asset = new Notecard()
+                AssetData asset = new Notecard
                 {
                     Text = contents
                 };

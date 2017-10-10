@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                     (int)Math.Floor(globPos.X),
                     (int)Math.Floor(globPos.Y),
                     (int)Math.Floor(globPos.Z));
-                imservice.Send(new GridInstantMessage()
+                imservice.Send(new GridInstantMessage
                 {
                     FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                     IMSessionID = thisGroup.ID,
@@ -71,7 +71,7 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
                 var imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
-                imservice.Send(new GridInstantMessage()
+                imservice.Send(new GridInstantMessage
                 {
                     FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                     IMSessionID = thisGroup.ID,
@@ -94,7 +94,7 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
                 IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
-                imservice.Send(new GridInstantMessage()
+                imservice.Send(new GridInstantMessage
                 {
                     FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                     IMSessionID = thisGroup.ID,

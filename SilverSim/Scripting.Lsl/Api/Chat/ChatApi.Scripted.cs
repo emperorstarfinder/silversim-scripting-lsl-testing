@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llShout")]
         public void Shout(ScriptInstance instance, int channel, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = channel,
                 Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Shout,
@@ -54,7 +54,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.ASSL, "llShout")]
         public void Shout(ScriptInstance instance, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = PUBLIC_CHANNEL,
                 Type = ListenEvent.ChatType.Shout,
@@ -68,7 +68,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llSay")]
         public void Say(ScriptInstance instance, int channel, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = channel,
                 Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Say,
@@ -82,7 +82,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.ASSL, "llSay")]
         public void Say(ScriptInstance instance, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = PUBLIC_CHANNEL,
                 Type = ListenEvent.ChatType.Say,
@@ -96,7 +96,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llWhisper")]
         public void Whisper(ScriptInstance instance, int channel, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = channel,
                 Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Whisper,
@@ -110,7 +110,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.ASSL, "llWhisper")]
         public void Whisper(ScriptInstance instance, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = PUBLIC_CHANNEL,
                 Type = ListenEvent.ChatType.Whisper,
@@ -126,7 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             lock (instance)
             {
-                var ev = new ListenEvent()
+                var ev = new ListenEvent
                 {
                     Channel = PUBLIC_CHANNEL,
                     Type = ListenEvent.ChatType.OwnerSay,
@@ -144,7 +144,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         {
             if (channel != PUBLIC_CHANNEL)
             {
-                var ev = new ListenEvent()
+                var ev = new ListenEvent
                 {
                     Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Region,
                     Channel = channel,
@@ -159,7 +159,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.LSL, "llRegionSayTo")]
         public void RegionSayTo(ScriptInstance instance, LSLKey target, int channel, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = channel,
                 Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Region,
@@ -174,7 +174,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APILevel(APIFlags.ASSL, "llRegionSayTo")]
         public void RegionSayTo(ScriptInstance instance, LSLKey target, string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = PUBLIC_CHANNEL,
                 Type = ListenEvent.ChatType.Region,

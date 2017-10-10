@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.LogListen
                             ScriptInstance instance = item.ScriptInstance;
                             if(instance != null)
                             {
-                                instance.PostEvent(new ListenEvent()
+                                instance.PostEvent(new ListenEvent
                                 {
                                     Channel = li.Channel,
                                     ID = UUID.Zero,

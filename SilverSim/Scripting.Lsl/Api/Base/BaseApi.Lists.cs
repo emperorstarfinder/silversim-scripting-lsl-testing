@@ -112,14 +112,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             public static AnArray operator +(AnArray v1, Variant v2)
             {
-                AnArray n = new AnArray(v1);
+                var n = new AnArray(v1);
                 n.Add(v2.Value);
                 return n;
             }
 
             public static AnArray operator +(Variant v1, AnArray v2)
             {
-                AnArray n = new AnArray { v1.Value };
+                var n = new AnArray { v1.Value };
                 n.AddRange(v2);
                 return n;
             }

@@ -651,7 +651,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 IObject obj = instance.Part.ObjectGroup.Scene.Objects[objectUUID];
-                obj.PostEvent(new MessageObjectEvent()
+                obj.PostEvent(new MessageObjectEvent
                 {
                     Data = message,
                     ObjectID = instance.Part.ObjectGroup.ID

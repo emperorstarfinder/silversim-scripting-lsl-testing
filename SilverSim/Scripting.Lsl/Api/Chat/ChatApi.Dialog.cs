@@ -58,7 +58,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 {
                     throw new LocalizedScriptErrorException(this, "AtLeastOneButtonMustBeDefined", "At least one button must be defined");
                 }
-                var m = new ScriptDialog()
+                var m = new ScriptDialog
                 {
                     Message = message.Substring(0, 256),
                     ObjectID = thisGroup.ID,
@@ -112,7 +112,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
-                var m = new LoadURL()
+                var m = new LoadURL
                 {
                     ObjectName = thisGroup.Name,
                     ObjectID = thisGroup.ID,
@@ -143,7 +143,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     IAgent agent;
                     if (thisScene.Agents.TryGetValue(detinfo.Key, out agent))
                     {
-                        var m = new ScriptTeleportRequest()
+                        var m = new ScriptTeleportRequest
                         {
                             ObjectName = thisGroup.Name,
                             SimName = simname,

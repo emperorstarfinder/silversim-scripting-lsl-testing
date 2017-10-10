@@ -86,7 +86,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                 }
 
-                part.Projection = new ObjectPart.ProjectionParam()
+                part.Projection = new ObjectPart.ProjectionParam
                 {
                     IsProjecting = projection != 0,
                     ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),

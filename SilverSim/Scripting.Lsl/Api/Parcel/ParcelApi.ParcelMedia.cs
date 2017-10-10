@@ -187,7 +187,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     }
                     else
                     {
-                        var pmu = new ParcelMediaUpdate()
+                        var pmu = new ParcelMediaUpdate
                         {
                             MediaAutoScale = mediaAutoAlign,
                             MediaDesc = mediaDescription,
@@ -233,7 +233,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                         if (sendCommand >= 0)
                         {
-                            var pmc = new ParcelMediaCommandMessage()
+                            var pmc = new ParcelMediaCommandMessage
                             {
                                 Flags = (uint)1 << sendCommand, /* Flags is a bit set of the commands to do */
                                 Command = (uint)sendCommand
@@ -343,7 +343,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                         return;
                     }
                     parcelInfo.MediaURI = new URI(url);
-                    var pmu = new ParcelMediaUpdate()
+                    var pmu = new ParcelMediaUpdate
                     {
                         MediaAutoScale = parcelInfo.MediaAutoScale,
                         MediaDesc = parcelInfo.MediaDescription,

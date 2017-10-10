@@ -363,7 +363,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if (scene.Parcels.TryGetValue(pos, out parcel))
                 {
-                    List<UUID> owners = new List<UUID>();
+                    var owners = new List<UUID>();
                     foreach (ObjectGroup o in instance.Part.ObjectGroup.Scene.ObjectGroups)
                     {
                         if(o.IsAttached)

@@ -310,7 +310,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         switch (data)
                         {
                             case DATA_ONLINE:
-                                ev = new DataserverEvent()
+                                ev = new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = uaservice.IsOnline(uui) ? "1" : "0"
@@ -319,7 +319,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 break;
 
                             case DATA_NAME:
-                                ev = new DataserverEvent()
+                                ev = new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = uui.FullName
@@ -337,7 +337,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 {
                                     return UUID.Zero;
                                 }
-                                ev = new DataserverEvent()
+                                ev = new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
@@ -346,7 +346,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 break;
 
                             case DATA_RATING:
-                                ev = new DataserverEvent()
+                                ev = new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = "[0,0,0,0,0,0]"
@@ -383,7 +383,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id.AsUUID, out agent))
                 {
-                    IAgentPhysicsObject agentContoller = agent.PhysicsActor as IAgentPhysicsObject;
+                    var agentContoller = agent.PhysicsActor as IAgentPhysicsObject;
                     if (agentContoller != null)
                     {
                         agentContoller.SpeedFactor = speedfactor;
@@ -424,7 +424,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         return 0;
                     }
 
-                    var gim = new GridInstantMessage()
+                    var gim = new GridInstantMessage
                     {
                         FromGroup = group,
                         FromAgent = owner,
@@ -471,7 +471,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     }
 
                     IAgent agent;
-                    var gim = new GridInstantMessage()
+                    var gim = new GridInstantMessage
                     {
                         Dialog = scene.Agents.TryGetValue(ejectee.ID, out agent) ?
                             GridInstantMessageDialog.MessageFromAgent :
@@ -487,7 +487,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     IMRouter router = scene.GetService<IMRouter>();
                     router.SendWithResultDelegate(gim);
 
-                    gim = new GridInstantMessage()
+                    gim = new GridInstantMessage
                     {
                         IMSessionID = UUID.Zero,
                         FromAgent = owner,
@@ -523,7 +523,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         displayname = agent.Owner.FullName;
                     }
                     UUID queryid = UUID.Random;
-                    instance.PostEvent(new DataserverEvent()
+                    instance.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
                         Data = displayname
@@ -550,7 +550,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             displayname = agentid.FullName;
                         }
                         UUID queryid = UUID.Random;
-                        instance.PostEvent(new DataserverEvent()
+                        instance.PostEvent(new DataserverEvent
                         {
                             QueryID = queryid,
                             Data = displayname
@@ -588,7 +588,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if(scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
                     UUID queryid = UUID.Random;
-                    instance.PostEvent(new DataserverEvent()
+                    instance.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
                         Data = agent.Owner.FullName
@@ -798,7 +798,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 asset.ID = UUID.Random;
                 scene.AssetService.Store(asset);
 
-                var item = new ObjectPartInventoryItem()
+                var item = new ObjectPartInventoryItem
                 {
                     AssetID = asset.ID,
                     AssetType = AssetType.Notecard,

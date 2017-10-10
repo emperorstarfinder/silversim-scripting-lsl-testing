@@ -57,7 +57,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item);
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
@@ -66,7 +66,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 }
                 catch
                 {
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
@@ -92,7 +92,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, allowXss);
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
@@ -101,7 +101,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 }
                 catch
                 {
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
@@ -121,7 +121,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, itemname);
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
@@ -130,7 +130,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 }
                 catch
                 {
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
@@ -159,7 +159,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item);
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
@@ -168,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 }
                 catch
                 {
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
@@ -194,7 +194,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, allowXss);
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
@@ -203,7 +203,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 }
                 catch
                 {
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
@@ -223,7 +223,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 try
                 {
                     string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, itemname);
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
@@ -232,7 +232,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 }
                 catch
                 {
-                    instance.PostEvent(new HttpRequestEvent()
+                    instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,

@@ -119,7 +119,7 @@ namespace SilverSim.Scripting.Lsl.Api.Permissions
                     ScriptPermissions perms = a.RequestPermissions(instance.Part, instance.Item.ID, (ScriptPermissions)permissions);
                     if (perms != ScriptPermissions.None)
                     {
-                        instance.PostEvent(new RuntimePermissionsEvent()
+                        instance.PostEvent(new RuntimePermissionsEvent
                         {
                             Permissions = perms,
                             PermissionsKey = a.Owner

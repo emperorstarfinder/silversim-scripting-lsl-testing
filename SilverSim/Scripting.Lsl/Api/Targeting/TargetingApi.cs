@@ -346,7 +346,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
 
-                var info = new AtTargetInfo()
+                var info = new AtTargetInfo
                 {
                     ObjectGroup = grp,
                     SceneID = scene.ID,
@@ -405,7 +405,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
 
-                var info = new RotTargetInfo()
+                var info = new RotTargetInfo
                 {
                     ObjectGroup = grp,
                     SceneID = scene.ID,
@@ -484,7 +484,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 if (m_AtTargets.TryGetValue(scene.ID, out atTargets))
                 {
                     var handle = (int)args[0];
-                    var info = new AtTargetInfo()
+                    var info = new AtTargetInfo
                     {
                         SceneID = scene.ID,
                         PartID = instance.Part.ID,
@@ -553,7 +553,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                 if (m_RotTargets.TryGetValue(scene.ID, out rotTargets))
                 {
                     var handle = (int)args[0];
-                    var info = new RotTargetInfo()
+                    var info = new RotTargetInfo
                     {
                         SceneID = scene.ID,
                         PartID = instance.Part.ID,

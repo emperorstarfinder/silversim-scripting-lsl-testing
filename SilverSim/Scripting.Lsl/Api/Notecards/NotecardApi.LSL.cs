@@ -42,14 +42,14 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             string[] lines = nc.Text.Split('\n');
             if (line >= lines.Length || line < 0)
             {
-                part.PostEvent(new DataserverEvent()
+                part.PostEvent(new DataserverEvent
                 {
                     Data = EOF,
                     QueryID = queryID
                 });
             }
 
-            part.PostEvent(new DataserverEvent()
+            part.PostEvent(new DataserverEvent
             {
                 Data = lines[line],
                 QueryID = queryID
@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                     ++n;
                 }
             }
-            part.PostEvent(new DataserverEvent()
+            part.PostEvent(new DataserverEvent
             {
                 Data = n.ToString(),
                 QueryID = queryID

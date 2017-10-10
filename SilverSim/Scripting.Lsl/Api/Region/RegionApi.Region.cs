@@ -409,7 +409,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 if(string.Equals(scene.Name, region, StringComparison.OrdinalIgnoreCase))
                 {
                     UUID queryID = UUID.Random;
-                    var e = new DataserverEvent()
+                    var e = new DataserverEvent
                     {
                         QueryID = queryID
                     };
@@ -457,7 +457,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     if(scene.GridService.TryGetValue(scene.ScopeID, region, out ri))
                     {
                         UUID queryID = UUID.Random;
-                        var e = new DataserverEvent()
+                        var e = new DataserverEvent
                         {
                             QueryID = queryID
                         };
