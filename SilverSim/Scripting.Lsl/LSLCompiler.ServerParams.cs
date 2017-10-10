@@ -105,6 +105,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
             }
+            m_AdminWebIF.SuccessResponse(req, new Map { { "functions", resdata } });
         }
 
         public void TriggerParameterUpdated(UUID regionID, string parametername, string value)
