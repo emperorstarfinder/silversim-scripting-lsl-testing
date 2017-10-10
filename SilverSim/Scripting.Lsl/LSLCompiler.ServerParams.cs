@@ -90,11 +90,17 @@ namespace SilverSim.Scripting.Lsl
                     {
                         foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                         {
-                            resdata.Add(string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                            resdata.Add(new Map
+                            {
+                                { "name", string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name }
+                            });
                         }
                         foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                         {
-                            resdata.Add(string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                            resdata.Add(new Map
+                            {
+                                { "name", string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name }
+                            });
                         }
                     }
                 }
