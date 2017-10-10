@@ -31,6 +31,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Threading;
 using SilverSim.Types;
+using SilverSim.Types.Sensor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -81,6 +82,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
             public string SearchName;
             public double SearchRadius;
             public double SearchArc;
+            public double SearchArcCosine;
             public Vector3 SensePoint;
             public Quaternion SenseRotation;
             public UUID SearchKey;
@@ -98,7 +100,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 SearchName = sName;
                 SearchType = sType;
                 SearchRadius = sRadius;
-                SearchArc = sArc;
+                SearchArc = sArc.Clamp(0, Math.PI);
+                SearchArcCosine = SearchArc.SensorArcToCosine();
                 SearchKey = (sKey.AsBoolean) ? sKey.AsUUID : UUID.Zero;
             }
 
@@ -459,17 +462,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 {
                     return false;
                 }
-                if(sensor.SearchArc < Math.PI && distance < double.Epsilon)
-                {
-                    Vector3 fwd_direction = Vector3.UnitX * sensor.SenseRotation;
-                    double d = fwd_direction.Dot(object_direction);
-                    double angleToObj = Math.Acos(d / distance);
-                    return angleToObj <= sensor.SearchArc;
-                }
-                else
-                {
-                    return true;
-                }
+                return object_direction.DirectionToCosine(sensor.SenseRotation) >= sensor.SearchArcCosine;
             }
 
             private bool CheckIfSensed(SensorInfo sensor, IObject obj)
