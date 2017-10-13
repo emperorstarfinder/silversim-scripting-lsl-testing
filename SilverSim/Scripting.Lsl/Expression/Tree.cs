@@ -234,7 +234,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 {
                     Value = new ConstantValueLong(Entry.Substring(0, Entry.Length - 1));
                 }
-                else if(double.TryParse(Entry, NumberStyles.Float, CultureInfo.InvariantCulture, out fval))
+                else if(TryDoubleParse(Entry, out fval))
                 {
                     if (Entry.StartsWith("-") && BitConverter.DoubleToInt64Bits(fval) == 0)
                     {
@@ -247,6 +247,15 @@ namespace SilverSim.Scripting.Lsl.Expression
                     throw new CompilerException(lineNumber, string.Format("'{0}' is not a value", Entry));
                 }
             }
+        }
+
+        private static bool TryDoubleParse(string input, out double fval)
+        {
+            if(input.EndsWith("f") && input.Length > 1)
+            {
+                input = input.Substring(0, input.Length - 1);
+            }
+            return double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out fval);
         }
     }
 }
