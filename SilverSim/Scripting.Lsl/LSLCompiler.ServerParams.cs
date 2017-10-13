@@ -196,7 +196,7 @@ namespace SilverSim.Scripting.Lsl
             switch (parts[2])
             {
                 case "AllowedCreators":
-                    list = value.Split(',');
+                    list = value == "none" ? new string[0] : value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     uuilist = new List<UUI>();
                     foreach(string entry in list)
                     {
@@ -222,7 +222,7 @@ namespace SilverSim.Scripting.Lsl
                     break;
 
                 case "AllowedOwners":
-                    list = value.Split(',');
+                    list = value == "none" ? new string[0] : value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     uuilist = new List<UUI>();
                     foreach (string entry in list)
                     {
