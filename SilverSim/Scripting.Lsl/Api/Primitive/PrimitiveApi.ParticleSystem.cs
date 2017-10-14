@@ -544,8 +544,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 { PSYS_PART_FLAGS }, { PSYS_PART_INTERP_COLOR_MASK | PSYS_PART_INTERP_SCALE_MASK | PSYS_PART_EMISSIVE_MASK | PSYS_PART_WIND_MASK },
                 { PSYS_SRC_PATTERN }, { PSYS_SRC_PATTERN_ANGLE_CONE },
-                { PSYS_PART_START_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
-                { PSYS_PART_END_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
+                { PSYS_PART_START_COLOR }, { Vector3.One },
+                { PSYS_PART_END_COLOR }, { Vector3.One },
                 { PSYS_PART_START_ALPHA }, { 0.50 },
                 { PSYS_PART_END_ALPHA }, { 0.25 },
                 { PSYS_PART_START_SCALE }, { new Vector3(scale, scale, 0.0) },
@@ -628,8 +628,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 { PSYS_PART_FLAGS }, { PSYS_PART_INTERP_COLOR_MASK | PSYS_PART_INTERP_SCALE_MASK | PSYS_PART_EMISSIVE_MASK | PSYS_PART_WIND_MASK },
                 { PSYS_SRC_PATTERN }, { PSYS_SRC_PATTERN_ANGLE_CONE },
-                { PSYS_PART_START_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
-                { PSYS_PART_END_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
+                { PSYS_PART_START_COLOR }, { Vector3.One },
+                { PSYS_PART_END_COLOR }, { Vector3.One },
                 { PSYS_PART_START_ALPHA }, { 0.50 },
                 { PSYS_PART_END_ALPHA }, { 0.10 },
                 { PSYS_PART_START_SCALE }, { new Vector3(scale/2, scale/2, 0.0) },
