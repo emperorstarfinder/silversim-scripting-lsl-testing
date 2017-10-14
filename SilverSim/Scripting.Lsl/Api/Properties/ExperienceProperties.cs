@@ -24,6 +24,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.Experience;
 using SilverSim.Types;
+using SilverSim.Types.Experience;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
@@ -92,7 +93,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
         [APIExtension(APIExtension.Properties, "experience")]
         [APIDisplayName("experience")]
-        [APIAccessibleMembers("KeyValueStore", "ID", "Enabled")]
+        [APIAccessibleMembers("KeyValueStore", "ID", "Enabled", "OwnerID", "GroupID")]
         public class ExperienceAccessor
         {
             private readonly ScriptInstance m_ScriptInstance;
@@ -107,6 +108,72 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public LSLKey ID => m_ScriptInstance.Item.ExperienceID;
 
             public int Enabled => (m_ScriptInstance.Item.ExperienceID != UUID.Zero).ToLSLBoolean();
+
+            public string Name
+            {
+                get
+                {
+                    lock(m_ScriptInstance)
+                    {
+                        ExperienceServiceInterface experienceService = m_ScriptInstance.Part.ObjectGroup.Scene.ExperienceService;
+                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
+                        if(experienceService == null || experienceID == UUID.Zero)
+                        {
+                            return string.Empty;
+                        }
+                        ExperienceInfo info;
+                        if(experienceService.TryGetValue(experienceID, out info))
+                        {
+                            return info.Name;
+                        }
+                        return string.Empty;
+                    }
+                }
+            }
+
+            public LSLKey OwnerID
+            {
+                get
+                {
+                    lock (m_ScriptInstance)
+                    {
+                        ExperienceServiceInterface experienceService = m_ScriptInstance.Part.ObjectGroup.Scene.ExperienceService;
+                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
+                        if (experienceService == null || experienceID == UUID.Zero)
+                        {
+                            return string.Empty;
+                        }
+                        ExperienceInfo info;
+                        if (experienceService.TryGetValue(experienceID, out info))
+                        {
+                            return info.Owner.ID;
+                        }
+                        return string.Empty;
+                    }
+                }
+            }
+
+            public LSLKey GroupID
+            {
+                get
+                {
+                    lock (m_ScriptInstance)
+                    {
+                        ExperienceServiceInterface experienceService = m_ScriptInstance.Part.ObjectGroup.Scene.ExperienceService;
+                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
+                        if (experienceService == null || experienceID == UUID.Zero)
+                        {
+                            return string.Empty;
+                        }
+                        ExperienceInfo info;
+                        if (experienceService.TryGetValue(experienceID, out info))
+                        {
+                            return info.Group.ID;
+                        }
+                        return string.Empty;
+                    }
+                }
+            }
         }
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Experience")]
