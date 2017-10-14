@@ -538,30 +538,114 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llMakeExplosion")]
         [ForcedSleep(0.1)]
-        public void MakeExplosion(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset)
-        {
-            throw new DeprecatedFunctionCalledException("llMakeExplosion(integer, float, float, float, float, string, vector)");
-        }
+        public void MakeExplosion(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset) =>
+            /* expect offset all are used as given in SL wiki for emulation */
+            ParticleSystem(instance, new AnArray
+            {
+                { PSYS_PART_FLAGS }, { PSYS_PART_INTERP_COLOR_MASK | PSYS_PART_INTERP_SCALE_MASK | PSYS_PART_EMISSIVE_MASK | PSYS_PART_WIND_MASK },
+                { PSYS_SRC_PATTERN }, { PSYS_SRC_PATTERN_ANGLE_CONE },
+                { PSYS_PART_START_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
+                { PSYS_PART_END_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
+                { PSYS_PART_START_ALPHA }, { 0.50 },
+                { PSYS_PART_END_ALPHA }, { 0.25 },
+                { PSYS_PART_START_SCALE }, { new Vector3(scale, scale, 0.0) },
+                { PSYS_PART_END_SCALE }, { new Vector3(scale * 2 + lifetime, scale * 2 + lifetime, 0.0) },
+                { PSYS_PART_MAX_AGE }, { lifetime },
+                { PSYS_SRC_ACCEL }, { Vector3.Zero },
+                { PSYS_SRC_TEXTURE }, { texture },
+                { PSYS_SRC_BURST_RATE }, { 1.0 },
+                { PSYS_SRC_ANGLE_BEGIN }, { 0.0 },
+                { PSYS_SRC_ANGLE_END }, { arc * Math.PI },
+                { PSYS_SRC_BURST_PART_COUNT }, { particles / 2 },
+                { PSYS_SRC_BURST_RADIUS }, { 0.0 },
+                { PSYS_SRC_BURST_SPEED_MIN }, { vel / 3 },
+                { PSYS_SRC_BURST_SPEED_MAX }, { vel * 2/3 },
+                { PSYS_SRC_MAX_AGE }, { lifetime / 2 },
+                { PSYS_SRC_OMEGA },{Vector3.Zero }
+            });
 
         [APILevel(APIFlags.LSL, "llMakeFountain")]
         [ForcedSleep(0.1)]
-        public void MakeFountain(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, int bounce, string texture, Vector3 offset, double bounce_offset)
-        {
-            throw new DeprecatedFunctionCalledException("llMakeFountain(integer, float, float, float, float, integer, string, vector, float)");
-        }
+        public void MakeFountain(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, int bounce, string texture, Vector3 offset, double bounce_offset) =>
+            /* bounce, bounce_offset and local_offset is ignored. All other parameters are emulated according to SL wiki */
+            ParticleSystem(instance, new AnArray
+            {
+                { PSYS_PART_FLAGS }, { PSYS_PART_INTERP_COLOR_MASK | PSYS_PART_INTERP_SCALE_MASK | PSYS_PART_WIND_MASK | PSYS_PART_BOUNCE_MASK | PSYS_PART_EMISSIVE_MASK },
+                { PSYS_SRC_PATTERN }, { PSYS_SRC_PATTERN_ANGLE_CONE },
+                { PSYS_PART_START_COLOR }, { Vector3.One },
+                { PSYS_PART_END_COLOR }, { Vector3.One },
+                { PSYS_PART_START_ALPHA }, { 0.50 },
+                { PSYS_PART_END_ALPHA }, { 0.25 },
+                { PSYS_PART_START_SCALE }, { new Vector3(scale/1.5, scale/1.5, 0.0) },
+                { PSYS_PART_END_SCALE }, { Vector3.Zero },
+                { PSYS_PART_MAX_AGE }, { 3.0 },
+                { PSYS_SRC_ACCEL }, { new Vector3(1.0, 0.0, -4) },
+                { PSYS_SRC_TEXTURE }, { texture },
+                { PSYS_SRC_BURST_RATE }, { 5/particles },
+                { PSYS_SRC_ANGLE_BEGIN }, { 0.0 },
+                { PSYS_SRC_ANGLE_END }, { arc * Math.PI },
+                { PSYS_SRC_BURST_PART_COUNT }, { 1 },
+                { PSYS_SRC_BURST_RADIUS }, { 0.0 },
+                { PSYS_SRC_BURST_SPEED_MIN }, { vel },
+                { PSYS_SRC_BURST_SPEED_MAX }, { vel },
+                { PSYS_SRC_MAX_AGE }, { lifetime/2 },
+                { PSYS_SRC_OMEGA }, { Vector3.Zero }
+            });
 
         [APILevel(APIFlags.LSL, "llMakeSmoke")]
         [ForcedSleep(0.1)]
-        public void MakeSmoke(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset)
-        {
-            throw new DeprecatedFunctionCalledException("llMakeSmoke(integer, float, float, float, float, string, vector)");
-        }
+        public void MakeSmoke(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset) =>
+            /* offset is ignored and remaining parameters are emulated according to SL wiki */
+            ParticleSystem(instance, new AnArray
+            {
+                { PSYS_PART_FLAGS }, { PSYS_PART_INTERP_COLOR_MASK | PSYS_PART_INTERP_SCALE_MASK | PSYS_PART_EMISSIVE_MASK | PSYS_PART_WIND_MASK },
+                { PSYS_SRC_PATTERN }, { PSYS_SRC_PATTERN_ANGLE_CONE },
+                { PSYS_PART_START_COLOR }, { Vector3.One },
+                { PSYS_PART_END_COLOR }, { Vector3.One },
+                { PSYS_PART_START_ALPHA }, { 1.00 },
+                { PSYS_PART_END_ALPHA }, { 0.05 },
+                { PSYS_PART_START_SCALE }, { new Vector3(scale, scale, 0.0) },
+                { PSYS_PART_END_SCALE }, { new Vector3(10, 10, 0.0) },
+                { PSYS_PART_MAX_AGE }, { 3.0 },
+                { PSYS_SRC_ACCEL }, {Vector3.Zero },
+                { PSYS_SRC_TEXTURE }, { texture },
+                { PSYS_SRC_BURST_RATE }, { 10.0 / particles },
+                { PSYS_SRC_ANGLE_BEGIN }, { 0.0 },
+                { PSYS_SRC_ANGLE_END }, { arc * Math.PI },
+                { PSYS_SRC_BURST_PART_COUNT }, { 1 },
+                { PSYS_SRC_BURST_RADIUS }, { 0.0 },
+                { PSYS_SRC_BURST_SPEED_MIN }, { vel },
+                { PSYS_SRC_BURST_SPEED_MAX }, { vel },
+                { PSYS_SRC_MAX_AGE }, { lifetime / 2 },
+                { PSYS_SRC_OMEGA }, {Vector3.Zero }
+            });
 
         [APILevel(APIFlags.LSL, "llMakeFire")]
         [ForcedSleep(0.1)]
-        public void MakeFire(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset)
-        {
-            throw new DeprecatedFunctionCalledException("llMakeFire(integer, float, float, float, float, string, vector)");
-        }
+        public void MakeFire(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset) =>
+            /* offset is ignored and remaining parameters are emulated according to SL wiki */
+            ParticleSystem(instance, new AnArray
+            {
+                { PSYS_PART_FLAGS }, { PSYS_PART_INTERP_COLOR_MASK | PSYS_PART_INTERP_SCALE_MASK | PSYS_PART_EMISSIVE_MASK | PSYS_PART_WIND_MASK },
+                { PSYS_SRC_PATTERN }, { PSYS_SRC_PATTERN_ANGLE_CONE },
+                { PSYS_PART_START_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
+                { PSYS_PART_END_COLOR }, { new Vector3(1.0, 1.0, 1.0) },
+                { PSYS_PART_START_ALPHA }, { 0.50 },
+                { PSYS_PART_END_ALPHA }, { 0.10 },
+                { PSYS_PART_START_SCALE }, { new Vector3(scale/2, scale/2, 0.0) },
+                { PSYS_PART_END_SCALE }, { new Vector3(scale, scale, 0.0) },
+                { PSYS_PART_MAX_AGE }, { 0.5 },
+                { PSYS_SRC_ACCEL }, { Vector3.Zero },
+                { PSYS_SRC_TEXTURE }, { texture },
+                { PSYS_SRC_BURST_RATE }, { 5 / particles },
+                { PSYS_SRC_ANGLE_BEGIN }, { 0.0 },
+                { PSYS_SRC_ANGLE_END }, { arc * Math.PI },
+                { PSYS_SRC_BURST_PART_COUNT }, { 1 },
+                { PSYS_SRC_BURST_RADIUS }, { 0.0 },
+                { PSYS_SRC_BURST_SPEED_MIN }, { vel },
+                { PSYS_SRC_BURST_SPEED_MAX }, { vel },
+                { PSYS_SRC_MAX_AGE }, { lifetime / 2 },
+                { PSYS_SRC_OMEGA }, { Vector3.Zero }
+            });
     }
 }
