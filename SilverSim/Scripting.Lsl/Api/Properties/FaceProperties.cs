@@ -35,8 +35,8 @@ using System.Xml.Serialization;
 namespace SilverSim.Scripting.Lsl.Api.Properties
 {
     [LSLImplementation]
-    [ScriptApiName("FaceInventoryProperties")]
-    [Description("FaceInventory Properties API")]
+    [ScriptApiName("FaceProperties")]
+    [Description("Face Properties API")]
     public class FaceProperties : IPlugin, IScriptApi
     {
         public const int ALL_SIDES = -1;
