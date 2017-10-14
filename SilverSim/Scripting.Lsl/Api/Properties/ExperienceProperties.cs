@@ -93,7 +93,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
         [APIExtension(APIExtension.Properties, "experience")]
         [APIDisplayName("experience")]
-        [APIAccessibleMembers("KeyValueStore", "ID", "Enabled", "OwnerID", "GroupID")]
+        [APIAccessibleMembers("KeyValueStore", "ID", "Enabled", "Name", "OwnerID", "GroupID")]
         public class ExperienceAccessor
         {
             private readonly ScriptInstance m_ScriptInstance;
