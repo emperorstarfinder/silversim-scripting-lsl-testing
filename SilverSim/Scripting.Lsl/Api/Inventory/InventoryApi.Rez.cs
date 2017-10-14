@@ -118,19 +118,21 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         private Vector3 CalculateGeometricCenter(List<ObjectGroup> groups)
         {
-            Vector3 geometriccenteroffset = Vector3.Zero;
-            int primcount = 0;
+            if(groups.Count == 0)
+            {
+                return Vector3.Zero;
+            }
+            Vector3 aabbMin = groups[0].Position;
+            Vector3 aabbMax = groups[0].Position;
             foreach (ObjectGroup grp in groups)
             {
                 foreach (ObjectPart part in grp.Values)
                 {
-                    geometriccenteroffset += part.GlobalPosition;
-                    ++primcount;
+                    aabbMin = aabbMin.ComponentMin(part.GlobalPosition - part.Size / 2);
+                    aabbMax = aabbMax.ComponentMax(part.GlobalPosition + part.Size / 2);
                 }
             }
-            geometriccenteroffset /= primcount;
-            geometriccenteroffset -= groups[0].GlobalPosition;
-            return geometriccenteroffset;
+            return (aabbMax + aabbMin) / 2;
         }
 
         [APILevel(APIFlags.ASSL, "asLinkRezObject")]
