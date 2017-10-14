@@ -322,7 +322,6 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
         #endregion
 
-        [APILevel(APIFlags.LSL, "llJsonSetValue")]
         public IValue String2Json(string value)
         {
             int i;
@@ -418,6 +417,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             }
         }
 
+        [APILevel(APIFlags.LSL, "llJsonSetValue")]
         public string JsonSetValue(ScriptInstance instance, string json, AnArray specifiers, string value)
         {
             IValue jsonData;
