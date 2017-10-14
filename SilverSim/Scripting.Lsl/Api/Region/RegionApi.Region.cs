@@ -26,6 +26,7 @@ using SilverSim.Main.Common.CmdIO;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Pathfinding;
+using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
@@ -225,8 +226,8 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             lock(instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if(scene.Name.ToLower() == regionName.ToLower() ||
-                    regionName.ToLower() == scene.ID.ToString().ToLower())
+                if(string.Equals(scene.Name, regionName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(regionName, scene.ID.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     return GetMapTexture(instance);
                 }
@@ -252,9 +253,53 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osGetRegionStats")]
+        [ThreatLevelRequired(ThreatLevel.Moderate, "osGetRegionStats")]
         public AnArray GetRegionStats(ScriptInstance instance)
         {
-            throw new NotImplementedException("osGetRegionStats()");
+            lock (instance)
+            {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                IPhysicsScene physicsScene = scene.PhysicsScene;
+                int activeScripts = 0;
+                int activePrims = 0;
+                foreach(ObjectPart part in scene.Primitives)
+                {
+                    int countActivePrim = 0;
+                    foreach(ObjectPartInventoryItem item in part.Inventory.ValuesByKey1)
+                    {
+                        if(item.ScriptInstance != null && item.ScriptInstance.IsRunning)
+                        {
+                            countActivePrim = 1;
+                            ++activeScripts;
+                        }
+                    }
+                    activePrims += countActivePrim;
+                }
+                return new AnArray
+                {
+                    { physicsScene.PhysicsDilationTime }, /* STATS_TIME_DILATION */
+                    { scene.Environment.EnvironmentFps }, /* STATS_SIM_FPS */
+                    { physicsScene.PhysicsFPS }, /* STATS_PHYSICS_FPS */
+                    { 0 }, /* STATS_AGENT_UPDATES */
+                    { scene.RootAgents.Count }, /* STATS_ROOT_AGENTS */
+                    { scene.Agents.Count - scene.RootAgents.Count }, /* STATS_CHILD_AGENTS */
+                    { scene.Primitives.Count }, /* STATS_TOTAL_PRIMS */
+                    { activePrims }, /* STATS_ACTIVE_PRIMS */
+                    { 0 }, /* STATS_FRAME_MS */
+                    { 0 }, /* STATS_NET_MS */
+                    { 0 }, /* STATS_PHYSICS_MS */
+                    { 0 }, /* STATS_IMAGE_MS */
+                    { 0 }, /* STATS_OTHER_MS */
+                    { 0 }, /* STATS_IN_PACKETS_PER_SECOND */
+                    { 0 }, /* STATS_OUT_PACKETS_PER_SECOND */
+                    { 0 }, /* STATS_UNACKED_BYTES */
+                    { 0 }, /* STATS_AGENT_MS */
+                    { 0 }, /* STATS_PENDING_DOWNLOADS */
+                    { 0 }, /* STATS_PENDING_UPLOADS */
+                    { activeScripts }, /* STATS_ACTIVE_SCRIPTS */
+                    { scene.ScriptThreadPool.ScriptEventsPerSec } /* STATS_SCRIPT_LPS */
+                };
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osGetSimulatorMemory")]
