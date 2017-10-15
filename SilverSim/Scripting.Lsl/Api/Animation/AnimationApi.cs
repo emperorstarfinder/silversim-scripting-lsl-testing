@@ -188,7 +188,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.OSSL, "osAvatarStopAnimation")]
         [Description("stops the specified animation if it is playing on the avatar given.")]
-        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh, "osAvatarPlayAnimation")]
         public void AvatarStopAnimation(
             ScriptInstance instance,
             [Description("UUID of the agent")]
@@ -204,7 +204,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         [APILevel(APIFlags.OSSL, "osNpcStopAnimation")]
         [Description("stops the specified animation if it is playing on the avatar given.")]
-        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh, "osNpcPlayAnimation")]
         public void NpcStopAnimation(
             ScriptInstance instance,
             [Description("UUID of the agent")]
