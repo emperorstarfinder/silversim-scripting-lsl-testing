@@ -302,6 +302,21 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osGetSimulatorMemoryKB")]
+        [ThreatLevelRequired(ThreatLevel.Moderate, "osGetSimulatorMemory")]
+        public int GetSimulatorMemoryKB(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                long pws = (Process.GetCurrentProcess().WorkingSet64 + 1023) / 1024;
+                if (pws > Int32.MaxValue)
+                {
+                    return Int32.MaxValue;
+                }
+                return (int)pws;
+            }
+        }
+
         [APILevel(APIFlags.OSSL, "osGetCurrentSunHour")]
         public double GetCurrentSunHour(ScriptInstance instance)
         {
