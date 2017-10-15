@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+	<name>SilverSim.Meta.Scripting.Lsl.Default</name>
+	<version>meta</version>
+	<license>Affero GPLv3 License+Link Exception</license>
+	<dependencies>
+		<dependency name="log4net"/>
+		<dependency name="SilverSim.Scripting.Lsl.Api.DynamicTexture"/>
+		<dependency name="SilverSim.Scripting.Lsl.Api.Email"/>
+		<dependency name="SilverSim.Scripting.Lsl.Api.Selling"/>
+		<dependency name="SilverSim.Scripting.Lsl.Api.Sensor"/>
+		<dependency name="SilverSim.Scripting.Lsl.Api.Terraform"/>
+		<dependency name="SilverSim.Scripting.Lsl.Api.XmlRpc"/>
+		<dependency name="SilverSim.Scripting.Lsl"/>
+	</dependencies>
+</package>
