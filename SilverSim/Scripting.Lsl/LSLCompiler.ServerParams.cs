@@ -60,15 +60,34 @@ namespace SilverSim.Scripting.Lsl
                     Type instanceType = api.GetType();
                     foreach(MethodInfo mi in instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
                     {
-                        if(Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) != null)
+                        var threatLevelAttr = Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) as ThreatLevelRequiredAttribute;
+                        if (threatLevelAttr != null)
                         {
                             foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                             {
-                                AddServerParamBlock(resList, string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                                string funcName = mi.Name;
+                                if(attr.Name?.Length != 0)
+                                {
+                                    funcName = attr.Name;
+                                }
+                                if(threatLevelAttr.FunctionName?.Length != 0)
+                                {
+                                    funcName = threatLevelAttr.FunctionName;
+                                }
+                                AddServerParamBlock(resList, funcName);
                             }
                             foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                             {
-                                AddServerParamBlock(resList, string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name);
+                                string funcName = mi.Name;
+                                if (attr.Name?.Length != 0)
+                                {
+                                    funcName = attr.Name;
+                                }
+                                if (threatLevelAttr.FunctionName?.Length != 0)
+                                {
+                                    funcName = threatLevelAttr.FunctionName;
+                                }
+                                AddServerParamBlock(resList, funcName);
                             }
                         }
                     }
@@ -87,29 +106,46 @@ namespace SilverSim.Scripting.Lsl
                 Type instanceType = api.GetType();
                 foreach (MethodInfo mi in instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
                 {
-                    if (Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) != null)
+                    var threatLevelAttr = Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) as ThreatLevelRequiredAttribute;
+                    if (threatLevelAttr != null)
                     {
                         foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
                         {
-                            string name = string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name;
-                            if(!encountered.Contains(name))
+                            string funcName = mi.Name;
+                            if (attr.Name?.Length != 0)
                             {
-                                encountered.Add(name);
+                                funcName = attr.Name;
+                            }
+                            if (threatLevelAttr.FunctionName?.Length != 0)
+                            {
+                                funcName = threatLevelAttr.FunctionName;
+                            }
+                            if (!encountered.Contains(funcName))
+                            {
+                                encountered.Add(funcName);
                                 resdata.Add(new Map
                                 {
-                                    { "name", name }
+                                    { "name", funcName }
                                 });
                             }
                         }
                         foreach (APIExtensionAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APIExtensionAttribute)))
                         {
-                            string name = string.IsNullOrEmpty(attr.Name) ? mi.Name : attr.Name;
-                            if (!encountered.Contains(name))
+                            string funcName = mi.Name;
+                            if (attr.Name?.Length != 0)
                             {
-                                encountered.Add(name);
+                                funcName = attr.Name;
+                            }
+                            if (threatLevelAttr.FunctionName?.Length != 0)
+                            {
+                                funcName = threatLevelAttr.FunctionName;
+                            }
+                            if (!encountered.Contains(funcName))
+                            {
+                                encountered.Add(funcName);
                                 resdata.Add(new Map
                                 {
-                                    { "name", name }
+                                    { "name", funcName }
                                 });
                             }
                         }
