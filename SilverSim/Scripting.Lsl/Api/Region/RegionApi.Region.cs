@@ -260,21 +260,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 IPhysicsScene physicsScene = scene.PhysicsScene;
-                int activeScripts = 0;
-                int activePrims = 0;
-                foreach(ObjectPart part in scene.Primitives)
-                {
-                    int countActivePrim = 0;
-                    foreach(ObjectPartInventoryItem item in part.Inventory.ValuesByKey1)
-                    {
-                        if(item.ScriptInstance != null && item.ScriptInstance.IsRunning)
-                        {
-                            countActivePrim = 1;
-                            ++activeScripts;
-                        }
-                    }
-                    activePrims += countActivePrim;
-                }
                 return new AnArray
                 {
                     { physicsScene.PhysicsDilationTime }, /* STATS_TIME_DILATION */
@@ -284,7 +269,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     { scene.RootAgents.Count }, /* STATS_ROOT_AGENTS */
                     { scene.Agents.Count - scene.RootAgents.Count }, /* STATS_CHILD_AGENTS */
                     { scene.Primitives.Count }, /* STATS_TOTAL_PRIMS */
-                    { activePrims }, /* STATS_ACTIVE_PRIMS */
+                    { scene.ActiveObjects }, /* STATS_ACTIVE_PRIMS */
                     { 0 }, /* STATS_FRAME_MS */
                     { 0 }, /* STATS_NET_MS */
                     { 0 }, /* STATS_PHYSICS_MS */
@@ -296,7 +281,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     { 0 }, /* STATS_AGENT_MS */
                     { 0 }, /* STATS_PENDING_DOWNLOADS */
                     { 0 }, /* STATS_PENDING_UPLOADS */
-                    { activeScripts }, /* STATS_ACTIVE_SCRIPTS */
+                    { scene.ActiveScripts }, /* STATS_ACTIVE_SCRIPTS */
                     { scene.ScriptThreadPool.ScriptEventsPerSec } /* STATS_SCRIPT_LPS */
                 };
             }
