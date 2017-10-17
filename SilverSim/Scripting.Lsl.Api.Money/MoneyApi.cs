@@ -80,8 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                         Source = sourceid,
                         Destination = destinationid
                     };
-                    sourceservice.ChargeAmount(sourceid, transaction, amount,
-                        () => destinationservice.IncreaseAmount(destinationid, transaction, amount));
+                    sourceservice.TransferMoney(sourceid, destinationid, transaction, amount, () => { });
                     ev.Success = true;
                 }
                 catch
