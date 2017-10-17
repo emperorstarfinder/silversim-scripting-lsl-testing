@@ -27,6 +27,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.Economy;
 using SilverSim.Types;
+using SilverSim.Types.Economy.Transactions;
 using SilverSim.Types.Script;
 using System;
 using System.ComponentModel;
@@ -57,7 +58,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         {
             EconomyServiceInterface sourceservice = null;
             EconomyServiceInterface destinationservice = null;
-            var ev = new TransactionResultEvent()
+            var ev = new TransactionResultEvent
             {
                 Success = false,
                 TransactionID = transactionID
@@ -72,8 +73,15 @@ namespace SilverSim.Scripting.Lsl.Api.Money
             {
                 try
                 {
-                    sourceservice.ChargeAmount(sourceid, EconomyServiceInterface.TransactionType.ObjectPays, amount,
-                        () => destinationservice.IncreaseAmount(destinationid, EconomyServiceInterface.TransactionType.ObjectPays, amount));
+                    var transaction = new ObjectPaysTransaction
+                    {
+                        ObjectName = instance.Part.Name,
+                        ObjectID = instance.Part.ID,
+                        Source = sourceid,
+                        Destination = destinationid
+                    };
+                    sourceservice.ChargeAmount(sourceid, transaction, amount,
+                        () => destinationservice.IncreaseAmount(destinationid, transaction, amount));
                     ev.Success = true;
                 }
                 catch
