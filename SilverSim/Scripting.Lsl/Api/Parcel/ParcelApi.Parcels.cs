@@ -28,7 +28,6 @@ using SilverSim.Types;
 using SilverSim.Types.Groups;
 using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -436,7 +435,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                         Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
 
                     if (pInfo.Owner.EqualsGrid(part.Owner) ||
-                        (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned)))
+                        (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageBanned)))
                     {
                         scene.Parcels.BlackList.Store(entry);
                     }
@@ -468,7 +467,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                         Date.UnixTimeToDateTime((ulong)(hours * 3600) + Date.GetUnixTime());
 
                     if (pInfo.Owner.EqualsGrid(part.Owner) ||
-                        (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed)))
+                        (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageAllowed)))
                     {
                         scene.Parcels.WhiteList.Store(entry);
                     }
@@ -493,7 +492,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 }
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
-                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned))))
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageBanned))))
                 {
                     scene.Parcels.BlackList.Remove(scene.ID, pInfo.ID, accessor);
                 }
@@ -517,7 +516,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 }
                 else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
-                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed))))
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageAllowed))))
                 {
                     scene.Parcels.WhiteList.Remove(scene.ID, pInfo.ID, accessor);
                 }
@@ -555,7 +554,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ParcelInfo pInfo;
                 if(scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
-                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageAllowed))))
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageAllowed))))
                 {
                     scene.Parcels.WhiteList.Remove(scene.ID, pInfo.ID);
                 }
