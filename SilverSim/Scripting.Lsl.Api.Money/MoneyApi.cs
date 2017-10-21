@@ -77,8 +77,6 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                     {
                         ObjectName = instance.Part.Name,
                         ObjectID = instance.Part.ID,
-                        Source = sourceid,
-                        Destination = destinationid
                     };
                     sourceservice.TransferMoney(sourceid, destinationid, transaction, amount, () => { });
                     ev.Success = true;
