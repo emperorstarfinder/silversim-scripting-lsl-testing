@@ -23,6 +23,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.Economy;
@@ -73,7 +74,11 @@ namespace SilverSim.Scripting.Lsl.Api.Money
             {
                 try
                 {
-                    var transaction = new ObjectPaysTransaction
+                    SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                    var transaction = new ObjectPaysTransaction(
+                        scene.GridPosition,
+                        scene.ID,
+                        scene.Name)
                     {
                         ObjectName = instance.Part.Name,
                         ObjectID = instance.Part.ID,
