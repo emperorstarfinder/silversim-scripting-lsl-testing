@@ -258,7 +258,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     return ERR_RUNTIME_PERMISSIONS;
                 }
 
-                List<UUID> returnids = new List<UUID>();
+                var returnids = new List<UUID>();
 
                 foreach(IValue iv in objects)
                 {
@@ -288,7 +288,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 if (scene.Parcels.TryGetValue(instance.Part.ObjectGroup.GlobalPosition, out parcel))
                 {
                     /* a lot faster to go by ObjectGroups then to go by prims here */
-                    List<UUID> returnids = new List<UUID>();
+                    var returnids = new List<UUID>();
                     foreach (ObjectGroup o in instance.Part.ObjectGroup.Scene.ObjectGroups)
                     {
                         if (o.IsAttached)
