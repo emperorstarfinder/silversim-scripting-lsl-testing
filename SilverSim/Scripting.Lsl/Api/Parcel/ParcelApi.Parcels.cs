@@ -25,6 +25,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Groups;
 using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
 using System;
@@ -393,7 +394,22 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llEjectFromLand")]
         public void EjectFromLand(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException("llEjectFromLand(key)");
+            lock(instance)
+            {
+                ObjectPart part = instance.Part;
+                ObjectGroup grp = part.ObjectGroup;
+                ObjectPartInventoryItem item = instance.Item;
+                SceneInterface scene = part.ObjectGroup.Scene;
+                ParcelInfo pinfo;
+
+                if(scene.Parcels.TryGetValue(grp.GlobalPosition, out pinfo) && 
+                    (pinfo.Owner.EqualsGrid(item.Owner) ||
+                    (pinfo.GroupOwned && grp.IsGroupOwned && pinfo.Group == grp.Group &&
+                    scene.HasGroupPower(grp.Owner, grp.Group, GroupPowers.LandEjectAndFreeze))))
+                {
+                    scene.EjectFromParcel(avatar.AsUUID, pinfo.ID);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llAddToLandBanList")]
