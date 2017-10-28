@@ -166,19 +166,14 @@ namespace SilverSim.Scripting.Lsl
             m_HttpServer = loader.HttpServer;
             m_HttpServer.StartsWithUriHandlers.Add("/lslhttp/", LSLHttpRequestHandler);
             m_HttpServer.StartsWithUriHandlers.Add("/lslhttp-named/", LSLNamedHttpRequestHandler);
-            try
-            {
-                m_HttpsServer = loader.HttpsServer;
-            }
-            catch(ConfigurationLoader.ServiceNotFoundException)
-            {
-                m_HttpsServer = null;
-            }
-
-            if(m_HttpsServer != null)
+            if(loader.TryGetHttpsServer(out m_HttpsServer))
             {
                 m_HttpsServer.StartsWithUriHandlers.Add("/lslhttps/", LSLHttpRequestHandler);
                 m_HttpsServer.StartsWithUriHandlers.Add("/lslhttps-named/", LSLNamedHttpRequestHandler);
+            }
+            else
+            {
+                m_HttpsServer = null;
             }
 
             IConfig lslConfig = loader.Config.Configs["LSL"];
@@ -391,7 +386,7 @@ namespace SilverSim.Scripting.Lsl
                 return;
             }
 
-            var ev = new HttpRequestEvent()
+            var ev = new HttpRequestEvent
             {
                 RequestID = reqid,
                 Body = body,
