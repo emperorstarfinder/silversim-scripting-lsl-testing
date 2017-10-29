@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Xml;
-using static SilverSim.Scripting.Lsl.LSLCompiler.ApiInfo;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -262,12 +261,16 @@ namespace SilverSim.Scripting.Lsl
                     return bool.Parse(data);
 
                 case "System.Single":
+                case "System.Double":
+                case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
                     return double.Parse(data, NumberStyles.Float, CultureInfo.InvariantCulture);
 
                 case "System.String":
+                case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
                     return data;
 
                 case "System.Int32":
+                case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
                     return int.Parse(data);
 
                 case "System.Int64":
@@ -277,7 +280,7 @@ namespace SilverSim.Scripting.Lsl
                     return UUID.Parse(data);
 
                 default:
-                    throw new ArgumentException("Unknown type in serialization");
+                    throw new ArgumentException("Unknown type \"" + type + "\" in serialization");
             }
         }
 
@@ -495,7 +498,7 @@ namespace SilverSim.Scripting.Lsl
             return assetID;
         }
 
-        internal static System.Reflection.PropertyInfo GetMemberProperty(this Type t, LSLCompiler.CompileState cs, string name)
+        internal static PropertyInfo GetMemberProperty(this Type t, LSLCompiler.CompileState cs, string name)
         {
             try
             {
@@ -503,8 +506,8 @@ namespace SilverSim.Scripting.Lsl
             }
             catch(AmbiguousMatchException)
             {
-                System.Reflection.PropertyInfo pInfo = null;
-                foreach (System.Reflection.PropertyInfo prop in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                PropertyInfo pInfo = null;
+                foreach (PropertyInfo prop in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                 {
                     if (prop.Name != name)
                     {

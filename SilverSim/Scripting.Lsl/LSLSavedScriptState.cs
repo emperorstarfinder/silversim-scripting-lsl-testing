@@ -139,11 +139,18 @@ namespace SilverSim.Scripting.Lsl
                         array.Add(reader.ReadElementValueAsInt("ListItem"));
                         break;
 
+                    case "System.Int64":
+                        array.Add((IValue)new LongInteger(reader.ReadElementValueAsLong("ListItem")));
+                        break;
+
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
+                    case "System.Double":
+                    case "System.Single":
                         array.Add(reader.ReadElementValueAsDouble("ListItem"));
                         break;
 
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
+                    case "System.String":
                         array.Add(isEmptyElement ? string.Empty : reader.ReadElementValueAsString("ListItem"));
                         break;
 
@@ -157,7 +164,7 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     default:
-                        throw new InvalidObjectXmlException("Unknown type " + type + " encountered");
+                        throw new InvalidObjectXmlException("Unknown type \"" + type + "\" encountered");
                 }
             }
 
