@@ -36,6 +36,7 @@ using SilverSim.ServiceInterfaces.UserAgents;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Asset.Format;
+using SilverSim.Types.IM;
 using SilverSim.Types.Inventory;
 using SilverSim.Types.ServerURIs;
 using SilverSim.Viewer.Messages.Inventory;
@@ -958,6 +959,10 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
 
             new InventoryTransferItem(
+                instance.Part.ObjectGroup.Owner,
+                instance.Part.ObjectGroup.Group,
+                instance.Part.ObjectGroup.IsGroupOwned,
+                instance.Part.Name,
                 agent,
                 inventoryService, assetService,
                 scene,
@@ -970,14 +975,22 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         private sealed class InventoryTransferItem : AssetTransferWorkItem
         {
             private readonly InventoryServiceInterface m_InventoryService;
+            private readonly UUI m_Owner;
+            private readonly UGI m_Group;
             private readonly UUI m_DestinationAgent;
             private readonly UUID m_SceneID;
             private readonly List<InventoryItem> m_Items;
             private readonly string m_DestinationFolder = string.Empty;
             private readonly SceneInterface.TryGetSceneDelegate TryGetScene;
             private readonly bool m_CreateFolder;
+            private readonly bool m_IsFromGroup;
+            private readonly string m_ObjectName;
 
             public InventoryTransferItem(
+                UUI owner,
+                UGI group,
+                bool isFromGroup,
+                string objectName,
                 UUI targetAgent,
                 InventoryServiceInterface inventoryService,
                 AssetServiceInterface assetService,
@@ -988,6 +1001,10 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 bool createFolder)
                 : base(assetService, scene.AssetService, assetids, ReferenceSource.Source)
             {
+                m_ObjectName = objectName;
+                m_Owner = owner;
+                m_Group = group;
+                m_IsFromGroup = isFromGroup;
                 m_InventoryService = inventoryService;
                 m_DestinationAgent = targetAgent;
                 m_SceneID = scene.ID;
@@ -1009,6 +1026,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
 
                 var selectedFolder = new Dictionary<AssetType, UUID>();
+                UUID givenToFolderID = UUID.Zero;
 
                 if (m_CreateFolder)
                 {
@@ -1017,7 +1035,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         return;
                     }
                     UUID rootFolderID = folder.ID;
-                    folder = new InventoryFolder()
+                    folder = new InventoryFolder
                     {
                         Owner = m_DestinationAgent,
                         ParentFolderID = rootFolderID,
@@ -1027,10 +1045,11 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         ID = UUID.Random
                     };
                     m_InventoryService.Folder.Add(folder);
+                    givenToFolderID = folder.ID;
 
                     if (agent != null)
                     {
-                        var msg = new BulkUpdateInventory()
+                        var msg = new BulkUpdateInventory
                         {
                             AgentID = m_DestinationAgent.ID,
                             TransactionID = UUID.Zero
@@ -1077,7 +1096,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     m_InventoryService.Item.Add(item);
                     if (agent != null)
                     {
-                        var msg = new UpdateCreateInventoryItem()
+                        var msg = new UpdateCreateInventoryItem
                         {
                             AgentID = m_DestinationAgent.ID,
                             SimApproved = true
@@ -1085,7 +1104,46 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         msg.AddItem(item, 0);
                         agent.SendMessageAlways(msg, m_SceneID);
                     }
-                    /* TODO: implement object InventoryOffered message */
+
+                    if (!m_CreateFolder)
+                    {
+                        var binbucket = new byte[17];
+                        binbucket[0] = (byte)item.InventoryType;
+                        item.ID.ToBytes(binbucket, 1);
+
+                        var gim = new GridInstantMessage
+                        {
+                            FromGroup = m_Group,
+                            FromAgent = m_Owner,
+                            Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "Object0HasGivenYouAnItem1", "Object {0} has given you an item \"{1}\"."),
+                                m_ObjectName, item.Name),
+                            IsFromGroup = m_IsFromGroup,
+                            RegionID = scene.ID,
+                            BinaryBucket = binbucket,
+                            IMSessionID = item.ID,
+                            Dialog = GridInstantMessageDialog.TaskInventoryOffered
+                        };
+                    }
+                }
+
+                if(m_CreateFolder)
+                {
+                    var binbucket = new byte[17];
+                    binbucket[0] = (byte)InventoryType.Folder;
+                    givenToFolderID.ToBytes(binbucket, 1);
+
+                    var gim = new GridInstantMessage
+                    {
+                        FromGroup = m_Group,
+                        FromAgent = m_Owner,
+                        Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "Object0HasGivenYouAFolder1", "Object {0} has given you a folder \"{1}\"."),
+                            m_ObjectName, m_DestinationFolder),
+                        IsFromGroup = false,
+                        RegionID = scene.ID,
+                        BinaryBucket = binbucket,
+                        IMSessionID = givenToFolderID,
+                        Dialog = GridInstantMessageDialog.TaskInventoryOffered
+                    };
                 }
             }
 

@@ -307,3 +307,5 @@ OnlyOwnerIsAbleToDelinkObjectByScript=Nur der Objekteigentümer kann das Objekt p
 LinkFailedDueNoEditPerms=Verlinken fehlgeschlagen aufgrund fehlender Änderungsberechtigung.
 OnlyOwnerIsAbleToLinkObjectByScript=Nur der Objekteigentümer kann das Objekt per Skript verlinken.
 HitSandboxLimit=Sandbox-Begrenzung überschritten.
+Object0HasGivenYouAnItem1=Objekt {0} hat dir ein Inventar "{1}" übergeben.
+Object0HasGivenYouAFolder1=Objekt {0} hat dir einen Ordner "{1}" übergeben.
