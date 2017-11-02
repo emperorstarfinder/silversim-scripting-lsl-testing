@@ -278,7 +278,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llGetPhysicsMaterial")]
         public AnArray GetPhysicsMaterial(ScriptInstance instance)
         {
-            AnArray array = new AnArray();
+            var array = new AnArray();
             lock (instance)
             {
                 ObjectPart rootPart = instance.Part.ObjectGroup.RootPart;

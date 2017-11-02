@@ -284,7 +284,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                             }
                             else
                             {
-                                savedScriptState = new SavedScriptState()
+                                savedScriptState = new SavedScriptState
                                 {
                                     StartParameter = param
                                 };

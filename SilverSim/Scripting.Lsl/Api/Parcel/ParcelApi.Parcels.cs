@@ -154,7 +154,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
         public int GetParcelMaxPrims(ScriptInstance instance, Vector3 pos, int sim_wide)
         {
-            List<ParcelInfo> parcels = new List<ParcelInfo>();
+            var parcels = new List<ParcelInfo>();
             ParcelInfo locatedparcel;
 
             lock(instance)
@@ -358,7 +358,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         {
             lock (instance)
             {
-                AnArray res = new AnArray();
+                var res = new AnArray();
                 ParcelInfo parcel;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if (scene.Parcels.TryGetValue(pos, out parcel))

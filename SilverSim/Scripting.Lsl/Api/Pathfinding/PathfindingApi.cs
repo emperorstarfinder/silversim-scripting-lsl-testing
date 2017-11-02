@@ -226,7 +226,7 @@ namespace SilverSim.Scripting.Lsl.Api.Pathfinding
         [APILevel(APIFlags.LSL, "llGetStaticPath")]
         public AnArray GetStaticPath(ScriptInstance instance, Vector3 start, Vector3 end, double radius, AnArray param)
         {
-            var cInfo = new CharacterInfo()
+            var cInfo = new CharacterInfo
             {
                 CollisionCapsuleRadius = radius
             };
