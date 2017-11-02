@@ -22,7 +22,6 @@
 #pragma warning disable RCS1029
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
@@ -31,9 +30,7 @@ using SilverSim.ServiceInterfaces.Economy;
 using SilverSim.Types;
 using SilverSim.Types.Economy.Transactions;
 using SilverSim.Types.Script;
-using System;
 using System.ComponentModel;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Money
