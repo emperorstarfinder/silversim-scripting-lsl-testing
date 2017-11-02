@@ -646,7 +646,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         return UUID.Zero;
                     }
 
-                    var e = new DataserverEvent()
+                    var e = new DataserverEvent
                     {
                         QueryID = UUID.Random,
                         Data = landmark.LocalPos.ToString()

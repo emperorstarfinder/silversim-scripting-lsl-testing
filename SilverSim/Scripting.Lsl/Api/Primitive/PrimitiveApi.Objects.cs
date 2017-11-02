@@ -678,7 +678,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     bool msgAll = aps.Contains(OS_ATTACH_MSG_ALL);
                     bool invert = (options & OS_ATTACH_MSG_INVERT_POINTS) != 0;
 
-                    var ev = new MessageObjectEvent()
+                    var ev = new MessageObjectEvent
                     {
                         Data = message,
                         ObjectID = instance.Part.ObjectGroup.ID

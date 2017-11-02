@@ -290,7 +290,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                             kvp.Value.TimeoutToElapse += kvp.Value.Timeout;
                             if (kvp.Value.SensorHits.Count != 0)
                             {
-                                kvp.Value.Instance.PostEvent(new SensorEvent()
+                                kvp.Value.Instance.PostEvent(new SensorEvent
                                 {
                                     Detected = GetDistanceSorted(kvp.Value.SensePoint, kvp.Value.SensorHits.Values)
                                 });

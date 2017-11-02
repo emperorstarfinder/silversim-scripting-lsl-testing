@@ -75,13 +75,13 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                 {
                     duration = 4.0;
                 }
-                var modLand = new ModifyLand()
+                var modLand = new ModifyLand
                 {
                     Height = pos.Z,
                     Size = (byte)brush,
                     Seconds = duration
                 };
-                var landData = new ModifyLand.Data()
+                var landData = new ModifyLand.Data
                 {
                     BrushSize = brush,
                     East = pos.X,

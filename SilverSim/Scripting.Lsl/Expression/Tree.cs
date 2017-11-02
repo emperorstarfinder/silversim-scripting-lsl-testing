@@ -158,7 +158,7 @@ namespace SilverSim.Scripting.Lsl.Expression
             {
                 if(arg.StartsWith("\""))
                 {
-                    nt = new Tree()
+                    nt = new Tree
                     {
                         Type = EntryType.StringValue,
                         Entry = arg.Substring(1, arg.Length - 2)
@@ -167,7 +167,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 }
                 else
                 {
-                    nt = new Tree()
+                    nt = new Tree
                     {
                         Type = EntryType.Unknown,
                         Entry = arg

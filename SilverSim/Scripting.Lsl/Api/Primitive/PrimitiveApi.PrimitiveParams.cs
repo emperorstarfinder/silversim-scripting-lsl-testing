@@ -383,7 +383,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetText")]
         public void SetText(ScriptInstance instance, string text, Vector3 color, double alpha)
         {
-            var tp = new ObjectPart.TextParam()
+            var tp = new ObjectPart.TextParam
             {
                 Text = text,
                 TextColor = new ColorAlpha(color, alpha)
@@ -406,7 +406,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llTargetOmega")]
         public void TargetOmega(ScriptInstance instance, Vector3 axis, double spinrate, double gain)
         {
-            var op = new ObjectPart.OmegaParam()
+            var op = new ObjectPart.OmegaParam
             {
                 Axis = axis,
                 Spinrate = spinrate,

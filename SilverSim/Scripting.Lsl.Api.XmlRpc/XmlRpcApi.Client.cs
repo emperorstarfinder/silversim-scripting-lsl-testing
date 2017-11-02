@@ -145,7 +145,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 part.Inventory.TryGetValue(rdi.ItemID, out item))
             {
                 ScriptInstance instance = item.ScriptInstance;
-                instance?.PostEvent(new RemoteDataEvent()
+                instance?.PostEvent(new RemoteDataEvent
                     {
                         Channel = UUID.Zero,
                         IData = idata,

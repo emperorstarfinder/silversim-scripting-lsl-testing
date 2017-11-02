@@ -235,7 +235,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     switch(data)
                     {
                         case DATA_ONLINE:
-                            ev = new DataserverEvent()
+                            ev = new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = "1"
@@ -244,7 +244,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             break;
 
                         case DATA_NAME:
-                            ev = new DataserverEvent()
+                            ev = new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = agent.FirstName + " " + agent.LastName
@@ -265,7 +265,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 {
                                     return UUID.Zero;
                                 }
-                                ev = new DataserverEvent()
+                                ev = new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
@@ -275,7 +275,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             break;
 
                         case DATA_RATING:
-                            ev = new DataserverEvent()
+                            ev = new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = "[0,0,0,0,0,0]"
@@ -284,7 +284,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             break;
 
                         case DATA_PAYINFO:
-                            ev = new DataserverEvent()
+                            ev = new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = "0"
@@ -355,7 +355,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 break;
 
                             case DATA_PAYINFO:
-                                ev = new DataserverEvent()
+                                ev = new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = "0"
@@ -598,7 +598,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
                 {
                     UUID queryid = UUID.Random;
-                    instance.PostEvent(new DataserverEvent()
+                    instance.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
                         Data = uui.FullName

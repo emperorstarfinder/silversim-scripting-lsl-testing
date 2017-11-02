@@ -43,7 +43,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                var p = new ObjectPart.ProjectionParam()
+                var p = new ObjectPart.ProjectionParam
                 {
                     IsProjecting = projection != 0,
                     ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),

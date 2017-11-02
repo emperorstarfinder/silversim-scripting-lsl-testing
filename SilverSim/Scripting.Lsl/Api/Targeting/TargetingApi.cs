@@ -171,7 +171,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                             }
                             else if (pos.ApproxEquals(info.TargetPosition, info.Epsilon))
                             {
-                                item.ScriptInstance.PostEvent(new AtTargetEvent()
+                                item.ScriptInstance.PostEvent(new AtTargetEvent
                                 {
                                     Handle = kvpInner.Key,
                                     OurPosition = pos,
@@ -218,7 +218,7 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
                             }
                             else if (rot.ApproxEquals(info.TargetRotation, info.Epsilon))
                             {
-                                item.ScriptInstance.PostEvent(new AtRotTargetEvent()
+                                item.ScriptInstance.PostEvent(new AtRotTargetEvent
                                 {
                                     Handle = kvpInner.Key,
                                     OurRotation = rot,

@@ -439,7 +439,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             if (DATA_SIM_RELEASE == data)
             {
                 UUID queryID = UUID.Random;
-                instance.PostEvent(new DataserverEvent()
+                instance.PostEvent(new DataserverEvent
                 {
                     Data = VersionInfo.SimulatorVersion,
                     QueryID = queryID

@@ -355,7 +355,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     return WithPart((ObjectPart p) =>
                     {
                         ObjectPart.TextParam text = p.Text;
-                        return new Hovertext()
+                        return new Hovertext
                         {
                             Text = text.Text,
                             Color = text.TextColor,
@@ -381,7 +381,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     return WithPart((ObjectPart p) =>
                     {
                         ObjectPart.PointLightParam light = p.PointLight;
-                        return new Pointlight()
+                        return new Pointlight
                         {
                             Enabled = light.IsLight.ToLSLBoolean(),
                             Color = light.LightColor,

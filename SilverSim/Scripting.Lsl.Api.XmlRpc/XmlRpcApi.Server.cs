@@ -141,7 +141,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 throw new XmlRpcStructs.XmlRpcFaultException(2, "Unexpected error");
             }
 
-            instance.PostEvent(new RemoteDataEvent()
+            instance.PostEvent(new RemoteDataEvent
             {
                 Channel = channelid,
                 IData = intval.AsInt,
@@ -217,7 +217,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 part.Inventory.TryGetValue(ci.ItemID, out item))
             {
                 ScriptInstance instance = item.ScriptInstance;
-                instance?.PostEvent(new RemoteDataEvent()
+                instance?.PostEvent(new RemoteDataEvent
                     {
                         Channel = ci.ChannelID,
                         IData = 0,
