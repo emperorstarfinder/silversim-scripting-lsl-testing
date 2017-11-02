@@ -22,6 +22,7 @@
 #pragma warning disable RCS1029
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
@@ -33,6 +34,7 @@ using SilverSim.Types.Script;
 using System;
 using System.ComponentModel;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Money
 {
@@ -54,23 +56,14 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         private delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid,
             UUI destinationid, int amount, ScriptInstance instance);
 
-        private void TransferMoney(UUID transactionID, UUI sourceid,
-            UUI destinationid, int amount, ScriptInstance instance)
+        private bool TransferMoney(UUI sourceid, UUI destinationid, int amount, ScriptInstance instance)
         {
             EconomyServiceInterface sourceservice = null;
             EconomyServiceInterface destinationservice = null;
-            var ev = new TransactionResultEvent
-            {
-                Success = false,
-                TransactionID = transactionID
-            };
-            if (sourceservice == null ||
-                destinationservice == null ||
-                destinationid == UUI.Unknown)
-            {
-                instance?.PostEvent(ev);
-            }
-            else
+            bool success = false;
+            if (sourceservice != null &&
+                destinationservice != null &&
+                destinationid != UUI.Unknown)
             {
                 try
                 {
@@ -84,39 +77,61 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                         ObjectID = instance.Part.ID,
                     };
                     sourceservice.TransferMoney(sourceid, destinationid, transaction, amount, () => { });
-                    ev.Success = true;
+                    success = true;
                 }
                 catch
                 {
                     /* error intentionally ignored sine ev.Success holds the result status */
                 }
-                instance?.PostEvent(ev);
             }
+            return success;
         }
 
-        private void TransferMoneyEnd(IAsyncResult ar)
+        public class TransferMoneyData
         {
-            var result = (AsyncResult)ar;
-            var caller = (TransferMoneyDelegate)result.AsyncDelegate;
-            caller.EndInvoke(ar);
+            public UUID TransactionID;
+            public UUI SourceID;
+            public UUI DestinationID;
+            public int Amount;
+            public ScriptInstance Instance;
         }
 
-        private void InvokeTransferMoney(UUID transactionID, UUI sourceid,
-            UUI destinationid, int amount, ScriptInstance instance)
+        private void TransferMoney(object o)
         {
-            TransferMoneyDelegate d = TransferMoney;
-            d.BeginInvoke(transactionID, sourceid, destinationid, amount, instance, TransferMoneyEnd, this);
+            var data = (TransferMoneyData)o;
+            var ev = new TransactionResultEvent
+            {
+                Success = false,
+                TransactionID = data.TransactionID
+            };
+            try
+            {
+                ev.Success = TransferMoney(data.SourceID, data.DestinationID, data.Amount, data.Instance);
+            }
+            catch
+            {
+                /* content intentionally ignored */
+            }
+
+            data.Instance.PostEvent(ev);
         }
 
         [APILevel(APIFlags.LSL, "llGiveMoney")]
         public int GiveMoney(ScriptInstance instance, LSLKey destination, int amount)
         {
-            ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-            if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
-                grantinfo.PermsGranter != instance.Part.Owner ||
-                amount < 0)
+            lock (instance)
             {
-                return 0;
+                UUI destinationuui;
+                ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
+                if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
+                    grantinfo.PermsGranter != instance.Part.Owner ||
+                    amount < 0 ||
+                    !instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(destination.AsUUID, out destinationuui))
+                {
+                    return 0;
+                }
+
+                TransferMoney(grantinfo.PermsGranter, destinationuui, amount, instance);
             }
             return 0;
         }
@@ -124,14 +139,32 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         [APILevel(APIFlags.LSL, "llTransferLindenDollars")]
         public LSLKey TransferLindenDollars(ScriptInstance instance, LSLKey destination, int amount)
         {
-            ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-            if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
-                grantinfo.PermsGranter != instance.Part.Owner ||
-                amount < 0)
+            lock (instance)
             {
-                return UUID.Zero;
+                UUI destinationuui;
+                ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
+                if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
+                    grantinfo.PermsGranter != instance.Part.Owner ||
+                    amount < 0 ||
+                    !instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(destination.AsUUID, out destinationuui))
+                {
+                    return UUID.Zero;
+                }
+
+                UUID transactionid = UUID.Random;
+
+                var data = new TransferMoneyData
+                {
+                    SourceID = grantinfo.PermsGranter,
+                    DestinationID = destinationuui,
+                    Amount = amount,
+                    Instance = instance,
+                    TransactionID = transactionid
+                };
+
+                ThreadPool.QueueUserWorkItem(TransferMoney, data);
+                return transactionid;
             }
-            return UUID.Zero;
         }
     }
 }
