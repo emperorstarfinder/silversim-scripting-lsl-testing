@@ -190,7 +190,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
         [APIDisplayName("animationoverride")]
         public class AnimationOverrideAccessor
         {
-            private ScriptInstance m_Instance;
+            private readonly ScriptInstance m_Instance;
 
             public AnimationOverrideAccessor(ScriptInstance instance)
             {

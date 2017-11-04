@@ -46,7 +46,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         [APIAccessibleMembers("Key", "FirstName", "LastName", "HomeUri", "FullName")]
         public class AgentId
         {
-            private UUI m_Uui;
+            private readonly UUI m_Uui;
 
             public AgentId()
             {

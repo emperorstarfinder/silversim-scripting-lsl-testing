@@ -114,8 +114,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIDisplayName("linkfaceaccess")]
         public class FaceAccessor
         {
-            private ScriptInstance Instance;
-            private int[] LinkNumbers;
+            private readonly ScriptInstance Instance;
+            private readonly int[] LinkNumbers;
 
             public FaceAccessor(ScriptInstance instance, int[] linkNumbers)
             {
