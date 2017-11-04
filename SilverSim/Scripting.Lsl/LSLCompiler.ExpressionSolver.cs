@@ -1947,6 +1947,7 @@ namespace SilverSim.Scripting.Lsl
                     switch (tree.SubTree[pos - 1].Type)
                     {
                         case Tree.EntryType.Variable:
+                        case Tree.EntryType.ThisOperator:
                             break;
 
                         case Tree.EntryType.OperatorBinary:
@@ -1963,9 +1964,6 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
                             }
-                            break;
-
-                        case Tree.EntryType.ThisOperator:
                             break;
 
                         default:
