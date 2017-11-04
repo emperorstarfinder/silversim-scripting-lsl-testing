@@ -2095,7 +2095,7 @@ namespace SilverSim.Scripting.Lsl
             EventSerializers.Add(typeof(HttpResponseEvent), HttpResponseSerializer);
             EventDeserializers.Add("listen", ListenDeserializer);
             EventSerializers.Add(typeof(ListenEvent), ListenSerializer);
-            EventDeserializers.Add("sensor", (SavedScriptState.EventParams ep) => new SensorEvent() { Detected = ep.Detected } );
+            EventDeserializers.Add("sensor", (SavedScriptState.EventParams ep) => new SensorEvent { Detected = ep.Detected } );
             EventSerializers.Add(typeof(SensorEvent), (Script script, IScriptEvent iev, XmlTextWriter writer) =>
             {
                 var ev = (SensorEvent)iev;
@@ -2113,14 +2113,14 @@ namespace SilverSim.Scripting.Lsl
             EventSerializers.Add(typeof(NoSensorEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("no_sensor", writer));
             EventDeserializers.Add("timer", (SavedScriptState.EventParams ep) => new TimerEvent());
             EventSerializers.Add(typeof(TimerEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("timer", writer));
-            EventDeserializers.Add("touch_start", (SavedScriptState.EventParams ep) => new TouchEvent() { Type = TouchEvent.TouchType.Start, Detected = ep.Detected });
+            EventDeserializers.Add("touch_start", (SavedScriptState.EventParams ep) => new TouchEvent { Type = TouchEvent.TouchType.Start, Detected = ep.Detected });
             EventSerializers.Add(typeof(TouchEvent), TouchSerializer);
-            EventDeserializers.Add("touch", (SavedScriptState.EventParams ep) => new TouchEvent() { Type = TouchEvent.TouchType.Continuous, Detected = ep.Detected });
-            EventDeserializers.Add("touch_end", (SavedScriptState.EventParams ep) => new TouchEvent() { Type = TouchEvent.TouchType.End, Detected = ep.Detected });
-            EventDeserializers.Add("collision_start", (SavedScriptState.EventParams ep) => new CollisionEvent() { Type = CollisionEvent.CollisionType.Start, Detected = ep.Detected });
+            EventDeserializers.Add("touch", (SavedScriptState.EventParams ep) => new TouchEvent { Type = TouchEvent.TouchType.Continuous, Detected = ep.Detected });
+            EventDeserializers.Add("touch_end", (SavedScriptState.EventParams ep) => new TouchEvent { Type = TouchEvent.TouchType.End, Detected = ep.Detected });
+            EventDeserializers.Add("collision_start", (SavedScriptState.EventParams ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.Start, Detected = ep.Detected });
             EventSerializers.Add(typeof(CollisionEvent), CollisionSerializer);
-            EventDeserializers.Add("collision", (SavedScriptState.EventParams ep) => new CollisionEvent() { Type = CollisionEvent.CollisionType.Continuous, Detected = ep.Detected });
-            EventDeserializers.Add("collision_end", (SavedScriptState.EventParams ep) => new CollisionEvent() { Type = CollisionEvent.CollisionType.End, Detected = ep.Detected });
+            EventDeserializers.Add("collision", (SavedScriptState.EventParams ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.Continuous, Detected = ep.Detected });
+            EventDeserializers.Add("collision_end", (SavedScriptState.EventParams ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.End, Detected = ep.Detected });
             EventDeserializers.Add("not_at_target", (SavedScriptState.EventParams ep) => new NotAtTargetEvent());
             EventSerializers.Add(typeof(NotAtTargetEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("not_at_target", writer));
             EventDeserializers.Add("moving_start", (SavedScriptState.EventParams ep) => new MovingStartEvent());
