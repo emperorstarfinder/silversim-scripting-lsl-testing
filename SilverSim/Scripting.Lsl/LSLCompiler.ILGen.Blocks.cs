@@ -142,7 +142,7 @@ namespace SilverSim.Scripting.Lsl
                             Label endlabel = compileState.ILGen.DefineLabel();
                             Label looplabel = compileState.ILGen.DefineLabel();
 
-                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel()
+                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel
                             {
                                 BreakTargetLabel = endlabel,
                                 ContinueTargetLabel = looplabel,
@@ -238,7 +238,7 @@ namespace SilverSim.Scripting.Lsl
                             Label looplabel = compileState.ILGen.DefineLabel();
                             Label endlabel = compileState.ILGen.DefineLabel();
 
-                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel()
+                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel
                             {
                                 BreakTargetLabel = endlabel,
                                 ContinueTargetLabel = looplabel,
@@ -294,7 +294,7 @@ namespace SilverSim.Scripting.Lsl
 
                         {
                             Label looplabel = compileState.ILGen.DefineLabel();
-                            var bcLabel = new BreakContinueLabel()
+                            var bcLabel = new BreakContinueLabel
                             {
                                 ContinueTargetLabel = looplabel,
                                 BreakTargetLabel = compileState.ILGen.DefineLabel(),
@@ -384,7 +384,7 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         compileState.ILGen.BeginScope();
-                        var switchBcLabel = new BreakContinueLabel()
+                        var switchBcLabel = new BreakContinueLabel
                         {
                             CaseRequired = true,
                             BreakTargetLabel = compileState.ILGen.DefineLabel(),

@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetLinkTextureAnim")]
         public void SetLinkTextureAnim(ScriptInstance instance, int link, int mode, int face, int sizeX, int sizeY, double start, double length, double rate)
         {
-            var te = new TextureAnimationEntry()
+            var te = new TextureAnimationEntry
             {
                 Flags = (TextureAnimationEntry.TextureAnimMode)mode,
                 Face = (sbyte)face,

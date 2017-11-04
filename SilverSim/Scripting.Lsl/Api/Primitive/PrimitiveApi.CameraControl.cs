@@ -129,7 +129,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
                     ObjectGroup grp = instance.Part.ObjectGroup;
-                    var followcamprops = new ClearFollowCamProperties()
+                    var followcamprops = new ClearFollowCamProperties
                     {
                         ObjectID = grp.ID
                     };
@@ -295,13 +295,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     if (parameters.Count > 0)
                     {
                         ObjectGroup grp = instance.Part.ObjectGroup;
-                        var followcamprops = new SetFollowCamProperties()
+                        var followcamprops = new SetFollowCamProperties
                         {
                             ObjectID = grp.ID
                         };
                         foreach (KeyValuePair<int, double> kvp in parameters)
                         {
-                            followcamprops.CameraProperties.Add(new SetFollowCamProperties.CameraProperty()
+                            followcamprops.CameraProperties.Add(new SetFollowCamProperties.CameraProperty
                             {
                                 Type = kvp.Key,
                                 Value = kvp.Value

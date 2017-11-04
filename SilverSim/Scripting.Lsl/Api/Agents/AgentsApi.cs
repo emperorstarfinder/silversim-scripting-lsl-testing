@@ -408,7 +408,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     group != UGI.Unknown &&
                     (groupsService.GetAgentPowers(group, owner) & GroupPowers.Invite) == GroupPowers.Invite)
                 {
-                    var invite = new GroupInvite()
+                    var invite = new GroupInvite
                     {
                         Principal = agent.Owner,
                         RoleID = UUID.Zero,

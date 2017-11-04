@@ -594,7 +594,7 @@ namespace SilverSim.Scripting.Lsl
             var changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
             if (changedflags != 0)
             {
-                PostEvent(new ChangedEvent()
+                PostEvent(new ChangedEvent
                 {
                     Flags = changedflags
                 });
@@ -606,7 +606,7 @@ namespace SilverSim.Scripting.Lsl
             var changedflags = (ChangedEvent.ChangedFlags)(uint)flags;
             if (changedflags != 0)
             {
-                PostEvent(new ChangedEvent()
+                PostEvent(new ChangedEvent
                 {
                     Flags = changedflags
                 });
@@ -1339,7 +1339,7 @@ namespace SilverSim.Scripting.Lsl
 
         public override void ShoutError(string message)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = 0x7FFFFFFF, /* DEBUG_CHANNEL */
                 Type = ListenEvent.ChatType.DebugChannel
@@ -1367,7 +1367,7 @@ namespace SilverSim.Scripting.Lsl
 
         public override void ShoutError(IListenEventLocalization localizedMessage)
         {
-            var ev = new ListenEvent()
+            var ev = new ListenEvent
             {
                 Channel = 0x7FFFFFFF, /* DEBUG_CHANNEL */
                 Type = ListenEvent.ChatType.DebugChannel
@@ -1407,7 +1407,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                return new ObjectRezEvent()
+                return new ObjectRezEvent
                 {
                     ObjectID = new UUID(ep.Params[0].ToString())
                 };
@@ -1434,7 +1434,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 5)
             {
-                return new EmailEvent()
+                return new EmailEvent
                 {
                     Time = ep.Params[0].ToString(),
                     Address = ep.Params[1].ToString(),
@@ -1469,7 +1469,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                var ev = new RuntimePermissionsEvent()
+                var ev = new RuntimePermissionsEvent
                 {
                     Permissions = (ScriptPermissions)(int)ep.Params[0]
                 };
@@ -1502,7 +1502,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 4)
             {
-                return new LinkMessageEvent()
+                return new LinkMessageEvent
                 {
                     SenderNumber = (int)ep.Params[0],
                     Number = (int)ep.Params[1],
@@ -1535,7 +1535,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 6)
             {
-                return new RemoteDataEvent()
+                return new RemoteDataEvent
                 {
                     Type = (int)ep.Params[0],
                     Channel = new UUID(ep.Params[1].ToString()),
@@ -1572,7 +1572,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                return new TransactionResultEvent()
+                return new TransactionResultEvent
                 {
                     TransactionID = ep.Params[0].ToString(),
                     Success = (int)ep.Params[1] != 0,
@@ -1603,7 +1603,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 2)
             {
-                return new MessageObjectEvent()
+                return new MessageObjectEvent
                 {
                     ObjectID = new UUID(ep.Params[0].ToString()),
                     Data = ep.Params[1].ToString()
@@ -1632,7 +1632,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 2)
             {
-                return new DataserverEvent()
+                return new DataserverEvent
                 {
                     QueryID = new UUID(ep.Params[0].ToString()),
                     Data = ep.Params[1].ToString()
@@ -1661,7 +1661,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 4)
             {
-                return new HttpResponseEvent()
+                return new HttpResponseEvent
                 {
                     RequestID = new UUID(ep.Params[0].ToString()),
                     Status = (int)ep.Params[1],
@@ -1694,7 +1694,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 4)
             {
-                return new ListenEvent()
+                return new ListenEvent
                 {
                     Channel = (int)ep.Params[0],
                     Name = ep.Params[1].ToString(),
@@ -1727,7 +1727,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                return new OnRezEvent()
+                return new OnRezEvent
                 {
                     StartParam = (int)ep.Params[0]
                 };
@@ -1739,7 +1739,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                return new AttachEvent()
+                return new AttachEvent
                 {
                     ObjectID = new UUID(ep.Params[0].ToString())
                 };
@@ -1766,7 +1766,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                return new ChangedEvent()
+                return new ChangedEvent
                 {
                     Flags = (ChangedEvent.ChangedFlags)(int)ep.Params[0]
                 };
@@ -1793,7 +1793,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 2)
             {
-                return new MoneyEvent()
+                return new MoneyEvent
                 {
                     ID = new UUID(ep.Params[0].ToString()),
                     Amount = (int)ep.Params[1]
@@ -1822,7 +1822,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                return new LandCollisionEvent()
+                return new LandCollisionEvent
                 {
                     Type = LandCollisionEvent.CollisionType.Start,
                     Position = (Vector3)ep.Params[0]
@@ -1863,7 +1863,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                return new LandCollisionEvent()
+                return new LandCollisionEvent
                 {
                     Type = LandCollisionEvent.CollisionType.Continuous,
                     Position = (Vector3)ep.Params[0]
@@ -1876,7 +1876,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 1)
             {
-                return new LandCollisionEvent()
+                return new LandCollisionEvent
                 {
                     Type = LandCollisionEvent.CollisionType.End,
                     Position = (Vector3)ep.Params[0]
@@ -1889,7 +1889,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                return new ControlEvent()
+                return new ControlEvent
                 {
                     AgentID = new UUID(ep.Params[0].ToString()),
                     Level = (int)ep.Params[1],
@@ -1920,7 +1920,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                return new AtTargetEvent()
+                return new AtTargetEvent
                 {
                     Handle = (int)ep.Params[0],
                     TargetPosition = (Vector3)ep.Params[1],
@@ -1951,7 +1951,7 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 3)
             {
-                return new AtRotTargetEvent()
+                return new AtRotTargetEvent
                 {
                     Handle = (int)ep.Params[0],
                     TargetRotation = (Quaternion)ep.Params[1],
@@ -2330,7 +2330,7 @@ namespace SilverSim.Scripting.Lsl
                 e.Permissions &= ~ScriptPermissions.Debit;
             }
 
-            script.Item.PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo()
+            script.Item.PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo
             {
                 PermsGranter = e.PermissionsKey,
                 PermsMask = e.Permissions
@@ -2342,7 +2342,7 @@ namespace SilverSim.Scripting.Lsl
         {
             var e = (ExperiencePermissionsEvent)ev;
 
-            script.Item.PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo()
+            script.Item.PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo
             {
                 PermsGranter = e.PermissionsKey,
                 PermsMask = ScriptPermissions.TakeControls | ScriptPermissions.TriggerAnimation | ScriptPermissions.Attach | ScriptPermissions.TrackCamera | ScriptPermissions.ControlCamera | ScriptPermissions.Teleport

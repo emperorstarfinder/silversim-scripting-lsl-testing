@@ -2258,7 +2258,7 @@ namespace SilverSim.Scripting.Lsl
             n = argBegin.Count;
             for(i = 0; i < n; ++i)
             {
-                var st = new Tree()
+                var st = new Tree
                 {
                     Type = type
                 };

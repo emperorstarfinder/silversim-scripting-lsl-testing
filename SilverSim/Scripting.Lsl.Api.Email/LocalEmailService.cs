@@ -168,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
                 qList.TryGetValue(objectID, out eQueue) &&
                 eQueue.TryGetValue(sender, subject, out em, out remaining))
             {
-                ev = new EmailEvent()
+                ev = new EmailEvent
                 {
                     Message = em.Message,
                     Subject = em.Subject,

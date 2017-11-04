@@ -227,7 +227,7 @@ namespace SilverSim.Scripting.Lsl.Api.Teleport
                         return;
                     }
 
-                    TeleportAgentViaGlobalCoords(instance, agent, new GridVector()
+                    TeleportAgentViaGlobalCoords(instance, agent, new GridVector
                     {
                         GridX = (ushort)globalCoordinates.X.Clamp(0, 65535),
                         GridY = (ushort)globalCoordinates.Y.Clamp(0, 65535)

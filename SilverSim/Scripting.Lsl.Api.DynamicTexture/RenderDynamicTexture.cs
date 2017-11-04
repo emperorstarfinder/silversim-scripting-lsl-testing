@@ -37,7 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
     {
         private const string DefaultFontName = "Arial";
 
-        public static AssetData ToTexture(this Bitmap bmp, bool lossless = false) => new AssetData()
+        public static AssetData ToTexture(this Bitmap bmp, bool lossless = false) => new AssetData
         {
             Type = AssetType.Texture,
             Name = "Dynamic Texture",

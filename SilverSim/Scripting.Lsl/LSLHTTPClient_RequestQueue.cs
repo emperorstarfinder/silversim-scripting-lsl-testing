@@ -227,7 +227,7 @@ namespace SilverSim.Scripting.Lsl
                     continue;
                 }
 
-                var ev = new HttpResponseEvent()
+                var ev = new HttpResponseEvent
                 {
                     RequestID = req.RequestID,
                     Body = string.Empty,
