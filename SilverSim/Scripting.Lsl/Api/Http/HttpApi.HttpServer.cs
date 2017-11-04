@@ -274,6 +274,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 (Exception e)
 #endif
                 {
+                    /* only filled in for debug output */
 #if DEBUG
                     m_Log.Debug("Exception in llHTTPResponse", e);
 #endif

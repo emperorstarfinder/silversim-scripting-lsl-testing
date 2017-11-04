@@ -197,6 +197,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (t1 == typeof(AString) || t2 == typeof(AString) ||
                     t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
                 {
+                    /* intentionally left empty */
                 }
                 else if (t1 == t2)
                 {
@@ -259,6 +260,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (t1 == typeof(AString) || t2 == typeof(AString) ||
                     t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
                 {
+                    /* intentionally left empty */
                 }
                 else if (t1 == t2)
                 {
@@ -349,6 +351,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (t1 == typeof(AString) || t2 == typeof(AString) ||
                     t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
                 {
+                    /* intentionally left empty */
                 }
                 else if (t1 == t2)
                 {
@@ -423,6 +426,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 if (t1 == typeof(AString) || t2 == typeof(AString) ||
                     t1 == typeof(LSLKey) || t2 == typeof(LSLKey))
                 {
+                    /* intentionally left empty */
                 }
                 else if (t1 == t2)
                 {
