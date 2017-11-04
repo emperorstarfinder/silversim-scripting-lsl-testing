@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 ObjectPart thisPart = instance.Part;
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
-                var imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                IMServiceInterface imservice = thisScene.GetService<IMServiceInterface>();
                 Vector3 globPos = thisGroup.GlobalPosition;
                 string binBuck = string.Format("{0}/{1}/{2}/{3}\0",
                     thisScene.Name,

@@ -31,6 +31,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scene.Types.Transfer;
 using SilverSim.ServiceInterfaces;
 using SilverSim.ServiceInterfaces.Asset;
+using SilverSim.ServiceInterfaces.IM;
 using SilverSim.ServiceInterfaces.Inventory;
 using SilverSim.ServiceInterfaces.UserAgents;
 using SilverSim.Types;
@@ -1110,8 +1111,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         var binbucket = new byte[17];
                         binbucket[0] = (byte)item.InventoryType;
                         item.ID.ToBytes(binbucket, 1);
-
-                        var gim = new GridInstantMessage
+                        IMServiceInterface imservice = scene.GetService<IMServiceInterface>();
+                        imservice?.Send(new GridInstantMessage
                         {
                             FromGroup = m_Group,
                             FromAgent = m_Owner,
@@ -1121,8 +1122,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                             RegionID = scene.ID,
                             BinaryBucket = binbucket,
                             IMSessionID = item.ID,
-                            Dialog = GridInstantMessageDialog.TaskInventoryOffered
-                        };
+                            Dialog = GridInstantMessageDialog.TaskInventoryOffered,
+                            OnResult = (GridInstantMessage imret, bool success) => { }
+                        });
                     }
                 }
 
@@ -1131,8 +1133,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     var binbucket = new byte[17];
                     binbucket[0] = (byte)InventoryType.Folder;
                     givenToFolderID.ToBytes(binbucket, 1);
-
-                    var gim = new GridInstantMessage
+                    IMServiceInterface imservice = scene.GetService<IMServiceInterface>();
+                    imservice?.Send(new GridInstantMessage
                     {
                         FromGroup = m_Group,
                         FromAgent = m_Owner,
@@ -1142,8 +1144,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         RegionID = scene.ID,
                         BinaryBucket = binbucket,
                         IMSessionID = givenToFolderID,
-                        Dialog = GridInstantMessageDialog.TaskInventoryOffered
-                    };
+                        Dialog = GridInstantMessageDialog.TaskInventoryOffered,
+                        OnResult = (GridInstantMessage imret, bool success) => { }
+                    });
                 }
             }
 

@@ -592,14 +592,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     ScriptInstance actInstance;
                     if (WeakInstance != null && WeakInstance.TryGetTarget(out actInstance))
                     {
-                        value.Texture = actInstance.GetTextureAssetID(value.Texture.ToString());
+                        textureID = actInstance.GetTextureAssetID(value.Texture.ToString());
                     }
 
                     With((Material mat, NormalMap m) =>
                     {
                         m.Offset *= Material.MATERIALS_MULTIPLIER;
                         m.Repeats *= Material.MATERIALS_MULTIPLIER;
-                        mat.NormMap = m.Texture;
+                        mat.NormMap = textureID;
                         mat.NormOffsetX = (int)Math.Round(m.Offset.X);
                         mat.NormOffsetY = (int)Math.Round(m.Offset.Y);
                         mat.NormRepeatX = (int)Math.Round(m.Repeats.X);
@@ -631,7 +631,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     ScriptInstance actInstance;
                     if (WeakInstance != null && WeakInstance.TryGetTarget(out actInstance))
                     {
-                        value.Texture = actInstance.GetTextureAssetID(value.Texture.ToString());
+                        textureID = actInstance.GetTextureAssetID(value.Texture.ToString());
                     }
                     value.Offset *= Material.MATERIALS_MULTIPLIER;
                     value.Repeats *= Material.MATERIALS_MULTIPLIER;
@@ -642,7 +642,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
                     With((Material mat, SpecularMap v) =>
                     {
-                        mat.SpecMap = value.Texture;
+                        mat.SpecMap = textureID;
                         mat.SpecColor = new ColorAlpha(value.Color, value.Alpha);
                         mat.SpecOffsetX = (int)Math.Round(value.Offset.X);
                         mat.SpecOffsetY = (int)Math.Round(value.Offset.Y);
