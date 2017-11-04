@@ -182,13 +182,13 @@ namespace SilverSim.Scripting.Lsl.Expression
             int idx = 0;
             int slen = v.Length;
             var o = new StringBuilder();
-            while(idx < v.Length)
+            while(idx < slen)
             {
                 char c = v[idx++];
                 switch(c)
                 {
                     case '\\':
-                        if (idx < v.Length)
+                        if (idx < slen)
                         {
                             c = v[idx++];
                             switch (c)

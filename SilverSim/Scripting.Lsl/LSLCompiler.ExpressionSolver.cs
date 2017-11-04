@@ -2441,7 +2441,6 @@ namespace SilverSim.Scripting.Lsl
 
                                 int endPos = startPos - 1;
                                 startPos = FindBeginOfElementSelectors(resolvetree, endPos, lineNumber, currentCulture);
-                                i = startPos;
 
                                 int elemPos = startPos + 1;
                                 while (elemPos <= endPos)
