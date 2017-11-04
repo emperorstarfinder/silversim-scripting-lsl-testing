@@ -41,7 +41,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     {
                         ScriptInstance si = item.ScriptInstance;
 
-                        if (si?.IsLinkMessageReceiver == true)
+                        if (si?.IsLinkMessageReceiver ?? false)
                         {
                             si.PostEvent(ev);
                         }
