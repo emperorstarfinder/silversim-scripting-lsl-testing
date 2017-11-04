@@ -2309,7 +2309,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         private static void HandleSensor(Script script, IScriptEvent ev)
-		{
+        {
             script.InvokeStateEvent("sensor", script.m_Detected.Count);
         }
 
