@@ -20,7 +20,6 @@
 // exception statement from your version.
 
 using SilverSim.Scene.Types.Script;
-using SilverSim.Threading;
 using System;
 using System.Collections.Generic;
 
@@ -71,8 +70,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     res.Add(2);
                     double interval = script.CurrentTimerInterval * 10000000.0;
                     res.Add(interval);
-                    long timeElapsed = StopWatchTime.TickCount - script.LastTimerEventTick;
-                    long timeToElapse = ((long)interval - timeElapsed * 100000000) / StopWatchTime.Frequency;
+                    long timeElapsed = Environment.TickCount - script.LastTimerEventTick;
+                    long timeToElapse = (long)interval - timeElapsed * 10000;
                     res.Add(timeToElapse);
                 }
             }

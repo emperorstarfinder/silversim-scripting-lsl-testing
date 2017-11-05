@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.Lsl
         internal RwLockedList<UUID> m_RequestedURLs = new RwLockedList<UUID>();
 
         public readonly Timer Timer = new Timer();
-        public long LastTimerEventTick;
+        public int LastTimerEventTick;
         public bool UseForcedSleep = true;
         public double ForcedSleepFactor = 1;
         public double CurrentTimerInterval;
@@ -73,14 +73,14 @@ namespace SilverSim.Scripting.Lsl
         protected bool m_UsesSinglePrecision;
         public bool UsesSinglePrecision => m_UsesSinglePrecision;
 
-        private long m_ExecutionStartedAt = StopWatchTime.TickCount;
+        private int m_ExecutionStartedAt = Environment.TickCount;
 
         public uint GetAndResetTime()
         {
             lock (m_Lock)
             {
-                long newtick = StopWatchTime.TickCount;
-                long oldvalue = m_ExecutionStartedAt;
+                int newtick = Environment.TickCount;
+                int oldvalue = m_ExecutionStartedAt;
                 m_ExecutionStartedAt = newtick;
                 return (uint)newtick - (uint)oldvalue;
             }
@@ -90,7 +90,7 @@ namespace SilverSim.Scripting.Lsl
         {
             lock(m_Lock)
             {
-                return (uint)StopWatchTime.TickCount - (uint)m_ExecutionStartedAt;
+                return (uint)Environment.TickCount - (uint)m_ExecutionStartedAt;
             }
         }
 
@@ -109,7 +109,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     PostEvent(new TimerEvent());
                 }
-                LastTimerEventTick = StopWatchTime.TickCount;
+                LastTimerEventTick = Environment.TickCount;
                 Timer.Interval = CurrentTimerInterval * 1000;
             }
         }
@@ -126,8 +126,8 @@ namespace SilverSim.Scripting.Lsl
                 else
                 {
                     Timer.Enabled = false;
-                    LastTimerEventTick = StopWatchTime.TickCount;
-                    Timer.Interval = (interval - elapsed) * StopWatchTime.Frequency;
+                    LastTimerEventTick = Environment.TickCount;
+                    Timer.Interval = (interval - elapsed) * 1000;
                     CurrentTimerInterval = interval;
                     Timer.Enabled = true;
                 }
@@ -1062,9 +1062,9 @@ namespace SilverSim.Scripting.Lsl
             {
                 return;
             }
-            long exectime;
+            int exectime;
             float execfloat;
-            long startticks = StopWatchTime.TickCount;
+            int startticks = Environment.TickCount;
             bool executeStateEntry = false;
             bool executeStateExit = false;
             bool executeScriptReset = false;
@@ -1105,7 +1105,7 @@ namespace SilverSim.Scripting.Lsl
                     SetCurrentState(m_States["default"]);
                     StartParameter = 0;
                     ResetVariables();
-                    startticks = StopWatchTime.TickCount;
+                    startticks = Environment.TickCount;
                 }
                 #endregion
 
@@ -1116,7 +1116,7 @@ namespace SilverSim.Scripting.Lsl
                     if (executeStateExit)
                     {
                         executeStateExit = false;
-                        startticks = StopWatchTime.TickCount;
+                        startticks = Environment.TickCount;
                         InvokeStateEvent("state_exit");
                     }
                 }
@@ -1142,8 +1142,8 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (executedStateExit)
                     {
-                        exectime = StopWatchTime.TickCount - startticks;
-                        execfloat = exectime / StopWatchTime.Frequency;
+                        exectime = Environment.TickCount - startticks;
+                        execfloat = exectime / 1000f;
                         lock (m_Lock)
                         {
                             m_ExecutionTime += execfloat;
@@ -1167,7 +1167,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         executeStateEntry = false;
                         SetCurrentState(newState);
-                        startticks = StopWatchTime.TickCount;
+                        startticks = Environment.TickCount;
                         if (evgot != null && evgot.GetType() == typeof(ResetScriptEvent))
                         {
                             evgot = null;
@@ -1224,8 +1224,8 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (executedStateEntry)
                     {
-                        exectime = StopWatchTime.TickCount - startticks;
-                        execfloat = exectime / StopWatchTime.Frequency;
+                        exectime = Environment.TickCount - startticks;
+                        execfloat = exectime / 1000f;
                         lock (m_Lock)
                         {
                             m_ExecutionTime += execfloat;
@@ -1251,7 +1251,7 @@ namespace SilverSim.Scripting.Lsl
                     if (ev != null)
                     {
                         eventExecuted = true;
-                        startticks = StopWatchTime.TickCount;
+                        startticks = Environment.TickCount;
                         Type evt = ev.GetType();
                         Action<Script, IScriptEvent> evtDelegate;
                         if (StateEventHandlers.TryGetValue(evt, out evtDelegate))
@@ -1292,8 +1292,8 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (eventExecuted)
                     {
-                        exectime = StopWatchTime.TickCount - startticks;
-                        execfloat = exectime / StopWatchTime.Frequency;
+                        exectime = Environment.TickCount - startticks;
+                        execfloat = exectime / 1000f;
                         lock (m_Lock)
                         {
                             m_ExecutionTime += execfloat;

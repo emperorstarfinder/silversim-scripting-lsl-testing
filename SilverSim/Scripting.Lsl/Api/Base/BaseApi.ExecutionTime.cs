@@ -20,7 +20,6 @@
 // exception statement from your version.
 
 using SilverSim.Scene.Types.Script;
-using SilverSim.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -42,7 +41,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock (instance)
             {
                 var script = (Script)instance;
-                return script.GetTime() / StopWatchTime.Frequency;
+                return script.GetTime() / 1000f;
             }
         }
 
