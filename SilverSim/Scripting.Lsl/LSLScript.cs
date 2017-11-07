@@ -104,7 +104,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     PostEvent(new TimerEvent());
                 }
-                LastTimerEventTick = TimeSource.TickCount;
+                Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
                 Timer.Interval = CurrentTimerInterval * 1000;
             }
         }
@@ -121,7 +121,7 @@ namespace SilverSim.Scripting.Lsl
                 else
                 {
                     Timer.Enabled = false;
-                    LastTimerEventTick = TimeSource.TickCount;
+                    Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
                     Timer.Interval = (interval - elapsed) * 1000;
                     CurrentTimerInterval = interval;
                     Timer.Enabled = true;

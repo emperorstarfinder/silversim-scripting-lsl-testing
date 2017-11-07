@@ -22,6 +22,7 @@
 using SilverSim.Scene.Types.Script;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -70,7 +71,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     res.Add(2);
                     var interval = (long)(script.CurrentTimerInterval * Script.TimeSource.Frequency);
                     res.Add(interval);
-                    long timeElapsed = Script.TimeSource.TicksElapsed(Script.TimeSource.TickCount, script.LastTimerEventTick);
+                    long timeElapsed = Script.TimeSource.TicksElapsed(Script.TimeSource.TickCount, Interlocked.Read(ref script.LastTimerEventTick));
                     long timeToElapse = (interval - timeElapsed) * 100000000 / Script.TimeSource.Frequency;
                     res.Add(timeToElapse);
                 }
