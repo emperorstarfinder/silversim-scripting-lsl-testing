@@ -68,10 +68,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     res.Add("timer");
                     res.Add(2);
-                    double interval = script.CurrentTimerInterval * 10000000.0;
+                    var interval = (long)(script.CurrentTimerInterval * Script.TimeSource.Frequency);
                     res.Add(interval);
-                    long timeElapsed = Environment.TickCount - script.LastTimerEventTick;
-                    long timeToElapse = (long)interval - timeElapsed * 10000;
+                    long timeElapsed = Script.TimeSource.TicksElapsed(Script.TimeSource.TickCount, script.LastTimerEventTick);
+                    long timeToElapse = (interval - timeElapsed) * 100000000 / Script.TimeSource.Frequency;
                     res.Add(timeToElapse);
                 }
             }

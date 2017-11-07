@@ -40,6 +40,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Timers;
 using System.Xml;
 using System.Xml.Serialization;
@@ -60,8 +61,8 @@ namespace SilverSim.Scripting.Lsl
         protected bool UseMessageObjectEvent;
         internal RwLockedList<UUID> m_RequestedURLs = new RwLockedList<UUID>();
 
-        public readonly Timer Timer = new Timer();
-        public int LastTimerEventTick;
+        public readonly System.Timers.Timer Timer = new System.Timers.Timer();
+        public long LastTimerEventTick;
         public bool UseForcedSleep = true;
         public double ForcedSleepFactor = 1;
         public double CurrentTimerInterval;
@@ -72,26 +73,20 @@ namespace SilverSim.Scripting.Lsl
         private readonly object m_Lock = new object();
         protected bool m_UsesSinglePrecision;
         public bool UsesSinglePrecision => m_UsesSinglePrecision;
+        public static readonly TimeProvider TimeSource = TimeProvider.StopWatch;
 
-        private int m_ExecutionStartedAt = Environment.TickCount;
+        private long m_ExecutionStartedAt = TimeSource.TickCount;
 
-        public uint GetAndResetTime()
+        public ulong GetAndResetTime()
         {
-            lock (m_Lock)
-            {
-                int newtick = Environment.TickCount;
-                int oldvalue = m_ExecutionStartedAt;
-                m_ExecutionStartedAt = newtick;
-                return (uint)newtick - (uint)oldvalue;
-            }
+            long newvalue = TimeSource.TickCount;
+            long oldvalue = Interlocked.Exchange(ref m_ExecutionStartedAt, newvalue);
+            return (ulong)TimeSource.TicksElapsed(newvalue, oldvalue);
         }
 
-        public uint GetTime()
+        public ulong GetTime()
         {
-            lock(m_Lock)
-            {
-                return (uint)Environment.TickCount - (uint)m_ExecutionStartedAt;
-            }
+            return (ulong)TimeSource.TicksElapsed(TimeSource.TickCount, m_ExecutionStartedAt);
         }
 
         private bool m_HasTouchEvent;
@@ -109,7 +104,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     PostEvent(new TimerEvent());
                 }
-                LastTimerEventTick = Environment.TickCount;
+                LastTimerEventTick = TimeSource.TickCount;
                 Timer.Interval = CurrentTimerInterval * 1000;
             }
         }
@@ -126,7 +121,7 @@ namespace SilverSim.Scripting.Lsl
                 else
                 {
                     Timer.Enabled = false;
-                    LastTimerEventTick = Environment.TickCount;
+                    LastTimerEventTick = TimeSource.TickCount;
                     Timer.Interval = (interval - elapsed) * 1000;
                     CurrentTimerInterval = interval;
                     Timer.Enabled = true;
@@ -1062,9 +1057,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return;
             }
-            int exectime;
-            float execfloat;
-            int startticks = Environment.TickCount;
+            long startticks = TimeSource.TickCount;
             bool executeStateEntry = false;
             bool executeStateExit = false;
             bool executeScriptReset = false;
@@ -1105,7 +1098,7 @@ namespace SilverSim.Scripting.Lsl
                     SetCurrentState(m_States["default"]);
                     StartParameter = 0;
                     ResetVariables();
-                    startticks = Environment.TickCount;
+                    startticks = TimeSource.TickCount;
                 }
                 #endregion
 
@@ -1116,7 +1109,7 @@ namespace SilverSim.Scripting.Lsl
                     if (executeStateExit)
                     {
                         executeStateExit = false;
-                        startticks = Environment.TickCount;
+                        startticks = TimeSource.TickCount;
                         InvokeStateEvent("state_exit");
                     }
                 }
@@ -1142,11 +1135,9 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (executedStateExit)
                     {
-                        exectime = Environment.TickCount - startticks;
-                        execfloat = exectime / 1000f;
                         lock (m_Lock)
                         {
-                            m_ExecutionTime += execfloat;
+                            m_ExecutionTime += TimeSource.TicksToSecs(TimeSource.TicksElapsed(TimeSource.TickCount, startticks));
                         }
                     }
                 }
@@ -1167,7 +1158,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         executeStateEntry = false;
                         SetCurrentState(newState);
-                        startticks = Environment.TickCount;
+                        startticks = TimeSource.TickCount;
                         if (evgot != null && evgot.GetType() == typeof(ResetScriptEvent))
                         {
                             evgot = null;
@@ -1224,11 +1215,9 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (executedStateEntry)
                     {
-                        exectime = Environment.TickCount - startticks;
-                        execfloat = exectime / 1000f;
                         lock (m_Lock)
                         {
-                            m_ExecutionTime += execfloat;
+                            m_ExecutionTime += TimeSource.TicksToSecs(TimeSource.TicksElapsed(TimeSource.TickCount, startticks));
                         }
                     }
                 }
@@ -1292,11 +1281,9 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (eventExecuted)
                     {
-                        exectime = Environment.TickCount - startticks;
-                        execfloat = exectime / 1000f;
                         lock (m_Lock)
                         {
-                            m_ExecutionTime += execfloat;
+                            m_ExecutionTime += TimeSource.TicksToSecs(TimeSource.TicksElapsed(TimeSource.TickCount, startticks));
                         }
                     }
                 }
