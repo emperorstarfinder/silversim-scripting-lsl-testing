@@ -76,16 +76,16 @@ namespace SilverSim.Scripting.Lsl
 
         private long m_ExecutionStartedAt = TimeSource.TickCount;
 
-        public ulong GetAndResetTime()
+        public double GetAndResetTime()
         {
             long newvalue = TimeSource.TickCount;
             long oldvalue = Interlocked.Exchange(ref m_ExecutionStartedAt, newvalue);
-            return (ulong)TimeSource.TicksElapsed(newvalue, oldvalue);
+            return (ulong)TimeSource.TicksElapsed(newvalue, oldvalue) / (double)TimeSource.Frequency;
         }
 
-        public ulong GetTime()
+        public double GetTime()
         {
-            return (ulong)TimeSource.TicksElapsed(TimeSource.TickCount, m_ExecutionStartedAt);
+            return (ulong)TimeSource.TicksElapsed(TimeSource.TickCount, m_ExecutionStartedAt) / (double)TimeSource.Frequency;
         }
 
         private bool m_HasTouchEvent;
