@@ -111,7 +111,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
         protected readonly string m_LocalDomain = "lsl.local";
 
-        private SceneList m_Scenes;
+        protected SceneList m_Scenes;
         private readonly RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>> m_Queues = new RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>>();
 
         public LocalEmailService(IConfig config)
