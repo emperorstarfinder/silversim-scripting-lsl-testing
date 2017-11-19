@@ -21,6 +21,7 @@
 
 #pragma warning disable RCS1029, IDE0018
 
+using Nini.Config;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
@@ -36,7 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 {
     [Description("Local Email Service")]
     [PluginName("LSL_Email_LocalOnlyService")]
-    public sealed class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
+    public class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
     {
         private class Email
         {
@@ -108,10 +109,15 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
-        private readonly string m_LocalDomain = "lsl.local";
+        protected readonly string m_LocalDomain = "lsl.local";
 
         private SceneList m_Scenes;
         private readonly RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>> m_Queues = new RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>>();
+
+        public LocalEmailService(IConfig config)
+        {
+            m_LocalDomain = config.GetString("LocalDomain", "lsl.local");
+        }
 
         public void Startup(ConfigurationLoader loader)
         {
@@ -196,6 +202,11 @@ namespace SilverSim.Scripting.Lsl.Api.Email
             }
         }
 
+        protected virtual void SendRemote(UUID fromSceneID, UUID fromObjectID, string toaddress, string subject, string body)
+        {
+            /* intentionally left emtpy */
+        }
+
         public void Send(UUID fromSceneID, UUID fromObjectID, string toaddress, string subject, string body)
         {
             string[] parts = toaddress.Split(new char[] { '@' }, 2);
@@ -206,6 +217,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
             if (parts[1].ToLowerInvariant() != m_LocalDomain)
             {
+                SendRemote(fromSceneID, fromObjectID, toaddress, subject, body);
                 return;
             }
 
@@ -213,6 +225,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
             if (!UUID.TryParse(parts[0], out primid))
             {
+                SendRemote(fromSceneID, fromObjectID, toaddress, subject, body);
                 return;
             }
 
@@ -230,6 +243,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
             if(part == null)
             {
+                SendRemote(fromSceneID, fromObjectID, toaddress, subject, body);
                 return;
             }
 
@@ -237,7 +251,7 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
             if(m_Queues.TryGetValue(sceneID, out qList))
             {
-                qList[primid].Put(new Email(fromObjectID + "@lsl.local", subject, body));
+                qList[primid].Put(new Email(fromObjectID + "@" + m_LocalDomain, subject, body));
             }
         }
     }
