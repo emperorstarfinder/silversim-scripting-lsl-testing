@@ -347,6 +347,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                         {
                             PermissionsKey = a.Owner
                         });
+                        scene.SendExperienceLog(a, instance.Part.ObjectGroup, SceneInterface.ExperienceLogType.AutoAccept, experienceid);
                     }
                     else
                     {
@@ -366,6 +367,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                         {
                             PermissionsKey = a.Owner
                         });
+                        scene.SendExperienceLog(a, instance.Part.ObjectGroup, SceneInterface.ExperienceLogType.AutoAccept, experienceid);
                     }
                 }
             }
