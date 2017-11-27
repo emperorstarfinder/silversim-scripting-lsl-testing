@@ -289,5 +289,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
         }
+
+        [APILevel(APIFlags.OSSL, "osStringStartsWith")]
+        public int StringStartsWith(ScriptInstance instance, string input, string startsWith) => input.StartsWith(startsWith).ToLSLBoolean();
+
+        [APILevel(APIFlags.OSSL, "osStringEndsWith")]
+        public int StringEndsWith(ScriptInstance instance, string input, string startsWith) => input.EndsWith(startsWith).ToLSLBoolean();
     }
 }
