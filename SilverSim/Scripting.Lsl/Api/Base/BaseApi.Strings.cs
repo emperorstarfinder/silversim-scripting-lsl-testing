@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llDeleteSubString")]
-        public string DeleteSubString(ScriptInstance instance, string src, int start, int end)
+        public string DeleteSubString(string src, int start, int end)
         {
             if (start < 0)
             {
@@ -70,16 +70,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llToLower")]
-        public string ToLower(ScriptInstance instance, string s) => s.ToLower();
+        public string ToLower(string s) => s.ToLower();
 
         [APILevel(APIFlags.LSL, "llToUpper")]
-        public string ToUpper(ScriptInstance instance, string s) => s.ToUpper();
+        public string ToUpper(string s) => s.ToUpper();
 
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
-        public string UnescapeURL(ScriptInstance instance, string url) => Uri.UnescapeDataString(url);
+        public string UnescapeURL(string url) => Uri.UnescapeDataString(url);
 
         [APILevel(APIFlags.LSL, "llEscapeURL")]
-        public string EscapeURL(ScriptInstance instance, string url) => Uri.EscapeDataString(url);
+        public string EscapeURL(string url) => Uri.EscapeDataString(url);
 
         [APILevel(APIFlags.LSL)]
         public const int STRING_TRIM_HEAD = 0x1;
@@ -91,7 +91,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         private static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
 
         [APILevel(APIFlags.LSL, "llStringTrim")]
-        public string StringTrim(ScriptInstance instance, string src, int type)
+        public string StringTrim(string src, int type)
         {
             switch(type & STRING_TRIM)
             {
@@ -114,7 +114,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llInsertString")]
-        public string InsertString(ScriptInstance instance, string dest, int index, string src)
+        public string InsertString(string dest, int index, string src)
         {
             if (index < 0)
             {
@@ -135,13 +135,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
-        public int StringLength(ScriptInstance instance, string src) => src.Length;
+        public int StringLength(string src) => src.Length;
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
-        public int SubStringIndex(ScriptInstance instance, string source, string pattern) => source.IndexOf(pattern);
+        public int SubStringIndex(string source, string pattern) => source.IndexOf(pattern);
 
         [APILevel(APIFlags.LSL, "llGetSubString")]
-        public string GetSubstring(ScriptInstance instance, string src, int start, int end)
+        public string GetSubstring(string src, int start, int end)
         {
             if(src.Length == 0)
             {
@@ -188,7 +188,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llMD5String")]
-        public string MD5String(ScriptInstance instance, string src, int nonce)
+        public string MD5String(string src, int nonce)
         {
             using (var md5 = MD5.Create())
             {
@@ -203,7 +203,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llSHA1String")]
-        public string SHA1String(ScriptInstance instance, string src)
+        public string SHA1String(string src)
         {
             using (var sha1 = SHA1.Create())
             {
@@ -218,7 +218,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osMatchString")]
-        public AnArray OsMatchString(ScriptInstance instance, string src, string pattern, int start)
+        public AnArray OsMatchString(string src, string pattern, int start)
         {
             var result = new AnArray();
 
@@ -254,7 +254,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osReplaceString")]
-        public string OsReplaceString(ScriptInstance instance, string src, string pattern, string replace, int count, int start)
+        public string OsReplaceString(string src, string pattern, string replace, int count, int start)
         {
             if (start < 0)
             {
@@ -271,29 +271,29 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osFormatString")]
-        public string OsFormatString(ScriptInstance instance, string fmt, AnArray list) => string.Format(fmt, list.ToArray());
+        public string OsFormatString(string fmt, AnArray list) => string.Format(fmt, list.ToArray());
 
         [APILevel(APIFlags.OSSL, "osRegexIsMatch")]
         public int RegexIsMatch(ScriptInstance instance, string input, string pattern)
         {
-            lock(instance)
+            try
             {
-                try
-                {
-                    return Regex.IsMatch(input, pattern) ? 1 : 0;
-                }
-                catch (Exception)
+                return Regex.IsMatch(input, pattern) ? 1 : 0;
+            }
+            catch (Exception)
+            {
+                lock (instance)
                 {
                     instance.ShoutError("Possible invalid regular expression detected.");
-                    return 0;
                 }
+                return 0;
             }
         }
 
         [APILevel(APIFlags.OSSL, "osStringStartsWith")]
-        public int StringStartsWith(ScriptInstance instance, string input, string startsWith) => input.StartsWith(startsWith).ToLSLBoolean();
+        public int StringStartsWith(string input, string startsWith) => input.StartsWith(startsWith).ToLSLBoolean();
 
         [APILevel(APIFlags.OSSL, "osStringEndsWith")]
-        public int StringEndsWith(ScriptInstance instance, string input, string endsWith) => input.EndsWith(endsWith).ToLSLBoolean();
+        public int StringEndsWith(string input, string endsWith) => input.EndsWith(endsWith).ToLSLBoolean();
     }
 }

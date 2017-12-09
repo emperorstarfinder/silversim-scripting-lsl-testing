@@ -63,122 +63,122 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         }
 
         [APIExtension(APIExtension.Properties, "osDrawResetTransform")]
-        public void DrawResetTransform(ScriptInstance instance, DynamicTextureDrawList drawList)
+        public void DrawResetTransform(DynamicTextureDrawList drawList)
         {
             drawList.Append(DrawResetTransform());
         }
 
         [APIExtension(APIExtension.Properties, "osDrawScaleTransform")]
-        public void DrawScaleTransform(ScriptInstance instance, DynamicTextureDrawList drawlist, double x, double y)
+        public void DrawScaleTransform(DynamicTextureDrawList drawlist, double x, double y)
         {
             drawlist.Append(DrawScaleTransform(x, y));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawTranslationTransform")]
-        public void DrawTranslationTransform(ScriptInstance instance, DynamicTextureDrawList drawlist, double x, double y)
+        public void DrawTranslationTransform(DynamicTextureDrawList drawlist, double x, double y)
         {
             drawlist.Append(DrawTranslationTransform(x, y));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawRotationTransform")]
-        public void DrawRotationTransform(ScriptInstance instance, DynamicTextureDrawList drawlist, double f)
+        public void DrawRotationTransform(DynamicTextureDrawList drawlist, double f)
         {
              drawlist.Append(DrawRotationTransform(f));
         }
 
         [APIExtension(APIExtension.Properties, "osMovePen")]
-        public void MovePen(ScriptInstance instance, DynamicTextureDrawList drawList, int x, int y)
+        public void MovePen(DynamicTextureDrawList drawList, int x, int y)
         {
             drawList.Append(MovePen(x, y));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawLine")]
-        public void DrawLine(ScriptInstance instance, DynamicTextureDrawList drawList, int startX, int startY, int endX, int endY)
+        public void DrawLine(DynamicTextureDrawList drawList, int startX, int startY, int endX, int endY)
         {
             drawList.Append(MovePen(startX, startY) + DrawLine(endX, endY));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawLine")]
-        public void DrawLine(ScriptInstance instance, DynamicTextureDrawList drawList, int endX, int endY)
+        public void DrawLine(DynamicTextureDrawList drawList, int endX, int endY)
         {
             drawList.Append(DrawLine(endX, endY));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawText")]
-        public void DrawText(ScriptInstance instance, DynamicTextureDrawList drawList, string text)
+        public void DrawText(DynamicTextureDrawList drawList, string text)
         {
             drawList.Append(DrawText(text));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawEllipse")]
-        public void DrawEllipse(ScriptInstance instance, DynamicTextureDrawList drawList, int width, int height)
+        public void DrawEllipse(DynamicTextureDrawList drawList, int width, int height)
         {
             drawList.Append(DrawEllipse(width, height));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawFilledEllipse")]
-        public void DrawFilledEllipse(ScriptInstance instance, DynamicTextureDrawList drawList, int width, int height)
+        public void DrawFilledEllipse(DynamicTextureDrawList drawList, int width, int height)
         {
             drawList.Append(DrawFilledEllipse(width, height));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawRectangle")]
-        public void DrawRectangle(ScriptInstance instance, DynamicTextureDrawList drawList, int width, int height)
+        public void DrawRectangle(DynamicTextureDrawList drawList, int width, int height)
         {
             drawList.Append(DrawRectangle(width, height));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawFilledRectangle")]
-        public void DrawFilledRectangle(ScriptInstance instance, DynamicTextureDrawList drawList, int width, int height)
+        public void DrawFilledRectangle(DynamicTextureDrawList drawList, int width, int height)
         {
             drawList.Append(DrawFilledRectangle(width, height));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawFilledPolygon")]
-        public void DrawFilledPolygon(ScriptInstance instance, DynamicTextureDrawList drawList, AnArray x, AnArray y)
+        public void DrawFilledPolygon(DynamicTextureDrawList drawList, AnArray x, AnArray y)
         {
             drawList.Append(DrawFilledPolygon(x, y));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawPolygon")]
-        public void DrawPolygon(ScriptInstance instance, DynamicTextureDrawList drawList, AnArray x, AnArray y)
+        public void DrawPolygon(DynamicTextureDrawList drawList, AnArray x, AnArray y)
         {
             drawList.Append(DrawPolygon(x, y));
         }
 
         [APIExtension(APIExtension.Properties, "osSetFontSize")]
-        public void SetFontSize(ScriptInstance instance, DynamicTextureDrawList drawList, int fontSize)
+        public void SetFontSize(DynamicTextureDrawList drawList, int fontSize)
         {
             drawList.Append(SetFontSize(fontSize));
         }
 
         [APIExtension(APIExtension.Properties, "osSetFontName")]
-        public void SetFontName(ScriptInstance instance, DynamicTextureDrawList drawList, string fontName)
+        public void SetFontName(DynamicTextureDrawList drawList, string fontName)
         {
             drawList.Append(SetFontName(fontName));
         }
 
         [APIExtension(APIExtension.Properties, "osSetPenSize")]
-        public void SetPenSize(ScriptInstance instance, DynamicTextureDrawList drawList, int penSize)
+        public void SetPenSize(DynamicTextureDrawList drawList, int penSize)
         {
             drawList.Append(SetPenSize(penSize));
         }
 
         [APIExtension(APIExtension.Properties, "osSetPenColor")]
         [APIExtension(APIExtension.Properties, "osSetPenColour")]
-        public void SetPenColor(ScriptInstance instance, DynamicTextureDrawList drawList, string color)
+        public void SetPenColor(DynamicTextureDrawList drawList, string color)
         {
             drawList.Append(SetPenColor(color));
         }
 
         [APIExtension(APIExtension.Properties, "osSetPenCap")]
-        public void SetPenCap(ScriptInstance instance, DynamicTextureDrawList drawList, string direction, string type)
+        public void SetPenCap(DynamicTextureDrawList drawList, string direction, string type)
         {
             drawList.Append(SetPenCap(direction, type));
         }
 
         [APIExtension(APIExtension.Properties, "osDrawImage")]
-        public void DrawImage(ScriptInstance instance, DynamicTextureDrawList drawList, int width, int height, string imageUrl)
+        public void DrawImage(DynamicTextureDrawList drawList, int width, int height, string imageUrl)
         {
             drawList.Append(DrawImage(width, height, imageUrl));
         }

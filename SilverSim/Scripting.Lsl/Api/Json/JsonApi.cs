@@ -187,7 +187,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJsonGetValue")]
-        public string JsonGetValue(ScriptInstance instance, string json, AnArray specifiers)
+        public string JsonGetValue(string json, AnArray specifiers)
         {
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
@@ -213,7 +213,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJsonValueType")]
-        public string JsonValueType(ScriptInstance instance, string json, AnArray specifiers)
+        public string JsonValueType(string json, AnArray specifiers)
         {
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
@@ -253,7 +253,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
         #region JSON List conversion
         [APILevel(APIFlags.LSL, "llList2Json")]
-        public string List2Json(ScriptInstance instance, string type, AnArray values)
+        public string List2Json(string type, AnArray values)
         {
             if (type == JSON_ARRAY)
             {
@@ -280,7 +280,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJson2List")]
-        public AnArray Json2List(ScriptInstance instance, string src)
+        public AnArray Json2List(string src)
         {
             IValue jsonData;
             var res = new AnArray();
@@ -418,7 +418,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJsonSetValue")]
-        public string JsonSetValue(ScriptInstance instance, string json, AnArray specifiers, string value)
+        public string JsonSetValue(string json, AnArray specifiers, string value)
         {
             IValue jsonData;
             ILevelAssignment jsonLevel = null;

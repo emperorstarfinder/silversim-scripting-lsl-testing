@@ -988,6 +988,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         private static readonly ColorSet Colors = new ColorSet();
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Color")]
-        public ColorSet GetColors(ScriptInstance instance) => Colors;
+        public ColorSet GetColors() => Colors;
     }
 }

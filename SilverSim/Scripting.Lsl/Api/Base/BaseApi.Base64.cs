@@ -32,7 +32,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llIntegerToBase64")]
-        public string IntegerToBase64(ScriptInstance instance, int number)
+        public string IntegerToBase64(int number)
         {
             byte[] b = BitConverter.GetBytes(number);
             if (BitConverter.IsLittleEndian)
@@ -43,7 +43,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToInteger")]
-        public int Base64ToInteger(ScriptInstance instance, string s)
+        public int Base64ToInteger(string s)
         {
             if (s.Length > 8)
             {
@@ -59,14 +59,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringToBase64")]
-        public string StringToBase64(ScriptInstance instance, string str)
+        public string StringToBase64(string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
             return Convert.ToBase64String(b);
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToString")]
-        public string Base64ToString(ScriptInstance instance, string str)
+        public string Base64ToString(string str)
         {
             byte[] b = Convert.FromBase64String(str);
             return Encoding.UTF8.GetString(b);
@@ -74,7 +74,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llXorBase64")]
         [APILevel(APIFlags.LSL, "llXorBase64StringsCorrect")]
-        public string XorBase64(ScriptInstance instance, string str1, string str2)
+        public string XorBase64(string str1, string str2)
         {
             byte[] a = Convert.FromBase64String(str1);
             byte[] b = Convert.FromBase64String(str2);
@@ -89,7 +89,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llXorBase64Strings")]
         [ForcedSleep(0.3)]
-        public string XorBase64Strings(ScriptInstance instance, string str1, string str2) =>
-            XorBase64(instance, str1, str2);
+        public string XorBase64Strings(string str1, string str2) =>
+            XorBase64(str1, str2);
     }
 }

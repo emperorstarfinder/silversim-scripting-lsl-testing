@@ -571,7 +571,7 @@ namespace SilverSim.Scripting.Lsl
                     break;
 
                 case APIUseAsEnum.Getter:
-                    if (m.GetParameters().Length != 1 || m.ReturnType == typeof(void))
+                    if (m.GetParameters().Length > 1 || m.ReturnType == typeof(void))
                     {
                         m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid getter.",
                             m.Name,
@@ -604,7 +604,7 @@ namespace SilverSim.Scripting.Lsl
                     break;
 
                 case APIUseAsEnum.Setter:
-                    if (m.GetParameters().Length != 2 || m.ReturnType != typeof(void))
+                    if (m.GetParameters().Length > 2 || m.GetParameters().Length < 1  || m.ReturnType != typeof(void))
                     {
                         m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid setter.",
                             m.Name,
@@ -688,6 +688,64 @@ namespace SilverSim.Scripting.Lsl
                                 foreach(KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                                 {
                                     if((kvp.Key & funcNameAttr.Flags) != 0)
+                                    {
+                                        CollectApiAddMethod(kvp.Value, funcNameAttr, api, m);
+                                    }
+                                }
+                            }
+                            foreach (APIExtensionAttribute funcNameAttr in apiExtensionAttrs)
+                            {
+                                ApiInfo apiInfo;
+                                string extensionName = funcNameAttr.Extension.ToLower();
+                                if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                                {
+                                    apiInfo = new ApiInfo();
+                                    m_ApiExtensions.Add(extensionName, apiInfo);
+                                }
+
+                                CollectApiAddMethod(apiInfo, funcNameAttr, api, m);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        /* validate parameters */
+                        bool methodValid = true;
+                        if ((m.Attributes & MethodAttributes.Static) != 0)
+                        {
+                            methodValid = false;
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Method is declared static.",
+                                m.Name,
+                                m.DeclaringType.FullName);
+                        }
+                        for (int i = 0; i < pi.Length; ++i)
+                        {
+                            if (!IsValidType(pi[i].ParameterType))
+                            {
+                                methodValid = false;
+                                m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Parameter '{2}' does not have LSL compatible type '{3}'.",
+                                    m.Name,
+                                    m.DeclaringType.FullName,
+                                    pi[i].Name,
+                                    pi[i].ParameterType.FullName);
+                            }
+                        }
+                        if (!IsValidType(m.ReturnType))
+                        {
+                            methodValid = false;
+                            m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Return value does not have LSL compatible type '{2}'.",
+                                m.Name,
+                                m.DeclaringType.FullName,
+                                m.ReturnType.FullName);
+                        }
+
+                        if (methodValid)
+                        {
+                            foreach (APILevelAttribute funcNameAttr in funcNameAttrs)
+                            {
+                                foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+                                {
+                                    if ((kvp.Key & funcNameAttr.Flags) != 0)
                                     {
                                         CollectApiAddMethod(kvp.Value, funcNameAttr, api, m);
                                     }

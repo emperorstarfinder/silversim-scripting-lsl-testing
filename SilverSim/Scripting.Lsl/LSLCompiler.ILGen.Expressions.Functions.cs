@@ -137,9 +137,37 @@ namespace SilverSim.Scripting.Lsl
                     foreach (ApiMethodInfo method in methods)
                     {
                         ParameterInfo[] pi = method.Method.GetParameters();
-                        if (pi.Length - 1 == functionTree.SubTree.Count)
+                        int providedCount = functionTree.SubTree.Count;
+                        int usingCount = pi.Length;
+                        bool methodValid = true;
+                        if (usingCount == 0 && providedCount == 0)
                         {
-                            bool methodValid = true;
+                            if (!compileState.IsValidType(method.Method.ReturnType))
+                            {
+                                methodValid = false;
+                                m_Log.ErrorFormat("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name);
+                            }
+                        }
+                        else if(usingCount == providedCount && pi[0].ParameterType != typeof(ScriptInstance))
+                        {
+                            if (!compileState.IsValidType(method.Method.ReturnType))
+                            {
+                                methodValid = false;
+                                m_Log.ErrorFormat("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name);
+                            }
+
+                            for (int i = 0; i < providedCount; ++i)
+                            {
+                                if (!compileState.IsValidType(pi[i].ParameterType))
+                                {
+                                    m_Log.ErrorFormat("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
+                                        pi[i].Name, pi[i].ParameterType.FullName, functionTree.Entry);
+                                    methodValid = false;
+                                }
+                            }
+                        }
+                        else if (usingCount - 1 == providedCount && pi[0].ParameterType == typeof(ScriptInstance))
+                        {
 
                             if (!compileState.IsValidType(method.Method.ReturnType))
                             {
@@ -147,7 +175,7 @@ namespace SilverSim.Scripting.Lsl
                                 m_Log.ErrorFormat("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.Method.Name, method.Method.ReturnType.Name);
                             }
 
-                            for (int i = 0; i < functionTree.SubTree.Count; ++i)
+                            for (int i = 0; i < providedCount; ++i)
                             {
                                 if (!compileState.IsValidType(pi[i + 1].ParameterType))
                                 {
@@ -156,11 +184,15 @@ namespace SilverSim.Scripting.Lsl
                                     methodValid = false;
                                 }
                             }
+                        }
+                        else
+                        {
+                            methodValid = false;
+                        }
 
-                            if (methodValid)
-                            {
-                                m_SelectedFunctions.Add(method);
-                            }
+                        if (methodValid)
+                        {
+                            m_SelectedFunctions.Add(method);
                         }
                     }
                 }
@@ -210,13 +242,28 @@ namespace SilverSim.Scripting.Lsl
                 {
                     var methodInfo = (ApiMethodInfo)o;
                     ParameterInfo[] pi = methodInfo.Method.GetParameters();
-                    for (int i = 0; i < m_Parameters.Count; ++i)
+                    if (pi.Length > 0 && pi[0].ParameterType == typeof(ScriptInstance))
                     {
-                        Type sourceType = m_Parameters[i].ParameterType;
-                        Type destType = pi[i + 1].ParameterType;
-                        if(sourceType != destType)
+                        for (int i = 0; i < m_Parameters.Count; ++i)
                         {
-                            return false;
+                            Type sourceType = m_Parameters[i].ParameterType;
+                            Type destType = pi[i + 1].ParameterType;
+                            if (sourceType != destType)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < m_Parameters.Count; ++i)
+                        {
+                            Type sourceType = m_Parameters[i].ParameterType;
+                            Type destType = pi[i].ParameterType;
+                            if (sourceType != destType)
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -250,20 +297,42 @@ namespace SilverSim.Scripting.Lsl
                 {
                     var methodInfo = (ApiMethodInfo)o;
                     ParameterInfo[] pi = methodInfo.Method.GetParameters();
-                    for (int i = 0; i < m_Parameters.Count; ++i)
+                    if (pi.Length > 0 && pi[0].ParameterType == typeof(ScriptInstance))
                     {
-                        Type sourceType = m_Parameters[i].ParameterType;
-                        Type destType = pi[i + 1].ParameterType;
-                        if (sourceType != destType)
+                        for (int i = 0; i < m_Parameters.Count; ++i)
                         {
-                            if(!IsImplicitlyCastable(compileState, destType, sourceType))
+                            Type sourceType = m_Parameters[i].ParameterType;
+                            Type destType = pi[i + 1].ParameterType;
+                            if (sourceType != destType)
                             {
-                                return false;
+                                if (!IsImplicitlyCastable(compileState, destType, sourceType))
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                ++matchedCount;
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        for (int i = 0; i < m_Parameters.Count; ++i)
                         {
-                            ++matchedCount;
+                            Type sourceType = m_Parameters[i].ParameterType;
+                            Type destType = pi[i].ParameterType;
+                            if (sourceType != destType)
+                            {
+                                if (!IsImplicitlyCastable(compileState, destType, sourceType))
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                ++matchedCount;
+                            }
                         }
                     }
                 }
@@ -381,19 +450,31 @@ namespace SilverSim.Scripting.Lsl
                     /* load ScriptApi reference */
                     compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
 
-                    /* load ScriptInstance reference */
-                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                    if (compileState.StateTypeBuilder != null)
-                    {
-                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
-                    }
-
-                    /* load actual parameters */
                     ParameterInfo[] parameters = methodInfo.GetParameters();
-                    for (int i = 0; i < lbs.Length; ++i)
+                    if (parameters.Length > 0 && parameters[0].ParameterType == typeof(ScriptInstance))
                     {
-                        compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
-                        ProcessImplicitCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                        /* load ScriptInstance reference */
+                        compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                        if (compileState.StateTypeBuilder != null)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                        }
+
+                        /* load actual parameters */
+                        for (int i = 0; i < lbs.Length; ++i)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
+                            ProcessImplicitCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                        }
+                    }
+                    else
+                    {
+                        /* load actual parameters */
+                        for (int i = 0; i < lbs.Length; ++i)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
+                            ProcessImplicitCasts(compileState, parameters[i].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                        }
                     }
 
                     GenIncCallDepthCount(compileState);

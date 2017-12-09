@@ -477,16 +477,14 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         [APILevel(APIFlags.LSL, "llSetPrimURL")]
 #pragma warning disable RCS1163 // Unused parameter.
-        public void SetPrimURL(ScriptInstance instance, string url)
+        public void SetPrimURL(string url)
 #pragma warning restore RCS1163 // Unused parameter.
         {
             /* noop function */
         }
 
         [APILevel(APIFlags.LSL, "llRefreshPrimURL")]
-#pragma warning disable RCS1163 // Unused parameter.
-        public void RefreshPrimURL(ScriptInstance instance)
-#pragma warning restore RCS1163 // Unused parameter.
+       public void RefreshPrimURL()
         {
             /* noop function */
         }

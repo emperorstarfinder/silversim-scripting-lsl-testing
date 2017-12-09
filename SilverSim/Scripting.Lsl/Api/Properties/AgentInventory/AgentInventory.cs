@@ -468,7 +468,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
             public AgentInventoryFolder ParentFolder => With((item) => new AgentInventoryFolder(m_Instance, InventoryService, InventoryOwner, item.ParentFolderID, IsLibrary), new AgentInventoryFolder());
 
             public int Version => With((folder) => folder.Version, 0);
-            public int DefaultType => (int)With((folder) => folder.DefaultType, Types.Asset.AssetType.Unknown);
+            public int DefaultType => (int)With((folder) => folder.DefaultType, AssetType.Unknown);
             public AgentInventoryChildFolderAccessor ChildFolders => new AgentInventoryChildFolderAccessor(m_Instance, InventoryService, InventoryOwner, Key, IsLibrary);
             public AgentInventoryChildItemAccessor ChildItems => new AgentInventoryChildItemAccessor(m_Instance, InventoryService, InventoryOwner, Key, IsLibrary);
         }

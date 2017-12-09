@@ -83,48 +83,48 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         private string DrawImage(int width, int height, string imageUrl) => width.ToString() + "," + height.ToString() + "," + imageUrl + ";";
 
         [APILevel(APIFlags.OSSL, "osDrawResetTransform")]
-        public string DrawResetTransform(ScriptInstance instance, string drawList) => drawList + DrawResetTransform();
+        public string DrawResetTransform(string drawList) => drawList + DrawResetTransform();
         [APILevel(APIFlags.OSSL, "osDrawScaleTransform")]
-        public string DrawScaleTransform(ScriptInstance instance, string drawlist, double x, double y) => drawlist + DrawScaleTransform(x, y);
+        public string DrawScaleTransform(string drawlist, double x, double y) => drawlist + DrawScaleTransform(x, y);
         [APILevel(APIFlags.OSSL, "osDrawTranslationTransform")]
-        public string DrawTranslationTransform(ScriptInstance instance, string drawlist, double x, double y) => drawlist + DrawTranslationTransform(x, y);
+        public string DrawTranslationTransform(string drawlist, double x, double y) => drawlist + DrawTranslationTransform(x, y);
         [APILevel(APIFlags.OSSL, "osDrawRotationTransform")]
-        public string DrawRotationTransform(ScriptInstance instance, string drawlist, double f) => drawlist + DrawRotationTransform(f);
+        public string DrawRotationTransform(string drawlist, double f) => drawlist + DrawRotationTransform(f);
         [APILevel(APIFlags.OSSL, "osMovePen")]
-        public string MovePen(ScriptInstance instance, string drawList, int x, int y) => drawList + MovePen(x, y);
+        public string MovePen(string drawList, int x, int y) => drawList + MovePen(x, y);
         [APILevel(APIFlags.OSSL, "osDrawLine")]
-        public string DrawLine(ScriptInstance instance, string drawList, int startX, int startY, int endX, int endY) =>
+        public string DrawLine(string drawList, int startX, int startY, int endX, int endY) =>
             drawList + MovePen(startX, startY) + DrawLine(endX, endY);
         [APILevel(APIFlags.OSSL, "osDrawLine")]
-        public string DrawLine(ScriptInstance instance, string drawList, int endX, int endY) => drawList + DrawLine(endX, endY);
+        public string DrawLine(string drawList, int endX, int endY) => drawList + DrawLine(endX, endY);
         [APILevel(APIFlags.OSSL, "osDrawText")]
-        public string DrawText(ScriptInstance instance, string drawList, string text) => drawList + DrawText(text);
+        public string DrawText(string drawList, string text) => drawList + DrawText(text);
         [APILevel(APIFlags.OSSL, "osDrawEllipse")]
-        public string DrawEllipse(ScriptInstance instance, string drawList, int width, int height) => drawList + DrawEllipse(width, height);
+        public string DrawEllipse(string drawList, int width, int height) => drawList + DrawEllipse(width, height);
         [APILevel(APIFlags.OSSL, "osDrawFilledEllipse")]
-        public string DrawFilledEllipse(ScriptInstance instance, string drawList, int width, int height) => drawList + DrawFilledEllipse(width, height);
+        public string DrawFilledEllipse(string drawList, int width, int height) => drawList + DrawFilledEllipse(width, height);
         [APILevel(APIFlags.OSSL, "osDrawRectangle")]
-        public string DrawRectangle(ScriptInstance instance, string drawList, int width, int height) => drawList + DrawRectangle(width, height);
+        public string DrawRectangle(string drawList, int width, int height) => drawList + DrawRectangle(width, height);
         [APILevel(APIFlags.OSSL, "osDrawFilledRectangle")]
-        public string DrawFilledRectangle(ScriptInstance instance, string drawList, int width, int height) => drawList + DrawFilledRectangle(width, height);
+        public string DrawFilledRectangle(string drawList, int width, int height) => drawList + DrawFilledRectangle(width, height);
         [APILevel(APIFlags.OSSL, "osDrawFilledPolygon")]
-        public string DrawFilledPolygon(ScriptInstance instance, string drawList, AnArray x, AnArray y) =>
+        public string DrawFilledPolygon(string drawList, AnArray x, AnArray y) =>
             drawList + DrawFilledPolygon(x, y);
         [APILevel(APIFlags.OSSL, "osDrawPolygon")]
-        public string DrawPolygon(ScriptInstance instance, string drawList, AnArray x, AnArray y) =>
+        public string DrawPolygon(string drawList, AnArray x, AnArray y) =>
             drawList + DrawPolygon(x, y);
         [APILevel(APIFlags.OSSL, "osSetFontSize")]
-        public string SetFontSize(ScriptInstance instance, string drawList, int fontSize) => drawList + SetFontSize(fontSize);
+        public string SetFontSize(string drawList, int fontSize) => drawList + SetFontSize(fontSize);
         [APILevel(APIFlags.OSSL, "osSetFontName")]
-        public string SetFontName(ScriptInstance instance, string drawList, string fontName) => drawList + SetFontName(fontName);
+        public string SetFontName(string drawList, string fontName) => drawList + SetFontName(fontName);
         [APILevel(APIFlags.OSSL, "osSetPenSize")]
-        public string SetPenSize(ScriptInstance instance, string drawList, int penSize) => drawList + SetPenSize(penSize);
+        public string SetPenSize(string drawList, int penSize) => drawList + SetPenSize(penSize);
         [APILevel(APIFlags.OSSL, "osSetPenColor")]
         [APILevel(APIFlags.OSSL, "osSetPenColour")]
-        public string SetPenColor(ScriptInstance instance, string drawList, string color) => drawList + SetPenColor(color);
+        public string SetPenColor(string drawList, string color) => drawList + SetPenColor(color);
         [APILevel(APIFlags.OSSL, "osSetPenCap")]
-        public string SetPenCap(ScriptInstance instance, string drawList, string direction, string type) => drawList + SetPenCap(direction, type);
+        public string SetPenCap(string drawList, string direction, string type) => drawList + SetPenCap(direction, type);
         [APILevel(APIFlags.OSSL, "osDrawImage")]
-        public string DrawImage(ScriptInstance instance, string drawList, int width, int height, string imageUrl) => drawList + DrawImage(width, height, imageUrl);
+        public string DrawImage(string drawList, int width, int height, string imageUrl) => drawList + DrawImage(width, height, imageUrl);
     }
 }

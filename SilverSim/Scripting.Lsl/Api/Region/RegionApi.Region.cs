@@ -91,7 +91,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if (scene.IsSimConsoleAllowed(instance.Part.Owner))
                 {
-                    ConsoleCommandTTY tty = new ConsoleCommandTTY();
+                    var tty = new ConsoleCommandTTY();
                     List<string> args = tty.GetCmdLine(cmd);
                     m_Commands.ExecuteCommand(args, tty, scene.ID);
                     return tty.OutputBuffer;

@@ -61,49 +61,49 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetString")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, string s)
+        public void HashtableSet(Hashtable table, string key, string s)
         {
             table[key] = new AString(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetList")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, AnArray s)
+        public void HashtableSet(Hashtable table, string key, AnArray s)
         {
             table[key] = s;
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetInteger")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, int s)
+        public void HashtableSet(Hashtable table, string key, int s)
         {
             table[key] = new Integer(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetLong")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, long s)
+        public void HashtableSet(Hashtable table, string key, long s)
         {
             table[key] = new LongInteger(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetFloat")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, double s)
+        public void HashtableSet(Hashtable table, string key, double s)
         {
             table[key] = new Real(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetVector")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, Vector3 s)
+        public void HashtableSet(Hashtable table, string key, Vector3 s)
         {
             table[key] = s;
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetQuaternion")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, Quaternion s)
+        public void HashtableSet(Hashtable table, string key, Quaternion s)
         {
             table[key] = s;
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetKey")]
-        public void HashtableSet(ScriptInstance instance, Hashtable table, string key, LSLKey s)
+        public void HashtableSet(Hashtable table, string key, LSLKey s)
         {
             table[key] = s;
         }
@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         {
             lock(instance)
             {
-                Script script = (Script)instance;
+                var script = (Script)instance;
                 IValue val;
                 if(!table.TryGetValue(key, out val))
                 {
@@ -147,7 +147,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Vector")]
-        public Vector3 Hash2Vector(ScriptInstance instance, Hashtable table, string key)
+        public Vector3 Hash2Vector(Hashtable table, string key)
         {
             IValue v;
             if(!table.TryGetValue(key, out v))
@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Rot")]
-        public Quaternion Hash2Rot(ScriptInstance instance, Hashtable table, string key)
+        public Quaternion Hash2Rot(Hashtable table, string key)
         {
             IValue v;
             if (!table.TryGetValue(key, out v))
@@ -185,7 +185,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Float")]
-        public double Hash2Float(ScriptInstance instance, Hashtable table, string key)
+        public double Hash2Float(Hashtable table, string key)
         {
             IValue v;
             if(!table.TryGetValue(key, out v))
@@ -204,7 +204,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2List")]
-        public AnArray Hash2List(ScriptInstance instance, Hashtable table, string key)
+        public AnArray Hash2List(Hashtable table, string key)
         {
             IValue v;
             if (!table.TryGetValue(key, out v))
@@ -226,7 +226,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Integer")]
-        public int Hash2Int(ScriptInstance instance, Hashtable table, string key)
+        public int Hash2Int(Hashtable table, string key)
         {
             IValue v;
             if(!table.TryGetValue(key, out v))
@@ -255,7 +255,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Long")]
-        public long Hash2Long(ScriptInstance instance, Hashtable table, string key)
+        public long Hash2Long(Hashtable table, string key)
         {
             IValue v;
             if (!table.TryGetValue(key, out v))

@@ -30,13 +30,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llGetTimestamp")]
-        public string GetTimestamp(ScriptInstance instance) => DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+        public string GetTimestamp() => DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 
         [APILevel(APIFlags.LSL, "llGetUnixTime")]
-        public int GetUnixTime(ScriptInstance instance) => (int)Date.GetUnixTime();
+        public int GetUnixTime() => (int)Date.GetUnixTime();
 
         [APILevel(APIFlags.LSL, "llGetGMTclock")]
-        public double GetGMTclock(ScriptInstance instance) => Date.GetUnixTime();
+        public double GetGMTclock() => Date.GetUnixTime();
 
         [APILevel(APIFlags.LSL, "llGetTimeOfDay")]
         public double GetTimeOfDay(ScriptInstance instance)
@@ -48,13 +48,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetWallclock")]
-        public double GetWallclock(ScriptInstance instance) => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "Pacific Standard Time").TimeOfDay.TotalMilliseconds / 1000;
+        public double GetWallclock() => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "Pacific Standard Time").TimeOfDay.TotalMilliseconds / 1000;
 
         [APILevel(APIFlags.LSL, "llGetDate")]
-        public string GetDate(ScriptInstance instance) => DateTime.UtcNow.ToString("yyyy-MM-dd");
+        public string GetDate() => DateTime.UtcNow.ToString("yyyy-MM-dd");
 
         [APILevel(APIFlags.OSSL, "osUnixTimeToTimestamp")]
-        public string OsUnixTimeToTimestamp(ScriptInstance instance, int time)
+        public string OsUnixTimeToTimestamp(int time)
         {
             const long baseTicks = 621355968000000000;
             const long tickResolution = 10000000;

@@ -477,7 +477,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llDeleteSubList")]
         [Description("Returns a list that is a copy of src but with the slice from start to end removed.")]
-        public AnArray DeleteSubList(ScriptInstance instance,
+        public AnArray DeleteSubList(
             [Description("source")]
             AnArray src,
             [Description("start index")]
@@ -542,7 +542,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llList2ListStrided")]
         [Description("Returns a list of all the entries in the strided list whose index is a multiple of stride in the range start to end.")]
-        public AnArray List2ListStrided(ScriptInstance instance,
+        public AnArray List2ListStrided(
             AnArray src,
             [Description("start index")]
             int start,
@@ -658,7 +658,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llList2List")]
-        public AnArray List2List(ScriptInstance instance, AnArray src, int start, int end)
+        public AnArray List2List(AnArray src, int start, int end)
         {
             if (start < 0)
             {
@@ -728,7 +728,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llList2Float")]
-        public double List2Float(ScriptInstance instance, AnArray src, int index)
+        public double List2Float(AnArray src, int index)
         {
             if(index < 0)
             {
@@ -744,7 +744,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llListInsertList")]
-        public AnArray ListInsertList(ScriptInstance instance, AnArray dest, AnArray src, int index)
+        public AnArray ListInsertList(AnArray dest, AnArray src, int index)
         {
             AnArray pref;
             AnArray suff;
@@ -760,10 +760,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if (index != 0)
             {
-                pref = List2List(instance, dest, 0, index - 1);
+                pref = List2List(dest, 0, index - 1);
                 if (index < dest.Count)
                 {
-                    suff = List2List(instance, dest, index, -1);
+                    suff = List2List(dest, index, -1);
                     return pref + src + suff;
                 }
                 else
@@ -775,7 +775,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (index < dest.Count)
                 {
-                    suff = List2List(instance, dest, index, -1);
+                    suff = List2List(dest, index, -1);
                     return src + suff;
                 }
                 else
@@ -787,7 +787,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llListFindList")]
         [Description("Returns the integer index of the first instance of test in src.")]
-        public int ListFindList(ScriptInstance instance,
+        public int ListFindList(
             [Description("what to search in (haystack)")]
             AnArray src,
             [Description("what to search for (needle)")]
@@ -849,7 +849,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APIExtension(APIExtension.LongInteger, "llList2Long")]
         [Description("Returns an integer that is at index in src")]
-        public long List2Long(ScriptInstance instance,
+        public long List2Long(
             [Description("List containing the element of interest")]
             AnArray src,
             [Description("Index of the element of interest.")]
@@ -893,7 +893,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llList2Integer")]
         [Description("Returns an integer that is at index in src")]
-        public int List2Integer(ScriptInstance instance,
+        public int List2Integer(
             [Description("List containing the element of interest")]
             AnArray src,
             [Description("Index of the element of interest.")]
@@ -975,7 +975,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llList2Rot")]
         [Description("Returns a rotation that is at index in src")]
-        public Quaternion List2Rot(ScriptInstance instance,
+        public Quaternion List2Rot(
             [Description("List containing the element of interest")]
             AnArray src,
             [Description("Index of the element of interest.")]
@@ -1057,7 +1057,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llList2Vector")]
         [Description("Returns a vector that is at index in src")]
-        public Vector3 List2Vector(ScriptInstance instance,
+        public Vector3 List2Vector(
             [Description("List containing the element of interest")]
             AnArray src,
             [Description("Index of the element of interest.")]
@@ -1139,7 +1139,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llGetListEntryType")]
         [Description("Returns the type (an integer) of the entry at index in src.")]
-        public int GetListEntryType(ScriptInstance instance,
+        public int GetListEntryType(
             [Description("List containing the element of interest")]
             AnArray src,
             [Description("Index of the element of interest")]
@@ -1160,9 +1160,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llGetListLength")]
         [Description("Returns an integer that is the number of elements in the list src")]
-        public int GetListLength(ScriptInstance instance, AnArray src) => src.Count;
+        public int GetListLength(AnArray src) => src.Count;
 
-        private AnArray ParseString2List(ScriptInstance instance, string src, AnArray separators, AnArray spacers, bool keepNulls)
+        private AnArray ParseString2List(string src, AnArray separators, AnArray spacers, bool keepNulls)
         {
             var res = new AnArray();
             string value = null;
@@ -1268,27 +1268,27 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llParseString2List")]
         [Description("Returns a list that is src broken into a list of strings, discarding separators, keeping spacers, discards any null (empty string) values generated.")]
-        public AnArray ParseString2List(ScriptInstance instance,
+        public AnArray ParseString2List(
             [Description("source string")]
             string src,
             [Description("separators to be discarded")]
             AnArray separators,
             [Description("spacers to be kept")]
-            AnArray spacers) => ParseString2List(instance, src, separators, spacers, false);
+            AnArray spacers) => ParseString2List(src, separators, spacers, false);
 
         [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
         [Description("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
-        public AnArray ParseStringKeepNulls(ScriptInstance instance,
+        public AnArray ParseStringKeepNulls(
             [Description("source string")]
             string src,
             [Description("separators to be discarded")]
             AnArray separators,
             [Description("spacers to be kept")]
-            AnArray spacers) => ParseString2List(instance, src, separators, spacers, true);
+            AnArray spacers) => ParseString2List(src, separators, spacers, true);
 
         [APILevel(APIFlags.LSL, "llCSV2List")]
         [Description("This function takes a string of values separated by commas, and turns it into a list.")]
-        public AnArray CSV2List(ScriptInstance instance, string src)
+        public AnArray CSV2List(string src)
         {
             bool wsconsume = true;
             bool inbracket = false;
@@ -1344,7 +1344,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llListReplaceList")]
         [Description("This function takes a string of values separated by commas, and turns it into a list.")]
-        public AnArray ListReplaceList(ScriptInstance instance, AnArray dest, AnArray src, int start, int end)
+        public AnArray ListReplaceList(AnArray dest, AnArray src, int start, int end)
         {
             AnArray pref;
 
@@ -1363,28 +1363,28 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (start > 0)
                 {
-                    pref = List2List(instance, dest, 0, start - 1);
+                    pref = List2List(dest, 0, start - 1);
 
                     return (end + 1 < dest.Count) ?
-                        (pref + src + List2List(instance, dest, end + 1, -1)) :
+                        (pref + src + List2List(dest, end + 1, -1)) :
                         (pref + src);
                 }
                 else if (start == 0)
                 {
                     return (end + 1 < dest.Count) ?
-                        (src + List2List(instance, dest, end + 1, -1)) :
+                        (src + List2List(dest, end + 1, -1)) :
                         src;
                 }
                 else
                 {
                     return (end + 1 < dest.Count) ?
-                        List2List(instance, dest, end + 1, -1) :
+                        List2List(dest, end + 1, -1) :
                         new AnArray();
                 }
             }
             else
             {
-                return List2List(instance, dest, end + 1, start - 1) + src;
+                return List2List(dest, end + 1, start - 1) + src;
             }
         }
 
@@ -1427,7 +1427,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llListSort")]
         [Description("Returns a list that is src sorted by stride.")]
-        public AnArray ListSort(ScriptInstance instance,
+        public AnArray ListSort(
             [Description("List to be sorted")]
             AnArray src,
             [Description("number of entries per stride. If it is less than 1, it is assumed to be 1.")]
@@ -1498,7 +1498,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llListRandomize")]
-        public AnArray ListRandomize(ScriptInstance instance, AnArray src, int stride)
+        public AnArray ListRandomize(AnArray src, int stride)
         {
             /* From LSL wiki:
              * When you want to randomize the position of every list element, specify a stride of 1. This is perhaps the setting most used.
@@ -1582,7 +1582,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int LIST_STAT_HARMONIC_MEAN = 100;
 
         [APILevel(APIFlags.LSL, "llListStatistics")]
-        public double ListStatistics(ScriptInstance instance, int operation, AnArray src)
+        public double ListStatistics(int operation, AnArray src)
         {
             switch(operation)
             {

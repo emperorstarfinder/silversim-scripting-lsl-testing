@@ -224,7 +224,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 /* fully opaque dynamic texture are filled here keeping scripts from doing the same */
                 if(alpha >= 255)
                 {
-                    using (SolidBrush fillBrush = new SolidBrush(backgroundColor))
+                    using (var fillBrush = new SolidBrush(backgroundColor))
                     {
                         graphics.FillRectangle(fillBrush, 0, 0, width, height);
                     }
@@ -232,7 +232,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 else
                 {
                     Color alphaColor = Color.FromArgb(alpha, backgroundColor);
-                    using (SolidBrush fillBrush = new SolidBrush(alphaColor))
+                    using (var fillBrush = new SolidBrush(alphaColor))
                     {
                         graphics.FillRectangle(fillBrush, 0, 0, width, height);
                     }
