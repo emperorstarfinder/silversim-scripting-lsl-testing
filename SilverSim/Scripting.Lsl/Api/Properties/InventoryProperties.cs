@@ -99,22 +99,22 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public string Name
             {
-                get { return With((ObjectPartInventoryItem item) => item.Name); }
+                get { return With((item) => item.Name); }
             }
 
             public string Desc
             {
-                get { return With((ObjectPartInventoryItem item) => item.Description); }
-                set { With((ObjectPartInventoryItem item, string v) => item.Description = v, value); }
+                get { return With((item) => item.Description); }
+                set { With((item, v) => item.Description = v, value); }
             }
 
-            public int Type => With((ObjectPartInventoryItem item) => (int)item.InventoryType);
+            public int Type => With((item) => (int)item.InventoryType);
 
-            public LSLKey Owner => With((ObjectPartInventoryItem item) => item.Owner.ID);
+            public LSLKey Owner => With((item) => item.Owner.ID);
 
-            public LSLKey Creator => With((ObjectPartInventoryItem item) => item.Creator.ID);
+            public LSLKey Creator => With((item) => item.Creator.ID);
 
-            public LSLKey Key => With((ObjectPartInventoryItem item) => item.AssetID);
+            public LSLKey Key => With((item) => item.AssetID);
 
             [APIExtension(APIExtension.Properties)]
             public static implicit operator bool(PrimInventoryItem c)
@@ -168,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
 
             public PrimInventoryItem this[int type, int number] =>
-                WithInventory((ScriptInstance instance, ObjectPart part) =>
+                WithInventory((instance, part) =>
                 {
                     try
                     {
@@ -181,7 +181,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 });
 
             public PrimInventoryItem this[int number] =>
-                WithInventory((ScriptInstance instance, ObjectPart part) =>
+                WithInventory((instance, part) =>
                 {
                     try
                     {
@@ -194,7 +194,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 });
 
             public PrimInventoryItem this[string name] =>
-                WithInventory((ScriptInstance instance, ObjectPart part) =>
+                WithInventory((instance, part) =>
                 {
                     try
                     {

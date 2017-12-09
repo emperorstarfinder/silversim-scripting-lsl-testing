@@ -179,8 +179,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
 
             public int Flags
             {
-                get { return With((InventoryItem item) => (int)item.Flags, 0); }
-                set { With((InventoryItem item, int f) => item.Flags = (InventoryFlags)f, value); }
+                get { return With((item) => (int)item.Flags, 0); }
+                set { With((item, f) => item.Flags = (InventoryFlags)f, value); }
             }
 
             public AgentId LastOwner => With((item) => new AgentId(item.LastOwner), new AgentId());

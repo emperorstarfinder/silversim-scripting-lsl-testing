@@ -395,7 +395,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             private void With<T>(Action<Material, T> setter, T value)
             {
-                With((ScriptInstance instance, TextureEntryFace face, T v) =>
+                With((instance, face, v) =>
                 {
                     SceneInterface scene = instance.Part.ObjectGroup.Scene;
                     Material mat;
@@ -417,7 +417,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [XmlIgnore]
             public LSLKey Texture
             {
-                get { return With((TextureEntryFace f) => new LSLKey(f.TextureID), new LSLKey()); }
+                get { return With((f) => new LSLKey(f.TextureID), new LSLKey()); }
                 set
                 {
                     UUID textureID = UUID.Zero;
@@ -426,17 +426,17 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     {
                         textureID = actInstance.GetTextureAssetID(value.ToString());
                     }
-                    With((ScriptInstance instance, TextureEntryFace f, LSLKey texture) => f.TextureID = texture, textureID);
+                    With((instance, f, texture) => f.TextureID = texture, textureID);
                 }
             }
 
             [XmlIgnore]
             public Vector3 TextureOffset
             {
-                get { return With((TextureEntryFace f) => new Vector3(f.OffsetU, f.OffsetV, 0)); }
+                get { return With((f) => new Vector3(f.OffsetU, f.OffsetV, 0)); }
                 set
                 {
-                    With((TextureEntryFace f, Vector3 v) =>
+                    With((f, v) =>
                     {
                         f.OffsetU = (float)v.X;
                         f.OffsetV = (float)v.Y;
@@ -447,10 +447,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [XmlIgnore]
             public Vector3 TextureScale
             {
-                get { return With((TextureEntryFace f) => new Vector3(f.RepeatU, f.RepeatV, 0)); }
+                get { return With((f) => new Vector3(f.RepeatU, f.RepeatV, 0)); }
                 set
                 {
-                    With((TextureEntryFace f, Vector3 v) =>
+                    With((f, v) =>
                     {
                         f.RepeatU = (float)v.X;
                         f.RepeatV = (float)v.Y;
@@ -462,7 +462,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public double TextureRotation
             {
                 get { return With((TextureEntryFace f) => f.Rotation); }
-                set { With((TextureEntryFace f, float v) => f.Rotation = v, (float)value); }
+                set { With((f, v) => f.Rotation = v, (float)value); }
             }
 
             [XmlIgnore]
@@ -472,7 +472,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     if(FaceNumber == ALL_SIDES)
                     {
-                        return With((ObjectPart p) =>
+                        return With((p) =>
                         {
                             Vector3 v = Vector3.Zero;
                             int n = 0;
@@ -489,12 +489,12 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     }
                     else
                     {
-                        return With((TextureEntryFace f) => f.TextureColor);
+                        return With((f) => f.TextureColor);
                     }
                 }
                 set
                 {
-                    With((TextureEntryFace f, Vector3 v) =>
+                    With((f, v) =>
                     {
                         ColorAlpha c = f.TextureColor;
                         c.R = v.X;
@@ -508,10 +508,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [XmlIgnore]
             public double Alpha
             {
-                get { return With((TextureEntryFace f) => f.TextureColor.A); }
+                get { return With((f) => f.TextureColor.A); }
                 set
                 {
-                    With((TextureEntryFace f, double v) =>
+                    With((f, v) =>
                     {
                         ColorAlpha c = f.TextureColor;
                         c.A = v;
@@ -523,12 +523,12 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [XmlIgnore]
             public int Bump
             {
-                get { return With((TextureEntryFace f) => (int)f.Bump); }
+                get { return With((f) => (int)f.Bump); }
                 set
                 {
                     if (value >= 0 && value <= (int)Bumpiness.Weave)
                     {
-                        With((TextureEntryFace f, Bumpiness v) => f.Bump = v, (Bumpiness)value);
+                        With((f, v) => f.Bump = v, (Bumpiness)value);
                     }
                 }
             }
@@ -536,12 +536,12 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [XmlIgnore]
             public int Shiny
             {
-                get { return With((TextureEntryFace f) => (int)f.Shiny); }
+                get { return With((f) => (int)f.Shiny); }
                 set
                 {
                     if (value >= 0 && value <= (int)Shininess.High)
                     {
-                        With((TextureEntryFace f, Shininess v) => f.Shiny = v, (Shininess)value);
+                        With((f, v) => f.Shiny = v, (Shininess)value);
                     }
                 }
             }
@@ -549,19 +549,19 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [XmlIgnore]
             public int FullBright
             {
-                get { return With((TextureEntryFace f) => f.FullBright.ToLSLBoolean()); }
-                set { With((TextureEntryFace f, bool v) => f.FullBright = v, value != 0); }
+                get { return With((f) => f.FullBright.ToLSLBoolean()); }
+                set { With((f, v) => f.FullBright = v, value != 0); }
             }
 
             [XmlIgnore]
             public int TexGen
             {
-                get { return With((TextureEntryFace f) => (int)f.TexMapType); }
+                get { return With((f) => (int)f.TexMapType); }
                 set
                 {
                     if (value >= 0 && value <= 1)
                     {
-                        With((TextureEntryFace f, MappingType v) => f.TexMapType = v, (MappingType)value);
+                        With((f, v) => f.TexMapType = v, (MappingType)value);
                     }
                 }
             }
@@ -569,8 +569,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             [XmlIgnore]
             public double Glow
             {
-                get { return With((TextureEntryFace f) => f.Glow); }
-                set { With((TextureEntryFace f, float v) => f.Glow = v, (float)value); }
+                get { return With((f) => f.Glow); }
+                set { With((f, v) => f.Glow = v, (float)value); }
             }
 
             [XmlIgnore]
@@ -578,7 +578,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    return With((Material m) => new NormalMap
+                    return With((m) => new NormalMap
                     {
                         Texture = m.NormMap,
                         Offset = new Vector3(m.NormOffsetX, m.NormOffsetY, 0) / Material.MATERIALS_MULTIPLIER,
@@ -595,7 +595,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                         textureID = actInstance.GetTextureAssetID(value.Texture.ToString());
                     }
 
-                    With((Material mat, NormalMap m) =>
+                    With((mat, m) =>
                     {
                         m.Offset *= Material.MATERIALS_MULTIPLIER;
                         m.Repeats *= Material.MATERIALS_MULTIPLIER;
@@ -613,7 +613,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    return With((Material m) => new SpecularMap
+                    return With((m) => new SpecularMap
                     {
                         Texture = m.SpecMap,
                         Offset = new Vector3(m.SpecOffsetX, m.SpecOffsetY, 0) / Material.MATERIALS_MULTIPLIER,
@@ -640,7 +640,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     value.Environment = value.Environment.Clamp(0, 255);
                     value.Glossiness = value.Glossiness.Clamp(0, 255);
 
-                    With((Material mat, SpecularMap v) =>
+                    With((mat, v) =>
                     {
                         mat.SpecMap = textureID;
                         mat.SpecColor = new ColorAlpha(value.Color, value.Alpha);
@@ -659,7 +659,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    return With((Material m) => new AlphaMode
+                    return With((m) => new AlphaMode
                     {
                         DiffuseMode = m.DiffuseAlphaMode,
                         MaskCutoff = m.AlphaMaskCutoff
@@ -670,7 +670,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     value.DiffuseMode = value.DiffuseMode.Clamp(0, 3);
                     value.MaskCutoff = value.MaskCutoff.Clamp(0, 3);
 
-                    With((Material mat, AlphaMode v) =>
+                    With((mat, v) =>
                     {
                         mat.DiffuseAlphaMode = v.DiffuseMode;
                         mat.AlphaMaskCutoff = v.MaskCutoff;
