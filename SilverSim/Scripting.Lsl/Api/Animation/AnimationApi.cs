@@ -239,5 +239,23 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
             return res;
         }
+
+        [APILevel(APIFlags.OSSL, "osSetSitAnimation")]
+        public void SetSitAnimation(ScriptInstance instance, string animation)
+        {
+            lock(instance)
+            {
+                instance.Part.SitAnimation = animation;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetSitAnimation")]
+        public string GetSitAnimation(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.SitAnimation;
+            }
+        }
     }
 }
