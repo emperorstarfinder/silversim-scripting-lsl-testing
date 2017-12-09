@@ -22,7 +22,6 @@
 #pragma warning disable IDE0018
 
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Lsl.Api.Base;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
