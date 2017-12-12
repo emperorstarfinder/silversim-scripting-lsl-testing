@@ -41,7 +41,6 @@ using SilverSim.Types.Groups;
 using SilverSim.Types.IM;
 using SilverSim.Types.Inventory;
 using SilverSim.Types.Parcel;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -861,14 +860,32 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void ForceOtherSit(ScriptInstance instance, LSLKey avatar)
         {
-            throw new NotImplementedException("osForceOtherSit(key)");
+            lock(instance)
+            {
+                ActForceOtherSit(instance, avatar.AsUUID, instance.Part.ID);
+            }
         }
 
         [APILevel(APIFlags.OSSL, "osForceOtherSit")]
         [ThreatLevelRequired(ThreatLevel.VeryHigh)]
         public void ForceOtherSit(ScriptInstance instance, LSLKey avatar, LSLKey target)
         {
-            throw new NotImplementedException("osForceOtherSit(key, key)");
+            lock(instance)
+            {
+                ActForceOtherSit(instance, avatar.AsUUID, target.AsUUID);
+            }
+        }
+
+        private void ActForceOtherSit(ScriptInstance instance, UUID avatar, UUID target)
+        {
+            SceneInterface scene = instance.Part.ObjectGroup.Scene;
+            IAgent agent;
+            ObjectPart part;
+            if(scene.RootAgents.TryGetValue(avatar.AsUUID, out agent) &&
+                scene.Primitives.TryGetValue(target, out part))
+            {
+                part.ObjectGroup.AgentSitting.Sit(agent, part.LinkNumber);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetAgentLanguage")]

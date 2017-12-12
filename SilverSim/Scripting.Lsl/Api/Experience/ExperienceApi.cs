@@ -21,6 +21,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
+using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
@@ -86,7 +87,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
         [APILevel(APIFlags.LSL)]
         public const int SIT_NOT_EXPERIENCE = -1;
         [APILevel(APIFlags.LSL)]
-        public const int SIT_NO_EXPERIENCE_PERMISSIONS = -2;
+        public const int SIT_NO_EXPERIENCE_PERMISSION = -2;
         [APILevel(APIFlags.LSL)]
         public const int SIT_NO_SIT_TARGET = -3;
         [APILevel(APIFlags.LSL)]
@@ -373,6 +374,8 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             }
         }
 
+        private const int LINK_THIS = -4;
+
         [APILevel(APIFlags.LSL, "llSitOnLink")]
         public int SitOnLink(ScriptInstance instance, LSLKey agent_id, int link)
         {
@@ -387,7 +390,59 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
              * If there are no valid sit targets remaining in the linkset this method returns NO_SIT_TARGET and no action is taken with the avatar.
              * If the avatar does not have access to the parcel containing the prim running this script, this call fails. 
              */
-            throw new NotImplementedException("llSitOnLink(key, int)");
+            ObjectPart part;
+            lock(instance)
+            {
+                ObjectGroup objgrp = instance.Part.ObjectGroup;
+                SceneInterface scene = objgrp.Scene;
+                ParcelInfo pInfo;
+                IAgent agent;
+                if (link == LINK_THIS)
+                {
+                    part = instance.Part;
+                }
+                else if(objgrp.IsAttached)
+                {
+                    return SIT_INVALID_OBJECT;
+                }
+
+                if (!objgrp.TryGetValue(link, out part))
+                {
+                    return SIT_INVALID_LINK;
+                }
+                else if(!scene.RootAgents.TryGetValue(agent_id.AsUUID, out agent))
+                {
+                    return SIT_INVALID_AGENT;
+                }
+                ExperienceServiceInterface experienceService = objgrp.Scene.ExperienceService;
+                UUID experienceID = instance.Item.ExperienceID;
+                string reason;
+                if(experienceService == null || experienceID == UUID.Zero)
+                {
+                    return SIT_NOT_EXPERIENCE;
+                }
+                else if(!scene.Parcels.TryGetValue(objgrp.GlobalPosition, out pInfo))
+                {
+                    return SIT_INVALID_OBJECT;
+                }
+                else if(!scene.CheckParcelAccessRights(agent, pInfo, out reason))
+                {
+                    return SIT_NO_ACCESS;
+                }
+                else if(XP_ERROR_NONE != CheckExperienceAllowed(instance, experienceService, experienceID))
+                {
+                    return SIT_NOT_EXPERIENCE;
+                }
+                else if(!experienceService.Permissions[experienceID, agent.Owner])
+                {
+                    return SIT_NO_EXPERIENCE_PERMISSION;
+                }
+                else if(!objgrp.AgentSitting.Sit(agent, forceScriptedSitOnly: true))
+                {
+                    return SIT_NO_SIT_TARGET;
+                }
+                return 1;
+            }
         }
     }
 }
