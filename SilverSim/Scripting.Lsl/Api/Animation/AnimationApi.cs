@@ -257,5 +257,43 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                 return instance.Part.SitAnimation;
             }
         }
+
+        public const int LINK_THIS = -4;
+
+        [APILevel(APIFlags.OSSL, "osSetLinkSitAnimation")]
+        public void SetSitAnimation(ScriptInstance instance, int link, string animation)
+        {
+            ObjectPart part;
+            lock (instance)
+            {
+                if (link == LINK_THIS)
+                {
+                    part = instance.Part;
+                }
+                else if (!instance.Part.ObjectGroup.TryGetValue(link, out part))
+                {
+                    return;
+                }
+                part.SitAnimation = animation;
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGetLinkSitAnimation")]
+        public string GetSitAnimation(ScriptInstance instance, int link)
+        {
+            ObjectPart part;
+            lock (instance)
+            {
+                if (link == LINK_THIS)
+                {
+                    part = instance.Part;
+                }
+                else if (!instance.Part.ObjectGroup.TryGetValue(link, out part))
+                {
+                    return string.Empty;
+                }
+                return part.SitAnimation;
+            }
+        }
     }
 }
