@@ -240,7 +240,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             return res;
         }
 
-        [APILevel(APIFlags.OSSL, "osSetSitAnimation")]
+        [APILevel(APIFlags.ASSL, "asSetSitAnimation")]
         public void SetSitAnimation(ScriptInstance instance, string animation)
         {
             lock(instance)
@@ -249,7 +249,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
         }
 
-        [APILevel(APIFlags.OSSL, "osGetSitAnimation")]
+        [APILevel(APIFlags.ASSL, "asGetSitAnimation")]
         public string GetSitAnimation(ScriptInstance instance)
         {
             lock(instance)
@@ -260,7 +260,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         public const int LINK_THIS = -4;
 
-        [APILevel(APIFlags.OSSL, "osSetLinkSitAnimation")]
+        [APILevel(APIFlags.ASSL, "asSetLinkSitAnimation")]
         public void SetSitAnimation(ScriptInstance instance, int link, string animation)
         {
             ObjectPart part;
@@ -278,7 +278,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
         }
 
-        [APILevel(APIFlags.OSSL, "osGetLinkSitAnimation")]
+        [APILevel(APIFlags.ASSL, "asGetLinkSitAnimation")]
         public string GetSitAnimation(ScriptInstance instance, int link)
         {
             ObjectPart part;
