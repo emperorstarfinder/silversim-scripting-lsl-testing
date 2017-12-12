@@ -390,7 +390,6 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
              * If there are no valid sit targets remaining in the linkset this method returns NO_SIT_TARGET and no action is taken with the avatar.
              * If the avatar does not have access to the parcel containing the prim running this script, this call fails. 
              */
-            ObjectPart part;
             lock(instance)
             {
                 ObjectGroup objgrp = instance.Part.ObjectGroup;
@@ -399,18 +398,18 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 IAgent agent;
                 if (link == LINK_THIS)
                 {
-                    part = instance.Part;
+                    link = instance.Part.LinkNumber;
                 }
-                else if(objgrp.IsAttached)
-                {
-                    return SIT_INVALID_OBJECT;
-                }
-
-                if (!objgrp.TryGetValue(link, out part))
+                else if (!objgrp.ContainsKey(link))
                 {
                     return SIT_INVALID_LINK;
                 }
-                else if(!scene.RootAgents.TryGetValue(agent_id.AsUUID, out agent))
+
+                if (objgrp.IsAttached)
+                {
+                    return SIT_INVALID_OBJECT;
+                }
+                else if (!scene.RootAgents.TryGetValue(agent_id.AsUUID, out agent))
                 {
                     return SIT_INVALID_AGENT;
                 }
@@ -437,7 +436,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 {
                     return SIT_NO_EXPERIENCE_PERMISSION;
                 }
-                else if(!objgrp.AgentSitting.Sit(agent, forceScriptedSitOnly: true))
+                else if(!objgrp.AgentSitting.Sit(agent, link, true))
                 {
                     return SIT_NO_SIT_TARGET;
                 }
