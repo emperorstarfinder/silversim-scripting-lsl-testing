@@ -169,7 +169,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         flags |= AGENT_ATTACHMENTS;
                     }
 
-                    /* TODO: AGENT_AWAY, AGENT_BUSY, AGENT_CROUCHING, AGENT_FLYING, AGENT_IN_AIR, AGENT_TYPING, AGENT_WALING */
+                    /* TODO: AGENT_AWAY, AGENT_BUSY, AGENT_CROUCHING, AGENT_FLYING, AGENT_IN_AIR, AGENT_TYPING, AGENT_WALKING */
 
                     if(agent.SittingOnObject != null)
                     {
