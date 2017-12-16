@@ -146,6 +146,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Get/set unsit target")]
         public const int PRIM_UNSIT_TARGET = 12000;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Get/set sit animation")]
+        public const int PRIM_SIT_ANIMATION = 12001;
 
         [APILevel(APIFlags.LSL)]
         public const int PRIM_TEXGEN_DEFAULT = 0;
