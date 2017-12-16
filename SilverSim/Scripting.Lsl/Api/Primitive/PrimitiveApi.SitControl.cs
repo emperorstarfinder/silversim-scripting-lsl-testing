@@ -167,6 +167,20 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
         }
+
+        [APILevel(APIFlags.ASSL, "llUnSit")]
+        public void UnSit(ScriptInstance instance, LSLKey id, Vector3 targetOffset, Quaternion targetOrientation)
+        {
+            lock(instance)
+            {
+                ObjectGroup group = instance.Part.ObjectGroup;
+                IAgent agent;
+                if(group.AgentSitting.TryGetValue(id, out agent))
+                {
+                    agent.UnSit(targetOffset, targetOrientation);
+                }
+            }
+        }
         #endregion
     }
 }

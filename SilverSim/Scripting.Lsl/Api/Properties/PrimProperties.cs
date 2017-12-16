@@ -110,6 +110,17 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             public Quaternion Orientation;
         }
 
+        [APIExtension(APIExtension.Properties, "linkunsittarget")]
+        [APIDisplayName("linkunsittarget")]
+        [APIAccessibleMembers]
+        [Serializable]
+        public struct LinkUnSitTarget
+        {
+            public int Enabled;
+            public Vector3 Offset;
+            public Quaternion Orientation;
+        }
+
         [APIExtension(APIExtension.Properties, "linkfaceaccess")]
         [APIDisplayName("linkfaceaccess")]
         public class FaceAccessor
@@ -342,7 +353,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     return WithPart((p) => new LinksitTarget
                     {
-                        Enabled = p.IsSitTargetActive ? 1 : 0,
+                        Enabled = p.IsSitTargetActive.ToLSLBoolean(),
                         Offset = p.SitTargetOffset,
                         Orientation = p.SitTargetOrientation
                     });
@@ -354,6 +365,29 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                         p.SitTargetOffset = t.Offset;
                         p.SitTargetOrientation = t.Orientation;
                         p.IsSitTargetActive = t.Enabled != 0;
+                    }, value);
+                }
+            }
+
+            [XmlIgnore]
+            public LinkUnSitTarget UnSitTarget
+            {
+                get
+                {
+                    return WithPart((p) => new LinkUnSitTarget
+                    {
+                        Enabled = p.IsUnSitTargetActive.ToLSLBoolean(),
+                        Offset = p.UnSitTargetOffset,
+                        Orientation = p.UnSitTargetOrientation
+                    });
+                }
+                set
+                {
+                    WithPart((p, t) =>
+                    {
+                        p.UnSitTargetOffset = t.Offset;
+                        p.UnSitTargetOrientation = t.Orientation;
+                        p.IsUnSitTargetActive = t.Enabled != 0;
                     }, value);
                 }
             }
@@ -790,8 +824,24 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
+        [APIExtension(APIExtension.Properties, "SitTarget")]
+        public LinksitTarget GetSitTarget(int enabled, Vector3 offset, Quaternion orientation) => new LinksitTarget
+        {
+            Enabled = enabled,
+            Offset = offset,
+            Orientation = orientation
+        };
+
+        [APIExtension(APIExtension.Properties, "UnSitTarget")]
+        public LinkUnSitTarget GetUnSitTarget(int enabled, Vector3 offset, Quaternion orientation) => new LinkUnSitTarget
+        {
+            Enabled = enabled,
+            Offset = offset,
+            Orientation = orientation
+        };
+
         [APIExtension(APIExtension.Properties, "HoverText")]
-        public Hovertext GetHovertext(ScriptInstance instance, string text, Vector3 color, double alpha) => new Hovertext
+        public Hovertext GetHovertext(string text, Vector3 color, double alpha) => new Hovertext
         {
             Text = text,
             Color = color,
@@ -799,7 +849,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         };
 
         [APIExtension(APIExtension.Properties, "PointLight")]
-        public Pointlight GetPointlight(ScriptInstance instance, int enabled, Vector3 color, double intensity, double radius, double falloff) => new Pointlight
+        public Pointlight GetPointlight(int enabled, Vector3 color, double intensity, double radius, double falloff) => new Pointlight
         {
             Enabled = enabled,
             Color = color,
@@ -809,7 +859,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         };
 
         [APIExtension(APIExtension.Properties, "Projector")]
-        public Projector GetProjector(ScriptInstance instance, int enabled, LSLKey texture, double fov, double focus, double ambience) => new Projector
+        public Projector GetProjector(int enabled, LSLKey texture, double fov, double focus, double ambience) => new Projector
         {
             Enabled = enabled,
             Texture = texture,
