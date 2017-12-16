@@ -168,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
-        [APILevel(APIFlags.ASSL, "llUnSit")]
+        [APILevel(APIFlags.ASSL, "asUnSit")]
         public void UnSit(ScriptInstance instance, LSLKey id, Vector3 targetOffset, Quaternion targetOrientation)
         {
             lock(instance)
