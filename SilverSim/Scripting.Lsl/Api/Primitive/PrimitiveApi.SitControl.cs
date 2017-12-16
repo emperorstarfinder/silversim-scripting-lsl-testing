@@ -23,8 +23,10 @@
 
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
@@ -108,6 +110,20 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 res.Add(part.SitTargetOrientation);
             }
             return res;
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetAvatarSitTarget")]
+        [Description("retrieves link on which an avatar got sat on by sit target or -1")]
+        public int GetAvatarSitTarget(ScriptInstance instance, LSLKey avatar)
+        {
+            lock(instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                IAgent agent;
+                ObjectPart sitsOn;
+                return scene.RootAgents.TryGetValue(avatar.AsUUID, out agent) && grp.AgentSitting.TryGetValue(agent, out sitsOn) ? sitsOn.LinkNumber : -1;
+            }
         }
         #endregion
 
