@@ -95,6 +95,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int AGENT_LIST_PARCEL_OWNER = 2;
         [APILevel(APIFlags.LSL)]
         public const int AGENT_LIST_REGION = 4;
+        [APILevel(APIFlags.OSSL)]
+        public const int AGENT_LIST_EXCLUDENPC = 0x4000000;
 
         [APILevel(APIFlags.LSL, "llGetAgentList")]
         public AnArray GetAgentList(ScriptInstance instance, int scope, AnArray options)
@@ -104,7 +106,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
-                if (scope == AGENT_LIST_PARCEL)
+                if ((scope & AGENT_LIST_PARCEL) != 0)
                 {
                     ParcelInfo thisParcel;
                     if (scene.Parcels.TryGetValue(grp.GlobalPosition, out thisParcel))
@@ -113,7 +115,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         {
                             ParcelInfo pInfo;
                             if(scene.Parcels.TryGetValue(agent.GlobalPosition, out pInfo) &&
-                                pInfo.ID == thisParcel.ID)
+                                pInfo.ID == thisParcel.ID &&
+                                (agent.IsNpc && (scope & AGENT_LIST_EXCLUDENPC) == 0))
                             {
                                 res.Add(agent.Owner.ID);
                             }
@@ -124,7 +127,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     foreach (IAgent agent in scene.RootAgents)
                     {
-                        if (scope == AGENT_LIST_PARCEL_OWNER)
+                        if(agent.IsNpc && (scope & AGENT_LIST_EXCLUDENPC) != 0)
+                        {
+                            continue;
+                        }
+
+                        if ((scope & AGENT_LIST_PARCEL_OWNER) != 0)
                         {
                             ParcelInfo pInfo;
                             if (scene.Parcels.TryGetValue(agent.GlobalPosition, out pInfo) ||
@@ -133,7 +141,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 res.Add(agent.Owner.ID);
                             }
                         }
-                        else if (scope == AGENT_LIST_REGION)
+                        else if ((scope & AGENT_LIST_REGION) != 0)
                         {
                             res.Add(agent.Owner.ID);
                         }
