@@ -99,6 +99,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     ID = filter.ID.AsUUID,
                     Type = filter.Accept != 0 ? ObjectPartInventoryItem.CollisionFilterEnum.Accept : ObjectPartInventoryItem.CollisionFilterEnum.Reject
                 };
+                instance.Part.ObjectGroup.Scene.ScheduleUpdate(instance.Item.UpdateInfo);
             }
         }
     }

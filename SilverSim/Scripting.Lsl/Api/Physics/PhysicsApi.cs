@@ -481,6 +481,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                     ID = id.AsUUID,
                     Type = accept != 0 ? ObjectPartInventoryItem.CollisionFilterEnum.Accept : ObjectPartInventoryItem.CollisionFilterEnum.Reject
                 };
+                instance.Part.ObjectGroup.Scene.ScheduleUpdate(instance.Item.UpdateInfo);
             }
         }
 
