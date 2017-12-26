@@ -70,7 +70,11 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         private static readonly Regex m_AuthRegex = new Regex(@"^(https?:\/\/)(\w+):(\w+)@(.*)$");
 
         [APILevel(APIFlags.LSL, "llHTTPRequest")]
-        public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body)
+        public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, string body) =>
+            HTTPRequest(instance, url, parameters, body.ToUTF8Bytes());
+
+        [APIExtension(APIExtension.ByteArray, "llHTTPRequest")]
+        public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, byte[] body)
         {
             var req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();
             lock (instance)

@@ -63,7 +63,7 @@ namespace SilverSim.Scripting.Lsl
             public bool VerboseThrottle = true;
             public bool SendPragmaNoCache = true;
             public int MaxBodyLength = 2048;
-            public string RequestBody;
+            public byte[] RequestBody;
             public Dictionary<string, string> Headers = new Dictionary<string, string>();
 
             public LSLHttpRequest()
