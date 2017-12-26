@@ -106,6 +106,25 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
                     }
                     return new ByteArray(resdata);
                 }
+                set
+                {
+                    if (start < 0 || start >= Data.Length || count < 0)
+                    {
+                        return;
+                    }
+                    if(count > value.Length)
+                    {
+                        count = value.Length;
+                    }
+                    if (count > Data.Length - start)
+                    {
+                        Buffer.BlockCopy(value.Data, 0, Data, start, count);
+                    }
+                    else
+                    {
+                        Buffer.BlockCopy(value.Data, 0, Data, start, count);
+                    }
+                }
             }
 
             public static ByteArray operator+(ByteArray a, ByteArray b)
