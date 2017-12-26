@@ -25,6 +25,7 @@
 using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.ByteString;
 using SilverSim.Types;
 using System.ComponentModel;
 
@@ -46,6 +47,21 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 
         [APILevel(APIFlags.LSL)]
         public const string URL_REQUEST_DENIED = "URL_REQUEST_DENIED";
+
+        [APILevel(APIFlags.LSL, "http_request")]
+        [StateEventDelegate]
+        public delegate void State_http_request(LSLKey request_id, string method, string body);
+
+        [APILevel(APIFlags.LSL, "http_binary_request")]
+        [StateEventDelegate]
+        public delegate void State_http_binary_request(LSLKey request_id, string method, ByteArrayApi.ByteArray body);
+
+        [APILevel(APIFlags.LSL, "http_response")]
+        [StateEventDelegate]
+        public delegate void State_http_response(LSLKey request_id, int status, AnArray metadata, string body);
+
+        [APIExtension(APIExtension.ByteArray, "http_binary_response")]
+        public delegate void State_http_binary_response(LSLKey request_id, int status, AnArray metadata, ByteArrayApi.ByteArray body);
 
         public void Startup(ConfigurationLoader loader)
         {

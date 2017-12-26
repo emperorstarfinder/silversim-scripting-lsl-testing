@@ -28,6 +28,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Scripting.Lsl.Api.ByteString;
 using SilverSim.ServiceInterfaces.Groups;
 using SilverSim.Threading;
 using SilverSim.Types;
@@ -1647,12 +1648,13 @@ namespace SilverSim.Scripting.Lsl
         {
             if (ep.Params.Count >= 4)
             {
+                bool isByteArray = ep.Params.Count > 4 && ep.Params[4].ToString() == "ByteArray";
                 return new HttpResponseEvent
                 {
                     RequestID = new UUID(ep.Params[0].ToString()),
                     Status = (int)ep.Params[1],
                     Metadata = (AnArray)ep.Params[2],
-                    Body = ep.Params[3].ToString()
+                    Body = isByteArray ? Convert.FromBase64String(ep.Params[3].ToString()) : ep.Params[3].ToString().ToUTF8Bytes()
                 };
             }
             return null;
@@ -1668,7 +1670,15 @@ namespace SilverSim.Scripting.Lsl
                 writer.WriteTypedValue("Param", ev.RequestID);
                 writer.WriteTypedValue("Param", ev.Status);
                 writer.WriteTypedValue("Param", ev.Metadata);
-                writer.WriteTypedValue("Param", ev.Body);
+                if (ev.UsesByteArray)
+                {
+                    writer.WriteTypedValue("Param", Convert.ToBase64String(ev.Body));
+                    writer.WriteTypedValue("Param", "ByteArray");
+                }
+                else
+                {
+                    writer.WriteTypedValue("Param", ev.Body.FromUTF8Bytes());
+                }
                 writer.WriteEndElement();
                 writer.WriteStartElement("Detected");
                 writer.WriteEndElement();
@@ -2158,13 +2168,27 @@ namespace SilverSim.Scripting.Lsl
             StateEventHandlers.Add(typeof(HttpResponseEvent), (Script script, IScriptEvent ev) =>
             {
                 var e = (HttpResponseEvent)ev;
-                script.InvokeStateEvent("http_response", new LSLKey(e.RequestID), e.Status, e.Metadata, e.Body);
+                if (e.UsesByteArray)
+                {
+                    script.InvokeStateEvent("http_binary_response", new LSLKey(e.RequestID), e.Status, e.Metadata, new ByteArrayApi.ByteArray(e.Body));
+                }
+                else
+                {
+                    script.InvokeStateEvent("http_response", new LSLKey(e.RequestID), e.Status, e.Metadata, e.Body.FromUTF8Bytes());
+                }
             });
 
             StateEventHandlers.Add(typeof(HttpRequestEvent), (Script script, IScriptEvent ev) =>
             {
                 var e = (HttpRequestEvent)ev;
-                script.InvokeStateEvent("http_request", new LSLKey(e.RequestID), e.Method, e.Body);
+                if (e.UsesByteArray)
+                {
+                    script.InvokeStateEvent("http_binary_request", new LSLKey(e.RequestID), e.Method, new ByteArrayApi.ByteArray(e.Body));
+                }
+                else
+                {
+                    script.InvokeStateEvent("http_request", new LSLKey(e.RequestID), e.Method, e.Body.FromUTF8Bytes());
+                }
             });
 
             StateEventHandlers.Add(typeof(LandCollisionEvent), HandleLandCollision);

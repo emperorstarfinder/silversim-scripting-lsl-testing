@@ -50,19 +50,27 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [APILevel(APIFlags.LSL, "llRequestURL")]
-        public LSLKey RequestURL(ScriptInstance instance)
+        public LSLKey RequestURL(ScriptInstance instance) =>
+            RequestURL(instance, false);
+
+        [APIExtension(APIExtension.ByteArray, "baRequestURL")]
+        public LSLKey RequestByteArrayURL(ScriptInstance instance) =>
+            RequestURL(instance, true);
+
+        private LSLKey RequestURL(ScriptInstance instance, bool useByteArray)
         {
             lock(instance)
             {
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item);
+                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, usesByteArray : useByteArray);
                     instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
-                        Body = urlID
+                        Body = urlID.ToUTF8Bytes(),
+                        UsesByteArray = useByteArray
                     });
                 }
                 catch
@@ -71,7 +79,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
-                        Body = string.Empty
+                        Body = new byte[0],
+                        UsesByteArray = useByteArray
                     });
                 }
                 return reqID;
@@ -79,7 +88,14 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [APILevel(APIFlags.OSSL, "osRequestURL")]
-        public LSLKey RequestURL(ScriptInstance instance, AnArray options)
+        public LSLKey RequestURL(ScriptInstance instance, AnArray options) =>
+            RequestURL(instance, options, false);
+
+        [APIExtension(APIExtension.ByteArray, "baRequestURL")]
+        public LSLKey RequestByteArrayURL(ScriptInstance instance, AnArray options) =>
+            RequestURL(instance, options, true);
+
+        private LSLKey RequestURL(ScriptInstance instance, AnArray options, bool usesByteArray)
         {
             bool allowXss = false;
             foreach(IValue iv in options)
@@ -92,12 +108,13 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, allowXss);
+                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, allowXss, usesByteArray);
                     instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
-                        Body = urlID
+                        Body = urlID.ToUTF8Bytes(),
+                        UsesByteArray = usesByteArray
                     });
                 }
                 catch
@@ -106,7 +123,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
-                        Body = string.Empty
+                        Body = new byte[0],
+                        UsesByteArray = usesByteArray
                     });
                 }
                 return reqID;
@@ -114,19 +132,27 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [APILevel(APIFlags.ASSL, "asRequestURL")]
-        public LSLKey RequestURL(ScriptInstance instance, string itemname)
+        public LSLKey RequestURL(ScriptInstance instance, string itemname) =>
+            RequestURL(instance, itemname, false);
+
+        [APIExtension(APIExtension.ByteArray, "baRequestURL")]
+        public LSLKey RequestByteArrayURL(ScriptInstance instance, string itemname) =>
+            RequestURL(instance, itemname, true);
+
+        private LSLKey RequestURL(ScriptInstance instance, string itemname, bool useByteArray)
         {
             lock (instance)
             {
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, itemname);
+                    string urlID = m_HTTPHandler.RequestURL(instance.Part, instance.Item, itemname, usesByteArray : useByteArray);
                     instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
-                        Body = urlID
+                        Body = urlID.ToUTF8Bytes(),
+                        UsesByteArray = useByteArray
                     });
                 }
                 catch
@@ -135,7 +161,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
-                        Body = string.Empty
+                        Body = new byte[0],
+                        UsesByteArray = useByteArray
                     });
                 }
                 return reqID;
@@ -152,19 +179,27 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [APILevel(APIFlags.LSL, "llRequestSecureURL")]
-        public LSLKey RequestSecureURL(ScriptInstance instance)
+        public LSLKey RequestSecureURL(ScriptInstance instance) =>
+            RequestSecureURL(instance, false);
+
+        [APIExtension(APIExtension.ByteArray, "baRequestSecureURL")]
+        public LSLKey RequestSecureByteArrayURL(ScriptInstance instance) =>
+            RequestSecureURL(instance, true);
+
+        private LSLKey RequestSecureURL(ScriptInstance instance, bool useByteArray)
         {
             lock (instance)
             {
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item);
+                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, usesByteArray : useByteArray);
                     instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
-                        Body = urlID
+                        Body = urlID.ToUTF8Bytes(),
+                        UsesByteArray = useByteArray
                     });
                 }
                 catch
@@ -173,7 +208,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
-                        Body = string.Empty
+                        Body = new byte[0],
+                        UsesByteArray = useByteArray
                     });
                 }
                 return reqID;
@@ -181,7 +217,14 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [APILevel(APIFlags.OSSL, "osRequestSecureURL")]
-        public LSLKey RequestSecureURL(ScriptInstance instance, AnArray options)
+        public LSLKey RequestSecureURL(ScriptInstance instance, AnArray options) =>
+            RequestSecureURL(instance, options, false);
+
+        [APIExtension(APIExtension.ByteArray, "baRequestSecureURL")]
+        public LSLKey RequestSecureByteArrayURL(ScriptInstance instance, AnArray options) =>
+            RequestSecureURL(instance, options, true);
+
+        private LSLKey RequestSecureURL(ScriptInstance instance, AnArray options, bool usesByteArray)
         {
             bool allowXss = false;
             foreach (IValue iv in options)
@@ -194,12 +237,13 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                 UUID reqID = UUID.Random;
                 try
                 {
-                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, allowXss);
+                    string urlID = m_HTTPHandler.RequestSecureURL(instance.Part, instance.Item, allowXss, usesByteArray);
                     instance.PostEvent(new HttpRequestEvent
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
-                        Body = urlID
+                        Body = urlID.ToUTF8Bytes(),
+                        UsesByteArray = usesByteArray
                     });
                 }
                 catch
@@ -208,7 +252,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
-                        Body = string.Empty
+                        Body = new byte[0],
+                        UsesByteArray = usesByteArray
                     });
                 }
                 return reqID;
@@ -216,7 +261,14 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         }
 
         [APILevel(APIFlags.ASSL, "asRequestSecureURL")]
-        public LSLKey RequestSecureURL(ScriptInstance instance, string itemname)
+        public LSLKey RequestSecureURL(ScriptInstance instance, string itemname) =>
+            RequestSecureURL(instance, itemname, false);
+
+        [APIExtension(APIExtension.ByteArray, "baRequestSecureURL")]
+        public LSLKey RequestSecureByteArrayURL(ScriptInstance instance, string itemname) =>
+            RequestSecureURL(instance, itemname, true);
+
+        private LSLKey RequestSecureURL(ScriptInstance instance, string itemname, bool usesByteArray)
         {
             lock (instance)
             {
@@ -228,7 +280,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_GRANTED,
-                        Body = urlID
+                        Body = urlID.ToUTF8Bytes()
                     });
                 }
                 catch
@@ -237,7 +289,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                     {
                         RequestID = reqID,
                         Method = URL_REQUEST_DENIED,
-                        Body = string.Empty
+                        Body = new byte[0]
                     });
                 }
                 return reqID;
@@ -253,14 +305,13 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             }
         }
 
-        [APIExtension(APIExtension.ByteArray, "llHTTPResponse")]
-        public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, ByteArrayApi.ByteArray body)
+        private void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, byte[] body)
         {
             lock (instance)
             {
                 try
                 {
-                    m_HTTPHandler.HttpResponse(requestID, status, body.Data);
+                    m_HTTPHandler.HttpResponse(requestID, status, body);
                 }
                 catch (SocketException)
                 {
@@ -283,35 +334,13 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             }
         }
 
+        [APIExtension(APIExtension.ByteArray, "llHTTPResponse")]
+        public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, ByteArrayApi.ByteArray body) =>
+            HTTPResponse(instance, requestID, status, body.Data);
+
         [APILevel(APIFlags.LSL, "llHTTPResponse")]
-        public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, string body)
-        {
-            lock(instance)
-            {
-                try
-                {
-                    m_HTTPHandler.HttpResponse(requestID, status, body.ToUTF8Bytes());
-                }
-                catch(SocketException)
-                {
-                    /* ignore this one */
-                }
-                catch (HttpResponse.ConnectionCloseException)
-                {
-                    /* ignore this one */
-                }
-                catch
-#if DEBUG
-                (Exception e)
-#endif
-                {
-                    /* only filled in for debug output */
-#if DEBUG
-                    m_Log.Debug("Exception in llHTTPResponse", e);
-#endif
-                }
-            }
-        }
+        public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, string body) => 
+            HTTPResponse(instance, requestID, status, body.ToUTF8Bytes());
 
         [APILevel(APIFlags.LSL)]
         public const int CONTENT_TYPE_TEXT = 0;

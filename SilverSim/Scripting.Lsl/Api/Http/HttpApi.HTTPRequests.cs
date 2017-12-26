@@ -51,6 +51,8 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         public const int HTTP_USER_AGENT = 7;
         [APILevel(APIFlags.LSL)]
         public const int HTTP_ACCEPT = 8;
+        [APIExtension(APIExtension.Properties)]
+        public const int HTTP_USE_BYTEARRAY = 10000;
 
         private readonly string[] m_AllowedHttpHeaders =
         {
@@ -168,6 +170,19 @@ namespace SilverSim.Scripting.Lsl.Api.Http
                         }
 
                         req.VerboseThrottle = parameters[++i].AsBoolean;
+                        break;
+
+                    case HTTP_USE_BYTEARRAY:
+                        if (i + 1 >= parameters.Count)
+                        {
+                            lock (instance)
+                            {
+                                instance.ShoutError(new LocalizedScriptMessage(this, "MissingParameterFor0", "Missing parameter for {0}", "HTTP_USE_BYTEARRAY"));
+                                return UUID.Zero;
+                            }
+                        }
+
+                        req.RequestsByteResponse = parameters[++i].AsBoolean;
                         break;
 
                     case HTTP_CUSTOM_HEADER:

@@ -55,14 +55,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [StateEventDelegate]
         public delegate void State_dataserver(LSLKey queryid, string data);
 
-        [APILevel(APIFlags.LSL, "http_request")]
-        [StateEventDelegate]
-        public delegate void State_http_request(LSLKey request_id, string method, string body);
-
-        [APILevel(APIFlags.LSL, "http_response")]
-        [StateEventDelegate]
-        public delegate void State_http_response(LSLKey request_id, int status, AnArray metadata, string body);
-
         [APILevel(APIFlags.LSL, "land_collision")]
         [StateEventDelegate]
         public delegate void State_land_collision(Vector3 pos);

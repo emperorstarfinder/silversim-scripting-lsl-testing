@@ -64,6 +64,7 @@ namespace SilverSim.Scripting.Lsl
             public bool SendPragmaNoCache = true;
             public int MaxBodyLength = 2048;
             public byte[] RequestBody;
+            public bool RequestsByteResponse;
             public Dictionary<string, string> Headers = new Dictionary<string, string>();
 
             public LSLHttpRequest()
@@ -230,7 +231,8 @@ namespace SilverSim.Scripting.Lsl
                 var ev = new HttpResponseEvent
                 {
                     RequestID = req.RequestID,
-                    Body = string.Empty,
+                    Body = new byte[0],
+                    UsesByteArray = req.RequestsByteResponse,
                     Metadata = new AnArray()
                 };
                 if (IsURLAllowed(req.SceneID, req.Url))
@@ -249,17 +251,17 @@ namespace SilverSim.Scripting.Lsl
                             httpreq.RequestBody = req.RequestBody;
                         }
 
-                        ev.Body = httpreq.ExecuteRequest();
+                        ev.Body = httpreq.ExecuteBinaryRequest();
                         ev.Status = (int)HttpStatusCode.OK;
                     }
                     catch (HttpClient.BadHttpResponseException e)
                     {
-                        ev.Body = e.Message;
+                        ev.Body = e.Message.ToUTF8Bytes();
                         ev.Status = 499;
                     }
                     catch (HttpException e)
                     {
-                        ev.Body = e.Message;
+                        ev.Body = e.Message.ToUTF8Bytes();
                         ev.Status = e.GetHttpCode();
                     }
                     catch(Exception e)
@@ -272,7 +274,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    ev.Body = "URL not allowed to access";
+                    ev.Body = "URL not allowed to access".ToUTF8Bytes();
                     ev.Status = 499;
                 }
 
