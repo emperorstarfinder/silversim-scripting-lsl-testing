@@ -38,8 +38,8 @@ using System.Xml.Serialization;
 namespace SilverSim.Scripting.Lsl.Api.ByteString
 {
     [LSLImplementation]
-    [ScriptApiName("ByteString")]
-    [Description("LSL/OSSL ByteString API")]
+    [ScriptApiName("ByteArray")]
+    [Description("ByteArray API")]
     public sealed class ByteArrayApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
@@ -138,6 +138,17 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
             }
         }
 
+        [APIExtension(APIExtension.ByteArray, "ByteArray")]
+        public ByteArray CreateByteArray(int size) => new ByteArray(new byte[size]);
+
+        [APIExtension(APIExtension.ByteArray, "baResize")]
+        public ByteArray Resize(ByteArray byteArray, int size)
+        {
+            byte[] resdata = new byte[size];
+            Buffer.BlockCopy(byteArray.Data, 0, resdata, 0, Math.Min(byteArray.Data.Length, size));
+            return new ByteArray(resdata);
+        }
+
         [APIExtension(APIExtension.ByteArray, "baFromBase64")]
         public ByteArray FromBase64(string base64) => new ByteArray(Convert.FromBase64String(base64));
 
@@ -149,5 +160,11 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
 
         [APIExtension(APIExtension.ByteArray, "baToUTF8")]
         public string ToUTF8(ByteArray byteArray) => byteArray.Data.FromUTF8Bytes();
+
+        [APIExtension(APIExtension.ByteArray, "baFromHex")]
+        public ByteArray FromHex(string s) => new ByteArray(s.FromHexStringToByteArray());
+
+        [APIExtension(APIExtension.ByteArray, "baToHex")]
+        public string ToHex(ByteArray byteArray) => byteArray.Data.ToHexString();
     }
 }
