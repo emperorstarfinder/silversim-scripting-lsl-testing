@@ -477,7 +477,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
             {
                 instance.Item.CollisionFilter = new ObjectPartInventoryItem.CollisionFilterParam
                 {
-                    Name = name,
+                    Name = name.TrimToMaxLength(63),
                     ID = id.AsUUID,
                     Type = accept != 0 ? ObjectPartInventoryItem.CollisionFilterEnum.Accept : ObjectPartInventoryItem.CollisionFilterEnum.Reject
                 };

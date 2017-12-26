@@ -65,6 +65,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
+        [APIExtension(APIExtension.Properties, "CollisionFilter")]
+        public CollisionFilter GetCollisionFilter(string name, LSLKey id, int accept) => new CollisionFilter
+        {
+            Name = name.TrimToMaxLength(63),
+            ID = id.AsUUID,
+            Accept = accept
+        };
+
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "CollisionFilter")]
         public CollisionFilter GetCollisionFilter(ScriptInstance instance)
         {
@@ -87,8 +95,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 instance.Item.CollisionFilter = new ObjectPartInventoryItem.CollisionFilterParam
                 {
-                    Name = filter.Name,
-                    ID = filter.ID,
+                    Name = filter.Name.TrimToMaxLength(63),
+                    ID = filter.ID.AsUUID,
                     Type = filter.Accept != 0 ? ObjectPartInventoryItem.CollisionFilterEnum.Accept : ObjectPartInventoryItem.CollisionFilterEnum.Reject
                 };
             }
