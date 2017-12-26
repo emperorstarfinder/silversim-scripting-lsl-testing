@@ -25,6 +25,7 @@
 using SilverSim.Main.Common.HttpServer;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Scripting.Lsl.Api.ByteString;
 using SilverSim.Types;
 using System;
 using System.Net.Sockets;
@@ -252,6 +253,36 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             }
         }
 
+        [APIExtension(APIExtension.ByteArray, "llHTTPResponse")]
+        public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, ByteArrayApi.ByteArray body)
+        {
+            lock (instance)
+            {
+                try
+                {
+                    m_HTTPHandler.HttpResponse(requestID, status, body.Data);
+                }
+                catch (SocketException)
+                {
+                    /* ignore this one */
+                }
+                catch (HttpResponse.ConnectionCloseException)
+                {
+                    /* ignore this one */
+                }
+                catch
+#if DEBUG
+                (Exception e)
+#endif
+                {
+                    /* only filled in for debug output */
+#if DEBUG
+                    m_Log.Debug("Exception in llHTTPResponse", e);
+#endif
+                }
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llHTTPResponse")]
         public void HTTPResponse(ScriptInstance instance, LSLKey requestID, int status, string body)
         {
@@ -259,7 +290,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             {
                 try
                 {
-                    m_HTTPHandler.HttpResponse(requestID, status, body);
+                    m_HTTPHandler.HttpResponse(requestID, status, body.ToUTF8Bytes());
                 }
                 catch(SocketException)
                 {

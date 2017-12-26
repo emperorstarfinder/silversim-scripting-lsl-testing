@@ -434,12 +434,11 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public void HttpResponse(UUID requestID, int status, string body)
+        public void HttpResponse(UUID requestID, int status, byte[] body)
         {
             HttpRequestData reqdata;
-            if(m_HttpRequests.Remove(requestID, out reqdata))
+            if (m_HttpRequests.Remove(requestID, out reqdata))
             {
-                byte[] b = body.ToUTF8Bytes();
                 var httpStatus = (HttpStatusCode)status;
                 using (HttpResponse res = reqdata.Request.BeginResponse(httpStatus, httpStatus.ToString(), reqdata.ContentType))
                 {
@@ -447,9 +446,9 @@ namespace SilverSim.Scripting.Lsl
                     {
                         res.Headers.Add("Access-Control-Allow-Origin", "*");
                     }
-                    using (Stream s = res.GetOutputStream(b.LongLength))
+                    using (Stream s = res.GetOutputStream(body.LongLength))
                     {
-                        s.Write(b, 0, b.Length);
+                        s.Write(body, 0, body.Length);
                     }
                 }
             }

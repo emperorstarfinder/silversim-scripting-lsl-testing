@@ -126,6 +126,7 @@ namespace SilverSim.Scripting.Lsl
 
     public static class APIExtension
     {
+        public const string ByteArray = "ByteArray";
         public const string LightShare = "LightShare";
         public const string WindLight_New = "WindLight";
         public const string WindLight_Aurora = "WindLight_Aurora";
