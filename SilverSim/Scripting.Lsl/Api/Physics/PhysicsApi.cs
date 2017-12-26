@@ -473,7 +473,15 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llCollisionFilter")]
         public void CollisionFilter(ScriptInstance instance, string name, LSLKey id, int accept)
         {
-            throw new NotImplementedException("llCollisionFilter(string, key, integer)");
+            lock(instance)
+            {
+                instance.Part.CollisionFilter = new ObjectPart.CollisionFilterParam
+                {
+                    Name = name,
+                    ID = id.AsUUID,
+                    Type = accept != 0 ? ObjectPart.CollisionFilterEnum.Accept : ObjectPart.CollisionFilterEnum.Reject
+                };
+            }
         }
 
         [APILevel(APIFlags.LSL, "llCollisionSprite")]
