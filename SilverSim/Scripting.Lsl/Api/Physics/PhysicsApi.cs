@@ -475,11 +475,11 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             lock(instance)
             {
-                instance.Part.CollisionFilter = new ObjectPart.CollisionFilterParam
+                instance.Item.CollisionFilter = new ObjectPartInventoryItem.CollisionFilterParam
                 {
                     Name = name,
                     ID = id.AsUUID,
-                    Type = accept != 0 ? ObjectPart.CollisionFilterEnum.Accept : ObjectPart.CollisionFilterEnum.Reject
+                    Type = accept != 0 ? ObjectPartInventoryItem.CollisionFilterEnum.Accept : ObjectPartInventoryItem.CollisionFilterEnum.Reject
                 };
             }
         }

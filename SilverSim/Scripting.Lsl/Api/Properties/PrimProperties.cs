@@ -44,33 +44,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             /* intentionally left empty */
         }
 
-        [APIExtension(APIExtension.Properties, "collisionfilter")]
-        [APIDisplayName("collisionfilter")]
-        [APIIsVariableType]
-        [APIAccessibleMembers]
-        [Serializable]
-        [APICloneOnAssignment]
-        public class CollisionFilter
-        {
-            public string Name;
-            public LSLKey ID;
-            public int Accept;
-
-            public CollisionFilter()
-            {
-                Name = string.Empty;
-                ID = UUID.Zero;
-                Accept = 1;
-            }
-
-            public CollisionFilter(CollisionFilter src)
-            {
-                Name = src.Name;
-                ID = src.ID;
-                Accept = src.Accept;
-            }
-        }
-
         [APIExtension(APIExtension.Properties, "hovertext")]
         [APIDisplayName("hovertext")]
         [APIIsVariableType]
@@ -368,36 +341,6 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get { return WithPart((p) => p.AngularVelocity); }
                 set { WithPart((p, v) => p.AngularVelocity = v, value); }
-            }
-
-            [XmlIgnore]
-            public CollisionFilter CollisionFilter
-            {
-                get
-                {
-                    return WithPart((p) =>
-                    {
-                        ObjectPart.CollisionFilterParam cfp = p.CollisionFilter;
-                        return new CollisionFilter
-                        {
-                            Name = cfp.Name,
-                            ID = cfp.ID,
-                            Accept = (cfp.Type == ObjectPart.CollisionFilterEnum.Accept).ToLSLBoolean()
-                        };
-                    });
-                }
-                set
-                {
-                    WithPart((p, v) =>
-                    {
-                        p.CollisionFilter = new ObjectPart.CollisionFilterParam
-                        {
-                            Name = v.Name,
-                            ID = v.ID,
-                            Type = v.Accept != 0 ? ObjectPart.CollisionFilterEnum.Accept : ObjectPart.CollisionFilterEnum.Reject
-                        };
-                    }, value);
-                }
             }
 
             public InventoryProperties.PrimInventory Inventory =>
