@@ -638,6 +638,11 @@ namespace SilverSim.Scripting.Lsl
                 compileState.LanguageExtensions.EnableSwitchBlock = true;
             }
 
+            if(apiExtensions.Contains(APIExtension.Properties.ToLower()))
+            {
+                compileState.LanguageExtensions.EnableProperties = true;
+            }
+
             if (apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()) ||
                 apiExtensions.Contains(APIExtension.Properties.ToLower()))
             {

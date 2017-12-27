@@ -133,6 +133,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableArrayThisOperator;
 
                 public bool EnableMemberFunctions;
+
+                public bool EnableProperties;
             }
 
             public bool UsesSinglePrecision;

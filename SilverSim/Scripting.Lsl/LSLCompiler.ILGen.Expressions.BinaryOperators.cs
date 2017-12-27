@@ -248,6 +248,20 @@ namespace SilverSim.Scripting.Lsl
                         {
                             varType = GetVectorOrQuaternionField(compileState, varType, member).FieldType;
                         }
+                        else if((varType == typeof(string) || varType == typeof(AnArray)) && compileState.LanguageExtensions.EnableProperties)
+                        {
+                            if(member == "Length")
+                            {
+                                varType = typeof(int);
+                            }
+                            else
+                            {
+                                throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
+                                    compileState.CurrentCulture,
+                                    "InvalidMemberAccess0To1",
+                                    "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
+                            }
+                        }
                         else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) == null)
                         {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
@@ -299,6 +313,20 @@ namespace SilverSim.Scripting.Lsl
                 if (varType == typeof(Vector3) || varType == typeof(Quaternion))
                 {
                     return GetVectorOrQuaternionField(compileState, varType, memberName).FieldType;
+                }
+                else if ((varType == typeof(string) || varType == typeof(AnArray)) && compileState.LanguageExtensions.EnableProperties)
+                {
+                    if (memberName == "Length")
+                    {
+                        return typeof(int);
+                    }
+                    else
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
+                            memberName,
+                            compileState.MapType(varType)));
+                    }
                 }
                 else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
                 {
@@ -551,6 +579,32 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                     varType = fi.FieldType;
                 }
+                else if(varType == typeof(string) && compileState.LanguageExtensions.EnableProperties)
+                {
+                    if(memberName != "Length")
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
+                            memberName,
+                            compileState.MapType(varType)));
+                    }
+                    PropertyInfo pi = typeof(string).GetProperty("Length");
+                    compileState.ILGen.Emit(OpCodes.Call, pi.GetGetMethod());
+                    varType = pi.PropertyType;
+                }
+                else if (varType == typeof(AnArray) && compileState.LanguageExtensions.EnableProperties)
+                {
+                    if (memberName != "Length")
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
+                            memberName,
+                            compileState.MapType(varType)));
+                    }
+                    PropertyInfo pi = typeof(AnArray).GetProperty("Count");
+                    compileState.ILGen.Emit(OpCodes.Call, pi.GetGetMethod());
+                    varType = pi.PropertyType;
+                }
                 else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
                 {
                     PropertyInfo pi;
@@ -740,6 +794,13 @@ namespace SilverSim.Scripting.Lsl
                 {
                     FieldInfo fi = GetVectorOrQuaternionField(compileState, varType, memberName);
                     compileState.ILGen.Emit(OpCodes.Stfld, fi);
+                }
+                else if ((varType == typeof(string) || varType == typeof(AnArray)) && compileState.LanguageExtensions.EnableProperties)
+                {
+                    throw new CompilerException(m_LineNumber, string.Format(
+                        this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
+                        memberName,
+                        compileState.MapType(varType)));
                 }
                 else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
                 {

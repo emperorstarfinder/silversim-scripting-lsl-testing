@@ -142,7 +142,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLength")]
         public int StringLength(string src) => src.Length;
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]

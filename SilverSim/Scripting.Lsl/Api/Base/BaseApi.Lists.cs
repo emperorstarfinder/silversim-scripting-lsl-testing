@@ -1195,7 +1195,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llGetListLength")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLength")]
         [Description("Returns an integer that is the number of elements in the list src")]
         public int GetListLength(AnArray src) => src.Count;
 
