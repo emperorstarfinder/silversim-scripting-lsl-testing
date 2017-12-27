@@ -21,6 +21,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.ByteString;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -61,54 +62,70 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, string s)
         {
             table[key] = new AString(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetList")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, AnArray s)
         {
-            table[key] = s;
+            table[key] = new AnArray(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetInteger")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, int s)
         {
             table[key] = new Integer(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetLong")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, long s)
         {
             table[key] = new LongInteger(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetFloat")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, double s)
         {
             table[key] = new Real(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetVector")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, Vector3 s)
         {
             table[key] = s;
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetQuaternion")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, Quaternion s)
         {
             table[key] = s;
         }
 
         [APILevel(APIFlags.ASSL, "asHashSetKey")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
         public void HashtableSet(Hashtable table, string key, LSLKey s)
         {
-            table[key] = s;
+            table[key] = new LSLKey(s);
+        }
+
+        [APILevel(APIFlags.ASSL, "asHashSetByteArray")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Set")]
+        public void HashtableSet(Hashtable table, string key, ByteArrayApi.ByteArray s)
+        {
+            table[key] = new ByteArrayApi.ByteArray(s);
         }
 
         [APILevel(APIFlags.ASSL, "asHash2String")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetString")]
         public string Hash2String(ScriptInstance instance, Hashtable table, string key)
         {
             lock(instance)
@@ -147,6 +164,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Vector")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetVector")]
         public Vector3 Hash2Vector(Hashtable table, string key)
         {
             IValue v;
@@ -166,6 +184,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Rot")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetRot")]
         public Quaternion Hash2Rot(Hashtable table, string key)
         {
             IValue v;
@@ -185,6 +204,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Float")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetFloat")]
         public double Hash2Float(Hashtable table, string key)
         {
             IValue v;
@@ -204,6 +224,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2List")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetList")]
         public AnArray Hash2List(Hashtable table, string key)
         {
             IValue v;
@@ -226,6 +247,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Integer")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetInteger")]
         public int Hash2Int(Hashtable table, string key)
         {
             IValue v;
@@ -255,6 +277,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Long")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLong")]
         public long Hash2Long(Hashtable table, string key)
         {
             IValue v;
@@ -284,6 +307,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         }
 
         [APILevel(APIFlags.ASSL, "asHash2Key")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetKey")]
         public LSLKey Hash2Key(ScriptInstance instance, Hashtable table, string key)
         {
             lock (instance)
@@ -320,5 +344,38 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
                 }
             }
         }
+
+        [APILevel(APIFlags.ASSL, "asHash2GetByteArray")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetByteArray")]
+        public ByteArrayApi.ByteArray Hash2ByteArray(ScriptInstance instance, Hashtable table, string key)
+        {
+            lock (instance)
+            {
+                Script script = (Script)instance;
+                IValue val;
+                if (!table.TryGetValue(key, out val))
+                {
+                    return new ByteArrayApi.ByteArray();
+                }
+
+                Type t = val.GetType();
+                if (t == typeof(ByteArrayApi.ByteArray))
+                {
+                    return (ByteArrayApi.ByteArray)val;
+                }
+                else
+                {
+                    return new ByteArrayApi.ByteArray();
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asHashContainsKey")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ContainsKey")]
+        public int HashContainsKey(Hashtable h, string key) => h.ContainsKey(key).ToLSLBoolean();
+
+        [APILevel(APIFlags.ASSL, "asHashRemove")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Remove")]
+        public int HashRemoveKey(Hashtable h, string key) => h.Remove(key).ToLSLBoolean();
     }
 }
