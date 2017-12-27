@@ -309,3 +309,5 @@ OnlyOwnerIsAbleToLinkObjectByScript=Nur der Objekteigentümer kann das Objekt per
 HitSandboxLimit=Sandbox-Begrenzung überschritten.
 Object0HasGivenYouAnItem1=Objekt {0} hat dir ein Inventar "{1}" übergeben.
 Object0HasGivenYouAFolder1=Objekt {0} hat dir einen Ordner "{1}" übergeben.
+MemberFunctionsNotEnabled=Objektmethoden sind nicht eingeschaltet.
+NoMemberFunction0Defined=Objektmethode {0} ist nicht definiert.

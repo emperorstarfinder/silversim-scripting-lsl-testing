@@ -2783,7 +2783,8 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 if (cs.m_Functions.ContainsKey(ent) ||
-                    cs.ApiInfo.Methods.ContainsKey(ent))
+                    cs.ApiInfo.Methods.ContainsKey(ent) ||
+                    (cs.ApiInfo.MemberMethods.ContainsKey(ent) && resolvetree.SubTree[i + 1].Entry == "("))
                 {
                     if(i + 1 >= n)
                     {
@@ -2868,7 +2869,62 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new CompilerException(lineNumber, "Internal Error! Expression tree not solved");
             }
+            IdentifyMemberFunctions(cs, expressionTree, lineNumber, currentCulture);
             return expressionTree;
+        }
+
+        private void IdentifyMemberFunctions(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        {
+            var enumeratorStack = new List<Tree>();
+            enumeratorStack.Insert(0, tree);
+            while (enumeratorStack.Count != 0)
+            {
+                tree = enumeratorStack[0];
+                enumeratorStack.RemoveAt(0);
+
+                int cnt = tree.SubTree.Count;
+                for(int pos = 0; pos < cnt; ++pos)
+                {
+                    Tree subtree = tree.SubTree[pos];
+                    if (subtree.Type == Tree.EntryType.OperatorBinary && subtree.Entry == "." && subtree.SubTree[1].Type == Tree.EntryType.Function)
+                    {
+                        Tree function = subtree.SubTree[1];
+                        Tree funcArg = new Tree
+                        {
+                            Type = Tree.EntryType.FunctionArgument
+                        };
+                        funcArg.SubTree.Add(subtree.SubTree[0]);
+                        funcArg.Value = subtree.SubTree[0].Value;
+                        function.SubTree.Insert(0, funcArg);
+                        tree.SubTree[pos] = function;
+                        function.Type = Tree.EntryType.MemberFunction;
+                        subtree = function;
+                    }
+
+                    if (subtree.Value != null)
+                    {
+                        /* skip solved parts */
+                        continue;
+                    }
+                    switch(subtree.Type)
+                    {
+                        case Tree.EntryType.Declaration:
+                        case Tree.EntryType.DeclarationArgument:
+                        case Tree.EntryType.Function:
+                        case Tree.EntryType.MemberFunction:
+                        case Tree.EntryType.FunctionArgument:
+                        case Tree.EntryType.Level:
+                        case Tree.EntryType.LevelBegin:
+                        case Tree.EntryType.OperatorBinary:
+                        case Tree.EntryType.OperatorLeftUnary:
+                        case Tree.EntryType.OperatorRightUnary:
+                        case Tree.EntryType.ThisOperator:
+                        case Tree.EntryType.Vector:
+                            enumeratorStack.Add(subtree);
+                            break;
+                    }
+                }
+            }
         }
     }
 }

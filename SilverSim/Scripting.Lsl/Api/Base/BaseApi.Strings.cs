@@ -35,6 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llDeleteSubString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "DeleteSubString")]
         public string DeleteSubString(string src, int start, int end)
         {
             if (start < 0)
@@ -70,15 +71,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llToLower")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToLower")]
         public string ToLower(string s) => s.ToLower();
 
         [APILevel(APIFlags.LSL, "llToUpper")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToUpper")]
         public string ToUpper(string s) => s.ToUpper();
 
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "UnescapeURL")]
         public string UnescapeURL(string url) => Uri.UnescapeDataString(url);
 
         [APILevel(APIFlags.LSL, "llEscapeURL")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "EscapeURL")]
         public string EscapeURL(string url) => Uri.EscapeDataString(url);
 
         [APILevel(APIFlags.LSL)]
@@ -91,6 +96,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         private static readonly char[] trimchars = new char[] { ' ', '\t', '\r', '\n' };
 
         [APILevel(APIFlags.LSL, "llStringTrim")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Trim")]
         public string StringTrim(string src, int type)
         {
             switch(type & STRING_TRIM)
@@ -114,6 +120,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llInsertString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Insert")]
         public string InsertString(string dest, int index, string src)
         {
             if (index < 0)
@@ -135,12 +142,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLength")]
         public int StringLength(string src) => src.Length;
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Index")]
         public int SubStringIndex(string source, string pattern) => source.IndexOf(pattern);
 
         [APILevel(APIFlags.LSL, "llGetSubString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Substring")]
         public string GetSubstring(string src, int start, int end)
         {
             if(src.Length == 0)
@@ -218,6 +228,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osMatchString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Match")]
         public AnArray OsMatchString(string src, string pattern, int start)
         {
             var result = new AnArray();
@@ -254,6 +265,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osReplaceString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Replace")]
         public string OsReplaceString(string src, string pattern, string replace, int count, int start)
         {
             if (start < 0)
@@ -271,9 +283,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osFormatString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Format")]
         public string OsFormatString(string fmt, AnArray list) => string.Format(fmt, list.ToArray());
 
         [APILevel(APIFlags.OSSL, "osRegexIsMatch")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "MatchesRegex")]
         public int RegexIsMatch(ScriptInstance instance, string input, string pattern)
         {
             try
@@ -291,9 +305,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osStringStartsWith")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "StartsWith")]
         public int StringStartsWith(string input, string startsWith) => input.StartsWith(startsWith).ToLSLBoolean();
 
         [APILevel(APIFlags.OSSL, "osStringEndsWith")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "EndsWith")]
         public int StringEndsWith(string input, string endsWith) => input.EndsWith(endsWith).ToLSLBoolean();
     }
 }

@@ -88,5 +88,11 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 return new TimerControl(instance);
             }
         }
+
+        [APIExtension(APIExtension.MemberFunctions,APIUseAsEnum.MemberFunction, "Stop")]
+        public void StopTimer(TimerControl control)
+        {
+            control.Interval = 0;
+        }
     }
 }

@@ -1160,7 +1160,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (m_RightHand.Type != Tree.EntryType.MemberName)
                 {
-                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Entry + m_RightHand.Type, compileState.MapType(m_LeftHandType)));
+                    throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsNotAMemberOfType1", "'{0}' is not a member of type {1}"), m_RightHand.Type.ToString() + " " + m_RightHand.Entry, compileState.MapType(m_LeftHandType)));
                 }
                 Type t = GetMemberSelectorToStack(compileState, m_LeftHandType, m_RightHand.Entry);
                 throw Return(compileState, t);

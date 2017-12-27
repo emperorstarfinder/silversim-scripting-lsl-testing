@@ -105,7 +105,7 @@ namespace SilverSim.Scripting.Lsl
                     m_Parameters.Add(new FunctionParameterInfo(functionTree.SubTree[i], i));
                 }
 
-                if (compileState.m_Functions.TryGetValue(functionTree.Entry, out funcInfos))
+                if (functionTree.Type == Tree.EntryType.Function && compileState.m_Functions.TryGetValue(functionTree.Entry, out funcInfos))
                 {
                     functionNameValid = true;
                     /*
@@ -131,7 +131,9 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
-                if (compileState.ApiInfo.Methods.TryGetValue(functionTree.Entry, out methods))
+                if (functionTree.Type == Tree.EntryType.MemberFunction ?
+                    compileState.ApiInfo.MemberMethods.TryGetValue(functionTree.Entry, out methods) :
+                    compileState.ApiInfo.Methods.TryGetValue(functionTree.Entry, out methods))
                 {
                     functionNameValid = true;
                     foreach (ApiMethodInfo method in methods)
@@ -199,7 +201,14 @@ namespace SilverSim.Scripting.Lsl
 
                 if (!functionNameValid)
                 {
-                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NoFunction0Defined", "No function {0} defined"), functionTree.Entry));
+                    if (functionTree.Type == Tree.EntryType.MemberFunction)
+                    {
+                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NoMemberFunction0Defined", "No member function {0} defined"), functionTree.Entry));
+                    }
+                    else
+                    {
+                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NoFunction0Defined", "No function {0} defined"), functionTree.Entry));
+                    }
                 }
                 else if (m_SelectedFunctions.Count == 0)
                 {

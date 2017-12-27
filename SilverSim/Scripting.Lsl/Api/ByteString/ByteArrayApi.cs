@@ -23,12 +23,7 @@
 #pragma warning disable RCS1029
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.ServiceInterfaces.Chat;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scene.Types.Script.Events;
-using SilverSim.ServiceInterfaces.ServerParam;
-using SilverSim.Threading;
 using SilverSim.Types;
 using System;
 using System.ComponentModel;
@@ -140,6 +135,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         }
 
         [APIExtension(APIExtension.ByteArray, "baSHA1")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CalcSHA1")]
         public ByteArray CalcSHA1(ByteArray data)
         {
             using (var sha = SHA1.Create())
@@ -149,6 +145,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         }
 
         [APIExtension(APIExtension.ByteArray, "baMD5")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CalcMD5")]
         public ByteArray CalcMD5(ByteArray data)
         {
             using (var md5 = MD5.Create())
@@ -161,6 +158,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         public ByteArray CreateByteArray(int size) => new ByteArray(new byte[size]);
 
         [APIExtension(APIExtension.ByteArray, "baResize")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Resize")]
         public ByteArray Resize(ByteArray byteArray, int size)
         {
             byte[] resdata = new byte[size];
@@ -169,21 +167,27 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         }
 
         [APIExtension(APIExtension.ByteArray, "baFromBase64")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FromBase64")]
         public ByteArray FromBase64(string base64) => new ByteArray(Convert.FromBase64String(base64));
 
         [APIExtension(APIExtension.ByteArray, "baToBase64")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToBase64")]
         public string ToBase64(ByteArray byteArray) => Convert.ToBase64String(byteArray.Data);
 
         [APIExtension(APIExtension.ByteArray, "baFromUTF8")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToByteArray")]
         public ByteArray FromUTF8(string s) => new ByteArray(s.ToUTF8Bytes());
 
         [APIExtension(APIExtension.ByteArray, "baToUTF8")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToUTF8")]
         public string ToUTF8(ByteArray byteArray) => byteArray.Data.FromUTF8Bytes();
 
         [APIExtension(APIExtension.ByteArray, "baFromHex")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "HexToByteArray")]
         public ByteArray FromHex(string s) => new ByteArray(s.FromHexStringToByteArray());
 
         [APIExtension(APIExtension.ByteArray, "baToHex")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToHexString")]
         public string ToHex(ByteArray byteArray) => byteArray.Data.ToHexString();
     }
 }

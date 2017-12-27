@@ -173,6 +173,18 @@ namespace SilverSim.Scripting.Lsl
                             innerExpressionReturn = null;
                             break;
 
+                        case Tree.EntryType.MemberFunction:
+                            if(!compileState.LanguageExtensions.EnableMemberFunctions)
+                            {
+                                throw new CompilerException(lineNumber, this.GetLanguageString(compileState.CurrentCulture, "MemberFunctionsNotEnabled", "Member functions not enabled"));
+                            }
+                            expressionStack.Insert(0, new FunctionExpression(
+                                compileState,
+                                functionTree,
+                                lineNumber));
+                            innerExpressionReturn = null;
+                            break;
+
                         case Tree.EntryType.OperatorBinary:
                             expressionStack.Insert(0, new BinaryOperatorExpression(
                                 this,

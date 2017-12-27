@@ -37,7 +37,8 @@ namespace SilverSim.Scripting.Lsl
     {
         Function = 0,
         Getter = 1,
-        Setter = 2
+        Setter = 2,
+        MemberFunction = 3
     }
 
     [Serializable]
@@ -143,6 +144,7 @@ namespace SilverSim.Scripting.Lsl
         public const string LongInteger = "LongInteger";
         public const string Properties = "Properties";
         public const string AgentInventory = "AgentInventory";
+        public const string MemberFunctions = "MemberFunctions";
     }
 
     [Serializable]

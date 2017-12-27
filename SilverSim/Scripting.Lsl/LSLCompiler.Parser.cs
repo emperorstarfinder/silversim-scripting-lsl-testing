@@ -580,6 +580,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             apiExtensions.Add(APIExtension.Properties.ToLower());
                         }
+                        if(!apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
+                        {
+                            apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
+                        }
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
@@ -625,6 +629,12 @@ namespace SilverSim.Scripting.Lsl
             if(apiExtensions.Contains(APIExtension.SwitchBlock.ToLower()))
             {
                 compileState.LanguageExtensions.EnableSwitchBlock = true;
+            }
+
+            if (apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()) ||
+                apiExtensions.Contains(APIExtension.Properties.ToLower()))
+            {
+                compileState.LanguageExtensions.EnableMemberFunctions = true;
             }
 
             foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)

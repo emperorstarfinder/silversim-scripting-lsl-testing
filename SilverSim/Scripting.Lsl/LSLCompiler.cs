@@ -86,6 +86,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             public Dictionary<string, List<ApiMethodInfo>> Methods = new Dictionary<string, List<ApiMethodInfo>>();
+            public Dictionary<string, List<ApiMethodInfo>> MemberMethods = new Dictionary<string, List<ApiMethodInfo>>();
             public Dictionary<string, FieldInfo> Constants = new Dictionary<string, FieldInfo>();
             public Dictionary<string, MethodInfo> EventDelegates = new Dictionary<string, MethodInfo>();
             public Dictionary<string, Type> Types = new Dictionary<string, Type>();
@@ -106,7 +107,18 @@ namespace SilverSim.Scripting.Lsl
                         Methods[mInfo.Key].AddRange(mInfo.Value);
                     }
                 }
-                foreach(KeyValuePair<string, FieldInfo> kvp in info.Constants)
+                foreach (KeyValuePair<string, List<ApiMethodInfo>> mInfo in info.MemberMethods)
+                {
+                    if (!MemberMethods.ContainsKey(mInfo.Key))
+                    {
+                        MemberMethods[mInfo.Key] = new List<ApiMethodInfo>(mInfo.Value);
+                    }
+                    else
+                    {
+                        MemberMethods[mInfo.Key].AddRange(mInfo.Value);
+                    }
+                }
+                foreach (KeyValuePair<string, FieldInfo> kvp in info.Constants)
                 {
                     Constants.Add(kvp.Key, kvp.Value);
                 }
@@ -558,14 +570,24 @@ namespace SilverSim.Scripting.Lsl
                 funcName = m.Name;
             }
 
+            List<ApiMethodInfo> methodList;
+
             switch (funcNameAttr.UseAs)
             {
                 case APIUseAsEnum.Function:
-                    List<ApiMethodInfo> methodList;
                     if (!apiInfo.Methods.TryGetValue(funcName, out methodList))
                     {
                         methodList = new List<ApiMethodInfo>();
                         apiInfo.Methods.Add(funcName, methodList);
+                    }
+                    methodList.Add(new ApiMethodInfo(funcName, api, m));
+                    break;
+
+                case APIUseAsEnum.MemberFunction:
+                    if (!apiInfo.MemberMethods.TryGetValue(funcName, out methodList))
+                    {
+                        methodList = new List<ApiMethodInfo>();
+                        apiInfo.MemberMethods.Add(funcName, methodList);
                     }
                     methodList.Add(new ApiMethodInfo(funcName, api, m));
                     break;
