@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         [APICloneOnAssignment]
         [APIAccessibleMembers("Length")]
         [Serializable]
-        public class ByteArray
+        public class ByteArray : IValue
         {
             public byte[] Data = new byte[0];
 
@@ -132,6 +132,32 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
 
             [XmlIgnore]
             public int Length => Data.Length;
+
+            public Types.ValueType Type => Types.ValueType.Unknown;
+
+            public LSLValueType LSL_Type => LSLValueType.Invalid;
+
+            public ABoolean AsBoolean => new ABoolean(Length != 0);
+
+            public Integer AsInteger => new Integer(Length);
+
+            public int AsInt => Length;
+
+            public uint AsUInt => (uint)Length;
+
+            public ulong AsULong => (ulong)Length;
+
+            public long AsLong => Length;
+
+            public Quaternion AsQuaternion => Quaternion.Identity;
+
+            public Real AsReal => new Real(Length);
+
+            public AString AsString => new AString(Data.ToHexString());
+
+            public UUID AsUUID => new UUID(Data, 0);
+
+            public Vector3 AsVector3 => Vector3.Zero;
         }
 
         [APIExtension(APIExtension.ByteArray, "baSHA1")]

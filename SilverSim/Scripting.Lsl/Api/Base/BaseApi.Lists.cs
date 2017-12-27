@@ -24,6 +24,7 @@
 #pragma warning disable RCS1163
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.ByteString;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [APILevel(APIFlags.ASSL)]
             public static implicit operator Variant(Quaternion v) => new Variant { Value = v };
             [APILevel(APIFlags.ASSL)]
+            public static implicit operator Variant(ByteArrayApi.ByteArray v) => new Variant { Value = v };
+            [APILevel(APIFlags.ASSL)]
             public static implicit operator bool(Variant v) => v.Value.AsBoolean;
             [APILevel(APIFlags.ASSL)]
             public static implicit operator int(Variant v) => ConvertToInt(v.Value);
@@ -73,6 +76,20 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             public static implicit operator Vector3(Variant v) => ConvertToVector(v.Value);
             [APILevel(APIFlags.ASSL)]
             public static implicit operator Quaternion(Variant v) => ConvertToRot(v.Value);
+            [APIExtension(APIExtension.ByteArray)]
+            public static implicit operator ByteArrayApi.ByteArray(Variant v)
+            {
+                ByteArrayApi.ByteArray byteArray = (ByteArrayApi.ByteArray)v.Value;
+                if(byteArray != null)
+                {
+                    return (ByteArrayApi.ByteArray)v.Value;
+                }
+                else
+                {
+                    return new ByteArrayApi.ByteArray();
+                }
+            }
+
             public int Type => (int)Value.LSL_Type;
             private static string MapVariantType(Type t)
             {
@@ -103,6 +120,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 else if(t == typeof(Integer))
                 {
                     return "int";
+                }
+                else if(t == typeof(ByteArrayApi.ByteArray))
+                {
+                    return "bytearray";
                 }
                 else
                 {
