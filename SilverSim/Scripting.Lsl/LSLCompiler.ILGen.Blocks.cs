@@ -806,9 +806,11 @@ namespace SilverSim.Scripting.Lsl
                 returnType = typeof(void);
             }
 
-            if(functionDeclaration[functionStart + 1] == "this")
+            if(functionDeclaration[functionStart + 1] == "this" &&
+                functionDeclaration[functionStart + 2] != ")")
             {
                 /* special keyword to declare custom member function */
+                ++functionStart;
             }
 
             int paramidx = 0;

@@ -125,7 +125,14 @@ namespace SilverSim.Scripting.Lsl
             {
                 return funcParams;
             }
-            for (int i = 0; i < arguments.Count; i += 3)
+
+            int i = 0;
+            if(arguments[0] == "this" && arguments[1] != ")")
+            {
+                /* custom member method designator */
+                i = 1;
+            }
+            for (; i < arguments.Count; i += 3)
             {
                 var fp = new FuncParamInfo();
                 if(!cs.TryGetValidVarType(arguments[i], out fp.Type))

@@ -102,6 +102,7 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, Dictionary<string, LineInfo>> m_StateVariableInitValues = new Dictionary<string, Dictionary<string, LineInfo>>();
             public List<List<string>> m_LocalVariables = new List<List<string>>();
             public Dictionary<string, List<FunctionInfo>> m_Functions = new Dictionary<string, List<FunctionInfo>>();
+            public Dictionary<string, List<FunctionInfo>> m_MemberFunctions = new Dictionary<string, List<FunctionInfo>>();
             public Dictionary<string, Dictionary<string, List<LineInfo>>> m_States = new Dictionary<string, Dictionary<string, List<LineInfo>>>();
             public Dictionary<string, FieldBuilder> m_ApiFieldInfo = new Dictionary<string, FieldBuilder>();
             public List<BreakContinueLabel> m_BreakContinueLabels = new List<BreakContinueLabel>();

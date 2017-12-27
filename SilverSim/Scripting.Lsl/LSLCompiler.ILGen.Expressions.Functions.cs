@@ -131,6 +131,33 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
+                if (functionTree.Type == Tree.EntryType.MemberFunction && compileState.LanguageExtensions.EnableMemberFunctions && 
+                    compileState.m_MemberFunctions.TryGetValue(functionTree.Entry, out funcInfos))
+                {
+                    functionNameValid = true;
+                    /*
+                    */
+
+                    foreach (FunctionInfo funcInfo in funcInfos)
+                    {
+                        if (funcInfo.Parameters.Length == m_Parameters.Count)
+                        {
+                            m_SelectedFunctions.Add(funcInfo);
+                        }
+                    }
+                    if (m_SelectedFunctions.Count == 0)
+                    {
+                        if (functionTree.SubTree.Count == 1)
+                        {
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter"), functionTree.Entry, functionTree.SubTree.Count));
+                        }
+                        else
+                        {
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters"), functionTree.Entry, functionTree.SubTree.Count));
+                        }
+                    }
+                }
+
                 if (functionTree.Type == Tree.EntryType.MemberFunction ?
                     compileState.ApiInfo.MemberMethods.TryGetValue(functionTree.Entry, out methods) :
                     compileState.ApiInfo.Methods.TryGetValue(functionTree.Entry, out methods))

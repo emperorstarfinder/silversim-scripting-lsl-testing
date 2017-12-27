@@ -526,6 +526,12 @@ namespace SilverSim.Scripting.Lsl
                             functionStart = 2;
                             returnType = typeof(void);
                         }
+                        if(functionDeclaration[functionStart] == "this" &&
+                            functionDeclaration[functionStart + 1] != ")")
+                        {
+                            /* special designator for custom member methods */
+                            ++functionStart;
+                        }
                         var paramTypes = new List<Type>();
                         var paramName = new List<string>();
                         while (functionDeclaration[functionStart] != ")")
@@ -577,6 +583,19 @@ namespace SilverSim.Scripting.Lsl
                             functionName = functionDeclaration[0];
                             functionStart = 2;
                             returnType = typeof(void);
+                        }
+                        if(functionDeclaration[functionStart] == "this" &&
+                            functionDeclaration[functionStart + 1] != ")")
+                        {
+                            /* member capable function */
+                            ++functionStart;
+                            List<FunctionInfo> memberFunctions;
+                            if(!compileState.m_MemberFunctions.TryGetValue(functionKvp.Key, out memberFunctions))
+                            {
+                                memberFunctions = new List<FunctionInfo>();
+                                compileState.m_MemberFunctions.Add(functionKvp.Key, memberFunctions);
+                            }
+                            memberFunctions.Add(funcInfo);
                         }
                         var paramTypes = new List<Type>();
                         var paramName = new List<string>();
