@@ -706,6 +706,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         public void LinkMessage(Prim p, int num, string data, LSLKey id) =>
             p.LinkMessage(num, data, id);
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Message")]
+        public void LinkMessage(LinkSetAccessor linkSet, int num, string data, LSLKey id) =>
+            linkSet[PrimitiveApi.LINK_SET].LinkMessage(num, data, id);
+
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "this")]
         public Prim GetThis(ScriptInstance instance)
         {
