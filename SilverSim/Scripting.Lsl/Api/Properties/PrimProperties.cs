@@ -24,8 +24,10 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Api.Primitive;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using SilverSim.Types.Primitive;
 using System;
 using System.Collections.Generic;
@@ -620,6 +622,42 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 set { WithPart((p, v) => p.Buoyancy = v, value); }
             }
 
+
+            public void LinkMessage(int num, string str, LSLKey id)
+            {
+                ScriptInstance instance;
+                if (WeakInstance == null || !WeakInstance.TryGetTarget(out instance) || LinkNumbers.Length == 0)
+                {
+                    throw new LocalizedScriptErrorException(this, "ValueContentsNotAssignedType0", "Value contents not assigned. (Type {0})", "link");
+                }
+                WithPart((p, v) =>
+                {
+                    if (p.IsScripted)
+                    {
+                        foreach (ObjectPartInventoryItem item in p.Inventory.Values)
+                        {
+                            if (item.AssetType == AssetType.LSLText || item.AssetType == AssetType.LSLBytecode)
+                            {
+                                ScriptInstance si = item.ScriptInstance;
+
+                                if (si?.IsLinkMessageReceiver ?? false)
+                                {
+                                    si.PostEvent(v);
+                                }
+                            }
+                        }
+                    }
+                },
+                new LinkMessageEvent
+                {
+                    SenderNumber = instance.Part.LinkNumber,
+                    TargetNumber = 0,
+                    Number = num,
+                    Data = str,
+                    Id = id.ToString()
+                });
+            }
+
             [APIExtension(APIExtension.Properties)]
             public static implicit operator bool(Prim c) => c.LinkNumbers.Length > 0;
 
@@ -663,6 +701,10 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
             }
         }
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Message")]
+        public void LinkMessage(Prim p, int num, string data, LSLKey id) =>
+            p.LinkMessage(num, data, id);
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "this")]
         public Prim GetThis(ScriptInstance instance)
