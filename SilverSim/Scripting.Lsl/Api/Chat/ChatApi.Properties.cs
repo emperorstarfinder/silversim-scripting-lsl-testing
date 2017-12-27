@@ -21,6 +21,7 @@
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System;
 using System.Xml.Serialization;
 
 namespace SilverSim.Scripting.Lsl.Api.Chat
@@ -32,6 +33,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APIIsVariableType]
         [APIAccessibleMembers("IsDebug", "IsPublic")]
         [ImplementsCustomTypecasts]
+        [Serializable]
         public struct ScriptChannel
         {
             public int Number;
@@ -50,6 +52,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APIIsVariableType]
         [APICloneOnAssignment]
         [ImplementsCustomTypecasts]
+        [Serializable]
         public class ListenHandle
         {
             public int Channel;
