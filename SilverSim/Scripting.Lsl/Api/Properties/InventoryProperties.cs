@@ -126,7 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Script")]
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "ScriptItem")]
         public PrimInventoryItem GetScript(ScriptInstance instance)
         {
             lock(instance)
