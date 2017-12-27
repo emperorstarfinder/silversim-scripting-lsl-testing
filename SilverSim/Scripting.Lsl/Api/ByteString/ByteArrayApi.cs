@@ -183,7 +183,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         public string ToUTF8(ByteArray byteArray) => byteArray.Data.FromUTF8Bytes();
 
         [APIExtension(APIExtension.ByteArray, "baFromHex")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "HexToByteArray")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FromHexToByteArray")]
         public ByteArray FromHex(string s) => new ByteArray(s.FromHexStringToByteArray());
 
         [APIExtension(APIExtension.ByteArray, "baToHex")]
