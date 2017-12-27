@@ -1576,6 +1576,8 @@ namespace SilverSim.Scripting.Lsl
                     case Tree.EntryType.Vector:
                     case Tree.EntryType.Rotation:
                     case Tree.EntryType.ThisOperator:
+                    case Tree.EntryType.StringValue:
+                    case Tree.EntryType.Value:
                         return startPos;
 
                     case Tree.EntryType.OperatorBinary:
