@@ -1649,7 +1649,8 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
                     }
 
-                    if(tree.SubTree[pos + 1].Type != Tree.EntryType.MemberName)
+                    if(tree.SubTree[pos + 1].Type != Tree.EntryType.MemberName &&
+                        tree.SubTree[pos + 1].Type != Tree.EntryType.Function)
                     {
                         throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
                     }
@@ -2757,7 +2758,14 @@ namespace SilverSim.Scripting.Lsl
 
                 if(ent == "." && i + 1 < n)
                 {
-                    resolvetree.SubTree[i + 1].Type = Tree.EntryType.MemberName;
+                    if (i + 2 < n && resolvetree.SubTree[i + 2].Entry == "(")
+                    {
+                        m_Log.Info("Member function");
+                    }
+                    else
+                    {
+                        resolvetree.SubTree[i + 1].Type = Tree.EntryType.MemberName;
+                    }
                 }
             }
         }
