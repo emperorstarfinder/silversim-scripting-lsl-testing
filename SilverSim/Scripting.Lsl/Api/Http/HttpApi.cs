@@ -61,6 +61,7 @@ namespace SilverSim.Scripting.Lsl.Api.Http
         public delegate void State_http_response(LSLKey request_id, int status, AnArray metadata, string body);
 
         [APIExtension(APIExtension.ByteArray, "http_binary_response")]
+        [StateEventDelegate]
         public delegate void State_http_binary_response(LSLKey request_id, int status, AnArray metadata, ByteArrayApi.ByteArray body);
 
         public void Startup(ConfigurationLoader loader)

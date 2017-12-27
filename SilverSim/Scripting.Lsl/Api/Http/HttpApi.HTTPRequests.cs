@@ -24,6 +24,7 @@
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Scripting.Lsl.Api.ByteString;
 using SilverSim.Types;
 using System;
 using System.Linq;
@@ -76,7 +77,10 @@ namespace SilverSim.Scripting.Lsl.Api.Http
             HTTPRequest(instance, url, parameters, body.ToUTF8Bytes());
 
         [APIExtension(APIExtension.ByteArray, "llHTTPRequest")]
-        public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, byte[] body)
+        public LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, ByteArrayApi.ByteArray body) =>
+            HTTPRequest(instance, url, parameters, body.Data);
+
+        private LSLKey HTTPRequest(ScriptInstance instance, string url, AnArray parameters, byte[] body)
         {
             var req = new LSLHTTPClient_RequestQueue.LSLHttpRequest();
             lock (instance)
