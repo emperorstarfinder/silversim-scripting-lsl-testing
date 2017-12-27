@@ -662,12 +662,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invIncrementFolderVersion")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "IncrementVersion")]
         public void IncrementFolderVersion(ScriptInstance instance, AgentInventoryFolder folder)
         {
             folder.IncrementVersion();
         }
 
         [APIExtension(APIExtension.AgentInventory, "invCreateFolder")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateFolder")]
         public LSLKey CreateFolder(ScriptInstance instance, AgentInventoryFolder folder, string name, int type)
         {
             if(folder.InventoryService == null)
@@ -690,7 +692,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invCreateLink")]
-        public LSLKey CreateLink(ScriptInstance instance, AgentInventoryFolder toFolder, AgentInventoryItem originalItem, string name, string description)
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateLink")]
+        public LSLKey CreateLink(ScriptInstance instance, AgentInventoryItem originalItem, AgentInventoryFolder toFolder, string name, string description)
         {
             lock (instance)
             {
@@ -739,7 +742,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invCreateLink")]
-        public LSLKey CreateLink(ScriptInstance instance, AgentInventoryFolder toFolder, AgentInventoryFolder originalFolder, string name, string description)
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateLink")]
+        public LSLKey CreateLink(ScriptInstance instance, AgentInventoryFolder originalFolder, AgentInventoryFolder toFolder, string name, string description)
         {
             lock (instance)
             {
@@ -780,6 +784,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invPurge")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Purge")]
         public void Purge(ScriptInstance instance, AgentInventoryFolder folder)
         {
             if (folder.InventoryService == null)
@@ -797,6 +802,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invDelete")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Delete")]
         public void Delete(ScriptInstance instance, AgentInventoryFolder folder)
         {
             if (folder.InventoryService == null)
@@ -814,6 +820,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invDelete")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Delete")]
         public void Delete(ScriptInstance instance, AgentInventoryItem item)
         {
             if (item.InventoryService == null)
@@ -831,7 +838,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invMove")]
-        public void Move(ScriptInstance instance, AgentInventoryFolder toFolder, AgentInventoryFolder folder)
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Move")]
+        public void Move(ScriptInstance instance, AgentInventoryFolder folder, AgentInventoryFolder toFolder)
         {
             if (folder.InventoryService == null || toFolder.InventoryService == null)
             {
@@ -852,7 +860,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
         }
 
         [APIExtension(APIExtension.AgentInventory, "invMove")]
-        public void Move(ScriptInstance instance, AgentInventoryFolder toFolder, AgentInventoryItem item)
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Move")]
+        public void Move(ScriptInstance instance, AgentInventoryItem item, AgentInventoryFolder toFolder)
         {
             if (item.InventoryService == null)
             {
