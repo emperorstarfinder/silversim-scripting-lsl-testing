@@ -48,6 +48,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         [APIExtension(APIExtension.Properties, "listenhandle")]
         [APIDisplayName("listenhandle")]
         [APIIsVariableType]
+        [APICloneOnAssignment]
         [ImplementsCustomTypecasts]
         public class ListenHandle
         {
