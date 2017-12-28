@@ -2762,7 +2762,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (i + 2 < n && resolvetree.SubTree[i + 2].Entry == "(")
                     {
-                        m_Log.Info("Member function");
+                        /* Member Function detected */
                     }
                     else
                     {
