@@ -108,8 +108,6 @@ namespace SilverSim.Scripting.Lsl
                 if (functionTree.Type == Tree.EntryType.Function && compileState.m_Functions.TryGetValue(functionTree.Entry, out funcInfos))
                 {
                     functionNameValid = true;
-                    /*
-                    */
 
                     foreach (FunctionInfo funcInfo in funcInfos)
                     {
@@ -135,8 +133,6 @@ namespace SilverSim.Scripting.Lsl
                     compileState.m_MemberFunctions.TryGetValue(functionTree.Entry, out funcInfos))
                 {
                     functionNameValid = true;
-                    /*
-                    */
 
                     foreach (FunctionInfo funcInfo in funcInfos)
                     {
