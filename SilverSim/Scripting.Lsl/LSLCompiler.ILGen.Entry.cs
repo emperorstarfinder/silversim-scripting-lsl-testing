@@ -572,7 +572,6 @@ namespace SilverSim.Scripting.Lsl
                     {
                         MethodBuilder method = funcInfo.Method;
 
-#if DEBUG
                         Type returnType;
                         List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
@@ -584,11 +583,14 @@ namespace SilverSim.Scripting.Lsl
                             functionStart = 2;
                             returnType = typeof(void);
                         }
+
                         if(functionDeclaration[functionStart] == "this" &&
                             functionDeclaration[functionStart + 1] != ")")
                         {
                             /* member capable function */
+#if DEBUG
                             ++functionStart;
+#endif
                             List<FunctionInfo> memberFunctions;
                             if(!compileState.m_MemberFunctions.TryGetValue(functionKvp.Key, out memberFunctions))
                             {
@@ -597,6 +599,8 @@ namespace SilverSim.Scripting.Lsl
                             }
                             memberFunctions.Add(funcInfo);
                         }
+
+#if DEBUG
                         var paramTypes = new List<Type>();
                         var paramName = new List<string>();
                         while (functionDeclaration[functionStart] != ")")
@@ -619,7 +623,7 @@ namespace SilverSim.Scripting.Lsl
                         dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
 #endif
 
-                        var method_ilgen = new ILGenDumpProxy(method.GetILGenerator(),
+                    var method_ilgen = new ILGenDumpProxy(method.GetILGenerator(),
                             compileState.DebugDocument
 #if DEBUG
                             , dumpILGen
