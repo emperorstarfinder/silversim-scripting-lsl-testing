@@ -206,8 +206,127 @@ namespace SilverSim.Scripting.Lsl
 
                 var stateTypes = new Dictionary<string, Type>();
 
-#region Globals generation
+                /* Collect static globals */
                 typeLocalsInited = AddConstants(compileState);
+
+                #region Struct generation
+                foreach (KeyValuePair<string, Dictionary<string, LineInfo>> kvp in compileState.m_Structs)
+                {
+#if DEBUG
+                    dumpILGen.WriteLine("********************************************************************************");
+                    dumpILGen.WriteLine("DefineType(\"{0}\")", assetAssemblyName + ".Struct_" + kvp.Key);
+#endif
+                    TypeBuilder structTypeBuilder = mb.DefineType(assetAssemblyName + ".Struct_" + kvp.Key, TypeAttributes.Public, typeof(object));
+                    structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(APIDisplayNameAttribute).GetConstructor(new Type[] { typeof(string) }), new object[] { kvp.Key }));
+                    structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(APICloneOnAssignmentAttribute).GetConstructor(Type.EmptyTypes), new object[0]));
+                    structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(APIAccessibleMembersAttribute).GetConstructor(new Type[] { typeof(string[]) }), new object[] { new string[0] }));
+                    structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(APIIsVariableTypeAttribute).GetConstructor(Type.EmptyTypes), new object[0]));
+                    structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(SerializableAttribute).GetConstructor(Type.EmptyTypes), new object[0]));
+
+                    ConstructorBuilder cb = structTypeBuilder.DefineTypeInitializer();
+                    var typecb_ILGen = new ILGenDumpProxy(cb.GetILGenerator(),
+                        compileState.DebugDocument
+#if DEBUG
+                        , dumpILGen
+#endif
+                    );
+                    typecb_ILGen.Emit(OpCodes.Ret);
+
+                    cb = structTypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+                    var defcb_ILGen = new ILGenDumpProxy(cb.GetILGenerator(),
+                        compileState.DebugDocument
+#if DEBUG
+                        , dumpILGen
+#endif
+                    );
+                    cb = structTypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { structTypeBuilder });
+                    var copycb_ILGen = new ILGenDumpProxy(cb.GetILGenerator(),
+                        compileState.DebugDocument
+#if DEBUG
+                        , dumpILGen
+#endif
+                    );
+
+                    foreach (KeyValuePair<string, LineInfo> variableKvp in kvp.Value)
+                    {
+                        Type varType;
+                        if(!compileState.TryGetValidVarType(variableKvp.Value.Line[0], out varType))
+                        {
+                            throw CompilerException(variableKvp.Value, "Internal Error");
+                        }
+                        FieldBuilder structField = structTypeBuilder.DefineField(variableKvp.Key, varType, FieldAttributes.Public);
+                        /* default value */
+                        if (varType == typeof(string))
+                        {
+                            defcb_ILGen.Emit(OpCodes.Ldarg_0);
+                            defcb_ILGen.Emit(OpCodes.Ldstr, string.Empty);
+                            defcb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+                        else if (varType == typeof(double))
+                        {
+                            defcb_ILGen.Emit(OpCodes.Ldarg_0);
+                            defcb_ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                            defcb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+                        else if (varType == typeof(long))
+                        {
+                            defcb_ILGen.Emit(OpCodes.Ldarg_0);
+                            defcb_ILGen.Emit(OpCodes.Ldc_I8, (long)0);
+                            defcb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+                        else if (varType == typeof(int))
+                        {
+                            defcb_ILGen.Emit(OpCodes.Ldarg_0);
+                            defcb_ILGen.Emit(OpCodes.Ldc_I4_0);
+                            defcb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+                        else if (varType == typeof(Quaternion))
+                        {
+                            FieldInfo sfld = typeof(Quaternion).GetField("Identity");
+                            defcb_ILGen.Emit(OpCodes.Ldarg_0);
+                            defcb_ILGen.Emit(OpCodes.Ldsfld, sfld);
+                            defcb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+                        else if (varType.IsValueType)
+                        {
+                            defcb_ILGen.Emit(OpCodes.Ldarg_0);
+                            defcb_ILGen.Emit(OpCodes.Ldflda, structField);
+                            defcb_ILGen.Emit(OpCodes.Initobj, varType);
+                        }
+                        else
+                        {
+                            defcb_ILGen.Emit(OpCodes.Ldarg_0);
+                            defcb_ILGen.Emit(OpCodes.Newobj, compileState.GetDefaultConstructor(varType));
+                            defcb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+
+                        if(varType.IsValueType)
+                        {
+                            copycb_ILGen.Emit(OpCodes.Ldarg_0);
+                            copycb_ILGen.Emit(OpCodes.Ldarg_1);
+                            copycb_ILGen.Emit(OpCodes.Ldfld, structField);
+                            copycb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+                        else
+                        {
+                            copycb_ILGen.Emit(OpCodes.Ldarg_0);
+                            copycb_ILGen.Emit(OpCodes.Ldarg_1);
+                            copycb_ILGen.Emit(OpCodes.Ldfld, structField);
+                            if (compileState.IsCloneOnAssignment(varType))
+                            {
+                                copycb_ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(varType));
+                            }
+                            copycb_ILGen.Emit(OpCodes.Stfld, structField);
+                        }
+                    }
+                    defcb_ILGen.Emit(OpCodes.Ret);
+                    copycb_ILGen.Emit(OpCodes.Ret);
+                    compileState.m_StructTypes.Add(kvp.Key, structTypeBuilder.CreateType());
+                }
+                #endregion
+
+                #region Globals generation
+                AddProperties(compileState, typeLocalsInited);
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                 {
 #if DEBUG
@@ -328,7 +447,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            ConstructorInfo cInfo = fb.FieldType.GetConstructor(Type.EmptyTypes);
+                            ConstructorInfo cInfo = compileState.GetDefaultConstructor(fb.FieldType);
                             if (cInfo == null)
                             {
                                 throw new ArgumentException("Unexpected type " + fb.FieldType.FullName);
@@ -413,7 +532,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            ConstructorInfo cInfo = fb.FieldType.GetConstructor(Type.EmptyTypes);
+                            ConstructorInfo cInfo = compileState.GetDefaultConstructor(fb.FieldType);
                             if (cInfo == null)
                             {
                                 throw new ArgumentException("Unexpected type " + fb.FieldType.FullName);
@@ -467,10 +586,10 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 /* skip operation as it is modified */
                             }
-                            else if (fb.FieldType == typeof(AnArray) || Attribute.GetCustomAttribute(fb.FieldType, typeof(APICloneOnAssignmentAttribute)) != null)
+                            else if (fb.FieldType == typeof(AnArray) || compileState.IsCloneOnAssignment(fb.FieldType))
                             {
                                 /* keep LSL semantics valid */
-                                compileState.ILGen.Emit(OpCodes.Newobj, fb.FieldType.GetConstructor(new Type[] { fb.FieldType }));
+                                compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(fb.FieldType));
                             }
                             compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
@@ -486,10 +605,10 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 /* skip operation as it is modified */
                             }
-                            else if (fb.FieldType == typeof(AnArray) || Attribute.GetCustomAttribute(fb.FieldType, typeof(APICloneOnAssignmentAttribute)) != null)
+                            else if (fb.FieldType == typeof(AnArray) || compileState.IsCloneOnAssignment(fb.FieldType))
                             {
                                 /* keep LSL semantics valid */
-                                compileState.ILGen.Emit(OpCodes.Newobj, fb.FieldType.GetConstructor(new Type[] { fb.FieldType }));
+                                compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(fb.FieldType));
                             }
                             compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
@@ -506,9 +625,9 @@ namespace SilverSim.Scripting.Lsl
                         throw new ArgumentException("Variable without init value encountered " + varName);
                     }
                 }
-#endregion
+                #endregion
 
-#region Function compilation
+                #region Function compilation
                 /* we have to process the function definition first */
                 foreach (KeyValuePair<string, List<FunctionInfo>> functionKvp in compileState.m_Functions)
                 {
@@ -637,9 +756,9 @@ namespace SilverSim.Scripting.Lsl
 #endif
                     }
                 }
-#endregion
+                #endregion
 
-#region State compilation
+                #region State compilation
                 foreach (KeyValuePair<string, Dictionary<string, List<LineInfo>>> stateKvp in compileState.m_States)
                 {
                     FieldBuilder fb;
@@ -745,22 +864,22 @@ namespace SilverSim.Scripting.Lsl
 
                     stateTypes.Add(stateKvp.Key, state.CreateType());
                 }
-#endregion
+                #endregion
 
                 script_ilgen.Emit(OpCodes.Ret);
 
-#region Call type initializer
+                #region Call type initializer
                 {
                     script_cb = scriptTypeBuilder.DefineTypeInitializer();
                     script_ilgen = script_cb.GetILGenerator();
                     script_ilgen.Emit(OpCodes.Ret);
                 }
                 reset_ilgen.Emit(OpCodes.Ret);
-#endregion
+                #endregion
 
                 mb.CreateGlobalFunctions();
 
-#region Initialize static fields
+                #region Initialize static fields
                 Type t = scriptTypeBuilder.CreateType();
 
                 if (access == AssemblyBuilderAccess.RunAndCollect)
@@ -772,7 +891,7 @@ namespace SilverSim.Scripting.Lsl
                         info.SetValue(null, api);
                     }
                 }
-#endregion
+                #endregion
 
                 return new LSLScriptAssembly(ab, t, stateTypes, forcedSleepDefault,
                     m_ScriptRemoveDelegates,
@@ -837,10 +956,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             /* skip operation as it is modified */
                         }
-                        else if (fb.FieldType == typeof(AnArray) || Attribute.GetCustomAttribute(fb.FieldType, typeof(APICloneOnAssignmentAttribute)) != null)
+                        else if (fb.FieldType == typeof(AnArray) || compileState.IsCloneOnAssignment(fb.FieldType))
                         {
                             /* keep LSL semantics valid */
-                            compileState.ILGen.Emit(OpCodes.Newobj, fb.FieldType.GetConstructor(new Type[] { fb.FieldType }));
+                            compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(fb.FieldType));
                         }
                         compileState.ILGen.Emit(OpCodes.Stfld, fb);
 

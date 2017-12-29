@@ -262,7 +262,7 @@ namespace SilverSim.Scripting.Lsl
                                     "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
                             }
                         }
-                        else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) == null)
+                        else if ((membersAttr = compileState.GetAccessibleAPIMembersAttribute(varType)) == null)
                         {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(
                                 compileState.CurrentCulture,
@@ -276,7 +276,7 @@ namespace SilverSim.Scripting.Lsl
                                 "InvalidMemberAccess0To1",
                                 "Invalid member access '{0}' to {1}"), member, compileState.MapType(varType)));
                         }
-                        else if ((fi = varType.GetField(member)) != null)
+                        else if ((fi = compileState.GetField(varType, member)) != null)
                         {
                             varType = fi.FieldType;
                         }
@@ -328,7 +328,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.MapType(varType)));
                     }
                 }
-                else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                else if ((membersAttr = compileState.GetAccessibleAPIMembersAttribute(varType)) != null)
                 {
                     PropertyInfo pi;
                     FieldInfo fi;
@@ -340,7 +340,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.MapType(varType)));
                     }
 
-                    if ((fi = varType.GetField(memberName)) != null)
+                    if ((fi = compileState.GetField(varType, memberName)) != null)
                     {
                         return fi.FieldType;
                     }
@@ -605,7 +605,7 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Call, pi.GetGetMethod());
                     varType = pi.PropertyType;
                 }
-                else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                else if ((membersAttr = compileState.GetAccessibleAPIMembersAttribute(varType)) != null)
                 {
                     PropertyInfo pi;
                     FieldInfo fi;
@@ -617,7 +617,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.MapType(varType)));
                     }
 
-                    if ((fi = varType.GetField(memberName)) != null)
+                    if ((fi = compileState.GetField(varType, memberName)) != null)
                     {
                         varType = fi.FieldType;
                         compileState.ILGen.Emit(OpCodes.Ldfld, fi);
@@ -802,7 +802,7 @@ namespace SilverSim.Scripting.Lsl
                         memberName,
                         compileState.MapType(varType)));
                 }
-                else if ((membersAttr = Attribute.GetCustomAttribute(varType, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute) != null)
+                else if ((membersAttr = compileState.GetAccessibleAPIMembersAttribute(varType)) != null)
                 {
                     PropertyInfo pi;
                     FieldInfo fi;
@@ -815,7 +815,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.MapType(varType)));
                     }
 
-                    if ((fi = varType.GetField(memberName)) != null)
+                    if ((fi = compileState.GetField(varType, memberName)) != null)
                     {
                         if(fi.IsStatic || fi.IsInitOnly)
                         {
@@ -910,10 +910,10 @@ namespace SilverSim.Scripting.Lsl
                 Type varType = GetVarToStack(compileState, varInfo);
                 bool storeBackVar = false;
 
-                if(Attribute.GetCustomAttribute(varType, typeof(APICloneOnAssignmentAttribute)) != null)
+                if(compileState.IsCloneOnAssignment(varType))
                 {
                     storeBackVar = true;
-                    compileState.ILGen.Emit(OpCodes.Newobj, varType.GetConstructor(new Type[] { varType }));
+                    compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(varType));
                 }
                 else if(varType.IsValueType)
                 {
@@ -948,9 +948,9 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                         compileState.ILGen.Emit(OpCodes.Ldloca, lb);
                     }
-                    else if(Attribute.GetCustomAttribute(varType, typeof(APICloneOnAssignmentAttribute)) != null)
+                    else if(compileState.IsCloneOnAssignment(varType))
                     {
-                        compileState.ILGen.Emit(OpCodes.Newobj, varType.GetConstructor(new Type[] { varType }));
+                        compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(varType));
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                         compileState.ILGen.Emit(OpCodes.Ldloc, lb);
                     }
@@ -968,7 +968,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         varType = GetMemberSelectorToStack(compileState, varType, sel.SubTree[1].Entry);
                     }
-                    if(varType.IsValueType || Attribute.GetCustomAttribute(varType, typeof(APICloneOnAssignmentAttribute)) != null)
+                    if(varType.IsValueType || compileState.IsCloneOnAssignment(varType))
                     {
                         firstRequiredSelector = true;
                     }

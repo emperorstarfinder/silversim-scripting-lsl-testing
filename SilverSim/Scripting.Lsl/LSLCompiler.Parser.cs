@@ -63,6 +63,18 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void CheckUsedFieldName(CompileState cs, Parser p, string type, string name)
+        {
+            string ltype = type.Replace(" ", "");
+            CheckValidName(cs, p, type, name);
+            if (m_ReservedWords.Contains(name) ||
+                (cs.LanguageExtensions.EnableSwitchBlock && (name == "switch" || name == "case" || name == "break")) ||
+                (cs.LanguageExtensions.EnableBreakContinueStatement && (name == "break" || name == "continue")))
+            {
+                throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAReservedWord", type + " cannot be declared as '{0}'. '{0}' is a reserved word."), name));
+            }
+        }
+
         private void CheckUsedName(CompileState cs, Parser p, string type, string name)
         {
             string ltype = type.Replace(" ", "");
@@ -540,6 +552,80 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void ParseStruct(CompileState compileState, Parser p, string structName)
+        {
+            compileState.m_Structs.Add(structName, new Dictionary<string, LineInfo>());
+            for (; ; )
+            {
+                int lineNumber;
+                var args = new List<string>();
+                try
+                {
+                    p.Read(args);
+                }
+                catch (ArgumentException e)
+                {
+                    throw ParserException(p, e.Message);
+                }
+                catch (ParserBase.EndOfStringException)
+                {
+                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "MissingQuoteAtTheEndOfScript", "Missing '\"' at the end of string"));
+                }
+                catch (ParserBase.EndOfFileException)
+                {
+                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "MissingBraceAtEndOfScript", "Missing '}' at end of script"));
+                }
+                catch (ParserBase.StackEmptyException)
+                {
+                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "PrematureEndOfScript", "Premature end of script"));
+                }
+                lineNumber = p.CurrentLineNumber;
+
+                if (args.Count == 0)
+                {
+                    /* should not happen but better be safe here */
+                }
+                else if (args[args.Count - 1] == ";")
+                {
+                    Type stateVarType;
+                    if(compileState.m_Structs.ContainsKey(args[0]))
+                    {
+                        /* we have a custom struct as member */
+                    }
+                    else if (!compileState.TryGetValidVarType(args[0], out stateVarType))
+                    {
+                        throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "NoStatementsInsideOfStructOffendingState0", "No statements allowed inside struct. Offending struct {0}."), structName));
+                    }
+                    else if (!BaseTypes.Contains(stateVarType) && Attribute.GetCustomAttribute(stateVarType, typeof(SerializableAttribute)) == null)
+                    {
+                        throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForStructMember", "Type '{0}' is not suitable for struct member."), args[0]));
+                    }
+                    CheckUsedFieldName(compileState, p, "Struct Member", args[1]);
+                    if(compileState.m_Structs[structName].ContainsKey(args[1]))
+                    {
+                        throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "DuplicateMember0InStruct1", "Duplicate member '{0}' in struct '{1}'."), args[1], structName));
+                    }
+                    compileState.m_Structs[structName].Add(args[1], new LineInfo(args, lineNumber));
+                    if (args[2] != ";")
+                    {
+                        throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "StructVarMustBeFollowedByOffendingStruct0", "Struct variable name must be followed by ';' or '='. Offending struct {0}."), structName));
+                    }
+                }
+                else if (args[args.Count - 1] == "{")
+                {
+                    throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OnlyMemberFieldsAllowedOffendingState0", "Only member fields allowed. Offending struct {0}."), structName));
+                }
+                else if (args[0] == "}")
+                {
+                    if (compileState.m_Structs[structName].Count == 0)
+                    {
+                        throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Struct0DoesNotHaveAnyFields", "struct '{0}' does not have any fields."), structName));
+                    }
+                    return;
+                }
+            }
+        }
+
         private readonly Type[] BaseTypes = new Type[] { typeof(int), typeof(long), typeof(string), typeof(double), typeof(Vector3), typeof(AnArray), typeof(Quaternion), typeof(LSLKey) };
 
         private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
@@ -591,6 +677,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
                         }
+                        if(!apiExtensions.Contains(APIExtension.Structs.ToLower()))
+                        {
+                            apiExtensions.Add(APIExtension.Structs.ToLower());
+                        }
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
@@ -610,6 +700,15 @@ namespace SilverSim.Scripting.Lsl
                 else if(shbang.Value.StartsWith("//#!UsesSinglePrecision"))
                 {
                     compileState.UsesSinglePrecision = true;
+                }
+            }
+
+            if(apiExtensions.Contains(APIExtension.Structs.ToLower()))
+            {
+                compileState.LanguageExtensions.EnableStructTypes = true;
+                if(!apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
+                {
+                    apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
                 }
             }
 
@@ -740,6 +839,20 @@ namespace SilverSim.Scripting.Lsl
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidDefaultStateDeclaration", "Invalid default state declaration"));
                         }
                         ParseState(compileState, p, "default");
+                    }
+                    else if(args[0] == "struct" && compileState.LanguageExtensions.EnableStructTypes)
+                    {
+                        /* struct type begin */
+                        if(args[1] == "{" || args[2] != "{")
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidDefaultStateDeclaration", "Invalid struct declaration"));
+                        }
+                        CheckValidName(compileState, p, "Struct", args[1]);
+                        if(compileState.ContainsValidVarType(args[1]) || compileState.m_Structs.ContainsKey(args[1]))
+                        {
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "AlreadyADefinedType0", "Already defined a type '{0}'"), args[1]));
+                        }
+                        ParseStruct(compileState, p, args[1]);
                     }
                     else if (args[0] == "state")
                     {

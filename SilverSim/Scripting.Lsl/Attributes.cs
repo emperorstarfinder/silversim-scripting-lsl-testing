@@ -145,6 +145,7 @@ namespace SilverSim.Scripting.Lsl
         public const string Properties = "Properties";
         public const string AgentInventory = "AgentInventory";
         public const string MemberFunctions = "MemberFunctions";
+        public const string Structs = "Structs";
     }
 
     [Serializable]

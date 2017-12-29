@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
 using System.Globalization;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl
@@ -104,6 +105,8 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, List<FunctionInfo>> m_Functions = new Dictionary<string, List<FunctionInfo>>();
             public Dictionary<string, List<FunctionInfo>> m_MemberFunctions = new Dictionary<string, List<FunctionInfo>>();
             public Dictionary<string, Dictionary<string, List<LineInfo>>> m_States = new Dictionary<string, Dictionary<string, List<LineInfo>>>();
+            public Dictionary<string, Dictionary<string, LineInfo>> m_Structs = new Dictionary<string, Dictionary<string, LineInfo>>();
+            public Dictionary<string, Type> m_StructTypes = new Dictionary<string, Type>();
             public Dictionary<string, FieldBuilder> m_ApiFieldInfo = new Dictionary<string, FieldBuilder>();
             public List<BreakContinueLabel> m_BreakContinueLabels = new List<BreakContinueLabel>();
 
@@ -135,6 +138,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableMemberFunctions;
 
                 public bool EnableProperties;
+
+                public bool EnableStructTypes;
             }
 
             public bool UsesSinglePrecision;
@@ -202,8 +207,33 @@ namespace SilverSim.Scripting.Lsl
             #region Type validation and string representation
             public bool IsValidType(Type t) => m_ReverseTypeDeclarations.ContainsKey(t);
 
-            public bool TryGetValidVarType(string typeName, out Type t) => m_ValidVarTypes.TryGetValue(typeName, out t);
-            public bool ContainsValidVarType(string typeName) => m_ValidVarTypes.ContainsKey(typeName);
+            public bool TryGetValidVarType(string typeName, out Type t) => m_ValidVarTypes.TryGetValue(typeName, out t) || m_StructTypes.TryGetValue(typeName, out t);
+            public bool ContainsValidVarType(string typeName) => m_ValidVarTypes.ContainsKey(typeName) || m_StructTypes.ContainsKey(typeName);
+
+            public bool IsCloneOnAssignment(Type t)
+            {
+                return Attribute.GetCustomAttribute(t, typeof(APICloneOnAssignmentAttribute)) != null;
+            }
+
+            public APIAccessibleMembersAttribute GetAccessibleAPIMembersAttribute(Type t)
+            {
+                return Attribute.GetCustomAttribute(t, typeof(APIAccessibleMembersAttribute)) as APIAccessibleMembersAttribute;
+            }
+
+            public FieldInfo GetField(Type t, string name)
+            {
+                return t.GetField(name);
+            }
+
+            public ConstructorInfo GetDefaultConstructor(Type t)
+            {
+                return t.GetConstructor(Type.EmptyTypes);
+            }
+
+            public ConstructorInfo GetCopyConstructor(Type t)
+            {
+                return t.GetConstructor(new Type[] { t });
+            }
 
             public string MapType(Type t)
             {

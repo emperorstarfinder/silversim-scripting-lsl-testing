@@ -714,10 +714,10 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     /* skip operation as it is modified */
                                 }
-                                else if(targetType == typeof(AnArray) || Attribute.GetCustomAttribute(targetType, typeof(APICloneOnAssignmentAttribute)) != null)
+                                else if(targetType == typeof(AnArray) || compileState.IsCloneOnAssignment(targetType))
                                 {
                                     /* keep LSL semantics valid */
-                                    compileState.ILGen.Emit(OpCodes.Newobj, targetType.GetConstructor(new Type[] { targetType }));
+                                    compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(targetType));
                                 }
                             }
                             else if(targetType == typeof(int))
@@ -748,7 +748,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                ConstructorInfo cInfo = targetType.GetConstructor(Type.EmptyTypes);
+                                ConstructorInfo cInfo = compileState.GetDefaultConstructor(targetType);
                                 if(cInfo == null)
                                 {
                                     throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
@@ -874,7 +874,7 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else
                 {
-                    ConstructorInfo cInfo = returnType.GetConstructor(Type.EmptyTypes);
+                    ConstructorInfo cInfo = compileState.GetDefaultConstructor(returnType);
                     if(cInfo == null)
                     {
                         throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));

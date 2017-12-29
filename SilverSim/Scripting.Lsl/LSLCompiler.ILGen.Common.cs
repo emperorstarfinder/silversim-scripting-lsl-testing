@@ -1348,7 +1348,7 @@ namespace SilverSim.Scripting.Lsl
         private Dictionary<string, object> AddConstants(CompileState compileState)
         {
             var localVars = new Dictionary<string, object>();
-            foreach(KeyValuePair<string, FieldInfo> kvp in compileState.ApiInfo.Constants)
+            foreach (KeyValuePair<string, FieldInfo> kvp in compileState.ApiInfo.Constants)
             {
                 FieldInfo f = kvp.Value;
                 if ((f.Attributes & FieldAttributes.Static) != 0)
@@ -1363,11 +1363,15 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
             }
-            foreach(KeyValuePair<string, ApiInfo.PropertyInfo> kvp in compileState.ApiInfo.Properties)
+            return localVars;
+        }
+
+        private void AddProperties(CompileState compileState, Dictionary<string, object> localVars)
+        {
+            foreach (KeyValuePair<string, ApiInfo.PropertyInfo> kvp in compileState.ApiInfo.Properties)
             {
                 localVars[kvp.Key] = kvp.Value;
             }
-            return localVars;
         }
         #endregion
     }
