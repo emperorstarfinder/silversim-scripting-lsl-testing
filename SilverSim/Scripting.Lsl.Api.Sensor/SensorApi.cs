@@ -132,6 +132,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
 
         public class SceneInfo : ISceneListener, IAgentListener
         {
+            public bool IgnorePhysicsLocationUpdates => false;
+
             private static readonly ILog m_Log = LogManager.GetLogger("LSL_SENSORS");
 
             public SceneInterface Scene;

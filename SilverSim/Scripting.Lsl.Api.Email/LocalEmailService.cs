@@ -39,6 +39,8 @@ namespace SilverSim.Scripting.Lsl.Api.Email
     [PluginName("LSL_Email_LocalOnlyService")]
     public class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
     {
+        public bool IgnorePhysicsLocationUpdates => true;
+
         private class Email
         {
             public Date Time = Date.Now;
