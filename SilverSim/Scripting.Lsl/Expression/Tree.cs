@@ -64,6 +64,7 @@ namespace SilverSim.Scripting.Lsl.Expression
         public List<Tree> SubTree = new List<Tree>();
         public EntryType Type /* = EntryType.Unknown */;
         public string Entry = string.Empty;
+        public int ParenLevel;
 
         public abstract class ValueBase
         {

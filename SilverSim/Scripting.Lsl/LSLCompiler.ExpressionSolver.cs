@@ -2357,7 +2357,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (parenStack[0].Key != "<")
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingGtDoesMatchPreceeding0", "'>' does not match preceeding '{0}'"), parenStack[0].Key));
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingGtDoesNotMatchPreceeding0", "'>' does not match preceeding '{0}'"), parenStack[0].Key));
                         }
                         else
                         {
@@ -2491,109 +2491,126 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Pre-Tree identifiers
-        private void IdentifyDeclarations(Tree resolvetree)
+        private void IdentifyParenLevel(CompileState cs, Tree resolvetree, int lineNumber)
         {
+            int parenLevel = 0;
             int n = resolvetree.SubTree.Count;
-            for (int i = 0; i < n; ++i)
+            var parenStack = new List<string>();
+            for(int i = 0; i < n; ++i)
             {
                 Tree st = resolvetree.SubTree[i];
-                string ent = st.Entry;
-                if (st.Type != Tree.EntryType.OperatorUnknown)
+
+                switch(st.Type)
                 {
-                    continue;
+                    case Tree.EntryType.StringValue:
+                    case Tree.EntryType.Value:
+                        st.ParenLevel = parenLevel;
+                        continue;
                 }
 
+                string ent = st.Entry;
                 switch (ent)
                 {
-                    case "<":
-                        if (0 == i ||
-                            (resolvetree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown &&
-                            resolvetree.SubTree[i - 1].Entry != "++" &&
-                            resolvetree.SubTree[i - 1].Entry != "--") ||
-                            resolvetree.SubTree[i - 1].Type == Tree.EntryType.Separator)
-                        {
-                            st.Type = Tree.EntryType.Declaration;
-                        }
-                        else
-                        {
-                            switch (resolvetree.SubTree[i - 1].Entry)
-                            {
-                                case "[":
-                                case "(":
-                                    if (resolvetree.SubTree[i - 1].Type != Tree.EntryType.StringValue)
-                                    {
-                                        st.Type = Tree.EntryType.Declaration;
-                                    }
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                        }
+                    case "(":
+                    case "[":
+                        parenStack.Insert(0, ent);
+                        st.ParenLevel = parenLevel++;
                         break;
-                    case ">":
-                        if (i + 1 == n ||
-                            resolvetree.SubTree[i + 1].Type == Tree.EntryType.Separator)
+
+                    case ")":
+                        if (parenStack.Count == 0)
                         {
-                            st.Type = Tree.EntryType.Declaration;
+                            throw new CompilerException(lineNumber, this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotHavePreceedingOpeningParenthesis", "')' does not have preceeding '('"));
                         }
-                        else if(resolvetree.SubTree[i + 1].Type == Tree.EntryType.OperatorUnknown)
+                        else if(parenStack[0] != "(")
                         {
-                            switch(resolvetree.SubTree[i + 1].Entry)
-                            {
-                                case "-":
-                                    if(i + 2 < n)
-                                    {
-                                        switch(resolvetree.SubTree[i + 2].Type)
-                                        {
-                                            case Tree.EntryType.Variable:
-                                            case Tree.EntryType.Value:
-                                            case Tree.EntryType.Function:
-                                                break;
-
-                                            default:
-                                                st.Type = Tree.EntryType.Declaration;
-                                                break;
-                                        }
-                                    }
-                                    break;
-
-                                case "+":
-                                case "*":
-                                case "/":
-                                case "%":
-                                case "==":
-                                case "!=":
-                                case "||":
-                                case "&&":
-                                    st.Type = Tree.EntryType.Declaration;
-                                    break;
-
-                                default:
-                                    break;
-                            }
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotMatchPreceeding0", "')' does not match preceeding '{0}'"), parenStack[0]));
                         }
-                        else
+                        parenStack.RemoveAt(0);
+                        st.ParenLevel = --parenLevel;
+                        break;
+
+                    case "]":
+                        if(parenStack.Count == 0)
                         {
-                            switch(resolvetree.SubTree[i + 1].Entry)
-                            {
-                                case "]":
-                                case ")":
-                                    if (resolvetree.SubTree[i + 1].Type != Tree.EntryType.StringValue)
-                                    {
-                                        st.Type = Tree.EntryType.Declaration;
-                                    }
-                                    break;
-
-                                default:
-                                    break;
-                            }
+                            throw new CompilerException(lineNumber, this.GetLanguageString(cs.CurrentCulture, "ClosingBracketDoesNotHavePreceedingOpeningBracket", "']' does not have preceeding '['"));
                         }
+                        else if (parenStack[0] != "[")
+                        {
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotMatchPreceeding0", "']' does not match preceeding '{0}'"), parenStack[0]));
+                        }
+                        parenStack.RemoveAt(0);
+                        st.ParenLevel = --parenLevel;
                         break;
 
                     default:
+                        st.ParenLevel = parenLevel;
                         break;
                 }
+            }
+        }
+
+        private int IdentifyFindEndOfDeclaration(CompileState cs, Tree resolvetree, int lineNumber, int startfrom)
+        {
+            int parenlevel = resolvetree.SubTree[startfrom].ParenLevel;
+            int n = resolvetree.SubTree.Count;
+            int endof = -1;
+            bool haveSeparator = false;
+            for (int i = startfrom; i < n; ++i)
+            {
+                int nparenlevel = resolvetree.SubTree[i].ParenLevel;
+                if (parenlevel > nparenlevel)
+                {
+                    /* stop at leaving level */
+                    break;
+                }
+                else if (parenlevel != nparenlevel)
+                {
+                    continue;
+                }
+                if(resolvetree.SubTree[i].Entry == ">")
+                {
+                    endof = i;
+                    break;
+                }
+                else if(resolvetree.SubTree[i].Entry == ",")
+                {
+                    haveSeparator = true;
+                }
+            }
+            if(!haveSeparator)
+            {
+                return -1;
+            }
+            if(endof < 0)
+            {
+                throw new CompilerException(lineNumber, this.GetLanguageString(cs.CurrentCulture, "OpeningLtDoesNotHaveFollowingGt", "'<' does not have following '>'"));
+            }
+            return endof;
+        }
+
+        private void IdentifyDeclarations(CompileState cs, Tree resolvetree, int lineNumber)
+        {
+            int n = resolvetree.SubTree.Count;
+            int eod;
+            int i = 0;
+            while(i < n)
+            {
+                Tree st = resolvetree.SubTree[i];
+                string ent = st.Entry;
+                if (st.Type == Tree.EntryType.OperatorUnknown &&
+                    st.Entry == "<")
+                {
+                    eod = IdentifyFindEndOfDeclaration(cs, resolvetree, lineNumber, i);
+                    if (eod >= 0)
+                    {
+                        st.Type = Tree.EntryType.Declaration;
+                        resolvetree.SubTree[eod].Type = Tree.EntryType.Declaration;
+                        i = eod;
+                    }
+                }
+
+                ++i;
             }
         }
 
@@ -2816,7 +2833,8 @@ namespace SilverSim.Scripting.Lsl
             IdentifyFunctions(cs, expressionTree, lineNumber, currentCulture);
             IdentifyOperators(cs, expressionTree);
             IdentifyNumericValues(expressionTree);
-            IdentifyDeclarations(expressionTree);
+            IdentifyParenLevel(cs, expressionTree, lineNumber);
+            IdentifyDeclarations(cs, expressionTree, lineNumber);
 
             int n = expressionTree.SubTree.Count;
             var msg = new StringBuilder();
