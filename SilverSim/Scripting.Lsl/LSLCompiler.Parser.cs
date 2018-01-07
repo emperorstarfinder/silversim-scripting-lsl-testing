@@ -945,15 +945,16 @@ namespace SilverSim.Scripting.Lsl
                             else
                             {
                                 string includename = args[2].Substring(1, args[2].Length - 2);
+                                TextReader includeReader;
                                 try
                                 {
-                                    includeOpen(includename);
+                                    includeReader = includeOpen(includename);
                                 }
                                 catch
                                 {
                                     throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "CannotInclude0", "Could not include '{0}'."), includename));
                                 }
-                                p.Push(reader, includename);
+                                p.Push(includeReader, includename);
                             }
                             break;
 
