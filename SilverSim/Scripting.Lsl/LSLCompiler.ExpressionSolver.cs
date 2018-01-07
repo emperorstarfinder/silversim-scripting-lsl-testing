@@ -2065,7 +2065,8 @@ namespace SilverSim.Scripting.Lsl
                     }
 
                     if (ent == "!" || ent == "~" || m_TypecastOperators.Contains(ent) ||
-                        (cs.LanguageExtensions.EnableLongIntegers && ent == "(long)"))
+                        (cs.LanguageExtensions.EnableLongIntegers && ent == "(long)") ||
+                        cs.ContainsValidVarType(ent))
                     {
                         if (pos + 1 < tree.SubTree.Count ||
                             (pos == 0 ||
