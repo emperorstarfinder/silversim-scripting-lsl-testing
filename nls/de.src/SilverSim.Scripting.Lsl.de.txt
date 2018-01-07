@@ -312,3 +312,5 @@ Object0HasGivenYouAFolder1=Objekt {0} hat dir einen Ordner "{1}" übergeben.
 MemberFunctionsNotEnabled=Objektmethoden sind nicht eingeschaltet.
 NoMemberFunction0Defined=Objektmethode {0} ist nicht definiert.
 OpeningLtDoesNotHaveFollowingGt='<' hat kein nachfolgendes '>'
+CannotInclude0=Konnte '{0}' nicht per #include öffnen.
+InvalidArgumentsToInclude=Ungültige Argumente für #include

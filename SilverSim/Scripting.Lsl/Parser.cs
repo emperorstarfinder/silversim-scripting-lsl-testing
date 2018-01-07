@@ -271,7 +271,7 @@ redo:
                                 token.Append(c);
                                 c = ReadC();
                             } while(c != '>');
-                            token.Append("\"");
+                            token.Append('\"');
                             if (0 != token.Length)
                             {
                                 args.Add(token.ToString());

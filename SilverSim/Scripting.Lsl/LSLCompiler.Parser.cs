@@ -628,7 +628,7 @@ namespace SilverSim.Scripting.Lsl
 
         private readonly Type[] BaseTypes = new Type[] { typeof(int), typeof(long), typeof(string), typeof(double), typeof(Vector3), typeof(AnArray), typeof(Quaternion), typeof(LSLKey) };
 
-        private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null)
+        private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null, Func<string, TextReader> includeOpen = null)
         {
             var compileState = new CompileState(cultureInfo);
             APIFlags acceptedFlags;
@@ -774,6 +774,7 @@ namespace SilverSim.Scripting.Lsl
 
             var p = new Parser(cultureInfo);
             p.Push(reader, string.Empty, lineNumber);
+            var includes = new List<string>();
 
             for (; ; )
             {
@@ -923,6 +924,46 @@ namespace SilverSim.Scripting.Lsl
                 else if (args[0] == "}")
                 {
                     throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "ClosingBraceWithoutMatchingOpeningBrace", "'}' found without matching '{'"));
+                }
+                else if(args[0] == "#" && args.Count > 1)
+                {
+                    switch(args[1])
+                    {
+                        case "include":
+                            if(args.Count != 3)
+                            {
+                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidArgumentsToInclude", "Invalid arguments to #include"));
+                            }
+                            else if(!args[2].StartsWith("\"") || !args[2].EndsWith("\""))
+                            {
+                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidArgumentsToInclude", "Invalid arguments to #include"));
+                            }
+                            else if(includeOpen == null)
+                            {
+                                throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "CannotInclude0", "Could not include '{0}'."), args[2].Substring(1, args[2].Length - 2)));
+                            }
+                            else
+                            {
+                                string includename = args[2].Substring(1, args[2].Length - 2);
+                                try
+                                {
+                                    includeOpen(includename);
+                                }
+                                catch
+                                {
+                                    throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "CannotInclude0", "Could not include '{0}'."), includename));
+                                }
+                                p.Push(reader, includename);
+                            }
+                            break;
+
+                        case "endinclude":
+                            if(p.IsIncluded)
+                            {
+                                p.Pop();
+                            }
+                            break;
+                    }
                 }
             }
             return compileState;
