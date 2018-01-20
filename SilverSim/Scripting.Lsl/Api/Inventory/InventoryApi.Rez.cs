@@ -177,17 +177,18 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
                 bool removeinventory;
-                if (IsRezDistanceLimitEnforced(sceneid) &&
-                    (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
-                {
-                    /* silent fail as per definition */
-                    return;
-                }
                 if(TryGetObjectInventory(instance, inventory, out groups, out removeinventory))
                 {
                     pos += CalculateGeometricCenter(groups);
 
-                    if(RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                    if (IsRezDistanceLimitEnforced(sceneid) &&
+                        (instance.Part.GlobalPosition - pos).Length > GetRezDistanceMeterLimit(sceneid))
+                    {
+                        /* silent fail as per definition */
+                        return;
+                    }
+
+                    if (RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
                         removeinventory)
                     {
                         rezzingpart.Inventory.Remove(inventory);
@@ -208,7 +209,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 UUID sceneid = scene.ID;
                 bool removeinventory;
                 if (IsRezDistanceLimitEnforced(sceneid) &&
-                    (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
+                    (instance.Part.GlobalPosition - pos).Length > GetRezDistanceMeterLimit(sceneid))
                 {
                     /* silent fail as per definition */
                     return;
