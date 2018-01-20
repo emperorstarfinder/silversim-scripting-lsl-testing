@@ -23,6 +23,7 @@
 
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Object.Parameters;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Api.Primitive;
@@ -401,7 +402,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     return WithPart((p) =>
                     {
-                        ObjectPart.TextParam text = p.Text;
+                        TextParam text = p.Text;
                         return new Hovertext
                         {
                             Text = text.Text,
@@ -412,7 +413,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
                 set
                 {
-                    WithPart((p, t) => p.Text = t, new ObjectPart.TextParam
+                    WithPart((p, t) => p.Text = t, new TextParam
                     {
                         Text = value.Text,
                         TextColor = new ColorAlpha(value.Color, value.Alpha)
@@ -427,7 +428,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     return WithPart((p) =>
                     {
-                        ObjectPart.PointLightParam light = p.PointLight;
+                        PointLightParam light = p.PointLight;
                         return new Pointlight
                         {
                             Enabled = light.IsLight.ToLSLBoolean(),
@@ -440,7 +441,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
                 set
                 {
-                    WithPart((p, l) => p.PointLight = l, new ObjectPart.PointLightParam
+                    WithPart((p, l) => p.PointLight = l, new PointLightParam
                     {
                         IsLight = value.Enabled != 0,
                         LightColor = new Color(value.Color),
@@ -458,7 +459,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 {
                     return WithPart((p) =>
                     {
-                        ObjectPart.ProjectionParam param = p.Projection;
+                        ProjectionParam param = p.Projection;
                         return new Projector
                         {
                             Enabled = param.IsProjecting.ToLSLBoolean(),
@@ -478,7 +479,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     }
                     WithPart((p, param) =>
                     {
-                        p.Projection = new ObjectPart.ProjectionParam
+                        p.Projection = new ProjectionParam
                         {
                             IsProjecting = param.Enabled != 0,
                             ProjectionTextureID = param.Texture,

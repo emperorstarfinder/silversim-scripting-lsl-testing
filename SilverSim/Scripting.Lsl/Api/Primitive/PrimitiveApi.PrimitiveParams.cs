@@ -22,6 +22,7 @@
 #pragma warning disable IDE0018, RCS1029
 
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Object.Parameters;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -383,7 +384,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetText")]
         public void SetText(ScriptInstance instance, string text, Vector3 color, double alpha)
         {
-            var tp = new ObjectPart.TextParam
+            var tp = new TextParam
             {
                 Text = text,
                 TextColor = new ColorAlpha(color, alpha)

@@ -22,6 +22,7 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Object.Parameters;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.Asset;
@@ -88,7 +89,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llCollisionSound")]
         public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume)
         {
-            var para = new ObjectPart.CollisionSoundParam();
+            var para = new CollisionSoundParam();
 
             lock (instance)
             {
@@ -197,7 +198,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             lock (instance)
             {
                 ObjectPart part = instance.Part;
-                ObjectPart.SoundParam param = part.Sound;
+                SoundParam param = part.Sound;
                 param.SoundID = UUID.Zero;
                 param.Flags = PrimitiveSoundFlags.Stop;
                 param.Gain = 0;
@@ -294,7 +295,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                ObjectPart.SoundParam sound = instance.Part.Sound;
+                SoundParam sound = instance.Part.Sound;
                 sound.Radius = radius;
                 instance.Part.Sound = sound;
             }
@@ -318,7 +319,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             {
                 flags |= PrimitiveSoundFlags.Queue;
             }
-            ObjectPart.SoundParam soundparams = thisPart.Sound;
+            SoundParam soundparams = thisPart.Sound;
             if (TryFetchSound(instance, soundID))
             {
                 thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, soundparams.Radius, flags);
@@ -346,7 +347,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 flags |= PrimitiveSoundFlags.Queue;
             }
 
-            ObjectPart.SoundParam soundparams = part.Sound;
+            SoundParam soundparams = part.Sound;
             soundparams.SoundID = soundID;
             soundparams.Gain = volume.Clamp(0, 1);
             soundparams.Flags = flags;

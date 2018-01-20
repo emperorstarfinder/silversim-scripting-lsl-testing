@@ -23,6 +23,7 @@
 
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Object.Parameters;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -43,7 +44,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                var p = new ObjectPart.ProjectionParam
+                var p = new ProjectionParam
                 {
                     IsProjecting = projection != 0,
                     ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),
@@ -86,7 +87,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                 }
 
-                part.Projection = new ObjectPart.ProjectionParam
+                part.Projection = new ProjectionParam
                 {
                     IsProjecting = projection != 0,
                     ProjectionTextureID = instance.GetTextureAssetID(texture.ToString()),
