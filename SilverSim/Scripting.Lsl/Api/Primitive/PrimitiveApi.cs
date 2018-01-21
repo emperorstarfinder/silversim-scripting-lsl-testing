@@ -149,6 +149,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Get/set sit animation")]
         public const int PRIM_SIT_ANIMATION = 12001;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Select language data")]
+        public const int PRIM_LANGUAGE = 12002;
 
         [APILevel(APIFlags.LSL)]
         public const int PRIM_TEXGEN_DEFAULT = 0;
