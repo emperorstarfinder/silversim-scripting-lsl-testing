@@ -28,6 +28,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
+using SilverSim.Types.Inventory;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -380,7 +381,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         /* intentionally left empty */
                     }
-                    else if (i.InventoryType != Types.Inventory.InventoryType.Animation)
+                    else if (i.InventoryType != InventoryType.Animation)
                     {
                         throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotAnAnimation", "Inventory item {0} is not an animation", item);
                     }
@@ -408,7 +409,7 @@ namespace SilverSim.Scripting.Lsl
                 ObjectPartInventoryItem i;
                 if (instance.Part.Inventory.TryGetValue(item, out i))
                 {
-                    if (i.InventoryType != Types.Inventory.InventoryType.Landmark)
+                    if (i.InventoryType != InventoryType.Landmark)
                     {
                         throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotALandmark", "Inventory item {0} is not a landmark", item);
                     }
@@ -431,7 +432,7 @@ namespace SilverSim.Scripting.Lsl
                 ObjectPartInventoryItem i;
                 if (instance.Part.Inventory.TryGetValue(item, out i))
                 {
-                    if (i.InventoryType != Types.Inventory.InventoryType.Notecard)
+                    if (i.InventoryType != InventoryType.Notecard)
                     {
                         throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotANotecard", "Inventory item {0} is not a notecard", item);
                     }
@@ -456,7 +457,7 @@ namespace SilverSim.Scripting.Lsl
                     ObjectPartInventoryItem i;
                     if (instance.Part.Inventory.TryGetValue(item, out i))
                     {
-                        if (i.InventoryType != Types.Inventory.InventoryType.Sound)
+                        if (i.InventoryType != InventoryType.Sound)
                         {
                             throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotASound", "Inventory item {0} is not a sound", item);
                         }
@@ -482,7 +483,7 @@ namespace SilverSim.Scripting.Lsl
                     ObjectPartInventoryItem i;
                     if (instance.Part.Inventory.TryGetValue(item, out i))
                     {
-                        if (i.InventoryType != Types.Inventory.InventoryType.Texture)
+                        if (i.InventoryType != InventoryType.Texture)
                         {
                             throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotATexture", "Inventory item {0} is not a texture", item);
                         }
