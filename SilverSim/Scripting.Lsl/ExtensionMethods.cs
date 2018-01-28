@@ -276,6 +276,13 @@ namespace SilverSim.Scripting.Lsl
                 case "System.Int64":
                     return long.Parse(data);
 
+                case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector":
+                case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3":
+                    return Vector3.Parse(data);
+
+                case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion":
+                    return Quaternion.Parse(data);
+
                 case "OpenMetaverse.UUID":
                     return UUID.Parse(data);
 
@@ -314,6 +321,18 @@ namespace SilverSim.Scripting.Lsl
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Int64");
+                writer.WriteValue(o.ToString());
+            }
+            else if(o is Vector3)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
+                writer.WriteValue(o.ToString());
+            }
+            else if(o is Quaternion)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
                 writer.WriteValue(o.ToString());
             }
             else if (o is UUID)
