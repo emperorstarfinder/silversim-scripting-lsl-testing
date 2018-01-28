@@ -92,6 +92,12 @@ namespace SilverSim.Scripting.Lsl
         private bool m_HasTouchEvent;
         private bool m_HasMoneyEvent;
         private bool m_HaveQueuedTimerEvent;
+        private bool m_HasLandCollisionEvent;
+        private bool m_HasLandCollisionStartEvent;
+        private bool m_HasLandCollisionEndEvent;
+        private bool m_HasCollisionEvent;
+        private bool m_HasCollisionStartEvent;
+        private bool m_HasCollisionEndEvent;
 
         public override bool HasTouchEvent => m_HasTouchEvent;
         public override bool HasMoneyEvent => m_HasMoneyEvent;
@@ -616,9 +622,63 @@ namespace SilverSim.Scripting.Lsl
         {
             if (IsRunning && !IsAborting)
             {
+                CollisionEvent cev;
+                LandCollisionEvent lcev;
                 if(e is TimerEvent)
                 {
                     m_HaveQueuedTimerEvent = true;
+                }
+                else if((cev = e as CollisionEvent) != null)
+                {
+                    switch (cev.Type)
+                    {
+                        case CollisionEvent.CollisionType.Start:
+                            if (!m_HasCollisionStartEvent)
+                            {
+                                return;
+                            }
+                            break;
+
+                        case CollisionEvent.CollisionType.Continuous:
+                            if (!m_HasCollisionEvent)
+                            {
+                                return;
+                            }
+                            break;
+
+                        case CollisionEvent.CollisionType.End:
+                            if (!m_HasCollisionEndEvent)
+                            {
+                                return;
+                            }
+                            break;
+                    }
+                }
+                else if((lcev = e as LandCollisionEvent) != null)
+                {
+                    switch(lcev.Type)
+                    {
+                        case LandCollisionEvent.CollisionType.Start:
+                            if(!m_HasLandCollisionStartEvent)
+                            {
+                                return;
+                            }
+                            break;
+
+                        case LandCollisionEvent.CollisionType.Continuous:
+                            if(!m_HasLandCollisionEvent)
+                            {
+                                return;
+                            }
+                            break;
+
+                        case LandCollisionEvent.CollisionType.End:
+                            if(!m_HasLandCollisionEndEvent)
+                            {
+                                return;
+                            }
+                            break;
+                    }
                 }
                 m_Events.Enqueue(e);
                 Part.ObjectGroup.Scene.ScriptThreadPool.PostScript(this);
@@ -797,6 +857,15 @@ namespace SilverSim.Scripting.Lsl
         {
             m_CurrentState = state;
             m_CurrentStateMethods.Clear();
+
+            m_HasTouchEvent = HasStateEvent("touch") || HasStateEvent("touch_start") || HasStateEvent("touch_end");
+            m_HasMoneyEvent = HasStateEvent("money");
+            m_HasLandCollisionEvent = HasStateEvent("land_collision");
+            m_HasLandCollisionStartEvent = HasStateEvent("land_collision_start");
+            m_HasLandCollisionEndEvent = HasStateEvent("land_collision_end");
+            m_HasCollisionEvent = HasStateEvent("collision");
+            m_HasCollisionStartEvent = HasStateEvent("collision_start");
+            m_HasCollisionEndEvent = HasStateEvent("collision_end");
         }
 
         private bool HasStateEvent(string name)
@@ -1163,8 +1232,6 @@ namespace SilverSim.Scripting.Lsl
                         {
                             evgot = null;
                         }
-                        m_HasTouchEvent = HasStateEvent("touch") || HasStateEvent("touch_start") || HasStateEvent("touch_end");
-                        m_HasMoneyEvent = HasStateEvent("money");
                         lock (this)
                         {
                             /* lock(this) needed here to prevent aborting in wrong place */
