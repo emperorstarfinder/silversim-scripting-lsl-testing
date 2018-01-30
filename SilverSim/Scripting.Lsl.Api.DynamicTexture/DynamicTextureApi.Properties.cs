@@ -62,6 +62,9 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             }
         }
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Append")]
+        public void Append(DynamicTextureDrawList drawlist, DynamicTextureDrawList src) => drawlist.Append(src);
+
         [APIExtension(APIExtension.Properties, "osDrawResetTransform")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ResetTransform")]
         public void DrawResetTransform(DynamicTextureDrawList drawList)
