@@ -148,6 +148,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Index")]
         public int SubStringIndex(string source, string pattern) => source.IndexOf(pattern);
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Contains")]
+        public int Contains(string source, string pattern) => source.Contains(pattern).ToLSLBoolean();
+
         [APILevel(APIFlags.LSL, "llGetSubString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Substring")]
         public string GetSubstring(string src, int start, int end)
