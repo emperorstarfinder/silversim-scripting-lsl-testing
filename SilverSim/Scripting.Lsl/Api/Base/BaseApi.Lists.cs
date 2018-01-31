@@ -1643,6 +1643,97 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, string value)
+        {
+            foreach(IValue iv in array)
+            {
+                if(iv.Type == Types.ValueType.String && iv.ToString() == value)
+                {
+                    return true.ToLSLBoolean();
+                }
+            }
+            return false.ToLSLBoolean();
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, int value)
+        {
+            foreach(IValue iv in array)
+            {
+                if(iv.Type == Types.ValueType.Integer && iv.AsInt == value)
+                {
+                    return true.ToLSLBoolean();
+                }
+            }
+            return false.ToLSLBoolean();
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, long value)
+        {
+            foreach (IValue iv in array)
+            {
+                if (iv.Type == Types.ValueType.LongInteger && iv.AsInt == value)
+                {
+                    return true.ToLSLBoolean();
+                }
+            }
+            return false.ToLSLBoolean();
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, double value)
+        {
+            foreach (IValue iv in array)
+            {
+                if (iv.Type == Types.ValueType.Integer && iv.AsReal == value)
+                {
+                    return true.ToLSLBoolean();
+                }
+            }
+            return false.ToLSLBoolean();
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, Vector3 value)
+        {
+            foreach (IValue iv in array)
+            {
+                if (iv.Type == Types.ValueType.Vector && iv.AsVector3 == value)
+                {
+                    return true.ToLSLBoolean();
+                }
+            }
+            return false.ToLSLBoolean();
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, Quaternion value)
+        {
+            foreach (IValue iv in array)
+            {
+                if (iv.Type == Types.ValueType.Rotation && iv.AsQuaternion == value)
+                {
+                    return true.ToLSLBoolean();
+                }
+            }
+            return false.ToLSLBoolean();
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, LSLKey key)
+        {
+            foreach(IValue iv in array)
+            {
+                if(iv.Type == Types.ValueType.UUID && iv.ToString() == key.ToString())
+                {
+                    return true.ToLSLBoolean();
+                }
+            }
+            return false.ToLSLBoolean();
+        }
+
         #region llListStatistics function implementation
         private bool IsValue(IValue iv, out double v)
         {
