@@ -1643,96 +1643,124 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        public int Contains(AnArray array, string value)
+        [APIExtension(APIExtension.MemberFunctions, "Index")]
+        public int Index(AnArray array, string value)
         {
-            foreach(IValue iv in array)
+            for(int idx = 0; idx < array.Count; ++idx)
             {
+                IValue iv = array[idx];
                 if(iv.Type == Types.ValueType.String && iv.ToString() == value)
                 {
-                    return true.ToLSLBoolean();
+                    return idx;
                 }
             }
-            return false.ToLSLBoolean();
+            return -1;
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        public int Contains(AnArray array, int value)
+        public int Contains(AnArray array, string value) => (Index(array, value) >= 0).ToLSLBoolean();
+
+        [APIExtension(APIExtension.MemberFunctions, "Index")]
+        public int Index(AnArray array, int value)
         {
-            foreach(IValue iv in array)
+            for (int idx = 0; idx < array.Count; ++idx)
             {
-                if(iv.Type == Types.ValueType.Integer && iv.AsInt == value)
+                IValue iv = array[idx];
+                if (iv.Type == Types.ValueType.Integer && iv.AsInt == value)
                 {
-                    return true.ToLSLBoolean();
+                    return idx;
                 }
             }
-            return false.ToLSLBoolean();
+            return -1;
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        public int Contains(AnArray array, long value)
+        public int Contains(AnArray array, int value) => (Index(array, value) >= 0).ToLSLBoolean();
+
+        [APIExtension(APIExtension.MemberFunctions, "Index")]
+        public int Index(AnArray array, long value)
         {
-            foreach (IValue iv in array)
+            for (int idx = 0; idx < array.Count; ++idx)
             {
+                IValue iv = array[idx];
                 if (iv.Type == Types.ValueType.LongInteger && iv.AsInt == value)
                 {
-                    return true.ToLSLBoolean();
+                    return idx;
                 }
             }
-            return false.ToLSLBoolean();
+            return -1;
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        public int Contains(AnArray array, double value)
+        public int Contains(AnArray array, long value) => (Index(array, value) >= 0).ToLSLBoolean();
+
+        [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
+        public int Index(AnArray array, double value)
         {
-            foreach (IValue iv in array)
+            for (int idx = 0; idx < array.Count; ++idx)
             {
+                IValue iv = array[idx];
                 if (iv.Type == Types.ValueType.Integer && iv.AsReal == value)
                 {
-                    return true.ToLSLBoolean();
+                    return idx;
                 }
             }
-            return false.ToLSLBoolean();
+            return -1;
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        public int Contains(AnArray array, Vector3 value)
+        public int Contains(AnArray array, double value) => (Index(array, value) >= 0).ToLSLBoolean();
+
+        [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
+        public int Index(AnArray array, Vector3 value)
         {
-            foreach (IValue iv in array)
+            for (int idx = 0; idx < array.Count; ++idx)
             {
+                IValue iv = array[idx];
                 if (iv.Type == Types.ValueType.Vector && iv.AsVector3 == value)
                 {
-                    return true.ToLSLBoolean();
+                    return idx;
                 }
             }
-            return false.ToLSLBoolean();
+            return -1;
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        public int Contains(AnArray array, Quaternion value)
+        public int Contains(AnArray array, Vector3 value) => (Index(array, value) >= 0).ToLSLBoolean();
+
+        [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
+        public int Index(AnArray array, Quaternion value)
         {
-            foreach (IValue iv in array)
+            for (int idx = 0; idx < array.Count; ++idx)
             {
+                IValue iv = array[idx];
                 if (iv.Type == Types.ValueType.Rotation && iv.AsQuaternion == value)
                 {
-                    return true.ToLSLBoolean();
+                    return idx;
                 }
             }
-            return false.ToLSLBoolean();
+            return -1;
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        public int Contains(AnArray array, LSLKey key)
+        public int Contains(AnArray array, Quaternion value) => (Index(array, value) >= 0).ToLSLBoolean();
+
+        [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
+        public int Index(AnArray array, LSLKey key)
         {
-            foreach(IValue iv in array)
+            for (int idx = 0; idx < array.Count; ++idx)
             {
-                if(iv.Type == Types.ValueType.UUID && iv.ToString() == key.ToString())
+                IValue iv = array[idx];
+                if (iv.Type == Types.ValueType.UUID && iv.ToString() == key.ToString())
                 {
-                    return true.ToLSLBoolean();
+                    return idx;
                 }
             }
-            return false.ToLSLBoolean();
+            return -1;
         }
+
+        [APIExtension(APIExtension.MemberFunctions, "Contains")]
+        public int Contains(AnArray array, LSLKey key) => (Index(array, key) >= 0).ToLSLBoolean();
 
         #region llListStatistics function implementation
         private bool IsValue(IValue iv, out double v)

@@ -145,7 +145,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public int StringLength(string src) => src.Length;
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Index")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "IndexOf")]
         public int SubStringIndex(string source, string pattern) => source.IndexOf(pattern);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Contains")]
