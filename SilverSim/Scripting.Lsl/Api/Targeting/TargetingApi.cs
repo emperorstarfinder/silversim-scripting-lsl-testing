@@ -128,7 +128,10 @@ namespace SilverSim.Scripting.Lsl.Api.Targeting
 
         public void Shutdown()
         {
-            m_Scenes.OnRegionRemove -= OnSceneRemove;
+            if (m_Scenes != null)
+            {
+                m_Scenes.OnRegionRemove -= OnSceneRemove;
+            }
         }
 
         private void OnSceneAdd(SceneInterface scene)

@@ -194,7 +194,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 m_HttpsServer.StartsWithUriHandlers.Remove("/lslhttps/");
             }
-            m_HttpServer.StartsWithUriHandlers.Remove("/lslhttp/");
+            m_HttpServer?.StartsWithUriHandlers.Remove("/lslhttp/");
 
             HttpRequestData reqdata;
             foreach (UUID id in m_HttpRequests.Keys)
