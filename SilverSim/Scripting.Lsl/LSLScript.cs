@@ -1007,6 +1007,10 @@ namespace SilverSim.Scripting.Lsl
 #endif
                     ShoutError(e.Message);
                 }
+                catch(ScriptWorkerInterruptionException)
+                {
+                    throw;
+                }
                 catch (Exception e)
                 {
                     LogInvokeException(name, e);
