@@ -1613,14 +1613,6 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
                             throw Return(compileState, typeof(string));
                         }
-                        else if(typeof(string) == m_LeftHandType)
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("Concat", new Type[] { m_LeftHandType, m_LeftHandType }));
-                            throw Return(compileState, m_LeftHandType);
-                        }
 
                         if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
                         {
