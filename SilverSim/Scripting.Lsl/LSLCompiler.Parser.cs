@@ -654,6 +654,7 @@ namespace SilverSim.Scripting.Lsl
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
                         compileState.ForcedSleepDefault = true;
+                        compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
                     }
                     else if (mode == "assl")
                     {
@@ -681,6 +682,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             apiExtensions.Add(APIExtension.Structs.ToLower());
                         }
+                        compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
@@ -700,6 +702,10 @@ namespace SilverSim.Scripting.Lsl
                 else if(shbang.Value.StartsWith("//#!UsesSinglePrecision"))
                 {
                     compileState.UsesSinglePrecision = true;
+                }
+                else if(shbang.Value.StartsWith("//#!EnableStringAddWithOther"))
+                {
+                    compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
                 }
             }
 

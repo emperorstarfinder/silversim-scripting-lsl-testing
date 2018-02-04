@@ -1348,6 +1348,12 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
                             break;
                         }
+                        else if(typeof(string) == m_LeftHandType && compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator)
+                        {
+                            ProcessCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
+                            break;
+                        }
                         else if(typeof(AnArray) == m_LeftHandType)
                         {
                             if (typeof(AnArray) == m_RightHandType)
@@ -1596,25 +1602,39 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Add);
                             throw Return(compileState, m_LeftHandType);
                         }
-                        else if(m_LeftHandType == typeof(string))
+                        else if(m_LeftHandType == typeof(string) || m_LeftHandType == typeof(LSLKey))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            if (m_LeftHandType == typeof(LSLKey))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                            }
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("Concat", new Type[] { m_LeftHandType, m_LeftHandType }));
+                            if (compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator)
+                            {
+                                ProcessCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
+                            }
+                            else
+                            {
+                                ProcessImplicitCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
+                            }
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
                             throw Return(compileState, typeof(string));
                         }
-                        else if(m_LeftHandType == typeof(LSLKey))
+                        else if((m_RightHandType == typeof(string) || m_RightHandType == typeof(LSLKey)) && compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                            ProcessCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
+                            if (m_RightHandType == typeof(LSLKey))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
+                            }
                             compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
                             throw Return(compileState, typeof(string));
                         }
 
-                        if(typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
+                        if (typeof(double) != m_LeftHandType && typeof(int) != m_LeftHandType && typeof(string) != m_LeftHandType)
                         {
                             mi = m_LeftHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
                             if (mi != null)
