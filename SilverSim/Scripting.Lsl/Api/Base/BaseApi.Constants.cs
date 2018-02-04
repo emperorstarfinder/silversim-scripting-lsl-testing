@@ -60,6 +60,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL)]
         public const int CHANGED_TELEPORT = 0x00000200;
         [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "CHANGED_REGION_RESTART")]
         public const int CHANGED_REGION_START = 0x00000400;
         [APILevel(APIFlags.LSL)]
         public const int CHANGED_MEDIA = 0x00000800;
