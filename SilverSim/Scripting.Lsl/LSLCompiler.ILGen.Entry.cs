@@ -568,7 +568,7 @@ namespace SilverSim.Scripting.Lsl
                             throw CompilerException(initargs, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
                         }
 
-                        if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))
+                        if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.LineNumber))
                         {
 #if DEBUG
                             compileState.ILGen.Writer.WriteLine("-- Init var " + varName);
@@ -939,7 +939,7 @@ namespace SilverSim.Scripting.Lsl
                         throw CompilerException(initargs, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of state variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
                     }
 
-                    if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree))
+                    if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.LineNumber))
                     {
 #if DEBUG
                         compileState.ILGen.Writer.WriteLine("-- Init state var " + varName);
@@ -1030,11 +1030,11 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private bool AreAllVarReferencesSatisfied(CompileState cs, List<string> initedVars, Tree expressionTree)
+        private bool AreAllVarReferencesSatisfied(CompileState cs, List<string> initedVars, Tree expressionTree, string varToInit, int lineNumber)
         {
             foreach (Tree st in expressionTree.SubTree)
             {
-                if (!AreAllVarReferencesSatisfied(cs, initedVars, st))
+                if (!AreAllVarReferencesSatisfied(cs, initedVars, st, varToInit, lineNumber))
                 {
                     return false;
                 }
@@ -1042,6 +1042,10 @@ namespace SilverSim.Scripting.Lsl
                     cs.m_VariableDeclarations.ContainsKey(st.Entry) &&
                     !initedVars.Contains(st.Entry))
                 {
+                    if(st.Entry == varToInit)
+                    {
+                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "Variable0HasACircularReference", "Variable '{0}' references itself on initialization."), st.Entry));
+                    }
                     return !cs.m_VariableInitValues.ContainsKey(st.Entry);
                 }
             }

@@ -315,3 +315,4 @@ NoMemberFunction0Defined=No member function {0} defined
 OpeningLtDoesNotHaveFollowingGt='<' does not have following '>'
 CannotInclude0=Could not include '{0}'.
 InvalidArgumentsToInclude=Invalid arguments to #include
+Variable0HasACircularReference=Variable '{0}' references itself on initialization.
