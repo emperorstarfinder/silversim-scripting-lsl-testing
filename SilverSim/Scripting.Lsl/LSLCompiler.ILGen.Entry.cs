@@ -37,7 +37,6 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-#if DEBUG
         private void DumpFunctionLines(StreamWriter dumpILGen, List<LineInfo> lines, int indentinit = 0, string indentBase = "")
         {
             int indent = indentinit;
@@ -81,69 +80,78 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
         }
-#endif
+
+        private bool DebugDiagnosticOutput { get; set; }
 
         private IScriptAssembly PostProcess(CompileState compileState, AppDomain appDom, UUID assetID, bool forcedSleepDefault, AssemblyBuilderAccess access, string filename = "")
         {
-#if DEBUG
-            Directory.CreateDirectory("../data/dumps");
-            using (var dumpILGen = new StreamWriter("../data/dumps/ILGendump_" + assetID.ToString() + ".txt", false, Encoding.UTF8))
+            StreamWriter dumpILGen = null;
+            try
             {
-                foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
+                if(DebugDiagnosticOutput)
                 {
-                    LineInfo initargs;
-
-                    if (compileState.m_VariableInitValues.TryGetValue(variableKvp.Key, out initargs))
-                    {
-                        dumpILGen.WriteLine(string.Format("_____: {0} {1} = {2};", compileState.MapType(variableKvp.Value), variableKvp.Key, string.Join(" ", initargs.Line)));
-                    }
-                    else
-                    {
-                        dumpILGen.WriteLine(string.Format("_____: {0} {1};", compileState.MapType(variableKvp.Value), variableKvp.Key));
-                    }
+                    Directory.CreateDirectory("../data/dumps");
+                    dumpILGen = new StreamWriter("../data/dumps/ILGendump_" + assetID.ToString() + ".txt", false, Encoding.UTF8);
                 }
 
-                dumpILGen.WriteLine("_____: ");
-
-                foreach (KeyValuePair<string, List<FunctionInfo>> functionKvp in compileState.m_Functions)
+                if (dumpILGen != null)
                 {
-                    foreach (FunctionInfo funcInfo in functionKvp.Value)
+                    foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                     {
-                        DumpFunctionLines(dumpILGen, funcInfo.FunctionLines);
+                        LineInfo initargs;
 
-                        dumpILGen.WriteLine("_____: ");
-                    }
-                }
-
-                bool first = true;
-                foreach (KeyValuePair<string, Dictionary<string, List<LineInfo>>> stateKvp in compileState.m_States)
-                {
-                    if (stateKvp.Key == "default")
-                    {
-                        dumpILGen.WriteLine("_____: default");
-                        dumpILGen.WriteLine("_____: {");
-                    }
-                    else
-                    {
-                        dumpILGen.WriteLine(string.Format("_____: state {0}", stateKvp.Key));
-                        dumpILGen.WriteLine("_____: {");
-                    }
-
-                    foreach (KeyValuePair<string, List<LineInfo>> eventKvp in stateKvp.Value)
-                    {
-                        if (!first)
+                        if (compileState.m_VariableInitValues.TryGetValue(variableKvp.Key, out initargs))
                         {
+                            dumpILGen.WriteLine(string.Format("_____: {0} {1} = {2};", compileState.MapType(variableKvp.Value), variableKvp.Key, string.Join(" ", initargs.Line)));
+                        }
+                        else
+                        {
+                            dumpILGen.WriteLine(string.Format("_____: {0} {1};", compileState.MapType(variableKvp.Value), variableKvp.Key));
+                        }
+                    }
+
+                    dumpILGen.WriteLine("_____: ");
+
+                    foreach (KeyValuePair<string, List<FunctionInfo>> functionKvp in compileState.m_Functions)
+                    {
+                        foreach (FunctionInfo funcInfo in functionKvp.Value)
+                        {
+                            DumpFunctionLines(dumpILGen, funcInfo.FunctionLines);
+
                             dumpILGen.WriteLine("_____: ");
                         }
-                        first = false;
-                        DumpFunctionLines(dumpILGen, eventKvp.Value, 1, "  ");
                     }
-                    dumpILGen.WriteLine("_____: }");
-                }
-                dumpILGen.WriteLine("");
 
-                dumpILGen.WriteLine("********************************************************************************");
-#endif
+                    bool first = true;
+                    foreach (KeyValuePair<string, Dictionary<string, List<LineInfo>>> stateKvp in compileState.m_States)
+                    {
+                        if (stateKvp.Key == "default")
+                        {
+                            dumpILGen.WriteLine("_____: default");
+                            dumpILGen.WriteLine("_____: {");
+                        }
+                        else
+                        {
+                            dumpILGen.WriteLine(string.Format("_____: state {0}", stateKvp.Key));
+                            dumpILGen.WriteLine("_____: {");
+                        }
+
+                        foreach (KeyValuePair<string, List<LineInfo>> eventKvp in stateKvp.Value)
+                        {
+                            if (!first)
+                            {
+                                dumpILGen.WriteLine("_____: ");
+                            }
+                            first = false;
+                            DumpFunctionLines(dumpILGen, eventKvp.Value, 1, "  ");
+                        }
+                        dumpILGen.WriteLine("_____: }");
+                    }
+                    dumpILGen.WriteLine("");
+
+                    dumpILGen.WriteLine("********************************************************************************");
+                }
+
                 string assetAssemblyName = "Script." + assetID.ToString().Replace('-', '_');
                 AssemblyName aName = new AssemblyName(assetAssemblyName);
                 AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, access);
@@ -160,10 +168,11 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 #region Create Script Container
-#if DEBUG
-                dumpILGen.WriteLine("********************************************************************************");
-                dumpILGen.WriteLine("DefineType({0})", assetAssemblyName + ".Script");
-#endif
+                if (dumpILGen != null)
+                {
+                    dumpILGen.WriteLine("********************************************************************************");
+                    dumpILGen.WriteLine("DefineType({0})", assetAssemblyName + ".Script");
+                }
                 TypeBuilder scriptTypeBuilder = mb.DefineType(assetAssemblyName + ".Script", TypeAttributes.Public, typeof(Script));
                 Dictionary<string, object> typeLocals;
                 Dictionary<string, object> typeLocalsInited;
@@ -174,10 +183,11 @@ namespace SilverSim.Scripting.Lsl
                     compileState.m_ApiFieldInfo.Add(apiAttr.Name, fb);
                 }
 
-#if DEBUG
-                dumpILGen.WriteLine("********************************************************************************");
-                dumpILGen.WriteLine("DefineConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) })");
-#endif
+                if (dumpILGen != null)
+                {
+                    dumpILGen.WriteLine("********************************************************************************");
+                    dumpILGen.WriteLine("DefineConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) })");
+                }
                 var script_cb_params = new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) };
                 ConstructorBuilder script_cb = scriptTypeBuilder.DefineConstructor(
                     MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
@@ -202,7 +212,7 @@ namespace SilverSim.Scripting.Lsl
 
                 MethodBuilder reset_func = scriptTypeBuilder.DefineMethod("ResetVariables", MethodAttributes.Public | MethodAttributes.Virtual, typeof(void), Type.EmptyTypes);
                 ILGenerator reset_ilgen = reset_func.GetILGenerator();
-#endregion
+                #endregion
 
                 var stateTypes = new Dictionary<string, Type>();
 
@@ -212,10 +222,11 @@ namespace SilverSim.Scripting.Lsl
                 #region Struct generation
                 foreach (KeyValuePair<string, Dictionary<string, LineInfo>> kvp in compileState.m_Structs)
                 {
-#if DEBUG
-                    dumpILGen.WriteLine("********************************************************************************");
-                    dumpILGen.WriteLine("DefineType(\"{0}\")", assetAssemblyName + ".Struct_" + kvp.Key);
-#endif
+                    if (dumpILGen != null)
+                    {
+                        dumpILGen.WriteLine("********************************************************************************");
+                        dumpILGen.WriteLine("DefineType(\"{0}\")", assetAssemblyName + ".Struct_" + kvp.Key);
+                    }
                     TypeBuilder structTypeBuilder = mb.DefineType(assetAssemblyName + ".Struct_" + kvp.Key, TypeAttributes.Public, typeof(object));
                     structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(APIDisplayNameAttribute).GetConstructor(new Type[] { typeof(string) }), new object[] { kvp.Key }));
                     structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(APICloneOnAssignmentAttribute).GetConstructor(Type.EmptyTypes), new object[0]));
@@ -224,28 +235,22 @@ namespace SilverSim.Scripting.Lsl
                     structTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(SerializableAttribute).GetConstructor(Type.EmptyTypes), new object[0]));
 
                     ConstructorBuilder cb = structTypeBuilder.DefineTypeInitializer();
-                    var typecb_ILGen = new ILGenDumpProxy(cb.GetILGenerator(),
-                        compileState.DebugDocument
-#if DEBUG
-                        , dumpILGen
-#endif
-                    );
+                    var typecb_ILGen = new ILGenDumpProxy(
+                        cb.GetILGenerator(),
+                        compileState.DebugDocument,
+                        dumpILGen);
                     typecb_ILGen.Emit(OpCodes.Ret);
 
                     cb = structTypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
-                    var defcb_ILGen = new ILGenDumpProxy(cb.GetILGenerator(),
-                        compileState.DebugDocument
-#if DEBUG
-                        , dumpILGen
-#endif
-                    );
+                    var defcb_ILGen = new ILGenDumpProxy(
+                        cb.GetILGenerator(),
+                        compileState.DebugDocument,
+                        dumpILGen);
                     cb = structTypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { structTypeBuilder });
-                    var copycb_ILGen = new ILGenDumpProxy(cb.GetILGenerator(),
-                        compileState.DebugDocument
-#if DEBUG
-                        , dumpILGen
-#endif
-                    );
+                    var copycb_ILGen = new ILGenDumpProxy(
+                        cb.GetILGenerator(),
+                        compileState.DebugDocument,
+                        dumpILGen);
 
                     foreach (KeyValuePair<string, LineInfo> variableKvp in kvp.Value)
                     {
@@ -329,10 +334,11 @@ namespace SilverSim.Scripting.Lsl
                 AddProperties(compileState, typeLocalsInited);
                 foreach (KeyValuePair<string, Type> variableKvp in compileState.m_VariableDeclarations)
                 {
-#if DEBUG
-                    dumpILGen.WriteLine("********************************************************************************");
-                    dumpILGen.WriteLine("DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName);
-#endif
+                    if (dumpILGen != null)
+                    {
+                        dumpILGen.WriteLine("********************************************************************************");
+                        dumpILGen.WriteLine("DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName);
+                    }
                     FieldBuilder fb = compileState.LanguageExtensions.EnableStateVariables ?
                         scriptTypeBuilder.DefineField("var_glob_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public) :
                         scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
@@ -343,10 +349,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     foreach (KeyValuePair<string, Type> variableKvp in stateVariableKvp.Value)
                     {
-#if DEBUG
-                        dumpILGen.WriteLine("********************************************************************************");
-                        dumpILGen.WriteLine("State[{2}].DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName, stateVariableKvp.Key);
-#endif
+                        if (dumpILGen != null)
+                        {
+                            dumpILGen.WriteLine("********************************************************************************");
+                            dumpILGen.WriteLine("State[{2}].DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName, stateVariableKvp.Key);
+                        }
                         FieldBuilder fb = scriptTypeBuilder.DefineField("var_state_" + stateVariableKvp.Key + "_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
                         if(!compileState.m_StateVariableFieldInfo.ContainsKey(stateVariableKvp.Key))
                         {
@@ -363,24 +370,21 @@ namespace SilverSim.Scripting.Lsl
 
                 compileState.ScriptTypeBuilder = scriptTypeBuilder;
                 compileState.StateTypeBuilder = null;
-                var script_ILGen = new ILGenDumpProxy(script_ilgen,
-                    compileState.DebugDocument
-#if DEBUG
-                    ,dumpILGen
-#endif
-                    );
-                var reset_ILGen = new ILGenDumpProxy(reset_ilgen,
-                    compileState.DebugDocument
-#if DEBUG
-                    , dumpILGen
-#endif
-                    );
+                var script_ILGen = new ILGenDumpProxy(
+                    script_ilgen,
+                    compileState.DebugDocument,
+                    dumpILGen);
+                var reset_ILGen = new ILGenDumpProxy(
+                    reset_ilgen,
+                    compileState.DebugDocument,
+                    dumpILGen);
                 compileState.ILGen = script_ILGen;
                 foreach(KeyValuePair<string, FieldBuilder> kvp in compileState.m_VariableFieldInfo)
                 {
-#if DEBUG
-                    compileState.ILGen.Writer.WriteLine("-- Init var " + kvp.Key);
-#endif
+                    if (compileState.ILGen.HaveDebugOut)
+                    {
+                        compileState.ILGen.WriteLine("-- Init var " + kvp.Key);
+                    }
                     FieldBuilder fb = kvp.Value;
                     if (!compileState.m_VariableInitValues.ContainsKey(kvp.Key))
                     {
@@ -570,9 +574,7 @@ namespace SilverSim.Scripting.Lsl
 
                         if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.LineNumber))
                         {
-#if DEBUG
-                            compileState.ILGen.Writer.WriteLine("-- Init var " + varName);
-#endif
+                            dumpILGen?.WriteLine("-- Init var " + varName);
 
                             compileState.ILGen = script_ILGen;
                             compileState.ILGen.Emit(OpCodes.Ldarg_0);
@@ -669,10 +671,11 @@ namespace SilverSim.Scripting.Lsl
                             paramName.Add(functionDeclaration[functionStart++]);
                         }
 
-#if DEBUG
-                        dumpILGen.WriteLine("********************************************************************************");
-                        dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
-#endif
+                        if (dumpILGen != null)
+                        {
+                            dumpILGen.WriteLine("********************************************************************************");
+                            dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
+                        }
                         method = scriptTypeBuilder.DefineMethod("fn_" + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
                         var paramSignature = new KeyValuePair<string, Type>[paramTypes.Count];
                         for (int i = 0; i < paramTypes.Count; ++i)
@@ -707,9 +710,7 @@ namespace SilverSim.Scripting.Lsl
                             functionDeclaration[functionStart + 1] != ")")
                         {
                             /* member capable function */
-#if DEBUG
                             ++functionStart;
-#endif
                             List<FunctionInfo> memberFunctions;
                             if(!compileState.m_MemberFunctions.TryGetValue(functionKvp.Key, out memberFunctions))
                             {
@@ -719,7 +720,6 @@ namespace SilverSim.Scripting.Lsl
                             memberFunctions.Add(funcInfo);
                         }
 
-#if DEBUG
                         var paramTypes = new List<Type>();
                         var paramName = new List<string>();
                         while (functionDeclaration[functionStart] != ")")
@@ -738,22 +738,20 @@ namespace SilverSim.Scripting.Lsl
                             paramName.Add(functionDeclaration[functionStart++]);
                         }
 
-                        dumpILGen.WriteLine("********************************************************************************");
-                        dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
-#endif
+                        if (dumpILGen != null)
+                        {
+                            dumpILGen.WriteLine("********************************************************************************");
+                            dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
+                        }
 
-                    var method_ilgen = new ILGenDumpProxy(method.GetILGenerator(),
-                            compileState.DebugDocument
-#if DEBUG
-                            , dumpILGen
-#endif
-                            );
+                        var method_ilgen = new ILGenDumpProxy(
+                            method.GetILGenerator(),
+                            compileState.DebugDocument,
+                            dumpILGen);
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, funcInfo.FunctionLines, typeLocals);
 
-#if DEBUG
-                        dumpILGen.WriteLine("GenerateMethodIL.End(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
-#endif
+                        dumpILGen?.WriteLine("GenerateMethodIL.End(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
                     }
                 }
                 #endregion
@@ -762,10 +760,11 @@ namespace SilverSim.Scripting.Lsl
                 foreach (KeyValuePair<string, Dictionary<string, List<LineInfo>>> stateKvp in compileState.m_States)
                 {
                     FieldBuilder fb;
-#if DEBUG
-                    dumpILGen.WriteLine("********************************************************************************");
-                    dumpILGen.WriteLine("DefineState(\"{0}\")", stateKvp.Key);
-#endif
+                    if (dumpILGen != null)
+                    {
+                        dumpILGen.WriteLine("********************************************************************************");
+                        dumpILGen.WriteLine("DefineState(\"{0}\")", stateKvp.Key);
+                    }
                     TypeBuilder state = mb.DefineType(aName.Name + ".State." + stateKvp.Key, TypeAttributes.Public, typeof(object));
                     state.AddInterfaceImplementation(typeof(ILSLState));
                     fb = state.DefineField("Instance", scriptTypeBuilder, FieldAttributes.Private | FieldAttributes.InitOnly);
@@ -800,11 +799,8 @@ namespace SilverSim.Scripting.Lsl
                             Type.EmptyTypes);
                         var event_ilgen = new ILGenDumpProxy(
                             eventbuilder.GetILGenerator(),
-                            compileState.DebugDocument
-#if DEBUG
-                            , dumpILGen
-#endif
-                            );
+                            compileState.DebugDocument,
+                            dumpILGen);
                         compileState.ILGen = event_ilgen;
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         StateEntryInitVars(stateKvp.Key, compileState, typeLocals);
@@ -820,21 +816,20 @@ namespace SilverSim.Scripting.Lsl
                         {
                             paramtypes[pi] = pinfo[pi].ParameterType;
                         }
-#if DEBUG
-                        dumpILGen.WriteLine("********************************************************************************");
-                        dumpILGen.WriteLine("DefineEvent(\"{0}\")", eventKvp.Key);
-#endif
+                        if (dumpILGen != null)
+                        {
+                            dumpILGen.WriteLine("********************************************************************************");
+                            dumpILGen.WriteLine("DefineEvent(\"{0}\")", eventKvp.Key);
+                        }
                         MethodBuilder eventbuilder = state.DefineMethod(
                             eventKvp.Key,
                             MethodAttributes.Public,
                             typeof(void),
                             paramtypes);
-                        var event_ilgen = new ILGenDumpProxy(eventbuilder.GetILGenerator(),
-                            compileState.DebugDocument
-#if DEBUG
-                            , dumpILGen
-#endif
-                            );
+                        var event_ilgen = new ILGenDumpProxy(
+                            eventbuilder.GetILGenerator(),
+                            compileState.DebugDocument,
+                            dumpILGen);
                         compileState.ILGen = event_ilgen;
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
                         Dictionary<string, FieldBuilder> stateVarDict;
@@ -857,9 +852,7 @@ namespace SilverSim.Scripting.Lsl
                         event_ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("ResetCallDepthCount"));
 
                         ProcessFunction(compileState, scriptTypeBuilder, state, eventbuilder, event_ilgen, eventKvp.Value, typeLocals);
-#if DEBUG
-                        dumpILGen.WriteLine("DefineEvent.ILGenEnd(\"{0}\")", eventKvp.Key);
-#endif
+                        dumpILGen?.WriteLine("DefineEvent.ILGenEnd(\"{0}\")", eventKvp.Key);
                     }
 
                     stateTypes.Add(stateKvp.Key, state.CreateType());
@@ -897,9 +890,11 @@ namespace SilverSim.Scripting.Lsl
                     m_ScriptRemoveDelegates,
                     m_ScriptSerializeDelegates,
                     m_ScriptDeserializeDelegates);
-#if DEBUG
             }
-#endif
+            finally
+            {
+                dumpILGen?.Dispose();
+            }
         }
 
         private void StateEntryInitVars(string stateName, CompileState compileState, Dictionary<string, object> typeLocalIn)
@@ -941,9 +936,10 @@ namespace SilverSim.Scripting.Lsl
 
                     if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.LineNumber))
                     {
-#if DEBUG
-                        compileState.ILGen.Writer.WriteLine("-- Init state var " + varName);
-#endif
+                        if (compileState.ILGen.HaveDebugOut)
+                        {
+                            compileState.ILGen.WriteLine("-- Init state var " + varName);
+                        }
                         compileState.ILGen.Emit(OpCodes.Ldarg_0);
                         compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                         ResultIsModifiedEnum modified = ProcessExpression(

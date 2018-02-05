@@ -380,9 +380,10 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-#if DEBUG
-                        compileState.ILGen.Writer.WriteLine("++++ Processing this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
-#endif
+                        if (compileState.ILGen.HaveDebugOut)
+                        {
+                            compileState.ILGen.WriteLine("++++ Processing this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+                        }
                         retType = compiler.ProcessExpressionPart(
                             compileState,
                             s,
@@ -398,9 +399,10 @@ namespace SilverSim.Scripting.Lsl
                         lb = DeclareLocal(compileState, retType);
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                         m_CachedLeftSideValues.Add(s, lb);
-#if DEBUG
-                        compileState.ILGen.Writer.WriteLine("++++ Processed this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
-#endif
+                        if (compileState.ILGen.HaveDebugOut)
+                        {
+                            compileState.ILGen.WriteLine("++++ Processed this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+                        }
                     }
 
                     paramTypes.Add(retType);
@@ -417,17 +419,19 @@ namespace SilverSim.Scripting.Lsl
                     Type retType;
                     if (m_CachedLeftSideValues.TryGetValue(s, out lb))
                     {
-#if DEBUG
-                        compileState.ILGen.Writer.WriteLine("++++ Getting cached this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
-#endif
+                        if (compileState.ILGen.HaveDebugOut)
+                        {
+                            compileState.ILGen.WriteLine("++++ Getting cached this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+                        }
                         retType = lb.LocalType;
                         compileState.ILGen.Emit(OpCodes.Ldloc, lb);
                     }
                     else
                     {
-#if DEBUG
-                        compileState.ILGen.Writer.WriteLine("++++ Processing this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
-#endif
+                        if (compileState.ILGen.HaveDebugOut)
+                        {
+                            compileState.ILGen.WriteLine("++++ Processing this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+                        }
                         retType = compiler.ProcessExpressionPart(
                             compileState,
                             s,
@@ -444,9 +448,10 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Dup);
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                         m_CachedLeftSideValues.Add(s, lb);
-#if DEBUG
-                        compileState.ILGen.Writer.WriteLine("++++ Processed this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
-#endif
+                        if (compileState.ILGen.HaveDebugOut)
+                        {
+                            compileState.ILGen.WriteLine("++++ Processed this-Operator parameter {0} / {1} ++++", i - 1, s.GetHashCode());
+                        }
                     }
                 }
             }
@@ -878,9 +883,10 @@ namespace SilverSim.Scripting.Lsl
 
             private void SetMemberVarTreeFromStack(LSLCompiler lslCompiler, CompileState compileState, Tree t, Dictionary<string, object> localVars)
             {
-#if DEBUG
-                compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Begin ========");
-#endif
+                if (compileState.ILGen.HaveDebugOut)
+                {
+                    compileState.ILGen.WriteLine("======== SetMemberVarTreeFromStack: Begin ========");
+                }
 
                 var selectorStack = new List<Tree>();
                 while (t.Type == Tree.EntryType.OperatorBinary || t.Type == Tree.EntryType.ThisOperator)
@@ -903,9 +909,10 @@ namespace SilverSim.Scripting.Lsl
 
                 LocalBuilder swapLb = DeclareLocal(compileState, m_LeftHandType);
                 compileState.ILGen.Emit(OpCodes.Stloc, swapLb);
-#if DEBUG
-                compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Fetch reference ========");
-#endif
+                if (compileState.ILGen.HaveDebugOut)
+                {
+                    compileState.ILGen.WriteLine("======== SetMemberVarTreeFromStack: Fetch reference ========");
+                }
 
                 Type varType = GetVarToStack(compileState, varInfo);
                 bool storeBackVar = false;
@@ -927,9 +934,10 @@ namespace SilverSim.Scripting.Lsl
 
                 for(int i = 0; i < selectorStack.Count - 1; ++i)
                 {
-#if DEBUG
-                    compileState.ILGen.Writer.WriteLine("-------- SetMemberVarTreeFromStack: Get: {0}: {1} --------", varType.FullName, selectorStack[i].SubTree[1].Entry);
-#endif
+                    if (compileState.ILGen.HaveDebugOut)
+                    {
+                        compileState.ILGen.WriteLine("-------- SetMemberVarTreeFromStack: Get: {0}: {1} --------", varType.FullName, selectorStack[i].SubTree[1].Entry);
+                    }
 
                     Tree sel = selectorStack[i];
                     LocalBuilder lb = DeclareLocal(compileState, varType);
@@ -988,9 +996,10 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Stloc, refLb);
                 }
 
-#if DEBUG
-                compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Set final member ========");
-#endif
+                if (compileState.ILGen.HaveDebugOut)
+                {
+                    compileState.ILGen.WriteLine("======== SetMemberVarTreeFromStack: Set final member ========");
+                }
 
                 compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
 
@@ -1004,9 +1013,10 @@ namespace SilverSim.Scripting.Lsl
                     SetMemberSelectorFromStack(compileState, varType, finalSel.SubTree[1].Entry);
                 }
 
-#if DEBUG
-                compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Save back necessary locals ========");
-#endif
+                if (compileState.ILGen.HaveDebugOut)
+                {
+                    compileState.ILGen.WriteLine("======== SetMemberVarTreeFromStack: Save back necessary locals ========");
+                }
 
                 foreach (SelectorTree sel in selectorTree)
                 {
@@ -1015,9 +1025,10 @@ namespace SilverSim.Scripting.Lsl
                         break;
                     }
 
-#if DEBUG
-                    compileState.ILGen.Writer.WriteLine("-------- SetMemberVarTreeFromStack: Set: {0}: {1} --------", sel.Type.FullName, sel.Member);
-#endif
+                    if (compileState.ILGen.HaveDebugOut)
+                    {
+                        compileState.ILGen.WriteLine("-------- SetMemberVarTreeFromStack: Set: {0}: {1} --------", sel.Type.FullName, sel.Member);
+                    }
 
                     if (sel.Type.IsValueType)
                     {
@@ -1045,9 +1056,10 @@ namespace SilverSim.Scripting.Lsl
                     SetVarFromStack(compileState, varInfo, m_LineNumber);
                 }
 
-#if DEBUG
-                compileState.ILGen.Writer.WriteLine("======== SetMemberVarTreeFromStack: Finished ========");
-#endif
+                if (compileState.ILGen.HaveDebugOut)
+                {
+                    compileState.ILGen.WriteLine("======== SetMemberVarTreeFromStack: Finished ========");
+                }
             }
 
             public BinaryOperatorExpression(

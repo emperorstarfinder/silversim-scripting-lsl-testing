@@ -2273,14 +2273,16 @@ namespace SilverSim.Scripting.Lsl
 
         private void OrderBrackets(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
         {
-#if DEBUG
-            cs.ILGen.Writer.WriteLine(string.Format("  //** Tree Flat Begin (Line {0})", lineNumber));
-            foreach (Tree st in resolvetree.SubTree)
+            if (cs.ILGen.HaveDebugOut)
             {
-                cs.ILGen.Writer.WriteLine(string.Format("  //** {0}: {1}", st.Entry, st.Type.ToString()));
+                cs.ILGen.WriteLine(string.Format("  //** Tree Flat Begin (Line {0})", lineNumber));
+                foreach (Tree st in resolvetree.SubTree)
+                {
+                    cs.ILGen.WriteLine(string.Format("  //** {0}: {1}", st.Entry, st.Type.ToString()));
+                }
+                cs.ILGen.WriteLine("  //** Tree Flat End");
             }
-            cs.ILGen.Writer.WriteLine("  //** Tree Flat End");
-#endif
+
             var parenStack = new List<KeyValuePair<string, int>>();
             int i = 0;
 
