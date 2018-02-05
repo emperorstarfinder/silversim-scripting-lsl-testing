@@ -39,6 +39,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         }
 
         [APILevel(APIFlags.LSL)]
+        [APILevel(APIFlags.LSL, "VEHICLE_FLAG_NO_FLY_UP")]
         public const int VEHICLE_FLAG_NO_DEFLECTION_UP = 0x001;
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_FLAG_LIMIT_ROLL_ONLY = 0x002;
