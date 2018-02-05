@@ -1554,7 +1554,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddRange", new Type[] { typeof(AnArray) }));
                             throw Return(compileState, typeof(AnArray));
                         }
-                        if(m_LeftHandType == typeof(AnArray))
+                        else if(m_LeftHandType == typeof(AnArray))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));

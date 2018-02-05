@@ -636,6 +636,7 @@ namespace SilverSim.Scripting.Lsl
             acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
             string windLightApiType = APIExtension.LightShare;
             compileState.ForcedSleepDefault = true;
+            compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = false;
             foreach (KeyValuePair<int, string> shbang in shbangs)
             {
                 if (shbang.Value.StartsWith("//#!Mode:"))
@@ -654,7 +655,6 @@ namespace SilverSim.Scripting.Lsl
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
                         compileState.ForcedSleepDefault = true;
-                        compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
                     }
                     else if (mode == "assl")
                     {
@@ -682,7 +682,6 @@ namespace SilverSim.Scripting.Lsl
                         {
                             apiExtensions.Add(APIExtension.Structs.ToLower());
                         }
-                        compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
@@ -703,13 +702,14 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.UsesSinglePrecision = true;
                 }
-                else if(shbang.Value.StartsWith("//#!EnableStringAddWithOther"))
-                {
-                    compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
-                }
             }
 
-            if(apiExtensions.Contains(APIExtension.Structs.ToLower()))
+            if((acceptedFlags & APIFlags.OSSL) != 0 || (acceptedFlags & APIFlags.ASSL) != 0)
+            {
+                compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
+            }
+
+            if (apiExtensions.Contains(APIExtension.Structs.ToLower()))
             {
                 compileState.LanguageExtensions.EnableStructTypes = true;
                 if(!apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
