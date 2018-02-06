@@ -42,6 +42,49 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 {
     public partial class RegionApi
     {
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_TIME_DILATION = 0;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_SIM_FPS = 1;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_PHYSICS_FPS = 2;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_AGENT_UPDATES = 3;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_ROOT_AGENTS = 4;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_CHILD_AGENTS = 5;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_TOTAL_PRIMS = 6;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_ACTIVE_PRIMS = 7;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_FRAME_MS = 8;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_NET_MS = 9;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_PHYSICS_MS = 10;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_IMAGE_MS = 11;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_OTHER_MS = 12;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_IN_PACKETS_PER_SECOND = 13;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_OUT_PACKETS_PER_SECOND = 14;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_UNACKED_BYTES = 15;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_AGENT_MS = 16;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_PENDING_DOWNLOADS = 17;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_PENDING_UPLOADS = 18;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_ACTIVE_SCRIPTS = 19;
+        [APILevel(APIFlags.OSSL)]
+        public const int STATS_SCRIPT_LPS = 20;
+
         private sealed class ConsoleCommandTTY : TTY
         {
             public string OutputBuffer { get; private set; }
