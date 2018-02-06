@@ -2381,17 +2381,19 @@ namespace SilverSim.Scripting.Lsl
 
                     case "&&":
                         /* DeMorgan helps here a lot to convert the operations nicely */
-                        if ((typeof(int) == m_LeftHandType || typeof(long) == m_LeftHandType) &&
-                            (typeof(int) == m_RightHandType || typeof(long) == m_RightHandType))
+                        compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                        try
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(bool), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(bool), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.And);
-                            throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorAndAndNotSupportedFor0And1", "operator '&&' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        catch(CompilerException)
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorAndAndNotSupportedFor0And1", "operator '>=' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        }
+                        throw Return(compileState, typeof(int));
 
                     case "&":
                         if (typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType)
@@ -2471,17 +2473,19 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorXorNotSupportedFor0And1", "operator '^' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
 
                     case "||":
-                        if ((typeof(int) == m_LeftHandType || typeof(long) == m_LeftHandType) &&
-                            (typeof(int) == m_RightHandType || typeof(long) == m_RightHandType))
+                        try
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(bool), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, typeof(bool), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Or);
-                            throw Return(compileState, typeof(int));
                         }
-                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorOrOrNotSupportedFor0And1", "operator '||' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        catch (CompilerException)
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorOrOrNotSupportedFor0And1", "operator '>=' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        }
+                        throw Return(compileState, typeof(int));
 
                     default:
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "UnknownOperator0For1And2", "unknown operator '{0}' for {1} and {2}"), m_Operator, compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
