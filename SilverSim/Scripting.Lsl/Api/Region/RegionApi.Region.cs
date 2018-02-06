@@ -858,5 +858,14 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 }
             }
         }
+
+        [APILevel(APIFlags.OSSL, "osWindActiveModelPluginName")]
+        public string GetWindActiveModelPluginName(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.Environment.Wind.Name;
+            }
+        }
     }
 }
