@@ -637,6 +637,7 @@ namespace SilverSim.Scripting.Lsl
             string windLightApiType = APIExtension.LightShare;
             compileState.ForcedSleepDefault = true;
             compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = false;
+            compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
             foreach (KeyValuePair<int, string> shbang in shbangs)
             {
                 if (shbang.Value.StartsWith("//#!Mode:"))
@@ -649,12 +650,14 @@ namespace SilverSim.Scripting.Lsl
                         acceptedFlags = APIFlags.LSL;
                         compileState.ForcedSleepDefault = true;
                         compileState.LanguageExtensions.EnableFunctionOverloading = false;
+                        compileState.LanguageExtensions.EnableNonFirstDefaultState = false;
                     }
                     else if(mode == "ossl")
                     {
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
                         compileState.ForcedSleepDefault = true;
+                        compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
                     }
                     else if (mode == "assl")
                     {
@@ -666,6 +669,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.LanguageExtensions.EnableSwitchBlock = true;
                         compileState.ForcedSleepDefault = false;
                         compileState.LanguageExtensions.EnableArrayThisOperator = true;
+                        compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
                         if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
                         {
                             apiExtensions.Add(APIExtension.LongInteger.ToLower());
@@ -868,7 +872,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "DefaultStateCannotBeDeclaredWithState", "default state cannot be declared with state"));
                         }
-                        else if (compileState.m_States.Count == 0)
+                        else if (compileState.m_States.Count == 0 && !compileState.LanguageExtensions.EnableNonFirstDefaultState)
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "DefaultstateMustBeFirstDeclaredStateInScript", "default state must be first declared state in script"));
                         }

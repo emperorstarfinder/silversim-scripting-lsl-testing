@@ -142,6 +142,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableStructTypes;
 
                 public bool EnableImplicitTypecastToStringOnAddOperator;
+
+                public bool EnableNonFirstDefaultState;
             }
 
             public bool UsesSinglePrecision;
