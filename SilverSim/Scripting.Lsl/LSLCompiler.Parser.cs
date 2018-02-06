@@ -658,6 +658,7 @@ namespace SilverSim.Scripting.Lsl
                         acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
                         compileState.ForcedSleepDefault = true;
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
+                        compileState.LanguageExtensions.EnableFunctionOverloading = true;
                     }
                     else if (mode == "assl")
                     {
@@ -686,12 +687,15 @@ namespace SilverSim.Scripting.Lsl
                         {
                             apiExtensions.Add(APIExtension.Structs.ToLower());
                         }
+                        compileState.LanguageExtensions.EnableFunctionOverloading = true;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
                         windLightApiType = APIExtension.WindLight_Aurora;
                         acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
                         compileState.ForcedSleepDefault = true;
+                        compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
+                        compileState.LanguageExtensions.EnableFunctionOverloading = true;
                     }
                 }
                 else if (shbang.Value.StartsWith("//#!Enable:"))
