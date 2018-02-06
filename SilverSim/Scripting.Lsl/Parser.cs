@@ -326,6 +326,11 @@ redo:
                                         }
                                     }
                                     token.Remove(token.Length - 2, 2);
+                                    if(token.Length != 0)
+                                    {
+                                        args.Add(token.ToString());
+                                    }
+                                    token.Clear();
                                     c = ' ';
                                     goto redo;
                                 }
@@ -374,6 +379,11 @@ redo:
                                     }
 
                                     token.Remove(token.Length - 2, 2);
+                                    if (token.Length != 0)
+                                    {
+                                        args.Add(token.ToString());
+                                    }
+                                    token.Clear();
                                     c = ' ';
                                     goto redo;
                                 }
