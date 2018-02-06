@@ -139,7 +139,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             int i = 0;
-            if(arguments[0] == "this" && arguments[1] != ")")
+            if(arguments.Count >= 2 && arguments[0] == "this" && arguments[1] != ")")
             {
                 /* custom member method designator */
                 i = 1;
