@@ -2313,10 +2313,13 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
+                            MethodInfo operatorMethodInfo = m_LeftHandType.GetMethod("op_GreaterThan", new Type[] { m_LeftHandType, m_LeftHandType });
+                            if (operatorMethodInfo != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, operatorMethodInfo);
 
-                            compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_GreaterThan", new Type[] { m_LeftHandType, m_LeftHandType }));
-
-                            throw Return(compileState, typeof(int));
+                                throw Return(compileState, typeof(int));
+                            }
                         }
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorGreaterNotSupportedFor0And1", "operator '>' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_LeftHandType)));
 
@@ -2373,9 +2376,13 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
 
-                            compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_GreaterThanOrEqual", new Type[] { m_LeftHandType, m_LeftHandType }));
+                            MethodInfo operatorMethodInfo = m_LeftHandType.GetMethod("op_GreaterThanOrEqual", new Type[] { m_LeftHandType, m_LeftHandType });
+                            if (operatorMethodInfo != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, operatorMethodInfo);
 
-                            throw Return(compileState, typeof(int));
+                                throw Return(compileState, typeof(int));
+                            }
                         }
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorGreaterEqualsNotSupportedFor0And1", "operator '>=' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
 
