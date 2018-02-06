@@ -47,5 +47,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llGetFreeMemory")]
         public int GetFreeMemory() => 65536; /* we have no resource tracking */
+
+        [APILevel(APIFlags.LSL)]
+        public const int PROFILE_NONE = 0;
+        [APILevel(APIFlags.LSL)]
+        public const int PROFILE_SCRIPT_MEMORY = 1;
+
+        [APILevel(APIFlags.LSL, "llScriptProfiler")]
+        public void ScriptProfiler(int flags)
+        {
+            /* no-operation */
+        }
     }
 }
