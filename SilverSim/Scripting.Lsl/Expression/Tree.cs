@@ -232,7 +232,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 {
                     Value = new ConstantValueInt(Entry);
                 }
-                if (Entry.StartsWith("-0x") || Entry.StartsWith("-0X"))
+                else if (Entry.StartsWith("-0x") || Entry.StartsWith("-0X"))
                 {
                     Value = new ConstantValueInt(Entry).Negate();
                 }
