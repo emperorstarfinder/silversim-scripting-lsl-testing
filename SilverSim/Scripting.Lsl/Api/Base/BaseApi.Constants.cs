@@ -64,6 +64,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int CHANGED_REGION_START = 0x00000400;
         [APILevel(APIFlags.LSL)]
         public const int CHANGED_MEDIA = 0x00000800;
+        [APILevel(APIFlags.OSSL)]
+        public const int CHANGED_ANIMATION = 0x00004000;
 
         [APILevel(APIFlags.LSL)]
         public const int ATTACH_CHEST = 1;
