@@ -305,7 +305,7 @@ redo:
                             MarkBeginOfLine();
                             while (!IsLSLWhitespace(c) && c != ';' && c != ':' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
-                                if(c == '.' && token.Length > 0 && !char.IsNumber(token[token.Length - 1]))
+                                if(c == '.' && token.Length > 0)
                                 {
                                     bool allIsNumber = true;
                                     foreach(char t in token.ToString())
@@ -314,10 +314,7 @@ redo:
                                     }
                                     if (!allIsNumber)
                                     {
-                                        if (token.Length != 0)
-                                        {
-                                            args.Add(token.ToString());
-                                        }
+                                        args.Add(token.ToString());
                                         token.Clear();
                                     }
                                 }
