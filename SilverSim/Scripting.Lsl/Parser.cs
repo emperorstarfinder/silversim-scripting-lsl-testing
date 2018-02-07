@@ -305,6 +305,22 @@ redo:
                             MarkBeginOfLine();
                             while (!IsLSLWhitespace(c) && c != ';' && c != ':' && c != '(' && c != ')' && c != ',' && c != '\"' && c != '\'' && c != '~' && c != '\\' && c != '?' && c != '@' && c != '{' && c != '}' && c != '[' && c != ']')
                             {
+                                if(c == '.' && token.Length > 0 && !char.IsNumber(token[token.Length - 1]))
+                                {
+                                    bool allIsNumber = true;
+                                    foreach(char t in token.ToString())
+                                    {
+                                        allIsNumber = allIsNumber && char.IsNumber(t);
+                                    }
+                                    if (!allIsNumber)
+                                    {
+                                        if (token.Length != 0)
+                                        {
+                                            args.Add(token.ToString());
+                                        }
+                                        token.Clear();
+                                    }
+                                }
                                 token.Append(c);
                                 if(token.EndsWith("//"))
                                 {
