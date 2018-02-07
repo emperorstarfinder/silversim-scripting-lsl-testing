@@ -232,7 +232,11 @@ namespace SilverSim.Scripting.Lsl.Expression
                 {
                     Value = new ConstantValueInt(Entry);
                 }
-                else if(cs.LanguageExtensions.EnableLongIntegers && (Entry.EndsWith("l") || Entry.EndsWith("L")))
+                if (Entry.StartsWith("-0x") || Entry.StartsWith("-0X"))
+                {
+                    Value = new ConstantValueInt(Entry).Negate();
+                }
+                else if (cs.LanguageExtensions.EnableLongIntegers && (Entry.EndsWith("l") || Entry.EndsWith("L")))
                 {
                     Value = new ConstantValueLong(Entry.Substring(0, Entry.Length - 1));
                 }
