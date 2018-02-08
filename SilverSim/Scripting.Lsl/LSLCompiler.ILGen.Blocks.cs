@@ -492,10 +492,6 @@ namespace SilverSim.Scripting.Lsl
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
-                                compileState.m_BreakContinueLabels.RemoveAt(0);
-
-                                compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
-                                compileState.ILGen.MarkLabel(endlabel);
                             }
                             else
                             {
@@ -505,16 +501,16 @@ namespace SilverSim.Scripting.Lsl
                                     localVars,
                                     labels,
                                     true);
-                                compileState.m_BreakContinueLabels.RemoveAt(0);
+                            }
 
-                                compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
-                                compileState.ILGen.MarkLabel(endlabel);
+                            compileState.m_BreakContinueLabels.RemoveAt(0);
+                            compileState.ILGen.Emit(OpCodes.Br, eoif_label.Value);
+                            compileState.ILGen.MarkLabel(endlabel);
 
-                                LineInfo li = compileState.PeekLine();
-                                if (li.Line[0] == "else")
-                                {
-                                    goto processnext;
-                                }
+                            LineInfo li = compileState.PeekLine();
+                            if (li.Line[0] == "else")
+                            {
+                                goto processnext;
                             }
                         }
                         break;
