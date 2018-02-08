@@ -22,6 +22,7 @@
 #pragma warning disable IDE0018, RCS1029, IDE0019
 
 using log4net;
+using Nini.Config;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
@@ -191,8 +192,9 @@ namespace SilverSim.Scripting.Lsl
             NegativeZero *= -1.0;
         }
 
-        public LSLCompiler()
+        public LSLCompiler(IConfig config)
         {
+            DebugDiagnosticOutput = config.GetBoolean("DebugDiagnosticOutput", false);
             m_ApiInfos.Add(APIFlags.ASSL, new ApiInfo());
             m_ApiInfos.Add(APIFlags.LSL, new ApiInfo());
             m_ApiInfos.Add(APIFlags.OSSL, new ApiInfo());
