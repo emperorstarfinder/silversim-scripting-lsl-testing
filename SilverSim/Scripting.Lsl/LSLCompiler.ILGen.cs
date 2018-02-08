@@ -96,6 +96,9 @@ namespace SilverSim.Scripting.Lsl
                     functionTree.SubTree[0].Entry == "*=" ||
                     functionTree.SubTree[0].Entry == "/=" ||
                     functionTree.SubTree[0].Entry == "%=" ||
+                    functionTree.SubTree[0].Entry == "&=" ||
+                    functionTree.SubTree[0].Entry == "|=" ||
+                    functionTree.SubTree[0].Entry == "^=" ||
                     functionTree.SubTree[0].Entry == "."))
             {
                 isModified = ResultIsModifiedEnum.Yes;

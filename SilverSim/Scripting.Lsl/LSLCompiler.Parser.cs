@@ -638,6 +638,7 @@ namespace SilverSim.Scripting.Lsl
             compileState.ForcedSleepDefault = true;
             compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = false;
             compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
+            compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
             foreach (KeyValuePair<int, string> shbang in shbangs)
             {
                 if (shbang.Value.StartsWith("//#!Mode:"))
@@ -651,6 +652,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ForcedSleepDefault = true;
                         compileState.LanguageExtensions.EnableFunctionOverloading = false;
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = false;
+                        compileState.LanguageExtensions.EnableLogicalModifyAssignments = false;
                     }
                     else if(mode == "ossl")
                     {
@@ -671,6 +673,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ForcedSleepDefault = false;
                         compileState.LanguageExtensions.EnableArrayThisOperator = true;
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
+                        compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
                         if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
                         {
                             apiExtensions.Add(APIExtension.LongInteger.ToLower());

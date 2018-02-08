@@ -152,6 +152,9 @@ namespace SilverSim.Scripting.Lsl
                 m_ProcessOrders.Add("*=", new State[] { State.RightHand });
                 m_ProcessOrders.Add("/=", new State[] { State.RightHand });
                 m_ProcessOrders.Add("%=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("|=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("&=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("^=", new State[] { State.RightHand });
             }
 
             private void BeginScope(CompileState compileState)
@@ -307,63 +310,6 @@ namespace SilverSim.Scripting.Lsl
                 return varType;
             }
 
-            private Type GetMemberSelectorType(CompileState compileState, Type varType, string memberName)
-            {
-                APIAccessibleMembersAttribute membersAttr;
-                if (varType == typeof(Vector3) || varType == typeof(Quaternion))
-                {
-                    return GetVectorOrQuaternionField(compileState, varType, memberName).FieldType;
-                }
-                else if ((varType == typeof(string) || varType == typeof(AnArray)) && compileState.LanguageExtensions.EnableProperties)
-                {
-                    if (memberName == "Length")
-                    {
-                        return typeof(int);
-                    }
-                    else
-                    {
-                        throw new CompilerException(m_LineNumber, string.Format(
-                            this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
-                            memberName,
-                            compileState.MapType(varType)));
-                    }
-                }
-                else if ((membersAttr = compileState.GetAccessibleAPIMembersAttribute(varType)) != null)
-                {
-                    PropertyInfo pi;
-                    FieldInfo fi;
-                    if (membersAttr.Members.Length != 0 && !membersAttr.Members.Contains(memberName))
-                    {
-                        throw new CompilerException(m_LineNumber, string.Format(
-                            this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
-                            memberName,
-                            compileState.MapType(varType)));
-                    }
-
-                    if ((fi = compileState.GetField(varType, memberName)) != null)
-                    {
-                        return fi.FieldType;
-                    }
-                    else if ((pi = varType.GetMemberProperty(compileState, memberName)) != null)
-                    {
-                        return pi.PropertyType;
-                    }
-                    else
-                    {
-                        throw new CompilerException(m_LineNumber, string.Format(
-                            this.GetLanguageString(compileState.CurrentCulture, "InvalidMemberAccess0To1", "Invalid member access '{0}' to {1}"),
-                            memberName,
-                            compileState.MapType(varType)));
-                    }
-                }
-                else
-                {
-                    throw new CompilerException(m_LineNumber, string.Format(
-                        this.GetLanguageString(compileState.CurrentCulture, "OperatorDorNotSupportedFor", "operator '.' not supported for {0}"),
-                        compileState.MapType(varType)));
-                }
-            }
-
             private readonly Dictionary<Tree, LocalBuilder> m_CachedLeftSideValues = new Dictionary<Tree, LocalBuilder>();
 
             private Type[] GetParametersTypes(LSLCompiler compiler, CompileState compileState, Tree arguments, Dictionary<string, object> localVars)
@@ -458,7 +404,7 @@ namespace SilverSim.Scripting.Lsl
 
             private string GetThisParameterTypeString(CompileState compileState, Type[] paramTypes)
             {
-                StringBuilder res = new StringBuilder();
+                var res = new StringBuilder();
                 foreach(Type paramType in paramTypes)
                 {
                     if(res.Length != 0)
@@ -522,7 +468,7 @@ namespace SilverSim.Scripting.Lsl
                             GetThisParameterTypeString(compileState, paramTypes)));
                     }
 
-                    List<Type> staticParamTypes = new List<Type> { typeof(AnArray) };
+                    var staticParamTypes = new List<Type> { typeof(AnArray) };
                     staticParamTypes.AddRange(paramTypes);
                     mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
                     if (mi == null || mi.ReturnType != typeof(BaseApi.Variant))
@@ -733,7 +679,7 @@ namespace SilverSim.Scripting.Lsl
                             GetThisParameterTypeString(compileState, paramTypes)));
                     }
 
-                    List<Type> staticParamTypes = new List<Type> { typeof(AnArray) };
+                    var staticParamTypes = new List<Type> { typeof(AnArray) };
                     staticParamTypes.AddRange(paramTypes);
                     staticParamTypes.Add(typeof(BaseApi.Variant));
                     mi = typeof(LSLCompiler).GetMethod("SetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
@@ -1097,6 +1043,15 @@ namespace SilverSim.Scripting.Lsl
                     BeginScope(compileState);
                     switch(m_Operator)
                     {
+                        case "&=":
+                        case "|=":
+                        case "^=":
+                            if(compileState.LanguageExtensions.EnableLogicalModifyAssignments)
+                            {
+                                goto case "+=";
+                            }
+                            break;
+
                         case "+=":
                         case "-=":
                         case "*=":
@@ -1187,6 +1142,15 @@ namespace SilverSim.Scripting.Lsl
                                 compileState,
                                 localVars);
                             break;
+
+                        case "|=":
+                        case "&=":
+                        case "^=":
+                            if(compileState.LanguageExtensions.EnableLogicalModifyAssignments)
+                            {
+                                goto case "+=";
+                            }
+                            throw new CompilerException(m_LineNumber, string.Format("Internal Error! Unexpected operator '{0}'", m_Operator));
 
                         case "+=":
                         case "-=":
@@ -1509,6 +1473,57 @@ namespace SilverSim.Scripting.Lsl
                         else
                         {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorModuloEqualsNotSupportedFor0And1", "operator '%=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        }
+                        break;
+
+                    case "&=":
+                        if((typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType) ||
+                            (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType))
+                        {
+                            compileState.ILGen.Emit(OpCodes.And);
+                        }
+                        else if(typeof(long) == m_LeftHandType && typeof(int) == m_RightHandType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Conv_I8);
+                            compileState.ILGen.Emit(OpCodes.And);
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorAndEqualsNotSupportedFor0And1", "operator '&=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        }
+                        break;
+
+                    case "|=":
+                        if ((typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType) ||
+                            (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Or);
+                        }
+                        else if (typeof(long) == m_LeftHandType && typeof(int) == m_RightHandType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Conv_I8);
+                            compileState.ILGen.Emit(OpCodes.Or);
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorOrEqualsNotSupportedFor0And1", "operator '|=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        }
+                        break;
+
+                    case "^=":
+                        if ((typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType) ||
+                            (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Xor);
+                        }
+                        else if (typeof(long) == m_LeftHandType && typeof(int) == m_RightHandType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Conv_I8);
+                            compileState.ILGen.Emit(OpCodes.Xor);
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorXorEqualsNotSupportedFor0And1", "operator '^=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                         }
                         break;
 

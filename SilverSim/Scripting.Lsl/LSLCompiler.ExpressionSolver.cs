@@ -1852,7 +1852,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private readonly List<string> m_AssignmentOps = new List<string>(new string[] { "=", "+=", "-=", "/=", "%=", "*=" });
+        private readonly List<string> m_AssignmentOps = new List<string>(new string[] { "=", "+=", "-=", "/=", "%=", "*=", "&=", "|=", "^=" });
         private bool Assignments_ExtractLeftUnaryOnLValue(Tree tree, out Tree start, out Tree end, out Tree variable)
         {
             variable = null;

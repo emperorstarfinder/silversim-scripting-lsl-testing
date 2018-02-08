@@ -112,7 +112,7 @@ SettingConstantsIsNotAllowed=Setting constants is not allowed
 Field0HasUnsupportedAttributeFlags1=Field {0} has unsupported attribute flags {1}
 InitValueOfVariable0HasSyntaxError=Init value of variable {0} has syntax error. {1}\n{2}
 LeftValueOfOperatorEqualsIsNotAVariable=l-value of operator '=' is not a variable
-OperatorDorNotSupportedFor=operator '.' not supported for {0}
+OperatorDotNotSupportedFor=operator '.' not supported for {0}
 InvalidMemberAccessSToVector=Invalid member access 's' to vector
 InvalidMemberAccess0To1=invalid member access '{0}' to {1}
 0IsNotAMemberOfType1='{0}' is not a member of type {1}
@@ -124,6 +124,9 @@ OperatorMinusEqualsNotSupportedFor0And1=operator '-=' not supported for '{0}' an
 OperatorMultiplyEqualsNotSupportedFor0And1=operator '*=' not supported for '{0}' and '{1}'
 OperatorDivideEqualsNotSupportedFor0And1=operator '/=' not supported for '{0}' and '{1}'
 OperatorModuloEqualsNotSupportedFor0And1=operator '%=' not supported for '{0}' and '{1}'
+OperatorAndEqualsNotSupportedFor0And1=operator '&=' not supported for '{0}' and '{1}'
+OperatorOrEqualsNotSupportedFor0And1=operator '|=' not supported for '{0}' and '{1}'
+OperatorXorEqualsNotSupportedFor0And1=operator '^=' not supported for '{0}' and '{1}'
 Operator0Unknown=Operator '{0}' unknown
 VectorDoesNothaveA0Member='vector' does not have a '{0}' member
 0DoesNotHaveA1Member='{0}' does not have a '{1}' member

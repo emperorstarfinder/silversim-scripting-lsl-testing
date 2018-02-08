@@ -112,7 +112,7 @@ SettingConstantsIsNotAllowed=Verändern von Konstanten ist nicht erlaubt
 Field0HasUnsupportedAttributeFlags1=Das Feld {0} hat nicht unterstützte Attributflags {1}
 InitValueOfVariable0HasSyntaxError=Init-Wert von Variable {0} enthält einen  Syntaxfehler. {1}\n{2}
 LeftValueOfOperatorEqualsIsNotAVariable=Linke Seite des Operators '=' is keine Variable
-OperatorDorNotSupportedFor=Operator '.' ist nicht unterstützt bei {0}
+OperatorDotNotSupportedFor=Operator '.' ist nicht unterstützt bei {0}
 InvalidMemberAccessSToVector=Ungültiger Zugriff auf Element 's' bei vector
 InvalidMemberAccess0To1=Ungültiger Zugriff auf Element '{0}' bei {1}
 0IsNotAMemberOfType1='{0}' is kein Element beim Typ {1}
@@ -124,6 +124,9 @@ OperatorMinusEqualsNotSupportedFor0And1=Operator '-=' wird für '{0}' und '{1}' n
 OperatorMultiplyEqualsNotSupportedFor0And1=Operator '*=' wird für '{0}' und '{1}' nicht unterstützt
 OperatorDivideEqualsNotSupportedFor0And1=Operator '/=' wird für '{0}' und '{1}' nicht unterstützt
 OperatorModuloEqualsNotSupportedFor0And1=Operator '%=' wird für '{0}' und '{1}' nicht unterstützt
+OperatorAndEqualsNotSupportedFor0And1=Operator '&=' wird für '{0}' und '{1}' nicht unterstützt
+OperatorOrEqualsNotSupportedFor0And1=Operator '|=' wird für '{0}' und '{1}' nicht unterstützt
+OperatorXorEqualsNotSupportedFor0And1=Operator '^=' wird für '{0}' und '{1}' nicht unterstützt
 Operator0Unknown=Operator '{0}' unbekannt
 VectorDoesNothaveA0Member='vector' hat kein Element '{0}'
 0DoesNotHaveA1Member='{0}' hat kein Element '{1}'
