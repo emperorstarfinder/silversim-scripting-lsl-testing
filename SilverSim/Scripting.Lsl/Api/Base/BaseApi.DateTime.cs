@@ -24,6 +24,7 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.Contracts;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -54,6 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public string GetDate() => DateTime.UtcNow.ToString("yyyy-MM-dd");
 
         [APILevel(APIFlags.OSSL, "osUnixTimeToTimestamp")]
+        [Pure]
         public string OsUnixTimeToTimestamp(int time)
         {
             const long baseTicks = 621355968000000000;

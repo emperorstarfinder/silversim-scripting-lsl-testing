@@ -23,8 +23,6 @@
 #pragma warning disable RCS1029
 #pragma warning disable RCS1163
 
-using SilverSim.Scene.Types.Script;
-
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi

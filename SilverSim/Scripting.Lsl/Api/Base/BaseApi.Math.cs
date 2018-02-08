@@ -26,6 +26,7 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Diagnostics.Contracts;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -45,61 +46,80 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const double SQRT2 = 1.414213538f;
 
         [APILevel(APIFlags.OSSL, "osMax")]
+        [Pure]
         public double Max(double a, double b) => (a > b) ? a : b;
 
         [APILevel(APIFlags.OSSL, "osMin")]
+        [Pure]
         public double Min(double a, double b) => (a < b) ? a : b;
 
         [APILevel(APIFlags.LSL, "llAbs")]
+        [Pure]
         public int Abs(int v) => (v < 0) ? -v : v;
 
         [APILevel(APIFlags.LSL, "llAcos")]
+        [Pure]
         public double Acos(double v) => Math.Acos(v);
 
         [APILevel(APIFlags.LSL, "llAsin")]
+        [Pure]
         public double Asin(double v) => Math.Asin(v);
 
         [APILevel(APIFlags.LSL, "llAtan2")]
+        [Pure]
         public double Atan2(double y, double x) => Math.Atan2(y, x);
 
         [APILevel(APIFlags.LSL, "llCos")]
+        [Pure]
         public double Cos(double v) => Math.Cos(v);
 
         [APILevel(APIFlags.LSL, "llFabs")]
+        [Pure]
         public double Fabs(double v) => Math.Abs(v);
 
         [APILevel(APIFlags.LSL, "llLog")]
+        [Pure]
         public double Log(double v) => Math.Log(v);
 
         [APILevel(APIFlags.LSL, "llLog10")]
+        [Pure]
         public double Log10(double v) => Math.Log10(v);
 
         [APILevel(APIFlags.LSL, "llPow")]
+        [Pure]
         public double Pow(double bas, double exponent) => Math.Pow(bas, exponent);
 
         [APILevel(APIFlags.LSL, "llSin")]
+        [Pure]
         public double Sin(double v) => Math.Sin(v);
 
         [APILevel(APIFlags.LSL, "llSqrt")]
+        [Pure]
         public double Sqrt(double v) => Math.Sqrt(v);
 
         [APILevel(APIFlags.LSL, "llTan")]
+        [Pure]
         public double Tan(double v) => Math.Tan(v);
 
         [APILevel(APIFlags.LSL, "llVecDist")]
+        [Pure]
         public double VecDist(Vector3 a, Vector3 b) => (a - b).Length;
 
         [APILevel(APIFlags.LSL, "llVecMag")]
+        [Pure]
         public double VecMag(Vector3 v) => v.Length;
 
         [APILevel(APIFlags.LSL, "llVecNorm")]
+        [Pure]
         public Vector3 VecNorm(Vector3 v) => (v.Length == 0.0) ? Vector3.Zero : (v / v.Length);
 
         [APILevel(APIFlags.LSL, "llModPow")]
         [ForcedSleep(1)]
+        [Pure]
         public int ModPow(int a, int b, int c) => ((int)Math.Pow(a, b)) % c;
 
         [APILevel(APIFlags.LSL, "llRot2Euler")]
+        [Pure]
         public Vector3 Rot2Euler(Quaternion q)
         {
             double roll;
@@ -111,6 +131,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llRot2Angle")]
+        [Pure]
         public double Rot2Angle(Quaternion r)
         {
             /* based on http://wiki.secondlife.com/wiki/LlRot2Angle */
@@ -130,15 +151,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llRot2Axis")]
+        [Pure]
         public Vector3 Rot2Axis(Quaternion q) => VecNorm(new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
 
         [APILevel(APIFlags.LSL, "llAxisAngle2Rot")]
+        [Pure]
         public Quaternion AxisAngle2Rot(Vector3 axis, double angle) => Quaternion.CreateFromAxisAngle(axis, angle);
 
         [APILevel(APIFlags.LSL, "llEuler2Rot")]
+        [Pure]
         public Quaternion Euler2Rot(Vector3 v) => Quaternion.CreateFromEulers(v);
 
         [APILevel(APIFlags.LSL, "llAngleBetween")]
+        [Pure]
         public double AngleBetween(ScriptInstance instance, Quaternion a, Quaternion b)
         {   /* based on http://wiki.secondlife.com/wiki/LlAngleBetween */
             Quaternion r = b / a;
@@ -156,27 +181,35 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llAxes2Rot")]
+        [Pure]
         public Quaternion Axes2Rot(Vector3 fwd, Vector3 left, Vector3 up) => Quaternion.Axes2Rot(fwd, left, up);
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
+        [Pure]
         public Vector3 Rot2Fwd(Quaternion r) => r.FwdAxis;
 
         [APILevel(APIFlags.LSL, "llRot2Left")]
+        [Pure]
         public Vector3 Rot2Left(Quaternion r) => r.LeftAxis;
 
         [APILevel(APIFlags.LSL, "llRot2Up")]
+        [Pure]
         public Vector3 Rot2Up(Quaternion r) => r.UpAxis;
 
         [APILevel(APIFlags.LSL, "llRotBetween")]
+        [Pure]
         public Quaternion RotBetween(Vector3 a, Vector3 b) => Quaternion.RotBetween(a, b);
 
         [APILevel(APIFlags.LSL, "llFloor")]
+        [Pure]
         public int Floor(double f) => (int)Math.Floor(f);
 
         [APILevel(APIFlags.LSL, "llCeil")]
+        [Pure]
         public int Ceil(double f) => (int)Math.Ceiling(f);
 
         [APILevel(APIFlags.LSL, "llRound")]
+        [Pure]
         public int Round(double f) => (int)Math.Round(f, MidpointRounding.AwayFromZero);
 
         private readonly Random random = new Random();
