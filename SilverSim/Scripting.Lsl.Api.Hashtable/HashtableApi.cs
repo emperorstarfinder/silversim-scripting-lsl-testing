@@ -26,6 +26,7 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 
 namespace SilverSim.Scripting.Lsl.Api.Hashtable
 {
@@ -126,6 +127,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2String")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetString")]
+        [Pure]
         public string Hash2String(ScriptInstance instance, Hashtable table, string key)
         {
             lock(instance)
@@ -165,6 +167,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2Vector")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetVector")]
+        [Pure]
         public Vector3 Hash2Vector(Hashtable table, string key)
         {
             IValue v;
@@ -185,6 +188,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2Rot")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetRot")]
+        [Pure]
         public Quaternion Hash2Rot(Hashtable table, string key)
         {
             IValue v;
@@ -205,6 +209,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2Float")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetFloat")]
+        [Pure]
         public double Hash2Float(Hashtable table, string key)
         {
             IValue v;
@@ -225,6 +230,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2List")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetList")]
+        [Pure]
         public AnArray Hash2List(Hashtable table, string key)
         {
             IValue v;
@@ -248,6 +254,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2Integer")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetInteger")]
+        [Pure]
         public int Hash2Int(Hashtable table, string key)
         {
             IValue v;
@@ -278,6 +285,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2Long")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLong")]
+        [Pure]
         public long Hash2Long(Hashtable table, string key)
         {
             IValue v;
@@ -308,6 +316,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2Key")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetKey")]
+        [Pure]
         public LSLKey Hash2Key(ScriptInstance instance, Hashtable table, string key)
         {
             lock (instance)
@@ -347,6 +356,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHash2GetByteArray")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetByteArray")]
+        [Pure]
         public ByteArrayApi.ByteArray Hash2ByteArray(ScriptInstance instance, Hashtable table, string key)
         {
             lock (instance)
@@ -372,6 +382,7 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
 
         [APILevel(APIFlags.ASSL, "asHashContainsKey")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ContainsKey")]
+        [Pure]
         public int HashContainsKey(Hashtable h, string key) => h.ContainsKey(key).ToLSLBoolean();
 
         [APILevel(APIFlags.ASSL, "asHashRemove")]
