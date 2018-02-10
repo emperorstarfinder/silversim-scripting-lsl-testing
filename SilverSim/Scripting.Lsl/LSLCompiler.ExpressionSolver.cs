@@ -2900,11 +2900,11 @@ namespace SilverSim.Scripting.Lsl
 
                 }
             }
-            IdentifyMemberFunctions(cs, expressionTree, currentCulture);
+            IdentifyMemberFunctions(expressionTree);
             return expressionTree;
         }
 
-        private void IdentifyMemberFunctions(CompileState cs, Tree tree, CultureInfo currentCulture)
+        private void IdentifyMemberFunctions(Tree tree)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
