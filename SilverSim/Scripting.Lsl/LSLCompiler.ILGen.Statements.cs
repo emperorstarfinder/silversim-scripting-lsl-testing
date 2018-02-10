@@ -193,7 +193,7 @@ namespace SilverSim.Scripting.Lsl
                             localVars);
                     }
                 }
-                else if(functionLine.Line.Count - 2 <= 1)
+                else if(functionLine.Line.Count - 2 < 1)
                 {
                     throw new CompilerException(functionLine.Line[startAt].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "ReturnIsMissingReturnValue", "'return' is missing a return value."));
                 }
