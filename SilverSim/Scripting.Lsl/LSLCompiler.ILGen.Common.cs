@@ -23,6 +23,7 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -391,15 +392,15 @@ namespace SilverSim.Scripting.Lsl
         #endregion
 
         #region Preprocessor for concatenated string constants
-        private void CollapseStringConstants(List<string> args)
+        private void CollapseStringConstants(List<TokenInfo> args)
         {
             int pos = 0;
             while(++pos < args.Count - 2)
             {
-                if (args[pos] == "+" && args[pos - 1].StartsWith("\"") && args[pos + 1].StartsWith("\""))
+                if (args[pos] == "+" && args[pos - 1].Token.StartsWith("\"") && args[pos + 1].Token.StartsWith("\""))
                 {
-                    string larg = args[pos - 1];
-                    args[pos - 1] = larg.Substring(0, larg.Length - 1) + args[pos + 1].Substring(1);
+                    TokenInfo larg = args[pos - 1];
+                    args[pos - 1].Token = larg.Token.Substring(0, larg.Token.Length - 1) + args[pos + 1].Token.Substring(1);
                     args.RemoveAt(pos);
                     args.RemoveAt(pos);
                     --pos;
@@ -408,13 +409,13 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        private void CombineTypecastArguments(CompileState cs, List<string> args)
+        private void CombineTypecastArguments(CompileState cs, List<TokenInfo> args)
         {
             for (int pos = 0; pos < args.Count - 2; ++pos)
             {
                 if (args[pos] == "(" && cs.ApiInfo.Types.ContainsKey(args[pos + 1]) && args[pos + 2] == ")")
                 {
-                    args[pos] = "(" + args[pos + 1] + ")";
+                    args[pos].Token = "(" + args[pos + 1].Token + ")";
                     args.RemoveAt(pos + 1);
                     args.RemoveAt(pos + 1);
                 }
@@ -422,7 +423,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         /*  Process important things before solving operators */
-        private void PreprocessLine(CompileState cs, List<string> args)
+        private void PreprocessLine(CompileState cs, List<TokenInfo> args)
         {
             CombineTypecastArguments(cs, args);
             CollapseStringConstants(args);

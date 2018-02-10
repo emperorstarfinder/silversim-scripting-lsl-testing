@@ -22,6 +22,7 @@
 #pragma warning disable RCS1029
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
@@ -63,7 +64,7 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        private void SolveConstantOperations(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void SolveConstantOperations(CompileState cs, Tree tree, CultureInfo currentCulture)
         {
             var processNodes = new List<Tree>();
             var enumeratorStack = new List<ListTreeEnumState>();
@@ -109,7 +110,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ConstantVectorCannotContainOtherValuesThanFloatOrInt", "constant vector cannot contain other values than float or int"));
+                                throw new CompilerException(st.SubTree[idx].SubTree[0].LineNumber, this.GetLanguageString(currentCulture, "ConstantVectorCannotContainOtherValuesThanFloatOrInt", "constant vector cannot contain other values than float or int"));
                             }
                         }
 
@@ -137,7 +138,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, "constant rotation cannot contain other values than float or int");
+                                throw new CompilerException(st.SubTree[idx].SubTree[0].LineNumber, "constant rotation cannot contain other values than float or int");
                             }
                         }
 
@@ -152,7 +153,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (ot.Type == Tree.EntryType.Value && ot.Value == null)
                         {
-                            ot.Process(cs, lineNumber);
+                            ot.Process(cs);
                         }
                     }
                 }
@@ -269,7 +270,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -331,7 +332,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -423,7 +424,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -497,7 +498,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -553,7 +554,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -585,7 +586,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -617,7 +618,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -649,7 +650,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -709,7 +710,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -770,7 +771,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -831,7 +832,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -892,7 +893,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -965,7 +966,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -1038,7 +1039,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -1070,7 +1071,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -1102,7 +1103,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                             }
                             break;
 
@@ -1138,7 +1139,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                    throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                                 }
 
                                 if (rightType == typeof(Tree.ConstantValueInt))
@@ -1167,7 +1168,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                    throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                                 }
 
                                 st.Value = new Tree.ConstantValueInt((isLeftTrue && isRightTrue).ToLSLBoolean());
@@ -1206,7 +1207,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                    throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                                 }
 
                                 if (rightType == typeof(Tree.ConstantValueInt))
@@ -1235,7 +1236,7 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else
                                 {
-                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
+                                    throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OnParametersOfMismatchingType", "Cannot process '{0}' on parameters of mismatching type"), st.Entry));
                                 }
 
                                 st.Value = new Tree.ConstantValueInt((isLeftTrue || isRightTrue).ToLSLBoolean());
@@ -1243,7 +1244,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OperatorIsUnknown", "Cannot process '{0}': operator is unknown"), st.Entry));
+                            throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OperatorIsUnknown", "Cannot process '{0}': operator is unknown"), st.Entry));
                     }
                 }
                 #endregion
@@ -1252,7 +1253,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (st.Entry != "-" && st.SubTree[0].Type == Tree.EntryType.Value)
                     {
-                        st.Process(cs, lineNumber);
+                        st.Process(cs);
                     }
                     if (st.Entry == "+")
                     {
@@ -1262,7 +1263,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (st.SubTree[0].Value == null)
                         {
-                            st.SubTree[0].Process(cs, lineNumber);
+                            st.SubTree[0].Process(cs);
                         }
                         if (st.Value == null)
                         {
@@ -1274,7 +1275,7 @@ namespace SilverSim.Scripting.Lsl
                         Type type = st.ValueType;
                         if (type == typeof(Tree.ConstantValueFloat))
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "FloatCannotBeBinaryNegated", "float cannot be binary-negated"));
+                            throw new CompilerException(st.LineNumber, this.GetLanguageString(currentCulture, "FloatCannotBeBinaryNegated", "float cannot be binary-negated"));
                         }
                         else if (type == typeof(Tree.ConstantValueInt))
                         {
@@ -1286,7 +1287,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (st.Value is Tree.ConstantValueString)
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "StringCannotBeBinaryNegated", "string cannot be binary negated"));
+                            throw new CompilerException(st.LineNumber, this.GetLanguageString(currentCulture, "StringCannotBeBinaryNegated", "string cannot be binary negated"));
                         }
                     }
                     else if (st.Entry == "!")
@@ -1294,7 +1295,7 @@ namespace SilverSim.Scripting.Lsl
                         Type type = st.ValueType;
                         if (type == typeof(Tree.ConstantValueFloat))
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "FloatCannotBeLogicallyNegated", "float cannot be logically negated"));
+                            throw new CompilerException(st.LineNumber, this.GetLanguageString(currentCulture, "FloatCannotBeLogicallyNegated", "float cannot be logically negated"));
                         }
                         else if (type == typeof(Tree.ConstantValueInt))
                         {
@@ -1306,7 +1307,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (type == typeof(Tree.ConstantValueString))
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "StringCannotBeLogicallyNegated", "string cannot be logically negated"));
+                            throw new CompilerException(st.LineNumber, this.GetLanguageString(currentCulture, "StringCannotBeLogicallyNegated", "string cannot be logically negated"));
                         }
                     }
                     else if (st.SubTree[0].Value != null)
@@ -1564,7 +1565,7 @@ namespace SilverSim.Scripting.Lsl
         }
 
         #region Order Tree according to definitions
-        private int FindBeginOfElementSelectors(Tree tree, int startPos, int lineNumber, CultureInfo currentCulture)
+        private int FindBeginOfElementSelectors(Tree tree, int startPos, CultureInfo currentCulture)
         {
             while(startPos >= 0)
             {
@@ -1590,20 +1591,20 @@ namespace SilverSim.Scripting.Lsl
                     case Tree.EntryType.MemberName:
                         if(startPos < 2)
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
+                            throw new CompilerException(tree.SubTree[startPos].LineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
                         }
                         startPos -= 2;
                         break;
 
                     default:
-                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
+                        throw new CompilerException(tree.SubTree[startPos].LineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
                 }
             }
 
             return -1;
         }
 
-        private void OrderOperators_ElementSelector(Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_ElementSelector(Tree tree, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1638,23 +1639,23 @@ namespace SilverSim.Scripting.Lsl
                     }
                     if (pos == 0)
                     {
-                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsAVectorOrRotationToSelectSomething", "element selector needs a vector or rotation to select something"));
+                        throw new CompilerException(tree.LineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsAVectorOrRotationToSelectSomething", "element selector needs a vector or rotation to select something"));
                     }
                     if (pos + 1 >= tree.SubTree.Count)
                     {
-                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
+                        throw new CompilerException(tree.LineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
                     }
 
-                    int startPos = FindBeginOfElementSelectors(tree, pos - 1, lineNumber, currentCulture);
+                    int startPos = FindBeginOfElementSelectors(tree, pos - 1, currentCulture);
                     if(startPos < 0)
                     {
-                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
+                        throw new CompilerException(tree.LineNumber, this.GetLanguageString(currentCulture, "ElementSelectorRequiresVariableDeclarationOrAFunctionReturnValue", "element selector requires variable, declaration or a function with a return value"));
                     }
 
                     if(tree.SubTree[pos + 1].Type != Tree.EntryType.MemberName &&
                         tree.SubTree[pos + 1].Type != Tree.EntryType.Function)
                     {
-                        throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
+                        throw new CompilerException(tree.LineNumber, this.GetLanguageString(currentCulture, "ElementSelectorNeedsASelector", "element selector needs a selector"));
                     }
 
                     enumeratorStack.Add(tree.SubTree[startPos]);
@@ -1674,7 +1675,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private void OrderOperators_IncsDecs(Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_IncsDecs(Tree tree, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1716,7 +1717,7 @@ namespace SilverSim.Scripting.Lsl
                         if (tree.SubTree[pos - 1].Type == Tree.EntryType.OperatorBinary &&
                             tree.SubTree[pos - 1].SubTree[0].Type != Tree.EntryType.Variable)
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "0NeedsVariableBeforeDot", "'{0}' needs a variable before '.'."), elem.Entry));
+                            throw new CompilerException(tree.SubTree[pos - 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "0NeedsVariableBeforeDot", "'{0}' needs a variable before '.'."), elem.Entry));
                         }
 
                         /* right unary */
@@ -1733,7 +1734,7 @@ namespace SilverSim.Scripting.Lsl
                         if (tree.SubTree[pos + 1].Type == Tree.EntryType.OperatorBinary &&
                             tree.SubTree[pos + 1].SubTree[0].Type != Tree.EntryType.Variable)
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "0NeedsVariableBeforeDot", "'{0}' needs a variable before '.'."), elem.Entry));
+                            throw new CompilerException(tree.SubTree[pos + 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "0NeedsVariableBeforeDot", "'{0}' needs a variable before '.'."), elem.Entry));
                         }
 
                         /* left unary */
@@ -1754,7 +1755,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private void OrderOperators_Common(Tree tree, List<string> operators, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_Common(Tree tree, List<string> operators, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1794,11 +1795,11 @@ namespace SilverSim.Scripting.Lsl
 
                     if(pos == 0)
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingLValueTo0", "missing l-value to '{0}'"), ent));
+                        throw new CompilerException(elem.LineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingLValueTo0", "missing l-value to '{0}'"), ent));
                     }
                     else if(pos + 1 >= tree.SubTree.Count)
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingRValueTo0", "missing r-value to '{0}'"), ent));
+                        throw new CompilerException(elem.LineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingRValueTo0", "missing r-value to '{0}'"), ent));
                     }
 
                     switch(tree.SubTree[pos - 1].Type)
@@ -1818,7 +1819,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
+                            throw new CompilerException(tree.SubTree[pos - 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
                     }
 
                     switch (tree.SubTree[pos + 1].Type)
@@ -1838,7 +1839,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
+                            throw new CompilerException(tree.SubTree[pos + 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
                     }
 
                     enumeratorStack.Add(tree.SubTree[pos - 1]);
@@ -1898,7 +1899,7 @@ namespace SilverSim.Scripting.Lsl
             return tree.Type == Tree.EntryType.Variable;
         }
 
-        private void OrderOperators_Assignments(Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_Assignments(Tree tree, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -1940,11 +1941,11 @@ namespace SilverSim.Scripting.Lsl
 
                     if (pos == 0)
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingLValueTo0", "missing l-value to '{0}'"), ent));
+                        throw new CompilerException(elem.LineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingLValueTo0", "missing l-value to '{0}'"), ent));
                     }
                     else if (pos + 1 >= tree.SubTree.Count)
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingRValueTo0", "missing r-value to '{0}'"), ent));
+                        throw new CompilerException(elem.LineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingRValueTo0", "missing r-value to '{0}'"), ent));
                     }
 
                     switch (tree.SubTree[pos - 1].Type)
@@ -1957,7 +1958,7 @@ namespace SilverSim.Scripting.Lsl
                             if(tree.SubTree[pos - 1].Entry != "." ||
                                 Assignments_HasVariableTree(tree.SubTree[1]))
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
+                                throw new CompilerException(tree.SubTree[pos - 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
                             }
                             break;
 
@@ -1965,12 +1966,12 @@ namespace SilverSim.Scripting.Lsl
                             if(!((tree.SubTree[pos - 1].Entry == "~" || tree.SubTree[pos - 1].Entry == "!") &&
                                 Assignments_ExtractLeftUnaryOnLValue(tree.SubTree[pos - 1], out startlvalueunarytree, out endlvalueunarytree, out variable)))
                             {
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
+                                throw new CompilerException(tree.SubTree[pos - 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
                             }
                             break;
 
                         default:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
+                            throw new CompilerException(tree.SubTree[pos - 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
                     }
 
                     switch (tree.SubTree[pos + 1].Type)
@@ -1990,7 +1991,7 @@ namespace SilverSim.Scripting.Lsl
                             break;
 
                         default:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
+                            throw new CompilerException(tree.SubTree[pos + 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
                     }
 
                     if (startlvalueunarytree != null)
@@ -2030,7 +2031,7 @@ namespace SilverSim.Scripting.Lsl
             "(key)"
             });
 
-        private void OrderOperators_UnaryLefts(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators_UnaryLefts(CompileState cs, Tree tree, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -2089,7 +2090,7 @@ namespace SilverSim.Scripting.Lsl
                                     break;
 
                                 default:
-                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRightHandParameterTo0", "invalid right hand parameter to '{0}'"), ent));
+                                    throw new CompilerException(tree.SubTree[pos - 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRightHandParameterTo0", "invalid right hand parameter to '{0}'"), ent));
                             }
 
                             /* left unary */
@@ -2176,7 +2177,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRightHandParameterTo0", "invalid right hand parameter to '{0}'"), ent));
+                            throw new CompilerException(tree.SubTree[pos + 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRightHandParameterTo0", "invalid right hand parameter to '{0}'"), ent));
                         }
                     }
                 }
@@ -2193,38 +2194,40 @@ namespace SilverSim.Scripting.Lsl
         private readonly List<string> m_BitwiseOrOps = new List<string>(new string[] { "|" });
         private readonly List<string> m_LogicalOps = new List<string>(new string[] { "&&", "||" });
 
-        private void OrderOperators(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void OrderOperators(CompileState cs, Tree tree, CultureInfo currentCulture)
         {
-            OrderOperators_ElementSelector(tree, lineNumber, currentCulture);
-            OrderOperators_IncsDecs(tree, lineNumber, currentCulture);
-            OrderOperators_UnaryLefts(cs, tree, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_MulDivOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_AddSubOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_BitwiseShiftOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_CompareOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_CompareEqualityOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_BitwiseAndOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_BitwiseXorOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_BitwiseOrOps, lineNumber, currentCulture);
-            OrderOperators_Common(tree, m_LogicalOps, lineNumber, currentCulture);
-            OrderOperators_Assignments(tree, lineNumber, currentCulture);
+            OrderOperators_ElementSelector(tree, currentCulture);
+            OrderOperators_IncsDecs(tree, currentCulture);
+            OrderOperators_UnaryLefts(cs, tree, currentCulture);
+            OrderOperators_Common(tree, m_MulDivOps, currentCulture);
+            OrderOperators_Common(tree, m_AddSubOps, currentCulture);
+            OrderOperators_Common(tree, m_BitwiseShiftOps, currentCulture);
+            OrderOperators_Common(tree, m_CompareOps, currentCulture);
+            OrderOperators_Common(tree, m_CompareEqualityOps, currentCulture);
+            OrderOperators_Common(tree, m_BitwiseAndOps, currentCulture);
+            OrderOperators_Common(tree, m_BitwiseXorOps, currentCulture);
+            OrderOperators_Common(tree, m_BitwiseOrOps, currentCulture);
+            OrderOperators_Common(tree, m_LogicalOps, currentCulture);
+            OrderOperators_Assignments(tree, currentCulture);
         }
 
-        private void OrderBrackets_SeparateArguments(Tree resolvetree, string elemname, Tree.EntryType type, int lineNumber, CultureInfo currentCulture)
+        private void OrderBrackets_SeparateArguments(Tree resolvetree, string elemname, Tree.EntryType type, CultureInfo currentCulture)
         {
             var argBegin = new List<int>();
             var argEnd = new List<int>();
             int i;
             int n = resolvetree.SubTree.Count;
             bool paraLast = false;
+            int lineNumber = 0;
             for(i = 0; i < n; ++i)
             {
                 Tree st = resolvetree.SubTree[i];
+                lineNumber = st.LineNumber;
                 if(st.Type == Tree.EntryType.Separator)
                 {
                     if(!paraLast)
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "Missing0BeforeComma", "Missing {0} before ','"), elemname));
+                        throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "Missing0BeforeComma", "Missing {0} before ','"), elemname));
                     }
                     else
                     {
@@ -2260,7 +2263,7 @@ namespace SilverSim.Scripting.Lsl
             n = argBegin.Count;
             for(i = 0; i < n; ++i)
             {
-                var st = new Tree
+                var st = new Tree(resolvetree.SubTree[argBegin[i]].LineNumber)
                 {
                     Type = type
                 };
@@ -2271,11 +2274,11 @@ namespace SilverSim.Scripting.Lsl
             resolvetree.SubTree = arguments;
         }
 
-        private void OrderBrackets(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
+        private void OrderBrackets(CompileState cs, Tree resolvetree, CultureInfo currentCulture)
         {
             if (cs.ILGen.HaveDebugOut)
             {
-                cs.ILGen.WriteLine(string.Format("  //** Tree Flat Begin (Line {0})", lineNumber));
+                cs.ILGen.WriteLine(string.Format("  //** Tree Flat Begin (Line {0})", resolvetree.LineNumber));
                 foreach (Tree st in resolvetree.SubTree)
                 {
                     cs.ILGen.WriteLine(string.Format("  //** {0}: {1}", st.Entry, st.Type.ToString()));
@@ -2313,11 +2316,11 @@ namespace SilverSim.Scripting.Lsl
                     case ")":
                         if(parenStack.Count == 0)
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ClosingParenthesisDoesNotHavePreceedingOpeningParenthesis", "')' does not have preceeding '('"));
+                            throw new CompilerException(resolvetree.SubTree[i].LineNumber, this.GetLanguageString(currentCulture, "ClosingParenthesisDoesNotHavePreceedingOpeningParenthesis", "')' does not have preceeding '('"));
                         }
                         else if(parenStack[0].Key != "(")
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingParenthesisDoesMatchPreceeding0", "')' does not match preceeding '{0}'"), parenStack[0].Key));
+                            throw new CompilerException(resolvetree.SubTree[i].LineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingParenthesisDoesMatchPreceeding0", "')' does not match preceeding '{0}'"), parenStack[0].Key));
                         }
                         else
                         {
@@ -2336,7 +2339,6 @@ namespace SilverSim.Scripting.Lsl
                                     resolvetree.SubTree[startPos - 1],
                                     "parameter",
                                     Tree.EntryType.FunctionArgument,
-                                    lineNumber,
                                     currentCulture);
                                 i = startPos;
                             }
@@ -2355,11 +2357,11 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (parenStack.Count == 0)
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ClosingGtDoesNotHavePreceedingLt", "'>' does not have preceeding '<'"));
+                            throw new CompilerException(resolvetree.SubTree[i].LineNumber, this.GetLanguageString(currentCulture, "ClosingGtDoesNotHavePreceedingLt", "'>' does not have preceeding '<'"));
                         }
                         else if (parenStack[0].Key != "<")
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingGtDoesNotMatchPreceeding0", "'>' does not match preceeding '{0}'"), parenStack[0].Key));
+                            throw new CompilerException(resolvetree.SubTree[i].LineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingGtDoesNotMatchPreceeding0", "'>' does not match preceeding '{0}'"), parenStack[0].Key));
                         }
                         else
                         {
@@ -2375,7 +2377,6 @@ namespace SilverSim.Scripting.Lsl
                                 resolvetree.SubTree[startPos],
                                 this.GetLanguageString(currentCulture, "VectorRotationElement", "vector/rotation element"),
                                 Tree.EntryType.DeclarationArgument,
-                                lineNumber,
                                 currentCulture);
                             switch(resolvetree.SubTree[startPos].SubTree.Count)
                             {
@@ -2388,7 +2389,7 @@ namespace SilverSim.Scripting.Lsl
                                     break;
 
                                 default:
-                                    throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "InvalidNumberOfElementsInVectorRotationDeclaration", "invalid number of elements in vector/rotation declaration"));
+                                    throw new CompilerException(resolvetree.SubTree[startPos].LineNumber, this.GetLanguageString(currentCulture, "InvalidNumberOfElementsInVectorRotationDeclaration", "invalid number of elements in vector/rotation declaration"));
                             }
 
                             i = startPos + 1;
@@ -2398,11 +2399,11 @@ namespace SilverSim.Scripting.Lsl
                     case "]":
                         if (parenStack.Count == 0)
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(currentCulture, "ClosingBracketDoesNotHavePreceedingOpeningBracket", "']' does not have preceeding '['"));
+                            throw new CompilerException(resolvetree.SubTree[i].LineNumber, this.GetLanguageString(currentCulture, "ClosingBracketDoesNotHavePreceedingOpeningBracket", "']' does not have preceeding '['"));
                         }
                         else if(parenStack[0].Key != "[")
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingBracketDoesMatchPreceeding0", "']' does not match preceeding '{0}'"), parenStack[0].Key));
+                            throw new CompilerException(resolvetree.SubTree[i].LineNumber, string.Format(this.GetLanguageString(currentCulture, "ClosingBracketDoesMatchPreceeding0", "']' does not match preceeding '{0}'"), parenStack[0].Key));
                         }
                         else
                         {
@@ -2415,7 +2416,7 @@ namespace SilverSim.Scripting.Lsl
 
                             if (startPos > 0 && resolvetree.SubTree[startPos - 1].Type == Tree.EntryType.Variable)
                             {
-                                var thisOpTree = new Tree();
+                                var thisOpTree = new Tree(resolvetree.SubTree[startPos -1].LineNumber);
                                 Tree varTree = resolvetree.SubTree[startPos - 1];
                                 thisOpTree.Type = Tree.EntryType.ThisOperator;
                                 resolvetree.SubTree[startPos - 1] = thisOpTree;
@@ -2425,7 +2426,6 @@ namespace SilverSim.Scripting.Lsl
                                     thisOpTree,
                                     "parameter",
                                     Tree.EntryType.FunctionArgument,
-                                    lineNumber,
                                     currentCulture);
                                 thisOpTree.SubTree.Insert(0, varTree);
 
@@ -2440,11 +2440,10 @@ namespace SilverSim.Scripting.Lsl
                                     thisOpTree,
                                     "parameter",
                                     Tree.EntryType.FunctionArgument,
-                                    lineNumber,
                                     currentCulture);
 
                                 int endPos = startPos - 1;
-                                startPos = FindBeginOfElementSelectors(resolvetree, endPos, lineNumber, currentCulture);
+                                startPos = FindBeginOfElementSelectors(resolvetree, endPos, currentCulture);
 
                                 int elemPos = startPos + 1;
                                 while (elemPos <= endPos)
@@ -2469,7 +2468,6 @@ namespace SilverSim.Scripting.Lsl
                                     resolvetree.SubTree[startPos],
                                     this.GetLanguageString(currentCulture, "ListElement", "list element"),
                                     Tree.EntryType.DeclarationArgument,
-                                    lineNumber,
                                     currentCulture);
 
                                 i = startPos + 1;
@@ -2486,14 +2484,14 @@ namespace SilverSim.Scripting.Lsl
 
         #endregion
 
-        private void SolveTree(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
+        private void SolveTree(CompileState cs, Tree resolvetree, CultureInfo currentCulture)
         {
             SolveMaxNegValues(resolvetree);
-            SolveConstantOperations(cs, resolvetree, lineNumber, currentCulture);
+            SolveConstantOperations(cs, resolvetree, currentCulture);
         }
 
         #region Pre-Tree identifiers
-        private void IdentifyParenLevel(CompileState cs, Tree resolvetree, int lineNumber)
+        private void IdentifyParenLevel(CompileState cs, Tree resolvetree)
         {
             int parenLevel = 0;
             int n = resolvetree.SubTree.Count;
@@ -2522,11 +2520,11 @@ namespace SilverSim.Scripting.Lsl
                     case ")":
                         if (parenStack.Count == 0)
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotHavePreceedingOpeningParenthesis", "')' does not have preceeding '('"));
+                            throw new CompilerException(st.LineNumber, this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotHavePreceedingOpeningParenthesis", "')' does not have preceeding '('"));
                         }
                         else if(parenStack[0] != "(")
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotMatchPreceeding0", "')' does not match preceeding '{0}'"), parenStack[0]));
+                            throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotMatchPreceeding0", "')' does not match preceeding '{0}'"), parenStack[0]));
                         }
                         parenStack.RemoveAt(0);
                         st.ParenLevel = --parenLevel;
@@ -2535,11 +2533,11 @@ namespace SilverSim.Scripting.Lsl
                     case "]":
                         if(parenStack.Count == 0)
                         {
-                            throw new CompilerException(lineNumber, this.GetLanguageString(cs.CurrentCulture, "ClosingBracketDoesNotHavePreceedingOpeningBracket", "']' does not have preceeding '['"));
+                            throw new CompilerException(st.LineNumber, this.GetLanguageString(cs.CurrentCulture, "ClosingBracketDoesNotHavePreceedingOpeningBracket", "']' does not have preceeding '['"));
                         }
                         else if (parenStack[0] != "[")
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotMatchPreceeding0", "']' does not match preceeding '{0}'"), parenStack[0]));
+                            throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "ClosingParenthesisDoesNotMatchPreceeding0", "']' does not match preceeding '{0}'"), parenStack[0]));
                         }
                         parenStack.RemoveAt(0);
                         st.ParenLevel = --parenLevel;
@@ -2552,15 +2550,17 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private int IdentifyFindEndOfDeclaration(CompileState cs, Tree resolvetree, int lineNumber, int startfrom)
+        private int IdentifyFindEndOfDeclaration(CompileState cs, Tree resolvetree, int startfrom)
         {
             int parenlevel = resolvetree.SubTree[startfrom].ParenLevel;
             int n = resolvetree.SubTree.Count;
             int endof = -1;
             bool haveSeparator = false;
+            int lineNumber = 0;
             for (int i = startfrom; i < n; ++i)
             {
                 int nparenlevel = resolvetree.SubTree[i].ParenLevel;
+                lineNumber = resolvetree.SubTree[i].LineNumber;
                 if (parenlevel > nparenlevel)
                 {
                     /* stop at leaving level */
@@ -2591,7 +2591,7 @@ namespace SilverSim.Scripting.Lsl
             return endof;
         }
 
-        private void IdentifyDeclarations(CompileState cs, Tree resolvetree, int lineNumber)
+        private void IdentifyDeclarations(CompileState cs, Tree resolvetree)
         {
             int n = resolvetree.SubTree.Count;
             int eod;
@@ -2603,7 +2603,7 @@ namespace SilverSim.Scripting.Lsl
                 if (st.Type == Tree.EntryType.OperatorUnknown &&
                     st.Entry == "<")
                 {
-                    eod = IdentifyFindEndOfDeclaration(cs, resolvetree, lineNumber, i);
+                    eod = IdentifyFindEndOfDeclaration(cs, resolvetree, i);
                     if (eod >= 0)
                     {
                         st.Type = Tree.EntryType.Declaration;
@@ -2792,7 +2792,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private void IdentifyFunctions(CompileState cs, Tree resolvetree, int lineNumber, CultureInfo currentCulture)
+        private void IdentifyFunctions(CompileState cs, Tree resolvetree, CultureInfo currentCulture)
         {
             int n = resolvetree.SubTree.Count;
             for (int i = 0; i < n; ++i)
@@ -2810,11 +2810,11 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if(i + 1 >= n)
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "Function0IsNotFollowedByOpeningParenthesis", "Function '{0}' is not followed by '('"), ent));
+                        throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "Function0IsNotFollowedByOpeningParenthesis", "Function '{0}' is not followed by '('"), ent));
                     }
                     else if(resolvetree.SubTree[i + 1].Entry != "(")
                     {
-                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidCallToFunction0", "Invalid call to function '{0}'"), ent));
+                        throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidCallToFunction0", "Invalid call to function '{0}'"), ent));
                     }
                     else
                     {
@@ -2825,18 +2825,18 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        private Tree LineToExpressionTree(CompileState cs, List<string> expressionLine, ICollection<string> localVarNames, int lineNumber, CultureInfo currentCulture)
+        private Tree LineToExpressionTree(CompileState cs, List<TokenInfo> expressionLine, ICollection<string> localVarNames, CultureInfo currentCulture)
         {
             PreprocessLine(cs, expressionLine);
             var expressionTree = new Tree(expressionLine);
             IdentifyReservedWords(cs, expressionTree);
             IdentifyMemberAccessors(expressionTree);
             IdentifyVariables(expressionTree, localVarNames);
-            IdentifyFunctions(cs, expressionTree, lineNumber, currentCulture);
+            IdentifyFunctions(cs, expressionTree, currentCulture);
             IdentifyOperators(cs, expressionTree);
             IdentifyNumericValues(expressionTree);
-            IdentifyParenLevel(cs, expressionTree, lineNumber);
-            IdentifyDeclarations(cs, expressionTree, lineNumber);
+            IdentifyParenLevel(cs, expressionTree);
+            IdentifyDeclarations(cs, expressionTree);
 
             int n = expressionTree.SubTree.Count;
             var msg = new StringBuilder();
@@ -2874,29 +2874,29 @@ namespace SilverSim.Scripting.Lsl
                         msg.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
                     }
                 }
-                st.Process(cs, lineNumber);
+                st.Process(cs);
             }
 
             if(msg.Length != 0)
             {
-                throw new CompilerException(lineNumber, msg.ToString());
+                throw new CompilerException(expressionLine[0].LineNumber, msg.ToString());
             }
 
             /* After OrderBrackets only deep-scanners can be used */
-            OrderBrackets(cs, expressionTree, lineNumber, currentCulture);
+            OrderBrackets(cs, expressionTree, currentCulture);
 
-            OrderOperators(cs, expressionTree, lineNumber, currentCulture);
+            OrderOperators(cs, expressionTree, currentCulture);
 
-            SolveTree(cs, expressionTree, lineNumber, currentCulture);
+            SolveTree(cs, expressionTree, currentCulture);
             if (expressionTree.SubTree.Count != 1)
             {
-                throw new CompilerException(lineNumber, this.GetLanguageString(cs.CurrentCulture, "SyntaxError", "Syntax Error"));
+                throw new CompilerException(expressionTree.SubTree[2].LineNumber, this.GetLanguageString(cs.CurrentCulture, "SyntaxError", "Syntax Error"));
             }
-            IdentifyMemberFunctions(cs, expressionTree, lineNumber, currentCulture);
+            IdentifyMemberFunctions(cs, expressionTree, currentCulture);
             return expressionTree;
         }
 
-        private void IdentifyMemberFunctions(CompileState cs, Tree tree, int lineNumber, CultureInfo currentCulture)
+        private void IdentifyMemberFunctions(CompileState cs, Tree tree, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
             enumeratorStack.Insert(0, tree);
@@ -2912,9 +2912,9 @@ namespace SilverSim.Scripting.Lsl
                     if (subtree.Type == Tree.EntryType.OperatorBinary && subtree.Entry == "." && subtree.SubTree[1].Type == Tree.EntryType.Function)
                     {
                         Tree function = subtree.SubTree[1];
-                        Tree funcArg = new Tree
+                        var funcArg = new Tree(function.LineNumber)
                         {
-                            Type = Tree.EntryType.FunctionArgument
+                            Type = Tree.EntryType.FunctionArgument,
                         };
                         funcArg.SubTree.Add(subtree.SubTree[0]);
                         funcArg.Value = subtree.SubTree[0].Value;

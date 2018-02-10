@@ -129,7 +129,7 @@ namespace SilverSim.Scripting.Lsl
             public string Name;
         }
 
-        private List<FuncParamInfo> CheckFunctionParameters(CompileState cs, Parser p, List<string> arguments)
+        private List<FuncParamInfo> CheckFunctionParameters(CompileState cs, Parser p, List<TokenInfo> arguments)
         {
             var funcParams = new List<FuncParamInfo>();
             cs.m_LocalVariables.Add(new List<string>());
@@ -173,7 +173,7 @@ namespace SilverSim.Scripting.Lsl
             throw ParserException(p, this.GetLanguageString(cs.CurrentCulture, "MissingClosingParenthesisAtTheEndOfFunctionDeclaration", "Missing ')' at the end of function declaration"));
         }
 
-        private int FindEndOfControlFlow(CompileState cs, List<string> line, int lineNumber)
+        private int FindEndOfControlFlow(CompileState cs, List<TokenInfo> line, int lineNumber)
         {
             int i;
             var parenstack = new List<string>();
@@ -248,7 +248,7 @@ namespace SilverSim.Scripting.Lsl
             throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "CouldNotFindEndOf0", "Could not find end of '{0}'"), line[0]));
         }
 
-        private void ParseBlockLine(CompileState compileState, Parser p, List<LineInfo> block, List<string> args, int lineNumber, bool inState)
+        private void ParseBlockLine(CompileState compileState, Parser p, List<LineInfo> block, List<TokenInfo> args, int lineNumber, bool inState)
         {
             for (; ; )
             {
@@ -258,14 +258,14 @@ namespace SilverSim.Scripting.Lsl
                     /* make it a block */
                     if (args[eocf + 1] == "{")
                     {
-                        block.Add(new LineInfo(args, lineNumber));
+                        block.Add(new LineInfo(args));
                         ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
                     {
-                        List<string> controlflow = args.GetRange(0, eocf + 1);
-                        block.Add(new LineInfo(controlflow, lineNumber));
+                        List<TokenInfo> controlflow = args.GetRange(0, eocf + 1);
+                        block.Add(new LineInfo(controlflow));
                         args = args.GetRange(eocf + 1, args.Count - eocf - 1);
                     }
                 }
@@ -283,7 +283,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "OpeningParenthesisRequiredForSwitchControlFlowInstruction", "'(' required for 'switch' control flow instruction"));
                     }
-                    block.Add(new LineInfo(args, lineNumber));
+                    block.Add(new LineInfo(args));
                     ParseBlock(compileState, p, block, inState, true);
                     return;
                 }
@@ -293,7 +293,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "SemicolonHasToFollow0", "';' has to follow '{0}'"), args[0]));
                     }
-                    block.Add(new LineInfo(args, lineNumber));
+                    block.Add(new LineInfo(args));
                     return;
                 }
                 else if (args[0] == "break" &&
@@ -304,7 +304,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "SemicolonHasToFollow0", "';' has to follow '{0}'"), args[0]));
                     }
-                    block.Add(new LineInfo(args, lineNumber));
+                    block.Add(new LineInfo(args));
                     return;
                 }
                 else if ((args[0] == "case" || args[0] == "default") &&
@@ -314,21 +314,21 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ColonRequiredFor0ControlFlowInstruction", "':' required for '{0}' control flow instruction"), args[0]));
                     }
-                    block.Add(new LineInfo(args, lineNumber));
+                    block.Add(new LineInfo(args));
                     return;
                 }
                 else if (args[0] == "else" || args[0] == "do")
                 {
                     if (args[1] == "{")
                     {
-                        block.Add(new LineInfo(args, lineNumber));
+                        block.Add(new LineInfo(args));
                         ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
                     {
-                        List<string> controlflow = args.GetRange(0, 1);
-                        block.Add(new LineInfo(controlflow, lineNumber));
+                        List<TokenInfo> controlflow = args.GetRange(0, 1);
+                        block.Add(new LineInfo(controlflow));
                         args = args.GetRange(1, args.Count - 1);
                     }
                 }
@@ -338,26 +338,26 @@ namespace SilverSim.Scripting.Lsl
                     /* make it a block */
                     if(args[eocf + 1] == "{")
                     {
-                        block.Add(new LineInfo(args, lineNumber));
+                        block.Add(new LineInfo(args));
                         ParseBlock(compileState, p, block, inState, true);
                         return;
                     }
                     else
                     {
-                        List<string> controlflow = args.GetRange(0, eocf + 1);
-                        block.Add(new LineInfo(controlflow, lineNumber));
+                        List<TokenInfo> controlflow = args.GetRange(0, eocf + 1);
+                        block.Add(new LineInfo(controlflow));
                         args = args.GetRange(eocf + 1, args.Count - eocf - 1);
                     }
                 }
                 else if (args[0] == "{")
                 {
-                    block.Add(new LineInfo(args, lineNumber));
+                    block.Add(new LineInfo(args));
                     ParseBlock(compileState, p, block, inState, true);
                     return;
                 }
                 else if (args[0] == ";")
                 {
-                    block.Add(new LineInfo(new List<string>(new string[] { ";" }), lineNumber));
+                    block.Add(new LineInfo(new List<TokenInfo> { new TokenInfo(";", lineNumber) }));
                     return;
                 }
                 else if(args[args.Count - 1] == "{")
@@ -375,7 +375,7 @@ namespace SilverSim.Scripting.Lsl
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ExpectingEqualOrSemicolonAfterVarName0", "Expecting '=' or ';' after variable name {0}"), args[1]));
                         }
                     }
-                    block.Add(new LineInfo(args, lineNumber));
+                    block.Add(new LineInfo(args));
                     return;
                 }
             }
@@ -391,7 +391,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 int lineNumber;
                 string fname;
-                var args = new List<string>();
+                var args = new List<TokenInfo>();
                 try
                 {
                     p.Read(args);
@@ -421,7 +421,7 @@ namespace SilverSim.Scripting.Lsl
                 else if (args[0] == "}")
                 {
                     compileState.m_LocalVariables.RemoveAt(compileState.m_LocalVariables.Count - 1);
-                    block.Add(new LineInfo(args, lineNumber));
+                    block.Add(new LineInfo(args));
                     return;
                 }
                 else
@@ -440,7 +440,7 @@ namespace SilverSim.Scripting.Lsl
                 for (;;)
                 {
                     int lineNumber;
-                    var args = new List<string>();
+                    var args = new List<TokenInfo>();
                     try
                     {
                         p.Read(args);
@@ -490,7 +490,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.m_StateVariableInitValues.Add(stateName, new Dictionary<string, LineInfo>());
                             }
-                            compileState.m_StateVariableInitValues[stateName].Add(args[1], new LineInfo(args.GetRange(3, args.Count - 4), lineNumber));
+                            compileState.m_StateVariableInitValues[stateName].Add(args[1], new LineInfo(args.GetRange(3, args.Count - 4)));
                         }
                         else if(args[2] != ";")
                         {
@@ -533,7 +533,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         var stateList = new List<LineInfo>();
                         compileState.m_States[stateName].Add(args[0], stateList);
-                        stateList.Add(new LineInfo(args, lineNumber));
+                        stateList.Add(new LineInfo(args));
                         ParseBlock(compileState, p, stateList, true);
                     }
                     else if (args[0] == "}")
@@ -558,7 +558,7 @@ namespace SilverSim.Scripting.Lsl
             for (; ; )
             {
                 int lineNumber;
-                var args = new List<string>();
+                var args = new List<TokenInfo>();
                 try
                 {
                     p.Read(args);
@@ -605,7 +605,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "DuplicateMember0InStruct1", "Duplicate member '{0}' in struct '{1}'."), args[1], structName));
                     }
-                    compileState.m_Structs[structName].Add(args[1], new LineInfo(args, lineNumber));
+                    compileState.m_Structs[structName].Add(args[1], new LineInfo(args));
                     if (args[2] != ";")
                     {
                         throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "StructVarMustBeFollowedByOffendingStruct0", "Struct variable name must be followed by ';' or '='. Offending struct {0}."), structName));
@@ -800,7 +800,7 @@ namespace SilverSim.Scripting.Lsl
 
             for (; ; )
             {
-                var args = new List<string>();
+                var args = new List<TokenInfo>();
                 try
                 {
                     p.Read(args);
@@ -844,7 +844,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.m_VariableDeclarations[args[1]] = varType;
                         if (args[2] == "=")
                         {
-                            compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4), lineNumber);
+                            compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4));
                         }
                     }
                     else
@@ -913,7 +913,7 @@ namespace SilverSim.Scripting.Lsl
                                 throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
                             }
                             funcparam = CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
-                            funcList.Add(new LineInfo(args, lineNumber));
+                            funcList.Add(new LineInfo(args));
                             ParseBlock(compileState, p, funcList, false);
                             if (!compileState.m_Functions.ContainsKey(args[1]))
                             {
@@ -932,8 +932,8 @@ namespace SilverSim.Scripting.Lsl
                                 throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
                             }
                             funcparam = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
-                            args.Insert(0, "void");
-                            funcList.Add(new LineInfo(args, lineNumber));
+                            args.Insert(0, new TokenInfo("void", lineNumber));
+                            funcList.Add(new LineInfo(args));
                             ParseBlock(compileState, p, funcList, false);
                             if (!compileState.m_Functions.ContainsKey(args[1]))
                             {

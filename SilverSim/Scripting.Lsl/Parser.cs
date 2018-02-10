@@ -26,7 +26,6 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -51,10 +50,10 @@ namespace SilverSim.Scripting.Lsl
             return false;
         }
 
-        public void ReadPass1(List<string> args)
+        public void ReadPass1(List<TokenInfo> args)
         {
             char c;
-            var token = new StringBuilder();
+            var token = new TokenInfoBuilder();
             Begin();
             args.Clear();
             bool is_preprocess = false;
@@ -94,13 +93,13 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         if(args.Count == 0)
                         {
                             MarkBeginOfLine();
                         }
-                        args.Add(c.ToString());
+                        args.Add(new TokenInfo(c.ToString(), CurrentLineNumber));
                         if (args.Count != 0 && parencount == 0)
                         {
                             return;
@@ -114,13 +113,13 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         if (args.Count == 0)
                         {
                             MarkBeginOfLine();
                         }
-                        args.Add("{");
+                        args.Add(new TokenInfo("{", CurrentLineNumber));
                         return;
 
                     case '}':       /* closing statement */
@@ -130,13 +129,13 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         if (args.Count == 0)
                         {
                             MarkBeginOfLine();
                         }
-                        args.Add("}");
+                        args.Add(new TokenInfo("}", CurrentLineNumber));
                         if(args.Count > 1)
                         {
                             throw new ArgumentException(this.GetLanguageString(m_CurrentCulture, "IncompleteStatementBeforeClosingBrace", "incomplete statement before '}'"));
@@ -150,7 +149,7 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         MarkBeginOfLine();
                         token.Clear();
@@ -158,20 +157,20 @@ redo:
                         {
                             if (c == '\\')
                             {
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                                 c = ReadC();
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                             }
                             else
                             {
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                             }
                             c = ReadC();
                         } while(c != '\"');
-                        token.Append("\"");
+                        token.Append("\"", CurrentLineNumber);
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         token.Clear();
                         break;
@@ -183,7 +182,7 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         MarkBeginOfLine();
                         token.Clear();
@@ -191,20 +190,20 @@ redo:
                         {
                             if (c == '\\')
                             {
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                                 c = ReadC();
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                             }
                             else
                             {
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                             }
                             c = ReadC();
                         } while(c != '\'');
-                        token.Append("\'");
+                        token.Append("\'", CurrentLineNumber);
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         token.Clear();
                         break;
@@ -224,14 +223,14 @@ redo:
                         }
                         if (0 != token.Length)
                         {
-                            args.Add(token.ToString());
+                            args.Add(token);
                         }
                         token.Clear();
                         if (args.Count == 0)
                         {
                             MarkBeginOfLine();
                         }
-                        args.Add(new string(new char[] {c}));
+                        args.Add(new TokenInfo(c, CurrentLineNumber));
                         if (c == '(')
                         {
                             ++parencount;
@@ -258,7 +257,7 @@ redo:
                             /* preprocessor literal */
                             if (0 != token.Length)
                             {
-                                args.Add(token.ToString());
+                                args.Add(token);
                             }
                             if (args.Count == 0)
                             {
@@ -268,13 +267,13 @@ redo:
                             c = '\"';
                             do
                             {
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                                 c = ReadC();
                             } while(c != '>');
-                            token.Append('\"');
+                            token.Append('\"', CurrentLineNumber);
                             if (0 != token.Length)
                             {
-                                args.Add(token.ToString());
+                                args.Add(token);
                             }
                             token.Clear();
                             break;
@@ -288,7 +287,7 @@ redo:
                         {
                             if(0 != token.Length)
                             {
-                                args.Add(token.ToString());
+                                args.Add(token);
                                 token.Clear();
                             }
                         }
@@ -307,11 +306,11 @@ redo:
                             {
                                 if(c == '.' && token.Length > 0 && !char.IsNumber(token[token.Length - 1]))
                                 {
-                                    args.Add(token.ToString());
+                                    args.Add(token);
                                     token.Clear();
                                 }
 
-                                token.Append(c);
+                                token.Append(c, CurrentLineNumber);
                                 if(token.EndsWith("//"))
                                 {
                                     /* got C++-style comment */
@@ -334,7 +333,7 @@ redo:
                                     token.Remove(token.Length - 2, 2);
                                     if(token.Length != 0)
                                     {
-                                        args.Add(token.ToString());
+                                        args.Add(token);
                                     }
                                     token.Clear();
                                     c = ' ';
@@ -387,7 +386,7 @@ redo:
                                     token.Remove(token.Length - 2, 2);
                                     if (token.Length != 0)
                                     {
-                                        args.Add(token.ToString());
+                                        args.Add(token);
                                     }
                                     token.Clear();
                                     c = ' ';
@@ -402,13 +401,13 @@ redo:
                                 {
                                     if(token.Length != 0)
                                     {
-                                        args.Add(token.ToString());
+                                        args.Add(token);
                                         return;
                                     }
                                     throw;
                                 }
                             }
-                            args.Add(token.ToString());
+                            args.Add(token);
                             token.Clear();
                             goto redo;
                         }
@@ -417,7 +416,7 @@ redo:
             }
         }
 
-        public void EvalCompounds(List<string> args)
+        public void EvalCompounds(List<TokenInfo> args)
         {
             int argi = -1;
             while (++argi < args.Count)
@@ -456,7 +455,8 @@ redo:
                                 /* compound literal += */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "+=");
+                                    args.Insert(argi, new TokenInfo("+=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -487,7 +487,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "+");
+                                args.Insert(argi, new TokenInfo("+", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -511,7 +512,8 @@ redo:
                                     args[argi] = args[argi].Substring(i, curlength - i);
                                     curlength -= i;
                                 }
-                                args.Insert(argi++, ".");
+                                args.Insert(argi, new TokenInfo(".", args[argi].LineNumber));
+                                ++argi;
 
                                 i = 0;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
@@ -545,7 +547,8 @@ redo:
                                 /* compound literal -= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "-=");
+                                    args.Insert(argi, new TokenInfo("-=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -556,10 +559,11 @@ redo:
                             }
                             else if (args[argi][1] == '>')
                             {
-                                /* compound literal -= */
+                                /* compound literal -> */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "->");
+                                    args.Insert(argi, new TokenInfo("->", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -590,7 +594,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "-");
+                                args.Insert(argi, new TokenInfo("-", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -618,7 +623,8 @@ redo:
                                 /* compound literal *= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "*=");
+                                    args.Insert(argi, new TokenInfo("*=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -629,7 +635,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "*");
+                                args.Insert(argi, new TokenInfo("*", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -657,7 +664,8 @@ redo:
                                 /* compound literal :: */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "::");
+                                    args.Insert(argi, new TokenInfo("::", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -668,7 +676,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, ":");
+                                args.Insert(argi, new TokenInfo(":", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -696,7 +705,8 @@ redo:
                                 /* compound literal /= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "/=");
+                                    args.Insert(argi, new TokenInfo("/=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -707,7 +717,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "/");
+                                args.Insert(argi, new TokenInfo("/", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -735,7 +746,8 @@ redo:
                                 /* compound literal %= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "%=");
+                                    args.Insert(argi, new TokenInfo("%=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -746,7 +758,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "%");
+                                args.Insert(argi, new TokenInfo("%", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -774,7 +787,8 @@ redo:
                                 /* compound literal <= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "<=");
+                                    args.Insert(argi, new TokenInfo("<=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -788,13 +802,15 @@ redo:
                                 /* compound literals <<, <<= */
                                 if (3 < curlength && args[argi][2] == '=')
                                 {
-                                    args.Insert(argi++, "<<=");
+                                    args.Insert(argi, new TokenInfo("<<=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(3, curlength - 3);
                                     curlength -= 3;
                                 }
                                 else if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "<<");
+                                    args.Insert(argi, new TokenInfo("<<", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -805,7 +821,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "<");
+                                args.Insert(argi, new TokenInfo("<", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -833,7 +850,8 @@ redo:
                                 /* compound literal >= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, ">=");
+                                    args.Insert(argi, new TokenInfo(">=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -844,16 +862,18 @@ redo:
                             }
                             else if (args[argi][1] == '>')
                             {
-                                /* compound literals << <<= */
+                                /* compound literals >> >>= */
                                 if (3 < curlength && args[argi][2] == '=')
                                 {
-                                    args.Insert(argi++, ">>=");
+                                    args.Insert(argi, new TokenInfo(">>=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(3, curlength - 3);
                                     curlength -= 3;
                                 }
                                 else if (2 < curlength)
                                 {
-                                    args.Insert(argi++, ">>");
+                                    args.Insert(argi, new TokenInfo(">>", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -864,7 +884,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, ">");
+                                args.Insert(argi, new TokenInfo(">", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -892,7 +913,8 @@ redo:
                                 /* compound literal == */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "==");
+                                    args.Insert(argi, new TokenInfo("==", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -906,7 +928,8 @@ redo:
                                 /* compound literal == */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "=>");
+                                    args.Insert(argi, new TokenInfo("=>", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -917,7 +940,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "=");
+                                args.Insert(argi, new TokenInfo("=", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -945,7 +969,8 @@ redo:
                                 /* compound literal != */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "!=");
+                                    args.Insert(argi, new TokenInfo("!=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -956,7 +981,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "!");
+                                args.Insert(argi, new TokenInfo("!", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -984,7 +1010,8 @@ redo:
                                 /* compound literal ^= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "^=");
+                                    args.Insert(argi, new TokenInfo("^=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -995,7 +1022,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "^");
+                                args.Insert(argi, new TokenInfo("^", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -1023,7 +1051,8 @@ redo:
                                 /* compound literal &= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "&=");
+                                    args.Insert(argi, new TokenInfo("&=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -1037,7 +1066,8 @@ redo:
                                 /* compound literal && */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "&&");
+                                    args.Insert(argi, new TokenInfo("&&", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -1048,7 +1078,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "&");
+                                args.Insert(argi, new TokenInfo("&", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -1076,7 +1107,8 @@ redo:
                                 /* compound literal ## */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "##");
+                                    args.Insert(argi, new TokenInfo("##", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -1087,7 +1119,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "#");
+                                args.Insert(argi, new TokenInfo("#", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -1115,7 +1148,8 @@ redo:
                                 /* compound literal |= */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "|=");
+                                    args.Insert(argi, new TokenInfo("|=", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -1129,7 +1163,8 @@ redo:
                                 /* compound literal || */
                                 if (2 < curlength)
                                 {
-                                    args.Insert(argi++, "||");
+                                    args.Insert(argi, new TokenInfo("||", args[argi].LineNumber));
+                                    ++argi;
                                     args[argi] = args[argi].Substring(2, curlength - 2);
                                     curlength -= 2;
                                 }
@@ -1140,7 +1175,8 @@ redo:
                             }
                             else
                             {
-                                args.Insert(argi++, "|");
+                                args.Insert(argi, new TokenInfo("|", args[argi].LineNumber));
+                                ++argi;
                                 args[argi] = args[argi].Substring(1, curlength - 1);
                                 --curlength;
                             }
@@ -1158,45 +1194,45 @@ redo:
             }
         }
 
-        public void ReadPass2(List<string> arguments)
+        public void ReadPass2(List<TokenInfo> arguments)
         {
-            var inargs = new List<string>(arguments);
+            var inargs = new List<TokenInfo>(arguments);
             arguments.Clear();
-            foreach(string it in inargs)
+            foreach(TokenInfo it in inargs)
             {
                 if(it == "+++")
                 {
-                    arguments.Add("++");
-                    arguments.Add("+");
+                    arguments.Add(new TokenInfo("++", it.LineNumber ));
+                    arguments.Add(new TokenInfo("+", it.LineNumber ));
                 }
                 else if(it == "+++++")
                 {
-                    arguments.Add("++");
-                    arguments.Add("+");
-                    arguments.Add("++");
+                    arguments.Add(new TokenInfo("++", it.LineNumber ));
+                    arguments.Add(new TokenInfo("+", it.LineNumber ));
+                    arguments.Add(new TokenInfo("++", it.LineNumber ));
                 }
                 else if(it == "++++")
                 {
-                    arguments.Add("++");
-                    arguments.Add("+");
-                    arguments.Add("+");
+                    arguments.Add(new TokenInfo("++", it.LineNumber ));
+                    arguments.Add(new TokenInfo("+", it.LineNumber ));
+                    arguments.Add(new TokenInfo("+", it.LineNumber ));
                 }
                 else if(it == "---")
                 {
-                    arguments.Add("--");
-                    arguments.Add("-");
+                    arguments.Add(new TokenInfo("--", it.LineNumber ));
+                    arguments.Add(new TokenInfo("-", it.LineNumber ));
                 }
                 else if(it == "----")
                 {
-                    arguments.Add("--");
-                    arguments.Add("-");
-                    arguments.Add("-");
+                    arguments.Add(new TokenInfo("--", it.LineNumber ));
+                    arguments.Add(new TokenInfo("-", it.LineNumber ));
+                    arguments.Add(new TokenInfo("-", it.LineNumber ));
                 }
                 else if(it == "-----")
                 {
-                    arguments.Add("--");
-                    arguments.Add("-");
-                    arguments.Add("--");
+                    arguments.Add(new TokenInfo("--", it.LineNumber ));
+                    arguments.Add(new TokenInfo("-", it.LineNumber ));
+                    arguments.Add(new TokenInfo("--", it.LineNumber ));
                 }
                 else
                 {
@@ -1205,7 +1241,7 @@ redo:
             }
         }
 
-        public override void Read(List<string> args)
+        public override void Read(List<TokenInfo> args)
         {
             MarkBeginOfLine();
             ReadPass1(args);

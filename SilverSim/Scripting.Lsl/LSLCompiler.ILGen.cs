@@ -20,6 +20,7 @@
 // exception statement from your version.
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Scripting.Lsl.Expression;
 using System;
 using System.Collections.Generic;
@@ -28,9 +29,6 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
-        private static CompilerException CompilerException(LineInfo p, string message) =>
-            new CompilerException(p.LineNumber, message);
-
         public enum ResultIsModifiedEnum
         {
             No,
@@ -50,14 +48,13 @@ namespace SilverSim.Scripting.Lsl
                 throw new NotSupportedException();
             }
 
-            List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
-            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber, compileState.CurrentCulture);
+            List<TokenInfo> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
+            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, compileState.CurrentCulture);
 
             return ProcessExpression(
                 compileState,
                 expectedType,
                 expressionTree,
-                functionLine.LineNumber,
                 localVars);
         }
 
@@ -65,7 +62,6 @@ namespace SilverSim.Scripting.Lsl
             CompileState compileState,
             Type expectedType,
             Tree functionTree,
-            int lineNumber,
             Dictionary<string, object> localVars)
         {
             var isModified = ResultIsModifiedEnum.No;
@@ -73,13 +69,12 @@ namespace SilverSim.Scripting.Lsl
             Type retType = ProcessExpressionPart(
                 compileState,
                 functionTree,
-                lineNumber,
                 localVars);
             ProcessImplicitCasts(
                 compileState,
                 expectedType,
                 retType,
-                lineNumber);
+                functionTree.LineNumber);
 
             if(functionTree.SubTree[0].Type == Tree.EntryType.Variable ||
                 functionTree.SubTree[0].Type == Tree.EntryType.ThisOperator)
@@ -127,13 +122,12 @@ namespace SilverSim.Scripting.Lsl
                 throw new NotSupportedException();
             }
 
-            List<string> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
-            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, functionLine.LineNumber, compileState.CurrentCulture);
+            List<TokenInfo> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
+            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, compileState.CurrentCulture);
 
             return ProcessExpressionPart(
                 compileState,
                 expressionTree,
-                functionLine.LineNumber,
                 localVars);
         }
     }

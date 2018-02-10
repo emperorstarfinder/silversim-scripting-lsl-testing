@@ -63,7 +63,6 @@ namespace SilverSim.Scripting.Lsl
         private Type ProcessExpressionPart(
             CompileState compileState,
             Tree functionTree,
-            int lineNumber,
             Dictionary<string, object> localVars)
         {
             var expressionStack = new List<IExpressionStackElement>();
@@ -90,7 +89,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             if (!compileState.IsValidType(innerExpressionReturn))
                             {
-                                throw new CompilerException(lineNumber, "Internal Error! Return type is not set to LSL compatible type. (" + innerExpressionReturn.FullName + ")");
+                                throw new CompilerException(functionTree.LineNumber, "Internal Error! Return type is not set to LSL compatible type. (" + innerExpressionReturn.FullName + ")");
                             }
                             return innerExpressionReturn;
                         }
@@ -101,7 +100,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if(!compileState.IsValidType(innerExpressionReturn))
                     {
-                        throw new CompilerException(lineNumber, "Internal Error! Return type is not set to LSL compatible type. (" + innerExpressionReturn.FullName + ")");
+                        throw new CompilerException(functionTree.LineNumber, "Internal Error! Return type is not set to LSL compatible type. (" + innerExpressionReturn.FullName + ")");
                     }
                     return innerExpressionReturn;
                 }
@@ -158,7 +157,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        throw new CompilerException(lineNumber, "Internal Error");
+                        throw new CompilerException(functionTree.LineNumber, "Internal Error");
                     }
                 }
                 else
@@ -169,19 +168,19 @@ namespace SilverSim.Scripting.Lsl
                             expressionStack.Insert(0, new FunctionExpression(
                                 compileState,
                                 functionTree,
-                                lineNumber));
+                                functionTree.LineNumber));
                             innerExpressionReturn = null;
                             break;
 
                         case Tree.EntryType.MemberFunction:
                             if(!compileState.LanguageExtensions.EnableMemberFunctions)
                             {
-                                throw new CompilerException(lineNumber, this.GetLanguageString(compileState.CurrentCulture, "MemberFunctionsNotEnabled", "Member functions not enabled"));
+                                throw new CompilerException(functionTree.LineNumber, this.GetLanguageString(compileState.CurrentCulture, "MemberFunctionsNotEnabled", "Member functions not enabled"));
                             }
                             expressionStack.Insert(0, new FunctionExpression(
                                 compileState,
                                 functionTree,
-                                lineNumber));
+                                functionTree.LineNumber));
                             innerExpressionReturn = null;
                             break;
 
@@ -190,7 +189,7 @@ namespace SilverSim.Scripting.Lsl
                                 this,
                                 compileState,
                                 functionTree,
-                                lineNumber,
+                                functionTree.LineNumber,
                                 localVars));
                             innerExpressionReturn = null;
                             break;
@@ -198,7 +197,7 @@ namespace SilverSim.Scripting.Lsl
                         case Tree.EntryType.ThisOperator:
                             expressionStack.Insert(0, new ThisOperatorExpression(
                                 functionTree,
-                                lineNumber));
+                                functionTree.LineNumber));
                             innerExpressionReturn = null;
                             break;
 
@@ -215,25 +214,25 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(long))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.SubTree[0].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -262,7 +261,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -275,7 +274,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(Quaternion))
                                         {
@@ -302,7 +301,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].SubTree[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -315,18 +314,18 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();
                                     }
                                     else
                                     {
-                                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "Operator '++' not supported for '{0}'"), functionTree.SubTree[0].Entry));
+                                        throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "Operator '++' not supported for '{0}'"), functionTree.SubTree[0].Entry));
                                     }
                                     break;
 
@@ -340,25 +339,25 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(long))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.SubTree[0].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -387,7 +386,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].SubTree[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -400,7 +399,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(Quaternion))
                                         {
@@ -427,7 +426,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].SubTree[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -440,18 +439,18 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Ldloc, copyLb);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();
                                     }
                                     else
                                     {
-                                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for '{0}'"), functionTree.SubTree[0].Entry));
+                                        throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for '{0}'"), functionTree.SubTree[0].Entry));
                                     }
                                     break;
 
@@ -462,14 +461,14 @@ namespace SilverSim.Scripting.Lsl
                                     {
                                         expressionStack.Insert(0, new TypecastExpression(
                                             functionTree,
-                                            lineNumber));
+                                            functionTree.LineNumber));
                                         innerExpressionReturn = null;
                                     }
                                     else
                                     {
                                         expressionStack.Insert(0, new LeftUnaryOperators(
                                             functionTree,
-                                            lineNumber));
+                                            functionTree.LineNumber));
                                         innerExpressionReturn = null;
                                     }
                                     break;
@@ -489,25 +488,25 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
                                             compileState.ILGen.Emit(OpCodes.Add);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(long))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
                                             compileState.ILGen.Emit(OpCodes.Add);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Add);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.SubTree[0].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if(functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -536,7 +535,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].SubTree[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -549,7 +548,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if(innerExpressionReturn == typeof(Quaternion))
                                         {
@@ -576,7 +575,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].SubTree[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -589,18 +588,18 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();
                                     }
                                     else
                                     {
-                                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for '{0}'"), functionTree.SubTree[0].Entry));
+                                        throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusPlusNotSupportedFor0", "operator '++' not supported for '{0}'"), functionTree.SubTree[0].Entry));
                                     }
                                     break;
 
@@ -614,25 +613,25 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(long))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
                                             compileState.ILGen.Emit(OpCodes.Sub);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.SubTree[0].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "operator '--' not supported for {0}"), compileState.MapType(innerExpressionReturn)));
                                         }
                                     }
                                     else if (functionTree.SubTree[0].Type == Tree.EntryType.OperatorBinary && functionTree.SubTree[0].Entry == ".")
@@ -661,7 +660,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].SubTree[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtVectorIsNotDefined", "Component access for '{0}' at vector is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -674,7 +673,7 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else if (innerExpressionReturn == typeof(Quaternion))
                                         {
@@ -701,7 +700,7 @@ namespace SilverSim.Scripting.Lsl
                                                     break;
 
                                                 default:
-                                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
+                                                    throw new CompilerException(functionTree.SubTree[0].SubTree[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ComponentAccessFor0AtRotationIsNotDefined", "Component access for '{0}' at rotation is not defined"), functionTree.SubTree[0].SubTree[1].Entry));
                                             }
                                             compileState.ILGen.Emit(OpCodes.Ldfld, fi);
                                             innerExpressionReturn = typeof(double);
@@ -714,28 +713,28 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Stfld, fi);
                                             compileState.ILGen.Emit(OpCodes.Ldloc, structLb);
-                                            SetVarFromStack(compileState, v, lineNumber);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
                                         else
                                         {
-                                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
+                                            throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDotNotSupportedFor0", "Operator '.' not supported for '{0}'"), compileState.MapType(innerExpressionReturn)));
                                         }
 
                                         compileState.ILGen.EndScope();
                                     }
                                     else
                                     {
-                                        throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "Operator '--' not supported for '{0}'"), functionTree.SubTree[0].Entry));
+                                        throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusMinusNotSupportedFor0", "Operator '--' not supported for '{0}'"), functionTree.SubTree[0].Entry));
                                     }
                                     break;
 
                                 default:
-                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "RightUnaryOperator0NotSupported", "Right unary operator '{0}' not supported"), functionTree.Entry));
+                                    throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "RightUnaryOperator0NotSupported", "Right unary operator '{0}' not supported"), functionTree.Entry));
                             }
                             break;
 
                         case Tree.EntryType.ReservedWord:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsAReservedWord", "'{0}' is a reserved word"), functionTree.Entry));
+                            throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsAReservedWord", "'{0}' is a reserved word"), functionTree.Entry));
 
                         #region Constants and complex types
                         case Tree.EntryType.StringValue:
@@ -764,7 +763,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 expressionStack.Insert(0, new RotationExpression(
                                     functionTree,
-                                    lineNumber));
+                                    functionTree.LineNumber));
                                 innerExpressionReturn = null;
                             }
                             break;
@@ -807,7 +806,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                throw new CompilerException(lineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidValue", "invalid value"));
+                                throw new CompilerException(functionTree.LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidValue", "invalid value"));
                             }
                             break;
 
@@ -827,7 +826,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 expressionStack.Insert(0, new VectorExpression(
                                     functionTree,
-                                    lineNumber));
+                                    functionTree.LineNumber));
                                 innerExpressionReturn = null;
                             }
                             break;
@@ -848,7 +847,7 @@ namespace SilverSim.Scripting.Lsl
 #if DEBUG
                                 m_Log.DebugFormat("Exception {0} at {1}", e.Message, e.StackTrace);
 #endif
-                                throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Variable0NotDefined", "Variable '{0}' not defined"), functionTree.Entry));
+                                throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Variable0NotDefined", "Variable '{0}' not defined"), functionTree.Entry));
                             }
                             break;
 
@@ -860,17 +859,17 @@ namespace SilverSim.Scripting.Lsl
                                     expressionStack.Insert(0, new ListExpression(
                                         compileState,
                                         functionTree,
-                                        lineNumber));
+                                        functionTree.LineNumber));
                                     innerExpressionReturn = null;
                                     break;
 
                                 default:
-                                    throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "UnexpectedLevelEntry0", "unexpected level entry '{0}'"), functionTree.Entry));
+                                    throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "UnexpectedLevelEntry0", "unexpected level entry '{0}'"), functionTree.Entry));
                             }
                             break;
 
                         default:
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Unknown0", "unknown '{0}'"), functionTree.Entry));
+                            throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Unknown0", "unknown '{0}'"), functionTree.Entry));
                     }
                 }
             }

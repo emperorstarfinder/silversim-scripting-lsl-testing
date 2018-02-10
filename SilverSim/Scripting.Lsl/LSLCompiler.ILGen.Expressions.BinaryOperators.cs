@@ -333,7 +333,6 @@ namespace SilverSim.Scripting.Lsl
                         retType = compiler.ProcessExpressionPart(
                             compileState,
                             s,
-                            m_LineNumber,
                             localVars);
                         if (retType == typeof(void))
                         {
@@ -381,7 +380,6 @@ namespace SilverSim.Scripting.Lsl
                         retType = compiler.ProcessExpressionPart(
                             compileState,
                             s,
-                            m_LineNumber,
                             localVars);
                         if (retType == typeof(void))
                         {

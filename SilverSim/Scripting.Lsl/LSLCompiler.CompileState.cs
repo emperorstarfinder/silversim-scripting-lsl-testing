@@ -21,6 +21,8 @@
 
 #pragma warning disable IDE0018, RCS1029, IDE0019
 
+using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -35,16 +37,15 @@ namespace SilverSim.Scripting.Lsl
     {
         sealed internal class LineInfo
         {
-            public readonly List<string> Line;
-            public readonly int LineNumber;
+            public readonly List<TokenInfo> Line;
 
-            public LineInfo(List<string> line, int lineNo)
+            public LineInfo(List<TokenInfo> line)
             {
                 Line = line;
-                LineNumber = lineNo;
             }
 
-            public override string ToString() => LineNumber.ToString() + ": " + string.Join(" ", Line);
+            public int FirstTokenLineNumber => (Line.Count > 0 ? Line[0].LineNumber : 0);
+            public override string ToString() => FirstTokenLineNumber.ToString() + ": " + string.Join(" ", Line);
         }
 
         internal class FunctionInfo
@@ -265,7 +266,7 @@ namespace SilverSim.Scripting.Lsl
                 List<LineInfo> functionBody = FunctionBody;
                 if (lineIndex >= functionBody.Count)
                 {
-                    throw CompilerException(functionBody[functionBody.Count - 1], message);
+                    throw new CompilerException(functionBody[functionBody.Count - 1].FirstTokenLineNumber, message);
                 }
                 return functionBody[lineIndex];
             }
@@ -280,7 +281,7 @@ namespace SilverSim.Scripting.Lsl
                 List<LineInfo> functionBody = FunctionBody;
                 if (lineIndex >= functionBody.Count)
                 {
-                    throw CompilerException(functionBody[functionBody.Count - 1], message);
+                    throw new CompilerException(functionBody[functionBody.Count - 1].FirstTokenLineNumber, message);
                 }
                 return functionBody[lineIndex];
             }

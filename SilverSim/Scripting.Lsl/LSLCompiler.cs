@@ -1231,11 +1231,11 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private void WriteIndented(TextWriter writer, List<string> list, ref int oldIndent)
+        private void WriteIndented(TextWriter writer, List<TokenInfo> list, ref int oldIndent)
         {
-            foreach(string s in list)
+            foreach(TokenInfo s in list)
             {
-                WriteIndented(writer, s, ref oldIndent);
+                WriteIndented(writer, s.Token, ref oldIndent);
             }
         }
 

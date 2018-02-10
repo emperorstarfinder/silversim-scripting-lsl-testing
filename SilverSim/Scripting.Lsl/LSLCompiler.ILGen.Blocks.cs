@@ -22,6 +22,7 @@
 #pragma warning disable RCS1029, IDE0018
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace SilverSim.Scripting.Lsl
             processnext:
                 LineInfo functionLine = compileState.GetLine();
                 LocalBuilder lb;
-                compileState.ILGen.MarkSequencePoint(functionLine.LineNumber, functionLine.LineNumber, 1, 1);
+                compileState.ILGen.MarkSequencePoint(functionLine.FirstTokenLineNumber, 1, 1, 1);
                 switch (functionLine.Line[0])
                 {
                     #region Label definition
@@ -53,7 +54,7 @@ namespace SilverSim.Scripting.Lsl
                         if(compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if(eoif_label.HasValue)
                         {
@@ -63,7 +64,7 @@ namespace SilverSim.Scripting.Lsl
 
                         if (functionLine.Line.Count != 3 || functionLine.Line[2] != ";")
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "NotAValidLabelDefinition", "not a valid label definition"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "NotAValidLabelDefinition", "not a valid label definition"));
                         }
                         else
                         {
@@ -75,7 +76,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (labels[labelName].IsDefined)
                             {
-                                throw CompilerException(functionLine, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Label0AlreadyDefined", "label '{0}' already defined"), labelName));
+                                throw new CompilerException(functionLine.Line[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Label0AlreadyDefined", "label '{0}' already defined"), labelName));
                             }
                             else
                             {
@@ -92,7 +93,7 @@ namespace SilverSim.Scripting.Lsl
                         if (compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if (eoif_label.HasValue)
                         {
@@ -123,7 +124,7 @@ namespace SilverSim.Scripting.Lsl
 
                             if (endoffor != functionLine.Line.Count - 1 && endoffor != functionLine.Line.Count - 2)
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidForEncountered", "Invalid 'for' encountered"));
+                                throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidForEncountered", "Invalid 'for' encountered"));
                             }
 
                             semicolon1 = functionLine.Line.IndexOf(";");
@@ -204,7 +205,7 @@ namespace SilverSim.Scripting.Lsl
                         if (compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if (eoif_label.HasValue)
                         {
@@ -232,7 +233,7 @@ namespace SilverSim.Scripting.Lsl
 
                             if ((endofwhile != functionLine.Line.Count - 1 && endofwhile != functionLine.Line.Count - 2) || endofwhile == 2)
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileEncountered", "Invalid 'while' encountered"));
+                                throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileEncountered", "Invalid 'while' encountered"));
                             }
 
                             Label looplabel = compileState.ILGen.DefineLabel();
@@ -284,7 +285,7 @@ namespace SilverSim.Scripting.Lsl
                         if (compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if (eoif_label.HasValue)
                         {
@@ -325,12 +326,12 @@ namespace SilverSim.Scripting.Lsl
                             functionLine = compileState.GetLine(this.GetLanguageString(compileState.CurrentCulture, "MissingWhileForDo", "Missing 'while' for 'do'"));
                             if(functionLine.Line[0] != "while")
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingWhileForDo", "Missing 'while' for 'do'"));
+                                throw new CompilerException(functionLine.Line[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingWhileForDo", "Missing 'while' for 'do'"));
                             }
 
                             if (compileState.GetLine(this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileForDo", "Invalid 'while' for 'do'")).Line[0] != ";")
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileForDo", "Invalid 'while' for 'do'"));
+                                throw new CompilerException(functionLine.Line[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileForDo", "Invalid 'while' for 'do'"));
                             }
 
                             int endofwhile;
@@ -352,7 +353,7 @@ namespace SilverSim.Scripting.Lsl
 
                             if ((endofwhile != functionLine.Line.Count - 1 && endofwhile != functionLine.Line.Count - 2) || endofwhile == 2)
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileEncountered", "Invalid 'while' encountered"));
+                                throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileEncountered", "Invalid 'while' encountered"));
                             }
 
                             ProcessExpression(
@@ -376,7 +377,7 @@ namespace SilverSim.Scripting.Lsl
                         if (compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if (!compileState.LanguageExtensions.EnableSwitchBlock)
                         {
@@ -401,7 +402,7 @@ namespace SilverSim.Scripting.Lsl
                                 localVars);
                         if(switchVarType == typeof(AnArray))
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "ListValueNotSupportedForSwitchBlock", "List value not supported for 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "ListValueNotSupportedForSwitchBlock", "List value not supported for 'switch' block"));
                         }
                         LocalBuilder switchLb = compileState.ILGen.DeclareLocal(switchVarType);
                         compileState.ILGen.Emit(OpCodes.Stloc, switchLb);
@@ -435,7 +436,7 @@ namespace SilverSim.Scripting.Lsl
                         if (compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if (eoif_label.HasValue)
                         {
@@ -466,7 +467,7 @@ namespace SilverSim.Scripting.Lsl
 
                             if ((endofif != functionLine.Line.Count - 1 && endofif != functionLine.Line.Count - 2) || endofif == 2)
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidIfEncountered", "Invalid 'if' encountered"));
+                                throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidIfEncountered", "Invalid 'if' encountered"));
                             }
 
                             ProcessExpression(
@@ -519,11 +520,11 @@ namespace SilverSim.Scripting.Lsl
                         if (compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if (!eoif_label.HasValue)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "NoMatchingIfFoundForElse", "No matching 'if' found for 'else'"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "NoMatchingIfFoundForElse", "No matching 'if' found for 'else'"));
                         }
                         else if (functionLine.Line.Count > 1 && functionLine.Line[1] == "if")
                         { /* else if */
@@ -548,7 +549,7 @@ namespace SilverSim.Scripting.Lsl
 
                             if ((endofif != functionLine.Line.Count - 1 && endofif != functionLine.Line.Count - 2) || endofif == 2)
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InvalidElseIfEncountered", "Invalid 'else if' encountered"));
+                                throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidElseIfEncountered", "Invalid 'else if' encountered"));
                             }
 
                             ProcessExpression(
@@ -633,7 +634,7 @@ namespace SilverSim.Scripting.Lsl
                         if (compileState.m_BreakContinueLabels.Count != 0 &&
                             compileState.m_BreakContinueLabels[0].CaseRequired)
                         {
-                            throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                         }
                         if (eoif_label.HasValue)
                         {
@@ -677,12 +678,12 @@ namespace SilverSim.Scripting.Lsl
                         {
                             if (isImplicit)
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "VariableDeclarationNotAllowedWithinConditionalStatementWithoutBlock", "variable declaration not allowed within conditional statement without block"));
+                                throw new CompilerException(functionLine.Line[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "VariableDeclarationNotAllowedWithinConditionalStatementWithoutBlock", "variable declaration not allowed within conditional statement without block"));
                             }
                             if (compileState.m_BreakContinueLabels.Count != 0 &&
                                 compileState.m_BreakContinueLabels[0].CaseRequired)
                             {
-                                throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                                throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
                             }
 
                             if (eoif_label.HasValue)
@@ -747,7 +748,7 @@ namespace SilverSim.Scripting.Lsl
                                 ConstructorInfo cInfo = compileState.GetDefaultConstructor(targetType);
                                 if(cInfo == null)
                                 {
-                                    throw CompilerException(functionLine, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                                    throw new CompilerException(functionLine.Line[1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
                                 }
                                 compileState.ILGen.Emit(OpCodes.Newobj, cInfo);
                             }
@@ -789,7 +790,7 @@ namespace SilverSim.Scripting.Lsl
             Dictionary<string, object> localVars)
         {
             Type returnType;
-            List<string> functionDeclaration = functionBody[0].Line;
+            List<TokenInfo> functionDeclaration = functionBody[0].Line;
             int functionStart = 2;
             compileState.m_BreakContinueLabels.Clear();
             compileState.ScriptTypeBuilder = scriptTypeBuilder;
@@ -819,7 +820,7 @@ namespace SilverSim.Scripting.Lsl
                 Type t;
                 if (!compileState.TryGetValidVarType(functionDeclaration[functionStart++], out t))
                 {
-                    throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                    throw new CompilerException(functionBody[0].FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
                 }
                 /* parameter name and type in order */
                 localVars[functionDeclaration[functionStart]] = new ILParameterInfo(t, ++paramidx);
@@ -873,7 +874,7 @@ namespace SilverSim.Scripting.Lsl
                     ConstructorInfo cInfo = compileState.GetDefaultConstructor(returnType);
                     if(cInfo == null)
                     {
-                        throw CompilerException(functionBody[0], this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
+                        throw new CompilerException(functionBody[0].FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "InternalError", "Internal Error"));
                     }
                     ilgen.Emit(OpCodes.Newobj, cInfo);
                 }
@@ -898,7 +899,7 @@ namespace SilverSim.Scripting.Lsl
 
             if(compileState.HaveMoreLines)
             {
-                throw CompilerException(compileState.FunctionBody[compileState.FunctionBody.Count - 1], this.GetLanguageString(compileState.CurrentCulture, "UnexpectedMoreLinesFollowing", "Unexpected more lines following"));
+                throw new CompilerException(compileState.FunctionBody[compileState.FunctionBody.Count - 1].FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "UnexpectedMoreLinesFollowing", "Unexpected more lines following"));
             }
         }
     }

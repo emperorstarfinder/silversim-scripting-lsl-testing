@@ -22,6 +22,7 @@
 #pragma warning disable IDE0018, RCS1029
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -65,6 +66,7 @@ namespace SilverSim.Scripting.Lsl.Expression
         public EntryType Type /* = EntryType.Unknown */;
         public string Entry = string.Empty;
         public int ParenLevel;
+        public int LineNumber;
 
         public abstract class ValueBase
         {
@@ -146,30 +148,32 @@ namespace SilverSim.Scripting.Lsl.Expression
 
         public Type ValueType => Value?.GetType();
 
-        public Tree()
+        public Tree(int linenumber)
         {
+            LineNumber = linenumber;
             /* intentionally left empty */
         }
 
         /* pre-initializes an expression tree */
-        public Tree(List<string> args)
+        public Tree(List<TokenInfo> args)
         {
             Type = EntryType.ExpressionTree;
+            LineNumber = args.Count > 0 ? args[0].LineNumber : 0;
             Tree nt;
-            foreach(string arg in args)
+            foreach(TokenInfo arg in args)
             {
-                if(arg.StartsWith("\""))
+                if(arg.Token.StartsWith("\""))
                 {
-                    nt = new Tree
+                    nt = new Tree(arg.LineNumber)
                     {
                         Type = EntryType.StringValue,
-                        Entry = arg.Substring(1, arg.Length - 2)
+                        Entry = arg.Token.Substring(1, arg.Length - 2)
                     };
                     SubTree.Add(nt);
                 }
                 else
                 {
-                    nt = new Tree
+                    nt = new Tree(arg.LineNumber)
                     {
                         Type = EntryType.Unknown,
                         Entry = arg
@@ -218,7 +222,7 @@ namespace SilverSim.Scripting.Lsl.Expression
             return o.ToString();
         }
 
-        internal void Process(LSLCompiler.CompileState cs, int lineNumber)
+        internal void Process(LSLCompiler.CompileState cs)
         {
             if(Type == EntryType.StringValue)
             {
@@ -250,7 +254,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 }
                 else
                 {
-                    throw new CompilerException(lineNumber, string.Format("'{0}' is not a value", Entry));
+                    throw new CompilerException(LineNumber, string.Format("'{0}' is not a value", Entry));
                 }
             }
         }

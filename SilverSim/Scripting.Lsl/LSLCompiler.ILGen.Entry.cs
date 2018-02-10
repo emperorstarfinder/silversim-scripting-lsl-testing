@@ -23,6 +23,7 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Common;
 using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
@@ -68,15 +69,15 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (line.Line.Count > 1)
                     {
-                        dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.LineNumber) + indent_header + string.Join(" ", line.Line.GetRange(0, line.Line.Count - 1)));
+                        dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.FirstTokenLineNumber) + indent_header + string.Join(" ", line.Line.GetRange(0, line.Line.Count - 1)));
                     }
-                    dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.LineNumber) + indent_header + "{");
+                    dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.FirstTokenLineNumber) + indent_header + "{");
                     ++indent;
                     indent_header += "  ";
                 }
                 else
                 {
-                    dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.LineNumber) + indent_header + string.Join(" ", line.Line));
+                    dumpILGen.WriteLine(string.Format("{0,5:d}: ", line.FirstTokenLineNumber) + indent_header + string.Join(" ", line.Line));
                 }
             }
         }
@@ -257,7 +258,7 @@ namespace SilverSim.Scripting.Lsl
                         Type varType;
                         if(!compileState.TryGetValidVarType(variableKvp.Value.Line[0], out varType))
                         {
-                            throw CompilerException(variableKvp.Value, "Internal Error");
+                            throw new CompilerException(variableKvp.Value.Line[0].LineNumber, "Internal Error");
                         }
                         FieldBuilder structField = structTypeBuilder.DefineField(variableKvp.Key, varType, FieldAttributes.Public);
                         /* default value */
@@ -565,14 +566,14 @@ namespace SilverSim.Scripting.Lsl
                         Tree expressionTree;
                         try
                         {
-                            expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber, compileState.CurrentCulture);
+                            expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, compileState.CurrentCulture);
                         }
                         catch (Exception e)
                         {
-                            throw CompilerException(initargs, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
+                            throw new CompilerException(initargs.FirstTokenLineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
                         }
 
-                        if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.LineNumber))
+                        if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.FirstTokenLineNumber))
                         {
                             dumpILGen?.WriteLine("-- Init var " + varName);
 
@@ -582,7 +583,6 @@ namespace SilverSim.Scripting.Lsl
                                 compileState,
                                 fb.FieldType,
                                 expressionTree,
-                                initargs.LineNumber,
                                 typeLocals);
                             if (modified == ResultIsModifiedEnum.Yes)
                             {
@@ -601,7 +601,6 @@ namespace SilverSim.Scripting.Lsl
                                 compileState,
                                 fb.FieldType,
                                 expressionTree,
-                                initargs.LineNumber,
                                 typeLocals);
                             if (modified == ResultIsModifiedEnum.Yes)
                             {
@@ -637,7 +636,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         MethodBuilder method;
                         Type returnType;
-                        List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
+                        List<TokenInfo> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
                         int functionStart = 3;
 
@@ -665,7 +664,7 @@ namespace SilverSim.Scripting.Lsl
                             Type paramType;
                             if(!compileState.TryGetValidVarType(functionDeclaration[functionStart++], out paramType))
                             {
-                                throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
+                                throw new CompilerException(functionDeclaration[functionStart - 1].LineNumber, "Internal Error");
                             }
                             paramTypes.Add(paramType);
                             paramName.Add(functionDeclaration[functionStart++]);
@@ -695,7 +694,7 @@ namespace SilverSim.Scripting.Lsl
                         MethodBuilder method = funcInfo.Method;
 
                         Type returnType;
-                        List<string> functionDeclaration = funcInfo.FunctionLines[0].Line;
+                        List<TokenInfo> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
                         int functionStart = 3;
 
@@ -732,7 +731,7 @@ namespace SilverSim.Scripting.Lsl
                             Type paramType;
                             if(!compileState.TryGetValidVarType(functionDeclaration[functionStart++], out paramType))
                             {
-                                throw CompilerException(funcInfo.FunctionLines[0], "Internal Error");
+                                throw new CompilerException(functionDeclaration[functionStart - 1].LineNumber, "Internal Error");
                             }
                             paramTypes.Add(paramType);
                             paramName.Add(functionDeclaration[functionStart++]);
@@ -927,14 +926,14 @@ namespace SilverSim.Scripting.Lsl
                     Tree expressionTree;
                     try
                     {
-                        expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, initargs.LineNumber, compileState.CurrentCulture);
+                        expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, compileState.CurrentCulture);
                     }
                     catch (Exception e)
                     {
-                        throw CompilerException(initargs, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of state variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
+                        throw new CompilerException(initargs.FirstTokenLineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of state variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
                     }
 
-                    if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.LineNumber))
+                    if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.FirstTokenLineNumber))
                     {
                         if (compileState.ILGen.HaveDebugOut)
                         {
@@ -946,7 +945,6 @@ namespace SilverSim.Scripting.Lsl
                             compileState,
                             fb.FieldType,
                             expressionTree,
-                            initargs.LineNumber,
                             typeLocals);
                         if (modified == ResultIsModifiedEnum.Yes)
                         {
