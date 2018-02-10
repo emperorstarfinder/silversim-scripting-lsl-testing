@@ -524,7 +524,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
                         }
-                        if(1 > args.Count - 3)
+                        if(args.Count < 4)
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "IncompleteEventSignature", "Incomplete event signature."));
                         }
