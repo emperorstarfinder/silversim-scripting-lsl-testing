@@ -247,6 +247,10 @@ namespace SilverSim.Scripting.Lsl
             public string MapType(Type t)
             {
                 string res;
+                if(t == null)
+                {
+                    return "<unresolved>";
+                }
                 if(!m_ReverseTypeDeclarations.TryGetValue(t, out res))
                 {
                     res = t == typeof(bool) ? "boolean" : "???";
