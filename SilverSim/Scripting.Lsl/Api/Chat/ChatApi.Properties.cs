@@ -68,48 +68,58 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         public ScriptChannel GetChannel(int channel) => new ScriptChannel { Number = channel };
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "PublicChannel")]
-        public ScriptChannel GetPublicChannel(int channel) => new ScriptChannel { Number = PUBLIC_CHANNEL };
+        public ScriptChannel GetPublicChannel() => new ScriptChannel { Number = PUBLIC_CHANNEL };
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "DebugChannel")]
-        public ScriptChannel GetDebugChannel(int channel) => new ScriptChannel { Number = DEBUG_CHANNEL };
+        public ScriptChannel GetDebugChannel() => new ScriptChannel { Number = DEBUG_CHANNEL };
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Shout")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Shout(ScriptInstance instance, ScriptChannel channel, string message) =>
             Shout(instance, channel.Number, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Shout")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Shout(ScriptInstance instance, ListenHandle handle, string message) =>
             Shout(instance, handle.Channel, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Say")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Say(ScriptInstance instance, ScriptChannel channel, string message) =>
             Say(instance, channel.Number, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Say")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Say(ScriptInstance instance, ListenHandle handle, string message) =>
             Say(instance, handle.Channel, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Whisper")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Whisper(ScriptInstance instance, ScriptChannel channel, string message) =>
             Say(instance, channel.Number, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Whisper")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Whisper(ScriptInstance instance, ListenHandle handle, string message) =>
             Say(instance, handle.Channel, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "RegionSay")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void RegionSay(ScriptInstance instance, ScriptChannel channel, string message) =>
             RegionSay(instance, channel.Number, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "RegionSay")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void RegionSay(ScriptInstance instance, ListenHandle handle, string message) =>
             RegionSay(instance, handle.Channel, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "RegionSayTo")]
+        [AllowExplicitTypecastsBeImplicitToString(3)]
         public void RegionSayTo(ScriptInstance instance, ScriptChannel channel, LSLKey target, string message) =>
             RegionSayTo(instance, target, channel.Number, message);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "RegionSayTo")]
+        [AllowExplicitTypecastsBeImplicitToString(3)]
         public void RegionSayTo(ScriptInstance instance, ListenHandle handle, LSLKey target, string message) =>
             RegionSayTo(instance, target, handle.Channel, message);
 
