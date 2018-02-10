@@ -2890,7 +2890,7 @@ namespace SilverSim.Scripting.Lsl
             SolveTree(cs, expressionTree, lineNumber, currentCulture);
             if (expressionTree.SubTree.Count != 1)
             {
-                throw new CompilerException(lineNumber, "Internal Error! Expression tree not solved");
+                throw new CompilerException(lineNumber, this.GetLanguageString(cs.CurrentCulture, "SyntaxError", "Syntax Error"));
             }
             IdentifyMemberFunctions(cs, expressionTree, lineNumber, currentCulture);
             return expressionTree;
