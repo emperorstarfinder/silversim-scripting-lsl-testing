@@ -321,3 +321,4 @@ CannotInclude0=Konnte '{0}' nicht per #include öffnen.
 InvalidArgumentsToInclude=Ungültige Argumente für #include
 Variable0HasACircularReference=Variable '{0}' referenziert sich selbst bei der Initialisierung.
 SyntaxError=Syntaxfehler
+UsedType0InPlaceOfAVariable=Typ '{0}' anstelle einer Variable verwendet.

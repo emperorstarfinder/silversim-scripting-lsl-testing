@@ -2871,7 +2871,14 @@ namespace SilverSim.Scripting.Lsl
                         {
                             msg.Append("\n");
                         }
-                        msg.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
+                        if (cs.ContainsValidVarType(entry))
+                        {
+                            msg.AppendFormat(this.GetLanguageString(currentCulture, "UsedType0InPlaceOfAVariable", "Used type '{0}' in place of a variable."), entry);
+                        }
+                        else
+                        {
+                            msg.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
+                        }
                     }
                 }
                 st.Process(cs);
