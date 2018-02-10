@@ -9,6 +9,7 @@ Param0DoesNotMatchInParameterTypes1='{0}' does not match in parameter types. Ref
 Param0DoesNotHaveTheCorrectParameters1='{0}' does not have the correct parameters. Reference: {0}({1})
 InternalParserError=Internal parser error.
 Name0IsNotAValidEvent='{0}' is not a valid event.
+IncompleteEventSignature=Incomplete event signature.
 StateVarMustBeFollowedByOffendingState0=State variable name must be followed by ';' or '='. Offending state {0}.
 NeitherVarDeclarationsNorStatementsOutsideofEventsOffendingState0=Neither variable declarations nor statements allowed outside of event functions. Offending state {0}.
 NoStatementsOutsideofEventsOffendingState0=No statements allowed outside of event functions. Offending state {0}.

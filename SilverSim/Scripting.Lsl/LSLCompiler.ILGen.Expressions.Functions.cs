@@ -121,11 +121,11 @@ namespace SilverSim.Scripting.Lsl
                     {
                         if (functionTree.SubTree.Count == 1)
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter: {2}"), functionTree.Entry, functionTree.SubTree.Count));
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter"), functionTree.Entry, functionTree.SubTree.Count));
                         }
                         else
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters: {2}"), functionTree.Entry, functionTree.SubTree.Count));
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters"), functionTree.Entry, functionTree.SubTree.Count));
                         }
                     }
                 }

@@ -524,6 +524,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
                         }
+                        if(1 > args.Count - 3)
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "IncompleteEventSignature", "Incomplete event signature."));
+                        }
                         List<FuncParamInfo> fp = CheckFunctionParameters(compileState, p, args.GetRange(2, args.Count - 3));
                         MethodInfo m = compileState.ApiInfo.EventDelegates[args[0]];
                         ParameterInfo[] pi = m.GetParameters();
