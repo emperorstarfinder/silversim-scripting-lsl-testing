@@ -43,6 +43,22 @@ namespace SilverSim.Scripting.Lsl
             return new CompilerException(lineno, message);
         }
 
+        private bool IsValidVarName(string name)
+        {
+            if (name[0] != '_' && !(name[0] >= 'a' && name[0] <= 'z') && !(name[0] >= 'A' && name[0] <= 'Z') && name[0] != '_' && name[0] != '$')
+            {
+                return false;
+            }
+            foreach (char c in name.Substring(1))
+            {
+                if (!(name[0] >= 'a' && name[0] <= 'z') && !(name[0] >= 'A' && name[0] <= 'Z') && name[0] != '_' && name[0] != '$')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void CheckValidName(CompileState cs, Parser p, string type, string name)
         {
             string ltype = type.Replace(" ", "");
@@ -67,9 +83,7 @@ namespace SilverSim.Scripting.Lsl
         {
             string ltype = type.Replace(" ", "");
             CheckValidName(cs, p, type, name);
-            if (m_ReservedWords.Contains(name) ||
-                (cs.LanguageExtensions.EnableSwitchBlock && (name == "switch" || name == "case" || name == "break")) ||
-                (cs.LanguageExtensions.EnableBreakContinueStatement && (name == "break" || name == "continue")))
+            if (cs.IsReservedWord(name))
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAReservedWord", type + " cannot be declared as '{0}'. '{0}' is a reserved word."), name));
             }
@@ -79,9 +93,7 @@ namespace SilverSim.Scripting.Lsl
         {
             string ltype = type.Replace(" ", "");
             CheckValidName(cs, p, type, name);
-            if (m_ReservedWords.Contains(name) ||
-                (cs.LanguageExtensions.EnableSwitchBlock && (name == "switch" || name == "case" || name == "break")) ||
-                (cs.LanguageExtensions.EnableBreakContinueStatement && (name == "break" || name == "continue")))
+            if (cs.IsReservedWord(name))
             {
                 throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, ltype + "CannotBeDeclaredAs0IsAReservedWord", type + " cannot be declared as '{0}'. '{0}' is a reserved word."), name));
             }

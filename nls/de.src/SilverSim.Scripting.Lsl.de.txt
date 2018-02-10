@@ -323,3 +323,4 @@ Variable0HasACircularReference=Variable '{0}' referenziert sich selbst bei der I
 SyntaxError=Syntaxfehler
 UsedType0InPlaceOfAVariable=Typ '{0}' anstelle einer Variable verwendet.
 ReturnIsMissingReturnValue='return' hat keinen Rückgabewert.
+Used0InPlaceOfAVariable='{0}' anstelle einer Variable angegeben.

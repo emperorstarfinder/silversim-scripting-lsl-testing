@@ -120,6 +120,12 @@ namespace SilverSim.Scripting.Lsl
             public List<LineInfo> FunctionBody;
             public int FunctionLineIndex;
 
+            public bool IsReservedWord(string entry)
+            {
+                return m_ReservedWords.Contains(entry) ||
+                                (LanguageExtensions.EnableSwitchBlock && (entry == "switch" || entry == "case" || entry == "break")) ||
+                                (LanguageExtensions.EnableBreakContinueStatement && (entry == "break" || entry == "continue"));
+            }
             public class LanguageExtensionsData
             {
                 public bool EnableExtendedTypecasts;

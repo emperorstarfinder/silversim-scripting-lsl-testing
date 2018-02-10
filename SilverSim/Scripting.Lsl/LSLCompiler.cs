@@ -170,7 +170,7 @@ namespace SilverSim.Scripting.Lsl
         private readonly Dictionary<string, Action<ScriptInstance, List<object>>> m_ScriptDeserializeDelegates = new Dictionary<string, Action<ScriptInstance, List<object>>>();
         private readonly List<Action<ScriptInstance, List<object>>> m_ScriptSerializeDelegates = new
             List<Action<ScriptInstance, List<object>>>();
-        private readonly List<string> m_ReservedWords = new List<string>();
+        private static readonly List<string> m_ReservedWords = new List<string>();
         private readonly List<char> m_SingleOps = new List<char>();
         private readonly List<char> m_MultiOps = new List<char>();
         private readonly List<char> m_NumericChars = new List<char>();
@@ -190,14 +190,6 @@ namespace SilverSim.Scripting.Lsl
         static LSLCompiler()
         {
             NegativeZero *= -1.0;
-        }
-
-        public LSLCompiler(IConfig config)
-        {
-            DebugDiagnosticOutput = config.GetBoolean("DebugDiagnosticOutput", false);
-            m_ApiInfos.Add(APIFlags.ASSL, new ApiInfo());
-            m_ApiInfos.Add(APIFlags.LSL, new ApiInfo());
-            m_ApiInfos.Add(APIFlags.OSSL, new ApiInfo());
 
             m_ReservedWords.Add("if");
             m_ReservedWords.Add("while");
@@ -207,6 +199,14 @@ namespace SilverSim.Scripting.Lsl
             m_ReservedWords.Add("return");
             m_ReservedWords.Add("state");
             m_ReservedWords.Add("event");
+        }
+
+        public LSLCompiler(IConfig config)
+        {
+            DebugDiagnosticOutput = config.GetBoolean("DebugDiagnosticOutput", false);
+            m_ApiInfos.Add(APIFlags.ASSL, new ApiInfo());
+            m_ApiInfos.Add(APIFlags.LSL, new ApiInfo());
+            m_ApiInfos.Add(APIFlags.OSSL, new ApiInfo());
 
             m_MultiOps.Add('+');
             m_MultiOps.Add('-');

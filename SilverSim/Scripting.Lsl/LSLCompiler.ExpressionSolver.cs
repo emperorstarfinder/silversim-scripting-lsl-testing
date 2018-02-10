@@ -2875,6 +2875,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             msg.AppendFormat(this.GetLanguageString(currentCulture, "UsedType0InPlaceOfAVariable", "Used type '{0}' in place of a variable."), entry);
                         }
+                        else if(!IsValidVarName(entry) || cs.IsReservedWord(entry))
+                        {
+                            msg.AppendFormat(this.GetLanguageString(currentCulture, "Used0InPlaceOfAVariable", "Used '{0}' in place of a variable."), entry);
+                        }
                         else
                         {
                             msg.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
