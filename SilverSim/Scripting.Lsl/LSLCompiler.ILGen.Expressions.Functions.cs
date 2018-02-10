@@ -119,18 +119,13 @@ namespace SilverSim.Scripting.Lsl
                     }
                     if (m_SelectedFunctions.Count == 0)
                     {
-                        var parameterTypeNames = new List<string>();
-                        foreach (FunctionParameterInfo paramInfo in m_Parameters)
-                        {
-                            parameterTypeNames.Add(compileState.MapType(paramInfo.ParameterType));
-                        }
                         if (functionTree.SubTree.Count == 1)
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter2", "Parameter mismatch at function {0}: no function variant takes {1} parameter: {2}"), functionTree.Entry, functionTree.SubTree.Count, string.Join(",", parameterTypeNames)));
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameter", "Parameter mismatch at function {0}: no function variant takes {1} parameter: {2}"), functionTree.Entry, functionTree.SubTree.Count));
                         }
                         else
                         {
-                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters2", "Parameter mismatch at function {0}: no function variant takes {1} parameters: {2}"), functionTree.Entry, functionTree.SubTree.Count, string.Join(",", parameterTypeNames)));
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtFunction0Parameters", "Parameter mismatch at function {0}: no function variant takes {1} parameters: {2}"), functionTree.Entry, functionTree.SubTree.Count));
                         }
                     }
                 }
