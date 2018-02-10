@@ -60,6 +60,17 @@ namespace SilverSim.Scripting.Lsl
     {
     }
 
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class AllowExplicitTypecastsBeImplicitToStringAttribute : Attribute
+    {
+        public int[] ParameterNumbers { get; }
+        public AllowExplicitTypecastsBeImplicitToStringAttribute(params int[] parameternumbers)
+        {
+            ParameterNumbers = parameternumbers;
+        }
+    }
+
     public interface IAPIDeclaration
     {
         string Name { get; }

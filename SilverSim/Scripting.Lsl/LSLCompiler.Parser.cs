@@ -639,6 +639,7 @@ namespace SilverSim.Scripting.Lsl
             compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = false;
             compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
             compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
+            compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
             foreach (KeyValuePair<int, string> shbang in shbangs)
             {
                 if (shbang.Value.StartsWith("//#!Mode:"))
@@ -653,6 +654,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.LanguageExtensions.EnableFunctionOverloading = false;
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = false;
                         compileState.LanguageExtensions.EnableLogicalModifyAssignments = false;
+                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = false;
                     }
                     else if(mode == "ossl")
                     {
@@ -661,6 +663,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ForcedSleepDefault = true;
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
                         compileState.LanguageExtensions.EnableFunctionOverloading = true;
+                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
                     }
                     else if (mode == "assl")
                     {
@@ -674,6 +677,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.LanguageExtensions.EnableArrayThisOperator = true;
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
                         compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
+                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
                         if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
                         {
                             apiExtensions.Add(APIExtension.LongInteger.ToLower());
@@ -699,6 +703,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ForcedSleepDefault = true;
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
                         compileState.LanguageExtensions.EnableFunctionOverloading = true;
+                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
                     }
                 }
                 else if (shbang.Value.StartsWith("//#!Enable:"))

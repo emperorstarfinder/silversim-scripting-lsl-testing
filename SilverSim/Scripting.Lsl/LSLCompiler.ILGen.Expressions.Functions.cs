@@ -26,6 +26,7 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -328,6 +329,7 @@ namespace SilverSim.Scripting.Lsl
                 if (t == typeof(ApiMethodInfo))
                 {
                     var methodInfo = (ApiMethodInfo)o;
+                    var attr = Attribute.GetCustomAttribute(methodInfo.Method, typeof(AllowExplicitTypecastsBeImplicitToStringAttribute)) as AllowExplicitTypecastsBeImplicitToStringAttribute;
                     ParameterInfo[] pi = methodInfo.Method.GetParameters();
                     if (pi.Length > 0 && pi[0].ParameterType == typeof(ScriptInstance))
                     {
@@ -337,7 +339,11 @@ namespace SilverSim.Scripting.Lsl
                             Type destType = pi[i + 1].ParameterType;
                             if (sourceType != destType)
                             {
-                                if (!IsImplicitlyCastable(compileState, destType, sourceType))
+                                if(compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
+                                {
+                                    /* is castable by attribute */
+                                }
+                                else if (!IsImplicitlyCastable(compileState, destType, sourceType))
                                 {
                                     return false;
                                 }
@@ -356,7 +362,11 @@ namespace SilverSim.Scripting.Lsl
                             Type destType = pi[i].ParameterType;
                             if (sourceType != destType)
                             {
-                                if (!IsImplicitlyCastable(compileState, destType, sourceType))
+                                if (compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
+                                {
+                                    /* is castable by attribute */
+                                }
+                                else if (!IsImplicitlyCastable(compileState, destType, sourceType))
                                 {
                                     return false;
                                 }
@@ -454,6 +464,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     var apiMethod = (ApiMethodInfo)o;
                     MethodInfo methodInfo = apiMethod.Method;
+                    var castImplicitToStringAttr = (AllowExplicitTypecastsBeImplicitToStringAttribute)Attribute.GetCustomAttribute(apiMethod.Method, typeof(AllowExplicitTypecastsBeImplicitToStringAttribute));
                     var apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
                     var threatLevelAttr = (ThreatLevelRequiredAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ThreatLevelRequiredAttribute));
 
@@ -496,7 +507,14 @@ namespace SilverSim.Scripting.Lsl
                         for (int i = 0; i < lbs.Length; ++i)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
-                            ProcessImplicitCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                            if (castImplicitToStringAttr != null && castImplicitToStringAttr.ParameterNumbers.Contains(i + 1))
+                            {
+                                ProcessCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                            }
+                            else
+                            {
+                                ProcessImplicitCasts(compileState, parameters[i + 1].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                            }
                         }
                     }
                     else
@@ -505,7 +523,14 @@ namespace SilverSim.Scripting.Lsl
                         for (int i = 0; i < lbs.Length; ++i)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
-                            ProcessImplicitCasts(compileState, parameters[i].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                            if (castImplicitToStringAttr != null && castImplicitToStringAttr.ParameterNumbers.Contains(i + 1))
+                            {
+                                ProcessCasts(compileState, parameters[i].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                            }
+                            else
+                            {
+                                ProcessImplicitCasts(compileState, parameters[i].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                            }
                         }
                     }
 

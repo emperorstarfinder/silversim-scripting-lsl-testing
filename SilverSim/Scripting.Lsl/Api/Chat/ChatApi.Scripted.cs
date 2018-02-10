@@ -38,6 +38,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         public delegate void State_listen(int channel, string name, LSLKey id, string message);
 
         [APILevel(APIFlags.LSL, "llShout")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Shout(ScriptInstance instance, int channel, string message)
         {
             var ev = new ListenEvent
@@ -52,6 +53,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.ASSL, "llShout")]
+        [AllowExplicitTypecastsBeImplicitToString(1)]
         public void Shout(ScriptInstance instance, string message)
         {
             var ev = new ListenEvent
@@ -66,6 +68,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llSay")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Say(ScriptInstance instance, int channel, string message)
         {
             var ev = new ListenEvent
@@ -80,6 +83,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.ASSL, "llSay")]
+        [AllowExplicitTypecastsBeImplicitToString(1)]
         public void Say(ScriptInstance instance, string message)
         {
             var ev = new ListenEvent
@@ -94,6 +98,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llWhisper")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void Whisper(ScriptInstance instance, int channel, string message)
         {
             var ev = new ListenEvent
@@ -108,6 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.ASSL, "llWhisper")]
+        [AllowExplicitTypecastsBeImplicitToString(1)]
         public void Whisper(ScriptInstance instance, string message)
         {
             var ev = new ListenEvent
@@ -122,6 +128,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llOwnerSay")]
+        [AllowExplicitTypecastsBeImplicitToString(1)]
         public void OwnerSay(ScriptInstance instance, string message)
         {
             lock (instance)
@@ -140,6 +147,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llRegionSay")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void RegionSay(ScriptInstance instance, int channel, string message)
         {
             if (channel != PUBLIC_CHANNEL)
@@ -157,6 +165,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.LSL, "llRegionSayTo")]
+        [AllowExplicitTypecastsBeImplicitToString(3)]
         public void RegionSayTo(ScriptInstance instance, LSLKey target, int channel, string message)
         {
             var ev = new ListenEvent
@@ -172,6 +181,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         }
 
         [APILevel(APIFlags.ASSL, "llRegionSayTo")]
+        [AllowExplicitTypecastsBeImplicitToString(2)]
         public void RegionSayTo(ScriptInstance instance, LSLKey target, string message)
         {
             var ev = new ListenEvent

@@ -146,6 +146,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableNonFirstDefaultState;
 
                 public bool EnableLogicalModifyAssignments;
+
+                public bool EnableAllowImplicitCastToString;
             }
 
             public bool UsesSinglePrecision;

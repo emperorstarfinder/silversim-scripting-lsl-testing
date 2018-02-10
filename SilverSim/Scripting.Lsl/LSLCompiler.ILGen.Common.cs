@@ -747,6 +747,26 @@ namespace SilverSim.Scripting.Lsl
             return sb.ToString();
         }
 
+        internal static bool IsExplicitlyCastableToString(CompileState compileState, Type fromType)
+        {
+            if(IsImplicitlyCastable(compileState, typeof(string), fromType))
+            {
+                return true;
+            }
+            else if(fromType == typeof(double) || fromType == typeof(int) ||
+                fromType == typeof(long) || fromType == typeof(AnArray) || fromType == typeof(Quaternion) ||
+                fromType == typeof(Vector3))
+            {
+                return true;
+            }
+
+            Dictionary<Type, MethodInfo> toDict;
+            MethodInfo mi;
+            return compileState.ApiInfo.Typecasts.TryGetValue(fromType, out toDict) &&
+                toDict.TryGetValue(typeof(string), out mi) &&
+                mi.Name == "op_Explicit";
+        }
+
         internal static bool IsImplicitlyCastable(CompileState compileState, Type toType, Type fromType)
         {
             if(fromType == toType ||
