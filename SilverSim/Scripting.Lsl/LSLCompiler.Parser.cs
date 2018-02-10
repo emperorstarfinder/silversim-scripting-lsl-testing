@@ -529,14 +529,24 @@ namespace SilverSim.Scripting.Lsl
                         ParameterInfo[] pi = m.GetParameters();
                         if (fp.Count != pi.Length)
                         {
-                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Param0DoesNotHaveTheCorrectParameters", "'{0}' does not have the correct parameters."), args[0]));
+                            var parameterNames = new List<string>();
+                            foreach(ParameterInfo it in pi)
+                            {
+                                parameterNames.Add(compileState.MapType(it.ParameterType) + " " + it.Name);
+                            }
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Param0DoesNotHaveTheCorrectParameters1", "'{0}' does not have the correct parameters. Reference: {0}({1})"), args[0], string.Join(",", parameterNames)));
                         }
                         int i;
                         for (i = 0; i < fp.Count; ++i)
                         {
                             if (!fp[i].Type.Equals(pi[i].ParameterType))
                             {
-                                throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Param0DoesNotMatchInParameterTypes", "'{0}' does not match in parameter types"), args[0]));
+                                var parameterNames = new List<string>();
+                                foreach (ParameterInfo it in pi)
+                                {
+                                    parameterNames.Add(compileState.MapType(it.ParameterType) + " " + it.Name);
+                                }
+                                throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Param0DoesNotMatchInParameterTypes1", "'{0}' does not match in parameter types. Reference: {0}({1})"), args[0], string.Join(",", parameterNames)));
                             }
                         }
                         if (compileState.m_States[stateName].ContainsKey(args[0]))

@@ -5,6 +5,8 @@ State0DoesNotHaveAnyEvents=State '{0}' does not have any events.
 Event0AlreadyDefined=Event '{0}' already defined
 Param0DoesNotMatchInParameterTypes='{0}' does not match in parameter types.
 Param0DoesNotHaveTheCorrectParameters='{0}' does not have the correct parameters.
+Param0DoesNotMatchInParameterTypes1='{0}' does not match in parameter types. Reference: {0}({1})
+Param0DoesNotHaveTheCorrectParameters1='{0}' does not have the correct parameters. Reference: {0}({1})
 InternalParserError=Internal parser error.
 Name0IsNotAValidEvent='{0}' is not a valid event.
 StateVarMustBeFollowedByOffendingState0=State variable name must be followed by ';' or '='. Offending state {0}.
