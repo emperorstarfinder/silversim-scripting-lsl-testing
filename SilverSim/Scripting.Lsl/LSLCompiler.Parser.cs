@@ -712,44 +712,21 @@ namespace SilverSim.Scripting.Lsl
                     {
                         windLightApiType = string.Empty;
                         acceptedFlags = APIFlags.LSL;
-                        compileState.ForcedSleepDefault = true;
-                        compileState.LanguageExtensions.EnableFunctionOverloading = false;
-                        compileState.LanguageExtensions.EnableNonFirstDefaultState = false;
-                        compileState.LanguageExtensions.EnableLogicalModifyAssignments = false;
-                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = false;
                     }
                     else if(mode == "ossl")
                     {
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
-                        compileState.ForcedSleepDefault = true;
-                        compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
-                        compileState.LanguageExtensions.EnableFunctionOverloading = true;
-                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
                     }
                     else if (mode == "assl")
                     {
                         windLightApiType = APIExtension.LightShare;
                         acceptedFlags = APIFlags.ASSL | APIFlags.OSSL | APIFlags.LSL;
-                        compileState.LanguageExtensions.EnableExtendedTypecasts = true;
-                        compileState.LanguageExtensions.EnableStateVariables = true;
-                        compileState.LanguageExtensions.EnableBreakContinueStatement = true;
-                        compileState.LanguageExtensions.EnableSwitchBlock = true;
-                        compileState.ForcedSleepDefault = false;
-                        compileState.LanguageExtensions.EnableArrayThisOperator = true;
-                        compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
-                        compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
-                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
-                        compileState.LanguageExtensions.EnableFunctionOverloading = true;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
                     {
                         windLightApiType = APIExtension.WindLight_Aurora;
                         acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
-                        compileState.ForcedSleepDefault = true;
-                        compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
-                        compileState.LanguageExtensions.EnableFunctionOverloading = true;
-                        compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
                     }
                 }
                 else if (shbang.Value.StartsWith("//#!Enable:"))
@@ -766,8 +743,25 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            if((acceptedFlags & APIFlags.ASSL) != 0)
+            if((acceptedFlags & (APIFlags.OSSL | APIFlags.ASSL)) != 0)
             {
+                compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
+                compileState.LanguageExtensions.EnableFunctionOverloading = true;
+                compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
+                compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
+                compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
+                compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
+            }
+
+            if ((acceptedFlags & APIFlags.ASSL) != 0)
+            {
+                compileState.LanguageExtensions.EnableExtendedTypecasts = true;
+                compileState.LanguageExtensions.EnableStateVariables = true;
+                compileState.LanguageExtensions.EnableBreakContinueStatement = true;
+                compileState.LanguageExtensions.EnableSwitchBlock = true;
+                compileState.ForcedSleepDefault = false;
+                compileState.LanguageExtensions.EnableArrayThisOperator = true;
+
                 if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
                 {
                     apiExtensions.Add(APIExtension.LongInteger.ToLower());
@@ -789,11 +783,6 @@ namespace SilverSim.Scripting.Lsl
                     apiExtensions.Add(APIExtension.CharacterType.ToLower());
                 }
                 compileState.LanguageExtensions.EnableForeach = true;
-            }
-
-            if ((acceptedFlags & APIFlags.OSSL) != 0 || (acceptedFlags & APIFlags.ASSL) != 0)
-            {
-                compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
             }
 
             if (apiExtensions.Contains(APIExtension.Structs.ToLower()))

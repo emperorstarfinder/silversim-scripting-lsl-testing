@@ -94,7 +94,7 @@ namespace SilverSim.Scripting.Lsl
         {
             public ApiInfo ApiInfo = new ApiInfo();
             public readonly CultureInfo CurrentCulture;
-            public bool ForcedSleepDefault;
+            public bool ForcedSleepDefault = true;
             public bool EmitDebugSymbols;
             public Dictionary<string, Type> m_VariableDeclarations = new Dictionary<string, Type>();
             public Dictionary<string, Dictionary<string, Type>> m_StateVariableDeclarations = new Dictionary<string, Dictionary<string, Type>>();
@@ -131,7 +131,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 public bool EnableExtendedTypecasts;
                 /** <summary>Enables a rather unknown function overloading support that happen to exist within OpenSim's XEngine</summary> */
-                public bool EnableFunctionOverloading = true;
+                public bool EnableFunctionOverloading;
 
                 public bool EnableStateVariables;
 
