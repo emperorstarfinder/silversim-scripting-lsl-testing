@@ -887,6 +887,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidDefaultStateDeclaration", "Invalid default state declaration"));
                         }
+                        if (compileState.m_States.ContainsKey("default"))
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "StateDefinitionCannotBeDeclaredTwice", "state definition cannot be declared twice"));
+                        }
                         ParseState(compileState, p, "default");
                     }
                     else if(args[0] == "struct" && compileState.LanguageExtensions.EnableStructTypes)
