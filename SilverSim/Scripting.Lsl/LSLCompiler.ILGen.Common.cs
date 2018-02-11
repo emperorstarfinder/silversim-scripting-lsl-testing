@@ -777,6 +777,7 @@ namespace SilverSim.Scripting.Lsl
                 (fromType == typeof(int) && toType == typeof(double)) ||
                 (fromType == typeof(long) && toType == typeof(double)) ||
                 (fromType == typeof(int) && toType == typeof(long)) ||
+                (fromType == typeof(char) && toType == typeof(string)) ||
                 toType == typeof(AnArray) ||
                 toType == typeof(bool))
             {
@@ -859,6 +860,22 @@ namespace SilverSim.Scripting.Lsl
                 {
                     compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
                 }
+                else if(fromType == typeof(char))
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) }));
+                }
+                else
+                {
+                    throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
+                }
+            }
+            else if(toType == typeof(char))
+            {
+                if(fromType == typeof(int))
+                {
+                    /* no-op */
+                }
                 else
                 {
                     throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
@@ -899,6 +916,10 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Callvirt, typeof(LSLKey).GetMethod("ToString", Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("ConvToInt", new Type[] { typeof(string) }));
                 }
+                else if(fromType == typeof(char))
+                {
+                    /* basically a no-op */
+                }
                 else
                 {
                     throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
@@ -914,7 +935,7 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Ceq);
                 }
-                else if (fromType == typeof(int))
+                else if (fromType == typeof(int) || fromType == typeof(char))
                 {
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Ceq);

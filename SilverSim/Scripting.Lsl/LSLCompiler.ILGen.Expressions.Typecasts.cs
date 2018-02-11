@@ -47,6 +47,10 @@ namespace SilverSim.Scripting.Lsl
                         m_TargetType = typeof(long);
                         break;
 
+                    case "(char)":
+                        m_TargetType = typeof(char);
+                        break;
+
                     case "(integer)":
                         m_TargetType = typeof(int);
                         break;

@@ -52,7 +52,6 @@ namespace SilverSim.Scripting.Lsl
 
             private readonly List<FunctionParameterInfo> m_Parameters = new List<FunctionParameterInfo>();
             private int m_ParameterPos;
-            private readonly List<object> m_SelectedFunctions = new List<object>();
 
             private readonly string m_FunctionName;
             private readonly int m_LineNumber;
@@ -118,12 +117,12 @@ namespace SilverSim.Scripting.Lsl
 
             private Type GenerateFunctionCall(CompileState compileState)
             {
-                List<Type> exactTypes = new List<Type>();
+                var exactTypes = new List<Type>();
                 MethodInfo mi;
 
                 if (m_Parameters[0].ParameterType == typeof(AnArray))
                 {
-                    exactTypes.Add(typeof(AnArray));
+                    exactTypes.Add(m_Parameters[0].ParameterType);
                     for (int i = 1; i < m_Parameters.Count; ++i)
                     {
                         exactTypes.Add(m_Parameters[i].ParameterType);
@@ -135,6 +134,41 @@ namespace SilverSim.Scripting.Lsl
 
                     mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, exactTypes.ToArray(), null);
                     if(mi == null)
+                    {
+                        if (exactTypes.Count == 2)
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtThisOperator0Parameter", "Parameter mismatch at this operator {0}: no this variant takes {1} parameter"), m_FunctionName, m_Parameters.Count));
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ParameterMismatchAtThisOperator0Parameters", "Parameter mismatch at this operator {0}: no this variant takes {1} parameters"), m_FunctionName, m_Parameters.Count));
+                        }
+                    }
+
+                    if (mi.IsVirtual)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Callvirt, mi);
+                    }
+                    else
+                    {
+                        compileState.ILGen.Emit(OpCodes.Call, mi);
+                    }
+                    return mi.ReturnType;
+                }
+                else if (m_Parameters[0].ParameterType == typeof(string))
+                {
+                    exactTypes.Add(m_Parameters[0].ParameterType);
+                    for (int i = 1; i < m_Parameters.Count; ++i)
+                    {
+                        exactTypes.Add(m_Parameters[i].ParameterType);
+                    }
+                    if (!compileState.LanguageExtensions.EnableArrayThisOperator)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ThisOperatorNotSupportedForType0", "This operator not supported for type {0}"), compileState.MapType(m_Parameters[0].ParameterType)));
+                    }
+
+                    mi = typeof(LSLCompiler).GetMethod("GetStringElement", BindingFlags.Static | BindingFlags.Public, null, exactTypes.ToArray(), null);
+                    if (mi == null)
                     {
                         if (exactTypes.Count == 2)
                         {

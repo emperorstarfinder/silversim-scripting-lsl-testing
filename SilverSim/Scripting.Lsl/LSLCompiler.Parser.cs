@@ -704,22 +704,6 @@ namespace SilverSim.Scripting.Lsl
                         compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
                         compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
                         compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
-                        if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
-                        {
-                            apiExtensions.Add(APIExtension.LongInteger.ToLower());
-                        }
-                        if (!apiExtensions.Contains(APIExtension.Properties.ToLower()))
-                        {
-                            apiExtensions.Add(APIExtension.Properties.ToLower());
-                        }
-                        if(!apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
-                        {
-                            apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
-                        }
-                        if(!apiExtensions.Contains(APIExtension.Structs.ToLower()))
-                        {
-                            apiExtensions.Add(APIExtension.Structs.ToLower());
-                        }
                         compileState.LanguageExtensions.EnableFunctionOverloading = true;
                     }
                     else if (mode == "aurora" || mode == "whitecore")
@@ -746,7 +730,31 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            if((acceptedFlags & APIFlags.OSSL) != 0 || (acceptedFlags & APIFlags.ASSL) != 0)
+            if((acceptedFlags & APIFlags.ASSL) != 0)
+            {
+                if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
+                {
+                    apiExtensions.Add(APIExtension.LongInteger.ToLower());
+                }
+                if (!apiExtensions.Contains(APIExtension.Properties.ToLower()))
+                {
+                    apiExtensions.Add(APIExtension.Properties.ToLower());
+                }
+                if (!apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
+                {
+                    apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
+                }
+                if (!apiExtensions.Contains(APIExtension.Structs.ToLower()))
+                {
+                    apiExtensions.Add(APIExtension.Structs.ToLower());
+                }
+                if (!apiExtensions.Contains(APIExtension.CharacterType.ToLower()))
+                {
+                    apiExtensions.Add(APIExtension.CharacterType.ToLower());
+                }
+            }
+
+            if ((acceptedFlags & APIFlags.OSSL) != 0 || (acceptedFlags & APIFlags.ASSL) != 0)
             {
                 compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
             }
@@ -763,6 +771,11 @@ namespace SilverSim.Scripting.Lsl
             if(apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
             {
                 compileState.LanguageExtensions.EnableLongIntegers = true;
+            }
+            
+            if(apiExtensions.Contains(APIExtension.CharacterType.ToLower()))
+            {
+                compileState.LanguageExtensions.EnableCharacterType = true;
             }
 
             if(apiExtensions.Contains(APIExtension.ExtendedTypecasts.ToLower()))

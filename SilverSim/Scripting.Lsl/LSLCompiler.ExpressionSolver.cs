@@ -2067,6 +2067,7 @@ namespace SilverSim.Scripting.Lsl
 
                     if (ent == "!" || ent == "~" || m_TypecastOperators.Contains(ent) ||
                         (cs.LanguageExtensions.EnableLongIntegers && ent == "(long)") ||
+                        (cs.LanguageExtensions.EnableCharacterType && ent == "(char)") ||
                         cs.ContainsValidVarType(ent))
                     {
                         if (pos + 1 < tree.SubTree.Count ||
@@ -2720,6 +2721,14 @@ namespace SilverSim.Scripting.Lsl
                 {
                     switch (ent)
                     {
+                        case "(char)":
+                            if (!cs.LanguageExtensions.EnableCharacterType)
+                            {
+                                goto default;
+                            }
+                            st.Type = Tree.EntryType.OperatorUnknown;
+                            break;
+
                         case "(long)":
                             if(!cs.LanguageExtensions.EnableLongIntegers)
                             {

@@ -36,6 +36,32 @@ namespace SilverSim.Scripting.Lsl
 {
     public partial class LSLCompiler
     {
+        public static string SetStringElement(string s, int index, char c)
+        {
+            int origIndex = index;
+            if (index < 0)
+            {
+                index = s.Length + index;
+            }
+
+            if(index == 0)
+            {
+                return c.ToString() + s.Substring(1);
+            }
+            else if(index < s.Length - 1)
+            {
+                return s.Substring(0, s.Length - 1) + c.ToString();
+            }
+            else if (index > 0 && index < s.Length)
+            {
+                return s.Substring(0, index) + c.ToString() + s.Substring(index + 1);
+            }
+            else
+            {
+                throw new LocalizedScriptErrorException(new BaseApi.Variant(), "ListIndex0IsOutOfBounds", "'list' index '{0}' is out of bounds.", origIndex);
+            }
+        }
+
         public static void SetArrayElement(AnArray array, int index, BaseApi.Variant v)
         {
             int origIndex = index;
@@ -52,6 +78,17 @@ namespace SilverSim.Scripting.Lsl
             {
                 throw new LocalizedScriptErrorException(new BaseApi.Variant(), "ListIndex0IsOutOfBounds", "'list' index '{0}' is out of bounds.", origIndex);
             }
+        }
+
+        public static char GetStringElement(string s, int index)
+        {
+            int origIndex = index;
+            if (index < 0)
+            {
+                index = s.Length + index;
+            }
+
+            return (index >= 0 && index < s.Length) ? s[index] : char.MinValue;
         }
 
         public static BaseApi.Variant GetArrayElement(AnArray array, int index)
@@ -427,7 +464,7 @@ namespace SilverSim.Scripting.Lsl
                             GetThisParameterTypeString(compileState, paramTypes)));
                     }
 
-                    List<Type> staticParamTypes = new List<Type> { typeof(AnArray) };
+                    var staticParamTypes = new List<Type> { typeof(AnArray) };
                     staticParamTypes.AddRange(paramTypes);
                     MethodInfo mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
                     if (mi == null || mi.ReturnType != typeof(BaseApi.Variant))
@@ -438,6 +475,28 @@ namespace SilverSim.Scripting.Lsl
                             GetThisParameterTypeString(compileState, paramTypes)));
                     }
                     return typeof(BaseApi.Variant);
+                }
+                else if(varType == typeof(string))
+                {
+                    if (!compileState.LanguageExtensions.EnableCharacterType)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    var staticParamTypes = new List<Type> { typeof(string) };
+                    staticParamTypes.AddRange(paramTypes);
+                    MethodInfo mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    if (mi == null)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+                    return typeof(char);
                 }
 
                 PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
@@ -481,6 +540,32 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Call, mi);
 
                     return typeof(BaseApi.Variant);
+                }
+                else if (varType == typeof(string))
+                {
+                    if (!compileState.LanguageExtensions.EnableCharacterType)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    var staticParamTypes = new List<Type> { typeof(string) };
+                    staticParamTypes.AddRange(paramTypes);
+                    mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    if (mi == null || mi.ReturnType != typeof(BaseApi.Variant))
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    GetParametersToStack(compiler, compileState, arguments, localVars);
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+
+                    return typeof(char);
                 }
 
                 PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
@@ -1312,7 +1397,7 @@ namespace SilverSim.Scripting.Lsl
                 switch(m_Operator)
                 {
                     case "+=":
-                        if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType || typeof(long) == m_LeftHandType)
+                        if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType || typeof(long) == m_LeftHandType || typeof(char) == m_LeftHandType)
                         {
                             compileState.ILGen.Emit(OpCodes.Add);
                             break;
@@ -1372,7 +1457,7 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "-=":
-                        if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType || typeof(long) == m_LeftHandType)
+                        if(typeof(int) == m_LeftHandType || typeof(double) == m_LeftHandType || typeof(long) == m_LeftHandType || typeof(char) == m_LeftHandType)
                         {
                             compileState.ILGen.Emit(OpCodes.Sub);
                             break;
@@ -1570,6 +1655,21 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Add);
                             throw Return(compileState, typeof(long));
                         }
+                        else if (m_LeftHandType == typeof(char) && m_RightHandType == typeof(char))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Add);
+                            throw Return(compileState, typeof(char));
+                        }
+                        else if ((m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char)) &&
+                            (m_RightHandType == typeof(int) || m_RightHandType == typeof(char)))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Add);
+                            throw Return(compileState, typeof(int));
+                        }
                         else if (m_LeftHandType == typeof(AnArray) && m_RightHandType == typeof(AnArray))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
@@ -1702,6 +1802,21 @@ namespace SilverSim.Scripting.Lsl
                             ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Sub);
                             throw Return(compileState, typeof(double));
+                        }
+                        else if (m_LeftHandType == typeof(char) && m_RightHandType == typeof(char))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Sub);
+                            throw Return(compileState, typeof(char));
+                        }
+                        else if ((m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char)) &&
+                            (m_RightHandType == typeof(int) || m_RightHandType == typeof(char)))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                            compileState.ILGen.Emit(OpCodes.Sub);
+                            throw Return(compileState, typeof(int));
                         }
                         else if (( m_LeftHandType == typeof(int) || m_LeftHandType == typeof(long)) &&
                             (m_RightHandType == typeof(int) || m_RightHandType == typeof(long)) &&
@@ -2041,7 +2156,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -2118,7 +2233,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -2202,7 +2317,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -2258,7 +2373,7 @@ namespace SilverSim.Scripting.Lsl
 
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -2311,7 +2426,7 @@ namespace SilverSim.Scripting.Lsl
 
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -2371,7 +2486,7 @@ namespace SilverSim.Scripting.Lsl
 
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);

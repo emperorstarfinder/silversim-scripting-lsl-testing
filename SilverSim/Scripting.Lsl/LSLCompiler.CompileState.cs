@@ -155,6 +155,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableLogicalModifyAssignments;
 
                 public bool EnableAllowImplicitCastToString;
+
+                public bool EnableCharacterType;
             }
 
             public bool UsesSinglePrecision;
@@ -179,6 +181,15 @@ namespace SilverSim.Scripting.Lsl
                 else
                 {
                     ApiInfo.Types.Remove("long");
+                }
+
+                if(LanguageExtensions.EnableCharacterType)
+                {
+                    ApiInfo.Types["char"] = typeof(char);
+                }
+                else
+                {
+                    ApiInfo.Types.Remove("char");
                 }
 
                 foreach(KeyValuePair<string, Type> kvp in ApiInfo.Types)
@@ -211,6 +222,10 @@ namespace SilverSim.Scripting.Lsl
                 if(LanguageExtensions.EnableLongIntegers)
                 {
                     m_ValidVarTypes["long"] = typeof(long);
+                }
+                if(LanguageExtensions.EnableCharacterType)
+                {
+                    m_ValidVarTypes["char"] = typeof(char);
                 }
 
                 foreach (KeyValuePair<string, Type> kvp in ApiInfo.Types)
