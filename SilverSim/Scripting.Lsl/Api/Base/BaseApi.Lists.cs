@@ -80,7 +80,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [APIExtension(APIExtension.ByteArray)]
             public static implicit operator ByteArrayApi.ByteArray(Variant v)
             {
-                ByteArrayApi.ByteArray byteArray = (ByteArrayApi.ByteArray)v.Value;
+                var byteArray = (ByteArrayApi.ByteArray)v.Value;
                 if(byteArray != null)
                 {
                     return (ByteArrayApi.ByteArray)v.Value;
@@ -134,8 +134,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             public static AnArray operator +(AnArray v1, Variant v2)
             {
-                var n = new AnArray(v1);
-                n.Add(v2.Value);
+                var n = new AnArray(v1)
+                {
+                    v2.Value
+                };
                 return n;
             }
 
