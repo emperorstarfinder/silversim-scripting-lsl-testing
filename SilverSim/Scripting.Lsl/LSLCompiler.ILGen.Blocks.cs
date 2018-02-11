@@ -212,6 +212,7 @@ namespace SilverSim.Scripting.Lsl
                             else
                             {
                                 MethodInfo currentGet = enumeratorType.GetProperty("Current").GetGetMethod();
+                                Type genKvp = typeof(KeyValuePair<,>);
                                 if (compileState.IsValidType(currentGet.ReturnType))
                                 {
                                     /* this is the simple one param case */
@@ -221,6 +222,27 @@ namespace SilverSim.Scripting.Lsl
                                     compileState.ILGen.Emit(OpCodes.Call, currentGet);
                                     compileState.ILGen.Emit(OpCodes.Stloc, p1);
                                     if (varNames.Count != 1)
+                                    {
+                                        throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
+                                    }
+                                }
+                                else if(genKvp.IsAssignableFrom(currentGet.ReturnType))
+                                {
+                                    /* this is the two param case */
+                                    Type[] genParam = currentGet.ReturnType.GetGenericArguments();
+                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(genParam[0]);
+                                    LocalBuilder p2 = compileState.ILGen.DeclareLocal(genParam[1]);
+                                    newLocalVars[varNames[0]] = p1;
+                                    newLocalVars[varNames[1]] = p2;
+                                    compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
+                                    compileState.ILGen.Emit(OpCodes.Call, currentGet);
+                                    compileState.ILGen.Emit(OpCodes.Dup);
+                                    compileState.ILGen.Emit(OpCodes.Call, currentGet.ReturnType.GetProperty("Key").GetGetMethod());
+                                    compileState.ILGen.Emit(OpCodes.Stloc, p1);
+                                    compileState.ILGen.Emit(OpCodes.Call, currentGet.ReturnType.GetProperty("Value").GetGetMethod());
+                                    compileState.ILGen.Emit(OpCodes.Stloc, p2);
+
+                                    if (varNames.Count != 2)
                                     {
                                         throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
                                     }
