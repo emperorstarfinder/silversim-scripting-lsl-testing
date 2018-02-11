@@ -140,6 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIExtension(APIExtension.Properties, "inventory")]
         [APIDisplayName("inventory")]
         [APIIsVariableType]
+        [APIAccessibleMembers]
         public class PrimInventory
         {
             private readonly WeakReference<ScriptInstance> WeakInstance;
@@ -207,6 +208,66 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                         return new PrimInventoryItem();
                     }
                 });
+
+            public InventoryItemEnumerator GetLslForeachEnumerator()
+            {
+                ScriptInstance instance;
+                ObjectPart part;
+                if (WeakInstance.TryGetTarget(out instance) &&
+                    WeakPart.TryGetTarget(out part))
+                {
+                    var list = new List<KeyValuePair<string, int>>();
+                    lock (instance)
+                    {
+                        foreach (KeyValuePair<string, ObjectPartInventoryItem> kvp in part.Inventory.Key2ValuePairs)
+                        {
+                            list.Add(new KeyValuePair<string, int>(kvp.Key, (int)kvp.Value.InventoryType));
+                        }
+                    }
+                    return new InventoryItemEnumerator(list.ToArray());
+                }
+                else
+                {
+                    return new InventoryItemEnumerator(new KeyValuePair<string, int>[0]);
+                }
+            }
+
+            public InventoryEnumerator FilterByType(int type)
+            {
+                ScriptInstance instance;
+                ObjectPart part;
+                if (WeakInstance.TryGetTarget(out instance) &&
+                    WeakPart.TryGetTarget(out part))
+                {
+                    return new InventoryEnumerator(instance, type);
+                }
+                else
+                {
+                    return new InventoryEnumerator(null, -1);
+                }
+            }
+
+            public InventoryEnumerator Scripts => FilterByType((int)InventoryType.LSL);
+
+            public InventoryEnumerator Animations => FilterByType((int)InventoryType.Animation);
+
+            public InventoryEnumerator Notecards => FilterByType((int)InventoryType.Notecard);
+
+            public InventoryEnumerator Landmarks => FilterByType((int)InventoryType.Landmark);
+
+            public InventoryEnumerator Attachables => FilterByType((int)InventoryType.Attachable);
+
+            public InventoryEnumerator Sounds => FilterByType((int)InventoryType.Sound);
+
+            public InventoryEnumerator Textures => FilterByType((int)InventoryType.Texture);
+
+            public InventoryEnumerator CallingCards => FilterByType((int)InventoryType.CallingCard);
+
+            public InventoryEnumerator Wearables => FilterByType((int)InventoryType.Wearable);
+
+            public InventoryEnumerator Gestures => FilterByType((int)InventoryType.Gesture);
+
+            public InventoryEnumerator Objects => FilterByType((int)InventoryType.Object);
         }
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Inventory")]
@@ -218,6 +279,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
+        [APIExtension(APIExtension.MemberFunctions, "inventoryitemenumerator")]
+        [APIDisplayName("inventoryitemenumerator")]
         public sealed class InventoryItemEnumerator : IEnumerator<KeyValuePair<string, int>>
         {
             private readonly KeyValuePair<string, int>[] m_Entries;
@@ -249,19 +312,18 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             private readonly ScriptInstance m_Instance;
             private readonly int m_LimitType = -1;
 
-            public InventoryEnumerator(ScriptInstance instance)
+            public InventoryEnumerator(ScriptInstance instance, int limitType)
             {
                 m_Instance = instance;
-            }
-
-            public InventoryEnumerator(InventoryEnumerator src, int limitType)
-            {
-                m_Instance = src.m_Instance;
                 m_LimitType = limitType;
             }
 
             public InventoryItemEnumerator GetLslForeachEnumerator()
             {
+                if(m_Instance == null)
+                {
+                    return new InventoryItemEnumerator(new KeyValuePair<string, int>[0]);
+                }
                 var list = new List<KeyValuePair<string, int>>();
                 lock (m_Instance)
                 {
@@ -277,10 +339,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "InventoryList")]
-        public InventoryEnumerator GetInventoryEnumerator(ScriptInstance instance) => new InventoryEnumerator(instance);
-
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FilterByType")]
-        public InventoryEnumerator GetInventoryEnumerator(InventoryEnumerator src, int type) => new InventoryEnumerator(src, type);
+        public InventoryEnumerator GetInventoryEnumerator(PrimInventory src, int type) => src.FilterByType(type);
     }
 }
