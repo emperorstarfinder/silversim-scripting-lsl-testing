@@ -26,6 +26,8 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
@@ -43,13 +45,37 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
             /* intentionally left empty */
         }
 
+        public sealed class ByteArrayEnumerator : IEnumerator<int>
+        {
+            private readonly ByteArray m_Array;
+            private int m_Position = -1;
+
+            public ByteArrayEnumerator(ByteArray array)
+            {
+                m_Array = array;
+            }
+
+            public int Current => m_Array[m_Position];
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                /* intentionally left empty */
+            }
+
+            public bool MoveNext() => ++m_Position < m_Array.Length;
+
+            public void Reset() => m_Position = -1;
+        }
+
         [APIExtension(APIExtension.ByteArray, "bytearray")]
         [APIDisplayName("bytearray")]
         [APIIsVariableType]
         [APICloneOnAssignment]
         [APIAccessibleMembers("Length")]
         [Serializable]
-        public class ByteArray : IValue
+        public sealed class ByteArray : IValue
         {
             public byte[] Data = new byte[0];
 
@@ -68,6 +94,8 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
             {
                 Data = src;
             }
+
+            public IEnumerator<int> GetLslForeachEnumerator() => new ByteArrayEnumerator(this);
 
             public int this[int index]
             {
