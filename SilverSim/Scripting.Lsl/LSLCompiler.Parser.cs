@@ -761,6 +761,7 @@ namespace SilverSim.Scripting.Lsl
                 compileState.LanguageExtensions.EnableSwitchBlock = true;
                 compileState.ForcedSleepDefault = false;
                 compileState.LanguageExtensions.EnableArrayThisOperator = true;
+                compileState.LanguageExtensions.EnableForeach = true;
 
                 if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
                 {
@@ -782,7 +783,6 @@ namespace SilverSim.Scripting.Lsl
                 {
                     apiExtensions.Add(APIExtension.CharacterType.ToLower());
                 }
-                compileState.LanguageExtensions.EnableForeach = true;
             }
 
             if (apiExtensions.Contains(APIExtension.Structs.ToLower()))
