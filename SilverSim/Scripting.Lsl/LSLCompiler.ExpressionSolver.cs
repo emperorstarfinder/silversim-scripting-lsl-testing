@@ -1762,6 +1762,7 @@ namespace SilverSim.Scripting.Lsl
                     case Tree.EntryType.Rotation:
                     case Tree.EntryType.ThisOperator:
                     case Tree.EntryType.StringValue:
+                    case Tree.EntryType.CharValue:
                     case Tree.EntryType.Value:
                         return startPos;
 
@@ -1990,6 +1991,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         case Tree.EntryType.Variable:
                         case Tree.EntryType.Value:
+                        case Tree.EntryType.CharValue:
                         case Tree.EntryType.StringValue:
                         case Tree.EntryType.Function:
                         case Tree.EntryType.Declaration:
@@ -2010,6 +2012,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         case Tree.EntryType.Variable:
                         case Tree.EntryType.Value:
+                        case Tree.EntryType.CharValue:
                         case Tree.EntryType.StringValue:
                         case Tree.EntryType.Function:
                         case Tree.EntryType.Declaration:
@@ -2162,6 +2165,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         case Tree.EntryType.Variable:
                         case Tree.EntryType.Value:
+                        case Tree.EntryType.CharValue:
                         case Tree.EntryType.StringValue:
                         case Tree.EntryType.Function:
                         case Tree.EntryType.Declaration:
@@ -2268,6 +2272,7 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.Level:
                                 case Tree.EntryType.Value:
                                 case Tree.EntryType.Variable:
+                                case Tree.EntryType.CharValue:
                                 case Tree.EntryType.StringValue:
                                 case Tree.EntryType.Vector:
                                 case Tree.EntryType.Rotation:
@@ -2306,6 +2311,7 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.OperatorLeftUnary:
                                 case Tree.EntryType.OperatorRightUnary:
                                 case Tree.EntryType.Rotation:
+                                case Tree.EntryType.CharValue:
                                 case Tree.EntryType.StringValue:
                                 case Tree.EntryType.Value:
                                 case Tree.EntryType.Variable:
@@ -2337,6 +2343,7 @@ namespace SilverSim.Scripting.Lsl
                                 case Tree.EntryType.Level:
                                 case Tree.EntryType.Value:
                                 case Tree.EntryType.Variable:
+                                case Tree.EntryType.CharValue:
                                 case Tree.EntryType.StringValue:
                                 case Tree.EntryType.Vector:
                                 case Tree.EntryType.Rotation:
@@ -2477,7 +2484,8 @@ namespace SilverSim.Scripting.Lsl
             while(i < resolvetree.SubTree.Count)
             {
                 string v = resolvetree.SubTree[i].Entry;
-                if(resolvetree.SubTree[i].Type == Tree.EntryType.StringValue)
+                if(resolvetree.SubTree[i].Type == Tree.EntryType.StringValue ||
+                    resolvetree.SubTree[i].Type == Tree.EntryType.CharValue)
                 {
                     v = string.Empty; /* place holder to skip strings */
                 }
@@ -2688,6 +2696,7 @@ namespace SilverSim.Scripting.Lsl
                 switch(st.Type)
                 {
                     case Tree.EntryType.StringValue:
+                    case Tree.EntryType.CharValue:
                     case Tree.EntryType.Value:
                         st.ParenLevel = parenLevel;
                         continue;

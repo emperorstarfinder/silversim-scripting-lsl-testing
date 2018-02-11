@@ -36,6 +36,7 @@ namespace SilverSim.Scripting.Lsl.Expression
         {
             Unknown,
             StringValue,
+            CharValue,
             Value,
             OperatorUnknown,
             OperatorLeftUnary, /* e.g. ++x */
@@ -107,7 +108,7 @@ namespace SilverSim.Scripting.Lsl.Expression
 
             public ConstantValueChar(string str)
             {
-                Value = str[0];
+                Value = str.Length != 0 ? str[0] : char.MinValue;
             }
 
             public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
@@ -193,6 +194,15 @@ namespace SilverSim.Scripting.Lsl.Expression
                     };
                     SubTree.Add(nt);
                 }
+                else if(arg.Token.StartsWith("'"))
+                {
+                    nt = new Tree(arg.LineNumber)
+                    {
+                        Type = EntryType.CharValue,
+                        Entry = arg.Token.Substring(1, arg.Length - 2)
+                    };
+                    SubTree.Add(nt);
+                }
                 else
                 {
                     nt = new Tree(arg.LineNumber)
@@ -249,6 +259,10 @@ namespace SilverSim.Scripting.Lsl.Expression
             if(Type == EntryType.StringValue)
             {
                 Value = new ConstantValueString(ProcessCSlashes(Entry));
+            }
+            else if(Type == EntryType.CharValue)
+            {
+                Value = new ConstantValueChar(ProcessCSlashes(Entry));
             }
             else if(Type == EntryType.Value)
             {

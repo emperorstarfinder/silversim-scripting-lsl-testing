@@ -920,7 +920,11 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 else if (pa is LSLKey || pa is string)
                                 {
-                                    sb.Append("\"" + pa.ToString() + "\"");
+                                    sb.Append("\"" + pa + "\"");
+                                }
+                                else if (pa is char)
+                                {
+                                    sb.Append("\'" + pa + "\'");
                                 }
                                 else
                                 {

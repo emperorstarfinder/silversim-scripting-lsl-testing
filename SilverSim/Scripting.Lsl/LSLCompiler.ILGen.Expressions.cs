@@ -742,10 +742,19 @@ namespace SilverSim.Scripting.Lsl
                             throw new CompilerException(functionTree.LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "0IsAReservedWord", "'{0}' is a reserved word"), functionTree.Entry));
 
                         #region Constants and complex types
+                        case Tree.EntryType.CharValue:
+                            /* char value */
+                            {
+                                var val = (Tree.ConstantValueChar)functionTree.Value;
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4, val.Value);
+                                innerExpressionReturn = typeof(char);
+                            }
+                            break;
+
                         case Tree.EntryType.StringValue:
                             /* string value */
                             {
-                                Tree.ConstantValueString val = (Tree.ConstantValueString)functionTree.Value;
+                                var val = (Tree.ConstantValueString)functionTree.Value;
                                 compileState.ILGen.Emit(OpCodes.Ldstr, val.Value);
                                 innerExpressionReturn = typeof(string);
                             }
