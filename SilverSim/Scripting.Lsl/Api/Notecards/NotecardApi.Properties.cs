@@ -78,7 +78,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         }
 
         [APILevel(APIFlags.ASSL, "asGetNotecardLines")]
-        [APIExtension(APIExtension.Properties, "Notecard")]
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Notecard")]
         public NotecardData GetNotecardData(ScriptInstance instance, string name)
         {
             lock (instance)
