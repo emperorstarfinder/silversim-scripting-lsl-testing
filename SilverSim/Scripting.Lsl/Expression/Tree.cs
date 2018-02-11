@@ -23,6 +23,7 @@
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
+using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -262,7 +263,12 @@ namespace SilverSim.Scripting.Lsl.Expression
             }
             else if(Type == EntryType.CharValue)
             {
-                Value = new ConstantValueChar(ProcessCSlashes(Entry));
+                string s = ProcessCSlashes(Entry);
+                if(s.Length != 1)
+                {
+                    throw new CompilerException(LineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "0IsNotAValue",  "'{0}' is not a value"), Entry));
+                }
+                Value = new ConstantValueChar(s);
             }
             else if(Type == EntryType.Value)
             {
@@ -290,7 +296,7 @@ namespace SilverSim.Scripting.Lsl.Expression
                 }
                 else
                 {
-                    throw new CompilerException(LineNumber, string.Format("'{0}' is not a value", Entry));
+                    throw new CompilerException(LineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "0IsNotAValue", "'{0}' is not a value"), Entry));
                 }
             }
         }
