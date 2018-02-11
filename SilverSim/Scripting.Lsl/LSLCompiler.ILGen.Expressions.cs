@@ -116,32 +116,33 @@ namespace SilverSim.Scripting.Lsl
 
                 if (functionTree.Value != null)
                 {
-                    if (functionTree.Value is Tree.ConstantValueFloat)
+                    Type valueType = functionTree.Value.GetType();
+                    if (valueType == typeof(Tree.ConstantValueFloat))
                     {
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, ((Tree.ConstantValueFloat)functionTree.Value).Value);
                         innerExpressionReturn = typeof(double);
                     }
-                    else if (functionTree.Value is Tree.ConstantValueInt)
+                    else if (valueType == typeof(Tree.ConstantValueInt))
                     {
                         compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
                         innerExpressionReturn = typeof(int);
                     }
-                    else if (functionTree.Value is Tree.ConstantValueChar)
+                    else if (valueType == typeof(Tree.ConstantValueChar))
                     {
                         compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueChar)functionTree.Value).Value);
                         innerExpressionReturn = typeof(char);
                     }
-                    else if (functionTree.Value is Tree.ConstantValueLong)
+                    else if (valueType == typeof(Tree.ConstantValueLong))
                     {
                         compileState.ILGen.Emit(OpCodes.Ldc_I8, ((Tree.ConstantValueLong)functionTree.Value).Value);
                         innerExpressionReturn = typeof(long);
                     }
-                    else if (functionTree.Value is Tree.ConstantValueString)
+                    else if (valueType == typeof(Tree.ConstantValueString))
                     {
                         compileState.ILGen.Emit(OpCodes.Ldstr, ((Tree.ConstantValueString)functionTree.Value).Value);
                         innerExpressionReturn = typeof(string);
                     }
-                    else if (functionTree.Value is ConstantValueRotation)
+                    else if (valueType == typeof(ConstantValueRotation))
                     {
                         var val = (ConstantValueRotation)functionTree.Value;
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
@@ -151,7 +152,7 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) }));
                         innerExpressionReturn = typeof(Quaternion);
                     }
-                    else if (functionTree.Value is ConstantValueVector)
+                    else if (valueType == typeof( ConstantValueVector))
                     {
                         var val = (ConstantValueVector)functionTree.Value;
                         compileState.ILGen.Emit(OpCodes.Ldc_R8, val.Value.X);
@@ -224,6 +225,13 @@ namespace SilverSim.Scripting.Lsl
                                         else if (innerExpressionReturn == typeof(long))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(char))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
@@ -349,6 +357,13 @@ namespace SilverSim.Scripting.Lsl
                                         else if (innerExpressionReturn == typeof(long))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(char))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
@@ -502,6 +517,13 @@ namespace SilverSim.Scripting.Lsl
                                             compileState.ILGen.Emit(OpCodes.Add);
                                             SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }
+                                        else if (innerExpressionReturn == typeof(char))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                            compileState.ILGen.Emit(OpCodes.Add);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
+                                        }
                                         else if (innerExpressionReturn == typeof(double))
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
@@ -624,6 +646,13 @@ namespace SilverSim.Scripting.Lsl
                                         {
                                             compileState.ILGen.Emit(OpCodes.Dup);
                                             compileState.ILGen.Emit(OpCodes.Ldc_I8, 1L);
+                                            compileState.ILGen.Emit(OpCodes.Sub);
+                                            SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
+                                        }
+                                        else if (innerExpressionReturn == typeof(char))
+                                        {
+                                            compileState.ILGen.Emit(OpCodes.Dup);
+                                            compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
                                             compileState.ILGen.Emit(OpCodes.Sub);
                                             SetVarFromStack(compileState, v, functionTree.SubTree[0].LineNumber);
                                         }

@@ -180,12 +180,6 @@ namespace SilverSim.Scripting.Lsl
             m_InternalAnimations.Add("yoga_float", "42ecd00b-9947-a97c-400a-bbc9174c7aeb");
         }
 
-        private const int AGENT = 1;
-        private const int ACTIVE = 2;
-        private const int PASSIVE = 4;
-        private const int SCRIPTED = 8;
-        private const int NPC = 0x20;
-
         public static bool FillDetectInfoFromObject(ref DetectInfo detectInfo, IObject obj)
         {
             var agent = obj as IAgent;

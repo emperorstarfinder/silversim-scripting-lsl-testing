@@ -39,7 +39,7 @@ namespace SilverSim.Scripting.Lsl
 
         private void GenerateTypedEqualOperator(CompileState cs, LineInfo functionLine, Type t)
         {
-            if(t == typeof(int) || t == typeof(double) || t == typeof(long))
+            if(t == typeof(int) || t == typeof(double) || t == typeof(long) || t == typeof(char))
             {
                 cs.ILGen.Emit(OpCodes.Ceq);
             }

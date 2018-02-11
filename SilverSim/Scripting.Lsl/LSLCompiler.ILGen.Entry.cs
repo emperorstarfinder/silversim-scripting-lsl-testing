@@ -154,7 +154,7 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 string assetAssemblyName = "Script." + assetID.ToString().Replace('-', '_');
-                AssemblyName aName = new AssemblyName(assetAssemblyName);
+                var aName = new AssemblyName(assetAssemblyName);
                 AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, access);
                 ModuleBuilder mb = (access == AssemblyBuilderAccess.RunAndCollect) ?
                     ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols) :

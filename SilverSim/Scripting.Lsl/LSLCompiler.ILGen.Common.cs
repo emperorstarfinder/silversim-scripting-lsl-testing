@@ -148,6 +148,11 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public static void AddCharToArray(AnArray array, char c)
+        {
+            array.Add(c.ToString());
+        }
+
         #region LSL Integer Overflow
         /* special functions for converts
          * 
@@ -252,7 +257,7 @@ namespace SilverSim.Scripting.Lsl
 
         public static int ConvToInt(string v)
         {
-            if (v.ToLower().StartsWith("0x"))
+            if (v.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase))
             {
                 try
                 {
@@ -304,7 +309,7 @@ namespace SilverSim.Scripting.Lsl
 
         public static long ConvToLong(string v)
         {
-            if (v.ToLower().StartsWith("0x"))
+            if (v.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase))
             {
                 try
                 {

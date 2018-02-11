@@ -1419,6 +1419,10 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 mi = typeof(AnArray).GetMethod("AddRange", new Type[] { m_RightHandType });
                             }
+                            else if(typeof(char) == m_RightHandType)
+                            {
+                                mi = typeof(LSLCompiler).GetMethod("AddCharToArray", new Type[] { typeof(AnArray), typeof(char) });
+                            }
                             else
                             {
                                 mi = typeof(AnArray).GetMethod("Add", new Type[] { m_RightHandType });

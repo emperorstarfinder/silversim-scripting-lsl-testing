@@ -1040,6 +1040,10 @@ namespace SilverSim.Scripting.Lsl
             {
                 return "integer";
             }
+            else if(typeof(char) == t)
+            {
+                return "char";
+            }
             else if(typeof(long) == t)
             {
                 return "long";

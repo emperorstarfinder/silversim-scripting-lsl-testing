@@ -61,7 +61,7 @@ namespace SilverSim.Scripting.Lsl
                     switch (m_Operator)
                     {
                         case "!":
-                            if (innerExpressionReturn == typeof(int))
+                            if (innerExpressionReturn == typeof(int) || innerExpressionReturn == typeof(char))
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                                 compileState.ILGen.Emit(OpCodes.Ceq);
