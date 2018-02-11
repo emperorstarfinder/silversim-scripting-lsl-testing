@@ -1463,7 +1463,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if(typeof(char) == m_RightHandType)
                             {
-                                mi = typeof(LSLCompiler).GetMethod("AddCharToArray", new Type[] { typeof(AnArray), typeof(char) });
+                                mi = typeof(LSLCompiler).GetMethod("AddCharToArray", BindingFlags.Static, null, new Type[] { typeof(AnArray), typeof(char) }, null);
                             }
                             else
                             {
