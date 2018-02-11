@@ -27,7 +27,10 @@ using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+#pragma warning disable RCS1163
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -38,6 +41,10 @@ namespace SilverSim.Scripting.Lsl
         private readonly List<Label> m_DefinedLabels = new List<Label>();
         public bool GeneratedRetAtLast;
         public ISymbolDocumentWriter DebugDocument;
+
+        public sealed class NopNull
+        {
+        }
 
         public ILGenDumpProxy(
             ILGenerator ilgen,
@@ -54,238 +61,238 @@ namespace SilverSim.Scripting.Lsl
         public bool HaveDebugOut => Writer != null;
         public void WriteLine(string fmt, params object[] p) => Writer?.WriteLine(fmt, p);
 
-        public void BeginCatchBlock(Type exceptionType)
+        public void BeginCatchBlock(Type exceptionType, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("BeginCatchBlock(typeof({0}))", exceptionType.FullName);
+            Writer?.WriteLine("BeginCatchBlock(typeof({0}))\n    ---------- {1}:{3}=>{2}", exceptionType.FullName, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.BeginCatchBlock(exceptionType);
         }
 
-        public void BeginExceptFilterBlock()
+        public void BeginExceptFilterBlock(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("BeginExceptFilterBlock()");
+            Writer?.WriteLine("BeginExceptFilterBlock()\n    ---------- {0}:{2}=>{1}", callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.BeginExceptFilterBlock();
         }
 
-        public Label BeginExceptionBlock()
+        public Label BeginExceptionBlock(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("BeginExceptionBlock()");
+            Writer?.WriteLine("BeginExceptionBlock()\n    ---------- {0}:{2}=>{1}", callerFilePath, callerMemberName, callerLineNumber);
             return m_ILGen.BeginExceptionBlock();
         }
 
-        public void BeginFaultBlock()
+        public void BeginFaultBlock(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("BeginFaultBlock()");
+            Writer?.WriteLine("BeginFaultBlock()\n    ---------- {0}:{2}=>{1}", callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.BeginFaultBlock();
         }
 
-        public void BeginFinallyBlock()
+        public void BeginFinallyBlock(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("BeginFinallyBlock()");
+            Writer?.WriteLine("BeginFinallyBlock()\n    ---------- {0}:{2}=>{1}", callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.BeginFinallyBlock();
         }
 
-        public void BeginScope()
+        public void BeginScope(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("BeginScope()");
+            Writer?.WriteLine("BeginScope()\n    ---------- {0}:{2}=>{1}", callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.BeginScope();
         }
 
-        public LocalBuilder DeclareLocal(Type localType)
+        public LocalBuilder DeclareLocal(Type localType, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
             LocalBuilder lb = m_ILGen.DeclareLocal(localType);
-            Writer?.WriteLine("DeclareLocal(typeof({0})) = {1}", localType.FullName, lb.LocalIndex);
+            Writer?.WriteLine("DeclareLocal(typeof({0})) = {1}\n    ---------- {2}:{4}=>{3}", localType.FullName, lb.LocalIndex, callerFilePath, callerMemberName, callerLineNumber);
             return lb;
         }
 
-        public LocalBuilder DeclareLocal(Type localType, bool pinned)
+        public LocalBuilder DeclareLocal(Type localType, bool pinned, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
             LocalBuilder lb = m_ILGen.DeclareLocal(localType, pinned);
-            Writer?.WriteLine("DeclareLocal(typeof({0}), {1}) = {2}", localType.FullName, pinned.ToString(), lb.LocalIndex);
+            Writer?.WriteLine("DeclareLocal(typeof({0}), {1}) = {2}\n    ---------- {3}:{5}=>{4}", localType.FullName, pinned.ToString(), lb.LocalIndex, callerFilePath, callerMemberName, callerLineNumber);
             return lb;
         }
 
-        public Label DefineLabel()
+        public Label DefineLabel(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
             Label lb = m_ILGen.DefineLabel();
-            Writer?.WriteLine("DefineLabel() = {0}", lb.ToString());
+            Writer?.WriteLine("DefineLabel() = {0}\n    ---------- {1}:{3}=>{2}", lb.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_DefinedLabels.Add(lb);
             return lb;
         }
 
-        public void Emit(OpCode opcode)
+        public void Emit(OpCode opcode, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0})", opcode.ToString());
+            Writer?.WriteLine("Emit(OpCodes.{0})\n    ---------- {1}:{3}=>{2}", opcode.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode);
             GeneratedRetAtLast = opcode == OpCodes.Ret;
         }
 
-        public void Emit(OpCode opcode, byte arg)
+        public void Emit(OpCode opcode, byte arg, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), arg);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), arg, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, arg);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, ConstructorInfo con)
+        public void Emit(OpCode opcode, ConstructorInfo con, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), con.ToString());
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), con.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, con);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, double arg)
+        public void Emit(OpCode opcode, double arg, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), arg);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), arg, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, arg);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, FieldInfo field)
+        public void Emit(OpCode opcode, FieldInfo field, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), field.Name);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), field.Name, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, field);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, float arg)
+        public void Emit(OpCode opcode, float arg, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), arg);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), arg, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, arg);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, int arg)
+        public void Emit(OpCode opcode, int arg, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), arg);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), arg, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, arg);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, Label label)
+        public void Emit(OpCode opcode, Label label, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), label.ToString());
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), label.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, label);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, Label[] labels)
+        public void Emit(OpCode opcode, Label[] labels, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, [])", opcode.ToString());
+            Writer?.WriteLine("Emit(OpCodes.{0}, [])\n    ---------- {1}:{3}=>{2}", opcode.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, labels);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, LocalBuilder local)
+        public void Emit(OpCode opcode, LocalBuilder local, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), local.LocalIndex);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), local.LocalIndex, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, local);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, long arg)
+        public void Emit(OpCode opcode, long arg, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), arg);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), arg, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, arg);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, MethodInfo meth)
+        public void Emit(OpCode opcode, MethodInfo meth, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), meth.ToString());
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1}) \n    ---------- {2}:{4}=>{3}", opcode.ToString(), meth.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, meth);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, sbyte arg)
+        public void Emit(OpCode opcode, sbyte arg, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), arg);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), arg, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, arg);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, short arg)
+        public void Emit(OpCode opcode, short arg, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), arg);
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), arg, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, arg);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, SignatureHelper signature)
+        public void Emit(OpCode opcode, SignatureHelper signature, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, {1})", opcode.ToString(), signature.ToString());
+            Writer?.WriteLine("Emit(OpCodes.{0}, {1})\n    ---------- {2}:{4}=>{3}", opcode.ToString(), signature.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, signature);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, string str)
+        public void Emit(OpCode opcode, string str, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, \"{1}\")", opcode.ToString(), str);
+            Writer?.WriteLine("Emit(OpCodes.{0}, \"{1}\")\n    ---------- {2}:{4}=>{3}", opcode.ToString(), str, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, str);
             GeneratedRetAtLast = false;
         }
 
-        public void Emit(OpCode opcode, Type cls)
+        public void Emit(OpCode opcode, Type cls, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("Emit(OpCodes.{0}, typeof({1}))", opcode.ToString(), cls.FullName);
+            Writer?.WriteLine("Emit(OpCodes.{0}, typeof({1}))\n    ---------- {2}:{4}=>{3}", opcode.ToString(), cls.FullName, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.Emit(opcode, cls);
             GeneratedRetAtLast = false;
         }
 
-        public void EmitCall(OpCode opcode, MethodInfo methodInfo, Type[] optionalParameterTypes)
+        public void EmitCall(OpCode opcode, MethodInfo methodInfo, Type[] optionalParameterTypes, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EmitCall(OpCodes.{0}, {1}, [])", opcode.ToString(), methodInfo.ToString());
+            Writer?.WriteLine("EmitCall(OpCodes.{0}, {1}, [])\n    ---------- {2}:{4}=>{3}", opcode.ToString(), methodInfo.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EmitCall(opcode, methodInfo, optionalParameterTypes);
             GeneratedRetAtLast = false;
         }
 
-        public void EmitCalli(OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes)
+        public void EmitCalli(OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EmitCall(OpCodes.{0}, {1}, typeof({2}), [...])", opcode.ToString(), unmanagedCallConv.ToString(), returnType.FullName);
+            Writer?.WriteLine("EmitCall(OpCodes.{0}, {1}, typeof({2}), [...])\n    ---------- {3}:{5}=>{4}", opcode.ToString(), unmanagedCallConv.ToString(), returnType.FullName, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EmitCalli(opcode, unmanagedCallConv, returnType, parameterTypes);
             GeneratedRetAtLast = false;
         }
 
-        public void EmitCalli(OpCode opcode, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes)
+        public void EmitCalli(OpCode opcode, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EmitCall(OpCodes.{0}, {1}, typeof({2}), [...], [...])", opcode.ToString(), callingConvention.ToString(), returnType.FullName);
+            Writer?.WriteLine("EmitCall(OpCodes.{0}, {1}, typeof({2}), [...], [...])\n    ---------- {3}:{5}=>{4}", opcode.ToString(), callingConvention.ToString(), returnType.FullName, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EmitCalli(opcode, callingConvention, returnType, parameterTypes, optionalParameterTypes);
             GeneratedRetAtLast = false;
         }
 
-        public void EmitWriteLine(FieldInfo fld)
+        public void EmitWriteLine(FieldInfo fld, [CallerFilePath]string callerFilePath = null, NopNull nop = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EmitWriteLine({0})", fld.ToString());
+            Writer?.WriteLine("EmitWriteLine({0})\n    ---------- {0}:{2}=>{1}", fld.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EmitWriteLine(fld);
         }
 
-        public void EmitWriteLine(LocalBuilder localBuilder)
+        public void EmitWriteLine(LocalBuilder localBuilder, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EmitWriteLine({0})", localBuilder.ToString());
+            Writer?.WriteLine("EmitWriteLine({0})\n    ---------- {0}:{2}=>{1}", localBuilder.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EmitWriteLine(localBuilder);
         }
 
-        public void EmitWriteLine(string value)
+        public void EmitWriteLine(string value, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EmitWriteLine({0})", value);
+            Writer?.WriteLine("EmitWriteLine({0})\n    ---------- {0}:{2}=>{1}", value, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EmitWriteLine(value);
         }
 
-        public void EndExceptionBlock()
+        public void EndExceptionBlock(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EndExceptionBlock()");
+            Writer?.WriteLine("EndExceptionBlock()\n    ---------- {0}:{2}=>{1}", callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EndExceptionBlock();
         }
 
-        public void EndScope()
+        public void EndScope(NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("EndScope()");
+            Writer?.WriteLine("EndScope()\n    ---------- {0}:{2}=>{1}", callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.EndScope();
         }
 
-        public void MarkLabel(Label loc)
+        public void MarkLabel(Label loc, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
             m_DefinedLabels.Remove(loc);
-            Writer?.WriteLine("MarkLabel({0})", loc.ToString());
+            Writer?.WriteLine("MarkLabel({0})\n    ---------- {1}:{3}=>{2}", loc.ToString(), callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.MarkLabel(loc);
             GeneratedRetAtLast = false;
         }
@@ -298,16 +305,16 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public void ThrowException(Type excType)
+        public void ThrowException(Type excType, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("ThrowException(typeof({0}))", excType.FullName);
+            Writer?.WriteLine("ThrowException(typeof({0}))\n    ---------- {1}:{3}=>{2}", excType.FullName, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.ThrowException(excType);
             GeneratedRetAtLast = false;
         }
 
-        public void UsingNamespace(string usingNamespace)
+        public void UsingNamespace(string usingNamespace, NopNull nop = null, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string callerMemberName = null, [CallerLineNumber]int callerLineNumber = 0)
         {
-            Writer?.WriteLine("UsingNamespace(\"{0}\")", usingNamespace);
+            Writer?.WriteLine("UsingNamespace(\"{0}\")\n    ---------- {1}:{3}=>{2}", usingNamespace, callerFilePath, callerMemberName, callerLineNumber);
             m_ILGen.UsingNamespace(usingNamespace);
         }
     }
