@@ -220,6 +220,10 @@ namespace SilverSim.Scripting.Lsl
                                     compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
                                     compileState.ILGen.Emit(OpCodes.Call, currentGet);
                                     compileState.ILGen.Emit(OpCodes.Stloc, p1);
+                                    if (varNames.Count != 1)
+                                    {
+                                        throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
+                                    }
                                 }
                                 else
                                 {
