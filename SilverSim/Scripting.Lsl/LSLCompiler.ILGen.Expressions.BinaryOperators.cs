@@ -1701,13 +1701,6 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Add);
                             throw Return(compileState, typeof(long));
                         }
-                        else if (m_LeftHandType == typeof(char) && m_RightHandType == typeof(char))
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Add);
-                            throw Return(compileState, typeof(char));
-                        }
                         else if ((m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char)) &&
                             (m_RightHandType == typeof(int) || m_RightHandType == typeof(char)))
                         {
@@ -1848,13 +1841,6 @@ namespace SilverSim.Scripting.Lsl
                             ProcessImplicitCasts(compileState, typeof(double), m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Sub);
                             throw Return(compileState, typeof(double));
-                        }
-                        else if (m_LeftHandType == typeof(char) && m_RightHandType == typeof(char))
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Sub);
-                            throw Return(compileState, typeof(char));
                         }
                         else if ((m_LeftHandType == typeof(int) || m_LeftHandType == typeof(char)) &&
                             (m_RightHandType == typeof(int) || m_RightHandType == typeof(char)))

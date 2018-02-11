@@ -246,9 +246,9 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (leftType == typeof(Tree.ConstantValueChar) && rightType == typeof(Tree.ConstantValueChar))
                             {
-                                st.Value = new Tree.ConstantValueChar(
-                                    (char)(((Tree.ConstantValueChar)(st.SubTree[0].Value)).Value +
-                                    ((Tree.ConstantValueChar)(st.SubTree[1].Value)).Value));
+                                st.Value = new Tree.ConstantValueInt(
+                                    ((Tree.ConstantValueChar)(st.SubTree[0].Value)).Value +
+                                    ((Tree.ConstantValueChar)(st.SubTree[1].Value)).Value);
                             }
                             else if (leftType == typeof(ConstantValueVector) && rightType == typeof(ConstantValueVector))
                             {
@@ -332,9 +332,9 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if (leftType == typeof(Tree.ConstantValueChar) && rightType == typeof(Tree.ConstantValueChar))
                             {
-                                st.Value = new Tree.ConstantValueChar(
-                                    (char)(((Tree.ConstantValueChar)(st.SubTree[0].Value)).Value -
-                                    ((Tree.ConstantValueChar)(st.SubTree[1].Value)).Value));
+                                st.Value = new Tree.ConstantValueInt(
+                                    ((Tree.ConstantValueChar)(st.SubTree[0].Value)).Value -
+                                    ((Tree.ConstantValueChar)(st.SubTree[1].Value)).Value);
                             }
                             else if (leftType == typeof(ConstantValueVector) && rightType == typeof(ConstantValueVector))
                             {
