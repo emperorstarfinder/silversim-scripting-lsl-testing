@@ -262,6 +262,10 @@ namespace SilverSim.Scripting.Lsl
                         state.Variables[varname] = reader.ReadElementValueAsLong("Variable");
                         break;
 
+                    case "char":
+                        state.Variables[varname] = (char)reader.ReadElementValueAsInt("Variable");
+                        break;
+
                     case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat":
                         state.Variables[varname] = reader.ReadElementValueAsDouble("Variable");
                         break;

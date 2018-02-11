@@ -336,7 +336,14 @@ namespace SilverSim.Scripting.Lsl
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
                                     writer.WriteValue(varValue.ToString());
                                 }
-                                if (varType == typeof(long))
+                                else if(varType == typeof(char))
+                                {
+                                    writer.WriteStartElement("Variable");
+                                    writer.WriteAttributeString("name", varName);
+                                    writer.WriteAttributeString("type", "char");
+                                    writer.WriteValue(((int)varValue).ToString());
+                                }
+                                else if (varType == typeof(long))
                                 {
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);
