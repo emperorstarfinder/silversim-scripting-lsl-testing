@@ -75,6 +75,8 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             public string this[int index] => (m_NotecardLines != null && index >= 0 && index < m_NotecardLines.Length) ? m_NotecardLines[index] : string.Empty;
 
             public int Count => m_NotecardLines?.Length ?? 0;
+
+            public NotecardDataEnumerator GetLslForeachEnumerator() => new NotecardDataEnumerator(this);
         }
 
         [APILevel(APIFlags.ASSL, "asGetNotecardLines")]
