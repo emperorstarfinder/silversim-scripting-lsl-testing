@@ -876,6 +876,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     /* no-op */
                 }
+                else if(fromType == typeof(string))
+                {
+                    MethodInfo mi = typeof(LSLCompiler).GetMethod("GetStringElement", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string), typeof(int) }, null);
+                    compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                }
                 else
                 {
                     throw new CompilerException(lineNumber, string.Format(compileState.GetLanguageString(compileState.CurrentCulture, "UnsupportedTypecastFrom0To1", "unsupported typecast from {0} to {1}"), compileState.MapType(fromType), compileState.MapType(toType)));
