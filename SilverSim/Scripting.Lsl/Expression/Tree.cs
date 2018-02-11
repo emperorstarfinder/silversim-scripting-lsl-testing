@@ -96,6 +96,28 @@ namespace SilverSim.Scripting.Lsl.Expression
             public override ValueBase Negate() => new ConstantValueInt(-Value);
         }
 
+        public class ConstantValueChar : ConstantValue
+        {
+            public char Value;
+
+            public ConstantValueChar(char value)
+            {
+                Value = value;
+            }
+
+            public ConstantValueChar(string str)
+            {
+                Value = str[0];
+            }
+
+            public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
+
+            public override ValueBase Negate()
+            {
+                throw new NotSupportedException("Characters cannot be negated");
+            }
+        }
+
         public class ConstantValueLong : ConstantValue
         {
             public long Value;

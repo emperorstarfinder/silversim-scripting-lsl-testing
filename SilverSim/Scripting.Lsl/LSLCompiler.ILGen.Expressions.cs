@@ -126,6 +126,11 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
                         innerExpressionReturn = typeof(int);
                     }
+                    else if (functionTree.Value is Tree.ConstantValueChar)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueChar)functionTree.Value).Value);
+                        innerExpressionReturn = typeof(char);
+                    }
                     else if (functionTree.Value is Tree.ConstantValueLong)
                     {
                         compileState.ILGen.Emit(OpCodes.Ldc_I8, ((Tree.ConstantValueLong)functionTree.Value).Value);
@@ -798,6 +803,11 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueInt)functionTree.Value).Value);
                                 innerExpressionReturn = typeof(int);
+                            }
+                            else if (functionTree.Value is Tree.ConstantValueChar)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4, ((Tree.ConstantValueChar)functionTree.Value).Value);
+                                innerExpressionReturn = typeof(char);
                             }
                             else if (functionTree.Value is Tree.ConstantValueLong)
                             {
