@@ -26,6 +26,8 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types.Inventory;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Properties
@@ -215,5 +217,70 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 return new PrimInventory(instance, instance.Part);
             }
         }
+
+        public sealed class InventoryItemEnumerator : IEnumerator<KeyValuePair<string, int>>
+        {
+            private readonly KeyValuePair<string, int>[] m_Entries;
+            private int m_Position = -1;
+
+            public InventoryItemEnumerator(KeyValuePair<string,int>[] entries)
+            {
+                m_Entries = entries;
+            }
+
+            public KeyValuePair<string, int> Current => m_Entries[m_Position];
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                /* intentionally left empty */
+            }
+
+            public bool MoveNext() => ++m_Position < m_Entries.Length;
+
+            public void Reset() => m_Position = -1;
+        }
+
+        [APIExtension(APIExtension.Properties, "inventoryenumerator")]
+        [APIDisplayName("inventoryenumerator")]
+        public sealed class InventoryEnumerator
+        {
+            private readonly ScriptInstance m_Instance;
+            private readonly int m_LimitType = -1;
+
+            public InventoryEnumerator(ScriptInstance instance)
+            {
+                m_Instance = instance;
+            }
+
+            public InventoryEnumerator(InventoryEnumerator src, int limitType)
+            {
+                m_Instance = src.m_Instance;
+                m_LimitType = limitType;
+            }
+
+            public InventoryItemEnumerator GetLslForeachEnumerator()
+            {
+                var list = new List<KeyValuePair<string, int>>();
+                lock (m_Instance)
+                {
+                    foreach (KeyValuePair<string, ObjectPartInventoryItem> kvp in m_Instance.Part.Inventory.Key2ValuePairs)
+                    {
+                        if (m_LimitType == -1 || m_LimitType == (int)kvp.Value.InventoryType)
+                        {
+                            list.Add(new KeyValuePair<string, int>(kvp.Key, (int)kvp.Value.InventoryType));
+                        }
+                    }
+                }
+                return new InventoryItemEnumerator(list.ToArray());
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "InventoryList")]
+        public InventoryEnumerator GetInventoryEnumerator(ScriptInstance instance) => new InventoryEnumerator(instance);
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FilterByType")]
+        public InventoryEnumerator GetInventoryEnumerator(InventoryEnumerator src, int type) => new InventoryEnumerator(src, type);
     }
 }

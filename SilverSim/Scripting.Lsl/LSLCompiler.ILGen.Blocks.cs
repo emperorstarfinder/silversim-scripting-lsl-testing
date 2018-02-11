@@ -212,11 +212,11 @@ namespace SilverSim.Scripting.Lsl
                             else
                             {
                                 MethodInfo currentGet = enumeratorType.GetProperty("Current").GetGetMethod();
-                                Type genKvp = typeof(KeyValuePair<,>);
-                                if (compileState.IsValidType(currentGet.ReturnType))
+                                Type enumRetType = currentGet.ReturnType;
+                                if (compileState.IsValidType(enumRetType))
                                 {
                                     /* this is the simple one param case */
-                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(currentGet.ReturnType);
+                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(enumRetType);
                                     newLocalVars[varNames[0]] = p1;
                                     compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
                                     compileState.ILGen.Emit(OpCodes.Call, currentGet);
@@ -226,16 +226,27 @@ namespace SilverSim.Scripting.Lsl
                                         throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
                                     }
                                 }
-                                else if(genKvp.IsAssignableFrom(currentGet.ReturnType))
+                                else if(enumRetType.IsConstructedGenericType && enumRetType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                                 {
                                     /* this is the two param case */
-                                    Type[] genParam = currentGet.ReturnType.GetGenericArguments();
+                                    Type[] genParam = enumRetType.GetGenericArguments();
+                                    if(!compileState.IsValidType(genParam[0]))
+                                    {
+                                        throw new CompilerException(functionLine.Line[2].LineNumber, string.Format("Internal Error! {0} is not a LSL compatible type", genParam[0].FullName));
+                                    }
+                                    if (!compileState.IsValidType(genParam[1]))
+                                    {
+                                        throw new CompilerException(functionLine.Line[4].LineNumber, string.Format("Internal Error! {0} is not a LSL compatible type", genParam[1].FullName));
+                                    }
+                                    LocalBuilder r1 = compileState.ILGen.DeclareLocal(enumRetType);
                                     LocalBuilder p1 = compileState.ILGen.DeclareLocal(genParam[0]);
                                     LocalBuilder p2 = compileState.ILGen.DeclareLocal(genParam[1]);
                                     newLocalVars[varNames[0]] = p1;
                                     newLocalVars[varNames[1]] = p2;
                                     compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
                                     compileState.ILGen.Emit(OpCodes.Call, currentGet);
+                                    compileState.ILGen.Emit(OpCodes.Stloc, r1);
+                                    compileState.ILGen.Emit(OpCodes.Ldloca, r1);
                                     compileState.ILGen.Emit(OpCodes.Dup);
                                     compileState.ILGen.Emit(OpCodes.Call, currentGet.ReturnType.GetProperty("Key").GetGetMethod());
                                     compileState.ILGen.Emit(OpCodes.Stloc, p1);
