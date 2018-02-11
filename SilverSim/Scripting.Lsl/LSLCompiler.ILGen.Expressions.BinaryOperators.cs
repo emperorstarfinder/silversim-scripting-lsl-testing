@@ -1009,12 +1009,7 @@ namespace SilverSim.Scripting.Lsl
                         Arguments = sel
                     });
 
-                    if(sel.Type == Tree.EntryType.ThisOperator && varType == typeof(string))
-                    {
-                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                        compileState.ILGen.Emit(OpCodes.Ldloc, lb);
-                    }
-                    else if(varType.IsValueType)
+                    if(varType.IsValueType)
                     {
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                         compileState.ILGen.Emit(OpCodes.Ldloca, lb);
@@ -1022,8 +1017,8 @@ namespace SilverSim.Scripting.Lsl
                     else if(compileState.IsCloneOnAssignment(varType))
                     {
                         compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(varType));
+                        compileState.ILGen.Emit(OpCodes.Dup);
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
-                        compileState.ILGen.Emit(OpCodes.Ldloc, lb);
                     }
                     else
                     {
@@ -1053,12 +1048,7 @@ namespace SilverSim.Scripting.Lsl
 
                 LocalBuilder refLb = DeclareLocal(compileState, varType);
                 varLb = varLb ?? refLb;
-                if (varType == typeof(string))
-                {
-                    compileState.ILGen.Emit(OpCodes.Stloc, refLb);
-                    compileState.ILGen.Emit(OpCodes.Ldloc, refLb);
-                }
-                else if (varType.IsValueType)
+                if (varType.IsValueType)
                 {
                     compileState.ILGen.Emit(OpCodes.Stloc, refLb);
                     compileState.ILGen.Emit(OpCodes.Ldloca, refLb);
