@@ -328,3 +328,7 @@ SyntaxError=Syntax Error
 UsedType0InPlaceOfAVariable=Used type '{0}' in place of a variable.
 ReturnIsMissingReturnValue='return' is missing a return value.
 Used0InPlaceOfAVariable=Used '{0}' in place of a variable.
+ExpectingCommaInForeachResultSet=Expecting ',' in 'foreach' result set
+InvalidForeachEncountered=Invalid 'foreach' encountered
+WrongNumberOfVariablesToForeachForType0=Wrong number of variables to 'foreach' for type '{0}'
+Type0IsNotEnumerableByForeach=Type '{0}' is not enumerable by 'foreach'

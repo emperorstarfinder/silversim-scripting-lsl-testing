@@ -25,6 +25,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Types;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -83,6 +84,173 @@ namespace SilverSim.Scripting.Lsl
                                 labels[labelName].IsDefined = true;
                             }
                             compileState.ILGen.MarkLabel(labels[labelName].Label);
+                        }
+                        break;
+                    #endregion
+
+                    #region Control Flow (Enumerator)
+                    case "foreach":
+                        if (compileState.m_BreakContinueLabels.Count != 0 &&
+                            compileState.m_BreakContinueLabels[0].CaseRequired)
+                        {
+                            throw new CompilerException(functionLine.FirstTokenLineNumber, this.GetLanguageString(compileState.CurrentCulture, "MissingCaseOrDefaultInSwitchBlock", "missing 'case' or 'default' in 'switch' block"));
+                        }
+                        if (eoif_label.HasValue)
+                        {
+                            compileState.ILGen.MarkLabel(eoif_label.Value);
+                            eoif_label = null;
+                        }
+
+                        {   /* foreach(names[,...] in c) */
+                            int endoffor;
+                            int countparens = 0;
+
+                            for (endoffor = 0; endoffor <= functionLine.Line.Count; ++endoffor)
+                            {
+                                if (functionLine.Line[endoffor] == ")")
+                                {
+                                    if (--countparens == 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                                else if (functionLine.Line[endoffor] == "(")
+                                {
+                                    ++countparens;
+                                }
+                            }
+
+                            if (endoffor != functionLine.Line.Count - 1 && endoffor != functionLine.Line.Count - 2)
+                            {
+                                throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidForeachEncountered", "Invalid 'foreach' encountered"));
+                            }
+
+                            var varNames = new List<string>();
+                            int pos = 1;
+                            do
+                            {
+                                ++pos;
+                                varNames.Add(functionLine.Line[pos]);
+                                ++pos;
+                            } while (functionLine.Line[pos] == ",");
+                            if(functionLine.Line[pos] != "in")
+                            {
+                                throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidForeachEncountered", "Invalid 'foreach' encountered"));
+                            }
+                            ++pos;
+                            Label endlabel = compileState.ILGen.DefineLabel();
+                            Label looplabel = compileState.ILGen.DefineLabel();
+
+                            compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel
+                            {
+                                BreakTargetLabel = endlabel,
+                                ContinueTargetLabel = looplabel,
+                                HaveBreakTarget = true,
+                                HaveContinueTarget = true
+                            });
+
+                            Type enumType = ProcessExpressionToAnyType(
+                                compileState,
+                                pos,
+                                endoffor - 1,
+                                functionLine,
+                                localVars);
+                            MethodInfo mi;
+                            if(enumType == typeof(string) && compileState.LanguageExtensions.EnableCharacterType)
+                            {
+                                mi = typeof(string).GetMethod("GetEnumerator", Type.EmptyTypes);
+                                if(varNames.Count != 1)
+                                {
+                                    throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "string"));
+                                }
+                            }
+                            else if(enumType == typeof(AnArray) && compileState.LanguageExtensions.EnableProperties)
+                            {
+                                mi = typeof(LSLCompiler).GetMethod("GetArrayEnumerator", BindingFlags.Static, null, new Type[] { typeof(AnArray) }, null);
+                                if (varNames.Count != 1)
+                                {
+                                    throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
+                                }
+                            }
+                            else
+                            {
+                                mi = enumType.GetMethod("GetLslForeachEnumerator", Type.EmptyTypes);
+                                if(mi == null)
+                                {
+                                    throw new CompilerException(functionLine.Line[pos].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotEnumerableByForeach", "Type '{0}' is not enumerable by 'foreach'"), compileState.MapType(enumType)));
+                                }
+                            }
+
+                            compileState.ILGen.Emit(mi.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, mi);
+
+                            if(!typeof(IEnumerator).IsAssignableFrom(mi.ReturnType))
+                            {
+                                throw new CompilerException(functionLine.Line[pos].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotEnumerableByForeach", "Type '{0}' is not enumerable by 'foreach'"), compileState.MapType(enumType)));
+                            }
+                            Type enumeratorType = mi.ReturnType;
+                            LocalBuilder enumeratorLocal = compileState.ILGen.DeclareLocal(enumeratorType);
+                            compileState.ILGen.Emit(OpCodes.Stloc, enumeratorLocal);
+
+                            compileState.ILGen.MarkLabel(looplabel);
+
+                            compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
+                            compileState.ILGen.Emit(OpCodes.Call, enumeratorType.GetMethod("MoveNext", Type.EmptyTypes));
+                            compileState.ILGen.Emit(OpCodes.Brfalse, endlabel);
+                            var newLocalVars = new Dictionary<string, object>(localVars);
+
+                            if (enumeratorType == typeof(CharEnumerator) ||
+                                enumeratorType == typeof(AnArrayEnumerator))
+                            {
+                                /* this is the simple one param case */
+                                MethodInfo currentGet = enumeratorType.GetProperty("Current").GetGetMethod();
+                                LocalBuilder p1 = compileState.ILGen.DeclareLocal(currentGet.ReturnType);
+                                newLocalVars[varNames[0]] = p1;
+                                compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
+                                compileState.ILGen.Emit(OpCodes.Call, currentGet);
+                                compileState.ILGen.Emit(OpCodes.Stloc, p1);
+                            }
+                            else
+                            {
+                                MethodInfo currentGet = enumeratorType.GetProperty("Current").GetGetMethod();
+                                if (compileState.IsValidType(currentGet.ReturnType))
+                                {
+                                    /* this is the simple one param case */
+                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(currentGet.ReturnType);
+                                    newLocalVars[varNames[0]] = p1;
+                                    compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
+                                    compileState.ILGen.Emit(OpCodes.Call, currentGet);
+                                    compileState.ILGen.Emit(OpCodes.Stloc, p1);
+                                }
+                                else
+                                {
+                                    throw new CompilerException(functionLine.Line[pos].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotEnumerableByForeach", "Type '{0}' is not enumerable by 'foreach'"), compileState.MapType(enumType)));
+                                }
+                            }
+
+                            if (functionLine.Line[functionLine.Line.Count - 1] == "{")
+                            {
+                                /* block */
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    newLocalVars,
+                                    labels);
+                            }
+                            else
+                            {
+                                ProcessBlock(
+                                    compileState,
+                                    returnType,
+                                    newLocalVars,
+                                    labels,
+                                    true);
+                            }
+
+                            compileState.ILGen.Emit(OpCodes.Br, looplabel);
+                            compileState.ILGen.MarkLabel(endlabel);
+                            compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
+                            compileState.ILGen.Emit(OpCodes.Call, enumeratorType.GetMethod("Dispose", Type.EmptyTypes));
+                            compileState.m_BreakContinueLabels.RemoveAt(0);
                         }
                         break;
                     #endregion

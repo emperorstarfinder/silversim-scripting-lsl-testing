@@ -24,8 +24,10 @@
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
+using SilverSim.Scripting.Lsl.Api.Base;
 using SilverSim.Types;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -146,6 +148,46 @@ namespace SilverSim.Scripting.Lsl
                 Label = label;
                 IsDefined = isDefined;
             }
+        }
+
+        public sealed class AnArrayEnumerator : IEnumerator<BaseApi.Variant>
+        {
+            private readonly AnArray m_Array;
+            private int Position = -1;
+
+            public AnArrayEnumerator(AnArray src)
+            {
+                m_Array = src;
+            }
+
+            public BaseApi.Variant Current
+            {
+                get
+                {
+                    return GetArrayElement(m_Array, Position);
+                }
+            }
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+            }
+
+            public bool MoveNext()
+            {
+                return ++Position < m_Array.Count;
+            }
+
+            public void Reset()
+            {
+                Position = -1;
+            }
+        }
+
+        public static AnArrayEnumerator GetArrayEnumerator(AnArray array)
+        {
+            return new AnArrayEnumerator(array);
         }
 
         public static void AddCharToArray(AnArray array, char c)

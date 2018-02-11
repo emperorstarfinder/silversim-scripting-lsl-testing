@@ -124,7 +124,8 @@ namespace SilverSim.Scripting.Lsl
             {
                 return m_ReservedWords.Contains(entry) ||
                                 (LanguageExtensions.EnableSwitchBlock && (entry == "switch" || entry == "case" || entry == "break")) ||
-                                (LanguageExtensions.EnableBreakContinueStatement && (entry == "break" || entry == "continue"));
+                                (LanguageExtensions.EnableBreakContinueStatement && (entry == "break" || entry == "continue")) ||
+                                (LanguageExtensions.EnableForeach && (entry == "foreach"));
             }
             public class LanguageExtensionsData
             {
@@ -157,6 +158,8 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableAllowImplicitCastToString;
 
                 public bool EnableCharacterType;
+
+                public bool EnableForeach;
             }
 
             public bool UsesSinglePrecision;

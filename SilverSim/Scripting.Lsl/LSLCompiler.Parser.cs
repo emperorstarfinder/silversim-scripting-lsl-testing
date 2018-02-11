@@ -237,6 +237,13 @@ namespace SilverSim.Scripting.Lsl
                         }
                         break;
 
+                    case "foreach":
+                        if(cs.LanguageExtensions.EnableForeach)
+                        {
+                            throw new CompilerException(lineNumber, string.Format(this.GetLanguageString(cs.CurrentCulture, "0NotAllowedIn1", "'{0}' not allowed in '{1}'"), line[i], line[0]));
+                        }
+                        break;
+
                     case "continue":
                     case "break":
                         if(cs.LanguageExtensions.EnableBreakContinueStatement)
@@ -344,11 +351,40 @@ namespace SilverSim.Scripting.Lsl
                         args = args.GetRange(1, args.Count - 1);
                     }
                 }
-                else if (args[0] == "if" || args[0] == "for" || args[0] == "while")
+                else if (args[0] == "if" || args[0] == "for" || args[0] == "while" || (args[0] == "foreach" && compileState.LanguageExtensions.EnableForeach))
                 {
                     int eocf = FindEndOfControlFlow(compileState, args, lineNumber);
                     /* make it a block */
                     if(args[eocf + 1] == "{")
+                    {
+                        block.Add(new LineInfo(args));
+                        ParseBlock(compileState, p, block, inState, true);
+                        return;
+                    }
+                    else
+                    {
+                        List<TokenInfo> controlflow = args.GetRange(0, eocf + 1);
+                        block.Add(new LineInfo(controlflow));
+                        args = args.GetRange(eocf + 1, args.Count - eocf - 1);
+                    }
+                }
+                else if(args[0] == "foreach" && compileState.LanguageExtensions.EnableForeach)
+                {
+                    int eocf = FindEndOfControlFlow(compileState, args, lineNumber);
+                    int inkeyword = args.IndexOf("in");
+                    for(int pos = 2; pos < inkeyword; pos += 2)
+                    {
+                        if(pos > 2 && args[pos - 1] != ",")
+                        {
+                            CheckUsedName(compileState, p, "Local Variable", args[1]);
+                        }
+                        else
+                        {
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ExpectingCommaInForeachResultSet", "Expecting ',' in 'foreach' result set"), args[0]));
+                        }
+                    }
+                    /* make it a block */
+                    if (args[eocf + 1] == "{")
                     {
                         block.Add(new LineInfo(args));
                         ParseBlock(compileState, p, block, inState, true);
@@ -752,6 +788,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     apiExtensions.Add(APIExtension.CharacterType.ToLower());
                 }
+                compileState.LanguageExtensions.EnableForeach = true;
             }
 
             if ((acceptedFlags & APIFlags.OSSL) != 0 || (acceptedFlags & APIFlags.ASSL) != 0)
