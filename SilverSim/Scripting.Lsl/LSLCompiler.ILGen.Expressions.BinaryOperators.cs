@@ -48,7 +48,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 return c.ToString() + s.Substring(1);
             }
-            else if(index < s.Length - 1)
+            else if(index == s.Length - 1)
             {
                 return s.Substring(0, s.Length - 1) + c.ToString();
             }
@@ -488,7 +488,7 @@ namespace SilverSim.Scripting.Lsl
 
                     var staticParamTypes = new List<Type> { typeof(string) };
                     staticParamTypes.AddRange(paramTypes);
-                    MethodInfo mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    MethodInfo mi = typeof(LSLCompiler).GetMethod("GetStringElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
                     if (mi == null)
                     {
                         throw new CompilerException(m_LineNumber, string.Format(
@@ -553,7 +553,7 @@ namespace SilverSim.Scripting.Lsl
 
                     var staticParamTypes = new List<Type> { typeof(string) };
                     staticParamTypes.AddRange(paramTypes);
-                    mi = typeof(LSLCompiler).GetMethod("GetArrayElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    mi = typeof(LSLCompiler).GetMethod("GetStringElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
                     if (mi == null || mi.ReturnType != typeof(BaseApi.Variant))
                     {
                         throw new CompilerException(m_LineNumber, string.Format(
@@ -781,6 +781,35 @@ namespace SilverSim.Scripting.Lsl
 
                     return typeof(BaseApi.Variant);
                 }
+                else if (varType == typeof(string))
+                {
+                    if (!compileState.LanguageExtensions.EnableCharacterType)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    var staticParamTypes = new List<Type> { typeof(string) };
+                    staticParamTypes.AddRange(paramTypes);
+                    staticParamTypes.Add(typeof(char));
+                    mi = typeof(LSLCompiler).GetMethod("SetStringElement", BindingFlags.Static | BindingFlags.Public, null, staticParamTypes.ToArray(), null);
+                    if (mi == null)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(
+                            this.GetLanguageString(compileState.CurrentCulture, "ThisOperator1IsNotSupportedForType0", "This[{1}] operator is not supported for type '{0}'."),
+                            compileState.MapType(varType),
+                            GetThisParameterTypeString(compileState, paramTypes)));
+                    }
+
+                    GetParametersToStack(compiler, compileState, arguments, localVars);
+                    compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
+                    ProcessImplicitCasts(compileState, typeof(char), valueArgument, m_LineNumber);
+                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                    /* special handling here to pass the string back to caller */
+                    return typeof(char);
+                }
 
                 PropertyInfo pInfo = varType.GetProperty("Item", paramTypes.ToArray());
                 if (pInfo == null)
@@ -951,7 +980,7 @@ namespace SilverSim.Scripting.Lsl
                     storeBackVar = true;
                     compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(varType));
                 }
-                else if(varType.IsValueType)
+                else if(varType.IsValueType || varType == typeof(string))
                 {
                     storeBackVar = true;
                 }
@@ -980,7 +1009,12 @@ namespace SilverSim.Scripting.Lsl
                         Arguments = sel
                     });
 
-                    if(varType.IsValueType)
+                    if(sel.Type == Tree.EntryType.ThisOperator && varType == typeof(string))
+                    {
+                        compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                        compileState.ILGen.Emit(OpCodes.Ldloc, lb);
+                    }
+                    else if(varType.IsValueType)
                     {
                         compileState.ILGen.Emit(OpCodes.Stloc, lb);
                         compileState.ILGen.Emit(OpCodes.Ldloca, lb);
@@ -999,13 +1033,18 @@ namespace SilverSim.Scripting.Lsl
 
                     if (sel.Type == Tree.EntryType.ThisOperator)
                     {
+                        Type vType = varType;
                         varType = GetThisOperatorToStack(lslCompiler, compileState, varType, sel, localVars);
+                        if(vType == typeof(string))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                        }
                     }
                     else
                     {
                         varType = GetMemberSelectorToStack(compileState, varType, sel.SubTree[1].Entry);
                     }
-                    if(varType.IsValueType || compileState.IsCloneOnAssignment(varType))
+                    if(varType.IsValueType || varType == typeof(string) || compileState.IsCloneOnAssignment(varType))
                     {
                         firstRequiredSelector = true;
                     }
@@ -1014,7 +1053,12 @@ namespace SilverSim.Scripting.Lsl
 
                 LocalBuilder refLb = DeclareLocal(compileState, varType);
                 varLb = varLb ?? refLb;
-                if (varType.IsValueType)
+                if (varType == typeof(string))
+                {
+                    compileState.ILGen.Emit(OpCodes.Stloc, refLb);
+                    compileState.ILGen.Emit(OpCodes.Ldloc, refLb);
+                }
+                else if (varType.IsValueType)
                 {
                     compileState.ILGen.Emit(OpCodes.Stloc, refLb);
                     compileState.ILGen.Emit(OpCodes.Ldloca, refLb);
@@ -1036,6 +1080,10 @@ namespace SilverSim.Scripting.Lsl
                 if (finalSel.Type == Tree.EntryType.ThisOperator)
                 {
                     SetThisOperatorFromStack(lslCompiler, compileState, varType, swapLb.LocalType, finalSel, localVars);
+                    if(varType == typeof(string))
+                    {
+                        compileState.ILGen.Emit(OpCodes.Stloc, refLb);
+                    }
                 }
                 else
                 {
@@ -1071,6 +1119,10 @@ namespace SilverSim.Scripting.Lsl
                     if (sel.Operator == Tree.EntryType.ThisOperator)
                     {
                         SetThisOperatorFromStack(lslCompiler, compileState, sel.Type, refLb.LocalType, sel.Arguments, localVars);
+                        if(sel.Type == typeof(string))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Stloc, sel.Local);
+                        }
                     }
                     else
                     {
