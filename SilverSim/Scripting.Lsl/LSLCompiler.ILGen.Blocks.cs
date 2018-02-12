@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else if(enumType == typeof(AnArray) && compileState.LanguageExtensions.EnableProperties)
                             {
-                                mi = typeof(LSLCompiler).GetMethod("GetArrayEnumerator", BindingFlags.Static, null, new Type[] { typeof(AnArray) }, null);
+                                mi = typeof(LSLCompiler).GetMethod("GetArrayEnumerator", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(AnArray) }, null);
                                 if (varNames.Count != 1)
                                 {
                                     throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
@@ -175,10 +175,10 @@ namespace SilverSim.Scripting.Lsl
                             else
                             {
                                 mi = enumType.GetMethod("GetLslForeachEnumerator", Type.EmptyTypes);
-                                if(mi == null)
-                                {
-                                    throw new CompilerException(functionLine.Line[pos].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotEnumerableByForeach", "Type '{0}' is not enumerable by 'foreach'"), compileState.MapType(enumType)));
-                                }
+                            }
+                            if (mi == null)
+                            {
+                                throw new CompilerException(functionLine.Line[pos].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotEnumerableByForeach", "Type '{0}' is not enumerable by 'foreach'"), compileState.MapType(enumType)));
                             }
 
                             compileState.ILGen.Emit(mi.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, mi);
