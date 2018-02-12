@@ -690,6 +690,24 @@ namespace SilverSim.Scripting.Lsl
 
         private readonly Type[] BaseTypes = new Type[] { typeof(int), typeof(long), typeof(string), typeof(double), typeof(Vector3), typeof(AnArray), typeof(Quaternion), typeof(LSLKey) };
 
+        private readonly string[] AsslEnabledExtensions = new string[]
+        {
+            APIExtension.LongInteger.ToLower(),
+            APIExtension.Properties.ToLower(),
+            APIExtension.MemberFunctions.ToLower(),
+            APIExtension.Structs.ToLower(),
+            APIExtension.CharacterType.ToLower(),
+            APIExtension.ByteArray.ToLower(),
+            APIExtension.SwitchBlock.ToLower(),
+            APIExtension.BreakContinue.ToLower(),
+            APIExtension.ExtendedTypecasts.ToLower(),
+            APIExtension.StateVariables.ToLower()
+        };
+
+        private readonly string[] OsslEnabledExtensions = new string[]
+        {
+        };
+
         private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null, Func<string, TextReader> includeOpen = null)
         {
             var compileState = new CompileState(cultureInfo);
@@ -740,94 +758,49 @@ namespace SilverSim.Scripting.Lsl
 
             if((acceptedFlags & (APIFlags.OSSL | APIFlags.ASSL)) != 0)
             {
-                compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
-                compileState.LanguageExtensions.EnableFunctionOverloading = true;
-                compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
-                compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
-                compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
-                compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = true;
+                foreach(string extension in OsslEnabledExtensions)
+                {
+                    if(!apiExtensions.Contains(extension))
+                    {
+                        apiExtensions.Add(extension);
+                    }
+                }
             }
 
             if ((acceptedFlags & APIFlags.ASSL) != 0)
             {
-                compileState.LanguageExtensions.EnableExtendedTypecasts = true;
-                compileState.LanguageExtensions.EnableStateVariables = true;
-                compileState.LanguageExtensions.EnableBreakContinueStatement = true;
-                compileState.LanguageExtensions.EnableSwitchBlock = true;
                 compileState.ForcedSleepDefault = false;
-                compileState.LanguageExtensions.EnableArrayThisOperator = true;
-                compileState.LanguageExtensions.EnableForeach = true;
 
-                if (!apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
+                foreach (string extension in AsslEnabledExtensions)
                 {
-                    apiExtensions.Add(APIExtension.LongInteger.ToLower());
-                }
-                if (!apiExtensions.Contains(APIExtension.Properties.ToLower()))
-                {
-                    apiExtensions.Add(APIExtension.Properties.ToLower());
-                }
-                if (!apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
-                {
-                    apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
-                }
-                if (!apiExtensions.Contains(APIExtension.Structs.ToLower()))
-                {
-                    apiExtensions.Add(APIExtension.Structs.ToLower());
-                }
-                if (!apiExtensions.Contains(APIExtension.CharacterType.ToLower()))
-                {
-                    apiExtensions.Add(APIExtension.CharacterType.ToLower());
+                    if (!apiExtensions.Contains(extension))
+                    {
+                        apiExtensions.Add(extension);
+                    }
                 }
             }
 
-            if (apiExtensions.Contains(APIExtension.Structs.ToLower()))
+            if (apiExtensions.Contains(APIExtension.Structs.ToLower()) && !apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
             {
-                compileState.LanguageExtensions.EnableStructTypes = true;
-                if(!apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()))
+                apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
+            }
+
+            foreach (FieldInfo fi in typeof(CompileState.LanguageExtensionsData).GetFields())
+            {
+                foreach(APIExtensionAttribute attr in (APIExtensionAttribute[])Attribute.GetCustomAttributes(fi, typeof(APIExtensionAttribute)))
                 {
-                    apiExtensions.Add(APIExtension.MemberFunctions.ToLower());
+                    if(apiExtensions.Contains(attr.Extension.ToLower()))
+                    {
+                        fi.SetValue(compileState.LanguageExtensions, true);
+                    }
                 }
-            }
-
-            if(apiExtensions.Contains(APIExtension.LongInteger.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableLongIntegers = true;
-            }
-            
-            if(apiExtensions.Contains(APIExtension.CharacterType.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableCharacterType = true;
-            }
-
-            if(apiExtensions.Contains(APIExtension.ExtendedTypecasts.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableExtendedTypecasts = true;
-            }
-
-            if(apiExtensions.Contains(APIExtension.StateVariables.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableStateVariables = true;
-            }
-
-            if (apiExtensions.Contains(APIExtension.BreakContinue.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableBreakContinueStatement = true;
-            }
-
-            if(apiExtensions.Contains(APIExtension.SwitchBlock.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableSwitchBlock = true;
-            }
-
-            if(apiExtensions.Contains(APIExtension.Properties.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableProperties = true;
-            }
-
-            if (apiExtensions.Contains(APIExtension.MemberFunctions.ToLower()) ||
-                apiExtensions.Contains(APIExtension.Properties.ToLower()))
-            {
-                compileState.LanguageExtensions.EnableMemberFunctions = true;
+                foreach(APILevelAttribute attr in (APILevelAttribute[])Attribute.GetCustomAttributes(fi, typeof(APILevelAttribute)))
+                {
+                    if((attr.Flags & acceptedFlags) != 0)
+                    {
+                        fi.SetValue(compileState.LanguageExtensions, true);
+                    }
+                }
             }
 
             foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)

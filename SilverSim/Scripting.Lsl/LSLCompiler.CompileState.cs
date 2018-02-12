@@ -129,37 +129,56 @@ namespace SilverSim.Scripting.Lsl
             }
             public class LanguageExtensionsData
             {
+#pragma warning disable CS0649
+                [APIExtension(APIExtension.ExtendedTypecasts)]
                 public bool EnableExtendedTypecasts;
                 /** <summary>Enables a rather unknown function overloading support that happen to exist within OpenSim's XEngine</summary> */
+                [APILevel(APIFlags.OSSL)]
                 public bool EnableFunctionOverloading;
 
+                [APIExtension(APIExtension.StateVariables)]
                 public bool EnableStateVariables;
 
+                [APIExtension(APIExtension.SwitchBlock)]
                 public bool EnableSwitchBlock;
 
+                [APIExtension(APIExtension.BreakContinue)]
                 public bool EnableBreakContinueStatement;
 
+                [APIExtension(APIExtension.LongInteger)]
                 public bool EnableLongIntegers;
 
+                [APILevel(APIFlags.ASSL)]
                 public bool EnableArrayThisOperator;
 
+                [APIExtension(APIExtension.MemberFunctions)]
+                [APIExtension(APIExtension.Properties)]
                 public bool EnableMemberFunctions;
 
+                [APIExtension(APIExtension.Properties)]
                 public bool EnableProperties;
 
+                [APIExtension(APIExtension.Structs)]
                 public bool EnableStructTypes;
 
+                [APILevel(APIFlags.OSSL)]
                 public bool EnableImplicitTypecastToStringOnAddOperator;
 
+                [APILevel(APIFlags.OSSL)]
                 public bool EnableNonFirstDefaultState;
 
+                [APILevel(APIFlags.OSSL)]
                 public bool EnableLogicalModifyAssignments;
 
+                [APILevel(APIFlags.OSSL)]
                 public bool EnableAllowImplicitCastToString;
 
+                [APIExtension(APIExtension.CharacterType)]
                 public bool EnableCharacterType;
 
+                [APILevel(APIFlags.ASSL)]
                 public bool EnableForeach;
+#pragma warning restore CS0649
             }
 
             public bool UsesSinglePrecision;
