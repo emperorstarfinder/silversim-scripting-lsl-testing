@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
                 Data = src;
             }
 
-            public IEnumerator<int> GetLslForeachEnumerator() => new ByteArrayEnumerator(this);
+            public ByteArrayEnumerator GetLslForeachEnumerator() => new ByteArrayEnumerator(this);
 
             public int this[int index]
             {
