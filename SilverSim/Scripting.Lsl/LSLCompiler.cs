@@ -136,23 +136,68 @@ namespace SilverSim.Scripting.Lsl
                 }
                 foreach (KeyValuePair<string, FieldInfo> kvp in info.Constants)
                 {
-                    Constants.Add(kvp.Key, kvp.Value);
+                    try
+                    {
+                        Constants.Add(kvp.Key, kvp.Value);
+                    }
+                    catch (Exception)
+                    {
+                        m_Log.WarnFormat("Duplicate constant registered {0}", kvp.Key);
+                    }
                 }
-                foreach(KeyValuePair<string, MethodInfo> kvp in info.EventDelegates)
+                foreach (KeyValuePair<string, MethodInfo> kvp in info.EventDelegates)
                 {
-                    EventDelegates.Add(kvp.Key, kvp.Value);
+                    try
+                    {
+                        EventDelegates.Add(kvp.Key, kvp.Value);
+                    }
+                    catch (Exception)
+                    {
+                        m_Log.WarnFormat("Duplicate event registered {0}", kvp.Key);
+                    }
                 }
                 foreach (KeyValuePair<string, Type> kvp in info.Types)
                 {
-                    Types.Add(kvp.Key, kvp.Value);
+                    try
+                    {
+                        Types.Add(kvp.Key, kvp.Value);
+                    }
+                    catch (Exception)
+                    {
+                        m_Log.WarnFormat("Duplicate type registered {0}", kvp.Key);
+                    }
                 }
-                foreach(KeyValuePair<string, PropertyInfo> kvp in info.Properties)
+                foreach (KeyValuePair<string, PropertyInfo> kvp in info.Properties)
                 {
-                    Properties.Add(kvp.Key, kvp.Value);
+                    try
+                    {
+                        Properties.Add(kvp.Key, kvp.Value);
+                    }
+                    catch (Exception)
+                    {
+                        m_Log.WarnFormat("Duplicate property registered {0}", kvp.Key);
+                    }
                 }
-                foreach(KeyValuePair<Type, Dictionary<Type, MethodInfo>> kvp in info.Typecasts)
+                foreach (KeyValuePair<Type, Dictionary<Type, MethodInfo>> kvp in info.Typecasts)
                 {
-                    Typecasts.Add(kvp.Key, kvp.Value);
+                    Dictionary<Type, MethodInfo> typecasts;
+                    if(!Typecasts.TryGetValue(kvp.Key, out typecasts))
+                    {
+                        typecasts = new Dictionary<Type, MethodInfo>();
+                        Typecasts[kvp.Key] = typecasts;
+                    }
+
+                    foreach (KeyValuePair<Type, MethodInfo> innerKvp in kvp.Value)
+                    {
+                        try
+                        {
+                            typecasts.Add(innerKvp.Key, innerKvp.Value);
+                        }
+                        catch (Exception)
+                        {
+                            m_Log.WarnFormat("Duplicate typecast registered {0} => {1}", kvp.Key, innerKvp.Key);
+                        }
+                    }
                 }
                 VariableTypes.AddRange(info.VariableTypes);
             }
