@@ -23,6 +23,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Asset.Format;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -63,6 +64,9 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         [APILevel(APIFlags.ASSL)]
         [APIDisplayName("notecard")]
         [APIAccessibleMembers("Count")]
+        [APIIsVariableType]
+        [ImplementsCustomTypecasts]
+        [Serializable]
         public sealed class NotecardData
         {
             private readonly string[] m_NotecardLines;
@@ -76,11 +80,40 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
 
             public int Count => m_NotecardLines?.Length ?? 0;
 
+            public static implicit operator bool(NotecardData d) => d.m_NotecardLines != null;
+
             public NotecardDataEnumerator GetLslForeachEnumerator() => new NotecardDataEnumerator(this);
         }
 
+        [APIExtension(APIExtension.Properties, "notecardaccessor")]
+        [APIDisplayName("notecardaccessor")]
+        public class NotecardAccessor
+        {
+            private readonly ScriptInstance Instance;
+
+            public NotecardAccessor(ScriptInstance instance)
+            {
+                Instance = instance;
+            }
+
+            public NotecardData this[string name]
+            {
+                get
+                {
+                    lock (Instance)
+                    {
+                        UUID assetID = Instance.GetNotecardAssetID(name);
+                        Notecard nc = Instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                        return new NotecardData(nc.Text.Split('\n'));
+                    }
+                }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Notecard")]
+        public NotecardAccessor GetNotecards(ScriptInstance instance) => new NotecardAccessor(instance);
+
         [APILevel(APIFlags.ASSL, "asGetNotecardLines")]
-        [APIExtension(APIExtension.Properties, "Notecard")]
         public NotecardData GetNotecardData(ScriptInstance instance, string name)
         {
             lock (instance)
