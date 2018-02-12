@@ -697,11 +697,6 @@ namespace SilverSim.Scripting.Lsl
             var apiExtensions = new List<string>();
             acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
             string windLightApiType = APIExtension.LightShare;
-            compileState.ForcedSleepDefault = true;
-            compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator = false;
-            compileState.LanguageExtensions.EnableNonFirstDefaultState = true;
-            compileState.LanguageExtensions.EnableLogicalModifyAssignments = true;
-            compileState.LanguageExtensions.EnableAllowImplicitCastToString = true;
             foreach (KeyValuePair<int, string> shbang in shbangs)
             {
                 if (shbang.Value.StartsWith("//#!Mode:"))
