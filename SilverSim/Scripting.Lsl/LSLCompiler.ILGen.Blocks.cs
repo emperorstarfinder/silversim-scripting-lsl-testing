@@ -223,7 +223,7 @@ namespace SilverSim.Scripting.Lsl
                                     compileState.ILGen.Emit(OpCodes.Stloc, p1);
                                     if (varNames.Count != 1)
                                     {
-                                        throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
+                                        throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), compileState.MapType(enumType)));
                                     }
                                 }
                                 else if(enumRetType.IsConstructedGenericType && enumRetType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
@@ -240,22 +240,36 @@ namespace SilverSim.Scripting.Lsl
                                     }
                                     LocalBuilder r1 = compileState.ILGen.DeclareLocal(enumRetType);
                                     LocalBuilder p1 = compileState.ILGen.DeclareLocal(genParam[0]);
-                                    LocalBuilder p2 = compileState.ILGen.DeclareLocal(genParam[1]);
+                                    LocalBuilder p2 = null;
                                     newLocalVars[varNames[0]] = p1;
-                                    newLocalVars[varNames[1]] = p2;
+
+                                    if(varNames.Count == 1 && Attribute.GetCustomAttribute(mi, typeof(AllowKeyOnlyEnumerationOnKeyValuePair)) != null)
+                                    {
+
+                                    }
+                                    else if (varNames.Count != 2)
+                                    {
+                                        throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), compileState.MapType(enumType)));
+                                    }
+                                    else
+                                    {
+                                        p2 = compileState.ILGen.DeclareLocal(genParam[1]);
+                                        newLocalVars[varNames[1]] = p2;
+                                    }
                                     compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
                                     compileState.ILGen.Emit(OpCodes.Call, currentGet);
                                     compileState.ILGen.Emit(OpCodes.Stloc, r1);
                                     compileState.ILGen.Emit(OpCodes.Ldloca, r1);
-                                    compileState.ILGen.Emit(OpCodes.Dup);
+                                    if (p2 != null)
+                                    {
+                                        compileState.ILGen.Emit(OpCodes.Dup);
+                                    }
                                     compileState.ILGen.Emit(OpCodes.Call, currentGet.ReturnType.GetProperty("Key").GetGetMethod());
                                     compileState.ILGen.Emit(OpCodes.Stloc, p1);
-                                    compileState.ILGen.Emit(OpCodes.Call, currentGet.ReturnType.GetProperty("Value").GetGetMethod());
-                                    compileState.ILGen.Emit(OpCodes.Stloc, p2);
-
-                                    if (varNames.Count != 2)
+                                    if (p2 != null)
                                     {
-                                        throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), "list"));
+                                        compileState.ILGen.Emit(OpCodes.Call, currentGet.ReturnType.GetProperty("Value").GetGetMethod());
+                                        compileState.ILGen.Emit(OpCodes.Stloc, p2);
                                     }
                                 }
                                 else

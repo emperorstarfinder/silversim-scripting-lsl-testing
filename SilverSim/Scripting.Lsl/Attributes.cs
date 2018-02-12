@@ -62,6 +62,12 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method)]
+    public sealed class AllowKeyOnlyEnumerationOnKeyValuePair : Attribute
+    {
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Method)]
     public sealed class AllowExplicitTypecastsBeImplicitToStringAttribute : Attribute
     {
         public int[] ParameterNumbers { get; }
