@@ -60,23 +60,23 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [APILevel(APIFlags.ASSL)]
             public static implicit operator Variant(Quaternion v) => new Variant { Value = v };
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator Variant(ByteArrayApi.ByteArray v) => new Variant { Value = v };
+            public static implicit operator Variant(ByteArrayApi.ByteArray v) => new Variant { Value = new ByteArrayApi.ByteArray(v) };
             [APILevel(APIFlags.ASSL)]
             public static implicit operator bool(Variant v) => v.Value.AsBoolean;
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator int(Variant v) => ConvertToInt(v.Value);
+            public static implicit operator int(Variant v) => v.Value.LslConvertToInt();
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator long(Variant v) => ConvertToLong(v.Value);
+            public static implicit operator long(Variant v) => v.Value.LslConvertToLong();
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator double(Variant v) => ConvertToFloat(v.Value);
+            public static implicit operator double(Variant v) => v.Value.LslConvertToFloat();
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator string(Variant v) => ConvertToString(v.Value);
+            public static implicit operator string(Variant v) => v.Value.LslConvertToString();
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator LSLKey(Variant v) => ConvertToKey(v.Value);
+            public static implicit operator LSLKey(Variant v) => v.Value.LslConvertToKey();
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator Vector3(Variant v) => ConvertToVector(v.Value);
+            public static implicit operator Vector3(Variant v) => v.Value.LslConvertToVector();
             [APILevel(APIFlags.ASSL)]
-            public static implicit operator Quaternion(Variant v) => ConvertToRot(v.Value);
+            public static implicit operator Quaternion(Variant v) => v.Value.LslConvertToRot();
             [APIExtension(APIExtension.ByteArray)]
             public static implicit operator ByteArrayApi.ByteArray(Variant v)
             {
@@ -132,14 +132,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
 
-            public static AnArray operator +(AnArray v1, Variant v2)
-            {
-                var n = new AnArray(v1)
-                {
-                    v2.Value
-                };
-                return n;
-            }
+            public static AnArray operator +(AnArray v1, Variant v2) => new AnArray(v1) { v2.Value };
 
             public static AnArray operator +(Variant v1, AnArray v2)
             {
@@ -745,18 +738,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        private static double ConvertToFloat(IValue iv)
-        {
-            try
-            {
-                return iv.AsReal;
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-
         [APILevel(APIFlags.LSL, "llList2Float")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetFloatAt")]
         [Pure]
@@ -772,7 +753,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
 
-            return ConvertToFloat(src[index]);
+            return src[index].LslConvertToFloat();
         }
 
         [APILevel(APIFlags.LSL, "llListInsertList")]
@@ -860,29 +841,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return index;
         }
 
-        internal static long ConvertToLong(IValue iv)
-        {
-            if (iv is Real)
-            {
-                return LSLCompiler.ConvToLong((Real)iv);
-            }
-            else if (iv is AString || iv is LSLKey)
-            {
-                return LSLCompiler.ConvToLong(iv.ToString());
-            }
-            else
-            {
-                try
-                {
-                    return iv.AsLong;
-                }
-                catch
-                {
-                    return 0;
-                }
-            }
-        }
-
         [APIExtension(APIExtension.LongInteger, "llList2Long")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLongAt")]
         [Description("Returns an integer that is at index in src")]
@@ -903,30 +861,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
 
-            return ConvertToLong(src[index]);
-        }
-
-        internal static int ConvertToInt(IValue iv)
-        {
-            if (iv is Real)
-            {
-                return LSLCompiler.ConvToInt((Real)iv);
-            }
-            else if (iv is AString || iv is LSLKey)
-            {
-                return LSLCompiler.ConvToInt(iv.ToString());
-            }
-            else
-            {
-                try
-                {
-                    return iv.AsInteger;
-                }
-                catch
-                {
-                    return 0;
-                }
-            }
+            return src[index].LslConvertToLong();
         }
 
         [APILevel(APIFlags.LSL, "llList2Integer")]
@@ -949,34 +884,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 0;
             }
 
-            return ConvertToInt(src[index]);
-        }
-
-        internal static LSLKey ConvertToKey(IValue val, bool singlePrecision = false)
-        {
-            Type t = val.GetType();
-            if (t == typeof(Real))
-            {
-                return singlePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
-                    LSLCompiler.TypecastDoubleToString(val.AsReal);
-            }
-            else if (t == typeof(Vector3))
-            {
-                return singlePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
-                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
-            }
-            else if (t == typeof(Quaternion))
-            {
-                return singlePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
-                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
-            }
-            else
-            {
-                return val.ToString();
-            }
+            return src[index].LslConvertToInt();
         }
 
         [APILevel(APIFlags.LSL, "llList2Key")]
@@ -1000,19 +908,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return UUID.Zero;
             }
 
-            return ConvertToKey(src[index], script.UsesSinglePrecision);
-        }
-
-        internal static Quaternion ConvertToRot(IValue iv)
-        {
-            try
-            {
-                return iv.AsQuaternion;
-            }
-            catch
-            {
-                return Quaternion.Identity;
-            }
+            return src[index].LslConvertToKey(script.UsesSinglePrecision);
         }
 
         [APILevel(APIFlags.LSL, "llList2Rot")]
@@ -1035,34 +931,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return Quaternion.Identity;
             }
 
-            return ConvertToRot(src[index]);
-        }
-
-        internal static string ConvertToString(IValue val, bool singlePrecision = false)
-        {
-            Type t = val.GetType();
-            if (t == typeof(Real))
-            {
-                return singlePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
-                    LSLCompiler.TypecastDoubleToString(val.AsReal);
-            }
-            else if (t == typeof(Vector3))
-            {
-                return singlePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
-                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
-            }
-            else if (t == typeof(Quaternion))
-            {
-                return singlePrecision ?
-                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
-                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
-            }
-            else
-            {
-                return val.ToString();
-            }
+            return src[index].LslConvertToRot();
         }
 
         [APILevel(APIFlags.LSL, "llList2String")]
@@ -1086,19 +955,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return string.Empty;
             }
 
-            return ConvertToString(src[index], script.UsesSinglePrecision);
-        }
-
-        internal static Vector3 ConvertToVector(IValue iv)
-        {
-            try
-            {
-                return iv.AsVector3;
-            }
-            catch
-            {
-                return Vector3.Zero;
-            }
+            return src[index].LslConvertToString(script.UsesSinglePrecision);
         }
 
         [APILevel(APIFlags.LSL, "llList2Vector")]
@@ -1121,7 +978,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return Vector3.Zero;
             }
 
-            return ConvertToVector(src[index]);
+            return src[index].LslConvertToVector();
         }
 
         [APILevel(APIFlags.LSL, "llDumpList2String")]
@@ -1186,6 +1043,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int TYPE_ROTATION = 6;
         [APIExtension(APIExtension.LongInteger)]
         public const int TYPE_LONGINTEGER = 7;
+        [APILevel(APIFlags.ASSL)]
+        public const int TYPE_LIST = 8;
         [APILevel(APIFlags.LSL)]
         public const int TYPE_INVALID = 0;
 

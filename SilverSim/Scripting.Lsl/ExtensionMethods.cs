@@ -540,5 +540,142 @@ namespace SilverSim.Scripting.Lsl
                 return pInfo;
             }
         }
+
+        public static long LslConvertToLong(this IValue iv)
+        {
+            if (iv is Real)
+            {
+                return LSLCompiler.ConvToLong((Real)iv);
+            }
+            else if (iv is AString || iv is LSLKey)
+            {
+                return LSLCompiler.ConvToLong(iv.ToString());
+            }
+            else
+            {
+                try
+                {
+                    return iv.AsLong;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public static int LslConvertToInt(this IValue iv)
+        {
+            if (iv is Real)
+            {
+                return LSLCompiler.ConvToInt((Real)iv);
+            }
+            else if (iv is AString || iv is LSLKey)
+            {
+                return LSLCompiler.ConvToInt(iv.ToString());
+            }
+            else
+            {
+                try
+                {
+                    return iv.AsInteger;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public static LSLKey LslConvertToKey(this IValue val, bool singlePrecision = false)
+        {
+            Type t = val.GetType();
+            if (t == typeof(Real))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
+                    LSLCompiler.TypecastDoubleToString(val.AsReal);
+            }
+            else if (t == typeof(Vector3))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
+                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
+            }
+            else if (t == typeof(Quaternion))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
+                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
+            }
+            else
+            {
+                return val.ToString();
+            }
+        }
+
+        public static Quaternion LslConvertToRot(this IValue iv)
+        {
+            try
+            {
+                return iv.AsQuaternion;
+            }
+            catch
+            {
+                return Quaternion.Identity;
+            }
+        }
+
+        public static Vector3 LslConvertToVector(this IValue iv)
+        {
+            try
+            {
+                return iv.AsVector3;
+            }
+            catch
+            {
+                return Vector3.Zero;
+            }
+        }
+
+        public static string LslConvertToString(this IValue val, bool singlePrecision = false)
+        {
+            Type t = val.GetType();
+            if (t == typeof(Real))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastFloatToString(val.AsReal) :
+                    LSLCompiler.TypecastDoubleToString(val.AsReal);
+            }
+            else if (t == typeof(Vector3))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastVectorToString6Places((Vector3)val) :
+                    LSLCompiler.TypecastVectorToString6Places((Vector3)val);
+            }
+            else if (t == typeof(Quaternion))
+            {
+                return singlePrecision ?
+                    LSLCompiler.SinglePrecision.TypecastRotationToString6Places((Quaternion)val) :
+                    LSLCompiler.TypecastRotationToString6Places((Quaternion)val);
+            }
+            else
+            {
+                return val.ToString();
+            }
+        }
+
+        public static double LslConvertToFloat(this IValue iv)
+        {
+            try
+            {
+                return iv.AsReal;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
     }
 }
