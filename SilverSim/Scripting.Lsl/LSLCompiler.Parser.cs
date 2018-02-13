@@ -372,7 +372,8 @@ namespace SilverSim.Scripting.Lsl
                 {
                     int eocf = FindEndOfControlFlow(compileState, args, lineNumber);
                     int inkeyword = args.IndexOf("in");
-                    for(int pos = 2; pos < inkeyword; pos += 2)
+                    compileState.m_LocalVariables.Add(new List<string>());
+                    for (int pos = 2; pos < inkeyword; pos += 2)
                     {
                         if(pos > 2 && args[pos - 1] != ",")
                         {
@@ -387,7 +388,8 @@ namespace SilverSim.Scripting.Lsl
                     if (args[eocf + 1] == "{")
                     {
                         block.Add(new LineInfo(args));
-                        ParseBlock(compileState, p, block, inState, true);
+                        ParseBlock(compileState, p, block, inState, false);
+                        compileState.m_LocalVariables.RemoveAt(compileState.m_LocalVariables.Count - 1);
                         return;
                     }
                     else
@@ -395,6 +397,7 @@ namespace SilverSim.Scripting.Lsl
                         List<TokenInfo> controlflow = args.GetRange(0, eocf + 1);
                         block.Add(new LineInfo(controlflow));
                         args = args.GetRange(eocf + 1, args.Count - eocf - 1);
+                        compileState.m_LocalVariables.RemoveAt(compileState.m_LocalVariables.Count - 1);
                     }
                 }
                 else if (args[0] == "{")
