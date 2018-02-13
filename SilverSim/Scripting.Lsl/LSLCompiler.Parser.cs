@@ -351,7 +351,7 @@ namespace SilverSim.Scripting.Lsl
                         args = args.GetRange(1, args.Count - 1);
                     }
                 }
-                else if (args[0] == "if" || args[0] == "for" || args[0] == "while" || (args[0] == "foreach" && compileState.LanguageExtensions.EnableForeach))
+                else if (args[0] == "if" || args[0] == "for" || args[0] == "while")
                 {
                     int eocf = FindEndOfControlFlow(compileState, args, lineNumber);
                     /* make it a block */
@@ -375,21 +375,22 @@ namespace SilverSim.Scripting.Lsl
                     compileState.m_LocalVariables.Add(new List<string>());
                     for (int pos = 2; pos < inkeyword; pos += 2)
                     {
-                        if(pos > 2 && args[pos - 1] != ",")
-                        {
-                            CheckUsedName(compileState, p, "Local Variable", args[1]);
-                        }
-                        else
+                        if (pos > 2 && args[pos - 1] != ",")
                         {
                             throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "ExpectingCommaInForeachResultSet", "Expecting ',' in 'foreach' result set"), args[0]));
                         }
+                        if (!IsValidVarName(args[pos]))
+                        {
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "VariableName0IsNotValid", "Variable name '{0}' is not valid."), args[pos]));
+                        }
+                        CheckUsedName(compileState, p, "Local Variable", args[pos]);
+                        compileState.m_LocalVariables[compileState.m_LocalVariables.Count - 1].Add(args[pos]);
                     }
                     /* make it a block */
                     if (args[eocf + 1] == "{")
                     {
                         block.Add(new LineInfo(args));
                         ParseBlock(compileState, p, block, inState, false);
-                        compileState.m_LocalVariables.RemoveAt(compileState.m_LocalVariables.Count - 1);
                         return;
                     }
                     else
