@@ -45,12 +45,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace SilverSim.Scripting.Lsl.Api.Base
+namespace SilverSim.Scripting.Lsl.Api.Agents
 {
     [ScriptApiName("Agents")]
     [LSLImplementation]
     [Description("LSL/OSSL Agents API")]
-    public class AgentsApi : IScriptApi, IPlugin
+    public sealed partial class AgentsApi : IScriptApi, IPlugin
     {
         private List<IUserAgentServicePlugin> m_UserAgentServicePlugins = new List<IUserAgentServicePlugin>();
 
