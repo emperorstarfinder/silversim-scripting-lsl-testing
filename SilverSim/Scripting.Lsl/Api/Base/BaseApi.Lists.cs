@@ -1106,35 +1106,41 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 int lowestSpacerIndex = src.Length;
                 int selectedDelimLength = 0;
                 int selectedSpacerLength = 0;
-                foreach(string separator in separators_array)
+                if (separators_array.Length != 0)
                 {
-                    int index = src.IndexOf(separator, position);
-                    if(index < 0)
+                    foreach (string separator in separators_array)
                     {
-                        separators.Remove(separator);
-                        separators_array = null;
-                    }
-                    else
-                    {
-                        lowestDelimIndex = Math.Min(index, lowestDelimIndex);
-                        selectedDelimLength = separator.Length;
+                        int index = src.IndexOf(separator, position);
+                        if (index < 0)
+                        {
+                            separators.Remove(separator);
+                            separators_array = null;
+                        }
+                        else
+                        {
+                            lowestDelimIndex = Math.Min(index, lowestDelimIndex);
+                            selectedDelimLength = separator.Length;
+                        }
                     }
                 }
 
                 string spc = null;
-                foreach (string spacer in spacers.ToArray())
+                if (spacers_array.Length != 0)
                 {
-                    int index = src.IndexOf(spacer, position);
-                    if (index < 0)
+                    foreach (string spacer in spacers.ToArray())
                     {
-                        spacers.Remove(spacer);
-                        spacers_array = null;
-                    }
-                    else
-                    {
-                        lowestSpacerIndex = Math.Min(index, lowestSpacerIndex);
-                        spc = spacer;
-                        selectedSpacerLength = spacer.Length;
+                        int index = src.IndexOf(spacer, position);
+                        if (index < 0)
+                        {
+                            spacers.Remove(spacer);
+                            spacers_array = null;
+                        }
+                        else
+                        {
+                            lowestSpacerIndex = Math.Min(index, lowestSpacerIndex);
+                            spc = spacer;
+                            selectedSpacerLength = spacer.Length;
+                        }
                     }
                 }
 
