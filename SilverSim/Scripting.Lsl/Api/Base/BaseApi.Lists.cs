@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
@@ -1080,105 +1081,90 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Description("Returns an integer that is the number of elements in the list src")]
         public int GetListLength(AnArray src) => src.Count;
 
-        private AnArray ParseString2List(string src, AnArray separators, AnArray spacers, bool keepNulls)
+        private AnArray ParseString2List(string src, AnArray separators_raw, AnArray spacers_raw, bool keepNulls)
         {
+            var spacers = new List<string>(from spacer in spacers_raw where spacer.LSL_Type == LSLValueType.String && spacer.ToString().Length != 0 select spacer.ToString());
+            var separators = new List<string>(from separator in separators_raw where separator.LSL_Type == LSLValueType.String && separator.ToString().Length != 0 select separator.ToString());
             var res = new AnArray();
-            string value = null;
 
-            while(src.Length != 0)
+            int position = 0;
+            string[] spacers_array = spacers.ToArray();
+            string[] separators_array = separators.ToArray();
+            while(position < src.Length)
             {
-                IValue foundSpacer = null;
-                foreach(IValue spacer in spacers)
+                if (separators_array == null)
                 {
-                    if(spacer.LSL_Type != LSLValueType.String)
+                    separators_array = separators_array.ToArray();
+                }
+
+                if(spacers_array == null)
+                {
+                    spacers_array = spacers.ToArray();
+                }
+
+                int lowestDelimIndex = src.Length;
+                int lowestSpacerIndex = src.Length;
+                int selectedDelimLength = 0;
+                int selectedSpacerLength = 0;
+                foreach(string separator in separators_array)
+                {
+                    int index = src.IndexOf(separator, position);
+                    if(index < 0)
                     {
-                        continue;
+                        separators.Remove(separator);
+                        separators_array = null;
                     }
-                    if(src.StartsWith(spacer.ToString()))
+                    else
                     {
-                        foundSpacer = spacer;
-                        break;
+                        lowestDelimIndex = Math.Min(index, lowestDelimIndex);
+                        selectedDelimLength = separator.Length;
                     }
                 }
 
-                if (foundSpacer != null)
+                string spc = null;
+                foreach (string spacer in spacers.ToArray())
                 {
-                    src = src.Substring(foundSpacer.ToString().Length);
-                    continue;
-                }
-
-                IValue foundSeparator = null;
-                foreach(IValue separator in separators)
-                {
-                    if(separator.LSL_Type != LSLValueType.String)
+                    int index = src.IndexOf(spacer, position);
+                    if (index < 0)
                     {
-                        continue;
+                        spacers.Remove(spacer);
+                        spacers_array = null;
                     }
-
-                    if(src.StartsWith(separator.ToString()))
+                    else
                     {
-                        foundSeparator = separator;
-                        break;
+                        lowestSpacerIndex = Math.Min(index, lowestSpacerIndex);
+                        spc = spacer;
+                        selectedSpacerLength = spacer.Length;
                     }
                 }
 
-                if(foundSeparator != null)
+                int lowestIndex;
+                int selectedLength;
+
+                if(lowestSpacerIndex < lowestDelimIndex)
                 {
-                    if(value != null || keepNulls)
-                    {
-                        res.Add(value);
-                    }
-                    value = null;
-                    src = src.Substring(foundSeparator.ToString().Length);
-                    if(src.Length == 0 && keepNulls)
-                    {
-                        /* special case we consumed all entries but a separator at end */
-                        res.Add(string.Empty);
-                    }
+                    lowestIndex = lowestSpacerIndex;
+                    selectedLength = selectedSpacerLength;
+                }
+                else
+                {
+                    lowestIndex = lowestDelimIndex;
+                    selectedLength = selectedDelimLength;
+                    spc = null;
                 }
 
-                int minIndex = src.Length;
-
-                foreach(IValue spacer in spacers)
+                if (keepNulls || lowestIndex > 0)
                 {
-                    if (spacer.LSL_Type != LSLValueType.String)
-                    {
-                        continue;
-                    }
-                    int resIndex = src.IndexOf(spacer.ToString());
-                    if(resIndex < 0)
-                    {
-                        continue;
-                    }
-                    else if(resIndex < minIndex)
-                    {
-                        minIndex = resIndex;
-                    }
-                }
-                foreach(IValue separator in separators)
-                {
-                    if(spacers.LSL_Type != LSLValueType.String)
-                    {
-                        continue;
-                    }
-                    int resIndex = src.IndexOf(separator.ToString());
-                    if (resIndex < 0)
-                    {
-                        continue;
-                    }
-                    else if (resIndex < minIndex)
-                    {
-                        minIndex = resIndex;
-                    }
+                    string val = src.Substring(position, lowestDelimIndex - position);
+                    res.Add(val);
                 }
 
-                value = src.Substring(0, minIndex);
-                src = src.Substring(minIndex);
-            }
+                position = lowestIndex + selectedLength;
 
-            if (value != null)
-            {
-                res.Add(value);
+                if (spc != null)
+                {
+                    res.Add(spc);
+                }
             }
 
             return res;
