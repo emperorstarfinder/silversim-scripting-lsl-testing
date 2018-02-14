@@ -800,6 +800,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        private bool CompareListElement(IValue a, IValue b)
+        {
+            return a.GetType() == b.GetType() && a.Equals(b);
+        }
+
         [APILevel(APIFlags.LSL, "llListFindList")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Find")]
         [Description("Returns the integer index of the first instance of test in src.")]
@@ -818,12 +823,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 for (int i = 0; i < length; i++)
                 {
-                    if (src[i].Equals(test[0]) || test[0].Equals(src[i]))
+                    if (CompareListElement(src[i], test[0]))
                     {
                         int j;
                         for (j = 1; j < test.Count; j++)
                         {
-                            if (!(src[i + j].Equals(test[j]) || test[j].Equals(src[i + j])))
+                            if (!CompareListElement(src[i + j], test[j]))
                             {
                                 break;
                             }
