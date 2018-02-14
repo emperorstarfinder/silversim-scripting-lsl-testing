@@ -1159,7 +1159,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     spc = null;
                 }
 
-                if (keepNulls || lowestIndex > 0)
+                if (keepNulls || lowestIndex > position)
                 {
                     string val = src.Substring(position, lowestDelimIndex - position);
                     res.Add(val);
