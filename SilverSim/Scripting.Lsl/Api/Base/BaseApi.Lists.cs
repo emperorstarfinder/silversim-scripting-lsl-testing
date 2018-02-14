@@ -506,11 +506,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (start < 0)
             {
-                start = src.Count - start;
+                start = src.Count + start;
             }
             if (end < 0)
             {
-                end = src.Count - end;
+                end = src.Count + end;
             }
 
             if (start < 0)
@@ -685,11 +685,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (start < 0)
             {
-                start = src.Count - start;
+                start = src.Count + start;
             }
             if (end < 0)
             {
-                end = src.Count - end;
+                end = src.Count + end;
             }
 
             if (start < 0)

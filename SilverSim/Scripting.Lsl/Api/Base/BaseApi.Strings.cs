@@ -42,11 +42,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (start < 0)
             {
-                start = src.Length - start;
+                start = src.Length + start;
             }
             if (end < 0)
             {
-                end = src.Length - end;
+                end = src.Length + end;
             }
 
             if (start < 0)
@@ -174,11 +174,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if(start < 0)
             {
-                start = src.Length - start;
+                start = src.Length + start;
             }
             if (end < 0)
             {
-                end = src.Length - end;
+                end = src.Length + end;
             }
 
             if(start < 0)
