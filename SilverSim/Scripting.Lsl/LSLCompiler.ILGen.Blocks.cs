@@ -47,7 +47,7 @@ namespace SilverSim.Scripting.Lsl
             processnext:
                 LineInfo functionLine = compileState.GetLine();
                 LocalBuilder lb;
-                compileState.ILGen.MarkSequencePoint(functionLine.FirstTokenLineNumber, 1, 1, 1);
+                compileState.ILGen.MarkSequencePoint(functionLine.FirstTokenLineNumber, 1, functionLine.FirstTokenLineNumber, 1);
                 switch (functionLine.Line[0])
                 {
                     #region Label definition
@@ -203,7 +203,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 /* this is the simple one param case */
                                 MethodInfo currentGet = enumeratorType.GetProperty("Current").GetGetMethod();
-                                LocalBuilder p1 = compileState.ILGen.DeclareLocal(currentGet.ReturnType);
+                                LocalBuilder p1 = compileState.ILGen.DeclareLocal(currentGet.ReturnType, varNames[0]);
                                 newLocalVars[varNames[0]] = p1;
                                 compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
                                 compileState.ILGen.Emit(OpCodes.Call, currentGet);
@@ -216,15 +216,15 @@ namespace SilverSim.Scripting.Lsl
                                 if (compileState.IsValidType(enumRetType))
                                 {
                                     /* this is the simple one param case */
-                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(enumRetType);
-                                    newLocalVars[varNames[0]] = p1;
-                                    compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
-                                    compileState.ILGen.Emit(OpCodes.Call, currentGet);
-                                    compileState.ILGen.Emit(OpCodes.Stloc, p1);
                                     if (varNames.Count != 1)
                                     {
                                         throw new CompilerException(functionLine.Line[pos - 2].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "WrongNumberOfVariablesToForeachForType0", "Wrong number of variables to 'foreach' for type '{0}'"), compileState.MapType(enumType)));
                                     }
+                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(enumRetType, varNames[0]);
+                                    newLocalVars[varNames[0]] = p1;
+                                    compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
+                                    compileState.ILGen.Emit(OpCodes.Call, currentGet);
+                                    compileState.ILGen.Emit(OpCodes.Stloc, p1);
                                 }
                                 else if(enumRetType.IsConstructedGenericType && enumRetType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                                 {
@@ -239,7 +239,7 @@ namespace SilverSim.Scripting.Lsl
                                         throw new CompilerException(functionLine.Line[4].LineNumber, string.Format("Internal Error! {0} is not a LSL compatible type", genParam[1].FullName));
                                     }
                                     LocalBuilder r1 = compileState.ILGen.DeclareLocal(enumRetType);
-                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(genParam[0]);
+                                    LocalBuilder p1 = compileState.ILGen.DeclareLocal(genParam[0], varNames[0]);
                                     LocalBuilder p2 = null;
                                     newLocalVars[varNames[0]] = p1;
 
@@ -253,7 +253,7 @@ namespace SilverSim.Scripting.Lsl
                                     }
                                     else
                                     {
-                                        p2 = compileState.ILGen.DeclareLocal(genParam[1]);
+                                        p2 = compileState.ILGen.DeclareLocal(genParam[1], varNames[1]);
                                         newLocalVars[varNames[1]] = p2;
                                     }
                                     compileState.ILGen.Emit(OpCodes.Ldloc, enumeratorLocal);
@@ -911,7 +911,7 @@ namespace SilverSim.Scripting.Lsl
                                 eoif_label = null;
                             }
 
-                            lb = compileState.ILGen.DeclareLocal(targetType);
+                            lb = compileState.ILGen.DeclareLocal(targetType, functionLine.Line[1]);
                             if (compileState.EmitDebugSymbols)
                             {
                                 lb.SetLocalSymInfo(functionLine.Line[1]);

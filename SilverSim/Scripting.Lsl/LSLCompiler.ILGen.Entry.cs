@@ -28,6 +28,7 @@ using SilverSim.Scripting.Lsl.Expression;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Reflection;
@@ -156,11 +157,24 @@ namespace SilverSim.Scripting.Lsl
                 string assetAssemblyName = "Script." + assetID.ToString().Replace('-', '_');
                 var aName = new AssemblyName(assetAssemblyName);
                 AssemblyBuilder ab = appDom.DefineDynamicAssembly(aName, access);
+
+                if (compileState.EmitDebugSymbols)
+                {
+                    Type daType = typeof(DebuggableAttribute);
+                    ConstructorInfo daCtor = daType.GetConstructor(new Type[] { typeof(DebuggableAttribute.DebuggingModes) });
+                    var daBuilder = new CustomAttributeBuilder(daCtor, new object[]
+                    {
+                        DebuggableAttribute.DebuggingModes.DisableOptimizations |
+                        DebuggableAttribute.DebuggingModes.Default
+                    });
+                    ab.SetCustomAttribute(daBuilder);
+                }
+
                 ModuleBuilder mb = (access == AssemblyBuilderAccess.RunAndCollect) ?
                     ab.DefineDynamicModule(aName.Name, compileState.EmitDebugSymbols) :
                     ab.DefineDynamicModule(aName.Name, filename, compileState.EmitDebugSymbols);
 
-                if (compileState.EmitDebugSymbols)
+                if(compileState.EmitDebugSymbols)
                 {
                     compileState.DebugDocument = mb.DefineDocument(assetID.ToString() + ".lsl",
                         SymDocumentType.Text,
