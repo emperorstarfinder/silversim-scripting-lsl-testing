@@ -1161,7 +1161,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 if (keepNulls || lowestIndex > position)
                 {
-                    string val = src.Substring(position, lowestDelimIndex - position);
+                    string val = src.Substring(position, lowestIndex - position);
                     res.Add(val);
                 }
 
