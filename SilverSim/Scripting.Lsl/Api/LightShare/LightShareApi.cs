@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
     [ScriptApiName("LightShare")]
     [LSLImplementation]
     [Description("OSSL LightShare API")]
-    public class LightShareApi : IScriptApi, IPlugin
+    public sealed partial class LightShareApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
         {

@@ -19,31 +19,22 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Scene;
+using SilverSim.Scene.Types.SceneEnvironment;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
-using EnvironmentController = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController;
-using WindlightSkyData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightSkyData;
-using WindlightWaterData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightWaterData;
-using WLVector2 = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WLVector2;
-using WLVector4 = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WLVector4;
+using static SilverSim.Scene.Types.SceneEnvironment.EnvironmentController;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.LightShare
 {
-    [LSLImplementation]
-    [ScriptApiName("LightShareProperties")]
-    [Description("LightShare Properties API")]
-    public class LightShareProperties : IScriptApi, IPlugin
+    public sealed partial class LightShareApi
     {
-        public void Startup(ConfigurationLoader loader)
-        {
-            /* intentionally left empty */
-        }
-
         [APIExtension(APIExtension.Properties, "lightshare")]
         [APIDisplayName("lightshare")]
         [APIAccessibleMembers(
@@ -299,7 +290,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
 
             [XmlIgnore]
-            public LightShareData Defaults => 
+            public LightShareData Defaults =>
                 new LightShareData(this) { Water = WindlightWaterData.Defaults, Sky = WindlightSkyData.Defaults };
         }
 
@@ -324,7 +315,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Setter, "Lightshare")]
         public void SetWindlightScene(ScriptInstance instance, LightShareData d)
         {
-            lock(instance)
+            lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if (scene.IsEstateManager(instance.Item.Owner))
