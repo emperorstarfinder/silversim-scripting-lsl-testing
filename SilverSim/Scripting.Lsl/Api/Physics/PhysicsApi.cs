@@ -36,7 +36,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
     [ScriptApiName("Physics")]
     [LSLImplementation]
     [Description("LSL/OSSL Physics API")]
-    public class PhysicsApi : IScriptApi, IPlugin
+    public sealed partial class PhysicsApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
         {

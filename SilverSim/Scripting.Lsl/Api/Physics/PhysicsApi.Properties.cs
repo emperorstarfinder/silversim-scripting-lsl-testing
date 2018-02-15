@@ -19,45 +19,35 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.ComponentModel;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.Physics
 {
-    [LSLImplementation]
-    [ScriptApiName("CollisionFilterProperties")]
-    [Description("CollisionFilter Properties API")]
-    public class CollisionFilterProperties : IScriptApi, IPlugin
+    public sealed partial class PhysicsApi
     {
-        public void Startup(ConfigurationLoader loader)
-        {
-            /* intentionally left empty */
-        }
-
         [APIExtension(APIExtension.Properties, "collisionfilter")]
         [APIDisplayName("collisionfilter")]
         [APIIsVariableType]
         [APIAccessibleMembers]
         [Serializable]
         [APICloneOnAssignment]
-        public class CollisionFilter
+        public class CollisionFilterData
         {
             public string Name;
             public LSLKey ID;
             public int Accept;
 
-            public CollisionFilter()
+            public CollisionFilterData()
             {
                 Name = string.Empty;
                 ID = UUID.Zero;
                 Accept = 1;
             }
 
-            public CollisionFilter(CollisionFilter src)
+            public CollisionFilterData(CollisionFilterData src)
             {
                 Name = src.Name;
                 ID = src.ID;
@@ -66,7 +56,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         }
 
         [APIExtension(APIExtension.Properties, "CollisionFilter")]
-        public CollisionFilter GetCollisionFilter(string name, LSLKey id, int accept) => new CollisionFilter
+        public CollisionFilterData GetCollisionFilter(string name, LSLKey id, int accept) => new CollisionFilterData
         {
             Name = name.TrimToMaxLength(63),
             ID = id.AsUUID,
@@ -74,12 +64,12 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         };
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "CollisionFilter")]
-        public CollisionFilter GetCollisionFilter(ScriptInstance instance)
+        public CollisionFilterData GetCollisionFilter(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 ObjectPartInventoryItem.CollisionFilterParam p = instance.Item.CollisionFilter;
-                return new CollisionFilter
+                return new CollisionFilterData
                 {
                     Name = p.Name,
                     ID = p.ID,
@@ -89,9 +79,9 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         }
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Setter, "CollisionFilter")]
-        public void SetCollisionFilter(ScriptInstance instance, CollisionFilter filter)
+        public void SetCollisionFilter(ScriptInstance instance, CollisionFilterData filter)
         {
-            lock(instance)
+            lock (instance)
             {
                 instance.Item.CollisionFilter = new ObjectPartInventoryItem.CollisionFilterParam
                 {
