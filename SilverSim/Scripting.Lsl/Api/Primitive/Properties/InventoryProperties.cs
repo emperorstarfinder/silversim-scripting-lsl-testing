@@ -30,7 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.Primitive.Properties
 {
     [LSLImplementation]
     [ScriptApiName("PrimInventoryProperties")]

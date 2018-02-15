@@ -19,25 +19,15 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types.Inventory;
-using System.ComponentModel;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.Base
 {
-    [LSLImplementation]
-    [ScriptApiName("ScriptProperties")]
-    [Description("Script Properties API")]
-    public class ScriptProperties : IScriptApi, IPlugin
+    public sealed partial class BaseApi
     {
-        public void Startup(ConfigurationLoader loader)
-        {
-            /* intentionally left empty */
-        }
-
         [APIExtension(APIExtension.Properties, "script")]
         [APIDisplayName("script")]
         [APIAccessibleMembers]
@@ -54,13 +44,13 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    lock(m_Instance)
+                    lock (m_Instance)
                     {
                         return m_Instance.Item.Owner.ID;
                     }
                 }
             }
-            
+
             public string Name
             {
                 get
@@ -76,7 +66,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    lock(m_Instance)
+                    lock (m_Instance)
                     {
                         return ((Script)m_Instance).StartParameter;
                     }
@@ -87,14 +77,14 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    lock(m_Instance)
+                    lock (m_Instance)
                     {
                         return ((Script)m_Instance).MinEventDelay;
                     }
                 }
                 set
                 {
-                    lock(m_Instance)
+                    lock (m_Instance)
                     {
                         ((Script)m_Instance).MinEventDelay = value;
                     }
@@ -104,7 +94,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
         /* retrieves own script */
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Script")]
-        public OwnScriptAccessor GetScript(ScriptInstance instance) => new OwnScriptAccessor(instance);
+        public OwnScriptAccessor GetScriptProperty(ScriptInstance instance) => new OwnScriptAccessor(instance);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Reset")]
         public void ResetScript(OwnScriptAccessor accessor)
@@ -159,7 +149,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
                 set
                 {
-                    lock(m_Instance)
+                    lock (m_Instance)
                     {
                         ((Script)m_OtherInstance).IsRunning = value != 0;
                     }

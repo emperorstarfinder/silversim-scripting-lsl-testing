@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.Primitive.Properties
 {
     [LSLImplementation]
     [ScriptApiName("PrimProperties")]
