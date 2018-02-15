@@ -34,7 +34,7 @@ namespace SilverSim.Scripting.Lsl.Api.KeyframedMotion
     [ScriptApiName("KeyframedMotion")]
     [LSLImplementation]
     [Description("LSL KeyframedMotion API")]
-    public sealed class KeyframedMotionApi : IScriptApi, IPlugin
+    public sealed partial class KeyframedMotionApi : IScriptApi, IPlugin
     {
         [APILevel(APIFlags.LSL)]
         public const int KFM_COMMAND = 0;

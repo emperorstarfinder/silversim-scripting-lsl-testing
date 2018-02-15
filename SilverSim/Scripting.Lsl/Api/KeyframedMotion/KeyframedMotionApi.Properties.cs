@@ -19,29 +19,18 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Lsl.Api.KeyframedMotion;
 using SilverSim.Types;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using KFM = SilverSim.Scene.Types.KeyframedMotion.KeyframedMotion;
 using KFMEntry = SilverSim.Scene.Types.KeyframedMotion.Keyframe;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.KeyframedMotion
 {
-    [LSLImplementation]
-    [ScriptApiName("KeyframedMotionProperties")]
-    [Description("KeyframedMotion Properties API")]
-    public sealed class KeyframedMotionProperties : IPlugin, IScriptApi
+    public sealed partial class KeyframedMotionApi
     {
-        public void Startup(ConfigurationLoader loader)
-        {
-            /* intentionally left empty */
-        }
-
         [APIExtension(APIExtension.Properties, "keyframedmotionentry")]
         [APIDisplayName("keyframedmotionentry")]
         [APIIsVariableType]
@@ -62,8 +51,8 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
         [Serializable]
         public class KeyframedMotionList
         {
-            public int Mode = KeyframedMotionApi.KFM_FORWARD;
-            public int DataFlags = KeyframedMotionApi.KFM_TRANSLATION | KeyframedMotionApi.KFM_ROTATION;
+            public int Mode = KFM_FORWARD;
+            public int DataFlags = KFM_TRANSLATION | KFM_ROTATION;
             internal readonly List<KeyframedMotionEntry> m_Entries = new List<KeyframedMotionEntry>();
 
             public KeyframedMotionList()
@@ -84,7 +73,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    if(index < 0 || index >= m_Entries.Count)
+                    if (index < 0 || index >= m_Entries.Count)
                     {
                         return new KeyframedMotionEntry();
                     }
@@ -92,11 +81,11 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 }
                 set
                 {
-                    if(index < 0 || index > m_Entries.Count)
+                    if (index < 0 || index > m_Entries.Count)
                     {
                         return;
                     }
-                    if(index == m_Entries.Count)
+                    if (index == m_Entries.Count)
                     {
                         m_Entries.Add(value);
                     }
@@ -137,7 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                     return With((kfm) =>
                     {
                         var list = new KeyframedMotionList();
-                        foreach(KFMEntry k in kfm)
+                        foreach (KFMEntry k in kfm)
                         {
                             list.Add(new KeyframedMotionEntry
                             {
@@ -145,40 +134,40 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                                 TargetRotation = k.TargetRotation
                             });
                         }
-                        switch(kfm.PlayMode)
+                        switch (kfm.PlayMode)
                         {
                             case KFM.Mode.Forward:
-                                list.Mode = KeyframedMotionApi.KFM_FORWARD;
+                                list.Mode = KFM_FORWARD;
                                 break;
 
                             case KFM.Mode.Loop:
-                                list.Mode = KeyframedMotionApi.KFM_LOOP;
+                                list.Mode = KFM_LOOP;
                                 break;
 
                             case KFM.Mode.PingPong:
-                                list.Mode = KeyframedMotionApi.KFM_PING_PONG;
+                                list.Mode = KFM_PING_PONG;
                                 break;
 
                             case KFM.Mode.Reverse:
-                                list.Mode = KeyframedMotionApi.KFM_REVERSE;
+                                list.Mode = KFM_REVERSE;
                                 break;
                         }
 
                         list.DataFlags = 0;
-                        if((kfm.Flags & KFM.DataFlags.Rotation) != 0)
+                        if ((kfm.Flags & KFM.DataFlags.Rotation) != 0)
                         {
-                            list.DataFlags |= KeyframedMotionApi.KFM_ROTATION;
+                            list.DataFlags |= KFM_ROTATION;
                         }
                         if ((kfm.Flags & KFM.DataFlags.Translation) != 0)
                         {
-                            list.DataFlags |= KeyframedMotionApi.KFM_TRANSLATION;
+                            list.DataFlags |= KFM_TRANSLATION;
                         }
                         return list;
                     });
                 }
                 set
                 {
-                    lock(m_Instance)
+                    lock (m_Instance)
                     {
                         ObjectGroup grp = m_Instance.Part.ObjectGroup;
                         if (grp.IsAttached)
@@ -186,7 +175,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                             return;
                         }
 
-                        if(value.Length == 0)
+                        if (value.Length == 0)
                         {
                             grp.KeyframedMotion = null;
                         }
@@ -197,15 +186,15 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
                             switch (value.Mode)
                             {
-                                case KeyframedMotionApi.KFM_LOOP:
+                                case KFM_LOOP:
                                     newMotion.PlayMode = KFM.Mode.Loop;
                                     break;
 
-                                case KeyframedMotionApi.KFM_PING_PONG:
+                                case KFM_PING_PONG:
                                     newMotion.PlayMode = KFM.Mode.PingPong;
                                     break;
 
-                                case KeyframedMotionApi.KFM_REVERSE:
+                                case KFM_REVERSE:
                                     newMotion.PlayMode = KFM.Mode.Reverse;
                                     break;
 
@@ -216,12 +205,12 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
                             newMotion.Flags = 0;
                             int div = 1;
-                            if ((value.DataFlags & KeyframedMotionApi.KFM_TRANSLATION) != 0)
+                            if ((value.DataFlags & KFM_TRANSLATION) != 0)
                             {
                                 ++div;
                                 newMotion.Flags |= KFM.DataFlags.Translation;
                             }
-                            if ((value.DataFlags & KeyframedMotionApi.KFM_ROTATION) != 0)
+                            if ((value.DataFlags & KFM_ROTATION) != 0)
                             {
                                 ++div;
                                 newMotion.Flags |= KFM.DataFlags.Rotation;
@@ -232,7 +221,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                                 return;
                             }
 
-                            foreach(KeyframedMotionEntry src_entry in value.m_Entries)
+                            foreach (KeyframedMotionEntry src_entry in value.m_Entries)
                             {
                                 entry = new KFMEntry();
                                 if ((newMotion.Flags & KFM.DataFlags.Translation) != 0)
@@ -253,7 +242,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public void Play()
             {
-                lock(m_Instance)
+                lock (m_Instance)
                 {
                     m_Instance.Part.ObjectGroup.PlayKeyframedMotion();
                 }
@@ -261,7 +250,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public void Pause()
             {
-                lock(m_Instance)
+                lock (m_Instance)
                 {
                     m_Instance.Part.ObjectGroup.PauseKeyframedMotion();
                 }
@@ -269,7 +258,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
 
             public void Stop()
             {
-                lock(m_Instance)
+                lock (m_Instance)
                 {
                     m_Instance.Part.ObjectGroup.StopKeyframedMotion();
                 }
