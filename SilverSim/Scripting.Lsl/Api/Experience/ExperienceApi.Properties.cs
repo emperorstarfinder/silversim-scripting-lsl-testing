@@ -24,14 +24,74 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.Experience;
 using SilverSim.Types;
 using SilverSim.Types.Experience;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace SilverSim.Scripting.Lsl.Api.Experience
 {
     public sealed partial class ExperienceApi
     {
+        public class KeyValueStoreEnumerator : IEnumerator<string>
+        {
+            private readonly string[] m_Keys;
+            private int m_Position = -1;
+
+            public KeyValueStoreEnumerator(ScriptInstance instance)
+            {
+                lock (instance)
+                {
+                    ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
+                    UUID experienceId = instance.Item.ExperienceID;
+                    UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
+                    if (queryid != UUID.Zero)
+                    {
+                        m_Keys = new string[0];
+                        return;
+                    }
+
+                    try
+                    {
+                        m_Keys = experienceService.KeyValueStore.GetKeys(experienceId).ToArray();
+                    }
+                    catch
+                    {
+                        m_Keys = new string[0];
+                    }
+                }
+            }
+
+            public string Current => m_Keys[m_Position];
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                /* intentionally left empty */
+            }
+
+            public bool MoveNext() => ++m_Position < m_Keys.Length;
+
+            public void Reset() => m_Position = -1;
+        }
+
+        [APIExtension(APIExtension.Properties, "experiencekeyvaluestorekeys")]
+        [APIDisplayName("experiencekeyvaluestorekeys")]
+        public class KeyValueStoreKeysAccessor
+        {
+            private readonly ScriptInstance m_ScriptInstance;
+
+            public KeyValueStoreKeysAccessor(ScriptInstance instance)
+            {
+                m_ScriptInstance = instance;
+            }
+
+            public KeyValueStoreEnumerator GetLslForeachEnumerator() => new KeyValueStoreEnumerator(m_ScriptInstance);
+        }
+
         [APIExtension(APIExtension.Properties, "experiencekeyvaluestore")]
         [APIDisplayName("experiencekeyvaluestore")]
         [APIIsVariableType]
+        [APIAccessibleMembers]
         public class KeyValueStoreAccessor
         {
             private readonly ScriptInstance m_ScriptInstance;
@@ -40,6 +100,8 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             {
                 m_ScriptInstance = instance;
             }
+
+            public KeyValueStoreKeysAccessor Keys => new KeyValueStoreKeysAccessor(m_ScriptInstance);
 
             public string this[string valuename]
             {

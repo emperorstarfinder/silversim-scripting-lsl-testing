@@ -130,18 +130,18 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             }
         }
 
-        private UUID SendExperienceError(ScriptInstance instance, int error)
+        private static UUID SendExperienceError(ScriptInstance instance, int error)
         {
             var e = new DataserverEvent
             {
                 QueryID = UUID.Random,
-                Data = string.Format("0,{0}", XP_ERROR_INVALID_EXPERIENCE)
+                Data = string.Format("0,{0}", error)
             };
             instance.PostEvent(e);
             return e.QueryID;
         }
 
-        private int CheckExperienceAllowed(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
+        private static int CheckExperienceAllowed(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
         {
             if (experienceid == UUID.Zero)
             {
@@ -222,7 +222,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             return XP_ERROR_NONE;
         }
 
-        private UUID CheckExperienceStatus(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
+        private static UUID CheckExperienceStatus(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
         {
             int result = CheckExperienceAllowed(instance, experienceService, experienceid);
             if(result != XP_ERROR_NONE)
