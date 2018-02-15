@@ -19,28 +19,17 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-#pragma warning disable IDE0018
 
-using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics.Vehicle;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scripting.Lsl.Api.Vehicles;
 using SilverSim.Types;
 using System;
-using System.ComponentModel;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.Vehicles
 {
-    [LSLImplementation]
-    [ScriptApiName("VehicleProperties")]
-    [Description("Vehicle Properties API")]
-    public class VehicleProperties : IPlugin, IScriptApi
+    public sealed partial class VehicleApi
     {
-        public void Startup(ConfigurationLoader loader)
-        {
-            /* intentionally left empty */
-        }
 
         public abstract class VehicleBaseData
         {

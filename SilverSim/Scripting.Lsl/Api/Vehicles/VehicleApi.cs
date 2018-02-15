@@ -31,7 +31,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
     [ScriptApiName("Vehicle")]
     [LSLImplementation]
     [Description("LSL Vehicle API")]
-    public class VehicleApi : IScriptApi, IPlugin
+    public sealed partial class VehicleApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
         {
