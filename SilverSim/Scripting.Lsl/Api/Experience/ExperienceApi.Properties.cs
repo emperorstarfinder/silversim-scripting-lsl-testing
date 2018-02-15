@@ -19,26 +19,16 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.ServiceInterfaces.Experience;
 using SilverSim.Types;
 using SilverSim.Types.Experience;
-using System.ComponentModel;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.Experience
 {
-    [LSLImplementation]
-    [ScriptApiName("ExperienceProperties")]
-    [Description("Experience Properties API")]
-    public sealed class ExperienceProperties : IPlugin, IScriptApi
+    public sealed partial class ExperienceApi
     {
-        public void Startup(ConfigurationLoader loader)
-        {
-            /* intentionally left empty */
-        }
-
         [APIExtension(APIExtension.Properties, "experiencekeyvaluestore")]
         [APIDisplayName("experiencekeyvaluestore")]
         [APIIsVariableType]
@@ -66,7 +56,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                         }
 
                         string value;
-                        if(!scene.ExperienceService.KeyValueStore.TryGetValue(experienceID, valuename, out value))
+                        if (!scene.ExperienceService.KeyValueStore.TryGetValue(experienceID, valuename, out value))
                         {
                             value = string.Empty;
                         }
@@ -113,16 +103,16 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             {
                 get
                 {
-                    lock(m_ScriptInstance)
+                    lock (m_ScriptInstance)
                     {
                         ExperienceServiceInterface experienceService = m_ScriptInstance.Part.ObjectGroup.Scene.ExperienceService;
                         UUID experienceID = m_ScriptInstance.Item.ExperienceID;
-                        if(experienceService == null || experienceID == UUID.Zero)
+                        if (experienceService == null || experienceID == UUID.Zero)
                         {
                             return string.Empty;
                         }
                         ExperienceInfo info;
-                        if(experienceService.TryGetValue(experienceID, out info))
+                        if (experienceService.TryGetValue(experienceID, out info))
                         {
                             return info.Name;
                         }

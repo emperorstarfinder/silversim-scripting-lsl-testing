@@ -38,7 +38,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
     [ScriptApiName("Experience")]
     [LSLImplementation]
     [Description("LSL Experience API")]
-    public partial class ExperienceApi : IScriptApi, IPlugin
+    public sealed partial class ExperienceApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
         {

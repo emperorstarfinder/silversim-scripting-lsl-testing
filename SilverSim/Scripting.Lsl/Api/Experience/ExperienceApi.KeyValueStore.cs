@@ -27,7 +27,7 @@ using System.Collections.Generic;
 
 namespace SilverSim.Scripting.Lsl.Api.Experience
 {
-    public partial class ExperienceApi
+    public sealed partial class ExperienceApi
     {
         [APILevel(APIFlags.LSL, "llCreateKeyValue")]
         public LSLKey CreateKeyValue(ScriptInstance instance, string k, string v)
