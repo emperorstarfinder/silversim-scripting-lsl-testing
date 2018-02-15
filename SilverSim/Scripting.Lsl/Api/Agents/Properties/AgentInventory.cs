@@ -28,7 +28,7 @@ using SilverSim.Types.Inventory;
 using System;
 using System.ComponentModel;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties.AgentInventory
+namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
 {
     [ScriptApiName("AgentInventoryProperties")]
     [Description("Agent Inventory Properties API")]
