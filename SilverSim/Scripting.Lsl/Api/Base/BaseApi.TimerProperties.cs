@@ -19,23 +19,13 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
-using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using System;
-using System.ComponentModel;
 
-namespace SilverSim.Scripting.Lsl.Api.Properties
+namespace SilverSim.Scripting.Lsl.Api.Base
 {
-    [LSLImplementation]
-    [ScriptApiName("TimerProperties")]
-    [Description("Timer Properties API")]
-    public sealed class TimerProperties : IPlugin, IScriptApi
+    public sealed partial class BaseApi
     {
-        public void Startup(ConfigurationLoader loader)
-        {
-            /* intentionally left empty */
-        }
-
         [APIExtension(APIExtension.Properties, "intervaltimer")]
         [APIDisplayName("intervaltimer")]
         [APIAccessibleMembers(
@@ -55,7 +45,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
                 get
                 {
                     ScriptInstance instance;
-                    if(WeakInstance.TryGetTarget(out instance))
+                    if (WeakInstance.TryGetTarget(out instance))
                     {
                         var script = (Script)instance;
                         lock (script)
@@ -89,7 +79,7 @@ namespace SilverSim.Scripting.Lsl.Api.Properties
             }
         }
 
-        [APIExtension(APIExtension.MemberFunctions,APIUseAsEnum.MemberFunction, "Stop")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Stop")]
         public void StopTimer(TimerControl control)
         {
             control.Interval = 0;
