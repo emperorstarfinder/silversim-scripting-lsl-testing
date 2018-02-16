@@ -58,6 +58,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
 
             public static implicit operator bool(SoundItem item) => item.WeakInstance != null;
+            public static explicit operator LSLKey(SoundItem item) => item.m_SoundID;
 
             public void Loop(double volume, PrimitiveSoundFlags paraflags)
             {
