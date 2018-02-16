@@ -34,8 +34,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 {
     public sealed partial class SoundApi
     {
-        [APIExtension(APIExtension.Properties, "sounditem")]
-        [APIDisplayName("sounditem")]
+        [APIExtension(APIExtension.Properties, "sound")]
+        [APIDisplayName("sound")]
         [APIIsVariableType]
         [ImplementsCustomTypecasts]
         [Serializable]
