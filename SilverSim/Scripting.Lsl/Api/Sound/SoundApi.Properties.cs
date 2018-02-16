@@ -288,31 +288,31 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APIExtension(APIExtension.Properties, "Sounds")]
         public SoundAccessor GetSounds(ScriptInstance instance) => new SoundAccessor(instance);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "Loop")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Loop")]
         public void SoundItemLoop(SoundItem item, double volume) => item.Loop(volume, 0);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "LoopMaster")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "LoopMaster")]
         public void SoundItemLoopMaster(SoundItem item, double volume) => item.Loop(volume, PrimitiveSoundFlags.SyncMaster);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "LoopSlave")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "LoopSlave")]
         public void SoundItemLoopSlave(SoundItem item, double volume) => item.Loop(volume, PrimitiveSoundFlags.SyncSlave);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "Play")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Play")]
         public void SoundItemPlay(SoundItem item, double volume) => item.Send(volume, 0);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "PlaySlave")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "PlaySlave")]
         public void SoundItemPlaySlave(SoundItem item, double volume) => item.Send(volume, PrimitiveSoundFlags.SyncSlave);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "Trigger")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Trigger")]
         public void SoundItemTrigger(SoundItem item, double volume) => item.Trigger(volume);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "TriggerLimited")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "TriggerLimited")]
         public void SoundItemTriggerLimited(SoundItem item, double volume, Vector3 top_north_east, Vector3 bottom_south_west) => item.TriggerLimited(volume, top_north_east, bottom_south_west);
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "Stop")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Stop")]
         public void SoundItemStop(SoundAccessor accessor) => accessor.Stop();
 
-        [APIExtension(APIExtension.Properties, APIUseAsEnum.MemberFunction, "AdjustVolume")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "AdjustVolume")]
         public void AdjustVolume(ScriptInstance instance, SoundAccessor accessor, double volume) => AdjustSoundVolume(instance, volume);
     }
 }
