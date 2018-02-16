@@ -157,7 +157,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
-        public class SoundEnumerator : IEnumerator<string>
+        public sealed class SoundEnumerator : IEnumerator<string>
         {
             private readonly string[] m_Sounds;
             private int m_Position = -1;
@@ -184,7 +184,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APIExtension(APIExtension.Properties, "soundaccessor")]
         [APIDisplayName("soundaccessor")]
         [APIAccessibleMembers]
-        public class SoundAccessor
+        public sealed class SoundAccessor
         {
             private readonly ScriptInstance m_Instance;
 
@@ -248,7 +248,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 }
             }
 
-            public double SoundRadius
+            public double Radius
             {
                 get
                 {
