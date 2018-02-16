@@ -36,14 +36,14 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
     [ScriptApiName("Sound")]
     [LSLImplementation]
     [Description("LSL Sound API")]
-    public class SoundApi : IScriptApi, IPlugin
+    public sealed partial class SoundApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
         }
 
-        private bool TryFetchSound(ScriptInstance instance, UUID soundID)
+        private static bool TryFetchSound(ScriptInstance instance, UUID soundID)
         {
             ObjectGroup grp = instance.Part.ObjectGroup;
             SceneInterface scene = grp.Scene;
