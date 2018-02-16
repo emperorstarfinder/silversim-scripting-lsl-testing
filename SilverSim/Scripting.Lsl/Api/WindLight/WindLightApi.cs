@@ -31,7 +31,7 @@ namespace SilverSim.Scripting.Lsl.Api.WindLight
 {
     [ScriptApiName("WindLight")]
     [LSLImplementation]
-    [Description("ASSL Agents API")]
+    [Description("ASSL WindLight API")]
     public class WindLightApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
