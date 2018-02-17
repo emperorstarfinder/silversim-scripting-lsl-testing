@@ -31,6 +31,7 @@ using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Script;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -219,13 +220,15 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimationList")]
-        public AnArray GetAnimationList(ScriptInstance instance, LSLKey agentkey)
+        public AnArray GetAnimationList(ScriptInstance instance, LSLKey agentkey) => GetAnimationListInternal(instance, agentkey);
+
+        private static AnArray GetAnimationListInternal(ScriptInstance instance, LSLKey agentkey)
         {
             List<UUID> playingAnimations;
-            lock(instance)
+            lock (instance)
             {
                 IAgent agent;
-                if(!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(agentkey, out agent))
+                if (!instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(agentkey, out agent))
                 {
                     return new AnArray();
                 }
@@ -233,7 +236,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             }
 
             var res = new AnArray();
-            foreach(UUID id in playingAnimations)
+            foreach (UUID id in playingAnimations)
             {
                 res.Add(id);
             }
@@ -295,5 +298,65 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                 return part.SitAnimation;
             }
         }
+
+        public sealed class AnimationListEnumerator : IEnumerator<LSLKey>
+        {
+            private readonly AnArray m_Animations;
+            private int m_Position = -1;
+
+            public AnimationListEnumerator(AnArray anims)
+            {
+                m_Animations = anims;
+            }
+
+            public LSLKey Current => m_Animations[m_Position].AsUUID;
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                /* intentionally left empty */
+            }
+
+            public bool MoveNext() => ++m_Position < m_Animations.Count;
+
+            public void Reset() => m_Position = -1;
+        }
+
+        [APIExtension(APIExtension.Properties, "animationlist")]
+        [APIDisplayName("animationlist")]
+        [ImplementsCustomTypecasts]
+        public sealed class AnimationListDetails
+        {
+            private readonly ScriptInstance m_Instance;
+            private readonly LSLKey m_Agent;
+
+            public AnimationListDetails(ScriptInstance instance, LSLKey agent)
+            {
+                m_Instance = instance;
+                m_Agent = agent;
+            }
+
+            public static implicit operator AnArray(AnimationListDetails details) => GetAnimationListInternal(details.m_Instance, details.m_Agent);
+
+            public AnimationListEnumerator GetLslForeachEnumerator() => new AnimationListEnumerator(GetAnimationListInternal(m_Instance, m_Agent));
+        }
+
+        [APIExtension(APIExtension.Properties, "animationlistaccessor")]
+        [APIDisplayName("animationlistaccessor")]
+        public sealed class AnimationListAccessor
+        {
+            private readonly ScriptInstance m_Instance;
+
+            public AnimationListAccessor(ScriptInstance instance)
+            {
+                m_Instance = instance;
+            }
+
+            public AnimationListDetails this[LSLKey agent] => new AnimationListDetails(m_Instance, agent);
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "AnimationList")]
+        public AnimationListAccessor GetAnimationListAccessor(ScriptInstance instance) => new AnimationListAccessor(instance);
     }
 }
