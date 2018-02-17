@@ -54,5 +54,46 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return script.GetAndResetTime();
             }
         }
+
+        [APIExtension(APIExtension.Properties, "executiontime")]
+        [APIDisplayName("executiontime")]
+        [APIAccessibleMembers]
+        public class ExecutionTime
+        {
+            private readonly Script m_Instance;
+
+            public ExecutionTime(Script instance)
+            {
+                m_Instance = instance;
+            }
+
+            public double Now
+            {
+                get
+                {
+                    lock(m_Instance)
+                    {
+                        return m_Instance.GetTime();
+                    }
+                }
+            }
+
+            public double GetAndReset()
+            {
+                lock(m_Instance)
+                {
+                    return m_Instance.GetAndResetTime();
+                }
+            }
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetAndReset")]
+        public double GetAndResetTime(ExecutionTime time) => time.GetAndReset();
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Reset")]
+        public void ResetTime(ExecutionTime time) => time.GetAndReset();
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "ExecutionTime")]
+        public ExecutionTime GetAccessor(ScriptInstance instance) => new ExecutionTime((Script)instance);
     }
 }
