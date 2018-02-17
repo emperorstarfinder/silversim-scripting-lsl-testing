@@ -30,7 +30,6 @@ using SilverSim.Types;
 using SilverSim.Types.Experience;
 using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
-using System;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Experience

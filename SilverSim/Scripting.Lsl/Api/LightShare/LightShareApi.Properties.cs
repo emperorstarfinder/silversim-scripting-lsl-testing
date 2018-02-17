@@ -20,16 +20,14 @@
 // exception statement from your version.
 
 using SilverSim.Scene.Types.Scene;
-using SilverSim.Scene.Types.SceneEnvironment;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using static SilverSim.Scene.Types.SceneEnvironment.EnvironmentController;
+using EnvironmentController = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController;
+using WindlightSkyData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightSkyData;
+using WindlightWaterData = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WindlightWaterData;
+using WLVector4 = SilverSim.Scene.Types.SceneEnvironment.EnvironmentController.WLVector4;
 
 namespace SilverSim.Scripting.Lsl.Api.LightShare
 {
@@ -195,7 +193,7 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
             public Vector3 CloudScroll
             {
                 get { return Sky.CloudScroll; }
-                set { Sky.CloudScroll = new WLVector2(value); }
+                set { Sky.CloudScroll = new EnvironmentController.WLVector2(value); }
             }
             public double CloudScale
             {
@@ -231,12 +229,12 @@ namespace SilverSim.Scripting.Lsl.Api.LightShare
             public Vector3 BigWaveDirection
             {
                 get { return Water.BigWaveDirection; }
-                set { Water.BigWaveDirection = new WLVector2(value); }
+                set { Water.BigWaveDirection = new EnvironmentController.WLVector2(value); }
             }
             public Vector3 LittleWaveDirection
             {
                 get { return Water.LittleWaveDirection; }
-                set { Water.LittleWaveDirection = new WLVector2(value); }
+                set { Water.LittleWaveDirection = new EnvironmentController.WLVector2(value); }
             }
             public double BlurMultiplier
             {

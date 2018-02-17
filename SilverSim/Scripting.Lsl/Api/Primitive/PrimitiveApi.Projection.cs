@@ -21,13 +21,10 @@
 
 #pragma warning disable IDE0018, RCS1029
 
-using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Object.Parameters;
-using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
-using SilverSim.Types.Asset;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
 {

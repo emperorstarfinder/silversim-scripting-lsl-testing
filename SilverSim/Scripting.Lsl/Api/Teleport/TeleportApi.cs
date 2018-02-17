@@ -33,7 +33,6 @@ using SilverSim.Types.Grid;
 using SilverSim.Types.Groups;
 using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
-using System;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Teleport

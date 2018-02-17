@@ -25,7 +25,6 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
