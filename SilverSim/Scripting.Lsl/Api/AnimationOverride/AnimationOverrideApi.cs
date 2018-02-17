@@ -27,8 +27,10 @@ using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using SilverSim.Types.Script;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -112,6 +114,11 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return;
                 }
 
+                if(!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
+                {
+                    return;
+                }
+
                 try
                 {
                     agent = instance.Part.ObjectGroup.Scene.Agents[grantinfo.PermsGranter.ID];
@@ -146,6 +153,12 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 {
                     return string.Empty;
                 }
+
+                if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
+                {
+                    return string.Empty;
+                }
+
                 try
                 {
                     agent = instance.Part.ObjectGroup.Scene.Agents[grantinfo.PermsGranter.ID];
@@ -156,7 +169,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return string.Empty;
                 }
 
-                return anim_state;
+                return agent.GetAnimationOverride(anim_state);
             }
         }
 
@@ -186,6 +199,30 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
             }
         }
 
+        public sealed class AnimationOverrideEnumerator : IEnumerator<KeyValuePair<string, string>>
+        {
+            private readonly KeyValuePair<string, string>[] m_Animations;
+            private int m_Position = -1;
+
+            public AnimationOverrideEnumerator(KeyValuePair<string, string>[] anims)
+            {
+                m_Animations = anims;
+            }
+
+            public KeyValuePair<string, string> Current => m_Animations[m_Position];
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                /* intentionally left empty */
+            }
+
+            public bool MoveNext() => ++m_Position < m_Animations.Length;
+
+            public void Reset() => m_Position = -1;
+        }
+
         [APIExtension(APIExtension.Properties, "animationoverride")]
         [APIDisplayName("animationoverride")]
         public class AnimationOverrideAccessor
@@ -197,9 +234,10 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 m_Instance = instance;
             }
 
-            public string this[string anim_state]
+            [AllowKeyOnlyEnumerationOnKeyValuePair]
+            public AnimationOverrideEnumerator GetLslForeachEnumerator()
             {
-                get
+                lock (m_Instance)
                 {
                     IAgent agent;
                     ObjectPartInventoryItem.PermsGranterInfo grantinfo = m_Instance.Item.PermsGranter;
@@ -207,7 +245,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                         (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0) ||
                         grantinfo.PermsGranter == UUI.Unknown)
                     {
-                        return string.Empty;
+                        return new AnimationOverrideEnumerator(new KeyValuePair<string, string>[0]);
                     }
                     try
                     {
@@ -216,10 +254,50 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     catch
                     {
                         m_Instance.ShoutError(new LocalizedScriptMessage(this, "Function0PermissionGranterNotInRegion", "{0}: permission granter not in region", "llGetAnimationOverride"));
-                        return string.Empty;
+                        return new AnimationOverrideEnumerator(new KeyValuePair<string, string>[0]);
                     }
 
-                    return anim_state;
+                    var list = new List<KeyValuePair<string, string>>();
+                    foreach(KeyValuePair<string, string> kvp in m_DefaultAnimationTranslate)
+                    {
+                        list.Add(new KeyValuePair<string, string>(kvp.Key, agent.GetAnimationOverride(kvp.Value)));
+                    }
+                    return new AnimationOverrideEnumerator(list.ToArray());
+                }
+            }
+
+            public string this[string anim_state]
+            {
+                get
+                {
+                    IAgent agent;
+                    lock (m_Instance)
+                    {
+                        ObjectPartInventoryItem.PermsGranterInfo grantinfo = m_Instance.Item.PermsGranter;
+                        if (((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 &&
+                            (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0) ||
+                            grantinfo.PermsGranter == UUI.Unknown)
+                        {
+                            return string.Empty;
+                        }
+
+                        if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
+                        {
+                            return string.Empty;
+                        }
+
+                        try
+                        {
+                            agent = m_Instance.Part.ObjectGroup.Scene.Agents[grantinfo.PermsGranter.ID];
+                        }
+                        catch
+                        {
+                            m_Instance.ShoutError(new LocalizedScriptMessage(this, "Function0PermissionGranterNotInRegion", "{0}: permission granter not in region", "llGetAnimationOverride"));
+                            return string.Empty;
+                        }
+
+                        return agent.GetAnimationOverride(anim_state);
+                    }
                 }
                 set
                 {
@@ -230,6 +308,11 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 
                         if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
                             grantinfo.PermsGranter == UUI.Unknown)
+                        {
+                            return;
+                        }
+
+                        if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
                         {
                             return;
                         }
