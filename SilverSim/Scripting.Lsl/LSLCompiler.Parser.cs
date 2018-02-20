@@ -703,13 +703,13 @@ namespace SilverSim.Scripting.Lsl
             APIExtension.CharacterType.ToLower(),
             APIExtension.ByteArray.ToLower(),
             APIExtension.SwitchBlock.ToLower(),
-            APIExtension.BreakContinue.ToLower(),
             APIExtension.ExtendedTypecasts.ToLower(),
             APIExtension.StateVariables.ToLower()
         };
 
         private readonly string[] OsslEnabledExtensions = new string[]
         {
+            APIExtension.BreakContinue.ToLower()
         };
 
         private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null, Func<string, TextReader> includeOpen = null)
