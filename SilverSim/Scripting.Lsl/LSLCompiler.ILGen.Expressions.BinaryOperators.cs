@@ -1905,6 +1905,7 @@ namespace SilverSim.Scripting.Lsl
                             (m_RightHandType == typeof(double) || m_RightHandType == typeof(int) || m_RightHandType == typeof(long)) &&
                             (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
                         {
+                            /* double must be part of one side therefore the left or right double type condition */
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -1923,7 +1924,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Mul);
                             throw Return(compileState, typeof(long));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) && m_RightHandType == typeof(int))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -2000,6 +2001,7 @@ namespace SilverSim.Scripting.Lsl
                             (m_RightHandType == typeof(double) || m_RightHandType == typeof(int) || m_RightHandType == typeof(long)) &&
                             (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
                         {
+                            /* double must be part of one side therefore the left or right double type condition */
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
@@ -2018,7 +2020,7 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Div);
                             throw Return(compileState, typeof(long));
                         }
-                        else if (m_LeftHandType == typeof(int))
+                        else if (m_LeftHandType == typeof(int) && m_RightHandType == typeof(int))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
