@@ -178,6 +178,9 @@ namespace SilverSim.Scripting.Lsl
 
                 [APILevel(APIFlags.ASSL)]
                 public bool EnableForeach;
+
+                [APILevel(APIFlags.OSSL)]
+                public bool EnableMultipleLoopActions;
 #pragma warning restore CS0649
             }
 

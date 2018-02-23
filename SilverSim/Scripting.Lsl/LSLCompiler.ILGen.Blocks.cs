@@ -330,14 +330,14 @@ namespace SilverSim.Scripting.Lsl
                             for (endoffor = 0; endoffor <= functionLine.Line.Count; ++endoffor)
                             {
                                 string s = functionLine.Line[endoffor];
-                                if (functionLine.Line[endoffor] == ")")
+                                if (s == ")")
                                 {
                                     if (--countparens == 0)
                                     {
                                         break;
                                     }
                                 }
-                                else if (functionLine.Line[endoffor] == "(")
+                                else if (s == "(")
                                 {
                                     ++countparens;
                                 }
@@ -352,7 +352,7 @@ namespace SilverSim.Scripting.Lsl
                                         semicolon2 = endoffor;
                                     }
                                 }
-                                else if(countparens == 1 && s == ",")
+                                else if(s == "," && countparens == 1 && compileState.LanguageExtensions.EnableMultipleLoopActions)
                                 {
                                     incseparators.Add(endoffor);
                                 }
