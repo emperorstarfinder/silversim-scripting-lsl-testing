@@ -321,13 +321,15 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         {   /* for(a;b;c) */
-                            int semicolon1;
-                            int semicolon2;
+                            int semicolon1 = -1;
+                            int semicolon2 = -1;
                             int endoffor;
                             int countparens = 0;
+                            var incseparators = new List<int>();
 
                             for (endoffor = 0; endoffor <= functionLine.Line.Count; ++endoffor)
                             {
+                                string s = functionLine.Line[endoffor];
                                 if (functionLine.Line[endoffor] == ")")
                                 {
                                     if (--countparens == 0)
@@ -339,15 +341,30 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     ++countparens;
                                 }
+                                else if (s == ";")
+                                {
+                                    if (semicolon1 == -1)
+                                    {
+                                        semicolon1 = endoffor;
+                                    }
+                                    else
+                                    {
+                                        semicolon2 = endoffor;
+                                    }
+                                }
+                                else if(countparens == 1 && s == ",")
+                                {
+                                    incseparators.Add(endoffor);
+                                }
                             }
+                            incseparators.Add(endoffor);
 
-                            if (endoffor != functionLine.Line.Count - 1 && endoffor != functionLine.Line.Count - 2)
+                            if ((endoffor != functionLine.Line.Count - 1 && endoffor != functionLine.Line.Count - 2) ||
+                                semicolon1 < 0 || semicolon2 < 0)
                             {
                                 throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidForEncountered", "Invalid 'for' encountered"));
                             }
 
-                            semicolon1 = functionLine.Line.IndexOf(";");
-                            semicolon2 = functionLine.Line.IndexOf(";", semicolon1 + 1);
                             if (2 != semicolon1)
                             {
                                 ProcessStatement(
@@ -405,13 +422,17 @@ namespace SilverSim.Scripting.Lsl
 
                             if (semicolon2 + 1 != endoffor)
                             {
-                                ProcessExpression(
-                                    compileState,
-                                    typeof(void),
-                                    semicolon2 + 1,
-                                    endoffor - 1,
-                                    functionLine,
-                                    localVars);
+                                foreach(int split in incseparators)
+                                {
+                                    ProcessExpression(
+                                        compileState,
+                                        typeof(void),
+                                        semicolon2 + 1,
+                                        split - 1,
+                                        functionLine,
+                                        localVars);
+                                    semicolon2 = split;
+                                }
                             }
 
                             compileState.ILGen.Emit(OpCodes.Br, looplabel);
@@ -895,6 +916,7 @@ namespace SilverSim.Scripting.Lsl
                         Type targetType;
                         if (compileState.TryGetValidVarType(functionLine.Line[0], out targetType))
                         {
+                            #region Variable declaration
                             if (isImplicit)
                             {
                                 throw new CompilerException(functionLine.Line[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "VariableDeclarationNotAllowedWithinConditionalStatementWithoutBlock", "variable declaration not allowed within conditional statement without block"));
@@ -972,9 +994,11 @@ namespace SilverSim.Scripting.Lsl
                                 compileState.ILGen.Emit(OpCodes.Newobj, cInfo);
                             }
                             compileState.ILGen.Emit(OpCodes.Stloc, lb);
+                            #endregion
                         }
                         else
                         {
+                            #region Statements
                             if (eoif_label.HasValue)
                             {
                                 compileState.ILGen.MarkLabel(eoif_label.Value);
@@ -989,6 +1013,7 @@ namespace SilverSim.Scripting.Lsl
                                 functionLine,
                                 localVars,
                                 labels);
+                            #endregion
                         }
                         break;
                 }
