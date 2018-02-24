@@ -45,6 +45,7 @@ namespace SilverSim.Scripting.Lsl
     [Description("LSL Compiler")]
     [ServerParam("LSL.CallDepthLimit", ParameterType = typeof(uint), DefaultValue = 40, Type = ServerParamType.GlobalOnly)]
     [ServerParam("LSL.EnableCompileDebug", ParameterType = typeof(bool), DefaultValue = false, Type = ServerParamType.GlobalOnly)]
+    [ServerParam("LSL.ForceDebug", ParameterType = typeof(bool), DefaultValue = false, Type = ServerParamType.GlobalOnly)]
     [ScriptEngineName("lsl")]
     [PluginName("ScriptEngine")]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory, IServerParamListener
@@ -84,6 +85,22 @@ namespace SilverSim.Scripting.Lsl
             else
             {
                 DebugDiagnosticOutput = false;
+            }
+        }
+
+        private bool m_ForceDebugForLsl;
+
+        [ServerParam("LSL.ForceDebug", ParameterType = typeof(bool), DefaultValue = false, Type = ServerParamType.GlobalOnly)]
+        public void ForceDebugForLsl(UUID regionID, string value)
+        {
+            bool val;
+            if (UUID.Zero == regionID && bool.TryParse(value, out val))
+            {
+                m_ForceDebugForLsl = val;
+            }
+            else
+            {
+                m_ForceDebugForLsl = false;
             }
         }
 
@@ -249,6 +266,7 @@ namespace SilverSim.Scripting.Lsl
         public LSLCompiler(IConfig config)
         {
             DebugDiagnosticOutput = config.GetBoolean("DebugDiagnosticOutput", false);
+            m_ForceDebugForLsl = config.GetBoolean("EmitDebugSymbols", false);
             m_ApiInfos.Add(APIFlags.ASSL, new ApiInfo());
             m_ApiInfos.Add(APIFlags.LSL, new ApiInfo());
             m_ApiInfos.Add(APIFlags.OSSL, new ApiInfo());
@@ -1364,11 +1382,7 @@ namespace SilverSim.Scripting.Lsl
 
         public IScriptAssembly Compile(AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null, Func<string, TextReader> includeOpen = null)
         {
-#if DEBUG
-            CompileState compileState = Preprocess(assetID, shbangs, reader, lineNumber, cultureInfo, includeOpen, emitDebugSymbols : true);
-#else
-            CompileState compileState = Preprocess(assetID, shbangs, reader, lineNumber, cultureInfo, includeOpen);
-#endif
+            CompileState compileState = Preprocess(assetID, shbangs, reader, lineNumber, cultureInfo, includeOpen, emitDebugSymbols : m_ForceDebugForLsl);
             return PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndCollect);
         }
 
@@ -1379,7 +1393,7 @@ namespace SilverSim.Scripting.Lsl
 
         public void CompileToDisk(string filename, AppDomain appDom, UUI user, Dictionary<int, string> shbangs, UUID assetID, TextReader reader, bool emitDebugSymbols, int lineNumber = 1, CultureInfo cultureInfo = null, Func<string, TextReader> includeOpen = null)
         {
-            CompileState compileState = Preprocess(assetID, shbangs, reader, lineNumber, cultureInfo, includeOpen, emitDebugSymbols: emitDebugSymbols);
+            CompileState compileState = Preprocess(assetID, shbangs, reader, lineNumber, cultureInfo, includeOpen, emitDebugSymbols : emitDebugSymbols || m_ForceDebugForLsl);
             var scriptAssembly = (LSLScriptAssembly)PostProcess(compileState, appDom, assetID, compileState.ForcedSleepDefault, AssemblyBuilderAccess.RunAndSave, filename);
             if(scriptAssembly == null)
             {
