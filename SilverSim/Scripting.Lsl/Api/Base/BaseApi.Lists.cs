@@ -513,49 +513,42 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 end = src.Count + end;
             }
-
-            if (start < 0)
-            {
-                start = 0;
-            }
-            else if (start > src.Count)
-            {
-                start = src.Count;
-            }
-
-            if (end < 0)
-            {
-                end = 0;
-            }
-            else if (end > src.Count)
-            {
-                end = src.Count;
-            }
+            start = Math.Max(start, 0);
+            end = Math.Max(end, 0);
 
             if (start > end)
             {
-                var res = new AnArray();
-                for (int i = start; i <= end; ++i)
+                if(end >= src.Count)
                 {
-                    res.Add(src[i]);
+                    return new AnArray();
                 }
 
-                return res;
+                start = Math.Min(start, src.Count - 1);
+
+                return new AnArray(src.GetRange(start, end - start + 1));
+            }
+            else if(start >= src.Count)
+            {
+                return new AnArray(src);
             }
             else
             {
+                end = Math.Min(end, src.Count - 1);
+
+                if(end + 1 - start == src.Count)
+                {
+                    return new AnArray();
+                }
+
                 var res = new AnArray();
-
-                for (int i = 0; i < start + 1; ++i)
+                if (start > 0)
                 {
-                    res.Add(src[i]);
+                    res.AddRange(src.GetRange(0, start));
                 }
-
-                for (int i = end; i < src.Count; ++i)
+                if (end + 1 < src.Count)
                 {
-                    res.Add(src[i]);
+                    res.AddRange(src.GetRange(end + 1, src.Count - end - 1));
                 }
-
                 return res;
             }
         }
@@ -693,48 +686,33 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 end = src.Count + end;
             }
 
-            if (start < 0)
-            {
-                start = 0;
-            }
-            else if (start > src.Count)
-            {
-                start = src.Count;
-            }
-
-            if (end < 0)
-            {
-                end = 0;
-            }
-            else if (end > src.Count)
-            {
-                end = src.Count;
-            }
-
             if (start <= end)
             {
-                var res = new AnArray();
-                for (int i = start; i <= end; ++i )
+                if(start >= src.Count || end < 0)
                 {
-                    res.Add(src[i]);
+                    return new AnArray();
                 }
+                end = Math.Min(end, src.Count - 1);
+                start = Math.Max(start, 0);
 
-                return res;
+                return new AnArray(src.GetRange(start, end - start + 1));
+            }
+            else if(end < 0 && start < 0)
+            {
+                return new AnArray(src);
             }
             else
             {
                 var res = new AnArray();
-
-                for (int i = 0; i < end + 1; ++i)
+                if(end >= 0)
                 {
-                    res.Add(src[i]);
+                    res.AddRange(src.GetRange(0, end + 1));
                 }
-
-                for (int i = start; i < src.Count; ++i)
+                
+                if(start < src.Count)
                 {
-                    res.Add(src[i]);
+                    res.AddRange(src.GetRange(start, src.Count - start));
                 }
-
                 return res;
             }
         }

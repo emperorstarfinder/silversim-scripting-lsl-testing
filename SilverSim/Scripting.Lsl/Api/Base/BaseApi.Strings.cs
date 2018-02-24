@@ -49,27 +49,30 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 end = src.Length + end;
             }
 
-            if (start < 0)
+            if(start <= end)
             {
-                start = 0;
-            }
-            else if (start > src.Length)
-            {
-                start = src.Length;
-            }
+                if(end < 0 || start >= src.Length)
+                {
+                    return src;
+                }
 
-            if (end < 0)
-            {
-                end = 0;
-            }
-            else if (end > src.Length)
-            {
-                end = src.Length;
-            }
+                start = Math.Max(0, start);
+                end = Math.Min(end, src.Length - 1);
 
-            return (start > end) ?
-                src.Substring(start, end - start + 1) :
-                src.Substring(0, start + 1) + src.Substring(end);
+                return src.Remove(start, end - start + 1);
+            }
+            else if(start < 0 || end >= src.Length)
+            {
+                return string.Empty;
+            }
+            else if(end > 0)
+            {
+                return (start < src.Length) ? src.Substring(end + 1, start - end) : src.Substring(end + 1);
+            }
+            else
+            {
+                return (start < src.Length) ? src.Substring(0, start) : src;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llToLower")]
@@ -181,33 +184,30 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 end = src.Length + end;
             }
 
-            if(start < 0)
-            {
-                start = 0;
-            }
-            else if(start > src.Length)
-            {
-                start = src.Length;
-            }
-
-            if (end < 0)
-            {
-                end = 0;
-            }
-            else if(end > src.Length)
-            {
-                end = src.Length;
-            }
-
             if(start <= end)
             {
-                return src.Substring(start, end - start + 1);
+                if(end < 0 || start >= src.Length)
+                {
+                    return string.Empty;
+                }
+
+                end = Math.Min(end, src.Length - 1);
+                return (start < 0) ?
+                    src.Substring(0, end + 1) :
+                    src.Substring(start, (end + 1) - start);
+            }
+            else if( start < 0 || end >= src.Length)
+            {
+                return src;
+            }
+            else if(end < 0)
+            {
+                return (start < src.Length) ? src.Substring(start) : string.Empty;
             }
             else
             {
-                string a = start < src.Length ? src.Substring(start) : string.Empty;
-                string b = src.Substring(0, end + 1);
-                return b + a;
+                string b = start < src.Length ? src.Substring(start) : string.Empty;
+                return src.Substring(0, end + 1) + b;
             }
         }
 
