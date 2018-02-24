@@ -325,7 +325,6 @@ namespace SilverSim.Scripting.Lsl
                             int semicolon2 = -1;
                             int endoffor;
                             int countparens = 0;
-                            var incseparators = new List<int>();
 
                             for (endoffor = 0; endoffor <= functionLine.Line.Count; ++endoffor)
                             {
@@ -352,12 +351,7 @@ namespace SilverSim.Scripting.Lsl
                                         semicolon2 = endoffor;
                                     }
                                 }
-                                else if(s == "," && countparens == 1 && compileState.LanguageExtensions.EnableMultipleLoopActions)
-                                {
-                                    incseparators.Add(endoffor);
-                                }
                             }
-                            incseparators.Add(endoffor);
 
                             if ((endoffor != functionLine.Line.Count - 1 && endoffor != functionLine.Line.Count - 2) ||
                                 semicolon1 < 0 || semicolon2 < 0)
@@ -422,17 +416,14 @@ namespace SilverSim.Scripting.Lsl
 
                             if (semicolon2 + 1 != endoffor)
                             {
-                                foreach(int split in incseparators)
-                                {
-                                    ProcessExpression(
-                                        compileState,
-                                        typeof(void),
-                                        semicolon2 + 1,
-                                        split - 1,
-                                        functionLine,
-                                        localVars);
-                                    semicolon2 = split;
-                                }
+                                ProcessExpression(
+                                    compileState,
+                                    typeof(void),
+                                    semicolon2 + 1,
+                                    endoffor - 1,
+                                    functionLine,
+                                    localVars,
+                                    compileState.LanguageExtensions.EnableMultipleLoopActions);
                             }
 
                             compileState.ILGen.Emit(OpCodes.Br, looplabel);

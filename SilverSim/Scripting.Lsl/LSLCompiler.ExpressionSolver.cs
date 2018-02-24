@@ -3027,7 +3027,7 @@ namespace SilverSim.Scripting.Lsl
         }
         #endregion
 
-        private Tree LineToExpressionTree(CompileState cs, List<TokenInfo> expressionLine, ICollection<string> localVarNames, CultureInfo currentCulture)
+        private Tree LineToExpressionTree(CompileState cs, List<TokenInfo> expressionLine, ICollection<string> localVarNames, CultureInfo currentCulture, bool enableCommaSeparatedExpressions = false)
         {
             PreprocessLine(cs, expressionLine);
             var expressionTree = new Tree(expressionLine);
@@ -3101,7 +3101,31 @@ namespace SilverSim.Scripting.Lsl
             OrderOperators(cs, expressionTree, currentCulture);
 
             SolveTree(cs, expressionTree, currentCulture);
-            if (expressionTree.SubTree.Count != 1)
+
+            if(enableCommaSeparatedExpressions && expressionTree.SubTree.Count > 1 && expressionTree.SubTree.Count % 2 == 1)
+            {
+                for(int i = 0; i < expressionTree.SubTree.Count; ++i)
+                {
+                    string t = expressionTree.SubTree[i].Entry;
+                    if (i % 2 == 1)
+                    {
+                        if(t != ",")
+                        {
+                            throw new CompilerException(expressionTree.SubTree[i].LineNumber, this.GetLanguageString(cs.CurrentCulture, "SyntaxError", "Syntax Error"));
+                        }
+                    }
+                    else if(t == ",")
+                    {
+                        throw new CompilerException(expressionTree.SubTree[i].LineNumber, this.GetLanguageString(cs.CurrentCulture, "SyntaxError", "Syntax Error"));
+                    }
+                }
+
+                for(int i = expressionTree.SubTree.Count - 2; i > 0; i -= 2)
+                {
+                    expressionTree.SubTree.RemoveAt(i);
+                }
+            }
+            else if (expressionTree.SubTree.Count != 1)
             {
                 if (expressionTree.SubTree.Count > 1)
                 {

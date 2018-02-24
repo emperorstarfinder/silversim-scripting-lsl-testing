@@ -19,8 +19,10 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
 using SilverSim.Scripting.Lsl.Expression;
+using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 
@@ -40,7 +42,8 @@ namespace SilverSim.Scripting.Lsl
             int startAt,
             int endAt,
             LineInfo functionLine,
-            Dictionary<string, object> localVars)
+            Dictionary<string, object> localVars,
+            bool enableCommaSeparatedExpressions = false)
         {
             if(startAt > endAt)
             {
@@ -48,7 +51,21 @@ namespace SilverSim.Scripting.Lsl
             }
 
             List<TokenInfo> expressionLine = functionLine.Line.GetRange(startAt, endAt - startAt + 1);
-            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, compileState.CurrentCulture);
+            Tree expressionTree = LineToExpressionTree(compileState, expressionLine, localVars.Keys, compileState.CurrentCulture, enableCommaSeparatedExpressions);
+
+            if (expressionTree.SubTree.Count > 1)
+            {
+                if (expectedType != typeof(void))
+                {
+                    throw new CompilerException(expressionTree.SubTree[1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "SyntaxError", "Syntax Error"));
+                }
+
+                foreach(Tree subtree in expressionTree.SubTree)
+                {
+                    ProcessExpression(compileState, expectedType, expressionTree, localVars);
+                }
+                return ResultIsModifiedEnum.No;
+            }
 
             return ProcessExpression(
                 compileState,
