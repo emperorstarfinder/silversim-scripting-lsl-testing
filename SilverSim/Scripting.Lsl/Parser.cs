@@ -32,6 +32,7 @@ namespace SilverSim.Scripting.Lsl
     public class Parser : ParserBase
     {
         private readonly CultureInfo m_CurrentCulture;
+
         public Parser(CultureInfo currentCulture)
         {
             m_CurrentCulture = currentCulture;

@@ -176,7 +176,7 @@ namespace SilverSim.Scripting.Lsl
 
                 if(compileState.EmitDebugSymbols)
                 {
-                    compileState.DebugDocument = mb.DefineDocument(assetID.ToString() + ".lsl",
+                    compileState.DebugDocument = mb.DefineDocument($"../data/dumps/{assetID}.lsl",
                         SymDocumentType.Text,
                         Guid.Empty,
                         Guid.Empty);

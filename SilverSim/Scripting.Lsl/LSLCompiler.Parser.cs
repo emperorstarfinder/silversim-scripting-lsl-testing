@@ -712,9 +712,10 @@ namespace SilverSim.Scripting.Lsl
             APIExtension.BreakContinue.ToLower()
         };
 
-        private CompileState Preprocess(Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null, Func<string, TextReader> includeOpen = null)
+        private CompileState Preprocess(UUID assetid, Dictionary<int, string> shbangs, TextReader reader, int lineNumber = 1, CultureInfo cultureInfo = null, Func<string, TextReader> includeOpen = null, bool emitDebugSymbols = false)
         {
             var compileState = new CompileState(cultureInfo);
+            compileState.EmitDebugSymbols = emitDebugSymbols;
             APIFlags acceptedFlags;
             var apiExtensions = new List<string>();
             acceptedFlags = APIFlags.OSSL | APIFlags.LSL;
@@ -831,8 +832,16 @@ namespace SilverSim.Scripting.Lsl
 
             compileState.FinalizeTypeList();
 
+            TextWriter debugSourceWriter = null;
+
+            if(compileState.EmitDebugSymbols)
+            {
+                Directory.CreateDirectory("../data/dumps");
+                debugSourceWriter = new StreamWriter($"../data/dumps/{assetid}.lsl");
+            }
+
             var p = new Parser(cultureInfo);
-            p.Push(reader, string.Empty, lineNumber);
+            p.Push(reader, string.Empty, lineNumber, debugSourceWriter);
             var includes = new List<string>();
 
             for (; ; )

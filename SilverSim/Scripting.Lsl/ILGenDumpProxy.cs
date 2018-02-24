@@ -102,7 +102,7 @@ namespace SilverSim.Scripting.Lsl
             LocalBuilder lb = m_ILGen.DeclareLocal(localType);
             if (DebugDocument != null && name?.Length != 0)
             {
-                lb.SetLocalSymInfo(name);
+                //lb.SetLocalSymInfo(name);
             }
             Writer?.WriteLine("DeclareLocal(typeof({0})) = {1}\n    ---------- {2}:{4}=>{3}", localType.FullName, lb.LocalIndex, callerFilePath, callerMemberName, callerLineNumber);
             return lb;
@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl
             LocalBuilder lb = m_ILGen.DeclareLocal(localType, pinned);
             if (DebugDocument != null && name?.Length != 0)
             {
-                lb.SetLocalSymInfo(name);
+                //lb.SetLocalSymInfo(name);
             }
             Writer?.WriteLine("DeclareLocal(typeof({0}), {1}) = {2}\n    ---------- {3}:{5}=>{4}", localType.FullName, pinned.ToString(), lb.LocalIndex, callerFilePath, callerMemberName, callerLineNumber);
             return lb;

@@ -927,7 +927,7 @@ namespace SilverSim.Scripting.Lsl
                             lb = compileState.ILGen.DeclareLocal(targetType, functionLine.Line[1]);
                             if (compileState.EmitDebugSymbols)
                             {
-                                lb.SetLocalSymInfo(functionLine.Line[1]);
+                                //lb.SetLocalSymInfo(functionLine.Line[1]);
                             }
                             localVars[functionLine.Line[1]] = lb;
                             if (functionLine.Line[2] != ";")
