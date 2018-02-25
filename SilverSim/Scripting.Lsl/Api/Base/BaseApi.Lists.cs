@@ -517,16 +517,24 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if (start <= end)
             {
-                var dst = new AnArray(src);
+                var dst = new AnArray();
                 if (end < 0 || start >= srcCount)
                 {
+                    dst.AddRange(src);
                     return dst;
                 }
 
                 start = Math.Max(0, start);
-                end = Math.Min(end, srcCount - 1);
+                if(start < srcCount)
+                {
+                    dst.AddRange(src, 0, start);
+                }
 
-                dst.RemoveRange(start, end - start + 1);
+                end = Math.Min(end + 1, srcCount);
+                if(end < srcCount)
+                {
+                    dst.AddRange(src, end, srcCount - end);
+                }
                 return dst;
             }
             else if (start < 0 || end >= srcCount)
