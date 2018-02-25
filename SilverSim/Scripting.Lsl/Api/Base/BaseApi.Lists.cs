@@ -597,17 +597,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             var result = new AnArray();
             int srcCount = src.Count;
-            /*
-             * First step is always to deal with negative indices
-             */
 
             if (start < 0)
             {
-                start = src.Count + start;
+                start += srcCount;
             }
             if (end < 0)
             {
-                end = src.Count + end;
+                end += srcCount;
             }
 
             if(end < start)
