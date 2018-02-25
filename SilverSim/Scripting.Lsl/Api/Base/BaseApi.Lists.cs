@@ -1262,16 +1262,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else
             {
-                res.AddRange(dest);
                 start = Math.Max(0, start);
-                if(start < destCount)
+                if(start < destCount && start > 0)
                 {
-                    res.RemoveRange(start, destCount - start);
+                    res.AddRange(dest, 0, start);
                 }
-                end = Math.Min(end, destCount - 1);
+                end = Math.Min(end + 1, res.Count);
                 if (end > 0)
                 {
-                    res.RemoveRange(0, end + 1);
+                    res.RemoveRange(0, end);
                 }
                 res.AddRange(src);
             }
