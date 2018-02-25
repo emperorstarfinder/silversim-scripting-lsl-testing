@@ -750,29 +750,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             if (index < 0)
             {
                 index = destLength + index;
-
-                if (index < 0)
-                {
-                    res.AddRange(src);
-                    res.AddRange(dest);
-                    return res;
-                }
-            }
-
-            if (index >= destLength)
-            {
-                res.AddRange(dest);
-                res.AddRange(src);
-                return res;
             }
 
             if(index > 0)
             {
+                index = Math.Min(index, destLength);
                 res.AddRange(dest.GetRange(0, index));
             }
             res.AddRange(src);
             if(index < destLength)
             {
+                index = Math.Max(0, index);
                 res.AddRange(dest.GetRange(index, destLength - index));
             }
             return res;

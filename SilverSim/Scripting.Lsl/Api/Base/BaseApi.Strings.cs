@@ -135,24 +135,26 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public string InsertString(string dest, int index, string src)
         {
-            int destLength = dest.Length;
             /* negative indexing here is non-LSL but we keep it since it makes sense to have it similarized to calls like llGetSubString and llDeleteSubString */
+            int destLength = dest.Length;
+            var res = new StringBuilder();
             if (index < 0)
             {
                 index = destLength + index;
-
-                if (index < 0)
-                {
-                    return src + dest;
-                }
             }
 
-            if (index >= destLength)
+            if (index > 0)
             {
-                return dest + src;
+                index = Math.Min(index, destLength);
+                res.Append(dest, 0, index);
             }
-
-            return dest.Substring(0, index) + src + dest.Substring(index);
+            res.Append(src);
+            if (index < destLength)
+            {
+                index = Math.Max(0, index);
+                res.Append(dest, index, destLength - index);
+            }
+            return res.ToString();
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
