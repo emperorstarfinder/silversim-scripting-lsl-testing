@@ -1263,14 +1263,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             else
             {
                 start = Math.Max(0, start);
-                if(start < destCount && start > 0)
+                end = Math.Min(end + 1, start);
+                if (start < destCount && start > 0 && start > end)
                 {
-                    res.AddRange(dest, 0, start);
-                }
-                end = Math.Min(end + 1, res.Count);
-                if (end > 0)
-                {
-                    res.RemoveRange(0, end);
+                    res.AddRange(dest, end, start - end);
                 }
                 res.AddRange(src);
             }
