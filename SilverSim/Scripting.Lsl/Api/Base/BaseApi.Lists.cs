@@ -1233,46 +1233,49 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public AnArray ListReplaceList(AnArray dest, AnArray src, int start, int end)
         {
-            AnArray pref;
+            int destCount = dest.Count;
+            var res = new AnArray();
 
-            // Note that although we have normalized, both
-            // indices could still be negative.
             if (start < 0)
             {
-                start += dest.Count;
+                start += destCount;
             }
 
             if (end < 0)
             {
-                end += dest.Count;
+                end += destCount;
             }
+
             if (start <= end)
             {
-                if (start > 0)
+                start = Math.Min(start, destCount);
+                if(start > 0)
                 {
-                    pref = List2List(dest, 0, start - 1);
-
-                    return (end + 1 < dest.Count) ?
-                        (pref + src + List2List(dest, end + 1, -1)) :
-                        (pref + src);
+                    res.AddRange(dest, 0, start);
                 }
-                else if (start == 0)
+                res.AddRange(src);
+                end = Math.Max(end, 0);
+                if(end < destCount)
                 {
-                    return (end + 1 < dest.Count) ?
-                        (src + List2List(dest, end + 1, -1)) :
-                        src;
-                }
-                else
-                {
-                    return (end + 1 < dest.Count) ?
-                        List2List(dest, end + 1, -1) :
-                        new AnArray();
+                    res.AddRange(dest, end, destCount - end);
                 }
             }
             else
             {
-                return List2List(dest, end + 1, start - 1) + src;
+                res.AddRange(dest);
+                end = Math.Min(0, destCount);
+                if (end > 0)
+                {
+                    res.RemoveRange(0, end);
+                }
+                start = Math.Max(0, start);
+                if(start < destCount)
+                {
+                    res.RemoveRange(start, res.Count - start);
+                }
+                res.AddRange(src);
             }
+            return res;
         }
 
         private static int ElementCompare(IValue left, IValue right)
