@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else if(end > 0)
             {
-                return (start < src.Length) ? src.Substring(end + 1, start - end) : src.Substring(end + 1);
+                return (start < src.Length) ? src.Remove(start).Remove(0, end + 1) : src.Substring(end + 1);
             }
             else
             {
