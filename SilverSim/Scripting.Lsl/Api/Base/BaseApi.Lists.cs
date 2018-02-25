@@ -505,39 +505,40 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("end index")]
             int end)
         {
+            int srcCount = src.Count;
             if (start < 0)
             {
-                start = src.Count + start;
+                start = srcCount + start;
             }
             if (end < 0)
             {
-                end = src.Count + end;
+                end = srcCount + end;
             }
 
             if (start <= end)
             {
                 var dst = new AnArray(src);
-                if (end < 0 || start >= src.Count)
+                if (end < 0 || start >= srcCount)
                 {
                     return dst;
                 }
 
                 start = Math.Max(0, start);
-                end = Math.Min(end, src.Count - 1);
+                end = Math.Min(end, srcCount - 1);
 
                 dst.RemoveRange(start, end - start + 1);
                 return dst;
             }
-            else if (start < 0 || end >= src.Count)
+            else if (start < 0 || end >= srcCount)
             {
                 return new AnArray();
             }
             else if (end > 0)
             {
                 var dst = new AnArray(src);
-                if (start < src.Count)
+                if (start < srcCount)
                 {
-                    dst.RemoveRange(start, src.Count - start);
+                    dst.RemoveRange(start, srcCount - start);
                     dst.RemoveRange(0, end + 1);
                 }
                 else
@@ -546,7 +547,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 return dst;
             }
-            else if(start < src.Count)
+            else if(start < srcCount)
             {
                 return new AnArray(src.GetRange(0, start));
             }
@@ -680,22 +681,23 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public AnArray List2List(AnArray src, int start, int end)
         {
+            int srcCount = src.Count;
             if (start < 0)
             {
-                start = src.Count + start;
+                start = srcCount + start;
             }
             if (end < 0)
             {
-                end = src.Count + end;
+                end = srcCount + end;
             }
 
             if (start <= end)
             {
-                if(start >= src.Count || end < 0)
+                if(start >= srcCount || end < 0)
                 {
                     return new AnArray();
                 }
-                end = Math.Min(end, src.Count - 1);
+                end = Math.Min(end, srcCount - 1);
                 start = Math.Max(start, 0);
 
                 return new AnArray(src.GetRange(start, end - start + 1));
@@ -712,7 +714,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     res.AddRange(src.GetRange(0, end + 1));
                 }
                 
-                if(start < src.Count)
+                if(start < srcCount)
                 {
                     res.AddRange(src.GetRange(start, src.Count - start));
                 }
@@ -743,43 +745,37 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public AnArray ListInsertList(AnArray dest, AnArray src, int index)
         {
-            AnArray pref;
-            AnArray suff;
-
+            int destLength = dest.Count;
+            var res = new AnArray();
             if (index < 0)
             {
-                index += dest.Count;
+                index = destLength + index;
+
                 if (index < 0)
                 {
-                    index = 0;
+                    res.AddRange(src);
+                    res.AddRange(dest);
+                    return res;
                 }
             }
 
-            if (index != 0)
+            if (index >= destLength)
             {
-                pref = List2List(dest, 0, index - 1);
-                if (index < dest.Count)
-                {
-                    suff = List2List(dest, index, -1);
-                    return pref + src + suff;
-                }
-                else
-                {
-                    return pref + src;
-                }
+                res.AddRange(dest);
+                res.AddRange(src);
+                return res;
             }
-            else
+
+            if(index > 0)
             {
-                if (index < dest.Count)
-                {
-                    suff = List2List(dest, index, -1);
-                    return src + suff;
-                }
-                else
-                {
-                    return src;
-                }
+                res.AddRange(dest.GetRange(0, index));
             }
+            res.AddRange(src);
+            if(index < destLength)
+            {
+                res.AddRange(dest.GetRange(index, destLength - index));
+            }
+            return res;
         }
 
         private bool CompareListElement(IValue a, IValue b)

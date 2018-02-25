@@ -40,38 +40,39 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public string DeleteSubString(string src, int start, int end)
         {
+            int srcLength = src.Length;
             if (start < 0)
             {
-                start = src.Length + start;
+                start = srcLength + start;
             }
             if (end < 0)
             {
-                end = src.Length + end;
+                end = srcLength + end;
             }
 
             if(start <= end)
             {
-                if(end < 0 || start >= src.Length)
+                if(end < 0 || start >= srcLength)
                 {
                     return src;
                 }
 
                 start = Math.Max(0, start);
-                end = Math.Min(end, src.Length - 1);
+                end = Math.Min(end, srcLength - 1);
 
                 return src.Remove(start, end - start + 1);
             }
-            else if(start < 0 || end >= src.Length)
+            else if(start < 0 || end >= srcLength)
             {
                 return string.Empty;
             }
             else if(end > 0)
             {
-                return (start < src.Length) ? src.Remove(start).Remove(0, end + 1) : src.Substring(end + 1);
+                return (start < srcLength) ? src.Remove(start).Remove(0, end + 1) : src.Substring(end + 1);
             }
             else
             {
-                return (start < src.Length) ? src.Substring(0, start) : src;
+                return (start < srcLength) ? src.Substring(0, start) : src;
             }
         }
 
@@ -134,10 +135,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public string InsertString(string dest, int index, string src)
         {
+            int destLength = dest.Length;
             /* negative indexing here is non-LSL but we keep it since it makes sense to have it similarized to calls like llGetSubString and llDeleteSubString */
             if (index < 0)
             {
-                index = dest.Length + index;
+                index = destLength + index;
 
                 if (index < 0)
                 {
@@ -145,7 +147,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
 
-            if (index >= dest.Length)
+            if (index >= destLength)
             {
                 return dest + src;
             }
@@ -171,43 +173,44 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public string GetSubstring(string src, int start, int end)
         {
-            if(src.Length == 0)
+            int srcLength = src.Length;
+            if(srcLength == 0)
             {
                 return src;
             }
 
             if(start < 0)
             {
-                start = src.Length + start;
+                start = srcLength + start;
             }
             if (end < 0)
             {
-                end = src.Length + end;
+                end = srcLength + end;
             }
 
             if(start <= end)
             {
-                if(end < 0 || start >= src.Length)
+                if(end < 0 || start >= srcLength)
                 {
                     return string.Empty;
                 }
 
-                end = Math.Min(end, src.Length - 1);
+                end = Math.Min(end, srcLength - 1);
                 return (start < 0) ?
                     src.Substring(0, end + 1) :
                     src.Substring(start, (end + 1) - start);
             }
-            else if( start < 0 || end >= src.Length)
+            else if( start < 0 || end >= srcLength)
             {
                 return src;
             }
             else if(end < 0)
             {
-                return (start < src.Length) ? src.Substring(start) : string.Empty;
+                return (start < srcLength) ? src.Substring(start) : string.Empty;
             }
             else
             {
-                string b = start < src.Length ? src.Substring(start) : string.Empty;
+                string b = start < srcLength ? src.Substring(start) : string.Empty;
                 return src.Substring(0, end + 1) + b;
             }
         }
