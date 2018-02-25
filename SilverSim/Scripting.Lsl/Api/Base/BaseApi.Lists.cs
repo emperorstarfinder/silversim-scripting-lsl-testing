@@ -619,10 +619,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 end = src.Count - 1;
             }
 
-            if (stride < 1)
+            if (stride <= 1)
             {
                 return List2List(src, start, end);
             }
+
             strideoffset = Math.Min(strideoffset, stride - 1);
 
             int offset = start % stride;
