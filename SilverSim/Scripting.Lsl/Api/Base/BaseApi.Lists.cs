@@ -543,13 +543,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 else
                 {
-                    dst.AddRange(src.GetRange(end + 1, src.Count - end + 1));
+                    dst.AddRange(src, end + 1, src.Count - end + 1);
                 }
                 return dst;
             }
             else if(start < srcCount)
             {
-                return new AnArray(src.GetRange(0, start));
+                var res = new AnArray();
+                res.AddRange(src, 0, start);
+                return res;
             }
             else
             {
@@ -693,14 +695,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             if (start <= end)
             {
+                var res = new AnArray();
                 if(start >= srcCount || end < 0)
                 {
-                    return new AnArray();
+                    return res;
                 }
                 end = Math.Min(end, srcCount - 1);
                 start = Math.Max(start, 0);
 
-                return new AnArray(src.GetRange(start, end - start + 1));
+                res.AddRange(src, start, end - start + 1);
+                return res;
             }
             else if(end < 0 && start < 0)
             {
@@ -711,12 +715,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 var res = new AnArray();
                 if(end >= 0)
                 {
-                    res.AddRange(src.GetRange(0, end + 1));
+                    res.AddRange(src, 0, end + 1);
                 }
                 
                 if(start < srcCount)
                 {
-                    res.AddRange(src.GetRange(start, src.Count - start));
+                    res.AddRange(src, start, src.Count - start);
                 }
                 return res;
             }
@@ -755,13 +759,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             if(index > 0)
             {
                 index = Math.Min(index, destLength);
-                res.AddRange(dest.GetRange(0, index));
+                res.AddRange(dest, 0, index);
             }
             res.AddRange(src);
             if(index < destLength)
             {
                 index = Math.Max(0, index);
-                res.AddRange(dest.GetRange(index, destLength - index));
+                res.AddRange(dest, index, destLength - index);
             }
             return res;
         }
