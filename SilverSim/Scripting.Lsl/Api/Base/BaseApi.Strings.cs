@@ -70,10 +70,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (start < srcLength)
                 {
-                    var sb = new StringBuilder(src);
-                    sb.Remove(start, srcLength - start);
-                    sb.Remove(0, end + 1);
-                    return sb.ToString();
+                    return src.Substring(end + 1, start - end - 1);
                 }
                 else
                 {
