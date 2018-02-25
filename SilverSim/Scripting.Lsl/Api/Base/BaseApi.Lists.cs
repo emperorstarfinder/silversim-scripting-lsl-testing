@@ -535,11 +535,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
             else if (end > 0)
             {
-                var dst = new AnArray(src);
+                var dst = new AnArray();
                 if (start < srcCount)
                 {
-                    dst.RemoveRange(start, srcCount - start);
-                    dst.RemoveRange(0, end + 1);
+                    dst.AddRange(src, end + 1, start - end - 1);
                 }
                 else
                 {
