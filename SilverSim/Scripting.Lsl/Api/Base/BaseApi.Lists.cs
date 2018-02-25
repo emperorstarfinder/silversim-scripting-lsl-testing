@@ -610,14 +610,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 end = src.Count + end;
             }
 
-            start = start.Clamp(0, srcCount);
-            end = end.Clamp(0, srcCount - 1);
             if(end < start)
             {
                 /* start & end will not form an exclusion range when start is past end (Approximately: start > end), instead it will act as if start was zero & end was -1. */
                 start = 0;
                 end = src.Count - 1;
             }
+
+            start = start.Clamp(0, srcCount);
+            end = end.Clamp(0, srcCount - 1);
 
             if (stride <= 1)
             {
