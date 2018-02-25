@@ -566,6 +566,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APILevel(APIFlags.ASSL, "asList2ListStrided")]
         [APILevel(APIFlags.LSL, "llList2ListStrided")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetStride")]
         [Description("Returns a list of all the entries in the strided list whose index is a multiple of stride in the range start to end.")]
@@ -577,7 +578,22 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("end index")]
             int end,
             [Description("number of entries per stride, if less than 1 it is assumed to be 1")]
-            int stride)
+            int stride) => List2ListStrided(src, start, end, stride, 0);
+
+        [APILevel(APIFlags.ASSL, "asList2ListStrided")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetStride")]
+        [Description("Returns a list of all the entries in the strided list whose index is a multiple of stride in the range start to end and return the selected stride element.")]
+        [Pure]
+        public AnArray List2ListStrided(
+            AnArray src,
+            [Description("start index")]
+            int start,
+            [Description("end index")]
+            int end,
+            [Description("number of entries per stride, if less than 1 it is assumed to be 1")]
+            int stride,
+            [Description("stride element index")]
+            int strideoffset)
         {
             var result = new AnArray();
             int srcCount = src.Count;
@@ -607,6 +623,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 return List2List(src, start, end);
             }
+            strideoffset = Math.Min(strideoffset, stride - 1);
 
             int offset = start % stride;
             if (offset != 0)
@@ -614,7 +631,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 start = start + stride - offset;
             }
 
-            for(int i = start; i <= end; i += stride)
+            for(int i = start + strideoffset; i <= end; i += stride)
             {
                 result.Add(src[i]);
             }
