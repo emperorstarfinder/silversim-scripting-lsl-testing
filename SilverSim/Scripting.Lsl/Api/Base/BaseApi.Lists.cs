@@ -1254,7 +1254,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     res.AddRange(dest, 0, start);
                 }
                 res.AddRange(src);
-                end = Math.Max(end, 0);
+                end = Math.Max(end + 1, 0);
                 if(end < destCount)
                 {
                     res.AddRange(dest, end, destCount - end);
@@ -1263,15 +1263,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             else
             {
                 res.AddRange(dest);
-                end = Math.Min(0, destCount);
-                if (end > 0)
-                {
-                    res.RemoveRange(0, end);
-                }
                 start = Math.Max(0, start);
                 if(start < destCount)
                 {
-                    res.RemoveRange(start, res.Count - start);
+                    res.RemoveRange(start, destCount - start);
+                }
+                end = Math.Min(end, destCount - 1);
+                if (end > 0)
+                {
+                    res.RemoveRange(0, end + 1);
                 }
                 res.AddRange(src);
             }
