@@ -78,6 +78,11 @@ namespace SilverSim.Scripting.Lsl
                                 compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                                 compileState.ILGen.Emit(OpCodes.Ceq);
                             }
+                            else if(innerExpressionReturn == typeof(double))
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
+                                compileState.ILGen.Emit(OpCodes.Ceq);
+                            }
                             else if (innerExpressionReturn == typeof(string) ||
                                 innerExpressionReturn == typeof(AnArray))
                             {
