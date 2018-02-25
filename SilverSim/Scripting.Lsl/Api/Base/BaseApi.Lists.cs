@@ -580,10 +580,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             int stride)
         {
             var result = new AnArray();
-            var si = new int[2];
-            var ei = new int[2];
-            bool twopass = false;
-
+            int srcCount = src.Count;
             /*
              * First step is always to deal with negative indices
              */
@@ -597,89 +594,29 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 end = src.Count + end;
             }
 
-            /*
-             * Out of bounds indices are OK, just trim them accordingly
-             */
-
-            if (start > src.Count)
+            start = start.Clamp(0, srcCount);
+            end = end.Clamp(0, srcCount - 1);
+            if(end < start)
             {
-                start = src.Count;
+                /* start & end will not form an exclusion range when start is past end (Approximately: start > end), instead it will act as if start was zero & end was -1. */
+                start = 0;
+                end = src.Count - 1;
             }
 
-            if (end > src.Count)
+            if (stride < 1)
             {
-                end = src.Count;
+                return List2List(src, start, end);
             }
 
-            if (stride == 0)
+            int offset = start % stride;
+            if (offset != 0)
             {
-                stride = 1;
+                start = start + stride - offset;
             }
 
-            /*
-             * There may be one or two ranges to be considered
-             */
-
-            if (start != end)
+            for(int i = start; i <= end; i += stride)
             {
-                if (start <= end)
-                {
-                    si[0] = start;
-                    ei[0] = end;
-                }
-                else
-                {
-                    si[1] = start;
-                    ei[1] = src.Count;
-                    si[0] = 0;
-                    ei[0] = end;
-                    twopass = true;
-                }
-
-                /*
-                 * The scan always starts from the beginning of the
-                 * source list, but members are only selected if they
-                 * fall within the specified sub-range. The specified
-                 * range values are inclusive.
-                 * A negative stride reverses the direction of the
-                 * scan producing an inverted list as a result.
-                 */
-
-                if (stride > 0)
-                {
-                    for (int i = 0; i < src.Count; i += stride)
-                    {
-                        if (i <= ei[0] && i >= si[0])
-                        {
-                            result.Add(src[i]);
-                        }
-                        if (twopass && i >= si[1] && i <= ei[1])
-                        {
-                            result.Add(src[i]);
-                        }
-                    }
-                }
-                else if (stride < 0)
-                {
-                    for (int i = src.Count - 1; i >= 0; i += stride)
-                    {
-                        if (i <= ei[0] && i >= si[0])
-                        {
-                            result.Add(src[i]);
-                        }
-                        if (twopass && i >= si[1] && i <= ei[1])
-                        {
-                            result.Add(src[i]);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (start % stride == 0)
-                {
-                    result.Add(src[start]);
-                }
+                result.Add(src[i]);
             }
 
             return result;
