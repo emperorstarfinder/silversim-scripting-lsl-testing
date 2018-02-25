@@ -508,11 +508,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             int srcCount = src.Count;
             if (start < 0)
             {
-                start = srcCount + start;
+                start += srcCount;
             }
             if (end < 0)
             {
-                end = srcCount + end;
+                end += srcCount;
             }
 
             if (start <= end)
@@ -646,11 +646,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             int srcCount = src.Count;
             if (start < 0)
             {
-                start = srcCount + start;
+                start += srcCount;
             }
             if (end < 0)
             {
-                end = srcCount + end;
+                end += srcCount;
             }
 
             if (start <= end)
@@ -693,7 +693,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if(index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if(index < 0 ||index >=src.Count)
@@ -713,7 +713,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             var res = new AnArray();
             if (index < 0)
             {
-                index = destLength + index;
+                index += destLength;
             }
 
             if(index > 0)
@@ -788,7 +788,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if (index < 0 || index >= src.Count)
@@ -811,7 +811,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if (index < 0 || index >= src.Count)
@@ -835,7 +835,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             var script = (Script)instance;
             if (index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if (index < 0 || index >= src.Count)
@@ -858,7 +858,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if (index < 0 || index >= src.Count)
@@ -882,7 +882,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             var script = (Script)instance;
             if (index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if (index < 0 || index >= src.Count)
@@ -905,7 +905,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if (index < 0 || index >= src.Count)
@@ -995,7 +995,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             if (index < 0)
             {
-                index = src.Count - index;
+                index += src.Count;
             }
 
             if (index < 0 || index >= src.Count)
