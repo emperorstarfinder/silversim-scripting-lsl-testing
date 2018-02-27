@@ -46,9 +46,10 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
         [APIExtension(XmlExtensionName, "xmldocument")]
         [APIDisplayName("xmldocument")]
         [APIIsVariableType]
+        [ImplementsCustomTypecasts]
         public sealed class Document
         {
-            private readonly XmlDocument m_XmlDocument = new XmlDocument();
+            public readonly XmlDocument XmlDocument = new XmlDocument();
 
             public Document()
             {
@@ -56,23 +57,55 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
 
             public Document(string xml)
             {
-                m_XmlDocument.LoadXml(xml);
+                XmlDocument.LoadXml(xml);
             }
 
             public Document(Stream s)
             {
-                m_XmlDocument.Load(s);
+                XmlDocument.Load(s);
             }
 
-            public override string ToString() => ToByteArray().FromUTF8Bytes();
+            public static explicit operator ByteArrayApi.ByteArray(Document doc) => new ByteArrayApi.ByteArray(doc.ToByteArray());
+
+            public static explicit operator string(Document doc) => doc.ToByteArray().FromUTF8Bytes();
+
+            public static explicit operator Document(string xml) => new Document(xml);
+
+            public static explicit operator Document(ByteArrayApi.ByteArray byteArray)
+            {
+                using (var ms = new MemoryStream(byteArray.Data))
+                {
+                    return new Document(ms);
+                }
+            }
 
             public byte[] ToByteArray()
             {
                 using (var ms = new MemoryStream())
                 {
-                    m_XmlDocument.Save(ms);
+                    XmlDocument.Save(ms);
                     return ms.ToArray();
                 }
+            }
+
+            public XmlNode SelectNode(string xpath, int index)
+            {
+                XmlNodeList nodeList = XmlDocument.SelectNodes(xpath);
+
+                if (nodeList == null || nodeList.Count == 0)
+                {
+                    return null;
+                }
+
+                foreach (XmlNode node in nodeList)
+                {
+                    if(index--== 0)
+                    {
+                        return node;
+                    }
+                }
+
+                return null;
             }
 
             public string this[string xpath]
@@ -84,7 +117,7 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
 
                 set
                 {
-                    XmlNodeList nodeList = m_XmlDocument.SelectNodes(xpath);
+                    XmlNodeList nodeList = XmlDocument.SelectNodes(xpath);
 
                     if (nodeList == null || nodeList.Count == 0)
                     {
@@ -106,7 +139,7 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
                     {
                         return string.Empty;
                     }
-                    XPathNavigator nav = m_XmlDocument.CreateNavigator();
+                    XPathNavigator nav = XmlDocument.CreateNavigator();
                     XPathExpression expr = nav.Compile(xpath);
                     object o = nav.Evaluate(expr);
                     if(o == null)
@@ -146,24 +179,69 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
 
         private const string XmlExtensionName = "xml";
 
-        [APIExtension(XmlExtensionName, "xmlLoad")]
-        public Document LoadXml(string xmlstring) => new Document(xmlstring);
-
-        [APIExtension(XmlExtensionName, "xmlLoad")]
-        public Document LoadXml(ByteArrayApi.ByteArray byteArray)
+        [APIExtension(XmlExtensionName, "xmlCreateElement")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateElement")]
+        public void CreateElement(Document doc, string name)
         {
-            using (var ms = new MemoryStream(byteArray.Data))
-            {
-                return new Document(ms);
-            }
+            doc.XmlDocument.AppendChild(doc.XmlDocument.CreateElement(name));
         }
 
-        [APIExtension(XmlExtensionName, "xmlSaveToString")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToString")]
-        public string SaveXmlToString(Document doc) => doc.ToString();
+        [APIExtension(XmlExtensionName, "xmlCreateElement")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateElement")]
+        public int CreateElement(Document doc, string xpath, int index, string name)
+        {
+            XmlElement node = doc.SelectNode(xpath, index) as XmlElement;
+            bool success = false;
+            if(node != null)
+            {
+                node.AppendChild(doc.XmlDocument.CreateElement(name));
+                success = true;
+            }
+            return success.ToLSLBoolean();
+        }
 
-        [APIExtension(XmlExtensionName, "xmlSaveToByteArray")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToByteArray")]
-        public ByteArrayApi.ByteArray SaveXmlToByteArray(Document doc) => new ByteArrayApi.ByteArray(doc.ToByteArray());
+        [APIExtension(XmlExtensionName, "xmlCreateAttribute")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateAttribute")]
+        public int CreateElement(Document doc, string xpath, int index, string name, string value)
+        {
+            XmlElement node = doc.SelectNode(xpath, index) as XmlElement;
+            bool success = false;
+            if (node != null)
+            {
+                XmlAttribute attr = doc.XmlDocument.CreateAttribute(name);
+                attr.Value = value;
+                node.AppendChild(attr);
+                success = true;
+            }
+            return success.ToLSLBoolean();
+        }
+
+        [APIExtension(XmlExtensionName, "xmlCreateCData")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateCData")]
+        public int CreateCData(Document doc, string xpath, int index, string data)
+        {
+            XmlElement node = doc.SelectNode(xpath, index) as XmlElement;
+            bool success = false;
+            if (node != null)
+            {
+                node.AppendChild(doc.XmlDocument.CreateCDataSection(data));
+                success = true;
+            }
+            return success.ToLSLBoolean();
+        }
+
+        [APIExtension(XmlExtensionName, "xmlCreateText")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CreateText")]
+        public int CreateText(Document doc, string xpath, int index, string text)
+        {
+            XmlElement node = doc.SelectNode(xpath, index) as XmlElement;
+            bool success = false;
+            if (node != null)
+            {
+                node.AppendChild(doc.XmlDocument.CreateTextNode(text));
+                success = true;
+            }
+            return success.ToLSLBoolean();
+        }
     }
 }
