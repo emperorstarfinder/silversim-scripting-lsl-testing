@@ -43,6 +43,9 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
             /* intentionally left mpty */
         }
 
+        [APIExtension(XmlExtensionName, "xmldocument")]
+        [APIDisplayName("xmldocument")]
+        [APIIsVariableType]
         public sealed class Document
         {
             private readonly XmlDocument m_XmlDocument = new XmlDocument();
