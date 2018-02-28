@@ -1023,7 +1023,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (separators_array == null)
                 {
-                    separators_array = separators_array.ToArray();
+                    separators_array = separators.ToArray();
                 }
 
                 if(spacers_array == null)
