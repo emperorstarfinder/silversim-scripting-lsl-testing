@@ -1346,7 +1346,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llListRandomize")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Randomize")]
-        [Pure]
         public AnArray ListRandomize(AnArray src, int stride)
         {
             /* From LSL wiki:
