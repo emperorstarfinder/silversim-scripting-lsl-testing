@@ -27,6 +27,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Web;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -243,5 +244,11 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
             }
             return success.ToLSLBoolean();
         }
+
+        [APIExtension(XmlExtensionName, "xmlEscape")]
+        public string XmlEscape(string input) => System.Security.SecurityElement.Escape(input);
+
+        [APIExtension(XmlExtensionName, "xmlUnescape")]
+        public string XmlUnescape(string input) => HttpUtility.HtmlDecode(input);
     }
 }
