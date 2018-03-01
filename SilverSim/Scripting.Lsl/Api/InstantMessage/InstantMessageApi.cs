@@ -20,7 +20,13 @@
 // exception statement from your version.
 
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.ServiceInterfaces.IM;
+using SilverSim.Types;
+using SilverSim.Types.IM;
+using System;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.IM
@@ -28,11 +34,89 @@ namespace SilverSim.Scripting.Lsl.Api.IM
     [ScriptApiName("InstantMessage")]
     [LSLImplementation]
     [Description("LSL/OSSL InstantMessage API")]
-    public partial class InstantMessageApi : IScriptApi, IPlugin
+    public sealed class InstantMessageApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
         {
             /* intentionally left empty */
+        }
+
+        [APILevel(APIFlags.LSL, "llInstantMessage")]
+        [ForcedSleep(2)]
+        public void InstantMessage(ScriptInstance instance, LSLKey user, string message)
+        {
+            lock (instance)
+            {
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
+                IMServiceInterface imservice = thisScene.GetService<IMServiceInterface>();
+                Vector3 globPos = thisGroup.GlobalPosition;
+                string binBuck = string.Format("{0}/{1}/{2}/{3}\0",
+                    thisScene.Name,
+                    (int)Math.Floor(globPos.X),
+                    (int)Math.Floor(globPos.Y),
+                    (int)Math.Floor(globPos.Z));
+                imservice.Send(new GridInstantMessage
+                {
+                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    IMSessionID = thisGroup.ID,
+                    ToAgent = new UUI(user),
+                    Position = globPos,
+                    RegionID = thisScene.ID,
+                    Message = message,
+                    Dialog = GridInstantMessageDialog.MessageFromObject,
+                    BinaryBucket = binBuck.ToUTF8Bytes(),
+                    OnResult = (GridInstantMessage imret, bool success) => { }
+                });
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osMessageBox")]
+        public void MessageBox(ScriptInstance instance, LSLKey user, string message)
+        {
+            lock (instance)
+            {
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
+                var imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                imservice.Send(new GridInstantMessage
+                {
+                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    IMSessionID = thisGroup.ID,
+                    ToAgent = new UUI(user),
+                    Position = thisGroup.GlobalPosition,
+                    RegionID = thisScene.ID,
+                    Message = message,
+                    Dialog = GridInstantMessageDialog.MessageBox,
+                    OnResult = (GridInstantMessage imret, bool success) => { }
+                });
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osGotoUrl")]
+        public void GotoUrl(ScriptInstance instance, LSLKey user, string message, string url)
+        {
+            lock (instance)
+            {
+                ObjectPart thisPart = instance.Part;
+                ObjectGroup thisGroup = thisPart.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
+                IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
+                imservice.Send(new GridInstantMessage
+                {
+                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    IMSessionID = thisGroup.ID,
+                    ToAgent = new UUI(user),
+                    Position = thisGroup.GlobalPosition,
+                    RegionID = thisScene.ID,
+                    Message = message,
+                    BinaryBucket = (url + "\0").ToUTF8Bytes(),
+                    Dialog = GridInstantMessageDialog.GotoUrl,
+                    OnResult = (GridInstantMessage imret, bool success) => { }
+                });
+            }
         }
     }
 }
