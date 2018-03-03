@@ -52,20 +52,9 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.ASSL, "llShout")]
+        [APILevel(APIFlags.OSSL, "llShout")]
         [AllowExplicitTypecastsBeImplicitToString(1)]
-        public void Shout(ScriptInstance instance, string message)
-        {
-            var ev = new ListenEvent
-            {
-                Channel = PUBLIC_CHANNEL,
-                Type = ListenEvent.ChatType.Shout,
-                Message = message,
-                SourceType = ListenEvent.ChatSourceType.Object,
-                OwnerID = GetOwner(instance)
-            };
-            SendChat(instance, ev);
-        }
+        public void Shout(ScriptInstance instance, string message) => Shout(instance, PUBLIC_CHANNEL, message);
 
         [APILevel(APIFlags.LSL, "llSay")]
         [AllowExplicitTypecastsBeImplicitToString(2)]
@@ -82,20 +71,9 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.ASSL, "llSay")]
+        [APILevel(APIFlags.OSSL, "llSay")]
         [AllowExplicitTypecastsBeImplicitToString(1)]
-        public void Say(ScriptInstance instance, string message)
-        {
-            var ev = new ListenEvent
-            {
-                Channel = PUBLIC_CHANNEL,
-                Type = ListenEvent.ChatType.Say,
-                Message = message,
-                SourceType = ListenEvent.ChatSourceType.Object,
-                OwnerID = GetOwner(instance)
-            };
-            SendChat(instance, ev);
-        }
+        public void Say(ScriptInstance instance, string message) => Say(instance, PUBLIC_CHANNEL, message);
 
         [APILevel(APIFlags.LSL, "llWhisper")]
         [AllowExplicitTypecastsBeImplicitToString(2)]
@@ -112,20 +90,9 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.ASSL, "llWhisper")]
+        [APILevel(APIFlags.OSSL, "llWhisper")]
         [AllowExplicitTypecastsBeImplicitToString(1)]
-        public void Whisper(ScriptInstance instance, string message)
-        {
-            var ev = new ListenEvent
-            {
-                Channel = PUBLIC_CHANNEL,
-                Type = ListenEvent.ChatType.Whisper,
-                Message = message,
-                SourceType = ListenEvent.ChatSourceType.Object,
-                OwnerID = GetOwner(instance)
-            };
-            SendChat(instance, ev);
-        }
+        public void Whisper(ScriptInstance instance, string message) => Whisper(instance, PUBLIC_CHANNEL, message);
 
         [APILevel(APIFlags.LSL, "llOwnerSay")]
         [AllowExplicitTypecastsBeImplicitToString(1)]
@@ -180,21 +147,9 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             SendChat(instance, ev);
         }
 
-        [APILevel(APIFlags.ASSL, "llRegionSayTo")]
+        [APILevel(APIFlags.OSSL, "llRegionSayTo")]
         [AllowExplicitTypecastsBeImplicitToString(2)]
-        public void RegionSayTo(ScriptInstance instance, LSLKey target, string message)
-        {
-            var ev = new ListenEvent
-            {
-                Channel = PUBLIC_CHANNEL,
-                Type = ListenEvent.ChatType.Region,
-                Message = message,
-                TargetID = target,
-                OwnerID = GetOwner(instance),
-                SourceType = ListenEvent.ChatSourceType.Object
-            };
-            SendChat(instance, ev);
-        }
+        public void RegionSayTo(ScriptInstance instance, LSLKey target, string message) => RegionSayTo(instance, target, PUBLIC_CHANNEL, message);
 
         [APILevel(APIFlags.LSL, "llListen")]
         public int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg)
