@@ -63,6 +63,7 @@ namespace SilverSim.Scripting.Lsl
 
             for(;;)
             {
+                CurrentLineNumber = GetFileInfo().LineNumber;
                 c = ReadC();
 redo:
                 switch(c)
@@ -88,10 +89,6 @@ redo:
 
                     case ':':       /* end of case */
                     case ';':       /* end of statement */
-                        if (CurrentLineNumber < 0)
-                        {
-                            CurrentLineNumber = GetFileInfo().LineNumber;
-                        }
                         if (0 != token.Length)
                         {
                             args.Add(token);
@@ -108,10 +105,6 @@ redo:
                         break;
 
                     case '{':       /* opening statement */
-                        if (CurrentLineNumber < 0)
-                        {
-                            CurrentLineNumber = GetFileInfo().LineNumber;
-                        }
                         if (0 != token.Length)
                         {
                             args.Add(token);
@@ -124,10 +117,6 @@ redo:
                         return;
 
                     case '}':       /* closing statement */
-                        if (CurrentLineNumber < 0)
-                        {
-                            CurrentLineNumber = GetFileInfo().LineNumber;
-                        }
                         if (0 != token.Length)
                         {
                             args.Add(token);
@@ -144,10 +133,6 @@ redo:
                         return;
 
                     case '\"':      /* string literal */
-                        if (CurrentLineNumber < 0)
-                        {
-                            CurrentLineNumber = GetFileInfo().LineNumber;
-                        }
                         if (0 != token.Length)
                         {
                             args.Add(token);
@@ -177,10 +162,6 @@ redo:
                         break;
 
                     case '\'':      /* string literal */
-                        if (CurrentLineNumber < 0)
-                        {
-                            CurrentLineNumber = GetFileInfo().LineNumber;
-                        }
                         if (0 != token.Length)
                         {
                             args.Add(token);
@@ -218,10 +199,6 @@ redo:
                     case '\\':
                     case '[':
                     case ']':
-                        if (CurrentLineNumber < 0)
-                        {
-                            CurrentLineNumber = GetFileInfo().LineNumber;
-                        }
                         if (0 != token.Length)
                         {
                             args.Add(token);
@@ -247,10 +224,6 @@ redo:
                         break;
 
                     case '<':
-                        if (CurrentLineNumber < 0)
-                        {
-                            CurrentLineNumber = GetFileInfo().LineNumber;
-                        }
                         if(is_preprocess &&
                             args.Count != 0 &&
                             (args[0] == "#include" || args[0] == "#include_once"))
@@ -265,6 +238,7 @@ redo:
                                 MarkBeginOfLine();
                             }
                             token.Clear();
+                            CurrentLineNumber = GetFileInfo().LineNumber;
                             c = '\"';
                             do
                             {
@@ -294,10 +268,6 @@ redo:
                         }
                         else
                         {
-                            if (CurrentLineNumber < 0)
-                            {
-                                CurrentLineNumber = GetFileInfo().LineNumber;
-                            }
                             if (token.Length == 0 && args.Count == 0 && c == '#')
                             {
                                 is_preprocess = true;
@@ -315,7 +285,6 @@ redo:
                                 if(token.EndsWith("//"))
                                 {
                                     /* got C++-style comment */
-                                    CurrentLineNumber = -1;
                                     while (c != '\n')
                                     {
                                         try
@@ -343,7 +312,6 @@ redo:
                                 if(token.EndsWith("/*"))
                                 {
                                     /* got C-style comment */
-                                    CurrentLineNumber = -1;
                                     for(;;)
                                     {
                                         try
