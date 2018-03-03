@@ -876,6 +876,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     /* should not happen but better be safe here */
                 }
+                else if(args[0] == ";")
+                {
+                    /* ignore this one, just a nop */
+                }
                 else if (args[args.Count - 1] == ";")
                 {
                     /* variable definition */
