@@ -879,7 +879,7 @@ namespace SilverSim.Scripting.Lsl
                 else if (args[args.Count - 1] == ";")
                 {
                     /* variable definition */
-                    if (args[2] != "=" && args[2] != ";")
+                    if (args.Count < 3 || (args[2] != "=" && args[2] != ";"))
                     {
                         throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidVariableDefinitionEitherSemicolonOrEqual", "Invalid variable definition. Either ';' or an expression preceeded by '='"));
                     }
