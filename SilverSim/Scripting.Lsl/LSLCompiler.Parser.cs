@@ -169,7 +169,11 @@ namespace SilverSim.Scripting.Lsl
                 fp.Name = arguments[i + 1];
                 funcParams.Add(fp);
 
-                if (arguments[i + 2] == ",")
+                if(i + 2 >= arguments.Count)
+                {
+                    throw ParserException(p, this.GetLanguageString(cs.CurrentCulture, "MissingClosingParenthesisAtTheEndOfFunctionDeclaration", "Missing ')' at the end of function declaration"));
+                }
+                else if (arguments[i + 2] == ",")
                 {
                     /* nothing to do here */
                 }
