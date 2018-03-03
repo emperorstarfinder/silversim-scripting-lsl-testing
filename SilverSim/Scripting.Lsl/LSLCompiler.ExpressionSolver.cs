@@ -2362,10 +2362,6 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if (hasValidRightHand)
                         {
-                            if(pos + 1 >= tree.SubTree.Count)
-                            {
-                                throw new CompilerException(tree.SubTree[pos].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRightHandParameterTo0", "invalid right hand parameter to '{0}'"), ent));
-                            }
                             /* left unary */
                             elem.Type = Tree.EntryType.OperatorLeftUnary;
                             elem.SubTree.Add(tree.SubTree[pos + 1]);
@@ -2373,7 +2369,12 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
-                            throw new CompilerException(tree.SubTree[pos + 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRightHandParameterTo0", "invalid right hand parameter to '{0}'"), ent));
+                            int errorPos = pos + 1;
+                            if(errorPos >= tree.SubTree.Count)
+                            {
+                                errorPos = pos;
+                            }
+                            throw new CompilerException(tree.SubTree[errorPos].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRightHandParameterTo0", "invalid right hand parameter to '{0}'"), ent));
                         }
                     }
                 }
