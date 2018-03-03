@@ -578,14 +578,7 @@ namespace SilverSim.Scripting.Lsl
                     if (compileState.m_VariableInitValues.TryGetValue(varName, out initargs))
                     {
                         Tree expressionTree;
-                        try
-                        {
-                            expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, compileState.CurrentCulture);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new CompilerException(initargs.FirstTokenLineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "InitValueOfVariable0HasSyntaxError", "Init value of variable {0} has syntax error. {1}\n{2}"), varName, e.Message, e.StackTrace));
-                        }
+                        expressionTree = LineToExpressionTree(compileState, initargs.Line, typeLocals.Keys, compileState.CurrentCulture);
 
                         if (AreAllVarReferencesSatisfied(compileState, varIsInited, expressionTree, varName, initargs.FirstTokenLineNumber))
                         {
