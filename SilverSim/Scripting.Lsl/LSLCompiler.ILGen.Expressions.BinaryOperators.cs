@@ -91,6 +91,51 @@ namespace SilverSim.Scripting.Lsl
             return (index >= 0 && index < s.Length) ? s[index] : char.MinValue;
         }
 
+        public static AnArray GetArrayElement(AnArray src, int start, int end)
+        {
+            int srcCount = src.Count;
+            if (start < 0)
+            {
+                start += srcCount;
+            }
+            if (end < 0)
+            {
+                end += srcCount;
+            }
+
+            if (start <= end)
+            {
+                var res = new AnArray();
+                if (start >= srcCount || end < 0)
+                {
+                    return res;
+                }
+                end = Math.Min(end, srcCount - 1);
+                start = Math.Max(start, 0);
+
+                res.AddRange(src, start, end - start + 1);
+                return res;
+            }
+            else if (end < 0 && start < 0)
+            {
+                return new AnArray(src);
+            }
+            else
+            {
+                var res = new AnArray();
+                if (end >= 0)
+                {
+                    res.AddRange(src, 0, end + 1);
+                }
+
+                if (start < srcCount)
+                {
+                    res.AddRange(src, start, src.Count - start);
+                }
+                return res;
+            }
+        }
+
         public static BaseApi.Variant GetArrayElement(AnArray array, int index)
         {
             int origIndex = index;
