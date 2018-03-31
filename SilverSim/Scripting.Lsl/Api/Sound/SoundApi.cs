@@ -25,6 +25,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Object.Parameters;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.Primitive;
 using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
@@ -272,12 +273,16 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 
         [APILevel(APIFlags.LSL, "llAdjustSoundVolume")]
         [ForcedSleep(0.1)]
-        public void AdjustSoundVolume(ScriptInstance instance, double volume)
+        public void AdjustSoundVolume(ScriptInstance instance, double volume) => AdjustSoundVolume(instance, PrimitiveApi.LINK_THIS, volume);
+
+        public void AdjustSoundVolume(ScriptInstance instance, int link, double volume)
         {
             lock (instance)
             {
-                ObjectPart thisPart = instance.Part;
-                thisPart.ObjectGroup.Scene.SendAttachedSoundGainChange(thisPart, volume, thisPart.Sound.Radius);
+                foreach (ObjectPart thisPart in GetLinks(instance, link))
+                {
+                    thisPart.ObjectGroup.Scene.SendAttachedSoundGainChange(thisPart, volume, thisPart.Sound.Radius);
+                }
             }
         }
 

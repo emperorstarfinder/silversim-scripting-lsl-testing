@@ -22,6 +22,7 @@
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Object.Parameters;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.Primitive;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Primitive;
@@ -34,6 +35,54 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 {
     public sealed partial class SoundApi
     {
+        private static ObjectPart[] GetLinks(ScriptInstance instance, int link)
+        {
+            List<ObjectPart> links;
+            switch (link)
+            {
+                case PrimitiveApi.LINK_SET:
+                    return instance.Part.ObjectGroup.ValuesByKey1.ToArray();
+
+                case PrimitiveApi.LINK_ALL_CHILDREN:
+                    links = new List<ObjectPart>();
+                    foreach (KeyValuePair<int, ObjectPart> kvp in instance.Part.ObjectGroup.Key1ValuePairs)
+                    {
+                        if (kvp.Key != PrimitiveApi.LINK_ROOT)
+                        {
+                            links.Add(kvp.Value);
+                        }
+                    }
+                    return links.ToArray();
+
+                case PrimitiveApi.LINK_ALL_OTHERS:
+                    links = new List<ObjectPart>();
+                    foreach (ObjectPart p in instance.Part.ObjectGroup.ValuesByKey1)
+                    {
+                        if (p != instance.Part)
+                        {
+                            links.Add(p);
+                        }
+                    }
+                    return links.ToArray();
+
+                case PrimitiveApi.LINK_ROOT:
+                    return new ObjectPart[] { instance.Part.ObjectGroup.RootPart };
+
+                case PrimitiveApi.LINK_THIS:
+                    return new ObjectPart[] { instance.Part };
+
+                default:
+                    ObjectPart objPart;
+                    if (instance.Part.ObjectGroup.TryGetValue(link, out objPart))
+                    {
+                        return new ObjectPart[] { objPart };
+                    }
+                    break;
+            }
+
+            return new ObjectPart[0];
+        }
+
         [APIExtension(APIExtension.Properties, "sound")]
         [APIDisplayName("sound")]
         [APIIsVariableType]
@@ -60,82 +109,98 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             public static implicit operator bool(SoundItem item) => item.m_SoundID != UUID.Zero;
             public static explicit operator LSLKey(SoundItem item) => item.m_SoundID;
 
-            public void Loop(double volume, PrimitiveSoundFlags paraflags)
+            public void Loop(double volume, PrimitiveSoundFlags paraflags) => Loop(PrimitiveApi.LINK_THIS, volume, paraflags);
+
+            public void Loop(int link, double volume, PrimitiveSoundFlags paraflags)
             {
                 ScriptInstance instance = null;
                 if (WeakInstance.TryGetTarget(out instance))
                 {
                     lock (instance)
                     {
-                        ObjectPart part = instance.Part;
-                        PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;
-
-                        if (part.IsSoundQueueing)
-                        {
-                            flags |= PrimitiveSoundFlags.Queue;
-                        }
-
-                        SoundParam soundparams = part.Sound;
-                        soundparams.SoundID = m_SoundID;
-                        soundparams.Gain = volume.Clamp(0, 1);
-                        soundparams.Flags = flags;
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            part.Sound = soundparams;
+                            foreach (ObjectPart part in GetLinks(instance, link))
+                            {
+                                PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;
+
+                                if (part.IsSoundQueueing)
+                                {
+                                    flags |= PrimitiveSoundFlags.Queue;
+                                }
+
+                                SoundParam soundparams = part.Sound;
+                                soundparams.SoundID = m_SoundID;
+                                soundparams.Gain = volume.Clamp(0, 1);
+                                soundparams.Flags = flags;
+                                part.Sound = soundparams;
+                            }
                         }
                     }
                 }
             }
 
-            public void Send(double volume, PrimitiveSoundFlags paraflags)
+            public void Send(double volume, PrimitiveSoundFlags paraflags) => Send(PrimitiveApi.LINK_THIS, volume, paraflags);
+
+            public void Send(int link, double volume, PrimitiveSoundFlags paraflags)
             {
                 ScriptInstance instance;
                 if (WeakInstance.TryGetTarget(out instance))
                 {
                     lock (instance)
                     {
-                        PrimitiveSoundFlags flags = paraflags;
-                        ObjectPart thisPart = instance.Part;
-                        if (thisPart.IsSoundQueueing)
-                        {
-                            flags |= PrimitiveSoundFlags.Queue;
-                        }
-                        SoundParam soundparams = thisPart.Sound;
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, m_SoundID, volume, soundparams.Radius, flags);
+                            foreach (ObjectPart thisPart in GetLinks(instance, link))
+                            {
+                                PrimitiveSoundFlags flags = paraflags;
+                                if (thisPart.IsSoundQueueing)
+                                {
+                                    flags |= PrimitiveSoundFlags.Queue;
+                                }
+                                SoundParam soundparams = thisPart.Sound;
+                                thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, m_SoundID, volume, soundparams.Radius, flags);
+                            }
                         }
                     }
                 }
             }
 
-            public void Trigger(double volume)
+            public void Trigger(double volume) => Trigger(PrimitiveApi.LINK_THIS, volume);
+
+            public void Trigger(int link, double volume)
             {
                 ScriptInstance instance;
                 if (WeakInstance.TryGetTarget(out instance))
                 {
                     lock (instance)
                     {
-                        ObjectPart thisPart = instance.Part;
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, m_SoundID, volume, 20);
+                            foreach (ObjectPart thisPart in GetLinks(instance, link))
+                            {
+                                thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, m_SoundID, volume, 20);
+                            }
                         }
                     }
                 }
             }
 
-            public void TriggerLimited(double volume, Vector3 top_north_east, Vector3 bottom_south_west)
+            public void TriggerLimited(double volume, Vector3 top_north_east, Vector3 bottom_south_west) => TriggerLimited(PrimitiveApi.LINK_THIS, volume, top_north_east, bottom_south_west);
+
+            public void TriggerLimited(int link, double volume, Vector3 top_north_east, Vector3 bottom_south_west)
             {
                 ScriptInstance instance;
                 if (WeakInstance.TryGetTarget(out instance))
                 {
                     lock (instance)
                     {
-                        ObjectPart thisPart = instance.Part;
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, m_SoundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
+                            foreach (ObjectPart thisPart in GetLinks(instance, link))
+                            {
+                                thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, m_SoundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
+                            }
                         }
                     }
                 }
@@ -271,16 +336,20 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 }
             }
 
-            public void Stop()
+            public void Stop() => Stop(PrimitiveApi.LINK_THIS);
+
+            public void Stop(int link)
             {
                 lock (m_Instance)
                 {
-                    ObjectPart part = m_Instance.Part;
-                    SoundParam param = part.Sound;
-                    param.SoundID = UUID.Zero;
-                    param.Flags = PrimitiveSoundFlags.Stop;
-                    param.Gain = 0;
-                    part.Sound = param;
+                    foreach (ObjectPart part in GetLinks(m_Instance, link))
+                    {
+                        SoundParam param = part.Sound;
+                        param.SoundID = UUID.Zero;
+                        param.Flags = PrimitiveSoundFlags.Stop;
+                        param.Gain = 0;
+                        part.Sound = param;
+                    }
                 }
             }
         }
@@ -291,28 +360,55 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Loop")]
         public void SoundItemLoop(SoundItem item, double volume) => item.Loop(volume, 0);
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Loop")]
+        public void SoundItemLoop(SoundItem item, int link, double volume) => item.Loop(link, volume, 0);
+
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "LoopMaster")]
         public void SoundItemLoopMaster(SoundItem item, double volume) => item.Loop(volume, PrimitiveSoundFlags.SyncMaster);
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "LoopMaster")]
+        public void SoundItemLoopMaster(SoundItem item, int link, double volume) => item.Loop(link, volume, PrimitiveSoundFlags.SyncMaster);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "LoopSlave")]
         public void SoundItemLoopSlave(SoundItem item, double volume) => item.Loop(volume, PrimitiveSoundFlags.SyncSlave);
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "LoopSlave")]
+        public void SoundItemLoopSlave(SoundItem item, int link, double volume) => item.Loop(link, volume, PrimitiveSoundFlags.SyncSlave);
+
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Play")]
         public void SoundItemPlay(SoundItem item, double volume) => item.Send(volume, 0);
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Play")]
+        public void SoundItemPlay(SoundItem item, int link, double volume) => item.Send(link, volume, 0);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "PlaySlave")]
         public void SoundItemPlaySlave(SoundItem item, double volume) => item.Send(volume, PrimitiveSoundFlags.SyncSlave);
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "PlaySlave")]
+        public void SoundItemPlaySlave(SoundItem item, int link, double volume) => item.Send(link, volume, PrimitiveSoundFlags.SyncSlave);
+
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Trigger")]
         public void SoundItemTrigger(SoundItem item, double volume) => item.Trigger(volume);
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Trigger")]
+        public void SoundItemTrigger(SoundItem item, int link, double volume) => item.Trigger(link, volume);
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "TriggerLimited")]
         public void SoundItemTriggerLimited(SoundItem item, double volume, Vector3 top_north_east, Vector3 bottom_south_west) => item.TriggerLimited(volume, top_north_east, bottom_south_west);
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "TriggerLimited")]
+        public void SoundItemTriggerLimited(SoundItem item, int link, double volume, Vector3 top_north_east, Vector3 bottom_south_west) => item.TriggerLimited(link, volume, top_north_east, bottom_south_west);
+
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Stop")]
         public void SoundItemStop(SoundAccessor accessor) => accessor.Stop();
 
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Stop")]
+        public void SoundItemStop(SoundAccessor accessor, int link) => accessor.Stop(link);
+
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "AdjustVolume")]
         public void AdjustVolume(ScriptInstance instance, SoundAccessor accessor, double volume) => AdjustSoundVolume(instance, volume);
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "AdjustVolume")]
+        public void AdjustVolume(ScriptInstance instance, SoundAccessor accessor, int link, double volume) => AdjustSoundVolume(instance, link, volume);
     }
 }
