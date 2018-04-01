@@ -119,45 +119,60 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llLoopSound")]
-        public void LoopSound(ScriptInstance instance, string sound, double volume)
+        public void LoopSound(ScriptInstance instance, string sound, double volume) => LoopSound(instance, PrimitiveApi.LINK_THIS, sound, volume);
+
+        [APILevel(APIFlags.ASSL, "asLinkLoopSound")]
+        public void LoopSound(ScriptInstance instance, int link, string sound, double volume)
         {
             lock (instance)
             {
-                LoopSound(instance, sound, volume, 0);
+                LoopSound(instance, link, sound, volume, 0);
             }
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundMaster")]
-        public void LoopSoundMaster(ScriptInstance instance, string sound, double volume)
+        public void LoopSoundMaster(ScriptInstance instance, string sound, double volume) => LoopSoundMaster(instance, PrimitiveApi.LINK_THIS, sound, volume);
+
+        [APILevel(APIFlags.ASSL, "asLinkLoopSoundMaster")]
+        public void LoopSoundMaster(ScriptInstance instance, int link, string sound, double volume)
         {
             lock (instance)
             {
-                LoopSound(instance, sound, volume, PrimitiveSoundFlags.SyncMaster);
+                LoopSound(instance, link, sound, volume, PrimitiveSoundFlags.SyncMaster);
             }
         }
 
         [APILevel(APIFlags.LSL, "llLoopSoundSlave")]
-        public void LoopSoundSlave(ScriptInstance instance, string sound, double volume)
+        public void LoopSoundSlave(ScriptInstance instance, string sound, double volume) => LoopSoundSlave(instance, PrimitiveApi.LINK_THIS, sound, volume);
+
+        [APILevel(APIFlags.ASSL, "asLoopSoundSlave")]
+        public void LoopSoundSlave(ScriptInstance instance, int link, string sound, double volume)
         {
             lock (instance)
             {
-                LoopSound(instance, sound, volume, PrimitiveSoundFlags.SyncSlave);
+                LoopSound(instance, link, sound, volume, PrimitiveSoundFlags.SyncSlave);
             }
         }
 
         [APILevel(APIFlags.LSL, "llSound")]
-        public void Sound(ScriptInstance instance, string sound, double volume, int queue, int loop)
+        public void Sound(ScriptInstance instance, string sound, double volume, int queue, int loop) => Sound(instance, PrimitiveApi.LINK_THIS, sound, volume, queue, loop);
+
+        [APILevel(APIFlags.ASSL, "asLinkSound")]
+        public void Sound(ScriptInstance instance, int link, string sound, double volume, int queue, int loop)
         {
             lock (instance)
             {
-                instance.Part.IsSoundQueueing = queue != 0;
+                foreach (ObjectPart p in GetLinks(instance, link))
+                {
+                    p.IsSoundQueueing = queue != 0;
+                }
                 if (loop != 0)
                 {
-                    LoopSound(instance, sound, volume, 0);
+                    LoopSound(instance, link, sound, volume, 0);
                 }
                 else
                 {
-                    SendSound(instance, sound, volume, 0);
+                    SendSound(instance, link, sound, volume, 0);
                 }
             }
         }
@@ -194,43 +209,56 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llStopSound")]
-        public void StopSound(ScriptInstance instance)
+        public void StopSound(ScriptInstance instance) => StopSound(instance, PrimitiveApi.LINK_THIS);
+
+        [APILevel(APIFlags.ASSL, "asLinkStopSound")]
+        public void StopSound(ScriptInstance instance, int link)
         {
             lock (instance)
             {
-                ObjectPart part = instance.Part;
-                SoundParam param = part.Sound;
-                param.SoundID = UUID.Zero;
-                param.Flags = PrimitiveSoundFlags.Stop;
-                param.Gain = 0;
-                part.Sound = param;
+                foreach (ObjectPart part in GetLinks(instance, link))
+                {
+                    SoundParam param = part.Sound;
+                    param.SoundID = UUID.Zero;
+                    param.Flags = PrimitiveSoundFlags.Stop;
+                    param.Gain = 0;
+                    part.Sound = param;
+                }
             }
         }
 
         [APILevel(APIFlags.LSL, "llPlaySound")]
-        public void PlaySound(ScriptInstance instance, string sound, double volume)
+        public void PlaySound(ScriptInstance instance, string sound, double volume) => PlaySound(instance, PrimitiveApi.LINK_THIS, sound, volume);
+
+        [APILevel(APIFlags.ASSL, "asLinkPlaySound")]
+        public void PlaySound(ScriptInstance instance, int link, string sound, double volume)
         {
             lock (instance)
             {
-                SendSound(instance, sound, volume, 0);
+                SendSound(instance, link, sound, volume, 0);
             }
         }
 
         [APILevel(APIFlags.LSL, "llPlaySoundSlave")]
-        public void PlaySoundSlave(ScriptInstance instance, string sound, double volume)
+        public void PlaySoundSlave(ScriptInstance instance, string sound, double volume) => PlaySoundSlave(instance, PrimitiveApi.LINK_THIS, sound, volume);
+
+        [APILevel(APIFlags.ASSL, "asLinkPlaySoundSlave")]
+        public void PlaySoundSlave(ScriptInstance instance, int link, string sound, double volume)
         {
             lock (instance)
             {
-                SendSound(instance, sound, volume, PrimitiveSoundFlags.SyncSlave);
+                SendSound(instance, link, sound, volume, PrimitiveSoundFlags.SyncSlave);
             }
         }
 
         [APILevel(APIFlags.LSL, "llTriggerSound")]
-        public void TriggerSound(ScriptInstance instance, string sound, double volume)
+        public void TriggerSound(ScriptInstance instance, string sound, double volume) => TriggerSound(instance, PrimitiveApi.LINK_THIS, sound, volume);
+
+        [APILevel(APIFlags.ASSL, "asLinkTriggerSound")]
+        public void TriggerSound(ScriptInstance instance, int link, string sound, double volume)
         {
             lock (instance)
             {
-                ObjectPart thisPart = instance.Part;
                 UUID soundID;
                 try
                 {
@@ -243,17 +271,23 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 }
                 if (TryFetchSound(instance, soundID))
                 {
-                    thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, 20);
+                    SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                    foreach (ObjectPart thisPart in GetLinks(instance, link))
+                    {
+                        scene.SendTriggerSound(thisPart, soundID, volume, 20);
+                    }
                 }
             }
         }
 
         [APILevel(APIFlags.LSL, "llTriggerSoundLimited")]
-        public void TriggerSoundLimited(ScriptInstance instance, string sound, double volume, Vector3 top_north_east, Vector3 bottom_south_west)
+        public void TriggerSoundLimited(ScriptInstance instance, string sound, double volume, Vector3 top_north_east, Vector3 bottom_south_west) => TriggerSoundLimited(instance, PrimitiveApi.LINK_THIS, sound, volume, top_north_east, bottom_south_west);
+
+        [APILevel(APIFlags.ASSL, "asLinkTriggerSoundLimited")]
+        public void TriggerSoundLimited(ScriptInstance instance, int link, string sound, double volume, Vector3 top_north_east, Vector3 bottom_south_west)
         {
             lock (instance)
             {
-                ObjectPart thisPart = instance.Part;
                 UUID soundID;
                 try
                 {
@@ -266,7 +300,11 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 }
                 if (TryFetchSound(instance, soundID))
                 {
-                    thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
+                    SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                    foreach (ObjectPart thisPart in GetLinks(instance, link))
+                    {
+                        scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
+                    }
                 }
             }
         }
@@ -275,6 +313,10 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [ForcedSleep(0.1)]
         public void AdjustSoundVolume(ScriptInstance instance, double volume) => AdjustSoundVolume(instance, PrimitiveApi.LINK_THIS, volume);
 
+        [APILevel(APIFlags.ASSL, "asAdjustSoundVolume")]
+        public void AdjustSoundVolume2(ScriptInstance instance, double volume) => AdjustSoundVolume(instance, PrimitiveApi.LINK_THIS, volume);
+
+        [APILevel(APIFlags.ASSL, "asLinkAdjustSoundVolume")]
         public void AdjustSoundVolume(ScriptInstance instance, int link, double volume)
         {
             lock (instance)
@@ -287,29 +329,39 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llSetSoundQueueing")]
-        public void SetSoundQueueing(ScriptInstance instance, int queue)
+        public void SetSoundQueueing(ScriptInstance instance, int queue) => SetSoundQueueing(instance, PrimitiveApi.LINK_THIS, queue);
+
+        [APILevel(APIFlags.LSL, "asLinkSetSoundQueueing")]
+        public void SetSoundQueueing(ScriptInstance instance, int link, int queue)
         {
             lock (instance)
             {
-                instance.Part.IsSoundQueueing = queue != 0;
+                foreach (ObjectPart part in GetLinks(instance, link))
+                {
+                    part.IsSoundQueueing = queue != 0;
+                }
             }
         }
 
         [APILevel(APIFlags.LSL, "llSetSoundRadius")]
-        public void SetSoundRadius(ScriptInstance instance, double radius)
+        public void SetSoundRadius(ScriptInstance instance, double radius) => SetSoundRadius(instance, PrimitiveApi.LINK_THIS, radius);
+
+        [APILevel(APIFlags.LSL, "asLinkSetSoundRadius")]
+        public void SetSoundRadius(ScriptInstance instance, int link, double radius)
         {
             lock (instance)
             {
-                SoundParam sound = instance.Part.Sound;
-                sound.Radius = radius;
-                instance.Part.Sound = sound;
+                foreach (ObjectPart part in GetLinks(instance, link))
+                {
+                    SoundParam sound = part.Sound;
+                    sound.Radius = radius;
+                    part.Sound = sound;
+                }
             }
         }
 
-        private void SendSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
+        private void SendSound(ScriptInstance instance, int link, string sound, double volume, PrimitiveSoundFlags paraflags)
         {
-            PrimitiveSoundFlags flags = paraflags;
-            ObjectPart thisPart = instance.Part;
             UUID soundID;
             try
             {
@@ -320,22 +372,24 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
                 return;
             }
-            if (thisPart.IsSoundQueueing)
-            {
-                flags |= PrimitiveSoundFlags.Queue;
-            }
-            SoundParam soundparams = thisPart.Sound;
             if (TryFetchSound(instance, soundID))
             {
-                thisPart.ObjectGroup.Scene.SendAttachedSound(thisPart, soundID, volume, soundparams.Radius, flags);
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                foreach (ObjectPart thisPart in GetLinks(instance, link))
+                {
+                    PrimitiveSoundFlags flags = paraflags;
+                    if (thisPart.IsSoundQueueing)
+                    {
+                        flags |= PrimitiveSoundFlags.Queue;
+                    }
+                    SoundParam soundparams = thisPart.Sound;
+                    scene.SendAttachedSound(thisPart, soundID, volume, soundparams.Radius, flags);
+                }
             }
         }
 
-        private void LoopSound(ScriptInstance instance, string sound, double volume, PrimitiveSoundFlags paraflags)
+        private void LoopSound(ScriptInstance instance, int link, string sound, double volume, PrimitiveSoundFlags paraflags)
         {
-            ObjectPart part = instance.Part;
-            PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;
-
             UUID soundID;
             try
             {
@@ -347,18 +401,22 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 return;
             }
 
-            if (part.IsSoundQueueing)
-            {
-                flags |= PrimitiveSoundFlags.Queue;
-            }
-
-            SoundParam soundparams = part.Sound;
-            soundparams.SoundID = soundID;
-            soundparams.Gain = volume.Clamp(0, 1);
-            soundparams.Flags = flags;
             if (TryFetchSound(instance, soundID))
             {
-                part.Sound = soundparams;
+                foreach (ObjectPart part in GetLinks(instance, link))
+                {
+                    PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;
+                    if (part.IsSoundQueueing)
+                    {
+                        flags |= PrimitiveSoundFlags.Queue;
+                    }
+
+                    SoundParam soundparams = part.Sound;
+                    soundparams.SoundID = soundID;
+                    soundparams.Gain = volume.Clamp(0, 1);
+                    soundparams.Flags = flags;
+                    part.Sound = soundparams;
+                }
             }
         }
     }
