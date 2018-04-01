@@ -34,11 +34,14 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
     [Description("LSL/OSSL Primitive API")]
     public partial class PrimitiveApi : IScriptApi, IPlugin
     {
+        #region pay price values
         [APILevel(APIFlags.LSL)]
         public const int PAY_HIDE = -1;
         [APILevel(APIFlags.LSL)]
         public const int PAY_DEFAULT = -2;
+        #endregion
 
+        #region link selectors
         [APILevel(APIFlags.LSL)]
         public const int LINK_ROOT = 1;
         [APILevel(APIFlags.LSL)]
@@ -49,7 +52,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int LINK_ALL_CHILDREN = -3;
         [APILevel(APIFlags.LSL)]
         public const int LINK_THIS = -4;
+        #endregion
 
+        #region Original primitive param types
         [APILevel(APIFlags.LSL)]
         public const int PRIM_MATERIAL = 2;
         [APILevel(APIFlags.LSL)]
@@ -79,9 +84,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL)]
         public const int PRIM_TEXGEN = 22;
         [APILevel(APIFlags.LSL)]
-        public const int PRIM_CAST_SHADOWS = 24; // Not implemented, here for completeness sake
+        public const int PRIM_POINT_LIGHT = 23;
         [APILevel(APIFlags.LSL)]
-        public const int PRIM_POINT_LIGHT = 23; // Huh?
+        public const int PRIM_CAST_SHADOWS = 24; // Not implemented, here for completeness sake
         [APILevel(APIFlags.LSL)]
         public const int PRIM_GLOW = 25;
         [APILevel(APIFlags.LSL)]
@@ -92,6 +97,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_DESC = 28;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_ROT_LOCAL = 29;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_PHYSICS_SHAPE_TYPE = 30;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_PHYSICS_MATERIAL = 31;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_OMEGA = 32;
         [APILevel(APIFlags.LSL)]
@@ -112,12 +121,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_SCRIPTED_SIT_ONLY = 40;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_SIT_TARGET = 41;
+        #endregion
 
+        #region Extension primitive param types
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_ALPHA")]
         [Description("Get/set alpha value of texture [integer face, float alpha]")]
         public const int PRIM_ALPHA = 11001;
-
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR")]
         [Description("Get/set projection params [integer enable, string texture, float fov, float focus, float ambience]")]
@@ -142,7 +152,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APIExtension(APIExtension.InWorldz, "IW_PRIM_PROJECTOR_AMBIENCE")]
         [Description("Get/set projection ambience [float ambience]")]
         public const int PRIM_PROJECTOR_AMBIENCE = 11105;
-
         [APILevel(APIFlags.ASSL)]
         [Description("Get/set unsit target")]
         public const int PRIM_UNSIT_TARGET = 12000;
@@ -170,17 +179,23 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Sound queueing [integer enable]")]
         public const int PRIM_SOUND_QUEUEING = 12008;
+        #endregion
 
+        #region PRIM_LOOP_SOUND
         [APILevel(APIFlags.ASSL)]
         public const int PRIM_SOUND_MASTER = 2;
         [APILevel(APIFlags.ASSL)]
         public const int PRIM_SOUND_SLAVE = 4;
+        #endregion
 
+        #region PRIM_TEXGEN
         [APILevel(APIFlags.LSL)]
         public const int PRIM_TEXGEN_DEFAULT = 0;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_TEXGEN_PLANAR = 1;
+        #endregion
 
+        #region PRIM_ALPHA_MODE
         [APILevel(APIFlags.LSL)]
         public const int PRIM_ALPHA_MODE_NONE = 0;
         [APILevel(APIFlags.LSL)]
@@ -189,7 +204,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_ALPHA_MODE_MASK = 2;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_ALPHA_MODE_EMISSIVE = 3;
+        #endregion
 
+        #region PRIM_TYPE
         [APILevel(APIFlags.LSL)]
         public const int PRIM_TYPE_BOX = 0;
         [APILevel(APIFlags.LSL)]
@@ -217,6 +234,21 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_HOLE_TRIANGLE = 48;
 
         [APILevel(APIFlags.LSL)]
+        public const int PRIM_SCULPT_TYPE_SPHERE = 1;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_SCULPT_TYPE_TORUS = 2;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_SCULPT_TYPE_PLANE = 3;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_SCULPT_TYPE_CYLINDER = 4;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_SCULPT_FLAG_INVERT = 64;
+        [APILevel(APIFlags.LSL)]
+        public const int PRIM_SCULPT_FLAG_MIRROR = 128;
+        #endregion
+
+        #region PRIM_MATERIAL
+        [APILevel(APIFlags.LSL)]
         public const int PRIM_MATERIAL_STONE = 0;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_MATERIAL_METAL = 1;
@@ -232,7 +264,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_MATERIAL_RUBBER = 6;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_MATERIAL_LIGHT = 7;
+        #endregion
 
+        #region PRIM_BUMP_SHINY
         [APILevel(APIFlags.LSL)]
         public const int PRIM_SHINY_NONE = 0;
         [APILevel(APIFlags.LSL)]
@@ -277,23 +311,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_BUMP_SUCTION = 16;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_BUMP_WEAVE = 17;
-
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_SCULPT_TYPE_SPHERE = 1;
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_SCULPT_TYPE_TORUS = 2;
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_SCULPT_TYPE_PLANE = 3;
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_SCULPT_TYPE_CYLINDER = 4;
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_SCULPT_FLAG_INVERT = 64;
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_SCULPT_FLAG_MIRROR = 128;
+        #endregion
 
         [APILevel(APIFlags.LSL)]
         public const int ALL_SIDES = -1;
 
+        #region Click actions
         [APILevel(APIFlags.LSL)]
         public const int CLICK_ACTION_NONE = 0;
         [APILevel(APIFlags.LSL)]
@@ -312,18 +335,18 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int CLICK_ACTION_OPEN_MEDIA = 6;
         [APILevel(APIFlags.LSL)]
         public const int CLICK_ACTION_ZOOM = 7;
+        #endregion
 
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_PHYSICS_SHAPE_TYPE = 30;
+        #region PRIM_PHYSICS_SHAPE_TYPE
         [APILevel(APIFlags.LSL)]
         public const int PRIM_PHYSICS_SHAPE_PRIM = 0;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_PHYSICS_SHAPE_CONVEX = 2;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_PHYSICS_SHAPE_NONE = 1;
+        #endregion
 
-        [APILevel(APIFlags.LSL)]
-        public const int PRIM_PHYSICS_MATERIAL = 31;
+        #region physics params
         [APILevel(APIFlags.LSL)]
         public const int DENSITY = 1;
         [APILevel(APIFlags.LSL)]
@@ -332,7 +355,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int RESTITUTION = 4;
         [APILevel(APIFlags.LSL)]
         public const int GRAVITY_MULTIPLIER = 8;
+        #endregion
 
+        #region texture constant names
         [APILevel(APIFlags.LSL)]
         public const string TEXTURE_BLANK = "5748decc-f629-461c-9a36-a35a221fe21f";
         [APILevel(APIFlags.LSL)]
@@ -343,13 +368,16 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const string TEXTURE_TRANSPARENT = "8dcd4a48-2d37-4909-9f78-f7a9eb4ef903";
         [APILevel(APIFlags.LSL)]
         public const string TEXTURE_MEDIA = "8b5fec65-8d8d-9dc5-cda8-8fdf2716e361";
+        #endregion
 
+        #region pass modes
         [APILevel(APIFlags.LSL)]
         public const int PASS_IF_NOT_HANDLED = 0;
         [APILevel(APIFlags.LSL)]
         public const int PASS_ALWAYS = 1;
         [APILevel(APIFlags.LSL)]
         public const int PASS_NEVER = 2;
+        #endregion
 
         private List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
         {
