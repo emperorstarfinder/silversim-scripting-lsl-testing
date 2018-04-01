@@ -152,6 +152,29 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Select language data")]
         public const int PRIM_LANGUAGE = 12002;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Remove language [string language]")]
+        public const int PRIM_REMOVE_LANGUAGE = 12003;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Remove all languages")]
+        public const int PRIM_REMOVE_ALL_LANGUAGES = 12004;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Loop Sound [string sound, float volume, integer flags]")]
+        public const int PRIM_LOOP_SOUND = 12005;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Sound radius [float radius]")]
+        public const int PRIM_SOUND_RADIUS = 12006;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Sound volume [float volume]")]
+        public const int PRIM_SOUND_VOLUME = 12007;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Sound queueing [integer enable]")]
+        public const int PRIM_SOUND_QUEUEING = 12008;
+
+        [APILevel(APIFlags.ASSL)]
+        public const int PRIM_SOUND_MASTER = 2;
+        [APILevel(APIFlags.ASSL)]
+        public const int PRIM_SOUND_SLAVE = 4;
 
         [APILevel(APIFlags.LSL)]
         public const int PRIM_TEXGEN_DEFAULT = 0;
