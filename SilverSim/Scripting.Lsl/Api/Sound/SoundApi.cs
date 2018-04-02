@@ -162,7 +162,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                foreach (ObjectPart p in GetLinks(instance, link))
+                foreach (ObjectPart p in instance.GetLinkTargets(link))
                 {
                     p.IsSoundQueueing = queue != 0;
                 }
@@ -216,7 +216,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                foreach (ObjectPart part in GetLinks(instance, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     SoundParam param = part.Sound;
                     param.SoundID = UUID.Zero;
@@ -272,7 +272,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 if (TryFetchSound(instance, soundID))
                 {
                     SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                    foreach (ObjectPart thisPart in GetLinks(instance, link))
+                    foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
                     {
                         scene.SendTriggerSound(thisPart, soundID, volume, 20);
                     }
@@ -301,7 +301,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                 if (TryFetchSound(instance, soundID))
                 {
                     SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                    foreach (ObjectPart thisPart in GetLinks(instance, link))
+                    foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
                     {
                         scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
                     }
@@ -321,7 +321,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                foreach (ObjectPart thisPart in GetLinks(instance, link))
+                foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
                 {
                     thisPart.ObjectGroup.Scene.SendAttachedSoundGainChange(thisPart, volume, thisPart.Sound.Radius);
                 }
@@ -336,7 +336,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                foreach (ObjectPart part in GetLinks(instance, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     part.IsSoundQueueing = queue != 0;
                 }
@@ -351,7 +351,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                foreach (ObjectPart part in GetLinks(instance, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     SoundParam sound = part.Sound;
                     sound.Radius = radius;
@@ -375,7 +375,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             if (TryFetchSound(instance, soundID))
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                foreach (ObjectPart thisPart in GetLinks(instance, link))
+                foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
                 {
                     PrimitiveSoundFlags flags = paraflags;
                     if (thisPart.IsSoundQueueing)
@@ -403,7 +403,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 
             if (TryFetchSound(instance, soundID))
             {
-                foreach (ObjectPart part in GetLinks(instance, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;
                     if (part.IsSoundQueueing)

@@ -52,6 +52,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int LINK_ALL_CHILDREN = -3;
         [APILevel(APIFlags.LSL)]
         public const int LINK_THIS = -4;
+        public const int LINK_UNLINKED_ROOT = 0;
         #endregion
 
         #region Original primitive param types
@@ -378,41 +379,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL)]
         public const int PASS_NEVER = 2;
         #endregion
-
-        private List<ObjectPart> GetLinkTargets(ScriptInstance instance, int link)
-        {
-            var list = new List<ObjectPart>();
-            ObjectPart thisPart = instance.Part;
-            ObjectGroup thisGroup = thisPart.ObjectGroup;
-            if (link == LINK_THIS)
-            {
-                list.Add(thisPart);
-            }
-            else if (link == LINK_ROOT)
-            {
-                list.Add(thisGroup.RootPart);
-            }
-            else if (link == LINK_SET)
-            {
-                list.AddRange(thisGroup.Values);
-            }
-            else if (link == LINK_ALL_OTHERS)
-            {
-                foreach (ObjectPart part in thisGroup.Values)
-                {
-                    if (part != instance.Part)
-                    {
-                        list.Add(part);
-                    }
-                }
-            }
-            else
-            {
-                list.Add(thisGroup[link]);
-            }
-
-            return list;
-        }
 
         public void Startup(ConfigurationLoader loader)
         {

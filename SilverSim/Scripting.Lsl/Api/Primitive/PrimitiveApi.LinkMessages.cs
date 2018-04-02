@@ -63,7 +63,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     Data = str,
                     Id = id.ToString()
                 };
-                foreach (ObjectPart part in GetLinkTargets(instance, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     EnqueueToScripts(part, ev);
                 }

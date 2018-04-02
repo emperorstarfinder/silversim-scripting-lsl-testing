@@ -523,7 +523,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
             lock (instance)
             {
-                foreach (ObjectPart part in GetLinkTargets(instance, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     part.ParticleSystem = ps;
                 }

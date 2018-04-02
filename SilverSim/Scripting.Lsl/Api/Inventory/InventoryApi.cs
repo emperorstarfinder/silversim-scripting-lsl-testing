@@ -110,59 +110,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.LSL)]
         public const int PERM_ALL = 2147483647;
 
-        /* private constants */
-        private const int LINK_ROOT = 1;
-        private const int LINK_SET = -1;
-        private const int LINK_ALL_OTHERS = -2;
-        private const int LINK_ALL_CHILDREN = -3;
-        private const int LINK_THIS = -4;
-
-        private List<ObjectPart> DetermineLinks(ObjectPart thisPart, int link)
-        {
-            var res = new List<ObjectPart>();
-            ObjectGroup grp = thisPart.ObjectGroup;
-            switch(link)
-            {
-                case LINK_THIS:
-                    res.Add(thisPart);
-                    break;
-
-                case LINK_ROOT:
-                    res.Add(grp.RootPart);
-                    break;
-
-                case LINK_ALL_OTHERS:
-                    foreach (ObjectPart p in grp.ValuesByKey1)
-                    {
-                        if (p != thisPart)
-                        {
-                            res.Add(p);
-                        }
-                    }
-                    break;
-
-                case LINK_ALL_CHILDREN:
-                    foreach(ObjectPart p in grp.ValuesByKey1)
-                    {
-                        if (p != grp.RootPart)
-                        {
-                            res.Add(p);
-                        }
-                    }
-                    break;
-
-                default:
-                    ObjectPart part;
-                    if(grp.TryGetValue(link, out part))
-                    {
-                        res.Add(part);
-                    }
-                    break;
-            }
-
-            return res;
-        }
-
         [APILevel(APIFlags.LSL, "llRemoveInventory")]
         public void RemoveInventory(ScriptInstance instance, string item)
         {
@@ -197,7 +144,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
-                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     ObjectPartInventoryItem resitem;
                     if (instance.Part.Inventory.TryGetValue(item, out resitem))
@@ -246,7 +193,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             lock(instance)
             {
                 ObjectPartInventoryItem item;
-                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     if(part.Inventory.TryGetValue(name, out item))
                     {
@@ -280,7 +227,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             lock (instance)
             {
                 ObjectPartInventoryItem item;
-                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     if (part.Inventory.TryGetValue(name, out item))
                     {
@@ -323,7 +270,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             {
                 if (type == INVENTORY_ALL)
                 {
-                    foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         int cnt = part.Inventory.Count;
                         if (number < cnt)
@@ -346,7 +293,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 else
                 {
-                    foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         int cnt = part.Inventory.CountType((InventoryType)type);
                         if (number < cnt)
@@ -391,7 +338,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             lock (instance)
             {
                 int cnt = 0;
-                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     cnt += (type == INVENTORY_ALL) ? part.Inventory.Count : part.Inventory.CountType((InventoryType)type);
                 }
@@ -448,7 +395,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             if (instance.Part.ObjectGroup.Scene.IsSimConsoleAllowed(instance.Part.Owner))
             {
-                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     try
                     {
@@ -538,7 +485,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
-                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     try
                     {
@@ -603,7 +550,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
-                foreach (ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     ObjectPartInventoryItem item;
                     if(part.Inventory.TryGetValue(name, out item))
@@ -685,7 +632,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock(instance)
             {
-                foreach(ObjectPart part in DetermineLinks(instance.Part, link))
+                foreach(ObjectPart part in instance.GetLinkTargets(link))
                 {
                     ObjectPartInventoryItem item;
                     if(part.Inventory.TryGetValue(name, out item))

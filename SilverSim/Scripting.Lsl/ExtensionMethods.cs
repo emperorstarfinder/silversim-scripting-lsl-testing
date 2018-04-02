@@ -26,6 +26,7 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Scripting.Lsl.Api.Primitive;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Inventory;
@@ -677,5 +678,63 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public static bool TryGetLink(this ScriptInstance instance, int link, out ObjectPart linkedpart)
+        {
+            ObjectPart part = instance.Part;
+            ObjectGroup grp = part.ObjectGroup;
+            if (PrimitiveApi.LINK_THIS == link)
+            {
+                linkedpart = part;
+                return true;
+            }
+            else if (link == PrimitiveApi.LINK_ROOT || link == PrimitiveApi.LINK_UNLINKED_ROOT)
+            {
+                linkedpart = grp.RootPart;
+                return true;
+            }
+            else
+            {
+                return grp.TryGetValue(link, out linkedpart);
+            }
+        }
+
+
+        public static List<ObjectPart> GetLinkTargets(this ScriptInstance instance, int link)
+        {
+            var list = new List<ObjectPart>();
+            ObjectPart thisPart = instance.Part;
+            ObjectGroup thisGroup = thisPart.ObjectGroup;
+            switch(link)
+            {
+                case PrimitiveApi.LINK_THIS:
+                    list.Add(thisPart);
+                    break;
+
+                case PrimitiveApi.LINK_UNLINKED_ROOT:
+                case PrimitiveApi.LINK_ROOT:
+                    list.Add(thisGroup.RootPart);
+                    break;
+
+                case PrimitiveApi.LINK_SET:
+                    list.AddRange(thisGroup.Values);
+                    break;
+
+                case PrimitiveApi.LINK_ALL_OTHERS:
+                    foreach (ObjectPart part in thisGroup.Values)
+                    {
+                        if (part != instance.Part)
+                        {
+                            list.Add(part);
+                        }
+                    }
+                    break;
+
+                default:
+                    list.Add(thisGroup[link]);
+                    break;
+            }
+
+            return list;
+        }
     }
 }

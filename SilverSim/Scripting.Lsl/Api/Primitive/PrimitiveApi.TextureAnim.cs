@@ -58,7 +58,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 Length = (float)length,
                 Rate = (float)rate
             };
-            foreach (ObjectPart part in GetLinkTargets(instance, link))
+            foreach (ObjectPart part in instance.GetLinkTargets(link))
             {
                 part.TextureAnimation = te;
             }

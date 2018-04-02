@@ -97,25 +97,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             return 10;
         }
 
-        private bool TryGetLink(ObjectPart part, int link, out ObjectPart linkedpart)
-        {
-            ObjectGroup grp = part.ObjectGroup;
-            if (LINK_THIS == link)
-            {
-                linkedpart = part;
-                return true;
-            }
-            else if(LINK_ROOT == link || 0 == link)
-            {
-                linkedpart = grp.RootPart;
-                return true;
-            }
-            else
-            {
-                return grp.TryGetValue(link, out linkedpart);
-            }
-        }
-
         private Vector3 CalculateGeometricCenter(List<ObjectGroup> groups)
         {
             if(groups.Count == 0)
@@ -152,7 +133,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     /* silent fail as per definition */
                     return;
                 }
-                if (TryGetLink(rezzingpart, link, out invpart) &&
+                if (instance.TryGetLink(link, out invpart) &&
                     TryGetObjectInventory(instance, invpart, inventory, out groups, out removeinventory))
                 {
                     pos += CalculateGeometricCenter(groups);
@@ -215,7 +196,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     return;
                 }
 
-                if (TryGetLink(rezzingpart, link, out invpart) &&
+                if (instance.TryGetLink(link, out invpart) &&
                     TryGetObjectInventory(instance, invpart, inventory, out groups, out removeinventory) &&
                     RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
                     removeinventory)

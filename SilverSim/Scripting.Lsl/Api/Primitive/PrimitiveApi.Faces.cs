@@ -198,7 +198,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                 if (face == ALL_SIDES)
                 {
-                    foreach (ObjectPart part in GetLinkTargets(instance, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         TextureEntry te = part.TextureEntry;
                         for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
@@ -212,7 +212,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 else
                 {
-                    foreach (ObjectPart part in GetLinkTargets(instance, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         try
                         {
@@ -248,7 +248,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                 if (face == ALL_SIDES)
                 {
-                    foreach (ObjectPart part in GetLinkTargets(instance, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         TextureEntry te = part.TextureEntry;
                         for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
@@ -260,7 +260,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 else
                 {
-                    foreach (ObjectPart part in GetLinkTargets(instance, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         try
                         {
@@ -391,7 +391,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 if (face == ALL_SIDES)
                 {
-                    foreach (ObjectPart part in GetLinkTargets(instance, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         TextureEntry te = part.TextureEntry;
                         for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
@@ -407,7 +407,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 else
                 {
-                    foreach (ObjectPart part in GetLinkTargets(instance, link))
+                    foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
                         try
                         {

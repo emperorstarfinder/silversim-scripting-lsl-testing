@@ -50,7 +50,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     ProjectionAmbience = amb
                 };
 
-                foreach (ObjectPart part in GetLinkTargets(instance, link))
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
                     part.Projection = p;
                 }

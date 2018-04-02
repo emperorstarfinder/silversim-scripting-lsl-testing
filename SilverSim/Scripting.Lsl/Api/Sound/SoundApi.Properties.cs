@@ -35,54 +35,6 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
 {
     public sealed partial class SoundApi
     {
-        private static ObjectPart[] GetLinks(ScriptInstance instance, int link)
-        {
-            List<ObjectPart> links;
-            switch (link)
-            {
-                case PrimitiveApi.LINK_SET:
-                    return instance.Part.ObjectGroup.ValuesByKey1.ToArray();
-
-                case PrimitiveApi.LINK_ALL_CHILDREN:
-                    links = new List<ObjectPart>();
-                    foreach (KeyValuePair<int, ObjectPart> kvp in instance.Part.ObjectGroup.Key1ValuePairs)
-                    {
-                        if (kvp.Key != PrimitiveApi.LINK_ROOT)
-                        {
-                            links.Add(kvp.Value);
-                        }
-                    }
-                    return links.ToArray();
-
-                case PrimitiveApi.LINK_ALL_OTHERS:
-                    links = new List<ObjectPart>();
-                    foreach (ObjectPart p in instance.Part.ObjectGroup.ValuesByKey1)
-                    {
-                        if (p != instance.Part)
-                        {
-                            links.Add(p);
-                        }
-                    }
-                    return links.ToArray();
-
-                case PrimitiveApi.LINK_ROOT:
-                    return new ObjectPart[] { instance.Part.ObjectGroup.RootPart };
-
-                case PrimitiveApi.LINK_THIS:
-                    return new ObjectPart[] { instance.Part };
-
-                default:
-                    ObjectPart objPart;
-                    if (instance.Part.ObjectGroup.TryGetValue(link, out objPart))
-                    {
-                        return new ObjectPart[] { objPart };
-                    }
-                    break;
-            }
-
-            return new ObjectPart[0];
-        }
-
         [APIExtension(APIExtension.Properties, "sound")]
         [APIDisplayName("sound")]
         [APIIsVariableType]
@@ -120,7 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     {
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            foreach (ObjectPart part in GetLinks(instance, link))
+                            foreach (ObjectPart part in instance.GetLinkTargets(link))
                             {
                                 PrimitiveSoundFlags flags = PrimitiveSoundFlags.Looped | paraflags;
 
@@ -151,7 +103,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     {
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            foreach (ObjectPart thisPart in GetLinks(instance, link))
+                            foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
                             {
                                 PrimitiveSoundFlags flags = paraflags;
                                 if (thisPart.IsSoundQueueing)
@@ -177,7 +129,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     {
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            foreach (ObjectPart thisPart in GetLinks(instance, link))
+                            foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
                             {
                                 thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, m_SoundID, volume, 20);
                             }
@@ -197,7 +149,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
                     {
                         if (TryFetchSound(instance, m_SoundID))
                         {
-                            foreach (ObjectPart thisPart in GetLinks(instance, link))
+                            foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
                             {
                                 thisPart.ObjectGroup.Scene.SendTriggerSound(thisPart, m_SoundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
                             }
@@ -342,7 +294,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             {
                 lock (m_Instance)
                 {
-                    foreach (ObjectPart part in GetLinks(m_Instance, link))
+                    foreach (ObjectPart part in m_Instance.GetLinkTargets(link))
                     {
                         SoundParam param = part.Sound;
                         param.SoundID = UUID.Zero;
