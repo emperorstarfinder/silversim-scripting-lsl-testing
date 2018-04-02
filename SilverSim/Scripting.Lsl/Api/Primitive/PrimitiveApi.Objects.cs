@@ -527,6 +527,102 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
+        [APILevel(APIFlags.ASSL, "asGetLinksByName")]
+        public AnArray GetLinksByName(ScriptInstance instance, string name)
+        {
+            lock(instance)
+            {
+                var res = new AnArray();
+                foreach(KeyValuePair<int, ObjectPart> kvp in instance.Part.ObjectGroup.Key1ValuePairs)
+                {
+                    if(kvp.Value.Name == name)
+                    {
+                        res.Add(kvp.Key);
+                    }
+                }
+                return res;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL)]
+        public const int AS_LINK_MATCH_HEAD = 1;
+        [APILevel(APIFlags.ASSL)]
+        public const int AS_LINK_MATCH_CONTAINS = 0;
+        [APILevel(APIFlags.ASSL)]
+        public const int AS_LINK_MATCH_TAIL = -1;
+        [APILevel(APIFlags.ASSL)]
+        public const int AS_LINK_MATCH_EXCLUDE = -2;
+
+        private bool CheckMatch(string haystack, string pattern, int matchType)
+        {
+            switch (matchType)
+            {
+                case AS_LINK_MATCH_HEAD:
+                    return haystack.StartsWith(pattern);
+
+                case AS_LINK_MATCH_TAIL:
+                    return haystack.EndsWith(pattern);
+
+                case AS_LINK_MATCH_CONTAINS:
+                    return haystack.Contains(pattern);
+
+                case AS_LINK_MATCH_EXCLUDE:
+                    return !haystack.Contains(pattern);
+            }
+            return false;
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinksByName")]
+        public AnArray GetLinksByName(ScriptInstance instance, string pattern, int matchType)
+        {
+            lock (instance)
+            {
+                var res = new AnArray();
+                foreach (KeyValuePair<int, ObjectPart> kvp in instance.Part.ObjectGroup.Key1ValuePairs)
+                {
+                    if(CheckMatch(kvp.Value.Name, pattern, matchType))
+                    {
+                        res.Add(kvp.Key);
+                    }
+                }
+                return res;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinksByDesc")]
+        public AnArray GetLinksByDesc(ScriptInstance instance, string desc)
+        {
+            lock (instance)
+            {
+                var res = new AnArray();
+                foreach (KeyValuePair<int, ObjectPart> kvp in instance.Part.ObjectGroup.Key1ValuePairs)
+                {
+                    if (kvp.Value.Description == desc)
+                    {
+                        res.Add(kvp.Key);
+                    }
+                }
+                return res;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinksByDesc")]
+        public AnArray GetLinksByDesc(ScriptInstance instance, string pattern, int matchType)
+        {
+            lock (instance)
+            {
+                var res = new AnArray();
+                foreach (KeyValuePair<int, ObjectPart> kvp in instance.Part.ObjectGroup.Key1ValuePairs)
+                {
+                    if (CheckMatch(kvp.Value.Description, pattern, matchType))
+                    {
+                        res.Add(kvp.Key);
+                    }
+                }
+                return res;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetLinkNumber")]
         public int GetLinkNumber(ScriptInstance instance)
         {
