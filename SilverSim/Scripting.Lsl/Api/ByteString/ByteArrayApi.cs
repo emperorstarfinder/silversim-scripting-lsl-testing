@@ -30,6 +30,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
+using System.IO;
+using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
 
@@ -254,5 +256,35 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToHexString")]
         [Pure]
         public string ToHex(ByteArray byteArray) => byteArray.Data.ToHexString();
+
+        [APIExtension(APIExtension.ByteArray, "gzipDecompress")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GzipDecompress")]
+        [Pure]
+        public ByteArray GzipDecompress(ByteArray array)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
+                {
+                    gz.Write(array.Data, 0, array.Data.Length);
+                }
+                return new ByteArray(ms.ToArray());
+            }
+        }
+
+        [APIExtension(APIExtension.ByteArray, "gzipCompress")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GzipCompress")]
+        [Pure]
+        public ByteArray GzipCompress(ByteArray array)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
+                {
+                    gz.Write(array.Data, 0, array.Data.Length);
+                }
+                return new ByteArray(ms.ToArray());
+            }
+        }
     }
 }
