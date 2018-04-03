@@ -53,6 +53,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [Pure]
         public double Min(double a, double b) => (a < b) ? a : b;
 
+        [APILevel(APIFlags.OSSL, "osRound")]
+        [Pure]
+        public double Round(double value, int ndigits) => Math.Round(value, ndigits.Clamp(0, 15), MidpointRounding.AwayFromZero);
+
+        [APILevel(APIFlags.OSSL, "osVecMagSquare")]
+        public double VecMagSquare(Vector3 v) => v.LengthSquared;
+
+        [APILevel(APIFlags.OSSL, "osVecDistSquare")]
+        public double VecDistSquare(Vector3 a, Vector3 b) => (a - b).LengthSquared;
+
+        [APILevel(APIFlags.OSSL, "osAngleBetween")]
+        public double OsAngleBetween(Vector3 a, Vector3 b) => Math.Atan2(a.Cross(b).Length, a.Dot(b));
+
         [APILevel(APIFlags.LSL, "llAbs")]
         [Pure]
         public int Abs(int v) => (v < 0) ? -v : v;
