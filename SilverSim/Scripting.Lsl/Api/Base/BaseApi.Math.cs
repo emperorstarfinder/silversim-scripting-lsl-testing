@@ -160,7 +160,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 return 2.0d * Math.Asin(Math.Sqrt(v2 / (s2 + v2))); // use arcsin if the s-component is dominant
             }
 
-            return 0.0; // argument is scaled too small to be meaningful, or it is a zero rotation, so return zer
+            return 0.0; // argument is scaled too small to be meaningful, or it is a zero rotation, so return zero
         }
 
         [APILevel(APIFlags.LSL, "llRot2Axis")]
