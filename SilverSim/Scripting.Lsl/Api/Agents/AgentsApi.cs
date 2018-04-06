@@ -57,7 +57,6 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
 
         public void Startup(ConfigurationLoader loader)
         {
-            /* intentionally left empty */
             m_UserAgentServicePlugins = loader.GetServicesByValue<IUserAgentServicePlugin>();
         }
 
