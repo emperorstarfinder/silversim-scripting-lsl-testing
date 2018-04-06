@@ -181,6 +181,34 @@ namespace SilverSim.Scripting.Lsl
             m_InternalAnimations.Add("yoga_float", "42ecd00b-9947-a97c-400a-bbc9174c7aeb");
         }
 
+        public static bool TryGetBinaryMask(this int constant, out int mask)
+        {
+            mask = 0;
+            if (constant != 0)
+            {
+                while ((constant & 1) == 0)
+                {
+                    mask = (mask << 1) | 1;
+                    constant >>= 1;
+                }
+            }
+            return constant == 1;
+        }
+
+        public static bool TryGetBinaryMask(this long constant, out long mask)
+        {
+            mask = 0;
+            if (constant != 0)
+            {
+                while ((constant & 1) == 0)
+                {
+                    mask = (mask << 1) | 1;
+                    constant >>= 1;
+                }
+            }
+            return constant == 1;
+        }
+
         public static bool FillDetectInfoFromObject(ref DetectInfo detectInfo, IObject obj)
         {
             var agent = obj as IAgent;

@@ -2109,7 +2109,37 @@ namespace SilverSim.Scripting.Lsl
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDivideNotSupportedFor0And1", "operator '/' is not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
 
                     case "%":
-                        if((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int) || m_LeftHandType == typeof(long)) &&
+                        Type rightHandRemType = m_RightHand.Value?.GetType();
+                        int mask32;
+                        long mask64;
+                        if(m_LeftHandType == typeof(int) && m_RightHandType == typeof(int) && rightHandRemType == typeof(Tree.ConstantValueInt) &&
+                            ((Tree.ConstantValueInt)m_RightHand.Value).Value.TryGetBinaryMask(out mask32))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(int), m_LeftHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Ldc_I4, mask32);
+                            compileState.ILGen.Emit(OpCodes.And);
+                            throw Return(compileState, typeof(long));
+                        }
+                        else if (m_LeftHandType == typeof(long) && m_RightHandType == typeof(int) && rightHandRemType == typeof(Tree.ConstantValueInt) &&
+                            ((Tree.ConstantValueInt)m_RightHand.Value).Value.TryGetBinaryMask(out mask32))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Ldc_I8, (long)mask32);
+                            compileState.ILGen.Emit(OpCodes.And);
+                            throw Return(compileState, typeof(long));
+                        }
+                        else if ((m_LeftHandType == typeof(int) || m_LeftHandType == typeof(long)) && m_RightHandType == typeof(long) && rightHandRemType == typeof(Tree.ConstantValueLong) &&
+                            ((Tree.ConstantValueLong)m_RightHand.Value).Value.TryGetBinaryMask(out mask64))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Ldc_I8, mask64);
+                            compileState.ILGen.Emit(OpCodes.And);
+                            throw Return(compileState, typeof(long));
+                        }
+                        else if ((m_LeftHandType == typeof(double) || m_LeftHandType == typeof(int) || m_LeftHandType == typeof(long)) &&
                             (m_RightHandType == typeof(double) || m_RightHandType == typeof(int) || m_RightHandType == typeof(long)) &&
                             (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double)))
                         {
