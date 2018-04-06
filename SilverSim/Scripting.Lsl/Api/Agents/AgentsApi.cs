@@ -41,6 +41,7 @@ using SilverSim.Types.Groups;
 using SilverSim.Types.IM;
 using SilverSim.Types.Inventory;
 using SilverSim.Types.Parcel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -97,6 +98,53 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
         public const int AGENT_LIST_REGION = 4;
         [APILevel(APIFlags.OSSL)]
         public const int AGENT_LIST_EXCLUDENPC = 0x4000000;
+
+        [APILevel(APIFlags.LSL, "llNameToKey")]
+        public LSLKey NameToKey(ScriptInstance instance, string name)
+        {
+            lock(instance)
+            {
+                string[] parts = name.Split(new char[] { '.', ' ' }, 2, StringSplitOptions.None);
+                if (parts.Length > 2)
+                {
+                    return UUID.Zero;
+                }
+                if (parts.Length < 2)
+                {
+                    parts = new string[] { parts[0], string.Empty };
+                }
+
+                foreach(IAgent agent in instance.Part.ObjectGroup.Scene.RootAgents)
+                {
+                    if(agent.FirstName == parts[0] &&
+                        agent.LastName == parts[1])
+                    {
+                        return agent.ID;
+                    }
+                }
+            }
+            return UUID.Zero;
+        }
+
+        [APILevel(APIFlags.LSL, "llRequestUserKey")]
+        public LSLKey RequestUserKey(ScriptInstance instance, string username)
+        {
+            lock(instance)
+            {
+                string[] parts = username.Split(new char[] { '.', ' ' }, 2, StringSplitOptions.None);
+                if(parts.Length > 2)
+                {
+                    return UUID.Zero;
+                }
+                if (parts.Length < 2)
+                {
+                    parts = new string[] { parts[0], "" };
+                }
+
+                UUI uui;
+                return (instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(parts[0], parts[1], out uui)) ? uui.ID : UUID.Zero;
+            }
+        }
 
         [APILevel(APIFlags.LSL, "llGetAgentList")]
         public AnArray GetAgentList(ScriptInstance instance, int scope, AnArray options)
