@@ -2187,7 +2187,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if ((m_LeftHandType == typeof(long) || m_LeftHandType == typeof(int)) &&
                             (m_RightHandType == typeof(long) || m_RightHandType == typeof(int)) &&
-                            (m_LeftHandType == typeof(long) || m_RightHandType == typeof(double)))
+                            m_LeftHandType == typeof(long))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(long), m_LeftHandType, m_LineNumber);
