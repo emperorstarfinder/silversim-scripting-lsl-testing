@@ -1626,10 +1626,45 @@ namespace SilverSim.Scripting.Lsl
                     case "%=":
                         if(typeof(int) == m_LeftHandType)
                         {
-                            compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerModulus", new Type[] { m_LeftHandType, m_RightHandType }));
+                            Tree.ConstantValueInt constantValue = m_RightHand.Value as Tree.ConstantValueInt;
+                            int mask;
+                            if (constantValue?.Value.TryGetBinaryMask(out mask) ?? false)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                compileState.ILGen.Emit(OpCodes.Sub);
+                                compileState.ILGen.Emit(OpCodes.And);
+                            }
+                            else
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerModulus", new Type[] { m_LeftHandType, m_RightHandType }));
+                            }
                             break;
                         }
-                        else if(typeof(double) == m_LeftHandType || typeof(long) == m_LeftHandType)
+                        if (typeof(long) == m_LeftHandType)
+                        {
+                            Tree.ConstantValueInt constantValueInt = m_RightHand.Value as Tree.ConstantValueInt;
+                            Tree.ConstantValueLong constantValueLong = m_RightHand.Value as Tree.ConstantValueLong;
+                            int mask32;
+                            long mask64;
+                            if (constantValueInt?.Value.TryGetBinaryMask(out mask32) ?? false)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I4_1);
+                                compileState.ILGen.Emit(OpCodes.Sub);
+                                compileState.ILGen.Emit(OpCodes.And);
+                            }
+                            else if(constantValueLong?.Value.TryGetBinaryMask(out mask64) ?? false)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldc_I8, 1);
+                                compileState.ILGen.Emit(OpCodes.Sub);
+                                compileState.ILGen.Emit(OpCodes.And);
+                            }
+                            else
+                            {
+                                compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerModulus", new Type[] { m_LeftHandType, m_RightHandType }));
+                            }
+                            break;
+                        }
+                        else if (typeof(double) == m_LeftHandType || typeof(long) == m_LeftHandType)
                         {
                             compileState.ILGen.Emit(OpCodes.Rem);
                             break;
