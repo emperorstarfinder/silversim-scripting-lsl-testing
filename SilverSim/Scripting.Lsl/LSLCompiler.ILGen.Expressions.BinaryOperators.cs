@@ -2119,7 +2119,7 @@ namespace SilverSim.Scripting.Lsl
                             ProcessImplicitCasts(compileState, typeof(int), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldc_I4, mask32);
                             compileState.ILGen.Emit(OpCodes.And);
-                            throw Return(compileState, typeof(long));
+                            throw Return(compileState, typeof(int));
                         }
                         else if (m_LeftHandType == typeof(long) && m_RightHandType == typeof(int) && rightHandRemType == typeof(Tree.ConstantValueInt) &&
                             ((Tree.ConstantValueInt)m_RightHand.Value).Value.TryGetBinaryMask(out mask32))
