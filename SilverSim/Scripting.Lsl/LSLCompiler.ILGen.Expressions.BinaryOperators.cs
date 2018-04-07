@@ -1660,7 +1660,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
-                                compileState.ILGen.Emit(OpCodes.Call, typeof(LSLCompiler).GetMethod("LSL_IntegerModulus", new Type[] { m_LeftHandType, m_RightHandType }));
+                                compileState.ILGen.Emit(OpCodes.Rem);
                             }
                             break;
                         }

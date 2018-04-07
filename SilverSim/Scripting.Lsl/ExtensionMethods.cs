@@ -192,7 +192,7 @@ namespace SilverSim.Scripting.Lsl
                     constant >>= 1;
                 }
             }
-            return constant == 1;
+            return constant == 1 && mask != -2147483648;
         }
 
         public static bool TryGetBinaryMask(this long constant, out long mask)
