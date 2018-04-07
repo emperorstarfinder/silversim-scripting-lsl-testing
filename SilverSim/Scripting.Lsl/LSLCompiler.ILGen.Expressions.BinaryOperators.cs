@@ -1640,7 +1640,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             break;
                         }
-                        if (typeof(long) == m_LeftHandType)
+                        else if (typeof(long) == m_LeftHandType)
                         {
                             Tree.ConstantValueInt constantValueInt = m_RightHand.Value as Tree.ConstantValueInt;
                             Tree.ConstantValueLong constantValueLong = m_RightHand.Value as Tree.ConstantValueLong;
