@@ -469,7 +469,7 @@ namespace SilverSim.Scripting.Lsl
             return assetID;
         }
 
-        public static UUID GetSoundAssetID(this ScriptInstance instance, string item)
+        public static UUID GetSoundAssetID(this ScriptInstance instance, string item, int inventorylink = PrimitiveApi.LINK_THIS)
         {
             UUID assetID;
             if (!UUID.TryParse(item, out assetID))
@@ -478,6 +478,20 @@ namespace SilverSim.Scripting.Lsl
                 lock (instance)
                 {
                     ObjectPartInventoryItem i;
+                    ObjectPart part = instance.Part;
+                    if(inventorylink != PrimitiveApi.LINK_THIS)
+                    {
+                        if(inventorylink == PrimitiveApi.LINK_UNLINKED_ROOT)
+                        {
+                            inventorylink = PrimitiveApi.LINK_ROOT;
+                        }
+
+                        if(!part.ObjectGroup.TryGetValue(inventorylink, out part))
+                        {
+                            throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotASoundUnknownLink1", "Inventory item {0} is not a sound due to unknown link {1}.", item, inventorylink);
+                        }
+                    }
+
                     if (instance.Part.Inventory.TryGetValue(item, out i))
                     {
                         if (i.InventoryType != InventoryType.Sound)

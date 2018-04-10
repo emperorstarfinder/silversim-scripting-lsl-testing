@@ -332,3 +332,4 @@ ExpectingCommaInForeachResultSet=Expecting ',' in 'foreach' result set
 InvalidForeachEncountered=Invalid 'foreach' encountered
 WrongNumberOfVariablesToForeachForType0=Wrong number of variables to 'foreach' for type '{0}'
 Type0IsNotEnumerableByForeach=Type '{0}' is not enumerable by 'foreach'
+InventoryItem0IsNotASoundUnknownLink1=Inventory item {0} is not a sound due to unknown link {1}.

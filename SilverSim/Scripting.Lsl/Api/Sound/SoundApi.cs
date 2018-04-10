@@ -130,6 +130,15 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osLoopSound")]
+        public void LoopSound2(ScriptInstance instance, int link, string sound, double volume)
+        {
+            lock(instance)
+            {
+                LoopSound(instance, link, sound, volume, 0, link);
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llLoopSoundMaster")]
         public void LoopSoundMaster(ScriptInstance instance, string sound, double volume) => LoopSoundMaster(instance, PrimitiveApi.LINK_THIS, sound, volume);
 
@@ -142,15 +151,33 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osLoopSoundMaster")]
+        public void LoopSoundMaster2(ScriptInstance instance, int link, string sound, double volume)
+        {
+            lock(instance)
+            {
+                LoopSound(instance, link, sound, volume, PrimitiveSoundFlags.SyncMaster, link);
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llLoopSoundSlave")]
         public void LoopSoundSlave(ScriptInstance instance, string sound, double volume) => LoopSoundSlave(instance, PrimitiveApi.LINK_THIS, sound, volume);
 
-        [APILevel(APIFlags.ASSL, "asLoopSoundSlave")]
+        [APILevel(APIFlags.ASSL, "asLinkLoopSoundSlave")]
         public void LoopSoundSlave(ScriptInstance instance, int link, string sound, double volume)
         {
             lock (instance)
             {
                 LoopSound(instance, link, sound, volume, PrimitiveSoundFlags.SyncSlave);
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osLoopSoundSlave")]
+        public void LoopSoundSlave2(ScriptInstance instance, int link, string sound, double volume)
+        {
+            lock(instance)
+            {
+                LoopSound(instance, link, sound, volume, PrimitiveSoundFlags.SyncSlave, link);
             }
         }
 
@@ -191,16 +218,22 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             lock (instance)
             {
                 ObjectPart thisPart = instance.Part;
-                UUID soundID;
-                try
+                UUID soundID = instance.GetSoundAssetID(sound);
+                if (TryFetchSound(instance, soundID))
                 {
-                    soundID = instance.GetSoundAssetID(sound);
+                    thisPart.ObjectGroup.Scene.SendPreloadSound(thisPart, soundID);
                 }
-                catch
-                {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
-                    return;
-                }
+            }
+        }
+
+        [APILevel(APIFlags.LSL, "osPreloadSound")]
+        [ForcedSleep(1)]
+        public void PreloadSound(ScriptInstance instance, int link, string sound)
+        {
+            lock (instance)
+            {
+                ObjectPart thisPart = instance.Part;
+                UUID soundID = instance.GetSoundAssetID(sound, link);
                 if (TryFetchSound(instance, soundID))
                 {
                     thisPart.ObjectGroup.Scene.SendPreloadSound(thisPart, soundID);
@@ -212,6 +245,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         public void StopSound(ScriptInstance instance) => StopSound(instance, PrimitiveApi.LINK_THIS);
 
         [APILevel(APIFlags.ASSL, "asLinkStopSound")]
+        [APILevel(APIFlags.OSSL, "osStopSound")]
         public void StopSound(ScriptInstance instance, int link)
         {
             lock (instance)
@@ -239,6 +273,16 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osPlaySound")]
+        public void PlaySound2(ScriptInstance instance, int link, string sound, double volume)
+        {
+            lock(instance)
+            {
+                SendSound(instance, link, sound, volume, 0, link);
+            }
+        }
+
+
         [APILevel(APIFlags.LSL, "llPlaySoundSlave")]
         public void PlaySoundSlave(ScriptInstance instance, string sound, double volume) => PlaySoundSlave(instance, PrimitiveApi.LINK_THIS, sound, volume);
 
@@ -251,6 +295,15 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osPlaySoundSlave")]
+        public void PlaySoundSlave2(ScriptInstance instance, int link, string sound, double volume)
+        {
+            lock(instance)
+            {
+                SendSound(instance, link, sound, volume, PrimitiveSoundFlags.SyncSlave, link);
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llTriggerSound")]
         public void TriggerSound(ScriptInstance instance, string sound, double volume) => TriggerSound(instance, PrimitiveApi.LINK_THIS, sound, volume);
 
@@ -259,16 +312,24 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                UUID soundID;
-                try
+                UUID soundID = instance.GetSoundAssetID(sound);
+                if (TryFetchSound(instance, soundID))
                 {
-                    soundID = instance.GetSoundAssetID(sound);
+                    SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                    foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
+                    {
+                        scene.SendTriggerSound(thisPart, soundID, volume, 20);
+                    }
                 }
-                catch
-                {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
-                    return;
-                }
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osTriggerSound")]
+        public void TriggerSound2(ScriptInstance instance, int link, string sound, double volume)
+        {
+            lock(instance)
+            {
+                UUID soundID = instance.GetSoundAssetID(sound, link);
                 if (TryFetchSound(instance, soundID))
                 {
                     SceneInterface scene = instance.Part.ObjectGroup.Scene;
@@ -288,16 +349,24 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         {
             lock (instance)
             {
-                UUID soundID;
-                try
+                UUID soundID = instance.GetSoundAssetID(sound);
+                if (TryFetchSound(instance, soundID))
                 {
-                    soundID = instance.GetSoundAssetID(sound);
+                    SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                    foreach (ObjectPart thisPart in instance.GetLinkTargets(link))
+                    {
+                        scene.SendTriggerSound(thisPart, soundID, volume, thisPart.Sound.Radius, top_north_east, bottom_south_west);
+                    }
                 }
-                catch
-                {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
-                    return;
-                }
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osTriggerSoundLimited")]
+        public void TriggerSoundLimited2(ScriptInstance instance, int link, string sound, double volume, Vector3 top_north_east, Vector3 bottom_south_west)
+        {
+            lock(instance)
+            {
+                UUID soundID = instance.GetSoundAssetID(sound, link);
                 if (TryFetchSound(instance, soundID))
                 {
                     SceneInterface scene = instance.Part.ObjectGroup.Scene;
@@ -317,6 +386,7 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         public void AdjustSoundVolume2(ScriptInstance instance, double volume) => AdjustSoundVolume(instance, PrimitiveApi.LINK_THIS, volume);
 
         [APILevel(APIFlags.ASSL, "asLinkAdjustSoundVolume")]
+        [APILevel(APIFlags.OSSL, "osAdjustSoundVolume")]
         public void AdjustSoundVolume(ScriptInstance instance, int link, double volume)
         {
             lock (instance)
@@ -346,7 +416,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         [APILevel(APIFlags.LSL, "llSetSoundRadius")]
         public void SetSoundRadius(ScriptInstance instance, double radius) => SetSoundRadius(instance, PrimitiveApi.LINK_THIS, radius);
 
-        [APILevel(APIFlags.LSL, "asLinkSetSoundRadius")]
+        [APILevel(APIFlags.ASSL, "asLinkSetSoundRadius")]
+        [APILevel(APIFlags.OSSL, "osSetSoundRadius")]
         public void SetSoundRadius(ScriptInstance instance, int link, double radius)
         {
             lock (instance)
@@ -360,18 +431,9 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
-        private void SendSound(ScriptInstance instance, int link, string sound, double volume, PrimitiveSoundFlags paraflags)
+        private void SendSound(ScriptInstance instance, int link, string sound, double volume, PrimitiveSoundFlags paraflags, int otherlink = PrimitiveApi.LINK_THIS)
         {
-            UUID soundID;
-            try
-            {
-                soundID = instance.GetSoundAssetID(sound);
-            }
-            catch
-            {
-                instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
-                return;
-            }
+            UUID soundID = instance.GetSoundAssetID(sound, otherlink);
             if (TryFetchSound(instance, soundID))
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
@@ -388,18 +450,9 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             }
         }
 
-        private void LoopSound(ScriptInstance instance, int link, string sound, double volume, PrimitiveSoundFlags paraflags)
+        private void LoopSound(ScriptInstance instance, int link, string sound, double volume, PrimitiveSoundFlags paraflags, int otherlink = PrimitiveApi.LINK_THIS)
         {
-            UUID soundID;
-            try
-            {
-                soundID = instance.GetSoundAssetID(sound);
-            }
-            catch
-            {
-                instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0DoesNotReferenceASound", "Inventory item {0} does not reference a sound", sound));
-                return;
-            }
+            UUID soundID = instance.GetSoundAssetID(sound, otherlink);
 
             if (TryFetchSound(instance, soundID))
             {
