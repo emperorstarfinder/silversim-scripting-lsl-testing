@@ -66,7 +66,11 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
             AssetServiceInterface assetService = scene.AssetService;
             AssetMetadata metadata;
             AssetData data;
-            if (!assetService.Metadata.TryGetValue(animID, out metadata))
+            if(animID.IsInternalAnimationID())
+            {
+                /* anim is an internal one so viewer knows it */
+            }
+            else if (!assetService.Metadata.TryGetValue(animID, out metadata))
             {
                 if (grp.IsAttached) /* on attachments, we have to fetch from agent eventually */
                 {

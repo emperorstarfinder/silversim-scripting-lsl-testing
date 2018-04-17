@@ -390,6 +390,8 @@ namespace SilverSim.Scripting.Lsl
             return assetID.ToString();
         }
 
+        public static bool IsInternalAnimationID(this UUID id) => m_InternalAnimations.ContainsValue(id);
+
         public static UUID GetAnimationAssetID(this ScriptInstance instance, string item)
         {
             UUID assetID;
