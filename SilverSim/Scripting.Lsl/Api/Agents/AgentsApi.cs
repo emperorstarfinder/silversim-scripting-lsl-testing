@@ -140,7 +140,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     parts = new string[] { parts[0], "" };
                 }
 
-                UUI uui;
+                UGUIWithName uui;
                 return (instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(parts[0], parts[1], out uui)) ? uui.ID : UUID.Zero;
             }
         }
@@ -292,7 +292,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 DataserverEvent ev;
                 UUID queryid = UUID.Random;
-                UUI uui;
+                UGUIWithName uui;
 
                 if (scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
@@ -467,7 +467,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                 GroupsServiceInterface groupsService = scene.GroupsService;
                 IAgent agent;
                 UGI group = grp.Group;
-                UUI owner = grp.Owner;
+                UGUI owner = grp.Owner;
                 if(scene.Agents.TryGetValue(id.AsUUID, out agent) &&
                     group != UGI.Unknown &&
                     (groupsService.GetAgentPowers(group, owner) & GroupPowers.Invite) == GroupPowers.Invite)
@@ -488,12 +488,13 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                         return 0;
                     }
 
+                    UGUIWithName namedOwner = scene.AvatarNameService.ResolveName(owner);
                     var gim = new GridInstantMessage
                     {
                         FromGroup = group,
-                        FromAgent = owner,
+                        FromAgent = namedOwner,
                         Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "osGroupInviteMessage", "{0} has invited you to join a group called {1}. There is no cost to join this group."),
-                        owner.FullName, group.GroupName),
+                        namedOwner.FullName, group.GroupName),
                         IsFromGroup = true,
                         RegionID = scene.ID,
                         BinaryBucket = new byte[] { (byte)'M', (byte)'0', 0 },
@@ -519,8 +520,8 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                 SceneInterface scene = grp.Scene;
                 GroupsServiceInterface groupsService = scene.GroupsService;
                 UGI group = grp.Group;
-                UUI owner = grp.Owner;
-                UUI ejectee;
+                UGUI owner = grp.Owner;
+                UGUI ejectee;
                 if (group != UGI.Unknown &&
                     (groupsService.GetAgentPowers(group, owner) & GroupPowers.Eject) == GroupPowers.Eject &&
                     scene.AvatarNameService.TryGetValue(id.AsUUID, out ejectee))
@@ -535,6 +536,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     }
 
                     IAgent agent;
+                    UGUIWithName namedOwner = scene.AvatarNameService.ResolveName(owner);
                     var gim = new GridInstantMessage
                     {
                         Dialog = scene.Agents.TryGetValue(ejectee.ID, out agent) ?
@@ -542,22 +544,23 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                             GridInstantMessageDialog.EjectedFromGroup,
 
                         IMSessionID = group.ID,
-                        FromAgent = owner,
+                        FromAgent = namedOwner,
                         FromGroup = group,
                         RegionID = scene.ID,
-                        Message = string.Format("You have been ejected from '{1}' by {0}.", owner.FullName, group.GroupName),
+                        Message = string.Format("You have been ejected from '{1}' by {0}.", namedOwner.FullName, group.GroupName),
                         OnResult = (GridInstantMessage g, bool result) => { }
                     };
                     IMRouter router = scene.GetService<IMRouter>();
                     router.SendWithResultDelegate(gim);
 
+                    UGUIWithName namedEjectee = scene.AvatarNameService.ResolveName(ejectee);
                     gim = new GridInstantMessage
                     {
                         IMSessionID = UUID.Zero,
-                        FromAgent = owner,
+                        FromAgent = namedOwner,
                         FromGroup = group,
                         IsFromGroup = true,
-                        Message = string.Format("{2} has been ejected from '{1}' by {0}.", ejectee.FullName, group.GroupName, owner.FullName),
+                        Message = string.Format("{2} has been ejected from '{1}' by {0}.", namedEjectee.FullName, group.GroupName, namedOwner.FullName),
                         Dialog = GridInstantMessageDialog.MessageFromAgent,
                         RegionID = scene.ID,
                         OnResult = (GridInstantMessage g, bool result) => { }
@@ -577,14 +580,14 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             lock (instance)
             {
                 IAgent agent;
-                UUI agentid;
+                UGUIWithName agentid;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if (scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
                     string displayname;
                     if(!agent.UserAgentService.DisplayName.TryGetValue(agent.Owner, out displayname))
                     {
-                        displayname = agent.Owner.FullName;
+                        displayname = agent.NamedOwner.FullName;
                     }
                     UUID queryid = UUID.Random;
                     instance.PostEvent(new DataserverEvent
@@ -635,7 +638,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
-                    return agent.Owner.FullName.Replace(' ', '.');
+                    return agent.NamedOwner.FullName.Replace(' ', '.');
                 }
                 return string.Empty;
             }
@@ -647,7 +650,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             lock(instance)
             {
                 IAgent agent;
-                UUI uui;
+                UGUIWithName uui;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 if(scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
@@ -655,7 +658,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     instance.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
-                        Data = agent.Owner.FullName
+                        Data = agent.NamedOwner.FullName
                     });
                     return queryid;
                 }
@@ -686,7 +689,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     string displayname;
                     if (!agent.UserAgentService.DisplayName.TryGetValue(agent.Owner, out displayname))
                     {
-                        displayname = agent.Owner.FullName;
+                        displayname = agent.NamedOwner.FullName;
                     }
                     return displayname;
                 }
@@ -713,7 +716,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
         {
             lock (instance)
             {
-                UUI uui;
+                UGUIWithName uui;
                 if (instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(id, out uui))
                 {
                     return uui.FullName;
@@ -826,7 +829,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
         {
             lock(instance)
             {
-                UUI uui;
+                UGUIWithName uui;
                 if(instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(firstName, lastName, out uui))
                 {
                     return uui.ID;
@@ -912,7 +915,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             {
                 foreach(IAgent agent in instance.Part.ObjectGroup.Scene.RootAgents)
                 {
-                    if(agent.Owner.FullName == firstName + " " + lastName)
+                    if(agent.NamedOwner.FullName == firstName + " " + lastName)
                     {
                         agent.KickUser(alert);
                         break;

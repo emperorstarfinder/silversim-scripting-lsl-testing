@@ -221,7 +221,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
             }
         }
 
-        private int ReturnObjects(SceneInterface scene, UUI returningAgent, List<UUID> returnids)
+        private int ReturnObjects(SceneInterface scene, UGUI returningAgent, List<UUID> returnids)
         {
             foreach (UUID objectid in returnids)
             {
@@ -485,7 +485,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 ParcelInfo pInfo;
-                UUI accessor;
+                UGUI accessor;
                 if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out accessor))
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
@@ -509,7 +509,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 ParcelInfo pInfo;
-                UUI accessor;
+                UGUI accessor;
                 if (!scene.AvatarNameService.TryGetValue(avatar.AsUUID, out accessor))
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
@@ -576,7 +576,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                     bool parcelDataChanged = false;
                     while (idx + 1 < rules.Count)
                     {
-                        UUI agentId;
+                        UGUI agentId;
                         UGI groupId;
                         int type = rules[idx++].AsInt;
 

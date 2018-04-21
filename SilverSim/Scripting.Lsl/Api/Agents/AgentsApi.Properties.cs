@@ -52,7 +52,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             {
                 IsNpc = agent.IsNpc.ToLSLBoolean();
                 Key = agent.Owner.ID;
-                Name = agent.Owner.FullName;
+                Name = agent.NamedOwner.FullName;
                 Position = agent.GlobalPosition;
             }
 

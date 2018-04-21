@@ -59,9 +59,9 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                     (int)Math.Floor(globPos.Z));
                 imservice.Send(new GridInstantMessage
                 {
-                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    FromAgent = new UGUIWithName { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                     IMSessionID = thisGroup.ID,
-                    ToAgent = new UUI(user),
+                    ToAgent = new UGUI(user),
                     Position = globPos,
                     RegionID = thisScene.ID,
                     Message = message,
@@ -83,9 +83,9 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 var imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
                 imservice.Send(new GridInstantMessage
                 {
-                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    FromAgent = new UGUIWithName { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                     IMSessionID = thisGroup.ID,
-                    ToAgent = new UUI(user),
+                    ToAgent = new UGUI(user),
                     Position = thisGroup.GlobalPosition,
                     RegionID = thisScene.ID,
                     Message = message,
@@ -106,9 +106,9 @@ namespace SilverSim.Scripting.Lsl.Api.IM
                 IMServiceInterface imservice = instance.Part.ObjectGroup.Scene.GetService<IMServiceInterface>();
                 imservice.Send(new GridInstantMessage
                 {
-                    FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                    FromAgent = new UGUIWithName { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                     IMSessionID = thisGroup.ID,
-                    ToAgent = new UUI(user),
+                    ToAgent = new UGUI(user),
                     Position = thisGroup.GlobalPosition,
                     RegionID = thisScene.ID,
                     Message = message,

@@ -123,8 +123,8 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return 0;
                 }
 
-                UUI uui;
-                return (scene.AvatarNameService.TryGetValue(new UUI(agent.AsUUID), out uui) && 
+                UGUI uui;
+                return (scene.AvatarNameService.TryGetValue(agent.AsUUID, out uui) && 
                     experienceService.Permissions[experienceid, uui]).ToLSLBoolean();
             }
         }

@@ -45,7 +45,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 instance.ShoutError(new LocalizedScriptMessage(this, "DelinkFailedDueNoEditPerms", "Delink failed because you do not have edit permission"));
             }
-            else if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ChangeLinks) != 0)
+            else if (grantinfo.PermsGranter != UGUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ChangeLinks) != 0)
             {
                 if (grantinfo.PermsGranter != instance.Part.Owner)
                 {
@@ -70,7 +70,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 instance.ShoutError(new LocalizedScriptMessage(this, "LinkFailedDueNoEditPerms", "Linking failed because you do not have edit permission"));
             }
-            else if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ChangeLinks) != 0)
+            else if (grantinfo.PermsGranter != UGUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ChangeLinks) != 0)
             {
                 if (grantinfo.PermsGranter != instance.Part.Owner)
                 {

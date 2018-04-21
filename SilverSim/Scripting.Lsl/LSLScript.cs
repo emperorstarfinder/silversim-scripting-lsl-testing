@@ -755,7 +755,7 @@ namespace SilverSim.Scripting.Lsl
             ObjectPartInventoryItem thisItem = Item;
             ObjectPart thisPart = Part;
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = thisItem.PermsGranter;
-            if (permissionsKey == grantinfo.PermsGranter.ID && grantinfo.PermsGranter != UUI.Unknown)
+            if (permissionsKey == grantinfo.PermsGranter.ID && grantinfo.PermsGranter != UGUI.Unknown)
             {
                 IAgent agent;
                 if(!thisPart.ObjectGroup.Scene.Agents.TryGetValue(grantinfo.PermsGranter.ID, out agent))
@@ -1548,7 +1548,7 @@ namespace SilverSim.Scripting.Lsl
                 };
                 if (ep.Params.Count > 1)
                 {
-                    ev.PermissionsKey = new UUI(ep.Params[1].ToString());
+                    ev.PermissionsKey = new UGUI(ep.Params[1].ToString());
                 }
                 return ev;
             }
@@ -2342,7 +2342,8 @@ namespace SilverSim.Scripting.Lsl
             StateEventHandlers.Add(typeof(ItemSoldEvent), (Script script, IScriptEvent ev) =>
             {
                 var e = (ItemSoldEvent)ev;
-                script.InvokeStateEvent("item_sold", e.Agent.FullName, new LSLKey(e.Agent.ID), e.ObjectName, new LSLKey(e.ObjectID));
+                UGUIWithName agent = script.Part?.ObjectGroup?.Scene?.AvatarNameService?.ResolveName(e.Agent) ?? (UGUIWithName)e.Agent;
+                script.InvokeStateEvent("item_sold", agent.FullName, new LSLKey(e.Agent.ID), e.ObjectName, new LSLKey(e.ObjectID));
             });
 
             StateEventHandlers.Add(typeof(SensorEvent), HandleSensor);
@@ -2476,8 +2477,8 @@ namespace SilverSim.Scripting.Lsl
 
         public class Permissions
         {
-            public readonly RwLockedList<UUI> Creators = new RwLockedList<UUI>();
-            public readonly RwLockedList<UUI> Owners = new RwLockedList<UUI>();
+            public readonly RwLockedList<UGUI> Creators = new RwLockedList<UGUI>();
+            public readonly RwLockedList<UGUI> Owners = new RwLockedList<UGUI>();
             public bool IsAllowedForParcelOwner;
             public bool IsAllowedForParcelGroupMember;
             public bool IsAllowedForEstateOwner;
@@ -2501,8 +2502,8 @@ namespace SilverSim.Scripting.Lsl
             SceneInterface scene,
             ParcelInfo pInfo,
             ObjectGroup objgroup,
-            UUI creator,
-            UUI owner,
+            UGUI creator,
+            UGUI owner,
             Permissions perms)
         {
             if (perms.IsAllowedForEveryone)
@@ -2562,8 +2563,8 @@ namespace SilverSim.Scripting.Lsl
             ObjectGroup objgroup = part.ObjectGroup;
             SceneInterface scene = objgroup.Scene;
             ObjectPart rootPart = objgroup.RootPart;
-            UUI creator = rootPart.Creator;
-            UUI owner = objgroup.Owner;
+            UGUI creator = rootPart.Creator;
+            UGUI owner = objgroup.Owner;
             ParcelInfo pInfo;
 
             ThreatLevel threatLevel;

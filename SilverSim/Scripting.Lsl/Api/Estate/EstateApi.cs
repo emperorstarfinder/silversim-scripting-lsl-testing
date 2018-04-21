@@ -127,7 +127,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                     return 0;
                 }
 
-                UUI uui = UUI.Unknown;
+                UGUIWithName uui = UGUIWithName.Unknown;
                 UGI ugi = UGI.Unknown;
                 GroupsNameServiceInterface groupsNameService = scene.GroupsNameService;
                 switch(action)
@@ -219,7 +219,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
                     var im = new GridInstantMessage
                     {
-                        FromAgent = new UUI { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
+                        FromAgent = new UGUIWithName { ID = thisPart.Owner.ID, FullName = thisGroup.Name },
                         IMSessionID = thisGroup.ID,
                         ToAgent = thisGroup.Owner,
                         Position = globPos,

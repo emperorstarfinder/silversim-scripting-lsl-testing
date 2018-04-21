@@ -126,7 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
+                if (grantinfo.PermsGranter != UGUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
                     ObjectGroup grp = instance.Part.ObjectGroup;
                     var followcamprops = new ClearFollowCamProperties
@@ -149,7 +149,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-                if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
+                if (grantinfo.PermsGranter != UGUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.ControlCamera) != 0)
                 {
                     var parameters = new SortedDictionary<int, double>();
 
@@ -322,7 +322,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public Vector3 GetCameraPos(ScriptInstance instance)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-            if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
+            if (grantinfo.PermsGranter != UGUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
                 lock(instance)
                 {
@@ -340,7 +340,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public Quaternion GetCameraRot(ScriptInstance instance)
         {
             ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
-            if (grantinfo.PermsGranter != UUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
+            if (grantinfo.PermsGranter != UGUI.Unknown && (grantinfo.PermsMask & ScriptPermissions.TrackCamera) != 0)
             {
                 lock(instance)
                 {

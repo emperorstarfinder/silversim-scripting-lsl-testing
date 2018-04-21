@@ -74,7 +74,7 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
             {
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if ((grantinfo.PermsMask & ScriptPermissions.TakeControls) == 0 ||
-                    grantinfo.PermsGranter == UUI.Unknown)
+                    grantinfo.PermsGranter == UGUI.Unknown)
                 {
                     return;
                 }

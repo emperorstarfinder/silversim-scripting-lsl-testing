@@ -46,14 +46,14 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         [APIAccessibleMembers("Key", "FirstName", "LastName", "HomeUri", "FullName")]
         public class AgentId
         {
-            private readonly UUI m_Uui;
+            private readonly UGUIWithName m_Uui;
 
             public AgentId()
             {
-                m_Uui = UUI.Unknown;
+                m_Uui = UGUIWithName.Unknown;
             }
 
-            public AgentId(UUI uui)
+            public AgentId(UGUIWithName uui)
             {
                 m_Uui = uui;
             }
@@ -95,18 +95,18 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         public class AgentInventoryItem
         {
             private readonly ScriptInstance m_Instance;
-            public UUI InventoryOwner { get; }
+            public UGUI InventoryOwner { get; }
             public UUID Key { get; }
             public InventoryServiceInterface InventoryService { get; }
             public bool IsLibrary { get; }
 
             public AgentInventoryItem()
             {
-                InventoryOwner = UUI.Unknown;
+                InventoryOwner = UGUI.Unknown;
                 Key = UUID.Zero;
             }
 
-            public AgentInventoryItem(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, UUID itemID, bool isLibrary)
+            public AgentInventoryItem(ScriptInstance instance, InventoryServiceInterface inventoryService, UGUI owner, UUID itemID, bool isLibrary)
             {
                 m_Instance = instance;
                 InventoryService = inventoryService;
@@ -183,11 +183,11 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
                 set { With((item, f) => item.Flags = (InventoryFlags)f, value); }
             }
 
-            public AgentId LastOwner => With((item) => new AgentId(item.LastOwner), new AgentId());
+            public AgentId LastOwner => With((item) => new AgentId(m_Instance.Part.ObjectGroup.Scene.AvatarNameService.ResolveName(item.LastOwner)), new AgentId());
 
-            public AgentId Owner => With((item) => new AgentId(item.Owner), new AgentId());
+            public AgentId Owner => With((item) => new AgentId(m_Instance.Part.ObjectGroup.Scene.AvatarNameService.ResolveName(item.Owner)), new AgentId());
 
-            public AgentId Creator => With((item) => new AgentId(item.Creator), new AgentId());
+            public AgentId Creator => With((item) => new AgentId(m_Instance.Part.ObjectGroup.Scene.AvatarNameService.ResolveName(item.Creator)), new AgentId());
 
             public int CurrentPermissions => With((item) => (int)item.Permissions.Current, 0);
 
@@ -220,12 +220,12 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         public class AgentInventoryChildFolderAccessor
         {
             private readonly ScriptInstance m_Instance;
-            private readonly UUI m_InventoryOwner;
+            private readonly UGUI m_InventoryOwner;
             private readonly InventoryServiceInterface m_InventoryService;
             private readonly UUID m_FolderID;
             private readonly bool m_IsLibrary;
 
-            public AgentInventoryChildFolderAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, UUID folderID, bool isLibrary)
+            public AgentInventoryChildFolderAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UGUI owner, UUID folderID, bool isLibrary)
             {
                 m_Instance = instance;
                 m_InventoryOwner = owner;
@@ -283,12 +283,12 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         public class AgentInventoryChildItemAccessor
         {
             private readonly ScriptInstance m_Instance;
-            private readonly UUI m_InventoryOwner;
+            private readonly UGUI m_InventoryOwner;
             private readonly InventoryServiceInterface m_InventoryService;
             private readonly UUID m_FolderID;
             private readonly bool m_IsLibrary;
 
-            public AgentInventoryChildItemAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, UUID folderID, bool isLibrary)
+            public AgentInventoryChildItemAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UGUI owner, UUID folderID, bool isLibrary)
             {
                 m_Instance = instance;
                 m_InventoryOwner = owner;
@@ -357,18 +357,18 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         public class AgentInventoryFolder
         {
             private readonly ScriptInstance m_Instance;
-            public UUI InventoryOwner { get; }
+            public UGUI InventoryOwner { get; }
             public InventoryServiceInterface InventoryService { get; }
             public UUID Key { get; }
             public bool IsLibrary { get; }
 
             public AgentInventoryFolder()
             {
-                InventoryOwner = UUI.Unknown;
+                InventoryOwner = UGUI.Unknown;
                 Key = UUID.Zero;
             }
 
-            public AgentInventoryFolder(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, UUID folderID, bool isLibrary)
+            public AgentInventoryFolder(ScriptInstance instance, InventoryServiceInterface inventoryService, UGUI owner, UUID folderID, bool isLibrary)
             {
                 m_Instance = instance;
                 InventoryService = inventoryService;
@@ -478,11 +478,11 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         public class AgentInventoryFolderAccessor
         {
             private readonly ScriptInstance m_Instance;
-            private readonly UUI m_Owner;
+            private readonly UGUI m_Owner;
             private readonly InventoryServiceInterface m_InventoryService;
             private readonly bool m_IsLibrary;
 
-            public AgentInventoryFolderAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, bool isLibrary)
+            public AgentInventoryFolderAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UGUI owner, bool isLibrary)
             {
                 m_Instance = instance;
                 m_Owner = owner;
@@ -610,11 +610,11 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         public class AgentInventoryItemAccessor
         {
             private readonly ScriptInstance m_Instance;
-            private readonly UUI m_Owner;
+            private readonly UGUI m_Owner;
             private readonly InventoryServiceInterface m_InventoryService;
             private readonly bool m_IsLibrary;
 
-            public AgentInventoryItemAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, bool isLibrary)
+            public AgentInventoryItemAccessor(ScriptInstance instance, InventoryServiceInterface inventoryService, UGUI owner, bool isLibrary)
             {
                 m_Instance = instance;
                 m_Owner = owner;
@@ -633,16 +633,16 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         public class AgentInventory
         {
             private readonly ScriptInstance m_Instance;
-            private readonly UUI m_Owner;
+            private readonly UGUI m_Owner;
             private readonly InventoryServiceInterface m_InventoryService;
             private readonly bool m_IsLibrary;
 
             public AgentInventory()
             {
-                m_Owner = UUI.Unknown;
+                m_Owner = UGUI.Unknown;
             }
 
-            public AgentInventory(ScriptInstance instance, InventoryServiceInterface inventoryService, UUI owner, bool isLibrary)
+            public AgentInventory(ScriptInstance instance, InventoryServiceInterface inventoryService, UGUI owner, bool isLibrary)
             {
                 m_Instance = instance;
                 m_Owner = owner;

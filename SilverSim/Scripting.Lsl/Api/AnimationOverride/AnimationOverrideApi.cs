@@ -108,7 +108,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
 
                 if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
-                    grantinfo.PermsGranter == UUI.Unknown)
+                    grantinfo.PermsGranter == UGUI.Unknown)
                 {
                     return;
                 }
@@ -148,7 +148,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if (((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 &&
                     (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0) ||
-                    grantinfo.PermsGranter == UUI.Unknown)
+                    grantinfo.PermsGranter == UGUI.Unknown)
                 {
                     return string.Empty;
                 }
@@ -180,7 +180,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
-                    grantinfo.PermsGranter == UUI.Unknown)
+                    grantinfo.PermsGranter == UGUI.Unknown)
                 {
                     return;
                 }
@@ -242,7 +242,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     ObjectPartInventoryItem.PermsGranterInfo grantinfo = m_Instance.Item.PermsGranter;
                     if (((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 &&
                         (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0) ||
-                        grantinfo.PermsGranter == UUI.Unknown)
+                        grantinfo.PermsGranter == UGUI.Unknown)
                     {
                         return new AnimationOverrideEnumerator(new KeyValuePair<string, string>[0]);
                     }
@@ -275,7 +275,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                         ObjectPartInventoryItem.PermsGranterInfo grantinfo = m_Instance.Item.PermsGranter;
                         if (((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 &&
                             (grantinfo.PermsMask & ScriptPermissions.TriggerAnimation) == 0) ||
-                            grantinfo.PermsGranter == UUI.Unknown)
+                            grantinfo.PermsGranter == UGUI.Unknown)
                         {
                             return string.Empty;
                         }
@@ -306,7 +306,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                         ObjectPartInventoryItem.PermsGranterInfo grantinfo = m_Instance.Item.PermsGranter;
 
                         if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
-                            grantinfo.PermsGranter == UUI.Unknown)
+                            grantinfo.PermsGranter == UGUI.Unknown)
                         {
                             return;
                         }

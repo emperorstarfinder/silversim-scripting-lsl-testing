@@ -91,7 +91,7 @@ namespace SilverSim.Scripting.Lsl.Api.Terraform
                 };
                 modLand.ParcelData.Add(landData);
 
-                Action<UUI, SceneInterface, ModifyLand, ModifyLand.Data> modifier;
+                Action<UGUI, SceneInterface, ModifyLand, ModifyLand.Data> modifier;
 
                 if (Terraforming.PaintEffects.TryGetValue((Terraforming.StandardTerrainEffect)action, out modifier))
                 {

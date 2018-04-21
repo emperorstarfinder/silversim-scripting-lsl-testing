@@ -50,17 +50,17 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         [StateEventDelegate]
         public delegate void State_transaction_result(LSLKey id, int success, string data);
 
-        private delegate void TransferMoneyDelegate(UUID transactionID, UUI sourceid,
-            UUI destinationid, int amount, ScriptInstance instance);
+        private delegate void TransferMoneyDelegate(UUID transactionID, UGUI sourceid,
+            UGUI destinationid, int amount, ScriptInstance instance);
 
-        private bool TransferMoney(UUI sourceid, UUI destinationid, int amount, ScriptInstance instance)
+        private bool TransferMoney(UGUI sourceid, UGUI destinationid, int amount, ScriptInstance instance)
         {
             EconomyServiceInterface sourceservice = null;
             EconomyServiceInterface destinationservice = null;
             bool success = false;
             if (sourceservice != null &&
                 destinationservice != null &&
-                destinationid != UUI.Unknown)
+                destinationid != UGUI.Unknown)
             {
                 try
                 {
@@ -87,8 +87,8 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         public class TransferMoneyData
         {
             public UUID TransactionID;
-            public UUI SourceID;
-            public UUI DestinationID;
+            public UGUI SourceID;
+            public UGUI DestinationID;
             public int Amount;
             public ScriptInstance Instance;
         }
@@ -118,7 +118,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         {
             lock (instance)
             {
-                UUI destinationuui;
+                UGUI destinationuui;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
                     grantinfo.PermsGranter != instance.Part.Owner ||
@@ -138,7 +138,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
         {
             lock (instance)
             {
-                UUI destinationuui;
+                UGUI destinationuui;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
                 if ((grantinfo.PermsMask & ScriptPermissions.Debit) == 0 ||
                     grantinfo.PermsGranter != instance.Part.Owner ||

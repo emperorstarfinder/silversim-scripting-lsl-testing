@@ -645,7 +645,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         }
         #endregion
 
-        private bool TryGetServices(UUI targetAgentId, out InventoryServiceInterface inventoryService, out AssetServiceInterface assetService)
+        private bool TryGetServices(UGUI targetAgentId, out InventoryServiceInterface inventoryService, out AssetServiceInterface assetService)
         {
             inventoryService = null;
             assetService = null;
@@ -706,7 +706,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 ObjectPart targetPart;
                 IAgent targetAgent;
                 UUID id = destination.AsUUID;
-                UUI targetAgentId;
+                UGUI targetAgentId;
                 var array = new AnArray();
                 InventoryServiceInterface inventoryService;
                 AssetServiceInterface assetService;
@@ -759,7 +759,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 ObjectPart targetPart;
                 IAgent targetAgent;
                 UUID id = destination.AsUUID;
-                UUI targetAgentId;
+                UGUI targetAgentId;
                 var array = new AnArray();
                 InventoryServiceInterface inventoryService;
                 AssetServiceInterface assetService;
@@ -861,7 +861,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         private void GiveInventoryToAgent(
             ScriptInstance instance,
-            UUI agent,
+            UGUI agent,
             InventoryServiceInterface inventoryService, AssetServiceInterface assetService,
             SceneInterface scene,
             ObjectPart origin,
@@ -923,9 +923,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         private sealed class InventoryTransferItem : AssetTransferWorkItem
         {
             private readonly InventoryServiceInterface m_InventoryService;
-            private readonly UUI m_Owner;
+            private readonly UGUI m_Owner;
             private readonly UGI m_Group;
-            private readonly UUI m_DestinationAgent;
+            private readonly UGUI m_DestinationAgent;
             private readonly UUID m_SceneID;
             private readonly List<InventoryItem> m_Items;
             private readonly string m_DestinationFolder = string.Empty;
@@ -935,11 +935,11 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             private readonly string m_ObjectName;
 
             public InventoryTransferItem(
-                UUI owner,
+                UGUI owner,
                 UGI group,
                 bool isFromGroup,
                 string objectName,
-                UUI targetAgent,
+                UGUI targetAgent,
                 InventoryServiceInterface inventoryService,
                 AssetServiceInterface assetService,
                 SceneInterface scene,
@@ -1062,7 +1062,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         imservice?.Send(new GridInstantMessage
                         {
                             FromGroup = m_Group,
-                            FromAgent = m_Owner,
+                            FromAgent = scene.AvatarNameService.ResolveName(m_Owner),
                             Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "Object0HasGivenYouAnItem1", "Object {0} has given you an item \"{1}\"."),
                                 m_ObjectName, item.Name),
                             IsFromGroup = m_IsFromGroup,
@@ -1084,7 +1084,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     imservice?.Send(new GridInstantMessage
                     {
                         FromGroup = m_Group,
-                        FromAgent = m_Owner,
+                        FromAgent = scene.AvatarNameService.ResolveName(m_Owner),
                         Message = string.Format(this.GetLanguageString(agent.CurrentCulture, "Object0HasGivenYouAFolder1", "Object {0} has given you a folder \"{1}\"."),
                             m_ObjectName, m_DestinationFolder),
                         IsFromGroup = false,

@@ -211,7 +211,7 @@ namespace SilverSim.Scripting.Lsl
 
             string[] parts = parametername.Split('.');
             string[] list;
-            List<UUI> uuilist;
+            List<UGUI> uuilist;
 
             if (parts.Length < 3)
             {
@@ -233,17 +233,17 @@ namespace SilverSim.Scripting.Lsl
             {
                 case "AllowedCreators":
                     list = value == "none" ? new string[0] : value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    uuilist = new List<UUI>();
+                    uuilist = new List<UGUI>();
                     foreach(string entry in list)
                     {
-                        UUI uui;
-                        if(UUI.TryParse(entry, out uui) && !uuilist.Contains(uui))
+                        UGUI uui;
+                        if(UGUI.TryParse(entry, out uui) && !uuilist.Contains(uui))
                         {
                             uuilist.Add(uui);
                         }
                     }
 
-                    foreach(UUI uui in perms.Creators)
+                    foreach(UGUI uui in perms.Creators)
                     {
                         if(!uuilist.Contains(uui))
                         {
@@ -251,7 +251,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
 
-                    foreach (UUI uui in uuilist)
+                    foreach (UGUI uui in uuilist)
                     {
                         perms.Creators.AddIfNotExists(uui);
                     }
@@ -259,17 +259,17 @@ namespace SilverSim.Scripting.Lsl
 
                 case "AllowedOwners":
                     list = value == "none" ? new string[0] : value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    uuilist = new List<UUI>();
+                    uuilist = new List<UGUI>();
                     foreach (string entry in list)
                     {
-                        UUI uui;
-                        if (UUI.TryParse(entry, out uui) && !uuilist.Contains(uui))
+                        UGUI uui;
+                        if (UGUI.TryParse(entry, out uui) && !uuilist.Contains(uui))
                         {
                             uuilist.Add(uui);
                         }
                     }
 
-                    foreach (UUI uui in perms.Owners)
+                    foreach (UGUI uui in perms.Owners)
                     {
                         if (!uuilist.Contains(uui))
                         {
@@ -277,7 +277,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
 
-                    foreach (UUI uui in uuilist)
+                    foreach (UGUI uui in uuilist)
                     {
                         perms.Owners.AddIfNotExists(uui);
                     }

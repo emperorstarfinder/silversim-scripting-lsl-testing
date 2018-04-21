@@ -41,7 +41,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             lock (instance)
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
-                UUI groupOwner = thisGroup.Owner;
+                UGUIWithName groupOwner = thisGroup.Scene.AvatarNameService.ResolveName(thisGroup.Owner);
                 if (message.Length > 511)
                 {
                     throw new LocalizedScriptErrorException(this, "MessageMoreThan511Characters", "Message more than 511 characters");

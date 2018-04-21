@@ -233,7 +233,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        public bool RealRezObject(SceneInterface scene, UUI rezzingowner, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param)
+        public bool RealRezObject(SceneInterface scene, UGUI rezzingowner, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param)
         {
             Quaternion rotOff = rot / groups[0].GlobalRotation;
             Vector3 coalesced = groups[0].CoalescedRestoreOffset;

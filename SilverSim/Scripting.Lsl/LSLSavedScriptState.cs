@@ -452,7 +452,7 @@ namespace SilverSim.Scripting.Lsl
                                 break;
 
                             case "owner":
-                                di.Owner = new UUI(reader.Value);
+                                di.Owner = new UGUI(reader.Value);
                                 break;
 
                             case "position":
