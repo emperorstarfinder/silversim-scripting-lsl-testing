@@ -50,7 +50,10 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
         [ImplementsCustomTypecasts]
         public sealed class Document
         {
-            public readonly XmlDocument XmlDocument = new XmlDocument();
+            public readonly XmlDocument XmlDocument = new XmlDocument
+            {
+                XmlResolver = null
+            };
 
             public Document()
             {

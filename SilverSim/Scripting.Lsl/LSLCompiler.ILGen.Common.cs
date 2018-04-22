@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.Lsl
                     {
                         using (var ms = new MemoryStream(serializedState))
                         {
-                            using (var reader = new XmlTextReader(ms))
+                            using (XmlTextReader reader = ms.CreateXmlReader())
                             {
                                 m_Script.LoadScriptState(Script.SavedScriptState.FromXML(reader, item));
                             }
