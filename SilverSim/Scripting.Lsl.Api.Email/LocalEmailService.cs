@@ -113,6 +113,8 @@ namespace SilverSim.Scripting.Lsl.Api.Email
 
         protected readonly string m_LocalDomain = "lsl.local";
 
+        public string LocalDomain => m_LocalDomain;
+
         protected SceneList m_Scenes;
         private readonly RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>> m_Queues = new RwLockedDictionary<UUID, RwLockedDictionaryAutoAdd<UUID, EmailQueue>>();
 

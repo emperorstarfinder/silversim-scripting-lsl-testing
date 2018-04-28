@@ -110,5 +110,53 @@ namespace SilverSim.Scripting.Lsl.Api.Email
                 m_Service.RequestNext(scene.ID, part.ID, address, subject);
             }
         }
+
+        [APIDisplayName("emailaccessor")]
+        [APIExtension(APIExtension.Properties, "emailaccessor")]
+        [APIAccessibleMembers("LocalLslDomain")]
+        public sealed class EmailAccessor
+        {
+            public string LocalLslDomain { get; }
+
+            public EmailAccessor(string localDomain)
+            {
+                LocalLslDomain = localDomain;
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Email")]
+        public EmailAccessor GetEmailAccessor(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return new EmailAccessor(m_Service?.LocalDomain ?? string.Empty);
+            }
+        }
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Send")]
+        public void SendEmail(ScriptInstance instance, EmailAccessor accessor, string address, string subject, string message) =>
+            Email(instance, address, subject, message);
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetNext")]
+        public void GetNextEmail(ScriptInstance instance, EmailAccessor accessor, string address, string subject) =>
+            GetNextEmail(instance, address, subject);
+
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetNext")]
+        public void GetNextEmail(ScriptInstance instance, EmailAccessor accessor) =>
+            GetNextEmail(instance, string.Empty, string.Empty);
+
+        [APILevel(APIFlags.ASSL, "asGetLocalLslEmailDomain")]
+        public string GetLocalEmailDomain(ScriptInstance instance)
+        {
+            if (m_Service == null)
+            {
+                return string.Empty;
+            }
+
+            lock (instance)
+            {
+                return m_Service.LocalDomain;
+            }
+        }
     }
 }

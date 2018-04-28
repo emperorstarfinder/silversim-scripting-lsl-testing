@@ -28,5 +28,6 @@ namespace SilverSim.Scripting.Lsl.Api.Email
         void Send(UUID fromSceneID, UUID fromObjectID, string toaddress, string subject, string body);
         /** return path is handled by EmailService */
         void RequestNext(UUID sceneID, UUID objectID, string sender, string subject);
+        string LocalDomain { get; }
     }
 }
