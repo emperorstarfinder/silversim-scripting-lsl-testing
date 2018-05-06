@@ -1848,7 +1848,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else if(m_LeftHandType == typeof(string) || m_LeftHandType == typeof(LSLKey))
                         {
-                            if(!compileState.LanguageExtensions.EnableKeyAndStringConcat && m_LeftHandType != m_RightHandType)
+                            if(!compileState.LanguageExtensions.EnableKeyAndStringConcat && (m_LeftHandType != m_RightHandType || m_LeftHandType == typeof(LSLKey)))
                             {
                                 throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusNotSupportedFor0And1", "operator '+' is not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                             }
