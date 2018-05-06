@@ -165,6 +165,9 @@ namespace SilverSim.Scripting.Lsl
                 public bool EnableImplicitTypecastToStringOnAddOperator;
 
                 [APILevel(APIFlags.OSSL)]
+                public bool EnableKeyAndStringConcat;
+
+                [APILevel(APIFlags.OSSL)]
                 public bool EnableNonFirstDefaultState;
 
                 [APILevel(APIFlags.OSSL)]
