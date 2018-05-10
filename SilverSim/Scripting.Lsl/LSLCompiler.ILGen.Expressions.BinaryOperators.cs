@@ -1539,6 +1539,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorPlusEqualsNotSupportedFor0And1", "operator '+=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                             }
+                            ProcessImplicitCasts(compileState, mi.GetParameters()[1].ParameterType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
@@ -1561,6 +1562,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMinusEqualsNotSupportedFor0And1", "operator '-=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                             }
+                            ProcessImplicitCasts(compileState, mi.GetParameters()[1].ParameterType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
@@ -1588,6 +1590,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorMultiplyEqualsNotSupportedFor0And1", "operator '*=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                             }
+                            ProcessImplicitCasts(compileState, mi.GetParameters()[1].ParameterType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
@@ -1615,6 +1618,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorDivideEqualsNotSupportedFor0And1", "operator '/=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                             }
+                            ProcessImplicitCasts(compileState, mi.GetParameters()[1].ParameterType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
@@ -1677,6 +1681,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorModuloEqualsNotSupportedFor0And1", "operator '%=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                             }
+                            ProcessImplicitCasts(compileState, mi.GetParameters()[1].ParameterType, m_RightHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Call, mi);
                         }
                         else
@@ -1750,6 +1755,18 @@ namespace SilverSim.Scripting.Lsl
                     SetVarFromStack(compileState, varInfo, m_LineNumber);
                 }
                 throw Return(compileState, m_LeftHandType);
+            }
+
+            private void GenerateCallOfTwoParameterMethod(
+                CompileState compileState,
+                MethodInfo mi)
+            {
+                ParameterInfo[] pi = mi.GetParameters();
+                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                ProcessImplicitCasts(compileState, pi[0].ParameterType, m_LeftHandType, m_LineNumber);
+                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                ProcessImplicitCasts(compileState, pi[1].ParameterType, m_RightHandType, m_LineNumber);
+                compileState.ILGen.Emit(mi.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, mi);
             }
 
             public void ProcessOperator_Return(
@@ -1887,9 +1904,7 @@ namespace SilverSim.Scripting.Lsl
                             mi = m_LeftHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
                             if (mi != null)
                             {
-                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                GenerateCallOfTwoParameterMethod(compileState, mi);
                                 if (!compileState.IsValidType(mi.ReturnType))
                                 {
                                     throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -1902,9 +1917,7 @@ namespace SilverSim.Scripting.Lsl
                             mi = m_RightHandType.GetMethod("op_Addition", new Type[] { m_LeftHandType, m_RightHandType });
                             if (mi != null)
                             {
-                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                GenerateCallOfTwoParameterMethod(compileState, mi);
                                 if (!compileState.IsValidType(mi.ReturnType))
                                 {
                                     throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -1957,9 +1970,7 @@ namespace SilverSim.Scripting.Lsl
                             mi = m_LeftHandType.GetMethod("op_Subtraction", new Type[] { m_LeftHandType, m_RightHandType });
                             if (mi != null)
                             {
-                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                GenerateCallOfTwoParameterMethod(compileState, mi);
                                 if (!compileState.IsValidType(mi.ReturnType))
                                 {
                                     throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -2022,9 +2033,7 @@ namespace SilverSim.Scripting.Lsl
                                 mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
                                 if (mi != null)
                                 {
-                                    compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                                    compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                                    compileState.ILGen.Emit(OpCodes.Call, mi);
+                                    GenerateCallOfTwoParameterMethod(compileState, mi);
                                     if (!compileState.IsValidType(mi.ReturnType))
                                     {
                                         throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -2057,9 +2066,7 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_LeftHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
                         if (mi != null)
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            GenerateCallOfTwoParameterMethod(compileState, mi);
                             if (!compileState.IsValidType(mi.ReturnType))
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -2069,9 +2076,7 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_RightHandType.GetMethod("op_Multiply", new Type[] { m_LeftHandType, m_RightHandType });
                         if (mi != null)
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            GenerateCallOfTwoParameterMethod(compileState, mi);
                             if (!compileState.IsValidType(mi.ReturnType))
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -2123,9 +2128,7 @@ namespace SilverSim.Scripting.Lsl
                         else if(m_LeftHandType == typeof(Quaternion) && m_RightHandType == typeof(Quaternion))
                         {
                             mi = typeof(LSLCompiler).GetMethod("LSLQuaternionDivision");
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            GenerateCallOfTwoParameterMethod(compileState, mi);
                             if (!compileState.IsValidType(mi.ReturnType))
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -2136,9 +2139,7 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_LeftHandType.GetMethod("op_Division", new Type[] { m_LeftHandType, m_RightHandType });
                         if (mi != null)
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
+                            GenerateCallOfTwoParameterMethod(compileState, mi);
                             if (!compileState.IsValidType(mi.ReturnType))
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
@@ -2220,10 +2221,8 @@ namespace SilverSim.Scripting.Lsl
                         mi = m_RightHandType.GetMethod("op_Modulus", new Type[] { m_LeftHandType, m_RightHandType });
                         if (mi != null)
                         {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Call, mi);
-                            if(!compileState.IsValidType(mi.ReturnType))
+                            GenerateCallOfTwoParameterMethod(compileState, mi);
+                            if (!compileState.IsValidType(mi.ReturnType))
                             {
                                 throw new CompilerException(m_LineNumber, string.Format("Internal Error! Type {0} is not a LSL compatible type", mi.ReturnType.FullName));
                             }
