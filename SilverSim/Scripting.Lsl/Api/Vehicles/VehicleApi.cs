@@ -167,11 +167,11 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         break;
 
                     case VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY:
-                        thisGroup[VehicleFloatParamId.AngularDeflectionEfficiency] = value;
+                        thisGroup[VehicleVectorParamId.AngularDeflectionEfficiency] = new Vector3(value);
                         break;
 
                     case VEHICLE_ANGULAR_DEFLECTION_TIMESCALE:
-                        thisGroup[VehicleFloatParamId.AngularDeflectionTimescale] = value;
+                        thisGroup[VehicleVectorParamId.AngularDeflectionTimescale] = new Vector3(value);
                         break;
 
                     case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
@@ -211,11 +211,11 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         break;
 
                     case VEHICLE_LINEAR_DEFLECTION_EFFICIENCY:
-                        thisGroup[VehicleFloatParamId.LinearDeflectionEfficiency] = value;
+                        thisGroup[VehicleVectorParamId.LinearDeflectionEfficiency] = new Vector3(value);
                         break;
 
                     case VEHICLE_LINEAR_DEFLECTION_TIMESCALE:
-                        thisGroup[VehicleFloatParamId.LinearDeflectionTimescale] = value;
+                        thisGroup[VehicleVectorParamId.LinearDeflectionTimescale] = new Vector3(value);
                         break;
 
                     case VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE:
@@ -227,11 +227,11 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         break;
 
                     case VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY:
-                        thisGroup[VehicleFloatParamId.VerticalAttractionEfficiency] = value;
+                        thisGroup[VehicleVectorParamId.VerticalAttractionEfficiency] = new Vector3(value);
                         break;
 
                     case VEHICLE_VERTICAL_ATTRACTION_TIMESCALE:
-                        thisGroup[VehicleFloatParamId.VerticalAttractionTimescale] = value;
+                        thisGroup[VehicleVectorParamId.VerticalAttractionTimescale] = new Vector3(value);
                         break;
 
                     case VEHICLE_MOUSELOOK_AZIMUTH:
@@ -390,6 +390,14 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         thisGroup[VehicleVectorParamId.LinearMotorOffset] = vec;
                         break;
 
+                    case VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.AngularDeflectionEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_DEFLECTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularDeflectionTimescale] = vec;
+                        break;
+
                     case VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE:
                         thisGroup[VehicleVectorParamId.AngularMotorDecayTimescale] = vec;
                         break;
@@ -398,12 +406,28 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         thisGroup[VehicleVectorParamId.AngularMotorTimescale] = vec;
                         break;
 
+                    case VEHICLE_LINEAR_DEFLECTION_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.LinearDeflectionEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_DEFLECTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearDeflectionTimescale] = vec;
+                        break;
+
                     case VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE:
                         thisGroup[VehicleVectorParamId.LinearMotorDecayTimescale] = vec;
                         break;
 
                     case VEHICLE_LINEAR_MOTOR_TIMESCALE:
                         thisGroup[VehicleVectorParamId.LinearMotorTimescale] = vec;
+                        break;
+
+                    case VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.VerticalAttractionEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_VERTICAL_ATTRACTION_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.VerticalAttractionTimescale] = vec;
                         break;
 
                     default:

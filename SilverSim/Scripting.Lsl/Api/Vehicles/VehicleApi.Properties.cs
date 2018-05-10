@@ -133,16 +133,16 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 set { With((g, v) => g[VehicleVectorParamId.AngularWindEfficiency] = v, value); }
             }
 
-            public double DeflectionEfficiency
+            public Vector3 DeflectionEfficiency
             {
-                get { return With((g) => g[VehicleFloatParamId.AngularDeflectionEfficiency]); }
-                set { With((g, v) => g[VehicleFloatParamId.AngularDeflectionEfficiency] = v, value); }
+                get { return With((g) => g[VehicleVectorParamId.AngularDeflectionEfficiency]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularDeflectionEfficiency] = v, value); }
             }
 
-            public double DeflectionTimescale
+            public Vector3 DeflectionTimescale
             {
-                get { return With((g) => g[VehicleFloatParamId.AngularDeflectionTimescale]); }
-                set { With((g, v) => g[VehicleFloatParamId.AngularDeflectionTimescale] = v, value); }
+                get { return With((g) => g[VehicleVectorParamId.AngularDeflectionTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularDeflectionTimescale] = v, value); }
             }
         }
 
@@ -203,16 +203,16 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 set { With((g, v) => g[VehicleVectorParamId.LinearWindEfficiency] = v, value); }
             }
 
-            public double DeflectionEfficiency
+            public Vector3 DeflectionEfficiency
             {
-                get { return With((g) => g[VehicleFloatParamId.LinearDeflectionEfficiency]); }
-                set { With((g, v) => g[VehicleFloatParamId.LinearDeflectionEfficiency] = v, value); }
+                get { return With((g) => g[VehicleVectorParamId.LinearDeflectionEfficiency]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearDeflectionEfficiency] = v, value); }
             }
 
-            public double DeflectionTimescale
+            public Vector3 DeflectionTimescale
             {
-                get { return With((g) => g[VehicleFloatParamId.LinearDeflectionTimescale]); }
-                set { With((g, v) => g[VehicleFloatParamId.LinearDeflectionTimescale] = v, value); }
+                get { return With((g) => g[VehicleVectorParamId.LinearDeflectionTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearDeflectionTimescale] = v, value); }
             }
         }
 
@@ -324,16 +324,16 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
             {
             }
 
-            public double Efficiency
+            public Vector3 Efficiency
             {
-                get { return With((g) => g[VehicleFloatParamId.VerticalAttractionEfficiency]); }
-                set { With((g, v) => g[VehicleFloatParamId.VerticalAttractionEfficiency] = v, value); }
+                get { return With((g) => g[VehicleVectorParamId.VerticalAttractionEfficiency]); }
+                set { With((g, v) => g[VehicleVectorParamId.VerticalAttractionEfficiency] = v, value); }
             }
 
-            public double Timescale
+            public Vector3 Timescale
             {
-                get { return With((g) => g[VehicleFloatParamId.VerticalAttractionTimescale]); }
-                set { With((g, v) => g[VehicleFloatParamId.VerticalAttractionTimescale] = v, value); }
+                get { return With((g) => g[VehicleVectorParamId.VerticalAttractionTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.VerticalAttractionTimescale] = v, value); }
             }
         }
 
