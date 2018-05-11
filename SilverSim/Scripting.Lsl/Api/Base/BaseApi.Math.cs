@@ -173,31 +173,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llEuler2Rot")]
         [Pure]
-        public Quaternion Euler2Rot(Vector3 v)
-        {
-            double roll = v.X;
-            double pitch = v.Y;
-            double yaw = v.Z;
-            const double twopi = Math.PI * 2;
-            roll = roll % twopi;
-            pitch = pitch % twopi;
-            yaw = yaw % twopi;
-
-            double atCos = Math.Cos(roll / 2f);
-            double atSin = Math.Sin(roll / 2f);
-            double leftCos = Math.Cos(pitch / 2f);
-            double leftSin = Math.Sin(pitch / 2f);
-            double upCos = Math.Cos(yaw / 2f);
-            double upSin = Math.Sin(yaw / 2f);
-            double atLeftCos = atCos * leftCos;
-            double atLeftSin = atSin * leftSin;
-            return new Quaternion(
-                atSin * leftCos * upCos + atCos * leftSin * upSin,
-                atCos * leftSin * upCos - atSin * leftCos * upSin,
-                atLeftCos * upSin + atLeftSin * upCos,
-                atLeftCos * upCos - atLeftSin * upSin
-            );
-        }
+        public Quaternion Euler2Rot(Vector3 v) => Quaternion.CreateFromEulers(v);
 
         [APILevel(APIFlags.LSL, "llAngleBetween")]
         [Pure]
