@@ -85,14 +85,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APIExtension(APIExtension.Properties, "vehicle_angular")]
         [APIDisplayName("vehicle_angular")]
-        [APIAccessibleMembers(
-            "FrictionTimescale",
-            "MotorDirection",
-            "MotorDecayTimescale",
-            "MotorTimescale",
-            "WindEfficiency",
-            "DeflectionEfficiency",
-            "DeflectionTimescale")]
+        [APIAccessibleMembers]
         public class VehicleAngularData : VehicleBaseData
         {
             public VehicleAngularData()
@@ -123,8 +116,32 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
             public Vector3 MotorTimescale
             {
-                get { return With((g) => g[VehicleVectorParamId.AngularWindEfficiency]); }
+                get { return With((g) => g[VehicleVectorParamId.AngularMotorTimescale]); }
                 set { With((g, v) => g[VehicleVectorParamId.AngularMotorTimescale] = v, value); }
+            }
+
+            public Vector3 MotorAccelPosTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMotorAccelPosTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMotorAccelPosTimescale] = v, value); }
+            }
+
+            public Vector3 MotorDecelPosTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMotorDecelPosTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMotorDecelPosTimescale] = v, value); }
+            }
+
+            public Vector3 MotorAccelNegTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMotorAccelNegTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMotorAccelNegTimescale] = v, value); }
+            }
+
+            public Vector3 MotorDecelNegTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMotorDecelNegTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMotorDecelNegTimescale] = v, value); }
             }
 
             public Vector3 WindEfficiency
@@ -148,15 +165,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APIExtension(APIExtension.Properties, "vehicle_linear")]
         [APIDisplayName("vehicle_linear")]
-        [APIAccessibleMembers(
-            "FrictionTimescale",
-            "MotorDirection",
-            "MotorOffset",
-            "MotorDecayTimescale",
-            "MotorTimescale",
-            "WindEfficiency",
-            "DeflectionEfficiency",
-            "DeflectionTimescale")]
+        [APIAccessibleMembers]
         public class VehicleLinearData : VehicleBaseData
         {
             public VehicleLinearData()
@@ -197,6 +206,30 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 set { With((g, v) => g[VehicleVectorParamId.LinearMotorTimescale] = v, value); }
             }
 
+            public Vector3 MotorAccelPosTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMotorAccelPosTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMotorAccelPosTimescale] = v, value); }
+            }
+
+            public Vector3 MotorDecelPosTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMotorDecelPosTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMotorDecelPosTimescale] = v, value); }
+            }
+
+            public Vector3 MotorAccelNegTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMotorAccelNegTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMotorAccelNegTimescale] = v, value); }
+            }
+
+            public Vector3 MotorDecelNegTimescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMotorDecelNegTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMotorDecelNegTimescale] = v, value); }
+            }
+
             public Vector3 WindEfficiency
             {
                 get { return With((g) => g[VehicleVectorParamId.LinearWindEfficiency]); }
@@ -218,12 +251,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APIExtension(APIExtension.Properties, "vehicle_banking")]
         [APIDisplayName("vehicle_banking")]
-        [APIAccessibleMembers(
-            "Efficiency",
-            "Mix",
-            "Timescale",
-            "Azimuth",
-            "InvertedModifier")]
+        [APIAccessibleMembers]
         public class VehicleBankingData : VehicleBaseData
         {
             public VehicleBankingData()
@@ -268,11 +296,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APIExtension(APIExtension.Properties, "vehicle_hover")]
         [APIDisplayName("vehicle_hover")]
-        [APIAccessibleMembers(
-            "Buoyancy",
-            "Height",
-            "Efficiency",
-            "Timescale")]
+        [APIAccessibleMembers]
         public class VehicleHoverData : VehicleBaseData
         {
             public VehicleHoverData()
@@ -311,9 +335,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APIExtension(APIExtension.Properties, "vehicle_verticalattraction")]
         [APIDisplayName("vehicle_verticalattraction")]
-        [APIAccessibleMembers(
-            "Efficiency",
-            "Timescale")]
+        [APIAccessibleMembers]
         public class VehicleVerticalAttractionData : VehicleBaseData
         {
             public VehicleVerticalAttractionData()
@@ -339,9 +361,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APIExtension(APIExtension.Properties, "vehicle_mouselook")]
         [APIDisplayName("vehicle_mouselook")]
-        [APIAccessibleMembers(
-            "Azimuth",
-            "Altitude")]
+        [APIAccessibleMembers]
         public class VehicleMouselookData : VehicleBaseData
         {
             public VehicleMouselookData()
@@ -367,17 +387,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APIExtension(APIExtension.Properties, "vehicle")]
         [APIDisplayName("vehicle")]
-        [APIAccessibleMembers(
-            "Type",
-            "ReferenceFrame",
-            "DisableMotorsAbove",
-            "DisableMotorsAfter",
-            "Linear",
-            "Angular",
-            "Banking",
-            "Mouselook",
-            "Hover",
-            "VerticalAttract")]
+        [APIAccessibleMembers]
         public class VehicleData : VehicleBaseData
         {
             public VehicleData(ScriptInstance instance) : base(instance)

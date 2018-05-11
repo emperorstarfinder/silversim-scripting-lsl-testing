@@ -258,6 +258,38 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         thisGroup[VehicleFloatParamId.InvertedBankingModifier] = value;
                         break;
 
+                    case VEHICLE_LINEAR_MOTOR_ACCEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorAccelPosTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_DECEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorDecelPosTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_ACCEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorAccelNegTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_DECEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorDecelNegTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_ACCEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorAccelPosTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_DECEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorDecelPosTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_ACCEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorAccelNegTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_DECEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorDecelNegTimescale] = new Vector3(value);
+                        break;
+
                     default:
                         break;
                 }
@@ -361,6 +393,22 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_LINEAR_MOTOR_DIRECTION = 18;
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_LINEAR_MOTOR_ACCEL_POS_TIMESCALE = 13000;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_LINEAR_MOTOR_DECEL_POS_TIMESCALE = 13001;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_LINEAR_MOTOR_ACCEL_NEG_TIMESCALE = 13002;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_LINEAR_MOTOR_DECEL_NEG_TIMESCALE = 13003;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_ANGULAR_MOTOR_ACCEL_POS_TIMESCALE = 13100;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_ANGULAR_MOTOR_DECEL_POS_TIMESCALE = 13101;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_ANGULAR_MOTOR_ACCEL_NEG_TIMESCALE = 13102;
+        [APILevel(APIFlags.ASSL)]
+        public const int VEHICLE_ANGULAR_MOTOR_DECEL_NEG_TIMESCALE = 13103;
 
         [APILevel(APIFlags.LSL, "llSetVehicleVectorParam")]
         public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
@@ -428,6 +476,38 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
                     case VEHICLE_VERTICAL_ATTRACTION_TIMESCALE:
                         thisGroup[VehicleVectorParamId.VerticalAttractionTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_ACCEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorAccelPosTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_DECEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorDecelPosTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_ACCEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorAccelNegTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOTOR_DECEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMotorDecelNegTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_ACCEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorAccelPosTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_DECEL_POS_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorDecelPosTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_ACCEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorAccelNegTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOTOR_DECEL_NEG_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMotorDecelNegTimescale] = vec;
                         break;
 
                     default:
