@@ -38,6 +38,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
             /* intentionally left empty */
         }
 
+        #region Vehicle flags
         [APILevel(APIFlags.LSL)]
         [APILevel(APIFlags.LSL, "VEHICLE_FLAG_NO_FLY_UP")]
         public const int VEHICLE_FLAG_NO_DEFLECTION_UP = 0x001;
@@ -72,6 +73,128 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_FLAG_MOUSE_POINT_STEER = 0x100000;
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_FLAG_MOUSE_POINT_BANK = 0x200000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_FLAG_STOP_MOVE_TO_TARGET_AT_END = 1 << 31;
+        #endregion
+
+        #region Vehicle types
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_TYPE_NONE = 0;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_TYPE_SLED = 1;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_TYPE_CAR = 2;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_TYPE_BOAT = 3;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_TYPE_AIRPLANE = 4;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_TYPE_BALLOON = 5;
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_TYPE_SAILBOAT = 10001;
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_TYPE_MOTORCYCLE = 10002;
+        #endregion
+
+        #region Vehicle parameters
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_ANGULAR_FRICTION_TIMESCALE = 17;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_ANGULAR_MOTOR_DIRECTION = 19;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_LINEAR_FRICTION_TIMESCALE = 16;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_LINEAR_MOTOR_DIRECTION = 18;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_HOVER_HEIGHT = 24;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_HOVER_EFFICIENCY = 25;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_HOVER_TIMESCALE = 26;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_BUOYANCY = 27;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_LINEAR_DEFLECTION_EFFICIENCY = 28;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_LINEAR_DEFLECTION_TIMESCALE = 29;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_LINEAR_MOTOR_TIMESCALE = 30;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE = 31;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY = 32;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_ANGULAR_DEFLECTION_TIMESCALE = 33;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_ANGULAR_MOTOR_TIMESCALE = 34;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE = 35;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY = 36;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_BANKING_EFFICIENCY = 38;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_BANKING_MIX = 39;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_BANKING_TIMESCALE = 40;
+        [APILevel(APIFlags.LSL)]
+        public const int VEHICLE_REFERENCE_FRAME = 44;
+
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_MOUSELOOK_AZIMUTH = 11001;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_MOUSELOOK_ALTITUDE = 11002;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_BANKING_AZIMUTH = 11003;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_DISABLE_MOTORS_ABOVE = 11004;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_DISABLE_MOTORS_AFTER = 11005;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_INVERTED_BANKING_MODIFIER = 11006;
+
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOTOR_ACCEL_POS_TIMESCALE = 13000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOTOR_DECEL_POS_TIMESCALE = 13001;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOTOR_ACCEL_NEG_TIMESCALE = 13002;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOTOR_DECEL_NEG_TIMESCALE = 13003;
+
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOTOR_ACCEL_POS_TIMESCALE = 13100;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOTOR_DECEL_POS_TIMESCALE = 13101;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOTOR_ACCEL_NEG_TIMESCALE = 13102;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOTOR_DECEL_NEG_TIMESCALE = 13103;
+
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOVE_TO_TARGET_EFFICIENCY = 14000;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOVE_TO_TARGET_TIMESCALE = 14001;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOVE_TO_TARGET_EPSILON = 14002;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_MOVE_TO_TARGET_MAX_OUTPUT = 14003;
+
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_EFFICIENCY = 14100;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_TIMESCALE = 14101;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_EPSILON = 14102;
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_MAX_OUTPUT = 14103;
+        #endregion
 
         [APILevel(APIFlags.LSL, "llSetVehicleFlags")]
         public void SetVehicleFlags(ScriptInstance instance, int flags)
@@ -90,53 +213,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 instance.Part.ObjectGroup.ClearVehicleFlags((VehicleFlags)flags);
             }
         }
-
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_ANGULAR_DEFLECTION_EFFICIENCY = 32;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_ANGULAR_DEFLECTION_TIMESCALE = 33;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_ANGULAR_MOTOR_DECAY_TIMESCALE = 35;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_ANGULAR_MOTOR_TIMESCALE = 34;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_BANKING_EFFICIENCY = 38;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_BANKING_MIX = 39;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_BANKING_TIMESCALE = 40;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_BUOYANCY = 27;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_HOVER_HEIGHT = 24;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_HOVER_EFFICIENCY = 25;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_HOVER_TIMESCALE = 26;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_LINEAR_DEFLECTION_EFFICIENCY = 28;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_LINEAR_DEFLECTION_TIMESCALE = 29;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_LINEAR_MOTOR_DECAY_TIMESCALE = 31;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_LINEAR_MOTOR_TIMESCALE = 30;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_VERTICAL_ATTRACTION_EFFICIENCY = 36;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_VERTICAL_ATTRACTION_TIMESCALE = 37;
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_MOUSELOOK_AZIMUTH = 11001;
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_MOUSELOOK_ALTITUDE = 11002;
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_BANKING_AZIMUTH = 11003;
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_DISABLE_MOTORS_ABOVE = 11004;
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_DISABLE_MOTORS_AFTER = 11005;
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_INVERTED_BANKING_MODIFIER = 11006;
 
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
         public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
@@ -290,14 +366,43 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         thisGroup[VehicleVectorParamId.AngularMotorDecelNegTimescale] = new Vector3(value);
                         break;
 
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetEfficiency] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_EPSILON:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetEpsilon] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_MAX_OUTPUT:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetMaxOutput] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetEfficiency] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetTimescale] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_EPSILON:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetEpsilon] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_MAX_OUTPUT:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetMaxOutput] = new Vector3(value);
+                        break;
+
                     default:
                         break;
                 }
             }
         }
-
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_REFERENCE_FRAME = 44;
 
         [APILevel(APIFlags.LSL, "llSetVehicleRotationParam")]
         public void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
@@ -316,25 +421,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 }
             }
         }
-
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_TYPE_NONE = 0;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_TYPE_SLED = 1;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_TYPE_CAR = 2;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_TYPE_BOAT = 3;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_TYPE_AIRPLANE = 4;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_TYPE_BALLOON = 5;
-        [APILevel(APIFlags.ASSL)]
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_TYPE_SAILBOAT = 10001;
-        [APILevel(APIFlags.ASSL)]
-        [APIExtension(APIExtension.ExtendedVehicle)]
-        public const int VEHICLE_TYPE_MOTORCYCLE = 10002;
 
         [APILevel(APIFlags.LSL, "llSetVehicleType")]
         public void SetVehicleType(ScriptInstance instance, int type)
@@ -382,33 +468,6 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 }
             }
         }
-
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_ANGULAR_FRICTION_TIMESCALE = 17;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_ANGULAR_MOTOR_DIRECTION = 19;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_LINEAR_FRICTION_TIMESCALE = 16;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_LINEAR_MOTOR_DIRECTION = 18;
-        [APILevel(APIFlags.LSL)]
-        public const int VEHICLE_LINEAR_MOTOR_OFFSET = 20;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_LINEAR_MOTOR_ACCEL_POS_TIMESCALE = 13000;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_LINEAR_MOTOR_DECEL_POS_TIMESCALE = 13001;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_LINEAR_MOTOR_ACCEL_NEG_TIMESCALE = 13002;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_LINEAR_MOTOR_DECEL_NEG_TIMESCALE = 13003;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_ANGULAR_MOTOR_ACCEL_POS_TIMESCALE = 13100;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_ANGULAR_MOTOR_DECEL_POS_TIMESCALE = 13101;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_ANGULAR_MOTOR_ACCEL_NEG_TIMESCALE = 13102;
-        [APILevel(APIFlags.ASSL)]
-        public const int VEHICLE_ANGULAR_MOTOR_DECEL_NEG_TIMESCALE = 13103;
 
         [APILevel(APIFlags.LSL, "llSetVehicleVectorParam")]
         public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
@@ -510,6 +569,37 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                         thisGroup[VehicleVectorParamId.AngularMotorDecelNegTimescale] = vec;
                         break;
 
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_EPSILON:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetEpsilon] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_MOVE_TO_TARGET_MAX_OUTPUT:
+                        thisGroup[VehicleVectorParamId.LinearMoveToTargetMaxOutput] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_TIMESCALE:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetTimescale] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_EPSILON:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetEpsilon] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_MOVE_TO_TARGET_MAX_OUTPUT:
+                        thisGroup[VehicleVectorParamId.AngularMoveToTargetMaxOutput] = vec;
+                        break;
                     default:
                         break;
                 }

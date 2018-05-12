@@ -86,7 +86,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APIExtension(APIExtension.Properties, "vehicle_angular")]
         [APIDisplayName("vehicle_angular")]
         [APIAccessibleMembers]
-        public class VehicleAngularData : VehicleBaseData
+        public sealed class VehicleAngularData : VehicleBaseData
         {
             public VehicleAngularData()
             {
@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APIExtension(APIExtension.Properties, "vehicle_linear")]
         [APIDisplayName("vehicle_linear")]
         [APIAccessibleMembers]
-        public class VehicleLinearData : VehicleBaseData
+        public sealed class VehicleLinearData : VehicleBaseData
         {
             public VehicleLinearData()
             {
@@ -249,14 +249,107 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
             }
         }
 
+        [APIExtension(APIExtension.Properties, "vehicle_linearmovetotarget")]
+        [APIDisplayName("vehicle_linearmovetotarget")]
+        [APIAccessibleMembers]
+        public sealed class VehicleLinearMoveToTargetData : VehicleBaseData
+        {
+            public VehicleLinearMoveToTargetData()
+            {
+            }
+
+            public VehicleLinearMoveToTargetData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public Vector3 Efficiency
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMoveToTargetEfficiency]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMoveToTargetEfficiency] = v, value); }
+            }
+
+            public Vector3 Timescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMoveToTargetTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMoveToTargetTimescale] = v, value); }
+            }
+
+            public Vector3 Epsilon
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMoveToTargetEpsilon]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMoveToTargetEpsilon] = v, value); }
+            }
+
+            public Vector3 MaxOutput
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearMoveToTargetMaxOutput]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearMoveToTargetMaxOutput] = v, value); }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_angularmovetotarget")]
+        [APIDisplayName("vehicle_angularmovetotarget")]
+        [APIAccessibleMembers]
+        public sealed class VehicleAngularMoveToTargetData : VehicleBaseData
+        {
+            public VehicleAngularMoveToTargetData()
+            {
+            }
+
+            public VehicleAngularMoveToTargetData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public Vector3 Efficiency
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMoveToTargetEfficiency]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMoveToTargetEfficiency] = v, value); }
+            }
+
+            public Vector3 Timescale
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMoveToTargetTimescale]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMoveToTargetTimescale] = v, value); }
+            }
+
+            public Vector3 Epsilon
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMoveToTargetEpsilon]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMoveToTargetEpsilon] = v, value); }
+            }
+
+            public Vector3 MaxOutput
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularMoveToTargetMaxOutput]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularMoveToTargetMaxOutput] = v, value); }
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, "vehicle_movetotarget")]
+        [APIDisplayName("vehicle_movetotarget")]
+        [APIAccessibleMembers]
+        public sealed class VehicleMoveToTargetData : VehicleBaseData
+        {
+            public VehicleMoveToTargetData()
+            {
+            }
+
+            public VehicleMoveToTargetData(ScriptInstance instance) : base(instance)
+            {
+            }
+
+            public VehicleLinearMoveToTargetData Linear => With((instance) => new VehicleLinearMoveToTargetData(instance), new VehicleLinearMoveToTargetData());
+
+            public VehicleAngularMoveToTargetData Angular => With((instance) => new VehicleAngularMoveToTargetData(instance), new VehicleAngularMoveToTargetData());
+        }
+
         [APIExtension(APIExtension.Properties, "vehicle_banking")]
         [APIDisplayName("vehicle_banking")]
         [APIAccessibleMembers]
-        public class VehicleBankingData : VehicleBaseData
+        public sealed class VehicleBankingData : VehicleBaseData
         {
             public VehicleBankingData()
             {
-
             }
 
             public VehicleBankingData(ScriptInstance instance) : base(instance)
@@ -297,7 +390,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APIExtension(APIExtension.Properties, "vehicle_hover")]
         [APIDisplayName("vehicle_hover")]
         [APIAccessibleMembers]
-        public class VehicleHoverData : VehicleBaseData
+        public sealed class VehicleHoverData : VehicleBaseData
         {
             public VehicleHoverData()
             {
@@ -336,7 +429,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APIExtension(APIExtension.Properties, "vehicle_verticalattraction")]
         [APIDisplayName("vehicle_verticalattraction")]
         [APIAccessibleMembers]
-        public class VehicleVerticalAttractionData : VehicleBaseData
+        public sealed class VehicleVerticalAttractionData : VehicleBaseData
         {
             public VehicleVerticalAttractionData()
             {
@@ -362,7 +455,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APIExtension(APIExtension.Properties, "vehicle_mouselook")]
         [APIDisplayName("vehicle_mouselook")]
         [APIAccessibleMembers]
-        public class VehicleMouselookData : VehicleBaseData
+        public sealed class VehicleMouselookData : VehicleBaseData
         {
             public VehicleMouselookData()
             {
@@ -388,7 +481,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APIExtension(APIExtension.Properties, "vehicle")]
         [APIDisplayName("vehicle")]
         [APIAccessibleMembers]
-        public class VehicleData : VehicleBaseData
+        public sealed class VehicleData : VehicleBaseData
         {
             public VehicleData(ScriptInstance instance) : base(instance)
             {
@@ -501,6 +594,9 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
             public VehicleMouselookData Mouselook =>
                 With((instance) => new VehicleMouselookData(instance), new VehicleMouselookData());
+
+            public VehicleMoveToTargetData MoveToTarget =>
+                With((instance) => new VehicleMoveToTargetData(instance), new VehicleMoveToTargetData());
         }
 
         [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "Vehicle")]
