@@ -92,6 +92,7 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         public const int VEHICLE_TYPE_BALLOON = 5;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
+        [Description("Ra-sail sailboat (no airfoil effects)")]
         public const int VEHICLE_TYPE_SAILBOAT = 10001;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
@@ -146,52 +147,74 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL)]
         public const int VEHICLE_REFERENCE_FRAME = 44;
 
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_MOUSELOOK_AZIMUTH = 11001;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_MOUSELOOK_ALTITUDE = 11002;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_BANKING_AZIMUTH = 11003;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_DISABLE_MOTORS_ABOVE = 11004;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_DISABLE_MOTORS_AFTER = 11005;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_INVERTED_BANKING_MODIFIER = 11006;
 
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOTOR_ACCEL_POS_TIMESCALE = 13000;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOTOR_DECEL_POS_TIMESCALE = 13001;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOTOR_ACCEL_NEG_TIMESCALE = 13002;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOTOR_DECEL_NEG_TIMESCALE = 13003;
 
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOTOR_ACCEL_POS_TIMESCALE = 13100;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOTOR_DECEL_POS_TIMESCALE = 13101;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOTOR_ACCEL_NEG_TIMESCALE = 13102;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOTOR_DECEL_NEG_TIMESCALE = 13103;
 
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOVE_TO_TARGET_EFFICIENCY = 14000;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOVE_TO_TARGET_TIMESCALE = 14001;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOVE_TO_TARGET_EPSILON = 14002;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOVE_TO_TARGET_MAX_OUTPUT = 14003;
 
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_EFFICIENCY = 14100;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_TIMESCALE = 14101;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_EPSILON = 14102;
+        [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_ANGULAR_MOVE_TO_TARGET_MAX_OUTPUT = 14103;
         #endregion
