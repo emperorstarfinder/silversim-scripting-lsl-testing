@@ -138,7 +138,25 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         {
             lock (instance)
             {
-                IPhysicsObject physobj = instance.Part.ObjectGroup.RootPart.PhysicsActor;
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                ObjectPart rootPart = grp.RootPart;
+                IPhysicsObject physobj = null;
+                Quaternion rotation = Quaternion.Identity;
+
+                if (grp.IsAttached)
+                {
+                    IAgent agent;
+                    if (grp.Scene.Agents.TryGetValue(grp.Owner.ID, out agent))
+                    {
+                        physobj = agent.PhysicsActor;
+                        rotation = agent.GlobalRotation;
+                    }
+                }
+                else
+                {
+                    physobj = rootPart.PhysicsActor;
+                    rotation = rootPart.GlobalRotation;
+                }
                 if (physobj == null)
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
@@ -146,7 +164,7 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 }
 
                 physobj.SetAppliedForce((local != 0) ?
-                    force / instance.Part.ObjectGroup.GlobalRotation :
+                    force / rotation :
                     force);
             }
         }
@@ -240,13 +258,59 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         [APILevel(APIFlags.LSL, "llApplyImpulse")]
         public void ApplyImpulse(ScriptInstance instance, Vector3 momentum, int local)
         {
-            throw new NotImplementedException("llApplyImpulse(vector, integer)");
+            lock (instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                ObjectPart rootPart = grp.RootPart;
+                IPhysicsObject physobj = null;
+                Quaternion rotation = Quaternion.Identity;
+
+                if (grp.IsAttached)
+                {
+                    IAgent agent;
+                    if (grp.Scene.Agents.TryGetValue(grp.Owner.ID, out agent))
+                    {
+                        physobj = agent.PhysicsActor;
+                    }
+                }
+                else
+                {
+                    physobj = rootPart.PhysicsActor;
+                }
+                if (physobj == null)
+                {
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
+                    return;
+                }
+
+                physobj.SetLinearImpulse((local != 0) ?
+                    momentum / instance.Part.ObjectGroup.GlobalRotation :
+                    momentum);
+            }
         }
 
         [APILevel(APIFlags.LSL, "llApplyRotationalImpulse")]
         public void ApplyRotationalImpulse(ScriptInstance instance, Vector3 ang_impulse, int local)
         {
-            throw new NotImplementedException("llApplyRotationalImpulse(vector, integer)");
+            lock (instance)
+            {
+                ObjectGroup thisGroup = instance.Part.ObjectGroup;
+                IPhysicsObject physobj = thisGroup.RootPart.PhysicsActor;
+                if (physobj == null)
+                {
+                    instance.ShoutError(new LocalizedScriptMessage(this, "ObjectHasNoPhysicalProperties", "Object has no physical properties"));
+                    return;
+                }
+
+                if (local != 0)
+                {
+                    physobj.SetAngularImpulse(ang_impulse / thisGroup.GlobalRotation);
+                }
+                else
+                {
+                    physobj.SetAngularImpulse(ang_impulse);
+                }
+            }
         }
 
         [APILevel(APIFlags.LSL, "llSetVelocity")]
