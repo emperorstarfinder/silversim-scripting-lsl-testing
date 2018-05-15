@@ -981,9 +981,10 @@ namespace SilverSim.Scripting.Lsl
                         }
                         else
                         {
+                            CheckUsedName(compileState, p, "Function", args[0]);
                             if (args.Count < 3)
                             {
-                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidStateDeclaration", "Invalid state declaration"));
+                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                             }
                             if (compileState.m_LocalVariables.Count != 0)
                             {
