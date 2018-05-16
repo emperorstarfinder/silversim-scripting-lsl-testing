@@ -2286,12 +2286,51 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private static IScriptEvent RpcDeserializer(SavedScriptState.EventParams ep)
+        {
+            if (ep.Params.Count >= 1)
+            {
+                var param = new List<object>();
+                for(int i = 1; i < ep.Params.Count; ++i)
+                {
+                    param.Add(ep.Params[i]);
+                }
+                return new RpcScriptEvent
+                {
+                    FunctionName = ep.Params[0].ToString(),
+                    Parameters = param.ToArray()
+                };
+            }
+            return null;
+        }
+
+
+        private static void RpcSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
+        {
+            var ev = (RpcScriptEvent)iev;
+            writer.WriteStartElement("Item");
+            {
+                writer.WriteAttributeString("event", "rpc");
+                writer.WriteStartElement("Params");
+                writer.WriteTypedValue("Function", ev.FunctionName);
+                foreach(object o in ev.Parameters)
+                {
+                    writer.WriteTypedValue("Param", o);
+                }
+                writer.WriteStartElement("Detected");
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
         #region Event to function handlers
         private static readonly Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>> EventSerializers = new Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>>();
         private static readonly Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>>();
 
         static Script()
         {
+            EventDeserializers.Add("rpc", RpcDeserializer);
+            EventSerializers.Add(typeof(RpcScriptEvent), RpcSerializer);
             EventDeserializers.Add("land_collision_start", LandCollisionStartDeserializer);
             EventSerializers.Add(typeof(LandCollisionEvent), LandCollisionSerializer);
             EventDeserializers.Add("land_collision", LandCollisionDeserializer);
