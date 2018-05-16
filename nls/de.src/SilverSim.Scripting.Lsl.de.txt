@@ -332,3 +332,4 @@ InvalidForeachEncountered=Fehlerhafte 'foreach'-Anweisung gefunden
 WrongNumberOfVariablesToForeachForType0=Anzahl der Ergebnisvariablen für 'foreach' stimmt nicht mit Typ '{0}' überein
 Type0IsNotEnumerableByForeach=Typ '{0}' unterstützt 'foreach' nicht
 InventoryItem0IsNotASoundUnknownLink1=Inventar '{0}' ist kein Sound da der Link {1} ungültig ist.
+RpcCallParameterTypeMustBeSerializable=RPC-Aufrufparametertyp muss serialisierbar sein.

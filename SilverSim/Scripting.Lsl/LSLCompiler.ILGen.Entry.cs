@@ -646,8 +646,28 @@ namespace SilverSim.Scripting.Lsl
                         List<TokenInfo> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
                         int functionStart = 3;
+                        string functionPrefix = "fn_";
 
-                        if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
+                        if (functionDeclaration[0] == "extern" && compileState.LanguageExtensions.EnableExtern)
+                        {
+                            if (functionDeclaration[functionDeclaration.Count - 1] == ";")
+                            {
+                                functionStart = 2;
+                                while (functionDeclaration[functionStart] != ")")
+                                {
+                                    ++functionStart;
+                                }
+                                ++functionStart;
+                                functionName = functionDeclaration[functionStart];
+                                functionStart += 2;
+                            }
+                            else
+                            {
+                                functionPrefix = "rpcfn_";
+                            }
+                            returnType = typeof(void);
+                        }
+                        else if (!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
                         {
                             functionName = functionDeclaration[0];
                             functionStart = 2;
@@ -682,7 +702,7 @@ namespace SilverSim.Scripting.Lsl
                             dumpILGen.WriteLine("********************************************************************************");
                             dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
                         }
-                        method = scriptTypeBuilder.DefineMethod("fn_" + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
+                        method = scriptTypeBuilder.DefineMethod(functionPrefix + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
                         var paramSignature = new KeyValuePair<string, Type>[paramTypes.Count];
                         for (int i = 0; i < paramTypes.Count; ++i)
                         {
@@ -704,8 +724,32 @@ namespace SilverSim.Scripting.Lsl
                         List<TokenInfo> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
                         int functionStart = 3;
+                        bool isExternCall = false;
+                        List<TokenInfo> externDefinition = null;
+                        bool requiresSerializable = functionDeclaration[0] == "extern";
 
-                        if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
+                        if(requiresSerializable && compileState.LanguageExtensions.EnableExtern)
+                        {
+                            returnType = typeof(void);
+                            isExternCall = functionDeclaration[functionDeclaration.Count - 1] == ";";
+                            if(isExternCall)
+                            {
+                                functionStart = 2;
+                                externDefinition = new List<TokenInfo>();
+                                while (functionDeclaration[functionStart] != ")")
+                                {
+                                    externDefinition.Add(functionDeclaration[functionStart++]);
+                                    if (functionDeclaration[functionStart] == ",")
+                                    {
+                                        ++functionStart;
+                                    }
+                                }
+                                ++functionStart;
+                                functionName = functionDeclaration[functionStart];
+                                functionStart+=2;
+                            }
+                        }
+                        else if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
                         {
                             functionName = functionDeclaration[0];
                             functionStart = 2;
@@ -740,6 +784,10 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(functionDeclaration[functionStart - 1].LineNumber, "Internal Error");
                             }
+                            if(requiresSerializable && paramType.GetCustomAttribute(typeof(SerializableAttribute)) == null)
+                            {
+                                throw new CompilerException(externDefinition[functionStart - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "RpcCallParameterTypeMustBeSerializable", "RPC call parameter type must be serializable."));
+                            }
                             paramTypes.Add(paramType);
                             paramName.Add(functionDeclaration[functionStart++]);
                         }
@@ -755,7 +803,15 @@ namespace SilverSim.Scripting.Lsl
                             compileState.DebugDocument,
                             dumpILGen);
                         typeLocals = new Dictionary<string, object>(typeLocalsInited);
-                        ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, funcInfo.FunctionLines, typeLocals);
+                        if (isExternCall)
+                        {
+                            /* generate special call process */
+                            ProcessExternFunction(compileState, scriptTypeBuilder, method, method_ilgen, externDefinition, functionName, paramTypes, functionDeclaration[0].LineNumber);
+                        }
+                        else
+                        {
+                            ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, funcInfo.FunctionLines, typeLocals);
+                        }
 
                         dumpILGen?.WriteLine("GenerateMethodIL.End(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
                     }

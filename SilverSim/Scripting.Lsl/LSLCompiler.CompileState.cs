@@ -136,6 +136,9 @@ namespace SilverSim.Scripting.Lsl
                 [APILevel(APIFlags.OSSL)]
                 public bool EnableFunctionOverloading;
 
+                [APIExtension(APIExtension.Extern)]
+                public bool EnableExtern;
+
                 [APIExtension(APIExtension.StateVariables)]
                 public bool EnableStateVariables;
 

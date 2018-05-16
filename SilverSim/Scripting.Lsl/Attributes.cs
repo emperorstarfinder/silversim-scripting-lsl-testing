@@ -164,6 +164,7 @@ namespace SilverSim.Scripting.Lsl
         public const string MemberFunctions = "MemberFunctions";
         public const string Structs = "Structs";
         public const string CharacterType = "char";
+        public const string Extern = "extern";
     }
 
     [Serializable]

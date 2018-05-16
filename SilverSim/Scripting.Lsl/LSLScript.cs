@@ -29,6 +29,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Api.ByteString;
+using SilverSim.Scripting.Lsl.Event;
 using SilverSim.ServiceInterfaces.Groups;
 using SilverSim.Threading;
 using SilverSim.Types;
@@ -827,6 +828,11 @@ namespace SilverSim.Scripting.Lsl
             InvokeStateEventReal(name, param);
         }
 
+        static public void InvokeRpcEvent(Script script, string name, object[] param)
+        {
+            script.InvokeRpcEventReal(name, param);
+        }
+
         private int m_RecursionCount;
         private static int m_CallDepthLimit = 40;
         static public int CallDepthLimit
@@ -1019,6 +1025,145 @@ namespace SilverSim.Scripting.Lsl
                     ShoutError(e.Message);
                 }
                 catch(ScriptWorkerInterruptionException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+            }
+        }
+
+        internal void InvokeRpcEventReal(string name, object[] param)
+        {
+            MethodInfo mi = GetType().GetMethod("rpcfn_" + name);
+
+            if (mi != null)
+            {
+                IncrementScriptEventCounter();
+                try
+                {
+                    foreach (object p in param)
+                    {
+                        if (p == null)
+                        {
+                            var sb = new StringBuilder("Call failure at rpc ");
+                            sb.Append(name + "(");
+                            bool first = true;
+                            foreach (object pa in param)
+                            {
+                                if (!first)
+                                {
+                                    sb.Append(",");
+                                }
+                                first = false;
+                                if (pa == null)
+                                {
+                                    sb.Append("null");
+                                }
+                                else if (pa is LSLKey || pa is string)
+                                {
+                                    sb.Append("\"" + pa + "\"");
+                                }
+                                else if (pa is char)
+                                {
+                                    sb.Append("\'" + pa + "\'");
+                                }
+                                else
+                                {
+                                    sb.Append(pa.ToString());
+                                }
+                            }
+                            sb.Append(")");
+                            m_Log.Debug(sb);
+                            return;
+                        }
+                    }
+
+                    mi.Invoke(this, param);
+                }
+                catch (ChangeStateException)
+                {
+                    throw;
+                }
+                catch (ResetScriptException)
+                {
+                    throw;
+                }
+                catch (TargetInvocationException e)
+                {
+                    Type innerType = e.InnerException.GetType();
+                    if (innerType == typeof(NotImplementedException))
+                    {
+                        ShoutUnimplementedException(e.InnerException as NotImplementedException);
+                        return;
+                    }
+                    else if (innerType == typeof(DeprecatedFunctionCalledException))
+                    {
+                        ShoutDeprecatedException(e.InnerException as DeprecatedFunctionCalledException);
+                        return;
+                    }
+                    else if (innerType == typeof(HitSandboxLimitException))
+                    {
+                        ShoutError(new LocalizedScriptMessage(this, "HitSandboxLimit", "Hit Sandbox Limit"));
+                    }
+                    else if (innerType == typeof(ChangeStateException) ||
+                        innerType == typeof(ResetScriptException) ||
+                        innerType == typeof(LocalizedScriptErrorException) ||
+                        innerType == typeof(DivideByZeroException))
+                    {
+                        throw e.InnerException;
+                    }
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (NotImplementedException e)
+                {
+                    ShoutUnimplementedException(e);
+                }
+                catch (DeprecatedFunctionCalledException e)
+                {
+                    ShoutDeprecatedException(e);
+                }
+                catch (InvalidProgramException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (HitSandboxLimitException)
+                {
+                    ShoutError(new LocalizedScriptMessage(this, "HitSandboxLimit", "Hit Sandbox Limit"));
+                }
+                catch (CallDepthLimitViolationException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(new LocalizedScriptMessage(this, "FunctionCallDepthLimitViolation", "Function call depth limit violation"));
+                }
+                catch (TargetParameterCountException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (TargetException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (NullReferenceException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (ArgumentException e)
+                {
+#if DEBUG
+                    LogInvokeException(name, e);
+#endif
+                    ShoutError(e.Message);
+                }
+                catch (ScriptWorkerInterruptionException)
                 {
                     throw;
                 }
@@ -2453,6 +2598,12 @@ namespace SilverSim.Scripting.Lsl
             script.InvokeStateEvent("experience_permissions_denied", new LSLKey(e.AgentId.ID), e.Reason);
         }
 
+        private static void HandleRpcScriptEvent(Script script, IScriptEvent ev)
+        {
+            var e = (RpcScriptEvent)ev;
+            script.InvokeRpcEventReal(e.FunctionName, e.Parameters);
+        }
+
         private static void HandleTouch(Script script, IScriptEvent ev)
         {
             var e = (TouchEvent)ev;
@@ -2554,6 +2705,90 @@ namespace SilverSim.Scripting.Lsl
             }
 
             return false;
+        }
+
+        private void InvokeRpcCall(ObjectPart part, string scriptname, RpcScriptEvent ev)
+        {
+            ObjectPartInventoryItem item;
+            if(string.IsNullOrEmpty(scriptname))
+            {
+                part.PostEvent(ev);
+            }
+            else if(part.Inventory.TryGetValue(scriptname, out item))
+            {
+                item.ScriptInstance?.PostEvent(ev);
+            }
+        }
+
+        protected void InvokeRpcCall(string linkname, string scriptname, RpcScriptEvent ev)
+        {
+            ObjectGroup objgroup = Part?.ObjectGroup;
+            if (objgroup == null)
+            {
+                return;
+            }
+            foreach (ObjectPart part in objgroup.Values)
+            {
+                if(part.Name == linkname)
+                {
+                    InvokeRpcCall(part, scriptname, ev);
+                }
+            }
+        }
+
+        protected void InvokeRpcCall(int linknumber, string scriptname, RpcScriptEvent ev)
+        {
+            ObjectPart thisPart = Part;
+            ObjectGroup objgroup = thisPart?.ObjectGroup;
+            if(objgroup == null)
+            {
+                return;
+            }
+
+            if (linknumber == -1 /* LINK_SET */)
+            {
+                foreach (ObjectPart part in objgroup.Values)
+                {
+                    InvokeRpcCall(part, scriptname, ev);
+                }
+            }
+            else if (linknumber == -2 /* LINK_ALL_OTHERS */)
+            {
+                foreach (ObjectPart part in objgroup.Values)
+                {
+                    if (part != thisPart)
+                    {
+                        InvokeRpcCall(part, scriptname, ev);
+                    }
+                }
+            }
+            else if (linknumber == -3 /* LINK_ALL_CHILDREN */)
+            {
+                ObjectPart rootPart = objgroup.RootPart;
+                foreach(ObjectPart part in objgroup.Values)
+                {
+                    if (part != rootPart)
+                    {
+                        InvokeRpcCall(part, scriptname, ev);
+                    }
+                }
+            }
+            else if (linknumber == -4 /* LINK_THIS */)
+            {
+                InvokeRpcCall(Part, scriptname, ev);
+            }
+            else
+            {
+                if(linknumber == 0)
+                {
+                    linknumber = 1;
+                }
+                ObjectPart part;
+                if (objgroup.TryGetValue(linknumber, out part))
+                {
+                    InvokeRpcCall(part, scriptname, ev);
+                }
+            }
         }
 
         public void CheckThreatLevel(string name, ThreatLevel level)

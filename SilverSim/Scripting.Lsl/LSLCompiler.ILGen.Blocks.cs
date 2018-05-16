@@ -23,6 +23,7 @@
 
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Common;
+using SilverSim.Scripting.Lsl.Event;
 using SilverSim.Types;
 using System;
 using System.Collections;
@@ -1015,6 +1016,131 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void ProcessExternFunction(
+            CompileState compileState,
+            TypeBuilder scriptTypeBuilder,
+            MethodBuilder mb,
+            ILGenDumpProxy ilgen,
+            List<TokenInfo> externDefinition,
+            string defaultFunctionName,
+            List<Type> paramTypes,
+            int defLineNumber)
+        {
+            /* extern function declaration 
+             extern ( script ) funcname (...)
+
+             extern ( script, remotefunction ) funcname (...)
+             extern ( linkname , script ) funcname (...)
+             extern ( linknumber, script ) funcname (...)
+
+             extern ( linkname , script, remotefunction ) funcname (...)
+             extern ( linknumber, script, remotefunction ) funcname (...)
+
+            linkname = literal string
+            linknumber = literal number
+            script = literal string
+            remotefunction = identifier
+             */
+            string functionName = defaultFunctionName;
+            string linkName = null;
+            string scriptName = string.Empty;
+            int linknumber = 0;
+
+            switch(externDefinition.Count)
+            {
+                case 1:
+                    if(!externDefinition[0].StartsWith("\""))
+                    {
+                        throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                    }
+                    scriptName = externDefinition[0].Substring(1, externDefinition[0].Length - 2);
+                    break;
+
+                case 2:
+                    if(externDefinition[1].StartsWith("\""))
+                    {
+                        scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
+                        if (externDefinition[0].StartsWith("\""))
+                        {
+                            /* link name */
+                            linkName = externDefinition[0].Substring(1, externDefinition[0].Length - 2);
+                        }
+                        else if (!int.TryParse(externDefinition[0], out linknumber))
+                        {
+                            throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                        }
+                    }
+                    else if(externDefinition[0].StartsWith("\""))
+                    {
+                        scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
+                        functionName = externDefinition[1];
+                    }
+                    else
+                    {
+                        throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                    }
+                    break;
+
+                case 3:
+                    if (externDefinition[0].StartsWith("\""))
+                    {
+                        /* link name */
+                        linkName = externDefinition[0].Substring(1, externDefinition[0].Length - 2);
+                    }
+                    else if (!int.TryParse(externDefinition[0], out linknumber))
+                    {
+                        throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                    }
+                    if (!externDefinition[1].StartsWith("\""))
+                    {
+                        throw new CompilerException(externDefinition[1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                    }
+                    scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
+                    if (externDefinition[2].StartsWith("\""))
+                    {
+                        throw new CompilerException(externDefinition[2].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                    }
+                    scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
+                    functionName = externDefinition[2];
+                    break;
+
+                default:
+                    throw new CompilerException(defLineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+            }
+
+            ilgen.Emit(OpCodes.Ldarg_0); /* fetch script instance first */
+            if (linkName != null)
+            {
+                ilgen.Emit(OpCodes.Ldstr, linkName);
+            }
+            else
+            {
+                ilgen.Emit(OpCodes.Ldc_I4, linknumber);
+            }
+            ilgen.Emit(OpCodes.Ldstr, scriptName);
+            ilgen.Emit(OpCodes.Ldc_I4, paramTypes.Count);
+            ilgen.Emit(OpCodes.Newarr, typeof(object));
+            for(int i = 0; i < paramTypes.Count; ++i)
+            {
+                ilgen.Emit(OpCodes.Dup);
+                ilgen.Emit(OpCodes.Ldc_I4, i);
+                ilgen.Emit(OpCodes.Ldarg, i);
+                ilgen.Emit(OpCodes.Stelem, paramTypes[i]);
+            }
+            ilgen.Emit(OpCodes.Newobj, typeof(RpcScriptEvent).GetConstructor(Type.EmptyTypes));
+            ilgen.Emit(OpCodes.Dup);
+            ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("Parameters"));
+            ilgen.Emit(OpCodes.Dup);
+            ilgen.Emit(OpCodes.Ldstr, functionName);
+            ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("FunctionName"));
+            Type[] invokeParams = linkName != null ? 
+                new Type[] { typeof(string), typeof(string), typeof(RpcScriptEvent) } : 
+                new Type[] { typeof(int), typeof(string), typeof(RpcScriptEvent) };
+            MethodInfo mi = typeof(Script).GetMethod("InvokeRpcCall", BindingFlags.NonPublic | BindingFlags.Instance, null, invokeParams, null);
+            ilgen.Emit(OpCodes.Call, mi);
+            ilgen.Emit(OpCodes.Ret);
+        }
+
         private void ProcessFunction(
             CompileState compileState,
             TypeBuilder scriptTypeBuilder,
@@ -1031,8 +1157,11 @@ namespace SilverSim.Scripting.Lsl
             compileState.ScriptTypeBuilder = scriptTypeBuilder;
             compileState.StateTypeBuilder = stateTypeBuilder;
             compileState.ILGen = ilgen;
-
-            if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
+            if(compileState.LanguageExtensions.EnableExtern && functionDeclaration[0] == "extern")
+            {
+                returnType = typeof(void);
+            }
+            else if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
             {
                 functionStart = 1;
                 returnType = typeof(void);
