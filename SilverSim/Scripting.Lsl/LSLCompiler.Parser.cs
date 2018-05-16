@@ -919,7 +919,15 @@ namespace SilverSim.Scripting.Lsl
                             }
                         }
 
-                        if(funcStart + 3 >= args.Count || args[funcStart + 1] != "(")
+                        if(funcStart + 3 < args.Count && args[funcStart + 1] == "(")
+                        {
+                            /* non-aliasing rpc */
+                        }
+                        else if(funcStart + 5 < args.Count && args[funcStart + 1] == "=" && args[funcStart + 3] == "(")
+                        {
+                            /* aliasing rpc */
+                        }
+                        else
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                         }
@@ -927,18 +935,28 @@ namespace SilverSim.Scripting.Lsl
                         List<FuncParamInfo> funcparam;
                         var funcList = new List<LineInfo>();
                         CheckUsedName(compileState, p, "Function", args[funcStart]);
+                        string functionName = args[funcStart];
+                        if (args[funcStart + 1] == "=")
+                        {
+                            CheckValidName(compileState, p, "Function", args[funcStart + 2]);
+                            funcStart += 2;
+                        }
+                        if (args[funcStart + 1] != "(")
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                        }
                         if (compileState.m_LocalVariables.Count != 0)
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
                         }
                         funcparam = CheckFunctionParameters(compileState, p, args.GetRange(funcStart + 2, args.Count - funcStart - 3));
                         funcList.Add(new LineInfo(args));
-                        if (!compileState.m_Functions.ContainsKey(args[funcStart]))
+                        if (!compileState.m_Functions.ContainsKey(functionName))
                         {
-                            compileState.m_Functions.Add(args[funcStart], new List<FunctionInfo>());
+                            compileState.m_Functions.Add(functionName, new List<FunctionInfo>());
                         }
                         compileState.m_LocalVariables.Clear();
-                        compileState.m_Functions[args[funcStart]].Add(new FunctionInfo(funcparam, funcList));
+                        compileState.m_Functions[functionName].Add(new FunctionInfo(funcparam, funcList));
                     }
                     else
                     {

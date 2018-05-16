@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -658,8 +659,12 @@ namespace SilverSim.Scripting.Lsl
                                     ++functionStart;
                                 }
                                 ++functionStart;
-                                functionName = functionDeclaration[functionStart];
-                                functionStart += 2;
+                                functionName = functionDeclaration[functionStart++];
+                                if (functionDeclaration[functionStart] == "=")
+                                {
+                                    functionStart += 2;
+                                }
+                                ++functionStart;
                             }
                             else
                             {
@@ -700,7 +705,7 @@ namespace SilverSim.Scripting.Lsl
                         if (dumpILGen != null)
                         {
                             dumpILGen.WriteLine("********************************************************************************");
-                            dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
+                            dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, string.Join(",", from p in paramTypes select p.FullName));
                         }
                         method = scriptTypeBuilder.DefineMethod(functionPrefix + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
                         var paramSignature = new KeyValuePair<string, Type>[paramTypes.Count];
@@ -727,6 +732,7 @@ namespace SilverSim.Scripting.Lsl
                         bool isExternCall = false;
                         List<TokenInfo> externDefinition = null;
                         bool requiresSerializable = functionDeclaration[0] == "extern";
+                        string aliasedFunctionName = string.Empty;
 
                         if(requiresSerializable && compileState.LanguageExtensions.EnableExtern)
                         {
@@ -745,8 +751,14 @@ namespace SilverSim.Scripting.Lsl
                                     }
                                 }
                                 ++functionStart;
-                                functionName = functionDeclaration[functionStart];
-                                functionStart+=2;
+                                functionName = functionDeclaration[functionStart++];
+                                aliasedFunctionName = functionName;
+                                if(functionDeclaration[functionStart] == "=")
+                                {
+                                    aliasedFunctionName = functionDeclaration[++functionStart];
+                                    ++functionStart;
+                                }
+                                ++functionStart;
                             }
                         }
                         else if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
@@ -795,7 +807,7 @@ namespace SilverSim.Scripting.Lsl
                         if (dumpILGen != null)
                         {
                             dumpILGen.WriteLine("********************************************************************************");
-                            dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
+                            dumpILGen.WriteLine("GenerateMethodIL.Begin(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, string.Join(",", from p in paramTypes select p.FullName));
                         }
 
                         var method_ilgen = new ILGenDumpProxy(
@@ -806,14 +818,14 @@ namespace SilverSim.Scripting.Lsl
                         if (isExternCall)
                         {
                             /* generate special call process */
-                            ProcessExternFunction(compileState, scriptTypeBuilder, method, method_ilgen, externDefinition, functionName, paramTypes, functionDeclaration[0].LineNumber);
+                            ProcessExternFunction(compileState, scriptTypeBuilder, method, method_ilgen, externDefinition, aliasedFunctionName, paramTypes, functionDeclaration[0].LineNumber, typeLocals);
                         }
                         else
                         {
                             ProcessFunction(compileState, scriptTypeBuilder, null, method, method_ilgen, funcInfo.FunctionLines, typeLocals);
                         }
 
-                        dumpILGen?.WriteLine("GenerateMethodIL.End(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, paramTypes.ToArray().ToString());
+                        dumpILGen?.WriteLine("GenerateMethodIL.End(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, string.Join(",", from p in paramTypes select p.FullName));
                     }
                 }
                 #endregion

@@ -1022,86 +1022,82 @@ namespace SilverSim.Scripting.Lsl
             MethodBuilder mb,
             ILGenDumpProxy ilgen,
             List<TokenInfo> externDefinition,
-            string defaultFunctionName,
+            string remoteFunctionName,
             List<Type> paramTypes,
-            int defLineNumber)
+            int defLineNumber,
+            Dictionary<string, object> localVars)
         {
+            var types = new List<Type>();
+            var locals = new List<LocalBuilder>();
+            for(int index = 0; index < externDefinition.Count; ++index)
+            {
+                Type t;
+                int val;
+                if(externDefinition[index].StartsWith("\""))
+                {
+                    t = typeof(string);
+                    ilgen.Emit(OpCodes.Ldstr, externDefinition[index].Substring(1, externDefinition[index].Length - 2));
+                }
+                else if(int.TryParse(externDefinition[index], out val))
+                {
+                    t = typeof(int);
+                    ilgen.Emit(OpCodes.Ldc_I4, val);
+                }
+                else
+                {
+                    throw new CompilerException(externDefinition[index].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                }
+                types.Add(t);
+                LocalBuilder lb = ilgen.DeclareLocal(t);
+                ilgen.Emit(OpCodes.Stloc, lb);
+                locals.Add(lb);
+            }
+
             /* extern function declaration 
              extern ( script ) funcname (...)
+             extern ( script ) funcname:remotefunction (...)
 
-             extern ( script, remotefunction ) funcname (...)
              extern ( linkname , script ) funcname (...)
              extern ( linknumber, script ) funcname (...)
 
-             extern ( linkname , script, remotefunction ) funcname (...)
-             extern ( linknumber, script, remotefunction ) funcname (...)
+             extern ( linkname , script, ) funcname:remotefunction (...)
+             extern ( linknumber, script ) funcname:remotefunction (...)
 
-            linkname = literal string
-            linknumber = literal number
-            script = literal string
+            linkname = string
+            linknumber = integer
+            script = string
             remotefunction = identifier
              */
-            string functionName = defaultFunctionName;
-            string linkName = null;
-            string scriptName = string.Empty;
-            int linknumber = 0;
+
+            LocalBuilder scriptName = null;
+            LocalBuilder linkName = null;
+            LocalBuilder linkNumber = null;
 
             switch(externDefinition.Count)
             {
                 case 1:
-                    if(!externDefinition[0].StartsWith("\""))
+                    if(types[0] != typeof(string))
                     {
                         throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                     }
-                    scriptName = externDefinition[0].Substring(1, externDefinition[0].Length - 2);
+                    scriptName = locals[0];
                     break;
 
                 case 2:
-                    if(externDefinition[1].StartsWith("\""))
+                    if(types[0] == typeof(int) && types[1] == typeof(string))
                     {
-                        scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
-                        if (externDefinition[0].StartsWith("\""))
-                        {
-                            /* link name */
-                            linkName = externDefinition[0].Substring(1, externDefinition[0].Length - 2);
-                        }
-                        else if (!int.TryParse(externDefinition[0], out linknumber))
-                        {
-                            throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
-                        }
+                        linkNumber = locals[0];
+                        scriptName = locals[1];
                     }
-                    else if(externDefinition[0].StartsWith("\""))
+                    else if(types[0] == typeof(string) && types[1] == typeof(string))
                     {
-                        scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
-                        functionName = externDefinition[1];
+                        linkName = locals[0];
+                        scriptName = locals[1];
                     }
                     else
                     {
                         throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                     }
-                    break;
-
-                case 3:
-                    if (externDefinition[0].StartsWith("\""))
-                    {
-                        /* link name */
-                        linkName = externDefinition[0].Substring(1, externDefinition[0].Length - 2);
-                    }
-                    else if (!int.TryParse(externDefinition[0], out linknumber))
-                    {
-                        throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
-                    }
-                    if (!externDefinition[1].StartsWith("\""))
-                    {
-                        throw new CompilerException(externDefinition[1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
-                    }
-                    scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
-                    if (externDefinition[2].StartsWith("\""))
-                    {
-                        throw new CompilerException(externDefinition[2].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
-                    }
-                    scriptName = externDefinition[1].Substring(1, externDefinition[1].Length - 2);
-                    functionName = externDefinition[2];
                     break;
 
                 default:
@@ -1111,13 +1107,26 @@ namespace SilverSim.Scripting.Lsl
             ilgen.Emit(OpCodes.Ldarg_0); /* fetch script instance first */
             if (linkName != null)
             {
-                ilgen.Emit(OpCodes.Ldstr, linkName);
+                ilgen.Emit(OpCodes.Ldloc, linkName);
+            }
+            else if(linkNumber != null)
+            {
+                ilgen.Emit(OpCodes.Ldloc, linkNumber);
             }
             else
             {
-                ilgen.Emit(OpCodes.Ldc_I4, linknumber);
+                ilgen.Emit(OpCodes.Ldc_I4, -4);
             }
-            ilgen.Emit(OpCodes.Ldstr, scriptName);
+
+            if (scriptName != null)
+            {
+                ilgen.Emit(OpCodes.Ldloc, scriptName);
+            }
+            else
+            {
+                ilgen.Emit(OpCodes.Ldstr, string.Empty);
+            }
+
             ilgen.Emit(OpCodes.Ldc_I4, paramTypes.Count);
             ilgen.Emit(OpCodes.Newarr, typeof(object));
             for(int i = 0; i < paramTypes.Count; ++i)
@@ -1131,13 +1140,14 @@ namespace SilverSim.Scripting.Lsl
             ilgen.Emit(OpCodes.Dup);
             ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("Parameters"));
             ilgen.Emit(OpCodes.Dup);
-            ilgen.Emit(OpCodes.Ldstr, functionName);
+            ilgen.Emit(OpCodes.Ldstr, remoteFunctionName);
             ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("FunctionName"));
             Type[] invokeParams = linkName != null ? 
                 new Type[] { typeof(string), typeof(string), typeof(RpcScriptEvent) } : 
                 new Type[] { typeof(int), typeof(string), typeof(RpcScriptEvent) };
             MethodInfo mi = typeof(Script).GetMethod("InvokeRpcCall", BindingFlags.NonPublic | BindingFlags.Instance, null, invokeParams, null);
             ilgen.Emit(OpCodes.Call, mi);
+
             ilgen.Emit(OpCodes.Ret);
         }
 
