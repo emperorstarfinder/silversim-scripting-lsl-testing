@@ -1019,7 +1019,6 @@ namespace SilverSim.Scripting.Lsl
         private void ProcessExternFunction(
             CompileState compileState,
             TypeBuilder scriptTypeBuilder,
-            MethodBuilder mb,
             ILGenDumpProxy ilgen,
             List<TokenInfo> externDefinition,
             string remoteFunctionName,
@@ -1027,30 +1026,23 @@ namespace SilverSim.Scripting.Lsl
             int defLineNumber,
             Dictionary<string, object> localVars)
         {
+            LineInfo li = new LineInfo(externDefinition);
+            compileState.ScriptTypeBuilder = scriptTypeBuilder;
+            compileState.StateTypeBuilder = null;
+            compileState.ILGen = ilgen;
+
+            Type linkSpecifierType = typeof(int);
             var types = new List<Type>();
-            var locals = new List<LocalBuilder>();
-            for(int index = 0; index < externDefinition.Count; ++index)
+            ilgen.Emit(OpCodes.Ldarg_0); /* fetch script instance first */
+            if(externDefinition.Count == 1)
             {
-                Type t;
-                int val;
-                if(externDefinition[index].StartsWith("\""))
-                {
-                    t = typeof(string);
-                    ilgen.Emit(OpCodes.Ldstr, externDefinition[index].Substring(1, externDefinition[index].Length - 2));
-                }
-                else if(int.TryParse(externDefinition[index], out val))
-                {
-                    t = typeof(int);
-                    ilgen.Emit(OpCodes.Ldc_I4, val);
-                }
-                else
-                {
-                    throw new CompilerException(externDefinition[index].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
-                }
+                /* add link parameter if single param */
+                ilgen.Emit(OpCodes.Ldc_I4, -4);
+            }
+            for (int index = 0; index < externDefinition.Count; ++index)
+            {
+                Type t = ProcessExpressionToAnyType(compileState, index, index, li, localVars);
                 types.Add(t);
-                LocalBuilder lb = ilgen.DeclareLocal(t);
-                ilgen.Emit(OpCodes.Stloc, lb);
-                locals.Add(lb);
             }
 
             /* extern function declaration 
@@ -1069,10 +1061,6 @@ namespace SilverSim.Scripting.Lsl
             remotefunction = identifier
              */
 
-            LocalBuilder scriptName = null;
-            LocalBuilder linkName = null;
-            LocalBuilder linkNumber = null;
-
             switch(externDefinition.Count)
             {
                 case 1:
@@ -1080,19 +1068,17 @@ namespace SilverSim.Scripting.Lsl
                     {
                         throw new CompilerException(externDefinition[0].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                     }
-                    scriptName = locals[0];
                     break;
 
                 case 2:
                     if(types[0] == typeof(int) && types[1] == typeof(string))
                     {
-                        linkNumber = locals[0];
-                        scriptName = locals[1];
+                        /* extern ( linknumber, script ) */
                     }
                     else if(types[0] == typeof(string) && types[1] == typeof(string))
                     {
-                        linkName = locals[0];
-                        scriptName = locals[1];
+                        linkSpecifierType = typeof(string);
+                        /* extern ( linkname, script ) */
                     }
                     else
                     {
@@ -1104,28 +1090,8 @@ namespace SilverSim.Scripting.Lsl
                     throw new CompilerException(defLineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
             }
 
-            ilgen.Emit(OpCodes.Ldarg_0); /* fetch script instance first */
-            if (linkName != null)
-            {
-                ilgen.Emit(OpCodes.Ldloc, linkName);
-            }
-            else if(linkNumber != null)
-            {
-                ilgen.Emit(OpCodes.Ldloc, linkNumber);
-            }
-            else
-            {
-                ilgen.Emit(OpCodes.Ldc_I4, -4);
-            }
-
-            if (scriptName != null)
-            {
-                ilgen.Emit(OpCodes.Ldloc, scriptName);
-            }
-            else
-            {
-                ilgen.Emit(OpCodes.Ldstr, string.Empty);
-            }
+            ilgen.Emit(OpCodes.Newobj, typeof(RpcScriptEvent).GetConstructor(Type.EmptyTypes));
+            ilgen.Emit(OpCodes.Dup);
 
             ilgen.Emit(OpCodes.Ldc_I4, paramTypes.Count);
             ilgen.Emit(OpCodes.Newarr, typeof(object));
@@ -1133,18 +1099,14 @@ namespace SilverSim.Scripting.Lsl
             {
                 ilgen.Emit(OpCodes.Dup);
                 ilgen.Emit(OpCodes.Ldc_I4, i);
-                ilgen.Emit(OpCodes.Ldarg, i);
+                ilgen.Emit(OpCodes.Ldarg, i + 1);
                 ilgen.Emit(OpCodes.Stelem, paramTypes[i]);
             }
-            ilgen.Emit(OpCodes.Newobj, typeof(RpcScriptEvent).GetConstructor(Type.EmptyTypes));
-            ilgen.Emit(OpCodes.Dup);
             ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("Parameters"));
             ilgen.Emit(OpCodes.Dup);
             ilgen.Emit(OpCodes.Ldstr, remoteFunctionName);
             ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("FunctionName"));
-            Type[] invokeParams = linkName != null ? 
-                new Type[] { typeof(string), typeof(string), typeof(RpcScriptEvent) } : 
-                new Type[] { typeof(int), typeof(string), typeof(RpcScriptEvent) };
+            Type[] invokeParams = new Type[] { linkSpecifierType, typeof(string), typeof(RpcScriptEvent) };
             MethodInfo mi = typeof(Script).GetMethod("InvokeRpcCall", BindingFlags.NonPublic | BindingFlags.Instance, null, invokeParams, null);
             ilgen.Emit(OpCodes.Call, mi);
 
@@ -1203,13 +1165,11 @@ namespace SilverSim.Scripting.Lsl
             compileState.FunctionBody = functionBody;
             compileState.FunctionLineIndex = 1;
             var labels = new Dictionary<string, ILLabelInfo>();
-            compileState.ILGen.BeginScope();
             ProcessBlock(
                 compileState,
                 mb.ReturnType,
                 localVars,
                 labels);
-            compileState.ILGen.EndScope();
 
             if (!ilgen.GeneratedRetAtLast)
             {

@@ -818,7 +818,7 @@ namespace SilverSim.Scripting.Lsl
                         if (isExternCall)
                         {
                             /* generate special call process */
-                            ProcessExternFunction(compileState, scriptTypeBuilder, method, method_ilgen, externDefinition, aliasedFunctionName, paramTypes, functionDeclaration[0].LineNumber, typeLocals);
+                            ProcessExternFunction(compileState, scriptTypeBuilder, method_ilgen, externDefinition, aliasedFunctionName, paramTypes, functionDeclaration[0].LineNumber, typeLocals);
                         }
                         else
                         {
