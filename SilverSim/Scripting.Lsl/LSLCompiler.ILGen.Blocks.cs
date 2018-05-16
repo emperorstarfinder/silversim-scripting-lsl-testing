@@ -1100,7 +1100,11 @@ namespace SilverSim.Scripting.Lsl
                 ilgen.Emit(OpCodes.Dup);
                 ilgen.Emit(OpCodes.Ldc_I4, i);
                 ilgen.Emit(OpCodes.Ldarg, i + 1);
-                ilgen.Emit(OpCodes.Stelem, paramTypes[i]);
+                if(paramTypes[i].IsValueType)
+                {
+                    ilgen.Emit(OpCodes.Box, paramTypes[i]);
+                }
+                ilgen.Emit(OpCodes.Stelem_Ref);
             }
             ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("Parameters"));
             ilgen.Emit(OpCodes.Dup);

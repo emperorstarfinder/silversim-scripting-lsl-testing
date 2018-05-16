@@ -1038,7 +1038,13 @@ namespace SilverSim.Scripting.Lsl
 
         internal void InvokeRpcEventReal(string name, object[] param)
         {
-            MethodInfo mi = GetType().GetMethod("rpcfn_" + name);
+            var paratypes = new List<Type>();
+            foreach (object p in param)
+            {
+                paratypes.Add(p.GetType());
+            }
+
+            MethodInfo mi = GetType().GetMethod("rpcfn_" + name, paratypes.ToArray());
 
             if (mi != null)
             {
@@ -2536,6 +2542,7 @@ namespace SilverSim.Scripting.Lsl
             StateEventHandlers.Add(typeof(ExperiencePermissionsDeniedEvent), HandleExperiencePermissionsDenied);
             StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
             StateEventHandlers.Add(typeof(TimerEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("timer"));
+            StateEventHandlers.Add(typeof(RpcScriptEvent), HandleRpcScriptEvent);
             #endregion
         }
 
