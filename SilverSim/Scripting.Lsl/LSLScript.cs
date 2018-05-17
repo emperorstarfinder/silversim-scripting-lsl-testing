@@ -78,6 +78,18 @@ namespace SilverSim.Scripting.Lsl
 
         private long m_ExecutionStartedAt = TimeSource.TickCount;
 
+        public string GetCurrentState()
+        {
+            foreach(KeyValuePair<string, ILSLState> kvp in m_States)
+            {
+                if(kvp.Value == m_CurrentState)
+                {
+                    return kvp.Key;
+                }
+            }
+            return string.Empty;
+        }
+
         public double GetAndResetTime()
         {
             long newvalue = TimeSource.TickCount;

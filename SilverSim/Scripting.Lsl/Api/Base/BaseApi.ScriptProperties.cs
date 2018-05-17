@@ -73,6 +73,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
 
+            public string CurrentState
+            {
+                get
+                {
+                    lock(m_Instance)
+                    {
+                        return ((Script)m_Instance).GetCurrentState();
+                    }
+                }
+            }
+
             public double MinEventDelay
             {
                 get

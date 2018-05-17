@@ -35,6 +35,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 {
     public partial class BaseApi
     {
+        [APIExtension(APIExtension.Extern, "asGetCurrentState")]
+        [APILevel(APIFlags.ASSL, "asGetCurrentState")]
+        public string GetCurrentState(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return ((Script)instance).GetCurrentState();
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetScriptName")]
         public string GetScriptName(ScriptInstance instance)
         {
