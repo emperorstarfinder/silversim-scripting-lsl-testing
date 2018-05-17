@@ -1169,11 +1169,13 @@ namespace SilverSim.Scripting.Lsl
             compileState.FunctionBody = functionBody;
             compileState.FunctionLineIndex = 1;
             var labels = new Dictionary<string, ILLabelInfo>();
+            ilgen.BeginScope();
             ProcessBlock(
                 compileState,
                 mb.ReturnType,
                 localVars,
                 labels);
+            ilgen.EndScope();
 
             if (!ilgen.GeneratedRetAtLast)
             {
