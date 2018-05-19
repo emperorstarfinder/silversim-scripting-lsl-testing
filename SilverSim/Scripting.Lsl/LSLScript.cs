@@ -2661,8 +2661,8 @@ namespace SilverSim.Scripting.Lsl
 
         public string RpcRemoteScriptName { get; private set; }
         public int RpcRemoteLinkNumber { get; private set; }
-        public UUID RpcRemoteKey { get; private set; }
-        public UUID RpcRemoteScriptKey { get; private set; }
+        public LSLKey RpcRemoteKey { get; private set; }
+        public LSLKey RpcRemoteScriptKey { get; private set; }
 
         private static void HandleRpcScriptEvent(Script script, IScriptEvent ev)
         {
@@ -2672,6 +2672,10 @@ namespace SilverSim.Scripting.Lsl
             script.RpcRemoteScriptName = e.SenderScriptName;
             script.RpcRemoteScriptKey = e.SenderScriptKey;
             script.InvokeRpcEventReal(e.FunctionName, e.Parameters);
+            script.RpcRemoteKey = UUID.Zero;
+            script.RpcRemoteLinkNumber = -1;
+            script.RpcRemoteScriptName = string.Empty;
+            script.RpcRemoteScriptKey = UUID.Zero;
         }
 
         private static void HandleTouch(Script script, IScriptEvent ev)
