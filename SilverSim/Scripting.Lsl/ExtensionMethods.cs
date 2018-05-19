@@ -471,6 +471,35 @@ namespace SilverSim.Scripting.Lsl
             return assetID;
         }
 
+        public static UUID GetNotecardAssetID(this ScriptInstance instance, int link, string item)
+        {
+            if(link == 0)
+            {
+                link = 1;
+            }
+            UUID assetID;
+            /* must be an inventory item */
+            lock (instance)
+            {
+                ObjectPartInventoryItem i;
+                ObjectPart otherPart;
+                if (instance.Part.ObjectGroup.TryGetValue(link, out otherPart) && otherPart.Inventory.TryGetValue(item, out i))
+                {
+                    if (i.InventoryType != InventoryType.Notecard)
+                    {
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotANotecard", "Inventory item {0} is not a notecard", item);
+                    }
+                }
+                else
+                {
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
+                }
+                assetID = i.AssetID;
+
+            }
+            return assetID;
+        }
+
         public static UUID GetSoundAssetID(this ScriptInstance instance, string item, int inventorylink = PrimitiveApi.LINK_THIS)
         {
             UUID assetID;

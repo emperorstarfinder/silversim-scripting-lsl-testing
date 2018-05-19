@@ -81,6 +81,18 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                 return query;
             }
         }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkNotecardLine")]
+        public LSLKey GetNotecardLine(ScriptInstance instance, int link, string name, int line)
+        {
+            lock(instance)
+            {
+                UUID assetID = instance.GetNotecardAssetID(link, name);
+                UUID query = UUID.Random;
+                GetNotecardLineAsyncInvoke(instance, query, assetID, line);
+                return query;
+            }
+        }
         #endregion
 
         #region llGetNumberOfNotecardLines
@@ -122,6 +134,19 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             lock (instance)
             {
                 UUID assetID = instance.GetNotecardAssetID(name);
+                UUID query = UUID.Random;
+                GetNumberOfNotecardLinesAsyncInvoke(instance, query, assetID);
+                return query;
+            }
+        }
+
+        [APILevel(APIFlags.LSL, "asGetLinkNumberOfNotecardLines")]
+        [ForcedSleep(0.1)]
+        public LSLKey GetNumberOfNotecardLines(ScriptInstance instance, int link, string name)
+        {
+            lock (instance)
+            {
+                UUID assetID = instance.GetNotecardAssetID(link, name);
                 UUID query = UUID.Random;
                 GetNumberOfNotecardLinesAsyncInvoke(instance, query, assetID);
                 return query;
