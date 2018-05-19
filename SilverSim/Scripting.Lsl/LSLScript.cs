@@ -1058,7 +1058,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 if(mi.GetCustomAttribute(typeof(RpcLinksetExternalCallAllowedAttribute)) == null)
                 {
-                    if(Part?.ObjectGroup?.ContainsKey(RpcRemoteKey.AsUUID) ?? true)
+                    if(!(Part?.ObjectGroup?.ContainsKey(RpcRemoteKey.AsUUID) ?? false))
                     {
                         /* ignore RPC from outside if not enabled */
                         return;
