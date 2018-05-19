@@ -20,11 +20,15 @@
 // exception statement from your version.
 
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Types;
 
 namespace SilverSim.Scripting.Lsl.Event
 {
     public sealed class RpcScriptEvent : IScriptEvent
     {
+        public UUID SenderKey;
+        public int SenderLinkNumber;
+        public string SenderScriptName;
         public string FunctionName;
         public object[] Parameters;
     }

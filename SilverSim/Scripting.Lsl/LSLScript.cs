@@ -2307,7 +2307,7 @@ namespace SilverSim.Scripting.Lsl
 
         private static IScriptEvent RpcDeserializer(SavedScriptState.EventParams ep)
         {
-            if (ep.Params.Count >= 1)
+            if (ep.Params.Count >= 4)
             {
                 var param = new List<object>();
                 for(int i = 1; i < ep.Params.Count; ++i)
@@ -2317,6 +2317,9 @@ namespace SilverSim.Scripting.Lsl
                 return new RpcScriptEvent
                 {
                     FunctionName = ep.Params[0].ToString(),
+                    SenderKey = (LSLKey)ep.Params[1],
+                    SenderLinkNumber = (int)ep.Params[2],
+                    SenderScriptName = ep.Params[3].ToString(),
                     Parameters = param.ToArray()
                 };
             }
@@ -2331,7 +2334,10 @@ namespace SilverSim.Scripting.Lsl
             {
                 writer.WriteAttributeString("event", "rpc");
                 writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Function", ev.FunctionName);
+                writer.WriteTypedValue("Param", ev.FunctionName);
+                writer.WriteTypedValue("Param", ev.SenderKey);
+                writer.WriteTypedValue("Param", ev.SenderLinkNumber);
+                writer.WriteTypedValue("Param", ev.SenderScriptName);
                 foreach(object o in ev.Parameters)
                 {
                     writer.WriteTypedValue("Param", o);
@@ -2781,11 +2787,17 @@ namespace SilverSim.Scripting.Lsl
 
         protected void InvokeRpcCall(string linkname, string scriptname, RpcScriptEvent ev)
         {
-            ObjectGroup objgroup = Part?.ObjectGroup;
+            ObjectPart thisPart = Part;
+            ObjectGroup objgroup = thisPart?.ObjectGroup;
             if (objgroup == null)
             {
                 return;
             }
+
+            ev.SenderLinkNumber = thisPart.LinkNumber;
+            ev.SenderKey = thisPart.ID;
+            ev.SenderScriptName = Item.Name;
+
             foreach (ObjectPart part in objgroup.Values)
             {
                 if(part.Name == linkname)
@@ -2803,6 +2815,10 @@ namespace SilverSim.Scripting.Lsl
             {
                 return;
             }
+
+            ev.SenderLinkNumber = thisPart.LinkNumber;
+            ev.SenderKey = thisPart.ID;
+            ev.SenderScriptName = Item.Name;
 
             if (linknumber == PrimitiveApi.LINK_THIS)
             {
