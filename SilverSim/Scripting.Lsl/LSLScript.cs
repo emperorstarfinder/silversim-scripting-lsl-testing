@@ -2310,7 +2310,7 @@ namespace SilverSim.Scripting.Lsl
             if (ep.Params.Count >= 4)
             {
                 var param = new List<object>();
-                for(int i = 1; i < ep.Params.Count; ++i)
+                for(int i = 4; i < ep.Params.Count; ++i)
                 {
                     param.Add(ep.Params[i]);
                 }
