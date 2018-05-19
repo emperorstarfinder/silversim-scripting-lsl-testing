@@ -841,11 +841,6 @@ namespace SilverSim.Scripting.Lsl
             InvokeStateEventReal(name, param);
         }
 
-        static public void InvokeRpcEvent(Script script, string name, object[] param)
-        {
-            script.InvokeRpcEventReal(name, param);
-        }
-
         private int m_RecursionCount;
         private static int m_CallDepthLimit = 40;
         static public int CallDepthLimit
@@ -2307,25 +2302,25 @@ namespace SilverSim.Scripting.Lsl
 
         private static IScriptEvent RpcDeserializer(SavedScriptState.EventParams ep)
         {
-            if (ep.Params.Count >= 4)
+            if (ep.Params.Count >= 5)
             {
                 var param = new List<object>();
-                for(int i = 4; i < ep.Params.Count; ++i)
+                for(int i = 5; i < ep.Params.Count; ++i)
                 {
                     param.Add(ep.Params[i]);
                 }
                 return new RpcScriptEvent
                 {
                     FunctionName = ep.Params[0].ToString(),
-                    SenderKey = (LSLKey)ep.Params[1],
+                    SenderKey = (UUID)ep.Params[1],
                     SenderLinkNumber = (int)ep.Params[2],
                     SenderScriptName = ep.Params[3].ToString(),
+                    SenderScriptKey = (UUID)ep.Params[4],
                     Parameters = param.ToArray()
                 };
             }
             return null;
         }
-
 
         private static void RpcSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
         {
@@ -2338,6 +2333,7 @@ namespace SilverSim.Scripting.Lsl
                 writer.WriteTypedValue("Param", ev.SenderKey);
                 writer.WriteTypedValue("Param", ev.SenderLinkNumber);
                 writer.WriteTypedValue("Param", ev.SenderScriptName);
+                writer.WriteTypedValue("Param", ev.SenderScriptKey);
                 foreach(object o in ev.Parameters)
                 {
                     writer.WriteTypedValue("Param", o);
@@ -2663,9 +2659,18 @@ namespace SilverSim.Scripting.Lsl
             script.InvokeStateEvent("experience_permissions_denied", new LSLKey(e.AgentId.ID), e.Reason);
         }
 
+        public string RpcRemoteScriptName { get; private set; }
+        public int RpcRemoteLinkNumber { get; private set; }
+        public UUID RpcRemoteKey { get; private set; }
+        public UUID RpcRemoteScriptKey { get; private set; }
+
         private static void HandleRpcScriptEvent(Script script, IScriptEvent ev)
         {
             var e = (RpcScriptEvent)ev;
+            script.RpcRemoteKey = e.SenderKey;
+            script.RpcRemoteLinkNumber = e.SenderLinkNumber;
+            script.RpcRemoteScriptName = e.SenderScriptName;
+            script.RpcRemoteScriptKey = e.SenderScriptKey;
             script.InvokeRpcEventReal(e.FunctionName, e.Parameters);
         }
 

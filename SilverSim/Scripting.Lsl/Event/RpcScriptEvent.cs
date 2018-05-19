@@ -29,6 +29,7 @@ namespace SilverSim.Scripting.Lsl.Event
         public UUID SenderKey;
         public int SenderLinkNumber;
         public string SenderScriptName;
+        public UUID SenderScriptKey;
         public string FunctionName;
         public object[] Parameters;
     }
