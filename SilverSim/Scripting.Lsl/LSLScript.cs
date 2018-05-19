@@ -1064,7 +1064,7 @@ namespace SilverSim.Scripting.Lsl
                         return;
                     }
                 }
-                if(mi.GetCustomAttribute(typeof(RpcLinksetExternalCallEveryoneAttribute)) == null)
+                else if(mi.GetCustomAttribute(typeof(RpcLinksetExternalCallEveryoneAttribute)) == null)
                 {
                     /* lockout foreign callers */
                     ObjectPart otherPart = null;
