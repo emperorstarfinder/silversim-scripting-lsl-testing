@@ -2802,6 +2802,7 @@ namespace SilverSim.Scripting.Lsl
             ev.SenderLinkNumber = thisPart.LinkNumber;
             ev.SenderKey = thisPart.ID;
             ev.SenderScriptName = Item.Name;
+            ev.SenderScriptKey = Item.AssetID;
 
             foreach (ObjectPart part in objgroup.Values)
             {
@@ -2824,6 +2825,7 @@ namespace SilverSim.Scripting.Lsl
             ev.SenderLinkNumber = thisPart.LinkNumber;
             ev.SenderKey = thisPart.ID;
             ev.SenderScriptName = Item.Name;
+            ev.SenderScriptKey = Item.AssetID;
 
             if (linknumber == PrimitiveApi.LINK_THIS)
             {
