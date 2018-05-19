@@ -165,7 +165,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                     int idx;
                     if (int.TryParse(spec, out idx))
                     {
-                        if (a.Count > idx)
+                        if (idx >= 0 && a.Count > idx)
                         {
                             json = a[idx];
                         }
@@ -193,7 +193,15 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         {
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
-                IValue val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
+                IValue val;
+                try
+                {
+                    val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
+                }
+                catch
+                {
+                    return JSON_INVALID;
+                }
                 if(val == null)
                 {
                     return JSON_INVALID;
@@ -220,7 +228,16 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         {
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
-                IValue val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
+                IValue val;
+                try
+                {
+                    val = FollowJsonPath(JsonSerializer.Deserialize(ms), specifiers);
+                }
+                catch
+                {
+                    return JSON_INVALID;
+                }
+
 
                 if(val is AnArray)
                 {
@@ -291,7 +308,14 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             var res = new AnArray();
             using (var ms = new MemoryStream(src.ToUTF8Bytes()))
             {
-                jsonData = JsonSerializer.Deserialize(ms);
+                try
+                {
+                    jsonData = JsonSerializer.Deserialize(ms);
+                }
+                catch
+                {
+                    return res;
+                }
             }
 
             var array = jsonData as AnArray;
@@ -418,7 +442,10 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
             public void Remove()
             {
-                m_Array.RemoveAt(m_Index);
+                if (m_Index >= 0 && m_Index < m_Array.Count)
+                {
+                    m_Array.RemoveAt(m_Index);
+                }
             }
         }
 
@@ -432,7 +459,14 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
-                jsonData = JsonSerializer.Deserialize(ms);
+                try
+                {
+                    jsonData = JsonSerializer.Deserialize(ms);
+                }
+                catch
+                {
+                    return JSON_INVALID;
+                }
             }
 
             if(specifiers.Count == 0)
