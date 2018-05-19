@@ -233,7 +233,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 m_Instance = instance;
             }
 
-            [AllowKeyOnlyEnumerationOnKeyValuePair]
+            [AllowKeyOnlyEnumerationOnKeyValuePairAttribute]
             public AnimationOverrideEnumerator GetLslForeachEnumerator()
             {
                 lock (m_Instance)

@@ -318,7 +318,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive.Properties
                 m_LimitType = limitType;
             }
 
-            [AllowKeyOnlyEnumerationOnKeyValuePair]
+            [AllowKeyOnlyEnumerationOnKeyValuePairAttribute]
             public InventoryItemEnumerator GetLslForeachEnumerator()
             {
                 if(m_Instance == null)

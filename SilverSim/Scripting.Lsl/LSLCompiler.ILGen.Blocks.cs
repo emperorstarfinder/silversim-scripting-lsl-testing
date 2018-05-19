@@ -244,7 +244,7 @@ namespace SilverSim.Scripting.Lsl
                                     LocalBuilder p2 = null;
                                     newLocalVars[varNames[0]] = p1;
 
-                                    if(varNames.Count == 1 && Attribute.GetCustomAttribute(mi, typeof(AllowKeyOnlyEnumerationOnKeyValuePair)) != null)
+                                    if(varNames.Count == 1 && Attribute.GetCustomAttribute(mi, typeof(AllowKeyOnlyEnumerationOnKeyValuePairAttribute)) != null)
                                     {
 
                                     }
@@ -1051,17 +1051,20 @@ namespace SilverSim.Scripting.Lsl
 
              extern ( linkname , script ) funcname (...)
              extern ( linknumber, script ) funcname (...)
+             extern ( lnkkey, script ) funcname (...)
 
-             extern ( linkname , script, ) funcname:remotefunction (...)
+             extern ( linkname , script ) funcname:remotefunction (...)
              extern ( linknumber, script ) funcname:remotefunction (...)
+             extern ( linkkey, script ) funcname:remotefunction (...)
 
             linkname = string
             linknumber = integer
+            linkkey = key (this variant does not communicate inventory key of script)
             script = string
             remotefunction = identifier
              */
 
-            switch(externDefinition.Count)
+            switch (externDefinition.Count)
             {
                 case 1:
                     if(types[0] != typeof(string))
@@ -1079,6 +1082,10 @@ namespace SilverSim.Scripting.Lsl
                     {
                         linkSpecifierType = typeof(string);
                         /* extern ( linkname, script ) */
+                    }
+                    else if(types[0] == typeof(LSLKey) && types[1] == typeof(string))
+                    {
+                        linkSpecifierType = typeof(LSLKey);
                     }
                     else
                     {

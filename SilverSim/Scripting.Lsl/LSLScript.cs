@@ -1056,6 +1056,27 @@ namespace SilverSim.Scripting.Lsl
 
             if (mi != null)
             {
+                if(mi.GetCustomAttribute(typeof(RpcLinksetExternalCallAllowedAttribute)) == null)
+                {
+                    if(Part?.ObjectGroup?.ContainsKey(RpcRemoteKey.AsUUID) ?? true)
+                    {
+                        /* ignore RPC from outside if not enabled */
+                        return;
+                    }
+                }
+                if(mi.GetCustomAttribute(typeof(RpcLinksetExternalCallEveryoneAttribute)) == null)
+                {
+                    /* lockout foreign callers */
+                    ObjectPart otherPart = null;
+                    if(!(Part?.ObjectGroup?.Scene?.Primitives.TryGetValue(RpcRemoteKey.AsUUID, out otherPart) ?? false))
+                    {
+                        return;
+                    }
+                    if((!otherPart?.Owner.EqualsGrid(Part.Owner)) ?? true)
+                    {
+                        return;
+                    }
+                }
                 IncrementScriptEventCounter();
                 try
                 {
@@ -2791,6 +2812,32 @@ namespace SilverSim.Scripting.Lsl
             else if(part.Inventory.TryGetValue(scriptname, out item))
             {
                 item.ScriptInstance?.PostEvent(ev);
+            }
+        }
+
+        protected void InvokeRpcCall(LSLKey key, string scriptname, RpcScriptEvent ev)
+        {
+            ObjectPart thisPart = Part;
+            ObjectGroup thisGroup = thisPart?.ObjectGroup;
+            SceneInterface scene = thisGroup?.Scene;
+            if (scene == null)
+            {
+                return;
+            }
+
+            ev.SenderLinkNumber = thisPart.LinkNumber;
+            ev.SenderKey = thisPart.ID;
+            ev.SenderScriptName = Item.Name;
+            ev.SenderScriptKey = UUID.Zero; /* no outside comms of script key */
+
+            ObjectPart part;
+            if(scene.Primitives.TryGetValue(key.AsUUID, out part))
+            {
+                if(thisGroup == part.ObjectGroup)
+                {
+                    ev.SenderScriptKey = Item.AssetID; /* if same linkset, propagate script key */
+                }
+                InvokeRpcCall(part, scriptname, ev);
             }
         }
 
