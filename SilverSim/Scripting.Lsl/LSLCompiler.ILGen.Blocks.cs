@@ -1143,6 +1143,16 @@ namespace SilverSim.Scripting.Lsl
             if(compileState.LanguageExtensions.EnableExtern && functionDeclaration[0] == "extern")
             {
                 returnType = typeof(void);
+                if (functionDeclaration[1] == "(")
+                {
+                    /* parse flags */
+                    int externPos = 1;
+                    while (functionDeclaration[externPos++] != ")")
+                    {
+                        ++externPos;
+                    }
+                    functionStart = externPos + 1;
+                }
             }
             else if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
             {

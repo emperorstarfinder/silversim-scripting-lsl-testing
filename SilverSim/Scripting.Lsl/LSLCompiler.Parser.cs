@@ -963,19 +963,53 @@ namespace SilverSim.Scripting.Lsl
                         /* extern function definition */
                         List<FuncParamInfo> funcparam;
                         var funcList = new List<LineInfo>();
-                        CheckUsedName(compileState, p, "Function", args[1]);
+                        int funcStart = 1;
+                        if(args[funcStart] == "(")
+                        {
+                            funcStart = 2;
+                            for (; ; )
+                            {
+                                if (args[funcStart] == "," || args[funcStart] == ")")
+                                {
+                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                }
+                                if (++funcStart >= args.Count)
+                                {
+                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                }
+                                if (args[funcStart] == ")")
+                                {
+                                    ++funcStart;
+                                    break;
+                                }
+                                else if (args[funcStart] != ",")
+                                {
+                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                }
+                                if (++funcStart >= args.Count)
+                                {
+                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                }
+                            }
+                            if(funcStart + 2 >= args.Count)
+                            {
+                                throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                            }
+                        }
+
+                        CheckUsedName(compileState, p, "Function", args[funcStart]);
                         if (compileState.m_LocalVariables.Count != 0)
                         {
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
                         }
-                        funcparam = CheckFunctionParameters(compileState, p, args.GetRange(3, args.Count - 4));
+                        funcparam = CheckFunctionParameters(compileState, p, args.GetRange(funcStart + 2, args.Count - funcStart - 3));
                         funcList.Add(new LineInfo(args));
                         ParseBlock(compileState, p, funcList, false);
-                        if (!compileState.m_Functions.ContainsKey(args[1]))
+                        if (!compileState.m_Functions.ContainsKey(args[funcStart]))
                         {
-                            compileState.m_Functions.Add(args[1], new List<FunctionInfo>());
+                            compileState.m_Functions.Add(args[funcStart], new List<FunctionInfo>());
                         }
-                        compileState.m_Functions[args[1]].Add(new FunctionInfo(funcparam, funcList));
+                        compileState.m_Functions[args[funcStart]].Add(new FunctionInfo(funcparam, funcList));
                     }
                 }
                 else if (args[args.Count - 1] == ";")

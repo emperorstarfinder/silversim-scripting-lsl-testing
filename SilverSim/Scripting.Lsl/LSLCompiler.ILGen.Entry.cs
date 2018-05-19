@@ -647,6 +647,8 @@ namespace SilverSim.Scripting.Lsl
                         List<TokenInfo> functionDeclaration = funcInfo.FunctionLines[0].Line;
                         string functionName = functionDeclaration[1];
                         int functionStart = 3;
+                        bool isRpcAccessibleFromOtherLinkset = false;
+                        bool isRpcAccessibleByEveryone = false;
                         string functionPrefix = "fn_";
 
                         if (functionDeclaration[0] == "extern" && compileState.LanguageExtensions.EnableExtern)
@@ -668,6 +670,38 @@ namespace SilverSim.Scripting.Lsl
                             }
                             else
                             {
+                                if (functionDeclaration[1] == "(")
+                                {
+                                    /* parse flags */
+                                    int externPos = 1;
+                                    while (functionDeclaration[externPos++] != ")")
+                                    {
+                                        switch(functionDeclaration[externPos])
+                                        {
+                                            case "public":
+                                                isRpcAccessibleFromOtherLinkset = true;
+                                                break;
+
+                                            case "private":
+                                                isRpcAccessibleFromOtherLinkset = false;
+                                                break;
+
+                                            case "everyone":
+                                                isRpcAccessibleByEveryone = true;
+                                                break;
+
+                                            case "owner":
+                                                isRpcAccessibleByEveryone = false;
+                                                break;
+
+                                            default:
+                                                throw new CompilerException(functionDeclaration[externPos].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                        }
+                                        ++externPos;
+                                    }
+                                    functionStart = externPos + 2;
+                                }
+
                                 functionPrefix = "rpcfn_";
                             }
                             returnType = typeof(void);
@@ -708,6 +742,16 @@ namespace SilverSim.Scripting.Lsl
                             dumpILGen.WriteLine("DefineMethod(\"{0}\", returnType=typeof({1}), new Type[] {{{2}}})", functionName, returnType.FullName, string.Join(",", from p in paramTypes select p.FullName));
                         }
                         method = scriptTypeBuilder.DefineMethod(functionPrefix + functionName, MethodAttributes.Public, returnType, paramTypes.ToArray());
+                        if(isRpcAccessibleFromOtherLinkset)
+                        {
+                            CustomAttributeBuilder attrBuilder = new CustomAttributeBuilder(typeof(RpcLinksetExternalCallAllowedAttribute).GetConstructor(Type.EmptyTypes), new object[0]);
+                            method.SetCustomAttribute(attrBuilder);
+                        }
+                        if (isRpcAccessibleByEveryone)
+                        {
+                            CustomAttributeBuilder attrBuilder = new CustomAttributeBuilder(typeof(RpcLinksetExternalCallEveryoneAttribute).GetConstructor(Type.EmptyTypes), new object[0]);
+                            method.SetCustomAttribute(attrBuilder);
+                        }
                         var paramSignature = new KeyValuePair<string, Type>[paramTypes.Count];
                         for (int i = 0; i < paramTypes.Count; ++i)
                         {
@@ -738,7 +782,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             returnType = typeof(void);
                             isExternCall = functionDeclaration[functionDeclaration.Count - 1] == ";";
-                            if(isExternCall)
+                            if(isExternCall || functionDeclaration[1] == "(")
                             {
                                 functionStart = 2;
                                 externDefinition = new List<TokenInfo>();
