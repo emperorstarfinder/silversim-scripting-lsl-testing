@@ -29,6 +29,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Api.ByteString;
+using SilverSim.Scripting.Lsl.Api.Primitive;
 using SilverSim.Scripting.Lsl.Event;
 using SilverSim.ServiceInterfaces.Groups;
 using SilverSim.Threading;
@@ -2803,14 +2804,14 @@ namespace SilverSim.Scripting.Lsl
                 return;
             }
 
-            if (linknumber == -1 /* LINK_SET */)
+            if (linknumber == PrimitiveApi.LINK_THIS)
             {
                 foreach (ObjectPart part in objgroup.Values)
                 {
                     InvokeRpcCall(part, scriptname, ev);
                 }
             }
-            else if (linknumber == -2 /* LINK_ALL_OTHERS */)
+            else if (linknumber == PrimitiveApi.LINK_ALL_OTHERS)
             {
                 foreach (ObjectPart part in objgroup.Values)
                 {
@@ -2820,7 +2821,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
             }
-            else if (linknumber == -3 /* LINK_ALL_CHILDREN */)
+            else if (linknumber == PrimitiveApi.LINK_ALL_CHILDREN)
             {
                 ObjectPart rootPart = objgroup.RootPart;
                 foreach(ObjectPart part in objgroup.Values)
@@ -2831,15 +2832,15 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
             }
-            else if (linknumber == -4 /* LINK_THIS */)
+            else if (linknumber == PrimitiveApi.LINK_THIS)
             {
                 InvokeRpcCall(Part, scriptname, ev);
             }
             else
             {
-                if(linknumber == 0)
+                if(linknumber == PrimitiveApi.LINK_UNLINKED_ROOT)
                 {
-                    linknumber = 1;
+                    linknumber = PrimitiveApi.LINK_ROOT;
                 }
                 ObjectPart part;
                 if (objgroup.TryGetValue(linknumber, out part))
