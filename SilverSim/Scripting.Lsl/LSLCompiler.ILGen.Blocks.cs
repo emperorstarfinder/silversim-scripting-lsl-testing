@@ -1034,11 +1034,6 @@ namespace SilverSim.Scripting.Lsl
             Type linkSpecifierType = typeof(int);
             var types = new List<Type>();
             ilgen.Emit(OpCodes.Ldarg_0); /* fetch script instance first */
-            if(externDefinition.Count == 1)
-            {
-                /* add link parameter if single param */
-                ilgen.Emit(OpCodes.Ldc_I4, -4);
-            }
             if (externDefinition.Count == 1 && externDefinition[0] == "return")
             {
                 externDefinition.Add(externDefinition[0]);
@@ -1051,6 +1046,12 @@ namespace SilverSim.Scripting.Lsl
             }
             else
             {
+                if (externDefinition.Count == 1)
+                {
+                    /* add link parameter if single param */
+                    ilgen.Emit(OpCodes.Ldc_I4, -4);
+                }
+
                 for (int index = 0; index < externDefinition.Count; ++index)
                 {
                     Type t = ProcessExpressionToAnyType(compileState, index, index, li, localVars);
