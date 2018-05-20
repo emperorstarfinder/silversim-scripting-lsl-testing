@@ -134,7 +134,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     return;
                 }
                 if (instance.TryGetLink(link, out invpart) &&
-                    TryGetObjectInventory(instance, invpart, inventory, out groups, out removeinventory))
+                    instance.TryGetObjectInventory(invpart, inventory, out groups, out removeinventory))
                 {
                     pos += CalculateGeometricCenter(groups);
 
@@ -158,7 +158,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
                 bool removeinventory;
-                if(TryGetObjectInventory(instance, inventory, out groups, out removeinventory))
+                if(instance.TryGetObjectInventory(inventory, out groups, out removeinventory))
                 {
                     pos += CalculateGeometricCenter(groups);
 
@@ -197,7 +197,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
 
                 if (instance.TryGetLink(link, out invpart) &&
-                    TryGetObjectInventory(instance, invpart, inventory, out groups, out removeinventory) &&
+                    instance.TryGetObjectInventory(invpart, inventory, out groups, out removeinventory) &&
                     RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
                     removeinventory)
                 {
@@ -224,7 +224,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     return;
                 }
 
-                if (TryGetObjectInventory(instance, inventory, out groups, out removeinventory) &&
+                if (instance.TryGetObjectInventory(inventory, out groups, out removeinventory) &&
                     RealRezObject(scene, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
                     removeinventory)
                 {
@@ -289,52 +289,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
 
             return true;
-        }
-
-        public bool TryGetObjectInventory(ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory) =>
-            TryGetObjectInventory(instance, instance.Part, name, out groups, out removeinventory);
-
-        public bool TryGetObjectInventory(ScriptInstance instance, ObjectPart linkpart, string name, out List<ObjectGroup> groups, out bool removeinventory)
-        {
-            ObjectPartInventoryItem item;
-            AssetData data;
-            ObjectPart rezzingpart = instance.Part;
-            ObjectGroup rezzinggrp = rezzingpart.ObjectGroup;
-            removeinventory = false;
-            groups = null;
-            if(!linkpart.Inventory.TryGetValue(name, out item))
-            {
-                instance.ShoutError(new LocalizedScriptMessage(this, "Item0NotFoundToRez", "Item '{0}' not found to rez", name));
-                return false;
-            }
-            else if(item.InventoryType != InventoryType.Object || item.AssetType != AssetType.Object)
-            {
-                instance.ShoutError(new LocalizedScriptMessage(this, "Item0IsNotAnObject", "Item '{0}' is not an object.", name));
-                return false;
-            }
-            else if(!rezzingpart.ObjectGroup.Scene.AssetService.TryGetValue(item.AssetID, out data))
-            {
-                instance.ShoutError(new LocalizedScriptMessage(this, "Item0IsMissingInDatabase", "Item '{0}' is missing in database.", name));
-                return false;
-            }
-
-            removeinventory = !item.CheckPermissions(instance.Item.Owner, instance.Item.Group, InventoryPermissionsMask.Copy);
-            if(removeinventory && rezzinggrp.IsAttached)
-            {
-                instance.ShoutError(new LocalizedScriptMessage(this, "CannotRezNoCopyObjectsFromAnAttachedObject", "Cannot rez no copy objects from an attached object."));
-                return false;
-            }
-
-            try
-            {
-                groups = ObjectXML.FromAsset(data, instance.Item.Owner);
-                return true;
-            }
-            catch
-            {
-                instance.ShoutError(new LocalizedScriptMessage(this, "Item0HasInvalidContent", "Item '{0}' has invalid content.", name));
-                return false;
-            }
         }
     }
 }

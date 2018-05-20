@@ -30,7 +30,6 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Agent;
 using SilverSim.Types.Script;
-using System;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Attachments
@@ -38,7 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
     [ScriptApiName("Attachments")]
     [LSLImplementation]
     [Description("LSL/OSSL Attachments API")]
-    public class AttachmentsApi : IScriptApi, IPlugin
+    public partial class AttachmentsApi : IScriptApi, IPlugin
     {
         public void Startup(ConfigurationLoader loader)
         {
@@ -132,16 +131,6 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
                     agent.Attachments.Remove(group.ID);
                     scene.Remove(group);
                 }
-            }
-        }
-
-        [APILevel(APIFlags.OSSL, "osForceAttachToOtherAvatarFromInventory")]
-        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
-        public void ForceAttachToOtherAvatarFromInventory(ScriptInstance instance, LSLKey id, string item_name, int attach_point)
-        {
-            lock (instance)
-            {
-                throw new NotImplementedException("osForceAttachToOtherAvatarFromInventory(key, string, integer)");
             }
         }
 

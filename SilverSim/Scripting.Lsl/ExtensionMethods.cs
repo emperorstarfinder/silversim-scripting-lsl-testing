@@ -809,5 +809,51 @@ namespace SilverSim.Scripting.Lsl
 
             return list;
         }
+
+        public static bool TryGetObjectInventory(this ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory) =>
+            TryGetObjectInventory(instance, instance.Part, name, out groups, out removeinventory);
+
+        public static bool TryGetObjectInventory(this ScriptInstance instance, ObjectPart linkpart, string name, out List<ObjectGroup> groups, out bool removeinventory)
+        {
+            ObjectPartInventoryItem item;
+            AssetData data;
+            ObjectPart rezzingpart = instance.Part;
+            ObjectGroup rezzinggrp = rezzingpart.ObjectGroup;
+            removeinventory = false;
+            groups = null;
+            if (!linkpart.Inventory.TryGetValue(name, out item))
+            {
+                instance.ShoutError(new LocalizedScriptMessage(instance, "Item0NotFoundToRez", "Item '{0}' not found to rez", name));
+                return false;
+            }
+            else if (item.InventoryType != InventoryType.Object || item.AssetType != AssetType.Object)
+            {
+                instance.ShoutError(new LocalizedScriptMessage(instance, "Item0IsNotAnObject", "Item '{0}' is not an object.", name));
+                return false;
+            }
+            else if (!rezzingpart.ObjectGroup.Scene.AssetService.TryGetValue(item.AssetID, out data))
+            {
+                instance.ShoutError(new LocalizedScriptMessage(instance, "Item0IsMissingInDatabase", "Item '{0}' is missing in database.", name));
+                return false;
+            }
+
+            removeinventory = !item.CheckPermissions(instance.Item.Owner, instance.Item.Group, InventoryPermissionsMask.Copy);
+            if (removeinventory && rezzinggrp.IsAttached)
+            {
+                instance.ShoutError(new LocalizedScriptMessage(instance, "CannotRezNoCopyObjectsFromAnAttachedObject", "Cannot rez no copy objects from an attached object."));
+                return false;
+            }
+
+            try
+            {
+                groups = ObjectXML.FromAsset(data, instance.Item.Owner);
+                return true;
+            }
+            catch
+            {
+                instance.ShoutError(new LocalizedScriptMessage(instance, "Item0HasInvalidContent", "Item '{0}' has invalid content.", name));
+                return false;
+            }
+        }
     }
 }
