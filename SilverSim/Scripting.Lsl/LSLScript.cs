@@ -2831,14 +2831,19 @@ namespace SilverSim.Scripting.Lsl
             ev.SenderScriptKey = UUID.Zero; /* no outside comms of script key */
 
             ObjectPart part;
-            if(thisGroup.TryGetValue(key.AsUUID, out part) || scene.Primitives.TryGetValue(key.AsUUID, out part))
+            if (thisGroup.TryGetValue(key.AsUUID, out part))
             {
-                if(thisGroup == part.ObjectGroup)
-                {
-                    ev.SenderScriptKey = Item.AssetID; /* if same linkset, propagate script key */
-                }
-                InvokeRpcCall(part, scriptname, ev);
+                ev.SenderScriptKey = Item.AssetID; /* if same linkset, propagate script key */
             }
+            else if(scene.Primitives.TryGetValue(key.AsUUID, out part))
+            {
+                /* nothing to be done here */
+            }
+            else
+            {
+                return;
+            }
+            InvokeRpcCall(part, scriptname, ev);
         }
 
         protected void InvokeRpcCall(string linkname, string scriptname, RpcScriptEvent ev)
