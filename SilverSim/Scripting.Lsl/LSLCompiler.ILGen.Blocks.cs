@@ -1039,19 +1039,34 @@ namespace SilverSim.Scripting.Lsl
                 /* add link parameter if single param */
                 ilgen.Emit(OpCodes.Ldc_I4, -4);
             }
-            for (int index = 0; index < externDefinition.Count; ++index)
+            if (externDefinition.Count == 1 && externDefinition[0] == "return")
             {
-                Type t = ProcessExpressionToAnyType(compileState, index, index, li, localVars);
-                types.Add(t);
+                externDefinition.Add(externDefinition[0]);
+                types.Add(typeof(LSLKey));
+                types.Add(typeof(string));
+                ilgen.Emit(OpCodes.Dup);
+                ilgen.Emit(OpCodes.Call, typeof(Script).GetProperty("RpcRemoteKey").GetGetMethod());
+                ilgen.Emit(OpCodes.Ldarg_0);
+                ilgen.Emit(OpCodes.Call, typeof(Script).GetProperty("RpcRemoteScriptName").GetGetMethod());
+            }
+            else
+            {
+                for (int index = 0; index < externDefinition.Count; ++index)
+                {
+                    Type t = ProcessExpressionToAnyType(compileState, index, index, li, localVars);
+                    types.Add(t);
+                }
             }
 
             /* extern function declaration 
              extern ( script ) funcname (...)
              extern ( script ) funcname:remotefunction (...)
+             extern ( return ) funcname (...) => respond to remote source
+             extern ( return ) funcname:remotefunction (...) => respond to remote source
 
              extern ( linkname , script ) funcname (...)
              extern ( linknumber, script ) funcname (...)
-             extern ( lnkkey, script ) funcname (...)
+             extern ( linkkey, script ) funcname (...)
 
              extern ( linkname , script ) funcname:remotefunction (...)
              extern ( linknumber, script ) funcname:remotefunction (...)
@@ -1062,6 +1077,7 @@ namespace SilverSim.Scripting.Lsl
             linkkey = key (this variant does not communicate inventory key of script)
             script = string
             remotefunction = identifier
+            RpcSender = RpcSender accessor
              */
 
             switch (externDefinition.Count)
