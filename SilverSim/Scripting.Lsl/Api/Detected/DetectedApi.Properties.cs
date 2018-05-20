@@ -125,7 +125,12 @@ namespace SilverSim.Scripting.Lsl.Api.Detected
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    List<DetectInfo> list = Instance.m_Detected;
+                    if (list == null || Position < 0 || Position >= list.Count)
+                    {
+                        return new DetectedData();
+                    }
+                    return new DetectedData(list[Position], Instance);
                 }
             }
 
