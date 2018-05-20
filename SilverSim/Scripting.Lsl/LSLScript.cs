@@ -829,7 +829,8 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public override bool IsLinkMessageReceiver => m_CurrentStateMethods.ContainsKey("link_message");
+        bool m_IsLinkMessageReceiver;
+        public override bool IsLinkMessageReceiver => m_IsLinkMessageReceiver;
 
         static public void InvokeStateEvent(Script script, string name, object[] param)
         {
@@ -881,6 +882,7 @@ namespace SilverSim.Scripting.Lsl
 
             m_HasTouchEvent = HasStateEvent("touch") || HasStateEvent("touch_start") || HasStateEvent("touch_end");
             m_HasMoneyEvent = HasStateEvent("money");
+            m_IsLinkMessageReceiver = HasStateEvent("link_message");
             m_HasLandCollisionEvent = HasStateEvent("land_collision");
             m_HasLandCollisionStartEvent = HasStateEvent("land_collision_start");
             m_HasLandCollisionEndEvent = HasStateEvent("land_collision_end");
