@@ -116,6 +116,23 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                 return nc.Text;
             }
         }
+
+        [APILevel(APIFlags.ASSL, "asGetNotecard")]
+        [Description("read the entire contents of a notecard directly.\nIt does not use the dataserver event.")]
+        public string GetNotecard(
+            ScriptInstance instance,
+            [Description("link number")]
+            int link,
+            [Description("name of notecard in inventory")]
+            string name)
+        {
+            lock (instance)
+            {
+                UUID assetID = instance.GetNotecardAssetID(link, name);
+                Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                return nc.Text;
+            }
+        }
         #endregion
 
         #region osGetNotecardLine
@@ -140,6 +157,30 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                 return lines[line];
             }
         }
+
+        [APILevel(APIFlags.ASSL, "asGetNotecardLine")]
+        [Description("read a line of a notecard directly.\nIt does not use the dataserver event.")]
+        public string OsGetNotecardLine(
+            ScriptInstance instance,
+            [Description("link number")]
+            int link,
+            [Description("name of notecard in inventory")]
+            string name,
+            [Description("line number (starting at 0)")]
+            int line)
+        {
+            lock (instance)
+            {
+                UUID assetID = instance.GetNotecardAssetID(link, name);
+                Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                string[] lines = nc.Text.Split('\n');
+                if (line >= lines.Length || line < 0)
+                {
+                    return EOF;
+                }
+                return lines[line];
+            }
+        }
         #endregion
 
         #region osGetNumberOfNotecardLines
@@ -153,6 +194,23 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             lock (instance)
             {
                 UUID assetID = instance.GetNotecardAssetID(name);
+                Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                return nc.Text.Split('\n').Length;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetNumberOfNotecardLines")]
+        [Description("read number of lines of a notecard directly.\nIt does not use the dataserver event.")]
+        public int OsGetNumberOfNotecardLines(
+            ScriptInstance instance,
+            [Description("link number")]
+            int link,
+            [Description("name of notecard in inventory")]
+            string name)
+        {
+            lock (instance)
+            {
+                UUID assetID = instance.GetNotecardAssetID(link, name);
                 Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
                 return nc.Text.Split('\n').Length;
             }
