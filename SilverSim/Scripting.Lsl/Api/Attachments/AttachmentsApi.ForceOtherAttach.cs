@@ -287,13 +287,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
 
             public override void AssetTransferFailed(Exception e)
             {
-                SceneInterface scene;
-                IAgent agent;
-                if (TryGetScene(m_DestinationAgent.ID, out scene) &&
-                    scene.Agents.TryGetValue(m_DestinationAgent.ID, out agent))
-                {
-
-                }
+                /* no activity here */
             }
         }
     }
