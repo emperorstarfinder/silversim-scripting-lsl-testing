@@ -1079,6 +1079,7 @@ namespace SilverSim.Scripting.Lsl
             script = string
             remotefunction = identifier
             RpcSender = RpcSender accessor
+            return = keyword
              */
 
             switch (externDefinition.Count)
