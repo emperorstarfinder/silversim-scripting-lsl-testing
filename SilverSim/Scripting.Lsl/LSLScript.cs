@@ -2831,7 +2831,7 @@ namespace SilverSim.Scripting.Lsl
             ev.SenderScriptKey = UUID.Zero; /* no outside comms of script key */
 
             ObjectPart part;
-            if(scene.Primitives.TryGetValue(key.AsUUID, out part))
+            if(thisGroup.TryGetValue(key.AsUUID, out part) || scene.Primitives.TryGetValue(key.AsUUID, out part))
             {
                 if(thisGroup == part.ObjectGroup)
                 {
