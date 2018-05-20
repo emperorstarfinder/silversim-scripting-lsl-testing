@@ -469,12 +469,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL)]
         public const int DATA_SIM_RELEASE = 128;
 
-        [APILevel(APIFlags.LSL, "llScriptDanger")]
-        public int ScriptDanger(ScriptInstance instance, Vector3 pos)
-        {
-            throw new NotImplementedException("llScriptDanger(vector)");
-        }
-
         [APILevel(APIFlags.LSL, "llRequestSimulatorData")]
         [ForcedSleep(1)]
         public LSLKey RequestSimulatorData(ScriptInstance instance, string region, int data)

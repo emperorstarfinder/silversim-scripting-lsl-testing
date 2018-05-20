@@ -28,6 +28,7 @@ using SilverSim.Types;
 using SilverSim.Types.Groups;
 using SilverSim.Types.Parcel;
 using SilverSim.Types.Script;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -149,6 +150,12 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 }
                 return 0;
             }
+        }
+
+        [APILevel(APIFlags.LSL, "llScriptDanger")]
+        public int ScriptDanger(ScriptInstance instance, Vector3 pos)
+        {
+            throw new NotImplementedException("llScriptDanger(vector)");
         }
 
         [APILevel(APIFlags.LSL, "llGetParcelMaxPrims")]
