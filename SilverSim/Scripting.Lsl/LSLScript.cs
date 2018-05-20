@@ -2828,16 +2828,15 @@ namespace SilverSim.Scripting.Lsl
             ev.SenderLinkNumber = thisPart.LinkNumber;
             ev.SenderKey = thisPart.ID;
             ev.SenderScriptName = Item.Name;
-            ev.SenderScriptKey = UUID.Zero; /* no outside comms of script key */
 
             ObjectPart part;
             if (thisGroup.TryGetValue(key.AsUUID, out part))
             {
-                ev.SenderScriptKey = Item.AssetID; /* if same linkset, propagate script key */
+                ev.SenderScriptKey = Item.AssetID; /* same linkset, propagate script key */
             }
             else if(scene.Primitives.TryGetValue(key.AsUUID, out part))
             {
-                /* nothing to be done here */
+                ev.SenderScriptKey = UUID.Zero; /* no outside comms of script key */
             }
             else
             {
