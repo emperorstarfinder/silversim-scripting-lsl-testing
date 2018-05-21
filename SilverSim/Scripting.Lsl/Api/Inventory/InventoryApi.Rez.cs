@@ -113,7 +113,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     aabbMax = aabbMax.ComponentMax(part.GlobalPosition + part.Size / 2);
                 }
             }
-            return (aabbMax + aabbMin) / 2;
+            return (aabbMax - aabbMin) / 2;
         }
 
         [APILevel(APIFlags.ASSL, "asLinkRezObject")]
