@@ -276,7 +276,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                instance.Part.Rotation = rot;
+                instance.Part.GlobalRotation = rot;
             }
         }
 
