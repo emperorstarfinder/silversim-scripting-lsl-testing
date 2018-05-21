@@ -1940,6 +1940,105 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void OrderOperators_Common_LtoR(Tree tree, List<string> operators, CultureInfo currentCulture)
+        {
+            var enumeratorStack = new List<Tree>();
+            enumeratorStack.Insert(0, tree);
+            while (enumeratorStack.Count != 0)
+            {
+                tree = enumeratorStack[0];
+                enumeratorStack.RemoveAt(0);
+                for (int pos = 0; pos < tree.SubTree.Count; ++pos)
+                {
+                    Tree elem = tree.SubTree[pos];
+                    string ent = elem.Entry;
+                    if (!operators.Contains(ent) ||
+                        elem.Type != Tree.EntryType.OperatorUnknown)
+                    {
+                        switch (elem.Type)
+                        {
+                            case Tree.EntryType.Level:
+                            case Tree.EntryType.FunctionArgument:
+                            case Tree.EntryType.Function:
+                            case Tree.EntryType.Declaration:
+                            case Tree.EntryType.DeclarationArgument:
+                            case Tree.EntryType.Vector:
+                            case Tree.EntryType.Rotation:
+                            case Tree.EntryType.OperatorBinary:
+                            case Tree.EntryType.OperatorLeftUnary:
+                            case Tree.EntryType.OperatorRightUnary:
+                            case Tree.EntryType.ThisOperator:
+                                enumeratorStack.Add(elem);
+                                break;
+
+                            default:
+                                break;
+                        }
+                        continue;
+                    }
+
+                    if (pos == 0)
+                    {
+                        throw new CompilerException(elem.LineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingLValueTo0", "missing l-value to '{0}'"), ent));
+                    }
+                    else if (pos + 1 >= tree.SubTree.Count)
+                    {
+                        throw new CompilerException(elem.LineNumber, string.Format(this.GetLanguageString(currentCulture, "MissingRValueTo0", "missing r-value to '{0}'"), ent));
+                    }
+
+                    switch (tree.SubTree[pos - 1].Type)
+                    {
+                        case Tree.EntryType.Variable:
+                        case Tree.EntryType.Value:
+                        case Tree.EntryType.CharValue:
+                        case Tree.EntryType.StringValue:
+                        case Tree.EntryType.Function:
+                        case Tree.EntryType.Declaration:
+                        case Tree.EntryType.Level:
+                        case Tree.EntryType.OperatorBinary:
+                        case Tree.EntryType.OperatorLeftUnary:
+                        case Tree.EntryType.OperatorRightUnary:
+                        case Tree.EntryType.Vector:
+                        case Tree.EntryType.Rotation:
+                        case Tree.EntryType.ThisOperator:
+                            break;
+
+                        default:
+                            throw new CompilerException(tree.SubTree[pos - 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidLValueTo0", "invalid l-value to '{0}'"), ent));
+                    }
+
+                    switch (tree.SubTree[pos + 1].Type)
+                    {
+                        case Tree.EntryType.Variable:
+                        case Tree.EntryType.Value:
+                        case Tree.EntryType.CharValue:
+                        case Tree.EntryType.StringValue:
+                        case Tree.EntryType.Function:
+                        case Tree.EntryType.Declaration:
+                        case Tree.EntryType.Level:
+                        case Tree.EntryType.OperatorBinary:
+                        case Tree.EntryType.OperatorLeftUnary:
+                        case Tree.EntryType.OperatorRightUnary:
+                        case Tree.EntryType.Vector:
+                        case Tree.EntryType.Rotation:
+                        case Tree.EntryType.ThisOperator:
+                            break;
+
+                        default:
+                            throw new CompilerException(tree.SubTree[pos + 1].LineNumber, string.Format(this.GetLanguageString(currentCulture, "InvalidRValueTo0", "invalid r-value to '{0}'"), ent));
+                    }
+
+                    enumeratorStack.Add(tree.SubTree[pos - 1]);
+                    enumeratorStack.Add(tree.SubTree[pos + 1]);
+                    elem.SubTree.Add(tree.SubTree[pos - 1]);
+                    elem.SubTree.Add(tree.SubTree[pos + 1]);
+                    elem.Type = Tree.EntryType.OperatorBinary;
+                    tree.SubTree.RemoveAt(pos + 1);
+                    tree.SubTree.RemoveAt(--pos);
+                }
+            }
+        }
+
         private void OrderOperators_Common(Tree tree, List<string> operators, CultureInfo currentCulture)
         {
             var enumeratorStack = new List<Tree>();
@@ -2396,7 +2495,7 @@ namespace SilverSim.Scripting.Lsl
             OrderOperators_ElementSelector(tree, currentCulture);
             OrderOperators_IncsDecs(tree, currentCulture);
             OrderOperators_UnaryLefts(cs, tree, currentCulture);
-            OrderOperators_Common(tree, m_MulDivOps, currentCulture);
+            OrderOperators_Common_LtoR(tree, m_MulDivOps, currentCulture);
             OrderOperators_Common(tree, m_AddSubOps, currentCulture);
             OrderOperators_Common(tree, m_BitwiseShiftOps, currentCulture);
             OrderOperators_Common(tree, m_CompareOps, currentCulture);
