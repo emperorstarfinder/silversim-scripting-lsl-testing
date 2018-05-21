@@ -2884,49 +2884,53 @@ namespace SilverSim.Scripting.Lsl
             ev.SenderScriptName = Item.Name;
             ev.SenderScriptKey = Item.AssetID;
 
-            if (linknumber == PrimitiveApi.LINK_THIS)
+            switch(linknumber)
             {
-                foreach (ObjectPart part in objgroup.Values)
-                {
-                    InvokeRpcCall(part, scriptname, ev);
-                }
-            }
-            else if (linknumber == PrimitiveApi.LINK_ALL_OTHERS)
-            {
-                foreach (ObjectPart part in objgroup.Values)
-                {
-                    if (part != thisPart)
+                case PrimitiveApi.LINK_SET:
+                    foreach (ObjectPart part in objgroup.Values)
                     {
                         InvokeRpcCall(part, scriptname, ev);
                     }
-                }
-            }
-            else if (linknumber == PrimitiveApi.LINK_ALL_CHILDREN)
-            {
-                ObjectPart rootPart = objgroup.RootPart;
-                foreach(ObjectPart part in objgroup.Values)
-                {
-                    if (part != rootPart)
+                    break;
+
+                case PrimitiveApi.LINK_ALL_OTHERS:
+                    foreach (ObjectPart part in objgroup.Values)
                     {
-                        InvokeRpcCall(part, scriptname, ev);
+                        if (part != thisPart)
+                        {
+                            InvokeRpcCall(part, scriptname, ev);
+                        }
                     }
-                }
-            }
-            else if (linknumber == PrimitiveApi.LINK_THIS)
-            {
-                InvokeRpcCall(Part, scriptname, ev);
-            }
-            else
-            {
-                if(linknumber == PrimitiveApi.LINK_UNLINKED_ROOT)
-                {
-                    linknumber = PrimitiveApi.LINK_ROOT;
-                }
-                ObjectPart part;
-                if (objgroup.TryGetValue(linknumber, out part))
-                {
-                    InvokeRpcCall(part, scriptname, ev);
-                }
+                    break;
+
+                case PrimitiveApi.LINK_ALL_CHILDREN:
+                    ObjectPart rootPart = objgroup.RootPart;
+                    foreach (ObjectPart part in objgroup.Values)
+                    {
+                        if (part != rootPart)
+                        {
+                            InvokeRpcCall(part, scriptname, ev);
+                        }
+                    }
+                    break;
+
+                case PrimitiveApi.LINK_THIS:
+                    InvokeRpcCall(Part, scriptname, ev);
+                    break;
+
+                default:
+                    {
+                        if (linknumber == PrimitiveApi.LINK_UNLINKED_ROOT)
+                        {
+                            linknumber = PrimitiveApi.LINK_ROOT;
+                        }
+                        ObjectPart part;
+                        if (objgroup.TryGetValue(linknumber, out part))
+                        {
+                            InvokeRpcCall(part, scriptname, ev);
+                        }
+                    }
+                    break;
             }
         }
 
