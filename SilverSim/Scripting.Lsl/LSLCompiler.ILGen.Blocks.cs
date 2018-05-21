@@ -373,11 +373,12 @@ namespace SilverSim.Scripting.Lsl
                             }
                             Label endlabel = compileState.ILGen.DefineLabel();
                             Label looplabel = compileState.ILGen.DefineLabel();
+                            Label continuelabel = compileState.ILGen.DefineLabel();
 
                             compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel
                             {
                                 BreakTargetLabel = endlabel,
-                                ContinueTargetLabel = looplabel,
+                                ContinueTargetLabel = continuelabel,
                                 HaveBreakTarget = true,
                                 HaveContinueTarget = true
                             });
@@ -415,6 +416,7 @@ namespace SilverSim.Scripting.Lsl
                                     true);
                             }
 
+                            compileState.ILGen.MarkLabel(continuelabel);
                             if (semicolon2 + 1 != endoffor)
                             {
                                 ProcessExpression(
