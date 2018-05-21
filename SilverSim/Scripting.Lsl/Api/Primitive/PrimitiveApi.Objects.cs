@@ -499,9 +499,24 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                return (link == LINK_THIS) ?
-                    instance.Part.ID :
-                    instance.Part.ObjectGroup[link].ID;
+                ObjectPart part;
+                if(link == LINK_UNLINKED_ROOT)
+                {
+                    link = LINK_ROOT;
+                }
+
+                if (link == LINK_THIS)
+                {
+                    return instance.Part.ID;
+                }
+                else if(instance.Part.ObjectGroup.TryGetValue(link, out part))
+                {
+                    return part.ID;
+                }
+                else
+                {
+                    return UUID.Zero;
+                }
             }
         }
 
@@ -510,9 +525,24 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                return (link == LINK_THIS) ?
-                    instance.Part.Name :
-                    instance.Part.ObjectGroup[link].Name;
+                ObjectPart part;
+                if (link == LINK_UNLINKED_ROOT)
+                {
+                    link = LINK_ROOT;
+                }
+
+                if (link == LINK_THIS)
+                {
+                    return instance.Part.Name;
+                }
+                else if (instance.Part.ObjectGroup.TryGetValue(link, out part))
+                {
+                    return part.Name;
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
         }
 
