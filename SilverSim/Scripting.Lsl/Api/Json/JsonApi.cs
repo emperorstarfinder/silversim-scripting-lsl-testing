@@ -24,6 +24,7 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
@@ -147,7 +148,6 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 var m = json as Map;
                 if(m != null)
                 {
-                    ++pos;
                     if (m.ContainsKey(spec))
                     {
                         json = m[spec];
@@ -161,13 +161,13 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 var a = json as AnArray;
                 if(a != null)
                 {
-                    ++pos;
                     int idx;
                     if (int.TryParse(spec, out idx))
                     {
                         if (idx >= 0 && a.Count > idx)
                         {
                             json = a[idx];
+                            continue;
                         }
                         else
                         {
@@ -206,15 +206,16 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 {
                     return JSON_INVALID;
                 }
-                if(val is Undef)
+                Type valType = val.GetType();
+                if (valType == typeof(Undef))
                 {
                     return JSON_NULL;
                 }
-                else if(val is ABoolean)
+                else if(valType == typeof(ABoolean))
                 {
                     return val.AsBoolean ? JSON_TRUE : JSON_FALSE;
                 }
-                else if((val is AnArray) || (val is Map))
+                else if(valType == typeof(AnArray) || valType == typeof(Map) || valType == typeof(Real))
                 {
                     return JsonSerializer.Serialize(val);
                 }
