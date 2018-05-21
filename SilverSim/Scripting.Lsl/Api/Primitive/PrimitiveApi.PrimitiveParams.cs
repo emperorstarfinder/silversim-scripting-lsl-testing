@@ -168,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                return instance.Part.ObjectGroup.RootPart.Rotation;
+                return instance.Part.ObjectGroup.RootPart.GlobalRotation;
             }
         }
 
@@ -177,7 +177,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                return instance.Part.Rotation;
+                return instance.Part.GlobalRotation;
             }
         }
 
