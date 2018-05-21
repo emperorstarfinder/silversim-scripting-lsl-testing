@@ -60,7 +60,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
                 var m = new ScriptDialog
                 {
-                    Message = message.Substring(0, 256),
+                    Message = message.TrimToMaxLength(256),
                     ObjectID = thisGroup.ID,
                     ImageID = UUID.Zero,
                     ObjectName = thisGroup.Name,
@@ -117,7 +117,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     ObjectName = thisGroup.Name,
                     ObjectID = thisGroup.ID,
                     OwnerID = thisGroup.Owner.ID,
-                    Message = message,
+                    Message = message.TrimToMaxLength(256),
                     URL = url
                 };
                 IAgent agent;
