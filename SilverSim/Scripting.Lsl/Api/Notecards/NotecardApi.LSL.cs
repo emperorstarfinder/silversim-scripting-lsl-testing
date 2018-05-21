@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using log4net;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
@@ -32,28 +33,39 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
 {
     public partial class NotecardApi
     {
+        private static readonly ILog m_Log = LogManager.GetLogger("LSL NOTECARD API");
         [APILevel(APIFlags.LSL)]
         public const string EOF = "\n\n\n";
 
         #region llGetNotecardLine
         private void GetNotecardLine(ObjectPart part, UUID queryID, UUID assetID, int line)
         {
-            Notecard nc = part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
-            string[] lines = nc.Text.Split('\n');
-            if (line >= lines.Length || line < 0)
+            try
             {
-                part.PostEvent(new DataserverEvent
+                Notecard nc = part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                string[] lines = nc.Text.Split('\n');
+                if (line >= lines.Length || line < 0)
                 {
-                    Data = EOF,
-                    QueryID = queryID
-                });
+                    part.PostEvent(new DataserverEvent
+                    {
+                        Data = EOF,
+                        QueryID = queryID
+                    });
+                }
+                else
+                {
+                    part.PostEvent(new DataserverEvent
+                    {
+                        Data = lines[line],
+                        QueryID = queryID
+                    });
+                }
             }
-
-            part.PostEvent(new DataserverEvent
+            catch(Exception e)
             {
-                Data = lines[line],
-                QueryID = queryID
-            });
+                /* do not push any exceptions on system threadpool */
+                m_Log.Error("llGetNotecardLine failed with exception", e);
+            }
         }
 
         private void GetNotecardLineEnd(IAsyncResult ar)
@@ -98,20 +110,28 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         #region llGetNumberOfNotecardLines
         private void GetNumberOfNotecardLines(ObjectPart part, UUID queryID, UUID assetID)
         {
-            Notecard nc = part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
-            int n = 1;
-            foreach (char c in nc.Text)
+            try
             {
-                if (c == '\n')
+                Notecard nc = part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                int n = 1;
+                foreach (char c in nc.Text)
                 {
-                    ++n;
+                    if (c == '\n')
+                    {
+                        ++n;
+                    }
                 }
+                part.PostEvent(new DataserverEvent
+                {
+                    Data = n.ToString(),
+                    QueryID = queryID
+                });
             }
-            part.PostEvent(new DataserverEvent
+            catch (Exception e)
             {
-                Data = n.ToString(),
-                QueryID = queryID
-            });
+                /* do not push any exceptions on system threadpool */
+                m_Log.Error("llGetNumberOfNotecardLines failed with exception", e);
+            }
         }
 
         private void GetNumberOfNotecardLinesEnd(IAsyncResult ar)
