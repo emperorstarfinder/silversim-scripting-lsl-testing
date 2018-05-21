@@ -2312,20 +2312,13 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(LSLKey))
+                        else if (m_LeftHandType == typeof(LSLKey) || m_RightHandType == typeof(LSLKey))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(string), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Callvirt, m_LeftHandType.GetMethod("Equals", new Type[] { m_LeftHandType }));
-                            throw Return(compileState, typeof(int));
-                        }
-                        else if (m_RightHandType == typeof(LSLKey))
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Callvirt, m_RightHandType.GetMethod("Equals", new Type[] { m_LeftHandType }));
+                            ProcessImplicitCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Equals", new Type[] { typeof(string) }));
                             throw Return(compileState, typeof(int));
                         }
                         else if (m_LeftHandType == typeof(Vector3) || m_LeftHandType == typeof(Quaternion) || m_LeftHandType == typeof(string))
@@ -2391,22 +2384,13 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
                         }
-                        else if (m_LeftHandType == typeof(LSLKey))
+                        else if (m_LeftHandType == typeof(LSLKey) || m_RightHandType == typeof(LSLKey))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                            ProcessImplicitCasts(compileState, typeof(string), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            ProcessImplicitCasts(compileState, m_LeftHandType, m_RightHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Callvirt, m_LeftHandType.GetMethod("Equals", new Type[] { m_LeftHandType }));
-                            compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
-                            compileState.ILGen.Emit(OpCodes.Ceq);
-                            throw Return(compileState, typeof(int));
-                        }
-                        else if (m_RightHandType == typeof(LSLKey))
-                        {
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            ProcessImplicitCasts(compileState, m_RightHandType, m_LeftHandType, m_LineNumber);
-                            compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
-                            compileState.ILGen.Emit(OpCodes.Callvirt, m_RightHandType.GetMethod("Equals", new Type[] { m_LeftHandType }));
+                            ProcessImplicitCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
+                            compileState.ILGen.Emit(OpCodes.Call, typeof(string).GetMethod("Equals", new Type[] { typeof(string) }));
                             compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
