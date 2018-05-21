@@ -386,7 +386,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         private interface ILevelAssignment
         {
             IValue Value { get; set; }
-            void Remove();
+            bool Remove();
         }
 
         private class LevelMapAssignment : ILevelAssignment
@@ -402,15 +402,16 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
             public IValue Value
             {
-                get { return m_Map[m_Key]; }
+                get
+                {
+                    IValue iv;
+                    return m_Map.TryGetValue(m_Key, out iv) ? iv : null;
+                }
 
                 set { m_Map[m_Key] = value; }
             }
 
-            public void Remove()
-            {
-                m_Map.Remove(m_Key);
-            }
+            public bool Remove() => m_Map.Remove(m_Key);
         }
 
         private class LevelArrayAssignment : ILevelAssignment
@@ -426,7 +427,11 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
             public IValue Value
             {
-                get { return m_Array[m_Index]; }
+                get
+                {
+                    IValue iv;
+                    return m_Array.TryGetValue(m_Index, out iv) ? iv : null;
+                }
 
                 set
                 {
@@ -441,12 +446,14 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 }
             }
 
-            public void Remove()
+            public bool Remove()
             {
                 if (m_Index >= 0 && m_Index < m_Array.Count)
                 {
                     m_Array.RemoveAt(m_Index);
+                    return true;
                 }
+                return false;
             }
         }
 
@@ -456,7 +463,6 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         {
             IValue jsonData;
             ILevelAssignment jsonLevel = null;
-            IValue jsonLevelData = null;
 
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
             {
@@ -466,7 +472,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 }
                 catch
                 {
-                    return JSON_INVALID;
+                    jsonData = new AnArray();
                 }
             }
 
@@ -481,51 +487,57 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 if(spec is Integer)
                 {
                     int index = spec.AsInt;
-                    if(jsonLevel == null)
+                    AnArray a;
+                    if (jsonLevel == null)
                     {
-                        var a = new AnArray();
-                        jsonData = a;
-                        jsonLevel = new LevelArrayAssignment(a, 0);
-                        jsonLevelData = a;
+                        a = jsonData as AnArray;
+                        if (a == null)
+                        {
+                            jsonData = a;
+                        }
                     }
                     else
                     {
-                        var a = jsonLevelData as AnArray;
-                        if(a == null)
+                        a = jsonLevel.Value as AnArray;
+                        if (a == null)
                         {
                             a = new AnArray();
-                            jsonData = a;
                             jsonLevel.Value = a;
-                            jsonLevelData = a;
                         }
-
-                        jsonLevel = (index < 0 || index >= a.Count) ?
-                             new LevelArrayAssignment(a, a.Count) :
-                             new LevelArrayAssignment(a, index);
                     }
+
+                    if(index > a.Count || index < JSON_APPEND)
+                    {
+                        return JSON_INVALID;
+                    }
+
+                    jsonLevel = (index < 0 || index >= a.Count) ?
+                            new LevelArrayAssignment(a, a.Count) :
+                            new LevelArrayAssignment(a, index);
                 }
                 else if(spec is AString)
                 {
                     string key = spec.ToString();
+                    Map m;
                     if(jsonLevel == null)
                     {
-                        var m = new Map();
-                        jsonData = m;
-                        jsonLevel = new LevelMapAssignment(m, key);
-                        jsonLevelData = m;
-                    }
-                    else
-                    {
-                        var m = jsonLevelData as Map;
-                        if(m == null)
+                        m = jsonData as Map;
+                        if (m == null)
                         {
                             m = new Map();
                             jsonData = m;
-                            jsonLevel.Value = m;
-                            jsonLevelData = m;
                         }
-                        jsonLevel = new LevelMapAssignment(m, key);
                     }
+                    else
+                    {
+                        m = jsonLevel.Value as Map;
+                        if(m == null)
+                        {
+                            m = new Map();
+                            jsonLevel.Value = m;
+                        }
+                    }
+                    jsonLevel = new LevelMapAssignment(m, key);
                 }
                 else
                 {
@@ -540,7 +552,10 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
             if(value == JSON_DELETE)
             {
-                jsonLevel.Remove();
+                if(!jsonLevel.Remove())
+                {
+                    return JSON_INVALID;
+                }
             }
             else
             {
