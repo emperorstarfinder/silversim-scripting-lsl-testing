@@ -279,7 +279,20 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         {
             if (type == JSON_ARRAY)
             {
-                return JsonSerializer.Serialize(values);
+                var a = new AnArray();
+                for (int i = 0; i < values.Count; ++i)
+                {
+                    IValue iv = values[i];
+                    if (iv is AString)
+                    {
+                        a.Add(String2Json(iv.ToString()));
+                    }
+                    else
+                    {
+                        a.Add(iv);
+                    }
+                }
+                return JsonSerializer.Serialize(a);
             }
             else if (type == JSON_OBJECT)
             {
@@ -291,7 +304,15 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
                 for (int i = 0; i < values.Count; i += 2)
                 {
-                    m.Add(values[i].ToString(), values[i + 1]);
+                    IValue iv = values[i + 1];
+                    if (iv is AString)
+                    {
+                        m.Add(values[i].ToString(), String2Json(iv.ToString()));
+                    }
+                    else
+                    {
+                        m.Add(values[i].ToString(), iv);
+                    }
                 }
                 return JsonSerializer.Serialize(m);
             }
@@ -315,7 +336,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 }
                 catch
                 {
-                    return res;
+                    return src.Length == 0 ? new AnArray() : new AnArray { src };
                 }
             }
 
@@ -324,7 +345,22 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             {
                 foreach (IValue val in array)
                 {
-                    res.Add(JsonSerializer.Serialize(val));
+                    if (val is AnArray || val is Map)
+                    {
+                        res.Add(JsonSerializer.Serialize(val));
+                    }
+                    else if(val is Undef)
+                    {
+                        res.Add(JSON_NULL);
+                    }
+                    else if(val is ABoolean)
+                    {
+                        res.Add((ABoolean)val ? JSON_TRUE : JSON_FALSE);
+                    }
+                    else
+                    {
+                        res.Add(val);
+                    }
                 }
                 return res;
             }
@@ -335,7 +371,23 @@ namespace SilverSim.Scripting.Lsl.Api.Json
                 foreach (KeyValuePair<string, IValue> kvp in m)
                 {
                     res.Add(kvp.Key);
-                    res.Add(JsonSerializer.Serialize(kvp.Value));
+                    IValue val = kvp.Value;
+                    if (val is Map || val is AnArray)
+                    {
+                        res.Add(JsonSerializer.Serialize(val));
+                    }
+                    else if (val is Undef)
+                    {
+                        res.Add(JSON_NULL);
+                    }
+                    else if (val is ABoolean)
+                    {
+                        res.Add((ABoolean)val ? JSON_TRUE : JSON_FALSE);
+                    }
+                    else
+                    {
+                        res.Add(val);
+                    }
                 }
                 return res;
             }
@@ -368,19 +420,17 @@ namespace SilverSim.Scripting.Lsl.Api.Json
             {
                 return new Undef();
             }
-            if(value.StartsWith("\"") && value.EndsWith("\""))
+            try
             {
-                return new AString(value.Substring(1, value.Length - 2));
+                using (var ms = new MemoryStream(value.ToUTF8Bytes()))
+                {
+                    return JsonSerializer.Deserialize(ms);
+                }
             }
-            if(int.TryParse(value, out i))
+            catch
             {
-                return new Integer(i);
+                return new AString(value);
             }
-            if(double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out f))
-            {
-                return new Real(f);
-            }
-            return new AString(value);
         }
 
         private interface ILevelAssignment
