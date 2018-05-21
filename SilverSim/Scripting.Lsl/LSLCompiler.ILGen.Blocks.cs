@@ -282,11 +282,13 @@ namespace SilverSim.Scripting.Lsl
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
                                 /* block */
+                                compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     newLocalVars,
                                     labels);
+                                compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -400,11 +402,13 @@ namespace SilverSim.Scripting.Lsl
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
                                 /* block */
+                                compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+                                compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -493,11 +497,13 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
+                                compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+                                compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -541,11 +547,13 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.MarkLabel(looplabel);
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
+                                compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+                                compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -722,11 +730,13 @@ namespace SilverSim.Scripting.Lsl
                             }
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
+                                compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+                                compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -806,11 +816,13 @@ namespace SilverSim.Scripting.Lsl
 
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
+                                compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+                                compileState.ILGen.EndScope();
 
                                 compileState.m_BreakContinueLabels.RemoveAt(0);
 
@@ -842,11 +854,13 @@ namespace SilverSim.Scripting.Lsl
                             /* else */
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
+                                compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     new Dictionary<string, object>(localVars),
                                     labels);
+                                compileState.ILGen.EndScope();
                             }
                             else
                             {
@@ -885,11 +899,13 @@ namespace SilverSim.Scripting.Lsl
                             compileState.m_BreakContinueLabels.Insert(0, new BreakContinueLabel(compileState.m_BreakContinueLabels[0]));
                         }
 
+                        compileState.ILGen.BeginScope();
                         ProcessBlock(
                             compileState,
                             returnType,
                             new Dictionary<string, object>(localVars),
                             labels);
+                        compileState.ILGen.EndScope();
                         compileState.m_BreakContinueLabels.RemoveAt(0);
                         break;
                     #endregion
@@ -930,7 +946,7 @@ namespace SilverSim.Scripting.Lsl
                             lb = compileState.ILGen.DeclareLocal(targetType, functionLine.Line[1]);
                             if (compileState.EmitDebugSymbols)
                             {
-                                //lb.SetLocalSymInfo(functionLine.Line[1]);
+                                lb.SetLocalSymInfo(functionLine.Line[1]);
                             }
                             localVars[functionLine.Line[1]] = lb;
                             if (functionLine.Line[2] != ";")
