@@ -49,6 +49,13 @@ namespace SilverSim.Scripting.Lsl
                 LineInfo functionLine = compileState.GetLine();
                 LocalBuilder lb;
                 compileState.ILGen.MarkSequencePoint(functionLine.FirstTokenLineNumber, 1, functionLine.FirstTokenLineNumber, 1);
+                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                if(compileState.StateTypeBuilder != null)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                }
+                compileState.ILGen.Emit(OpCodes.Ldc_I4, functionLine.FirstTokenLineNumber);
+                compileState.ILGen.Emit(OpCodes.Stfld, typeof(Script).GetField("LineNumber"));
                 switch (functionLine.Line[0])
                 {
                     #region Label definition
