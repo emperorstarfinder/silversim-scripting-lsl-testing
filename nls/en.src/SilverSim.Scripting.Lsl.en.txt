@@ -334,3 +334,4 @@ WrongNumberOfVariablesToForeachForType0=Wrong number of variables to 'foreach' f
 Type0IsNotEnumerableByForeach=Type '{0}' is not enumerable by 'foreach'
 InventoryItem0IsNotASoundUnknownLink1=Inventory item {0} is not a sound due to unknown link {1}.
 RpcCallParameterTypeMustBeSerializable=RPC call parameter type must be serializable.
+ShoutErrorAtRegion0LinkName1Num2Script3Line4=At region {0}:\nLink: {1} ({2})\nScript location: {3}:{4}:

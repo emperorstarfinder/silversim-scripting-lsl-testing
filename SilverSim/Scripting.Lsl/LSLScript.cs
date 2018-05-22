@@ -1579,18 +1579,38 @@ namespace SilverSim.Scripting.Lsl
         {
             private readonly IListenEventLocalization m_SubMessage;
             private readonly string m_RegionName;
+            public string LinkName { get; set; }
+            public int LinkNumber { get; set; }
+            public string ScriptName { get; set; }
+            public int LineNumber { get; set; }
+
             public AtRegionMessageLocalization(IListenEventLocalization subMessage, string regionName)
             {
                 m_SubMessage = subMessage;
                 m_RegionName = regionName;
+                LinkName = subMessage.LinkName;
+                LinkNumber = subMessage.LinkNumber;
+                ScriptName = subMessage.ScriptName;
+                LineNumber = subMessage.LineNumber;
             }
 
             public string Localize(ListenEvent le, CultureInfo currentCulture)
             {
-                return string.Format(this.GetLanguageString(currentCulture, "ShoutErrorAtRegion0", "At region {0}:") + "\n", m_RegionName) +
-                    (m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message);
+                if (!string.IsNullOrEmpty(ScriptName))
+                {
+                    return string.Format(typeof(Script).GetLanguageString(currentCulture, "ShoutErrorAtRegion0LinkName1Num2Script3Line4",
+                        "At region {0}:\nLink: {1} ({2})\nScript location: {3}:{4}:") + "\n", m_RegionName, LinkName, LinkNumber, ScriptName, LineNumber) +
+                        (m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message);
+                }
+                else
+                {
+                    return string.Format(typeof(Script).GetLanguageString(currentCulture, "ShoutErrorAtRegion0", "At region {0}:") + "\n", m_RegionName) +
+                        (m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message);
+                }
             }
         }
+
+        public int LineNumber;
 
         public override void ShoutError(string message)
         {
@@ -1610,7 +1630,13 @@ namespace SilverSim.Scripting.Lsl
                 ev.GlobalPosition = objGroup.GlobalPosition;
                 ev.ID = objGroup.ID;
                 ev.Name = objGroup.Name;
-                ev.Localization = new AtRegionMessageLocalization(null, objGroup.Scene.Name);
+                ev.Localization = new AtRegionMessageLocalization(null, objGroup.Scene.Name)
+                {
+                    LinkName = part.Name,
+                    LinkNumber = part.LinkNumber,
+                    ScriptName = Item.Name,
+                    LineNumber = LineNumber
+                };
                 ev.Message = ev.Localization.Localize(ev, null);
                 chatService = objGroup.Scene.GetService<ChatServiceInterface>();
             }
@@ -1637,7 +1663,13 @@ namespace SilverSim.Scripting.Lsl
                 ev.GlobalPosition = objGroup.GlobalPosition;
                 ev.ID = objGroup.ID;
                 ev.Name = objGroup.Name;
-                ev.Localization = new AtRegionMessageLocalization(localizedMessage, objGroup.Scene.Name);
+                ev.Localization = new AtRegionMessageLocalization(localizedMessage, objGroup.Scene.Name)
+                {
+                    LinkName = part.Name,
+                    LinkNumber = part.LinkNumber,
+                    ScriptName = Item.Name,
+                    LineNumber = LineNumber
+                };
                 ev.Message = ev.Localization.Localize(ev, null);
                 chatService = objGroup.Scene.GetService<ChatServiceInterface>();
             }
