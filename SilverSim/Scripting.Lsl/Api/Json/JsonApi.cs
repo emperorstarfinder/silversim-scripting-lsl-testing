@@ -406,8 +406,6 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
         public IValue String2Json(string value)
         {
-            int i;
-            double f;
             if(value == JSON_TRUE)
             {
                 return new ABoolean(true);
