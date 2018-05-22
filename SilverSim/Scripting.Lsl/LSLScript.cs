@@ -1635,7 +1635,7 @@ namespace SilverSim.Scripting.Lsl
                     LinkName = part.Name,
                     LinkNumber = part.LinkNumber,
                     ScriptName = Item.Name,
-                    LineNumber = LineNumber
+                    LineNumber = LineNumber - 1
                 };
                 ev.Message = ev.Localization.Localize(ev, null);
                 chatService = objGroup.Scene.GetService<ChatServiceInterface>();
@@ -1668,7 +1668,7 @@ namespace SilverSim.Scripting.Lsl
                     LinkName = part.Name,
                     LinkNumber = part.LinkNumber,
                     ScriptName = Item.Name,
-                    LineNumber = LineNumber
+                    LineNumber = LineNumber - 1
                 };
                 ev.Message = ev.Localization.Localize(ev, null);
                 chatService = objGroup.Scene.GetService<ChatServiceInterface>();
