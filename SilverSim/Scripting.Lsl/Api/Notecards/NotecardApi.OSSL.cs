@@ -90,10 +90,11 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
                     try
                     {
                         thisPart.Inventory.Add(item.ID, item.Name, item);
+                        return;
                     }
                     catch
                     {
-                        return;
+                        /* continue */
                     }
                 }
             }
