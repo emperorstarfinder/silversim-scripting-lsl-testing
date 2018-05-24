@@ -1599,13 +1599,13 @@ namespace SilverSim.Scripting.Lsl
             {
                 if (!string.IsNullOrEmpty(ScriptName))
                 {
-                    return string.Format(typeof(Script).GetLanguageString(currentCulture, "ShoutErrorAtRegion0LinkName1Num2Script3Line4",
+                    return string.Format(this.GetLanguageString(currentCulture, "ShoutErrorAtRegion0LinkName1Num2Script3Line4",
                         "At region {0}:\nLink: {1} ({2})\nScript location: {3}:{4}:") + "\n", m_RegionName, LinkName, LinkNumber, ScriptName, LineNumber) +
                         (m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message);
                 }
                 else
                 {
-                    return string.Format(typeof(Script).GetLanguageString(currentCulture, "ShoutErrorAtRegion0", "At region {0}:") + "\n", m_RegionName) +
+                    return string.Format(this.GetLanguageString(currentCulture, "ShoutErrorAtRegion0", "At region {0}:") + "\n", m_RegionName) +
                         (m_SubMessage != null ? m_SubMessage.Localize(le, currentCulture) : le.Message);
                 }
             }
