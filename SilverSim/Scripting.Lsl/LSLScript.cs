@@ -385,14 +385,7 @@ namespace SilverSim.Scripting.Lsl
                                     writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
                                     writer.WriteValue(LSLCompiler.TypecastRotationToString6Places((Quaternion)varValue));
                                 }
-                                else if (varType == typeof(UUID) || varType == typeof(LSLKey))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
-                                    writer.WriteValue(varValue.ToString());
-                                }
-                                else if (varType == typeof(string))
+                                else if (varType == typeof(UUID) || varType == typeof(LSLKey) || varType == typeof(string))
                                 {
                                     writer.WriteStartElement("Variable");
                                     writer.WriteAttributeString("name", varName);

@@ -95,7 +95,7 @@ namespace SilverSim.Scripting.Lsl
             return UUID.Zero;
         }
 
-        public static implicit operator bool(LSLKey v)
+        public static explicit operator bool(LSLKey v)
         {
             UUID uuid;
             if(UUID.TryParse(v.m_Value, out uuid))

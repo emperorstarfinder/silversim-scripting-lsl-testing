@@ -159,7 +159,7 @@ namespace SilverSim.Scripting.Lsl
                         break;
 
                     case "long":
-                        array.Add(isEmptyElement ? (long)0 : long.Parse(reader.ReadElementValueAsString("ListItem")));
+                        array.Add((IValue)new LongInteger(isEmptyElement ? (long)0 : long.Parse(reader.ReadElementValueAsString("ListItem"))));
                         break;
 
                     default:

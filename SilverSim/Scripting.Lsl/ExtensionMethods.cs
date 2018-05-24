@@ -317,49 +317,50 @@ namespace SilverSim.Scripting.Lsl
 
         public static void WriteTypedValue(this XmlTextWriter writer, string tagname, object o)
         {
-            if(o is bool)
+            Type type = o.GetType();
+            if(type == typeof(bool))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Boolean");
                 writer.WriteValue(o.ToString());
             }
-            else if(o is double)
+            else if(type == typeof(double))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Single");
                 writer.WriteValue(((float)(double)o).ToString(CultureInfo.InvariantCulture));
             }
-            else if(o is string)
+            else if(type == typeof(string))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.String");
                 writer.WriteValue(o.ToString());
             }
-            else if(o is int)
+            else if(type == typeof(int))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Int32");
                 writer.WriteValue(o.ToString());
             }
-            else if (o is long)
+            else if (type == typeof(long))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Int64");
                 writer.WriteValue(o.ToString());
             }
-            else if(o is Vector3)
+            else if(type == typeof(Vector3))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
                 writer.WriteValue(o.ToString());
             }
-            else if(o is Quaternion)
+            else if(type == typeof(Quaternion))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
                 writer.WriteValue(o.ToString());
             }
-            else if (o is UUID)
+            else if (type == typeof(UUID))
             {
                 writer.WriteStartElement(tagname);
                 /* people want compatibility with their creations so we have to understand to what
