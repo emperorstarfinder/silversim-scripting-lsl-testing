@@ -504,7 +504,7 @@ namespace SilverSim.Scripting.Lsl
             /* initialize variables */
             foreach (KeyValuePair<string, object> kvp in state.Variables)
             {
-                FieldInfo fi = scriptType.GetField("var_" + kvp.Key);
+                FieldInfo fi = scriptType.GetField("var_" + kvp.Key, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 Type loadType = kvp.Value.GetType();
                 if (fi == null)
                 {
