@@ -512,20 +512,28 @@ namespace SilverSim.Scripting.Lsl
             foreach (KeyValuePair<string, object> kvp in state.Variables)
             {
                 FieldInfo fi = scriptType.GetField("var_" + kvp.Key);
+                Type loadType = kvp.Value.GetType();
                 if (fi == null)
                 {
                     m_Log.ErrorFormat("Restoring variable {0} failed for {1}", kvp.Key, scriptType.FullName);
                     continue;
                 }
-                else if (fi.IsLiteral || fi.IsInitOnly || fi.FieldType != kvp.Value.GetType())
+                else if (fi.IsLiteral || fi.IsInitOnly)
                 {
                     continue;
                 }
-                fi.SetValue(this, kvp.Value);
-                MethodInfo initMi = fi.FieldType.GetMethod("RestoreFromSerialization", new Type[] { typeof(ScriptInstance) });
-                if(initMi != null)
+                if (fi.FieldType == typeof(LSLKey) && loadType == typeof(string))
                 {
-                    initMi.Invoke(kvp.Value, new object[] { this });
+                    fi.SetValue(this, new LSLKey((string)kvp.Value));
+                }
+                else if (fi.FieldType == loadType)
+                {
+                    fi.SetValue(this, kvp.Value);
+                    MethodInfo initMi = fi.FieldType.GetMethod("RestoreFromSerialization", new Type[] { typeof(ScriptInstance) });
+                    if (initMi != null)
+                    {
+                        initMi.Invoke(kvp.Value, new object[] { this });
+                    }
                 }
             }
 
