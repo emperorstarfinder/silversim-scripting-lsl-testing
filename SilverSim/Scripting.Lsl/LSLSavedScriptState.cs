@@ -383,6 +383,7 @@ namespace SilverSim.Scripting.Lsl
                     throw new InvalidObjectXmlException();
                 }
                 var ev = new EventParams();
+                ev.EventName = eventName;
 
                 for (;;)
                 {

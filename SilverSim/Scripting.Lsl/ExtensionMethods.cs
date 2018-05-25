@@ -293,6 +293,9 @@ namespace SilverSim.Scripting.Lsl
                 case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString":
                     return data;
 
+                case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key":
+                    return new LSLKey(data);
+
                 case "System.Int32":
                 case "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger":
                     return int.Parse(data);
@@ -358,6 +361,12 @@ namespace SilverSim.Scripting.Lsl
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
+                writer.WriteValue(o.ToString());
+            }
+            else if(type == typeof(LSLKey))
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
                 writer.WriteValue(o.ToString());
             }
             else if (type == typeof(UUID))
