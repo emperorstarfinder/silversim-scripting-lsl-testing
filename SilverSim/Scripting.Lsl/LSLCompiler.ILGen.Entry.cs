@@ -699,6 +699,7 @@ namespace SilverSim.Scripting.Lsl
                                         }
                                         ++externPos;
                                     }
+                                    functionName = functionDeclaration[externPos];
                                     functionStart = externPos + 2;
                                 }
 

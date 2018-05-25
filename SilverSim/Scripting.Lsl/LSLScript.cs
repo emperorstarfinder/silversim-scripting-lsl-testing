@@ -1056,7 +1056,7 @@ namespace SilverSim.Scripting.Lsl
             }
             Type scriptType = GetType();
 
-            MethodInfo mi = scriptType.GetMethod("rpcfn_" + name, BindingFlags.Instance, null, paratypes.ToArray(), null);
+            MethodInfo mi = scriptType.GetMethod("rpcfn_" + name, paratypes.ToArray());
 
             if (mi != null)
             {
