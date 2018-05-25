@@ -26,7 +26,6 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Reflection.Emit;
 using System.Security.Cryptography;

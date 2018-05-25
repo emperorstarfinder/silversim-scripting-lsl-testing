@@ -26,7 +26,6 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Reflection.Emit;
 
@@ -48,19 +47,55 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const double SQRT2 = 1.414213538f;
 
         [APILevel(APIFlags.OSSL, "osMax")]
-        [Pure]
-        public double Max(double a, double b) => (a > b) ? a : b;
+        public static readonly LSLCompiler.InlineApiMethodInfo OsMax = new LSLCompiler.InlineApiMethodInfo("Max",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "a", typeof(double)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "b", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Max", new Type[] { typeof(double), typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.OSSL, "osMin")]
-        [Pure]
-        public double Min(double a, double b) => (a < b) ? a : b;
+        public static readonly LSLCompiler.InlineApiMethodInfo OsMin = new LSLCompiler.InlineApiMethodInfo("Min",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "a", typeof(double)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "b", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Min", new Type[] { typeof(double), typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.OSSL, "osRound")]
         [Pure]
         public double Round(double value, int ndigits) => Math.Round(value, ndigits.Clamp(0, 15), MidpointRounding.AwayFromZero);
 
         [APILevel(APIFlags.OSSL, "osVecMagSquare")]
-        public double VecMagSquare(Vector3 v) => v.LengthSquared;
+        public static readonly LSLCompiler.InlineApiMethodInfo VecMagSquare = new LSLCompiler.InlineApiMethodInfo("VecMagSquare",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "v", typeof(Vector3))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("LengthSquared").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.OSSL, "osVecDistSquare")]
         public double VecDistSquare(Vector3 a, Vector3 b) => (a - b).LengthSquared;
@@ -255,8 +290,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public double VecDist(Vector3 a, Vector3 b) => (a - b).Length;
 
         [APILevel(APIFlags.LSL, "llVecMag")]
-        [Pure]
-        public double VecMag(Vector3 v) => v.Length;
+        public static readonly LSLCompiler.InlineApiMethodInfo VecMag = new LSLCompiler.InlineApiMethodInfo("VecMag",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "v", typeof(Vector3))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llVecNorm")]
         [Pure]
@@ -334,16 +380,49 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public Quaternion Axes2Rot(Vector3 fwd, Vector3 left, Vector3 up) => Quaternion.Axes2Rot(fwd, left, up);
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
-        [Pure]
-        public Vector3 Rot2Fwd(Quaternion r) => r.FwdAxis;
+        public static readonly LSLCompiler.InlineApiMethodInfo Rot2Fwd = new LSLCompiler.InlineApiMethodInfo("Rot2Fwd",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion))
+            },
+            typeof(Vector3),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetProperty("FwdAxis").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llRot2Left")]
-        [Pure]
-        public Vector3 Rot2Left(Quaternion r) => r.LeftAxis;
+        public static readonly LSLCompiler.InlineApiMethodInfo Rot2Left = new LSLCompiler.InlineApiMethodInfo("Rot2Left",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion))
+            },
+            typeof(Vector3),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetProperty("LeftAxis").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llRot2Up")]
-        [Pure]
-        public Vector3 Rot2Up(Quaternion r) => r.UpAxis;
+        public static readonly LSLCompiler.InlineApiMethodInfo Rot2Up = new LSLCompiler.InlineApiMethodInfo("Rot2Up",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion))
+            },
+            typeof(Vector3),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetProperty("UpAxis").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llRotBetween")]
         [Pure]
