@@ -350,12 +350,35 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public Vector3 Rot2Axis(Quaternion q) => VecNorm(new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
 
         [APILevel(APIFlags.LSL, "llAxisAngle2Rot")]
-        [Pure]
-        public Quaternion AxisAngle2Rot(Vector3 axis, double angle) => Quaternion.CreateFromAxisAngle(axis, angle);
+        public static readonly LSLCompiler.InlineApiMethodInfo AxisAngle2Rot = new LSLCompiler.InlineApiMethodInfo("AxisAngle2Rot",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "axis", typeof(Vector3)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "angle", typeof(double))
+            },
+            typeof(Quaternion),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("CreateFromAxisAngle", new Type[] { typeof(Vector3), typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llEuler2Rot")]
-        [Pure]
-        public Quaternion Euler2Rot(Vector3 v) => Quaternion.CreateFromEulers(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Euler2Rot = new LSLCompiler.InlineApiMethodInfo("Euler2Rot",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "v", typeof(Vector3))
+            },
+            typeof(Quaternion),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("CreateFromEulers", new Type[] { typeof(Vector3) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llAngleBetween")]
         [Pure]
@@ -376,8 +399,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llAxes2Rot")]
-        [Pure]
-        public Quaternion Axes2Rot(Vector3 fwd, Vector3 left, Vector3 up) => Quaternion.Axes2Rot(fwd, left, up);
+        public static readonly LSLCompiler.InlineApiMethodInfo Axes2Rot = new LSLCompiler.InlineApiMethodInfo("Axes2Rot",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "fwd", typeof(Vector3)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "left", typeof(Vector3)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "up", typeof(Vector3)),
+            },
+            typeof(Quaternion),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("Axes2Rot", new Type[] { typeof(Vector3), typeof(Vector3), typeof(Vector3) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llRot2Fwd")]
         public static readonly LSLCompiler.InlineApiMethodInfo Rot2Fwd = new LSLCompiler.InlineApiMethodInfo("Rot2Fwd",
