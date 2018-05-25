@@ -22,6 +22,7 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -281,6 +282,150 @@ namespace SilverSim.Scripting.Lsl
                         {
                             foreach (IScriptApi api in m_Apis)
                             {
+                                foreach(FieldInfo fi in api.GetType().GetFields())
+                                {
+                                    if(fi.FieldType == typeof(InlineApiMethodInfo) && fi.IsStatic)
+                                    {
+                                        InlineApiMethodInfo m = (InlineApiMethodInfo)fi.GetValue(null);
+
+                                        foreach (APILevelAttribute level in (APILevelAttribute[])Attribute.GetCustomAttributes(fi, typeof(APILevelAttribute)))
+                                        {
+                                            if (string.IsNullOrEmpty(level.Name))
+                                            {
+                                                writer.WriteNamedValue("key", m.FunctionName);
+                                            }
+                                            else
+                                            {
+                                                writer.WriteNamedValue("key", level.Name);
+                                            }
+                                            writer.WriteStartElement("map");
+                                            {
+                                                var energy = (EnergyUsageAttribute)Attribute.GetCustomAttribute(fi, typeof(EnergyUsageAttribute));
+                                                var forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(fi, typeof(ForcedSleepAttribute));
+                                                writer.WriteNamedValue("key", "energy");
+                                                if (energy != null)
+                                                {
+                                                    writer.WriteNamedValue("real", energy.Energy);
+                                                }
+                                                else
+                                                {
+                                                    writer.WriteNamedValue("real", 10f);
+                                                }
+                                                writer.WriteNamedValue("key", "sleep");
+                                                if (forcedSleep != null)
+                                                {
+                                                    writer.WriteNamedValue("real", forcedSleep.Seconds);
+                                                }
+                                                else
+                                                {
+                                                    writer.WriteNamedValue("real", "0.0");
+                                                }
+                                                writer.WriteNamedValue("key", "return");
+                                                writer.WriteNamedValue("string", MapTypeToString(m.ReturnType));
+
+                                                writer.WriteNamedValue("key", "arguments");
+                                                writer.WriteStartElement("map");
+                                                foreach (InlineApiMethodInfo.ParameterInfo pi in m.Parameters)
+                                                {
+                                                    writer.WriteNamedValue("key", pi.Name);
+                                                    writer.WriteNamedValue("string", MapTypeToString(pi.ParameterType));
+                                                    writer.WriteNamedValue("key", "tooltip");
+                                                    writer.WriteNamedValue("string", pi.Tooltip.Replace("\n", "\\n"));
+                                                }
+                                                writer.WriteEndElement();
+
+                                                var tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(fi, typeof(DescriptionAttribute));
+                                                writer.WriteNamedValue("key", "tooltip");
+                                                string avail = "Supported for";
+                                                if ((level.Flags & APIFlags.LSL) != APIFlags.None)
+                                                {
+                                                    avail += " LSL";
+                                                }
+                                                if ((level.Flags & APIFlags.ASSL) != APIFlags.None)
+                                                {
+                                                    avail += " ASSL";
+                                                }
+                                                if ((level.Flags & APIFlags.OSSL) != APIFlags.None)
+                                                {
+                                                    avail += " OSSL";
+                                                }
+
+                                                if (tooltip != null)
+                                                {
+                                                    writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
+                                                }
+                                                else
+                                                {
+                                                    writer.WriteNamedValue("string", m.FunctionName + "\\n" + avail);
+                                                }
+                                            }
+                                            writer.WriteEndElement();
+                                        }
+
+                                        foreach (APIExtensionAttribute level in (APIExtensionAttribute[])Attribute.GetCustomAttributes(fi, typeof(APIExtensionAttribute)))
+                                        {
+                                            if (string.IsNullOrEmpty(level.Name))
+                                            {
+                                                writer.WriteNamedValue("key", m.FunctionName);
+                                            }
+                                            else
+                                            {
+                                                writer.WriteNamedValue("key", level.Name);
+                                            }
+                                            writer.WriteStartElement("map");
+                                            {
+                                                var energy = (EnergyUsageAttribute)Attribute.GetCustomAttribute(fi, typeof(EnergyUsageAttribute));
+                                                var forcedSleep = (ForcedSleepAttribute)Attribute.GetCustomAttribute(fi, typeof(ForcedSleepAttribute));
+                                                writer.WriteNamedValue("key", "energy");
+                                                if (energy != null)
+                                                {
+                                                    writer.WriteNamedValue("real", energy.Energy);
+                                                }
+                                                else
+                                                {
+                                                    writer.WriteNamedValue("real", 10f);
+                                                }
+                                                writer.WriteNamedValue("key", "sleep");
+                                                if (forcedSleep != null)
+                                                {
+                                                    writer.WriteNamedValue("real", forcedSleep.Seconds);
+                                                }
+                                                else
+                                                {
+                                                    writer.WriteNamedValue("real", "0.0");
+                                                }
+                                                writer.WriteNamedValue("key", "return");
+                                                writer.WriteNamedValue("string", MapTypeToString(m.ReturnType));
+
+                                                writer.WriteNamedValue("key", "arguments");
+                                                writer.WriteStartElement("map");
+                                                foreach (InlineApiMethodInfo.ParameterInfo pi in m.Parameters)
+                                                {
+                                                    writer.WriteNamedValue("key", pi.Name);
+                                                    writer.WriteNamedValue("string", MapTypeToString(pi.ParameterType));
+                                                    writer.WriteNamedValue("key", "tooltip");
+                                                    writer.WriteNamedValue("string", pi.Tooltip.Replace("\n", "\\n"));
+                                                }
+                                                writer.WriteEndElement();
+
+                                                var tooltip = (DescriptionAttribute)Attribute.GetCustomAttribute(fi, typeof(DescriptionAttribute));
+                                                writer.WriteNamedValue("key", "tooltip");
+                                                string avail = "Supported for " + level.Extension;
+
+                                                if (tooltip != null)
+                                                {
+                                                    writer.WriteNamedValue("string", tooltip.Description.Replace("\n", "\\n") + "\\n" + avail);
+                                                }
+                                                else
+                                                {
+                                                    writer.WriteNamedValue("string", m.FunctionName + "\\n" + avail);
+                                                }
+                                            }
+                                            writer.WriteEndElement();
+                                        }
+                                    }
+                                }
+
                                 foreach (MethodInfo mi in api.GetType().GetMethods())
                                 {
                                     foreach(APILevelAttribute level in (APILevelAttribute[])Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
@@ -332,8 +477,7 @@ namespace SilverSim.Scripting.Lsl
                                                 }
                                                 else
                                                 {
-                                                    writer.WriteStartElement("string");
-                                                    writer.WriteEndElement();
+                                                    writer.WriteNamedValue("string", string.Empty);
                                                 }
                                             }
                                             writer.WriteEndElement();

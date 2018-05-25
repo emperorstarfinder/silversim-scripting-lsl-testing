@@ -70,9 +70,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llAbs")]
         public static readonly LSLCompiler.InlineApiMethodInfo Abs = new LSLCompiler.InlineApiMethodInfo("Abs",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(int))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(int))
             },
             typeof(int),
             (ilgen) =>
@@ -85,9 +85,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llAcos")]
         public static readonly LSLCompiler.InlineApiMethodInfo Acos = new LSLCompiler.InlineApiMethodInfo("Acos",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -100,9 +100,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llAsin")]
         public static readonly LSLCompiler.InlineApiMethodInfo Asin = new LSLCompiler.InlineApiMethodInfo("Asin",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -115,10 +115,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llAtan2")]
         public static readonly LSLCompiler.InlineApiMethodInfo Atan2 = new LSLCompiler.InlineApiMethodInfo("Atan2",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "y", typeof(double)),
-                new KeyValuePair<string, Type>( "x", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "y", typeof(double)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "x", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -131,9 +131,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llCos")]
         public static readonly LSLCompiler.InlineApiMethodInfo Cos = new LSLCompiler.InlineApiMethodInfo("Cos",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -146,9 +146,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llFabs")]
         public static readonly LSLCompiler.InlineApiMethodInfo Fabs = new LSLCompiler.InlineApiMethodInfo("Fabs",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -161,9 +161,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llLog")]
         public static readonly LSLCompiler.InlineApiMethodInfo Log = new LSLCompiler.InlineApiMethodInfo("Log",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -176,9 +176,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llLog10")]
         public static readonly LSLCompiler.InlineApiMethodInfo Log10 = new LSLCompiler.InlineApiMethodInfo("Log10",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -191,10 +191,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llPow")]
         public static readonly LSLCompiler.InlineApiMethodInfo Pow = new LSLCompiler.InlineApiMethodInfo("Pow",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "bas", typeof(double)),
-                new KeyValuePair<string, Type>( "exponent", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "bas", typeof(double)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "exponent", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -207,9 +207,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llSin")]
         public static readonly LSLCompiler.InlineApiMethodInfo Sin = new LSLCompiler.InlineApiMethodInfo("Sin",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -222,9 +222,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llSqrt")]
         public static readonly LSLCompiler.InlineApiMethodInfo Sqrt = new LSLCompiler.InlineApiMethodInfo("Sqrt",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>
@@ -237,9 +237,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llTan")]
         public static readonly LSLCompiler.InlineApiMethodInfo Tan = new LSLCompiler.InlineApiMethodInfo("Tan",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "value", typeof(double))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "value", typeof(double))
             },
             typeof(double),
             (ilgen) =>

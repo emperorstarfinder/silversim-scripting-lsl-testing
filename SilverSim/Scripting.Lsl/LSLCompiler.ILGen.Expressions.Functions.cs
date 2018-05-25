@@ -236,7 +236,7 @@ namespace SilverSim.Scripting.Lsl
                     functionNameValid = true;
                     foreach (InlineApiMethodInfo method in inlinemethods)
                     {
-                        KeyValuePair<string, Type>[] pi = method.Parameters;
+                        InlineApiMethodInfo.ParameterInfo[] pi = method.Parameters;
                         int providedCount = functionTree.SubTree.Count;
                         int usingCount = pi.Length;
                         bool methodValid = true;
@@ -258,10 +258,10 @@ namespace SilverSim.Scripting.Lsl
 
                             for (int i = 0; i < providedCount; ++i)
                             {
-                                if (!compileState.IsValidType(pi[i].Value))
+                                if (!compileState.IsValidType(pi[i].ParameterType))
                                 {
                                     m_Log.ErrorFormat("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
-                                        pi[i].Key, pi[i].Value.FullName, functionTree.Entry);
+                                        pi[i].Name, pi[i].ParameterType.FullName, functionTree.Entry);
                                     methodValid = false;
                                 }
                             }
@@ -372,11 +372,11 @@ namespace SilverSim.Scripting.Lsl
                 else if (t == typeof(InlineApiMethodInfo))
                 {
                     var methodInfo = (InlineApiMethodInfo)o;
-                    KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
+                    InlineApiMethodInfo.ParameterInfo[] pi = methodInfo.Parameters;
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
                         Type sourceType = m_Parameters[i].ParameterType;
-                        Type destType = pi[i].Value;
+                        Type destType = pi[i].ParameterType;
                         if (sourceType != destType)
                         {
                             return false;
@@ -471,11 +471,11 @@ namespace SilverSim.Scripting.Lsl
                 else if (t == typeof(InlineApiMethodInfo))
                 {
                     var methodInfo = (InlineApiMethodInfo)o;
-                    KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
+                    InlineApiMethodInfo.ParameterInfo[] pi = methodInfo.Parameters;
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
                         Type sourceType = m_Parameters[i].ParameterType;
-                        Type destType = pi[i].Value;
+                        Type destType = pi[i].ParameterType;
                         if (sourceType != destType)
                         {
                             if (!IsImplicitlyCastable(compileState, destType, sourceType))
@@ -518,12 +518,12 @@ namespace SilverSim.Scripting.Lsl
                 {
                     var funcInfo = o as InlineApiMethodInfo;
                     /* load actual parameters */
-                    KeyValuePair<string, Type>[] parameters = funcInfo.Parameters;
+                    InlineApiMethodInfo.ParameterInfo[] parameters = funcInfo.Parameters;
                     for (int i = 0; i < lbs.Length; ++i)
                     {
                         compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
-                        ProcessImplicitCasts(compileState, parameters[i].Value, m_Parameters[i].ParameterType, m_LineNumber);
-                        if (parameters[i].Value == m_Parameters[i].ParameterType &&
+                        ProcessImplicitCasts(compileState, parameters[i].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                        if (parameters[i].ParameterType == m_Parameters[i].ParameterType &&
                             m_Parameters[i].ParameterType == typeof(AnArray) &&
                             compileState.LanguageExtensions.EnableArrayThisOperator)
                         {

@@ -1010,9 +1010,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetListLength")]
         [Description("Returns an integer that is the number of elements in the list src")]
         public static readonly LSLCompiler.InlineApiMethodInfo GetListLength = new LSLCompiler.InlineApiMethodInfo("GetListLength",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "src", typeof(AnArray))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "src", typeof(AnArray))
             },
             typeof(int),
             (ilgen) =>

@@ -66,13 +66,27 @@ namespace SilverSim.Scripting.Lsl
 
         public sealed class InlineApiMethodInfo
         {
+            public class ParameterInfo
+            {
+                public string Name;
+                public Type ParameterType;
+                public string Tooltip;
+
+                public ParameterInfo(string name, Type type, string tooltip = "")
+                {
+                    Name = name;
+                    ParameterType = type;
+                    Tooltip = tooltip;
+                }
+            }
+
             public readonly string FunctionName;
-            public readonly KeyValuePair<string, Type>[] Parameters;
+            public readonly ParameterInfo[] Parameters;
             public readonly Type ReturnType;
             public readonly Action<ILGenDumpProxy> Generate;
             public bool IsPure;
 
-            public InlineApiMethodInfo(string functionName, KeyValuePair<string, Type>[] parameters, Type returnType, Action<ILGenDumpProxy> generator)
+            public InlineApiMethodInfo(string functionName, ParameterInfo[] parameters, Type returnType, Action<ILGenDumpProxy> generator)
             {
                 if (parameters == null)
                 {

@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
 
@@ -226,6 +227,21 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
             Buffer.BlockCopy(byteArray.Data, 0, resdata, 0, Math.Min(byteArray.Data.Length, size));
             return new ByteArray(resdata);
         }
+
+        [APIExtension(APIExtension.ByteArray, "baGetLength")]
+        public static readonly LSLCompiler.InlineApiMethodInfo GetLength = new LSLCompiler.InlineApiMethodInfo("GetLength",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "data", typeof(ByteArray))
+            },
+            typeof(int),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(ByteArray).GetProperty("Length").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         [APIExtension(APIExtension.ByteArray, "baFromBase64")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FromBase64")]

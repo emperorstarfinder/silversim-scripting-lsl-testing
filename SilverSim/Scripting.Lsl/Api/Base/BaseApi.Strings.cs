@@ -88,9 +88,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llToLower")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToLower")]
         public static readonly LSLCompiler.InlineApiMethodInfo ToLower = new LSLCompiler.InlineApiMethodInfo("ToLower",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "src", typeof(string))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "src", typeof(string))
             },
             typeof(string),
             (ilgen) =>
@@ -104,9 +104,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llToUpper")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToUpper")]
         public static readonly LSLCompiler.InlineApiMethodInfo ToUpper = new LSLCompiler.InlineApiMethodInfo("ToUpper",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "src", typeof(string))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "src", typeof(string))
             },
             typeof(string),
             (ilgen) =>
@@ -120,9 +120,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "UnescapeURL")]
         public static readonly LSLCompiler.InlineApiMethodInfo UnescapeURL = new LSLCompiler.InlineApiMethodInfo("UnecapeURL",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "url", typeof(string))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "url", typeof(string))
             },
             typeof(string),
             (ilgen) =>
@@ -136,9 +136,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llEscapeURL")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "EscapeURL")]
         public static readonly LSLCompiler.InlineApiMethodInfo EscapeURL = new LSLCompiler.InlineApiMethodInfo("EcapeURL",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "data", typeof(string))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "data", typeof(string))
             },
             typeof(string),
             (ilgen) =>
@@ -212,9 +212,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llStringLength")]
         public static readonly LSLCompiler.InlineApiMethodInfo StringLength = new LSLCompiler.InlineApiMethodInfo("StringLength",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "src", typeof(string))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "src", typeof(string))
             },
             typeof(int),
             (ilgen) =>
@@ -228,10 +228,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "IndexOf")]
         public static readonly LSLCompiler.InlineApiMethodInfo IndexOf = new LSLCompiler.InlineApiMethodInfo("IndexOf",
-            new KeyValuePair<string, Type>[]
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new KeyValuePair<string, Type>( "source", typeof(string)),
-                new KeyValuePair<string, Type>( "pattern", typeof(string))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "source", typeof(string)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "pattern", typeof(string))
             },
             typeof(int),
             (ilgen) =>
