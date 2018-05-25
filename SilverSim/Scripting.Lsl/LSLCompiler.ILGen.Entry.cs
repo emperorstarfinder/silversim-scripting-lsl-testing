@@ -843,7 +843,7 @@ namespace SilverSim.Scripting.Lsl
                             }
                             if(requiresSerializable && paramType.GetCustomAttribute(typeof(SerializableAttribute)) == null)
                             {
-                                throw new CompilerException(externDefinition[functionStart - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "RpcCallParameterTypeMustBeSerializable", "RPC call parameter type must be serializable."));
+                                throw new CompilerException(functionDeclaration[functionStart - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "RpcCallParameterTypeMustBeSerializable", "RPC call parameter type must be serializable."));
                             }
                             paramTypes.Add(paramType);
                             paramName.Add(functionDeclaration[functionStart++]);
