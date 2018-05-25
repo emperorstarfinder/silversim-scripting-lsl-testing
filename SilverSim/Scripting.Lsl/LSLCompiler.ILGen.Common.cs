@@ -72,7 +72,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 ConstructorInfo scriptconstructor = m_ScriptType.
                     GetConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) });
-                var attachedScriptState = item.ScriptState as Script.SavedScriptState;
+                var attachedScriptState = item.ScriptState as ScriptStates.ScriptState;
 #if DEBUG
                 m_Log.DebugFormat("Instantiate: HasState={0} HasCorrectState={1}", item.ScriptState != null, attachedScriptState != null);
 #endif
@@ -97,7 +97,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             using (XmlTextReader reader = ms.CreateXmlReader())
                             {
-                                m_Script.LoadScriptState(Script.SavedScriptState.FromXML(reader, item));
+                                m_Script.LoadScriptState(ScriptStates.ScriptState.FromXML(reader, item));
                             }
                         }
                     }

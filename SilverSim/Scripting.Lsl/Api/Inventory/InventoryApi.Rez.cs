@@ -30,9 +30,7 @@ using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.Threading;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
-using SilverSim.Types.Inventory;
 using System.Collections.Generic;
-using SavedScriptState = SilverSim.Scripting.Lsl.Script.SavedScriptState;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
@@ -259,14 +257,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     {
                         if(item.AssetType == AssetType.LSLText)
                         {
-                            var savedScriptState = item.ScriptState as SavedScriptState;
+                            var savedScriptState = item.ScriptState as ScriptStates.ScriptState;
                             if (savedScriptState != null)
                             {
                                 savedScriptState.StartParameter = param;
                             }
                             else
                             {
-                                savedScriptState = new SavedScriptState
+                                savedScriptState = new ScriptStates.ScriptState
                                 {
                                     StartParameter = param
                                 };

@@ -305,7 +305,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
-                else if(t == typeof(FunctionInfo))
+                else if(t == typeof(FunctionInfo) || t == typeof(InlineApiMethodInfo))
                 {
                     var methodInfo = (FunctionInfo)o;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
@@ -383,7 +383,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
-                else if (t == typeof(FunctionInfo))
+                else if (t == typeof(FunctionInfo) || t == typeof(InlineApiMethodInfo))
                 {
                     var methodInfo = (FunctionInfo)o;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
@@ -429,7 +429,29 @@ namespace SilverSim.Scripting.Lsl
 
                 object o = SelectFunctionCall(compileState);
                 Type ot = o.GetType();
-                if (ot == typeof(FunctionInfo))
+                if(ot == typeof(InlineApiMethodInfo))
+                {
+                    var funcInfo = o as InlineApiMethodInfo;
+                    /* load actual parameters */
+                    KeyValuePair<string, Type>[] parameters = funcInfo.Parameters;
+                    for (int i = 0; i < lbs.Length; ++i)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
+                        ProcessImplicitCasts(compileState, parameters[i].Value, m_Parameters[i].ParameterType, m_LineNumber);
+                        if (parameters[i].Value == m_Parameters[i].ParameterType &&
+                            m_Parameters[i].ParameterType == typeof(AnArray) &&
+                            compileState.LanguageExtensions.EnableArrayThisOperator)
+                        {
+                            /* duplicate array to adhere to LSL language features */
+                            compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(new Type[] { typeof(AnArray) }));
+                        }
+                    }
+
+                    funcInfo.Generate(compileState);
+                    compileState.ILGen.EndScope();
+                    return funcInfo.ReturnType;
+                }
+                else if (ot == typeof(FunctionInfo))
                 {
                     var funcInfo = o as FunctionInfo;
                     /* load script instance reference */

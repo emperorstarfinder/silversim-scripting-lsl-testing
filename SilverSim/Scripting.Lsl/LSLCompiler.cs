@@ -64,6 +64,22 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        internal abstract class InlineApiMethodInfo
+        {
+            public string FunctionName;
+            public KeyValuePair<string, Type>[] Parameters;
+            public Type ReturnType;
+
+            public InlineApiMethodInfo(string functionName, KeyValuePair<string, Type>[] parameters, Type returnType)
+            {
+                FunctionName = functionName;
+                Parameters = parameters;
+                ReturnType = returnType;
+            }
+
+            public abstract void Generate(CompileState ilgen);
+        }
+
         [ServerParam("LSL.CallDepthLimit")]
         public void SetCallDepthLimit(UUID regionID, string value)
         {

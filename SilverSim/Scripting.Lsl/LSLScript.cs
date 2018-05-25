@@ -180,292 +180,72 @@ namespace SilverSim.Scripting.Lsl
             m_States.Add(name, state);
         }
 
-        private double m_MinEventDelay;
+        private ReferenceBoxed<double> m_MinEventDelay = 0;
         public double MinEventDelay
         {
             get { return m_MinEventDelay; }
             set { m_MinEventDelay = (value < 0) ? 0 : value; }
         }
 
-        private readonly TransactionedState m_TransactionedState = new TransactionedState();
+        private readonly ScriptStates.ScriptState m_TransactionedState = new ScriptStates.ScriptState();
 
-        private class TransactionedState
+        private void UpdateScriptState()
         {
-            private readonly Dictionary<string, object> Variables = new Dictionary<string, object>();
-            private string CurrentState = string.Empty;
-            private ObjectPartInventoryItem.PermsGranterInfo PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo();
-            private readonly List<object> PluginSerialization = new List<object>();
-            private double MinEventDelay;
-            public UUID AssetID = UUID.Zero;
-            public UUID ItemID = UUID.Zero;
-            private readonly object m_TransactionLock = new object();
-            private IScriptEvent[] Events = new IScriptEvent[0];
-
-            public void UpdateFromScript(Script script)
+            var state = new ScriptStates.ScriptState
             {
-                IScriptEvent[] events = script.m_Events.ToArray();
-                lock (m_TransactionLock)
+                EventData = m_Events.ToArray(),
+                AssetID = Item.AssetID,
+                ItemID = Item.ID,
+                MinEventDelay = MinEventDelay,
+                CurrentState = "default",
+                UseMessageObjectEvent = UseMessageObjectEvent,
+                PermsGranter = Item.PermsGranter
+            };
+            foreach (KeyValuePair<string, ILSLState> kvp in m_States)
+            {
+                if (kvp.Value == m_CurrentState)
                 {
-                    Events = events;
-                    AssetID = script.Item.AssetID;
-                    ItemID = script.Item.ID;
-                    MinEventDelay = script.MinEventDelay;
-                    CurrentState = "default";
-                    foreach (KeyValuePair<string, ILSLState> kvp in script.m_States)
-                    {
-                        if (kvp.Value == script.m_CurrentState)
-                        {
-                            CurrentState = kvp.Key;
-                        }
-                    }
-                    PermsGranter = script.Item.PermsGranter;
-                    foreach (FieldInfo fi in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-                    {
-                        if (!fi.Name.StartsWith("var_"))
-                        {
-                            continue;
-                        }
-                        if (fi.FieldType == typeof(int) ||
-                            fi.FieldType == typeof(Vector3) ||
-                            fi.FieldType == typeof(double) ||
-                            fi.FieldType == typeof(long) ||
-                            fi.FieldType == typeof(Quaternion) ||
-                            fi.FieldType == typeof(UUID))
-                        {
-                            Variables[fi.Name.Substring(4)] = fi.GetValue(this);
-                        }
-                        else if (fi.FieldType == typeof(LSLKey))
-                        {
-                            Variables[fi.Name.Substring(4)] = new LSLKey(fi.GetValue(this).ToString());
-                        }
-                        else if (fi.FieldType == typeof(string))
-                        {
-                            Variables[fi.Name.Substring(4)] = (string)fi.GetValue(this);
-                        }
-                        else if (fi.FieldType == typeof(AnArray))
-                        {
-                            Variables[fi.Name.Substring(4)] = new AnArray((AnArray)fi.GetValue(this));
-                        }
-                    }
-
-                    PluginSerialization.Clear();
-                    foreach (Action<ScriptInstance, List<object>> serializer in script.SerializationDelegates)
-                    {
-                        serializer(script, PluginSerialization);
-                    }
+                    state.CurrentState = kvp.Key;
+                }
+            }
+            foreach (FieldInfo fi in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                if (!fi.Name.StartsWith("var_"))
+                {
+                    continue;
+                }
+                if (fi.FieldType == typeof(int) ||
+                    fi.FieldType == typeof(Vector3) ||
+                    fi.FieldType == typeof(double) ||
+                    fi.FieldType == typeof(long) ||
+                    fi.FieldType == typeof(Quaternion) ||
+                    fi.FieldType == typeof(UUID))
+                {
+                    state.Variables[fi.Name.Substring(4)] = fi.GetValue(this);
+                }
+                else if (fi.FieldType == typeof(LSLKey))
+                {
+                    state.Variables[fi.Name.Substring(4)] = new LSLKey(fi.GetValue(this).ToString());
+                }
+                else if (fi.FieldType == typeof(string))
+                {
+                    state.Variables[fi.Name.Substring(4)] = (string)fi.GetValue(this);
+                }
+                else if (fi.FieldType == typeof(AnArray))
+                {
+                    state.Variables[fi.Name.Substring(4)] = new AnArray((AnArray)fi.GetValue(this));
                 }
             }
 
-            private void ListToXml(XmlTextWriter writer, string name, AnArray array)
+            foreach (Action<ScriptInstance, List<object>> serializer in SerializationDelegates)
             {
-                writer.WriteStartElement("Variable");
-                writer.WriteAttributeString("name", name);
-                writer.WriteAttributeString("type", "list");
-                foreach (IValue val in array)
-                {
-                    Type valtype = val.GetType();
-                    if (valtype == typeof(Integer))
-                    {
-                        writer.WriteStartElement("ListItem");
-                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
-                        writer.WriteValue(val.AsInt);
-                        writer.WriteEndElement();
-                    }
-                    else if (valtype == typeof(Real))
-                    {
-                        writer.WriteStartElement("ListItem");
-                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
-                        double v = (Real)val;
-                        writer.WriteValue(LSLCompiler.TypecastDoubleToString(v));
-                        writer.WriteEndElement();
-                    }
-                    else if (valtype == typeof(Quaternion))
-                    {
-                        writer.WriteStartElement("ListItem");
-                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
-                        writer.WriteValue(LSLCompiler.TypecastRotationToString6Places((Quaternion)val));
-                        writer.WriteEndElement();
-                    }
-                    else if (valtype == typeof(Vector3))
-                    {
-                        writer.WriteStartElement("ListItem");
-                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
-                        writer.WriteValue(LSLCompiler.TypecastVectorToString6Places((Vector3)val));
-                        writer.WriteEndElement();
-                    }
-                    else if (valtype == typeof(AString))
-                    {
-                        writer.WriteStartElement("ListItem");
-                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
-                        writer.WriteValue(val.ToString());
-                        writer.WriteEndElement();
-                    }
-                    else if (valtype == typeof(UUID) || valtype == typeof(LSLKey))
-                    {
-                        writer.WriteStartElement("ListItem");
-                        writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
-                        writer.WriteValue(val.ToString());
-                        writer.WriteEndElement();
-                    }
-                }
-                writer.WriteEndElement();
-            }
-
-            public void ToXml(XmlTextWriter writer, Script script)
-            {
-                lock (m_TransactionLock)
-                {
-                    writer.WriteStartElement("State");
-                    writer.WriteAttributeString("UUID", ItemID.ToString());
-                    writer.WriteAttributeString("Asset", AssetID.ToString());
-                    writer.WriteAttributeString("Engine", "XEngine");
-                    {
-                        writer.WriteStartElement("ScriptState");
-                        {
-                            writer.WriteStartElement("State");
-                            {
-                                writer.WriteValue(CurrentState);
-                            }
-                            writer.WriteEndElement();
-                            writer.WriteStartElement("Running");
-                            {
-                                writer.WriteValue(script.IsRunning);
-                            }
-                            writer.WriteEndElement();
-                            writer.WriteStartElement("StartParameter");
-                            {
-                                writer.WriteValue(script.StartParameter);
-                            }
-                            writer.WriteEndElement();
-                            writer.WriteStartElement("Variables");
-                            foreach (KeyValuePair<string, object> kvp in Variables)
-                            {
-                                string varName = kvp.Key;
-                                object varValue = kvp.Value;
-                                Type varType = varValue.GetType();
-                                if (varType == typeof(int))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLInteger");
-                                    writer.WriteValue(varValue.ToString());
-                                }
-                                else if(varType == typeof(char))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "char");
-                                    writer.WriteValue(((int)varValue).ToString());
-                                }
-                                else if (varType == typeof(long))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "long");
-                                    writer.WriteValue(varValue.ToString());
-                                }
-                                else if (varType == typeof(double))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLFloat");
-                                    writer.WriteValue(LSLCompiler.TypecastDoubleToString((double)varValue));
-                                }
-                                else if (varType == typeof(Vector3))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
-                                    writer.WriteValue(LSLCompiler.TypecastVectorToString6Places((Vector3)varValue));
-                                }
-                                else if (varType == typeof(Quaternion))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
-                                    writer.WriteValue(LSLCompiler.TypecastRotationToString6Places((Quaternion)varValue));
-                                }
-                                else if (varType == typeof(UUID) || varType == typeof(LSLKey) || varType == typeof(string))
-                                {
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+LSLString");
-                                    writer.WriteValue(varValue.ToString());
-                                }
-                                else if (varType == typeof(AnArray))
-                                {
-                                    ListToXml(writer, varName, (AnArray)varValue);
-                                    continue;
-                                }
-                                else if (Attribute.GetCustomAttribute(varType, typeof(SerializableAttribute)) != null)
-                                {
-                                    byte[] data;
-                                    try
-                                    {
-                                        using (var ms = new MemoryStream())
-                                        {
-                                            using (XmlTextWriter innerWriter = ms.UTF8XmlTextWriter())
-                                            {
-                                                var formatter = new XmlSerializer(varValue.GetType());
-                                                formatter.Serialize(innerWriter, varValue);
-                                            }
-                                            data = ms.ToArray();
-                                        }
-                                    }
-                                    catch
-                                    {
-                                        continue;
-                                    }
-                                    writer.WriteStartElement("Variable");
-                                    writer.WriteAttributeString("name", varName);
-                                    writer.WriteAttributeString("type", varType.FullName);
-                                    writer.WriteValue(Convert.ToBase64String(data));
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                                writer.WriteEndElement();
-                            }
-                            writer.WriteEndElement();
-                            writer.WriteStartElement("Queue");
-                            foreach(IScriptEvent ev in Events)
-                            {
-                                Action<Script, IScriptEvent, XmlTextWriter> serializer;
-                                if(EventSerializers.TryGetValue(ev.GetType(), out serializer))
-                                {
-                                    serializer(script, ev, writer);
-                                }
-                            }
-                            writer.WriteEndElement();
-                            {
-                                ObjectPartInventoryItem.PermsGranterInfo grantInfo = PermsGranter;
-                                if (grantInfo.PermsGranter.ID != UUID.Zero)
-                                {
-                                    writer.WriteStartElement("Permissions");
-                                    writer.WriteAttributeString("mask", ((uint)grantInfo.PermsMask).ToString());
-                                    writer.WriteAttributeString("granter", grantInfo.PermsGranter.ID.ToString());
-                                    writer.WriteEndElement();
-                                }
-                            }
-                            writer.WriteStartElement("Plugins");
-                            foreach (object o in PluginSerialization)
-                            {
-                                writer.WriteTypedValue("ListItem", o);
-                            }
-                            writer.WriteEndElement();
-                            writer.WriteNamedValue("MinEventDelay", MinEventDelay);
-                        }
-                        writer.WriteEndElement();
-                    }
-                    writer.WriteEndElement();
-                }
+                serializer(this, state.PluginData);
             }
         }
 
         public void ToXml(XmlTextWriter writer)
         {
-            m_TransactionedState.ToXml(writer, this);
+            m_TransactionedState.ToXml(writer);
         }
 
         public byte[] ToDbSerializedState()
@@ -496,7 +276,7 @@ namespace SilverSim.Scripting.Lsl
             m_Part.ObjectGroup.OnPositionChange += OnGroupPositionUpdate;
         }
 
-        public void LoadScriptState(SavedScriptState state)
+        public void LoadScriptState(ILSLScriptState state)
         {
             /* we have to integrate the loaded script state */
             Type scriptType = GetType();
@@ -538,17 +318,9 @@ namespace SilverSim.Scripting.Lsl
             }
 
             /* queue deserialization */
-            foreach (SavedScriptState.EventParams ep in state.EventData)
+            foreach (IScriptEvent ev in state.EventData)
             {
-                IScriptEvent ev;
-                if (TryTranslateEventParams(ep, out ev))
-                {
-                    if(ev is TimerEvent)
-                    {
-                        m_HaveQueuedTimerEvent = true;
-                    }
-                    m_Events.Enqueue(ev);
-                }
+                m_Events.Enqueue(ev);
             }
 
             /* min event delay */
@@ -598,7 +370,7 @@ namespace SilverSim.Scripting.Lsl
 
             lock(this) /* really needed to prevent aborting here */
             {
-                m_TransactionedState.UpdateFromScript(this);
+                UpdateScriptState();
             }
         }
 
@@ -1417,7 +1189,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     lock (this) /* really needed to prevent aborting here */
                     {
-                        m_TransactionedState.UpdateFromScript(this);
+                        UpdateScriptState();
                     }
                 }
                 #endregion
@@ -1468,7 +1240,7 @@ namespace SilverSim.Scripting.Lsl
 
                         lock (this) /* really needed to prevent aborting here */
                         {
-                            m_TransactionedState.UpdateFromScript(this);
+                            UpdateScriptState();
                         }
                         continue;
                     }
@@ -1496,7 +1268,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     lock (this) /* really needed to prevent aborting here */
                     {
-                        m_TransactionedState.UpdateFromScript(this);
+                        UpdateScriptState();
                     }
                 }
                 #endregion
@@ -1561,7 +1333,7 @@ namespace SilverSim.Scripting.Lsl
 
                 lock (this) /* really needed to prevent aborting here */
                 {
-                    m_TransactionedState.UpdateFromScript(this);
+                    UpdateScriptState();
                 }
             } while (executeStateEntry || executeStateExit || executeScriptReset);
         }
@@ -1681,797 +1453,11 @@ namespace SilverSim.Scripting.Lsl
             chatService?.Send(ev);
         }
 
-        private static bool TryTranslateEventParams(SavedScriptState.EventParams ep, out IScriptEvent res)
-        {
-            res = null;
-            Func<SavedScriptState.EventParams, IScriptEvent> deserializer;
-            if (EventDeserializers.TryGetValue(ep.EventName, out deserializer))
-            {
-                res = deserializer(ep);
-            }
-            return res != null;
-        }
-
-        private static IScriptEvent ObjectRezDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                return new ObjectRezEvent
-                {
-                    ObjectID = new UUID(ep.Params[0].ToString())
-                };
-            }
-            return null;
-        }
-
-        private static void ObjectRezSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (ObjectRezEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "object_rez");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ObjectID);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent EmailDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 5)
-            {
-                return new EmailEvent
-                {
-                    Time = ep.Params[0].ToString(),
-                    Address = ep.Params[1].ToString(),
-                    Subject = ep.Params[2].ToString(),
-                    Message = ep.Params[3].ToString(),
-                    NumberLeft = (int)ep.Params[4]
-                };
-            }
-            return null;
-        }
-
-        private static void EmailSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (EmailEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "email");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Time);
-                writer.WriteTypedValue("Param", ev.Address);
-                writer.WriteTypedValue("Param", ev.Subject);
-                writer.WriteTypedValue("Param", ev.Message);
-                writer.WriteTypedValue("Param", ev.NumberLeft);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent RuntimePermissionsDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                var ev = new RuntimePermissionsEvent
-                {
-                    Permissions = (ScriptPermissions)(int)ep.Params[0]
-                };
-                if (ep.Params.Count > 1)
-                {
-                    ev.PermissionsKey = new UGUI(ep.Params[1].ToString());
-                }
-                return ev;
-            }
-            return null;
-        }
-
-        private static void RuntimePermissionsSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (RuntimePermissionsEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "run_time_permissions");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", (int)ev.Permissions);
-                writer.WriteTypedValue("Param", ev.PermissionsKey.ID);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent LinkMessageDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 4)
-            {
-                return new LinkMessageEvent
-                {
-                    SenderNumber = (int)ep.Params[0],
-                    Number = (int)ep.Params[1],
-                    Data = ep.Params[2].ToString(),
-                    Id = ep.Params[3].ToString()
-                };
-            }
-            return null;
-        }
-
-        private static void LinkMessageSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (LinkMessageEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "link_message");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.SenderNumber);
-                writer.WriteTypedValue("Param", ev.Number);
-                writer.WriteTypedValue("Param", ev.Data);
-                writer.WriteTypedValue("Param", ev.Id);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent RemoteDataDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 6)
-            {
-                return new RemoteDataEvent
-                {
-                    Type = (int)ep.Params[0],
-                    Channel = new UUID(ep.Params[1].ToString()),
-                    MessageID = new UUID(ep.Params[2].ToString()),
-                    Sender = ep.Params[3].ToString(),
-                    IData = (int)ep.Params[4],
-                    SData = ep.Params[5].ToString()
-                };
-            }
-            return null;
-        }
-
-        private static void RemoteDataSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (RemoteDataEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "remote_data");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Type);
-                writer.WriteTypedValue("Param", ev.Channel);
-                writer.WriteTypedValue("Param", ev.MessageID);
-                writer.WriteTypedValue("Param", ev.Sender);
-                writer.WriteTypedValue("Param", ev.IData);
-                writer.WriteTypedValue("Param", ev.SData);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent TransactionResultDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 3)
-            {
-                return new TransactionResultEvent
-                {
-                    TransactionID = ep.Params[0].ToString(),
-                    Success = (int)ep.Params[1] != 0,
-                    ReplyData = ep.Params[2].ToString()
-                };
-            }
-            return null;
-        }
-
-        private static void TransactionResultSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (TransactionResultEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "transaction_result");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.TransactionID);
-                writer.WriteTypedValue("Param", ev.Success);
-                writer.WriteTypedValue("Param", ev.ReplyData);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent ObjectMessageDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 2)
-            {
-                return new MessageObjectEvent
-                {
-                    ObjectID = new UUID(ep.Params[0].ToString()),
-                    Data = ep.Params[1].ToString()
-                };
-            }
-            return null;
-        }
-
-        private static void ObjectMessageSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (MessageObjectEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", script.UseMessageObjectEvent ? "object_message" : "dataserver");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ObjectID);
-                writer.WriteTypedValue("Param", ev.Data);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent DataserverDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 2)
-            {
-                return new DataserverEvent
-                {
-                    QueryID = new UUID(ep.Params[0].ToString()),
-                    Data = ep.Params[1].ToString()
-                };
-            }
-            return null;
-        }
-
-        private static void DataserverSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (DataserverEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "dataserver");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.QueryID);
-                writer.WriteTypedValue("Param", ev.Data);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent HttpResponseDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 4)
-            {
-                bool isByteArray = ep.Params.Count > 4 && ep.Params[4].ToString() == "ByteArray";
-                return new HttpResponseEvent
-                {
-                    RequestID = new UUID(ep.Params[0].ToString()),
-                    Status = (int)ep.Params[1],
-                    Metadata = (AnArray)ep.Params[2],
-                    Body = isByteArray ? Convert.FromBase64String(ep.Params[3].ToString()) : ep.Params[3].ToString().ToUTF8Bytes()
-                };
-            }
-            return null;
-        }
-
-        private static void HttpResponseSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (HttpResponseEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "http_response");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.RequestID);
-                writer.WriteTypedValue("Param", ev.Status);
-                writer.WriteTypedValue("Param", ev.Metadata);
-                if (ev.UsesByteArray)
-                {
-                    writer.WriteTypedValue("Param", Convert.ToBase64String(ev.Body));
-                    writer.WriteTypedValue("Param", "ByteArray");
-                }
-                else
-                {
-                    writer.WriteTypedValue("Param", ev.Body.FromUTF8Bytes());
-                }
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent ListenDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 4)
-            {
-                return new ListenEvent
-                {
-                    Channel = (int)ep.Params[0],
-                    Name = ep.Params[1].ToString(),
-                    ID = new UUID(ep.Params[2].ToString()),
-                    Message = ep.Params[3].ToString()
-                };
-            }
-            return null;
-        }
-
-        private static void ListenSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (ListenEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "listen");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Channel);
-                writer.WriteTypedValue("Param", ev.Name);
-                writer.WriteTypedValue("Param", ev.ID);
-                writer.WriteTypedValue("Param", ev.Message);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent OnRezDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                return new OnRezEvent
-                {
-                    StartParam = (int)ep.Params[0]
-                };
-            }
-            return null;
-        }
-
-        private static IScriptEvent AttachDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                return new AttachEvent
-                {
-                    ObjectID = new UUID(ep.Params[0].ToString())
-                };
-            }
-            return null;
-        }
-
-        private static void AttachSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (AttachEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "attach");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ObjectID);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent ChangedDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                return new ChangedEvent
-                {
-                    Flags = (ChangedEvent.ChangedFlags)(int)ep.Params[0]
-                };
-            }
-            return null;
-        }
-
-        private static void ChangedSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (ChangedEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "changed");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", (int)ev.Flags);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent MoneyDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 2)
-            {
-                return new MoneyEvent
-                {
-                    ID = new UUID(ep.Params[0].ToString()),
-                    Amount = (int)ep.Params[1]
-                };
-            }
-            return null;
-        }
-
-        private static void MoneySerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (MoneyEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "money");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ID);
-                writer.WriteTypedValue("Param", ev.Amount);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent LandCollisionStartDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                return new LandCollisionEvent
-                {
-                    Type = LandCollisionEvent.CollisionType.Start,
-                    Position = (Vector3)ep.Params[0]
-                };
-            }
-            return null;
-        }
-
-        private static void LandCollisionSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (LandCollisionEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                switch(ev.Type)
-                {
-                    case LandCollisionEvent.CollisionType.Start:
-                        writer.WriteAttributeString("event", "land_collision_start");
-                        break;
-                    case LandCollisionEvent.CollisionType.Continuous:
-                        writer.WriteAttributeString("event", "land_collision");
-                        break;
-                    case LandCollisionEvent.CollisionType.End:
-                        writer.WriteAttributeString("event", "land_collision_end");
-                        break;
-                    default:
-                        break;
-                }
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Position);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent LandCollisionDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                return new LandCollisionEvent
-                {
-                    Type = LandCollisionEvent.CollisionType.Continuous,
-                    Position = (Vector3)ep.Params[0]
-                };
-            }
-            return null;
-        }
-
-        private static IScriptEvent LandCollisionEndDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 1)
-            {
-                return new LandCollisionEvent
-                {
-                    Type = LandCollisionEvent.CollisionType.End,
-                    Position = (Vector3)ep.Params[0]
-                };
-            }
-            return null;
-        }
-
-        private static IScriptEvent ControlDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 3)
-            {
-                return new ControlEvent
-                {
-                    AgentID = new UUID(ep.Params[0].ToString()),
-                    Level = (int)ep.Params[1],
-                    Flags = (int)ep.Params[2]
-                };
-            }
-            return null;
-        }
-
-        private static void ControlSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (ControlEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "control");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.AgentID);
-                writer.WriteTypedValue("Param", ev.Level);
-                writer.WriteTypedValue("Param", ev.Flags);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent AtTargetDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 3)
-            {
-                return new AtTargetEvent
-                {
-                    Handle = (int)ep.Params[0],
-                    TargetPosition = (Vector3)ep.Params[1],
-                    OurPosition = (Vector3)ep.Params[2]
-                };
-            }
-            return null;
-        }
-
-        private static void AtTargetSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (AtTargetEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "at_target");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Handle);
-                writer.WriteTypedValue("Param", ev.TargetPosition);
-                writer.WriteTypedValue("Param", ev.OurPosition);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static IScriptEvent AtRotTargetDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 3)
-            {
-                return new AtRotTargetEvent
-                {
-                    Handle = (int)ep.Params[0],
-                    TargetRotation = (Quaternion)ep.Params[1],
-                    OurRotation = (Quaternion)ep.Params[2]
-                };
-            }
-            return null;
-        }
-
-        private static void AtRotTargetSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (AtRotTargetEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "at_rot_target");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Handle);
-                writer.WriteTypedValue("Param", ev.TargetRotation);
-                writer.WriteTypedValue("Param", ev.OurRotation);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static void NoParamSerializer(string name, XmlTextWriter writer)
-        {
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", name);
-                writer.WriteStartElement("Params");
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static void DetectedSerializer(List<DetectInfo> di, string name, XmlTextWriter writer)
-        {
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", name);
-                writer.WriteStartElement("Params");
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                foreach(DetectInfo d in di)
-                {
-                    writer.WriteStartElement("Object");
-                    writer.WriteAttributeString("pos", d.GrabOffset.ToString());
-                    writer.WriteAttributeString("linkNum", d.LinkNumber.ToString());
-                    writer.WriteAttributeString("group", d.Group.ToString());
-                    writer.WriteAttributeString("name", d.Name);
-                    writer.WriteAttributeString("owner", d.Owner.ToString());
-                    writer.WriteAttributeString("position", d.Position.ToString());
-                    writer.WriteAttributeString("rotation", d.Rotation.ToString());
-                    writer.WriteAttributeString("type", ((int)d.ObjType).ToString());
-                    writer.WriteAttributeString("velocity", d.Velocity.ToString());
-
-                    /* for whatever reason, OpenSim does not serialize the following */
-                    writer.WriteAttributeString("touchst", d.TouchST.ToString());
-                    writer.WriteAttributeString("touchuv", d.TouchUV.ToString());
-                    writer.WriteAttributeString("touchbinormal", d.TouchBinormal.ToString());
-                    writer.WriteAttributeString("touchpos", d.TouchPosition.ToString());
-                    writer.WriteAttributeString("touchface", d.TouchFace.ToString());
-                    writer.WriteEndElement();
-                }
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
-        private static void TouchSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (TouchEvent)iev;
-            switch(ev.Type)
-            {
-                case TouchEvent.TouchType.Start:
-                    DetectedSerializer(ev.Detected, "touch_start", writer);
-                    break;
-                case TouchEvent.TouchType.Continuous:
-                    DetectedSerializer(ev.Detected, "touch", writer);
-                    break;
-                case TouchEvent.TouchType.End:
-                    DetectedSerializer(ev.Detected, "touch_end", writer);
-                    break;
-            }
-        }
-
-        private static void CollisionSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (CollisionEvent)iev;
-            switch (ev.Type)
-            {
-                case CollisionEvent.CollisionType.Start:
-                    DetectedSerializer(ev.Detected, "collision_start", writer);
-                    break;
-                case CollisionEvent.CollisionType.Continuous:
-                    DetectedSerializer(ev.Detected, "collision", writer);
-                    break;
-                case CollisionEvent.CollisionType.End:
-                    DetectedSerializer(ev.Detected, "collision_end", writer);
-                    break;
-            }
-        }
-
-        private static IScriptEvent RpcDeserializer(SavedScriptState.EventParams ep)
-        {
-            if (ep.Params.Count >= 5)
-            {
-                var param = new List<object>();
-                for(int i = 5; i < ep.Params.Count; ++i)
-                {
-                    param.Add(ep.Params[i]);
-                }
-                return new RpcScriptEvent
-                {
-                    FunctionName = ep.Params[0].ToString(),
-                    SenderKey = (UUID)ep.Params[1],
-                    SenderLinkNumber = (int)ep.Params[2],
-                    SenderScriptName = ep.Params[3].ToString(),
-                    SenderScriptKey = (UUID)ep.Params[4],
-                    Parameters = param.ToArray()
-                };
-            }
-            return null;
-        }
-
-        private static void RpcSerializer(Script script, IScriptEvent iev, XmlTextWriter writer)
-        {
-            var ev = (RpcScriptEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "rpc");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.FunctionName);
-                writer.WriteTypedValue("Param", ev.SenderKey);
-                writer.WriteTypedValue("Param", ev.SenderLinkNumber);
-                writer.WriteTypedValue("Param", ev.SenderScriptName);
-                writer.WriteTypedValue("Param", ev.SenderScriptKey);
-                foreach(object o in ev.Parameters)
-                {
-                    writer.WriteTypedValue("Param", o);
-                }
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
 
         #region Event to function handlers
-        private static readonly Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>> EventSerializers = new Dictionary<Type, Action<Script, IScriptEvent, XmlTextWriter>>();
-        private static readonly Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<SavedScriptState.EventParams, IScriptEvent>>();
 
         static Script()
         {
-            EventDeserializers.Add("rpc", RpcDeserializer);
-            EventSerializers.Add(typeof(RpcScriptEvent), RpcSerializer);
-            EventDeserializers.Add("land_collision_start", LandCollisionStartDeserializer);
-            EventSerializers.Add(typeof(LandCollisionEvent), LandCollisionSerializer);
-            EventDeserializers.Add("land_collision", LandCollisionDeserializer);
-            EventDeserializers.Add("land_collision_end", LandCollisionEndDeserializer);
-            EventDeserializers.Add("at_target", AtTargetDeserializer);
-            EventSerializers.Add(typeof(AtTargetEvent), AtTargetSerializer);
-            EventDeserializers.Add("at_rot_target", AtRotTargetDeserializer);
-            EventSerializers.Add(typeof(AtRotTargetEvent), AtRotTargetSerializer);
-            EventDeserializers.Add("control", ControlDeserializer);
-            EventSerializers.Add(typeof(ControlEvent), ControlSerializer);
-            EventDeserializers.Add("object_rez", ObjectRezDeserializer);
-            EventSerializers.Add(typeof(ObjectRezEvent), ObjectRezSerializer);
-            EventDeserializers.Add("email", EmailDeserializer);
-            EventSerializers.Add(typeof(EmailEvent), EmailSerializer);
-            EventDeserializers.Add("run_time_permissions", RuntimePermissionsDeserializer);
-            EventSerializers.Add(typeof(RuntimePermissionsEvent), RuntimePermissionsSerializer);
-            EventDeserializers.Add("link_message", LinkMessageDeserializer);
-            EventSerializers.Add(typeof(LinkMessageEvent), LinkMessageSerializer);
-            EventDeserializers.Add("remote_data", RemoteDataDeserializer);
-            EventSerializers.Add(typeof(RemoteDataEvent), RemoteDataSerializer);
-            EventDeserializers.Add("transaction_result", TransactionResultDeserializer);
-            EventSerializers.Add(typeof(TransactionResultEvent), TransactionResultSerializer);
-            EventDeserializers.Add("dataserver", DataserverDeserializer);
-            EventSerializers.Add(typeof(DataserverEvent), DataserverSerializer);
-            EventDeserializers.Add("object_message", ObjectMessageDeserializer);
-            EventSerializers.Add(typeof(MessageObjectEvent), ObjectMessageSerializer);
-            EventDeserializers.Add("http_response", HttpResponseDeserializer);
-            EventSerializers.Add(typeof(HttpResponseEvent), HttpResponseSerializer);
-            EventDeserializers.Add("listen", ListenDeserializer);
-            EventSerializers.Add(typeof(ListenEvent), ListenSerializer);
-            EventDeserializers.Add("sensor", (SavedScriptState.EventParams ep) => new SensorEvent { Detected = ep.Detected } );
-            EventSerializers.Add(typeof(SensorEvent), (Script script, IScriptEvent iev, XmlTextWriter writer) =>
-            {
-                var ev = (SensorEvent)iev;
-                DetectedSerializer(ev.Detected, "sensor", writer);
-            });
-            EventDeserializers.Add("on_rez", OnRezDeserializer);
-            EventSerializers.Add(typeof(OnRezEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("on_rez", writer));
-            EventDeserializers.Add("attach", AttachDeserializer);
-            EventSerializers.Add(typeof(AttachEvent), AttachSerializer);
-            EventDeserializers.Add("changed", ChangedDeserializer);
-            EventSerializers.Add(typeof(ChangedEvent), ChangedSerializer);
-            EventDeserializers.Add("money", MoneyDeserializer);
-            EventSerializers.Add(typeof(MoneyEvent), MoneySerializer);
-            EventDeserializers.Add("no_sensor", (SavedScriptState.EventParams ep) => new NoSensorEvent());
-            EventSerializers.Add(typeof(NoSensorEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("no_sensor", writer));
-            EventDeserializers.Add("timer", (SavedScriptState.EventParams ep) => new TimerEvent());
-            EventSerializers.Add(typeof(TimerEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("timer", writer));
-            EventDeserializers.Add("touch_start", (SavedScriptState.EventParams ep) => new TouchEvent { Type = TouchEvent.TouchType.Start, Detected = ep.Detected });
-            EventSerializers.Add(typeof(TouchEvent), TouchSerializer);
-            EventDeserializers.Add("touch", (SavedScriptState.EventParams ep) => new TouchEvent { Type = TouchEvent.TouchType.Continuous, Detected = ep.Detected });
-            EventDeserializers.Add("touch_end", (SavedScriptState.EventParams ep) => new TouchEvent { Type = TouchEvent.TouchType.End, Detected = ep.Detected });
-            EventDeserializers.Add("collision_start", (SavedScriptState.EventParams ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.Start, Detected = ep.Detected });
-            EventSerializers.Add(typeof(CollisionEvent), CollisionSerializer);
-            EventDeserializers.Add("collision", (SavedScriptState.EventParams ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.Continuous, Detected = ep.Detected });
-            EventDeserializers.Add("collision_end", (SavedScriptState.EventParams ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.End, Detected = ep.Detected });
-            EventDeserializers.Add("not_at_target", (SavedScriptState.EventParams ep) => new NotAtTargetEvent());
-            EventSerializers.Add(typeof(NotAtTargetEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("not_at_target", writer));
-            EventDeserializers.Add("moving_start", (SavedScriptState.EventParams ep) => new MovingStartEvent());
-            EventSerializers.Add(typeof(MovingStartEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("moving_start", writer));
-            EventDeserializers.Add("moving_end", (SavedScriptState.EventParams ep) => new MovingEndEvent());
-            EventSerializers.Add(typeof(MovingEndEvent), (Script script, IScriptEvent ev, XmlTextWriter writer) => NoParamSerializer("moving_end", writer));
-
             #region Default state event handlers
             StateEventHandlers.Add(typeof(AtRotTargetEvent), (Script script, IScriptEvent ev) =>
             {

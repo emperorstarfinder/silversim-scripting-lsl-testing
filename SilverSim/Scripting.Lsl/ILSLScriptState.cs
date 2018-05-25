@@ -21,14 +21,23 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Types;
 using System.Collections.Generic;
-using System.Xml;
 
 namespace SilverSim.Scripting.Lsl
 {
-    public partial class LSLCompiler
+    public interface ILSLScriptState : IScriptState
     {
-        public IScriptState StateFromXml(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item) =>
-            ScriptStates.ScriptState.FromXML(reader, attrs, item);
+        UUID ItemID { get; }
+        UUID AssetID { get; }
+        Dictionary<string, object> Variables { get; }
+        List<object> PluginData { get; }
+        IScriptEvent[] EventData { get; }
+        bool IsRunning { get; }
+        string CurrentState { get; }
+        double MinEventDelay { get; }
+        int StartParameter { get; }
+        ObjectPartInventoryItem.PermsGranterInfo PermsGranter { get; set; }
     }
 }
