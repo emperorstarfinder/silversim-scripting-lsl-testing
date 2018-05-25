@@ -397,7 +397,8 @@ namespace SilverSim.Scripting.Lsl
                 writer.WriteAttributeString("type", "OpenMetaverse.UUID");
                 writer.WriteValue(o.ToString());
             }
-            else if (Attribute.GetCustomAttribute(type, typeof(SerializableAttribute)) != null)
+            else if (LSLCompiler.KnownSerializationTypes.ContainsValue(type) &&
+                Attribute.GetCustomAttribute(type, typeof(SerializableAttribute)) != null)
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", type.FullName);
