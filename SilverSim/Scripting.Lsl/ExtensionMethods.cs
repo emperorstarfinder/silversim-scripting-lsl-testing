@@ -33,8 +33,10 @@ using SilverSim.Types.Inventory;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -314,6 +316,23 @@ namespace SilverSim.Scripting.Lsl
                     return UUID.Parse(data);
 
                 default:
+                    Type customType;
+                    if (LSLCompiler.KnownSerializationTypes.TryGetValue(type, out customType) &&
+                        Attribute.GetCustomAttribute(customType, typeof(SerializableAttribute)) != null)
+                    {
+                        try
+                        {
+                            using (var ms = new MemoryStream(Convert.FromBase64String(reader.ReadElementValueAsString())))
+                            {
+                                var formatter = new XmlSerializer(customType);
+                                return formatter.Deserialize(ms);
+                            }
+                        }
+                        catch
+                        {
+                            /* deserialization not possible */
+                        }
+                    }
                     throw new ArgumentException("Unknown type \"" + type + "\" in serialization");
             }
         }
@@ -321,25 +340,25 @@ namespace SilverSim.Scripting.Lsl
         public static void WriteTypedValue(this XmlTextWriter writer, string tagname, object o)
         {
             Type type = o.GetType();
-            if(type == typeof(bool))
+            if (type == typeof(bool))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Boolean");
                 writer.WriteValue(o.ToString());
             }
-            else if(type == typeof(double))
+            else if (type == typeof(double))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Single");
                 writer.WriteValue(((float)(double)o).ToString(CultureInfo.InvariantCulture));
             }
-            else if(type == typeof(string))
+            else if (type == typeof(string))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.String");
                 writer.WriteValue(o.ToString());
             }
-            else if(type == typeof(int))
+            else if (type == typeof(int))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "System.Int32");
@@ -351,19 +370,19 @@ namespace SilverSim.Scripting.Lsl
                 writer.WriteAttributeString("type", "System.Int64");
                 writer.WriteValue(o.ToString());
             }
-            else if(type == typeof(Vector3))
+            else if (type == typeof(Vector3))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Vector3");
                 writer.WriteValue(o.ToString());
             }
-            else if(type == typeof(Quaternion))
+            else if (type == typeof(Quaternion))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+Quaternion");
                 writer.WriteValue(o.ToString());
             }
-            else if(type == typeof(LSLKey))
+            else if (type == typeof(LSLKey))
             {
                 writer.WriteStartElement(tagname);
                 writer.WriteAttributeString("type", "OpenSim.Region.ScriptEngine.Shared.LSL_Types+key");
@@ -377,6 +396,18 @@ namespace SilverSim.Scripting.Lsl
                  */
                 writer.WriteAttributeString("type", "OpenMetaverse.UUID");
                 writer.WriteValue(o.ToString());
+            }
+            else if (Attribute.GetCustomAttribute(type, typeof(SerializableAttribute)) != null)
+            {
+                writer.WriteStartElement(tagname);
+                writer.WriteAttributeString("type", type.FullName);
+                using (var ms = new MemoryStream())
+                {
+                    var formatter = new XmlSerializer(type);
+                    formatter.Serialize(ms, o);
+                    writer.WriteValue(Convert.ToBase64String(ms.ToArray()));
+                }
+                writer.WriteEndElement();
             }
             else
             {
