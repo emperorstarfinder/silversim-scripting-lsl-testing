@@ -26,7 +26,9 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -85,23 +87,67 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llToLower")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToLower")]
-        [Pure]
-        public string ToLower(string s) => s.ToLower();
+        public static readonly LSLCompiler.InlineApiMethodInfo ToLower = new LSLCompiler.InlineApiMethodInfo("ToLower",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "src", typeof(string))
+            },
+            typeof(string),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(string).GetMethod("ToLower", Type.EmptyTypes));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llToUpper")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToUpper")]
-        [Pure]
-        public string ToUpper(string s) => s.ToUpper();
+        public static readonly LSLCompiler.InlineApiMethodInfo ToUpper = new LSLCompiler.InlineApiMethodInfo("ToUpper",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "src", typeof(string))
+            },
+            typeof(string),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(string).GetMethod("ToUpper", Type.EmptyTypes));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llUnescapeURL")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "UnescapeURL")]
-        [Pure]
-        public string UnescapeURL(string url) => Uri.UnescapeDataString(url);
+        public static readonly LSLCompiler.InlineApiMethodInfo UnescapeURL = new LSLCompiler.InlineApiMethodInfo("UnecapeURL",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "url", typeof(string))
+            },
+            typeof(string),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Uri).GetMethod("UnescapeDataString", new Type[] { typeof(string) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llEscapeURL")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "EscapeURL")]
-        [Pure]
-        public string EscapeURL(string url) => Uri.EscapeDataString(url);
+        public static readonly LSLCompiler.InlineApiMethodInfo EscapeURL = new LSLCompiler.InlineApiMethodInfo("EcapeURL",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "data", typeof(string))
+            },
+            typeof(string),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Uri).GetMethod("EscapeDataString", new Type[] { typeof(string) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL)]
         public const int STRING_TRIM_HEAD = 0x1;
@@ -165,13 +211,36 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringLength")]
-        [Pure]
-        public int StringLength(string src) => src.Length;
+        public static readonly LSLCompiler.InlineApiMethodInfo StringLength = new LSLCompiler.InlineApiMethodInfo("StringLength",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "src", typeof(string))
+            },
+            typeof(int),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(string).GetProperty("Length").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llSubStringIndex")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "IndexOf")]
-        [Pure]
-        public int SubStringIndex(string source, string pattern) => source.IndexOf(pattern);
+        public static readonly LSLCompiler.InlineApiMethodInfo IndexOf = new LSLCompiler.InlineApiMethodInfo("IndexOf",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "source", typeof(string)),
+                new KeyValuePair<string, Type>( "pattern", typeof(string))
+            },
+            typeof(int),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(string).GetMethod("IndexOf", new Type[] { typeof(string) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Contains")]
         [Pure]

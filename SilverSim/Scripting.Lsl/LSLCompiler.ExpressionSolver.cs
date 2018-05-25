@@ -3112,7 +3112,8 @@ namespace SilverSim.Scripting.Lsl
 
                 if (cs.m_Functions.ContainsKey(ent) ||
                     cs.ApiInfo.Methods.ContainsKey(ent) ||
-                    (cs.ApiInfo.MemberMethods.ContainsKey(ent) && resolvetree.SubTree[i + 1].Entry == "("))
+                    cs.ApiInfo.InlineMethods.ContainsKey(ent) ||
+                    ((cs.ApiInfo.MemberMethods.ContainsKey(ent) || cs.ApiInfo.InlineMemberMethods.ContainsKey(ent)) && resolvetree.SubTree[i + 1].Entry == "("))
                 {
                     if(i + 1 >= n)
                     {

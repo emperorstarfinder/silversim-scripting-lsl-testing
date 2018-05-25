@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
@@ -1008,7 +1009,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llGetListLength")]
         [Description("Returns an integer that is the number of elements in the list src")]
-        public int GetListLength(AnArray src) => src.Count;
+        public static readonly LSLCompiler.InlineApiMethodInfo GetListLength = new LSLCompiler.InlineApiMethodInfo("GetListLength",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "src", typeof(AnArray))
+            },
+            typeof(int),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(AnArray).GetProperty("Count").GetGetMethod());
+            })
+        {
+            IsPure = true
+        };
 
         private AnArray ParseString2List(string src, AnArray separators_raw, AnArray spacers_raw, bool keepNulls)
         {

@@ -26,7 +26,9 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
 {
@@ -67,52 +69,186 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public double OsAngleBetween(Vector3 a, Vector3 b) => Math.Atan2(a.Cross(b).Length, a.Dot(b));
 
         [APILevel(APIFlags.LSL, "llAbs")]
-        [Pure]
-        public int Abs(int v) => (v < 0) ? -v : v;
+        public static readonly LSLCompiler.InlineApiMethodInfo Abs = new LSLCompiler.InlineApiMethodInfo("Abs",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(int))
+            },
+            typeof(int),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Abs", new Type[] { typeof(int) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llAcos")]
-        [Pure]
-        public double Acos(double v) => Math.Acos(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Acos = new LSLCompiler.InlineApiMethodInfo("Acos",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Acos", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llAsin")]
-        [Pure]
-        public double Asin(double v) => Math.Asin(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Asin = new LSLCompiler.InlineApiMethodInfo("Asin",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Asin", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llAtan2")]
-        [Pure]
-        public double Atan2(double y, double x) => Math.Atan2(y, x);
+        public static readonly LSLCompiler.InlineApiMethodInfo Atan2 = new LSLCompiler.InlineApiMethodInfo("Atan2",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "y", typeof(double)),
+                new KeyValuePair<string, Type>( "x", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Atan2", new Type[] { typeof(double), typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llCos")]
-        [Pure]
-        public double Cos(double v) => Math.Cos(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Cos = new LSLCompiler.InlineApiMethodInfo("Cos",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Cos", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llFabs")]
-        [Pure]
-        public double Fabs(double v) => Math.Abs(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Fabs = new LSLCompiler.InlineApiMethodInfo("Fabs",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Abs", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llLog")]
-        [Pure]
-        public double Log(double v) => Math.Log(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Log = new LSLCompiler.InlineApiMethodInfo("Log",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Log", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llLog10")]
-        [Pure]
-        public double Log10(double v) => Math.Log10(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Log10 = new LSLCompiler.InlineApiMethodInfo("Log10",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Log10", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llPow")]
-        [Pure]
-        public double Pow(double bas, double exponent) => Math.Pow(bas, exponent);
+        public static readonly LSLCompiler.InlineApiMethodInfo Pow = new LSLCompiler.InlineApiMethodInfo("Pow",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "bas", typeof(double)),
+                new KeyValuePair<string, Type>( "exponent", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Pow", new Type[] { typeof(double), typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llSin")]
-        [Pure]
-        public double Sin(double v) => Math.Sin(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Sin = new LSLCompiler.InlineApiMethodInfo("Sin",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Sin", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llSqrt")]
-        [Pure]
-        public double Sqrt(double v) => Math.Sqrt(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Sqrt = new LSLCompiler.InlineApiMethodInfo("Sqrt",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Sqrt", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llTan")]
-        [Pure]
-        public double Tan(double v) => Math.Tan(v);
+        public static readonly LSLCompiler.InlineApiMethodInfo Tan = new LSLCompiler.InlineApiMethodInfo("Tan",
+            new KeyValuePair<string, Type>[]
+            {
+                new KeyValuePair<string, Type>( "value", typeof(double))
+            },
+            typeof(double),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Math).GetMethod("Tan", new Type[] { typeof(double) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llVecDist")]
         [Pure]
@@ -215,11 +351,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llFloor")]
         [Pure]
-        public int Floor(double f) => (int)Math.Floor(f);
+        public int Floor(double f) => LSLCompiler.ConvToInt(Math.Floor(f));
 
         [APILevel(APIFlags.LSL, "llCeil")]
         [Pure]
-        public int Ceil(double f) => (int)Math.Ceiling(f);
+        public int Ceil(double f) => LSLCompiler.ConvToInt(Math.Ceiling(f));
 
         [APILevel(APIFlags.LSL, "llRound")]
         [Pure]

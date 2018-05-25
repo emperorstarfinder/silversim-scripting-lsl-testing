@@ -64,20 +64,41 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        internal abstract class InlineApiMethodInfo
+        public sealed class InlineApiMethodInfo
         {
-            public string FunctionName;
-            public KeyValuePair<string, Type>[] Parameters;
-            public Type ReturnType;
+            public readonly string FunctionName;
+            public readonly KeyValuePair<string, Type>[] Parameters;
+            public readonly Type ReturnType;
+            public readonly Action<ILGenDumpProxy> Generate;
+            public bool IsPure;
 
-            public InlineApiMethodInfo(string functionName, KeyValuePair<string, Type>[] parameters, Type returnType)
+            public InlineApiMethodInfo(string functionName, KeyValuePair<string, Type>[] parameters, Type returnType, Action<ILGenDumpProxy> generator)
             {
+                if (parameters == null)
+                {
+                    throw new ArgumentNullException(nameof(parameters));
+                }
+                if (returnType == null)
+                {
+                    throw new ArgumentNullException(nameof(returnType));
+                }
+                if (generator == null)
+                {
+                    throw new ArgumentNullException(nameof(generator));
+                }
                 FunctionName = functionName;
                 Parameters = parameters;
                 ReturnType = returnType;
+                Generate = generator;
             }
 
-            public abstract void Generate(CompileState ilgen);
+            public InlineApiMethodInfo(string functionName, InlineApiMethodInfo src)
+            {
+                FunctionName = functionName;
+                Parameters = src.Parameters;
+                ReturnType = src.ReturnType;
+                Generate = src.Generate;
+            }
         }
 
         [ServerParam("LSL.CallDepthLimit")]
@@ -134,6 +155,8 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
+            public Dictionary<string, List<InlineApiMethodInfo>> InlineMethods = new Dictionary<string, List<InlineApiMethodInfo>>();
+            public Dictionary<string, List<InlineApiMethodInfo>> InlineMemberMethods = new Dictionary<string, List<InlineApiMethodInfo>>();
             public Dictionary<string, List<ApiMethodInfo>> Methods = new Dictionary<string, List<ApiMethodInfo>>();
             public Dictionary<string, List<ApiMethodInfo>> MemberMethods = new Dictionary<string, List<ApiMethodInfo>>();
             public Dictionary<string, FieldInfo> Constants = new Dictionary<string, FieldInfo>();
@@ -156,6 +179,17 @@ namespace SilverSim.Scripting.Lsl
                         Methods[mInfo.Key].AddRange(mInfo.Value);
                     }
                 }
+                foreach (KeyValuePair<string, List<InlineApiMethodInfo>> mInfo in info.InlineMethods)
+                {
+                    if (!InlineMethods.ContainsKey(mInfo.Key))
+                    {
+                        InlineMethods[mInfo.Key] = new List<InlineApiMethodInfo>(mInfo.Value);
+                    }
+                    else
+                    {
+                        InlineMethods[mInfo.Key].AddRange(mInfo.Value);
+                    }
+                }
                 foreach (KeyValuePair<string, List<ApiMethodInfo>> mInfo in info.MemberMethods)
                 {
                     if (!MemberMethods.ContainsKey(mInfo.Key))
@@ -165,6 +199,17 @@ namespace SilverSim.Scripting.Lsl
                     else
                     {
                         MemberMethods[mInfo.Key].AddRange(mInfo.Value);
+                    }
+                }
+                foreach (KeyValuePair<string, List<InlineApiMethodInfo>> mInfo in info.InlineMemberMethods)
+                {
+                    if (!InlineMemberMethods.ContainsKey(mInfo.Key))
+                    {
+                        InlineMemberMethods[mInfo.Key] = new List<InlineApiMethodInfo>(mInfo.Value);
+                    }
+                    else
+                    {
+                        InlineMemberMethods[mInfo.Key].AddRange(mInfo.Value);
                     }
                 }
                 foreach (KeyValuePair<string, FieldInfo> kvp in info.Constants)
@@ -504,11 +549,88 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        private void CollectApiAddInlineMethod(ApiInfo apiInfo, IAPIDeclaration funcNameAttr, InlineApiMethodInfo m, string declaringType)
+        {
+            string funcName = funcNameAttr.Name;
+            if (string.IsNullOrEmpty(funcName))
+            {
+                funcName = m.FunctionName;
+            }
+
+            List<InlineApiMethodInfo> methodList;
+
+            switch (funcNameAttr.UseAs)
+            {
+                case APIUseAsEnum.Function:
+                    if (!apiInfo.InlineMethods.TryGetValue(funcName, out methodList))
+                    {
+                        methodList = new List<InlineApiMethodInfo>();
+                        apiInfo.InlineMethods.Add(funcName, methodList);
+                    }
+                    methodList.Add(new InlineApiMethodInfo(funcName, m));
+                    break;
+
+                case APIUseAsEnum.MemberFunction:
+                    if (!apiInfo.InlineMemberMethods.TryGetValue(funcName, out methodList))
+                    {
+                        methodList = new List<InlineApiMethodInfo>();
+                        apiInfo.InlineMemberMethods.Add(funcName, methodList);
+                    }
+                    methodList.Add(new InlineApiMethodInfo(funcName, m));
+                    break;
+
+                case APIUseAsEnum.Getter:
+                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid getter.",
+                        m.FunctionName,
+                        declaringType,
+                        m.ReturnType.FullName);
+                    break;
+
+                case APIUseAsEnum.Setter:
+                    m_Log.DebugFormat("Invalid method '{0}' in '{1}' has APILevel or APIExtension attribute. Function is not a valid setter.",
+                        m.FunctionName,
+                        declaringType,
+                        m.ReturnType.FullName);
+                    break;
+            }
+        }
+
         private void CollectApiConstants(IScriptApi api)
         {
             foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Public | BindingFlags.Static))
             {
-                if ((f.Attributes & FieldAttributes.Static) != 0 &&
+                if(f.FieldType == typeof(InlineApiMethodInfo))
+                {
+                    var funcNameAttrs = Attribute.GetCustomAttributes(f, typeof(APILevelAttribute)) as APILevelAttribute[];
+                    var apiExtensionAttrs = Attribute.GetCustomAttributes(f, typeof(APIExtensionAttribute)) as APIExtensionAttribute[];
+                    if((f.Attributes & FieldAttributes.Static) != 0)
+                    {
+                        InlineApiMethodInfo m = (InlineApiMethodInfo)f.GetValue(null);
+                        foreach (APILevelAttribute attr in funcNameAttrs)
+                        {
+                            foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
+                            {
+                                if ((kvp.Key & attr.Flags) != 0)
+                                {
+                                    CollectApiAddInlineMethod(kvp.Value, attr, m, f.DeclaringType.FullName);
+                                }
+                            }
+                        }
+
+                        foreach (APIExtensionAttribute attr in apiExtensionAttrs)
+                        {
+                            ApiInfo apiInfo;
+                            string extensionName = attr.Extension.ToLower();
+                            if (!m_ApiExtensions.TryGetValue(extensionName, out apiInfo))
+                            {
+                                apiInfo = new ApiInfo();
+                                m_ApiExtensions.Add(extensionName, apiInfo);
+                            }
+                            CollectApiAddInlineMethod(apiInfo, attr, m, f.DeclaringType.FullName);
+                        }
+                    }
+                }
+                else if ((f.Attributes & FieldAttributes.Static) != 0 &&
                     ((f.Attributes & FieldAttributes.InitOnly) != 0 || (f.Attributes & FieldAttributes.Literal) != 0))
                 {
                     if (IsValidType(f.FieldType))

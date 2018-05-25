@@ -95,6 +95,7 @@ namespace SilverSim.Scripting.Lsl
             {
                 List<FunctionInfo> funcInfos;
                 List<ApiMethodInfo> methods;
+                List<InlineApiMethodInfo> inlinemethods;
                 bool functionNameValid = false;
 
                 m_LineNumber = lineNumber;
@@ -228,6 +229,55 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
+                if (functionTree.Type == Tree.EntryType.MemberFunction ?
+                    compileState.ApiInfo.InlineMemberMethods.TryGetValue(functionTree.Entry, out inlinemethods) :
+                    compileState.ApiInfo.InlineMethods.TryGetValue(functionTree.Entry, out inlinemethods))
+                {
+                    functionNameValid = true;
+                    foreach (InlineApiMethodInfo method in inlinemethods)
+                    {
+                        KeyValuePair<string, Type>[] pi = method.Parameters;
+                        int providedCount = functionTree.SubTree.Count;
+                        int usingCount = pi.Length;
+                        bool methodValid = true;
+                        if (usingCount == 0 && providedCount == 0)
+                        {
+                            if (!compileState.IsValidType(method.ReturnType))
+                            {
+                                methodValid = false;
+                                m_Log.ErrorFormat("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.FunctionName, method.ReturnType.Name);
+                            }
+                        }
+                        else if (usingCount == providedCount)
+                        {
+                            if (!compileState.IsValidType(method.ReturnType))
+                            {
+                                methodValid = false;
+                                m_Log.ErrorFormat("Internal Error! Return Value (type {1}) of function {0} is not LSL compatible", method.FunctionName, method.ReturnType.Name);
+                            }
+
+                            for (int i = 0; i < providedCount; ++i)
+                            {
+                                if (!compileState.IsValidType(pi[i].Value))
+                                {
+                                    m_Log.ErrorFormat("Internal Error! Parameter {0} (type {1}) of function {2} is not LSL compatible",
+                                        pi[i].Key, pi[i].Value.FullName, functionTree.Entry);
+                                    methodValid = false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            methodValid = false;
+                        }
+
+                        if (methodValid)
+                        {
+                            m_SelectedFunctions.Add(method);
+                        }
+                    }
+                }
+
                 if (!functionNameValid)
                 {
                     if (functionTree.Type == Tree.EntryType.MemberFunction)
@@ -305,9 +355,23 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
-                else if(t == typeof(FunctionInfo) || t == typeof(InlineApiMethodInfo))
+                else if(t == typeof(FunctionInfo))
                 {
                     var methodInfo = (FunctionInfo)o;
+                    KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
+                    for (int i = 0; i < m_Parameters.Count; ++i)
+                    {
+                        Type sourceType = m_Parameters[i].ParameterType;
+                        Type destType = pi[i].Value;
+                        if (sourceType != destType)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else if (t == typeof(InlineApiMethodInfo))
+                {
+                    var methodInfo = (InlineApiMethodInfo)o;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
@@ -383,9 +447,30 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
-                else if (t == typeof(FunctionInfo) || t == typeof(InlineApiMethodInfo))
+                else if (t == typeof(FunctionInfo))
                 {
                     var methodInfo = (FunctionInfo)o;
+                    KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
+                    for (int i = 0; i < m_Parameters.Count; ++i)
+                    {
+                        Type sourceType = m_Parameters[i].ParameterType;
+                        Type destType = pi[i].Value;
+                        if (sourceType != destType)
+                        {
+                            if (!IsImplicitlyCastable(compileState, destType, sourceType))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            ++matchedCount;
+                        }
+                    }
+                }
+                else if (t == typeof(InlineApiMethodInfo))
+                {
+                    var methodInfo = (InlineApiMethodInfo)o;
                     KeyValuePair<string, Type>[] pi = methodInfo.Parameters;
                     for (int i = 0; i < m_Parameters.Count; ++i)
                     {
@@ -447,7 +532,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
 
-                    funcInfo.Generate(compileState);
+                    funcInfo.Generate(compileState.ILGen);
                     compileState.ILGen.EndScope();
                     return funcInfo.ReturnType;
                 }
