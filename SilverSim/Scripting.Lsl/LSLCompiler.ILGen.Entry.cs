@@ -841,7 +841,8 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw new CompilerException(functionDeclaration[functionStart - 1].LineNumber, "Internal Error");
                             }
-                            if(requiresSerializable && paramType.GetCustomAttribute(typeof(SerializableAttribute)) == null)
+                            if(requiresSerializable && 
+                                (paramType != typeof(AnArray) && paramType != typeof(LSLKey) && paramType.GetCustomAttribute(typeof(SerializableAttribute)) == null))
                             {
                                 throw new CompilerException(functionDeclaration[functionStart - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "RpcCallParameterTypeMustBeSerializable", "RPC call parameter type must be serializable."));
                             }

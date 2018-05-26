@@ -26,7 +26,6 @@ using System;
 
 namespace SilverSim.Scripting.Lsl
 {
-    [Serializable]
     public sealed class LSLKey : IEquatable<LSLKey>, IEquatable<string>, IValue
     {
         readonly private string m_Value;
