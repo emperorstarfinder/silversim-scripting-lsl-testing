@@ -158,9 +158,6 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
 
         #endregion
 
-
-        private static EventParams NoParamSerializer(string name) => new EventParams { EventName = name };
-
         #region Detected
 
         private static EventParams DetectedSerializer(List<DetectInfo> di, string name)
