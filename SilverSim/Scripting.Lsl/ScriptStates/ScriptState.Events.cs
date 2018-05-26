@@ -121,7 +121,35 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             EventSerializers.Add(typeof(MovingStartEvent), (ev) => new EventParams { EventName = "moving_start" });
             EventDeserializers.Add("moving_end", (ep) => new MovingEndEvent());
             EventSerializers.Add(typeof(MovingEndEvent), (ev) => new EventParams { EventName = "moving_end" });
+            EventDeserializers.Add("item_sold", ItemSoldDeserializer);
+            EventSerializers.Add(typeof(ItemSoldEvent), ItemSoldSerializer);
         }
+
+        #region Selling
+        private static EventParams ItemSoldSerializer(IScriptEvent iev)
+        {
+            var ep = new EventParams { EventName = "item_sold" };
+            var ev = (ItemSoldEvent)iev;
+            ep.Params.Add(ev.Agent.ToString());
+            ep.Params.Add(ev.ObjectName);
+            ep.Params.Add(ev.ObjectID);
+            return ep;
+        }
+
+        private static IScriptEvent ItemSoldDeserializer(EventParams ep)
+        {
+            if(ep.Params.Count >= 3)
+            {
+                return new ItemSoldEvent
+                {
+                    Agent = new UGUI(ep.Params[0].ToString()),
+                    ObjectName = ep.Params[1].ToString(),
+                    ObjectID = new LSLKey(ep.Params[2].ToString())
+                };
+            }
+            return null;
+        }
+        #endregion
 
         #region RPC
 

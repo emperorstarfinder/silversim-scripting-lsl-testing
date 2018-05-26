@@ -40,7 +40,7 @@ namespace SilverSim.Scripting.Lsl.Api.Selling
 
         [APIExtension(APIExtension.Selling, "item_sold")]
         [StateEventDelegate]
-        public delegate void State_item_sold(LSLKey id, string agentname, LSLKey agentid, string objectname, LSLKey objectid);
+        public delegate void State_item_sold(string agentname, LSLKey agentid, string objectname, LSLKey objectid);
 
         [APIExtension(APIExtension.Selling, "sellListen")]
         public void SellListen(ScriptInstance instance)
