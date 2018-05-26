@@ -1566,7 +1566,7 @@ namespace SilverSim.Scripting.Lsl
             StateEventHandlers.Add(typeof(MoneyEvent), (Script script, IScriptEvent ev) =>
             {
                 var e = (MoneyEvent)ev;
-                script.InvokeStateEvent("money", e.ID, e.Amount);
+                script.InvokeStateEvent("money", new LSLKey(e.ID), e.Amount);
             });
 
             StateEventHandlers.Add(typeof(MovingStartEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("moving_start"));
