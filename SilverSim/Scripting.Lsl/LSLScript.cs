@@ -1629,6 +1629,11 @@ namespace SilverSim.Scripting.Lsl
                 var e = (ControlEvent)ev;
                 script.InvokeStateEvent("control", new LSLKey(e.AgentID), (int)e.Level, (int)e.Edge);
             });
+            StateEventHandlers.Add(typeof(TransactionResultEvent), (script, ev) =>
+            {
+                var e = (TransactionResultEvent)ev;
+                script.InvokeStateEvent("transaction_result", new LSLKey(e.TransactionID), e.Success.ToLSLBoolean(), e.ReplyData);
+            });
             #endregion
         }
 
