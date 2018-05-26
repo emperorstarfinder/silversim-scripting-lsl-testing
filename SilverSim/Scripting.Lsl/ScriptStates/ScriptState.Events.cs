@@ -301,18 +301,25 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
         private static EventParams LandCollisionSerializer(IScriptEvent iev)
         {
             var ev = (LandCollisionEvent)iev;
+            EventParams ep = null;
             switch (ev.Type)
             {
                 case LandCollisionEvent.CollisionType.Start:
-                    return new EventParams { EventName = "land_collision_start" };
+                    ep = new EventParams { EventName = "land_collision_start" };
+                    ep.Params.Add(ev.Position);
+                    break;
                 case LandCollisionEvent.CollisionType.Continuous:
-                    return new EventParams { EventName = "land_collision" };
+                    ep = new EventParams { EventName = "land_collision" };
+                    ep.Params.Add(ev.Position);
+                    break;
                 case LandCollisionEvent.CollisionType.End:
-                    return new EventParams { EventName = "land_collision_end" };
+                    ep = new EventParams { EventName = "land_collision_end" };
+                    ep.Params.Add(ev.Position);
+                    break;
                 default:
                     break;
             }
-            return null;
+            return ep;
         }
 
         private static IScriptEvent LandCollisionDeserializer(EventParams ep)
