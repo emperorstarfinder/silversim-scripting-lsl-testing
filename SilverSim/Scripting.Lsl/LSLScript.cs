@@ -1383,10 +1383,13 @@ namespace SilverSim.Scripting.Lsl
             {
                 m_SubMessage = subMessage;
                 m_RegionName = regionName;
-                LinkName = subMessage.LinkName;
-                LinkNumber = subMessage.LinkNumber;
-                ScriptName = subMessage.ScriptName;
-                LineNumber = subMessage.LineNumber;
+                if (subMessage != null)
+                {
+                    LinkName = subMessage.LinkName;
+                    LinkNumber = subMessage.LinkNumber;
+                    ScriptName = subMessage.ScriptName;
+                    LineNumber = subMessage.LineNumber;
+                }
             }
 
             public string Localize(ListenEvent le, CultureInfo currentCulture)
