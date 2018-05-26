@@ -312,4 +312,10 @@ namespace SilverSim.Scripting.Lsl
             ParameterNumber = parameterNumber;
         }
     }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+    public sealed class TranslatedScriptEventDetectedInfoAttribute : Attribute
+    {
+    }
 }
