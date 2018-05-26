@@ -1611,20 +1611,25 @@ namespace SilverSim.Scripting.Lsl
             });
 #pragma warning restore RCS1021 // Simplify lambda expression.
 
-            StateEventHandlers.Add(typeof(ItemSoldEvent), (Script script, IScriptEvent ev) =>
+            StateEventHandlers.Add(typeof(ItemSoldEvent), (script, ev) =>
             {
                 var e = (ItemSoldEvent)ev;
                 UGUIWithName agent = script.Part?.ObjectGroup?.Scene?.AvatarNameService?.ResolveName(e.Agent) ?? (UGUIWithName)e.Agent;
                 script.InvokeStateEvent("item_sold", agent.FullName, new LSLKey(e.Agent.ID), e.ObjectName, new LSLKey(e.ObjectID));
             });
 
-            StateEventHandlers.Add(typeof(SensorEvent), HandleSensor);
+            StateEventHandlers.Add(typeof(SensorEvent), (script, ev) => script.InvokeStateEvent("sensor", script.m_Detected.Count));
             StateEventHandlers.Add(typeof(RuntimePermissionsEvent), HandleRuntimePermissions);
             StateEventHandlers.Add(typeof(ExperiencePermissionsEvent), HandleExperiencePermissions);
             StateEventHandlers.Add(typeof(ExperiencePermissionsDeniedEvent), HandleExperiencePermissionsDenied);
             StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
-            StateEventHandlers.Add(typeof(TimerEvent), (Script script, IScriptEvent ev) => script.InvokeStateEvent("timer"));
+            StateEventHandlers.Add(typeof(TimerEvent), (script, ev) => script.InvokeStateEvent("timer"));
             StateEventHandlers.Add(typeof(RpcScriptEvent), HandleRpcScriptEvent);
+            StateEventHandlers.Add(typeof(ControlEvent), (script, ev) =>
+            {
+                var e = (ControlEvent)ev;
+                script.InvokeStateEvent("control", new LSLKey(e.AgentID), e.Level, e.Flags);
+            });
             #endregion
         }
 
@@ -1676,11 +1681,6 @@ namespace SilverSim.Scripting.Lsl
                     script.InvokeStateEvent("land_collision", e.Position);
                     break;
             }
-        }
-
-        private static void HandleSensor(Script script, IScriptEvent ev)
-        {
-            script.InvokeStateEvent("sensor", script.m_Detected.Count);
         }
 
         private static void HandleRuntimePermissions(Script script, IScriptEvent ev)
