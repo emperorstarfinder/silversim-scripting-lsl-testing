@@ -1198,8 +1198,10 @@ namespace SilverSim.Scripting.Lsl
                         /* translatable parameters */
                         var parameters = new SortedDictionary<int, object>();
                         bool notUsable = false;
+                        FieldInfo detectedInfoField = null;
+                        PropertyInfo detectedInfoProperty = null;
 
-                        foreach(FieldInfo fi in evt.GetFields(BindingFlags.Instance | BindingFlags.Public))
+                        foreach (FieldInfo fi in evt.GetFields(BindingFlags.Instance | BindingFlags.Public))
                         {
                             var paramAttr = Attribute.GetCustomAttribute(fi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
 
@@ -1225,9 +1227,15 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 parameters.Add(paramAttr.ParameterNumber, fi);
                             }
+
+                            if (Attribute.GetCustomAttribute(fi, typeof(TranslatedScriptEventDetectedInfoAttribute)) != null &&
+                                fi.FieldType == typeof(List<DetectInfo>))
+                            {
+                                detectedInfoField = fi;
+                            }
                         }
 
-                        foreach(PropertyInfo pi in evt.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                        foreach (PropertyInfo pi in evt.GetProperties(BindingFlags.Instance | BindingFlags.Public))
                         {
                             var paramAttr = Attribute.GetCustomAttribute(pi, typeof(TranslatedScriptEventParameterAttribute)) as TranslatedScriptEventParameterAttribute;
 
@@ -1242,7 +1250,7 @@ namespace SilverSim.Scripting.Lsl
                                     notUsable = true;
                                     break;
                                 }
-                                else if(!IsValidType(pi.PropertyType))
+                                else if (!IsValidType(pi.PropertyType))
                                 {
                                     m_Log.DebugFormat("Invalid ScriptEvent type {0} encountered property {1} having unsupported type {2}",
                                         evt.FullName,
@@ -1253,12 +1261,18 @@ namespace SilverSim.Scripting.Lsl
                                 }
                                 parameters.Add(paramAttr.ParameterNumber, pi);
                             }
+
+                            if (Attribute.GetCustomAttribute(pi, typeof(TranslatedScriptEventDetectedInfoAttribute)) != null &&
+                                pi.PropertyType == typeof(List<DetectInfo>))
+                            {
+                                detectedInfoProperty = pi;
+                            }
                         }
 
                         int paramcount = 0;
-                        foreach(int key in parameters.Keys)
+                        foreach (int key in parameters.Keys)
                         {
-                            if(key != paramcount)
+                            if (key != paramcount)
                             {
                                 m_Log.DebugFormat("Invalid ScriptEvent type {0} encountered with duplicate parameter number definition is not valid (missing {1})",
                                     evt.FullName,
@@ -1269,71 +1283,295 @@ namespace SilverSim.Scripting.Lsl
                             ++paramcount;
                         }
 
-                        if(notUsable)
+                        if (notUsable)
                         {
                             continue;
                         }
 
-                        var dynMethod = new DynamicMethod("Translate_" + eventAttr.EventName,
-                            typeof(void),
-                            new Type[2] { typeof(Script), typeof(IScriptEvent) },
-                            typeof(Script).Module);
-                        ILGenerator ilgen = dynMethod.GetILGenerator();
-
-                        /* cast IScriptEvent to actual type */
-                        ilgen.Emit(OpCodes.Ldarg_1);
-                        ilgen.Emit(OpCodes.Castclass, evt);
-                        LocalBuilder eventlb = ilgen.DeclareLocal(evt);
-                        ilgen.Emit(OpCodes.Stloc, eventlb);
-
-                        /* create object[] array */
-                        LocalBuilder lb = ilgen.DeclareLocal(typeof(object[]));
-                        ilgen.Emit(OpCodes.Ldc_I4, paramcount);
-                        ilgen.Emit(OpCodes.Newarr, typeof(object));
-                        ilgen.Emit(OpCodes.Stloc, lb);
-
-                        /* collect parameters into object[] array */
-                        foreach(KeyValuePair<int, object> kvp in parameters)
+                        #region Invoke Translation
                         {
+                            var dynMethod = new DynamicMethod("Translate_" + eventAttr.EventName,
+                                typeof(void),
+                                new Type[2] { typeof(Script), typeof(IScriptEvent) },
+                                typeof(Script).Module);
+                            ILGenerator ilgen = dynMethod.GetILGenerator();
+
+                            /* cast IScriptEvent to actual type */
+                            ilgen.Emit(OpCodes.Ldarg_1);
+                            ilgen.Emit(OpCodes.Castclass, evt);
+                            LocalBuilder eventlb = ilgen.DeclareLocal(evt);
+                            ilgen.Emit(OpCodes.Stloc, eventlb);
+
+                            /* create object[] array */
+                            LocalBuilder lb = ilgen.DeclareLocal(typeof(object[]));
+                            ilgen.Emit(OpCodes.Ldc_I4, paramcount);
+                            ilgen.Emit(OpCodes.Newarr, typeof(object));
+                            ilgen.Emit(OpCodes.Stloc, lb);
+
+                            /* collect parameters into object[] array */
+                            foreach (KeyValuePair<int, object> kvp in parameters)
+                            {
+                                ilgen.Emit(OpCodes.Ldloc, lb);
+                                ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
+                                Type retType = null;
+                                FieldInfo fi;
+                                PropertyInfo pi;
+
+                                if ((fi = kvp.Value as FieldInfo) != null)
+                                {
+                                    if (evt.IsValueType)
+                                    {
+                                        ilgen.Emit(OpCodes.Ldloca, eventlb);
+                                    }
+                                    else
+                                    {
+                                        ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                    }
+                                    ilgen.Emit(OpCodes.Ldfld, fi);
+                                    retType = fi.FieldType;
+                                }
+                                else if ((pi = kvp.Value as PropertyInfo) != null)
+                                {
+                                    if (evt.IsValueType)
+                                    {
+                                        ilgen.Emit(OpCodes.Ldloca, eventlb);
+                                    }
+                                    else
+                                    {
+                                        ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                    }
+                                    ilgen.Emit(OpCodes.Call, pi.GetGetMethod());
+                                    retType = pi.PropertyType;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+
+                                if (!retType.IsByRef)
+                                {
+                                    ilgen.Emit(OpCodes.Box, retType);
+                                }
+                                ilgen.Emit(OpCodes.Stelem_Ref);
+                            }
+
+                            /* parameters for function */
+                            ilgen.Emit(OpCodes.Ldarg_0);
+                            ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
                             ilgen.Emit(OpCodes.Ldloc, lb);
-                            ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
-                            Type retType = null;
-                            FieldInfo fi;
-                            PropertyInfo pi;
 
-                            if ((fi = kvp.Value as FieldInfo) != null)
-                            {
-                                ilgen.Emit(OpCodes.Ldloc, eventlb);
-                                ilgen.Emit(OpCodes.Ldfld, fi);
-                                retType = fi.FieldType;
-                            }
-                            else if((pi = kvp.Value as PropertyInfo) != null)
-                            {
-                                ilgen.Emit(OpCodes.Ldloc, eventlb);
-                                ilgen.Emit(OpCodes.Call, pi.GetGetMethod());
-                                retType = pi.PropertyType;
-                            }
-                            else
-                            {
-                                continue;
-                            }
+                            ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("InvokeStateEvent", new Type[] { typeof(Script), typeof(string), typeof(object[]) }));
+                            ilgen.Emit(OpCodes.Ret);
 
-                            if (!retType.IsByRef)
-                            {
-                                ilgen.Emit(OpCodes.Box, retType);
-                            }
-                            ilgen.Emit(OpCodes.Stelem_Ref);
+                            Script.StateEventHandlers.Add(evt, dynMethod.CreateDelegate(typeof(Action<Script, IScriptEvent>)) as Action<Script, IScriptEvent>);
                         }
+                        #endregion
 
-                        /* parameters for function */
-                        ilgen.Emit(OpCodes.Ldarg_0);
-                        ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
-                        ilgen.Emit(OpCodes.Ldloc, lb);
+                        #region Serialization
+                        /* Create serializer */
+                        if(eventAttr.IsSerialized)
+                        {
+                            var dynMethod = new DynamicMethod("Serialize_" + eventAttr.EventName,
+                                typeof(ScriptStates.ScriptState.EventParams),
+                                new Type[] { typeof(IScriptEvent) },
+                                typeof(Script).Module);
+                            ILGenerator ilgen = dynMethod.GetILGenerator();
 
-                        ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("InvokeStateEvent", new Type[] { typeof(Script), typeof(string), typeof(object[]) }));
-                        ilgen.Emit(OpCodes.Ret);
+                            /* cast IScriptEvent to actual type */
+                            ilgen.Emit(OpCodes.Ldarg_0);
+                            ilgen.Emit(OpCodes.Castclass, evt);
+                            LocalBuilder eventlb = ilgen.DeclareLocal(evt);
+                            ilgen.Emit(OpCodes.Stloc, eventlb);
 
-                        Script.StateEventHandlers.Add(evt, dynMethod.CreateDelegate(typeof(Action<Script, IScriptEvent>)) as Action<Script, IScriptEvent>);
+                            /* create EventParams */
+                            ilgen.Emit(OpCodes.Newobj, typeof(ScriptStates.ScriptState.EventParams).GetConstructor(Type.EmptyTypes));
+                            LocalBuilder epLb = ilgen.DeclareLocal(typeof(ScriptStates.ScriptState.EventParams));
+                            ilgen.Emit(OpCodes.Dup);
+                            ilgen.Emit(OpCodes.Stloc, epLb);
+                            ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
+                            ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("EventName"));
+
+                            /* create object[] array */
+                            LocalBuilder lb = ilgen.DeclareLocal(typeof(List<object>));
+                            ilgen.Emit(OpCodes.Ldc_I4, paramcount);
+                            ilgen.Emit(OpCodes.Newobj, typeof(List<object>).GetConstructor(new Type[] { typeof(int) }));
+                            ilgen.Emit(OpCodes.Stloc, lb);
+
+                            /* collect parameters into List<object> */
+                            foreach (KeyValuePair<int, object> kvp in parameters)
+                            {
+                                ilgen.Emit(OpCodes.Ldloc, lb);
+                                ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
+                                Type retType = null;
+                                FieldInfo fi;
+                                PropertyInfo pi;
+
+                                if ((fi = kvp.Value as FieldInfo) != null)
+                                {
+                                    ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                    ilgen.Emit(OpCodes.Ldfld, fi);
+                                    retType = fi.FieldType;
+                                }
+                                else if ((pi = kvp.Value as PropertyInfo) != null)
+                                {
+                                    ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                    ilgen.Emit(OpCodes.Call, pi.GetGetMethod());
+                                    retType = pi.PropertyType;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+
+                                if (!retType.IsByRef)
+                                {
+                                    ilgen.Emit(OpCodes.Box, retType);
+                                }
+                                ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("Item", new Type[] { typeof(int) }).GetSetMethod());
+                            }
+
+                            ilgen.Emit(OpCodes.Ldloc, epLb);
+                            ilgen.Emit(OpCodes.Ldloc, lb);
+                            ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Params"));
+
+                            if(detectedInfoField != null)
+                            {
+                                ilgen.Emit(OpCodes.Ldloc, epLb);
+                                if (!evt.IsByRef)
+                                {
+                                    ilgen.Emit(OpCodes.Ldloca, eventlb);
+                                }
+                                else
+                                {
+                                    ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                }
+                                ilgen.Emit(OpCodes.Ldfld, detectedInfoField);
+                                ilgen.Emit(OpCodes.Stloc, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
+                            }
+                            else if(detectedInfoProperty != null)
+                            {
+                                ilgen.Emit(OpCodes.Ldloc, epLb);
+                                if (!evt.IsByRef)
+                                {
+                                    ilgen.Emit(OpCodes.Ldloca, eventlb);
+                                }
+                                else
+                                {
+                                    ilgen.Emit(OpCodes.Ldloc, eventlb);
+                                }
+                                MethodInfo mi = detectedInfoProperty.GetGetMethod();
+                                ilgen.Emit(mi.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, mi);
+                                ilgen.Emit(OpCodes.Stloc, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
+                            }
+
+                            ilgen.Emit(OpCodes.Ldloc, epLb);
+                            ilgen.Emit(OpCodes.Ret);
+
+                            ScriptStates.ScriptState.EventSerializers.Add(evt, dynMethod.CreateDelegate(typeof(Func<IScriptEvent, ScriptStates.ScriptState.EventParams>)) as Func<IScriptEvent, ScriptStates.ScriptState.EventParams>);
+                        }
+                        #endregion
+
+                        #region Deserialization
+                        {
+                            var dynMethod = new DynamicMethod("Deserialize_" + eventAttr.EventName,
+                                typeof(IScriptEvent),
+                                new Type[] { typeof(ScriptStates.ScriptState.EventParams) },
+                                typeof(Script).Module);
+                            ILGenerator ilgen = dynMethod.GetILGenerator();
+
+                            LocalBuilder retLb = ilgen.DeclareLocal(evt);
+                            ilgen.Emit(OpCodes.Ldnull);
+                            ilgen.Emit(OpCodes.Stloc, retLb);
+
+                            /* fetch params */
+                            LocalBuilder paramLb = ilgen.DeclareLocal(typeof(List<object>));
+                            ilgen.Emit(OpCodes.Ldarg_0);
+                            ilgen.Emit(OpCodes.Ldfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Params"));
+
+                            /* store array in local and fetch param count */
+                            ilgen.Emit(OpCodes.Dup);
+                            ilgen.Emit(OpCodes.Stloc, paramLb);
+                            ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("Count").GetGetMethod());
+                            ilgen.Emit(OpCodes.Ldc_I4, paramcount);
+
+                            /* skip if not enough parameters */
+                            Label skipLabel = ilgen.DefineLabel();
+                            ilgen.Emit(OpCodes.Blt_Un, skipLabel);
+
+                            ilgen.Emit(OpCodes.Newobj, evt.GetConstructor(Type.EmptyTypes));
+                            ilgen.Emit(OpCodes.Stloc, retLb);
+
+                            /* collect parameters from object[] array */
+                            foreach (KeyValuePair<int, object> kvp in parameters)
+                            {
+                                FieldInfo fi;
+                                PropertyInfo pi;
+
+                                if ((fi = kvp.Value as FieldInfo) != null)
+                                {
+                                    ilgen.Emit(OpCodes.Ldloc, retLb);
+                                    ilgen.Emit(OpCodes.Ldloc, paramLb);
+                                    ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
+                                    ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("Item", new Type[] { typeof(int) }).GetGetMethod());
+                                    if (fi.FieldType.IsValueType)
+                                    {
+                                        ilgen.Emit(OpCodes.Unbox_Any, fi.FieldType);
+                                    }
+                                    else
+                                    {
+                                        ilgen.Emit(OpCodes.Castclass, fi.FieldType);
+                                    }
+                                    ilgen.Emit(OpCodes.Stfld, fi);
+                                }
+                                else if ((pi = kvp.Value as PropertyInfo) != null)
+                                {
+                                    MethodInfo mi = pi.GetSetMethod();
+                                    if (mi != null)
+                                    {
+                                        ilgen.Emit(OpCodes.Ldloc, retLb);
+                                        ilgen.Emit(OpCodes.Ldloc, paramLb);
+                                        ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
+                                        ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("this", new Type[] { typeof(int) }).GetGetMethod());
+                                        if (pi.PropertyType.IsValueType)
+                                        {
+                                            ilgen.Emit(OpCodes.Unbox_Any, pi.PropertyType);
+                                        }
+                                        else
+                                        {
+                                            ilgen.Emit(OpCodes.Castclass, pi.PropertyType);
+                                        }
+                                        ilgen.Emit(OpCodes.Call, mi);
+                                    }
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+
+                            if(detectedInfoField != null)
+                            {
+                                ilgen.Emit(OpCodes.Ldloc, retLb);
+                                ilgen.Emit(OpCodes.Ldarg_0);
+                                ilgen.Emit(OpCodes.Ldfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
+                                ilgen.Emit(OpCodes.Stfld, detectedInfoField);
+                            }
+                            else if(detectedInfoProperty != null)
+                            {
+                                MethodInfo mi = detectedInfoProperty.GetSetMethod();
+                                ilgen.Emit(OpCodes.Ldloc, retLb);
+                                ilgen.Emit(OpCodes.Ldarg_0);
+                                ilgen.Emit(OpCodes.Ldfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
+                                ilgen.Emit(mi.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, mi);
+                            }
+
+                            ilgen.MarkLabel(skipLabel);
+                            ilgen.Emit(OpCodes.Ldloc, retLb);
+                            ilgen.Emit(OpCodes.Ret);
+
+                            ScriptStates.ScriptState.EventDeserializers.Add(eventAttr.EventName, dynMethod.CreateDelegate(typeof(Func<ScriptStates.ScriptState.EventParams, IScriptEvent>)) as Func<ScriptStates.ScriptState.EventParams, IScriptEvent>);
+                        }
+                        #endregion
                     }
                 }
             }

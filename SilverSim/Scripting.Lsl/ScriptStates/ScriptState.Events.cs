@@ -31,8 +31,8 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
 {
     public partial class ScriptState
     {
-        private static readonly Dictionary<Type, Func<IScriptEvent, EventParams>> EventSerializers = new Dictionary<Type, Func<IScriptEvent, EventParams>>();
-        private static readonly Dictionary<string, Func<EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<EventParams, IScriptEvent>>();
+        internal static readonly Dictionary<Type, Func<IScriptEvent, EventParams>> EventSerializers = new Dictionary<Type, Func<IScriptEvent, EventParams>>();
+        internal static readonly Dictionary<string, Func<EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<EventParams, IScriptEvent>>();
 
         public static bool TryTranslateEventParams(EventParams ep, out IScriptEvent res)
         {

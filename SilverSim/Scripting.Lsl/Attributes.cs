@@ -294,10 +294,18 @@ namespace SilverSim.Scripting.Lsl
     public sealed class TranslatedScriptEventAttribute : Attribute
     {
         public string EventName { get; }
+        public bool IsSerialized { get; }
 
         public TranslatedScriptEventAttribute(string eventName)
         {
             EventName = eventName;
+            IsSerialized = true;
+        }
+
+        public TranslatedScriptEventAttribute(string eventName, bool isSerialized)
+        {
+            EventName = eventName;
+            IsSerialized = isSerialized;
         }
     }
 
