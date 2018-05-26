@@ -201,6 +201,7 @@ namespace SilverSim.Scripting.Lsl.ScriptStates.Formats
                                 writer.WriteAttributeString("touchbinormal", d.TouchBinormal.ToString());
                                 writer.WriteAttributeString("touchpos", d.TouchPosition.ToString());
                                 writer.WriteAttributeString("touchface", d.TouchFace.ToString());
+                                writer.WriteValue(d.Key.ToString());
                                 writer.WriteEndElement();
                             }
                             writer.WriteEndElement();
