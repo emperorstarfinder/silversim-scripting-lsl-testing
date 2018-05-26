@@ -822,9 +822,25 @@ namespace SilverSim.Scripting.Lsl
         internal void InvokeRpcEventReal(string name, object[] param)
         {
             var paratypes = new List<Type>();
-            foreach (object p in param)
+            object[] realparams = new object[param.Length];
+            for(int i = 0; i < param.Length; ++i)
             {
-                paratypes.Add(p.GetType());
+                object p = param[i];
+                Type pType = p.GetType();
+                paratypes.Add(pType);
+                realparams[i] = p;
+                MethodInfo restoreMethod = pType.GetMethod("RestoreFromSerialization", new Type[] { typeof(ScriptInstance) });
+                if (restoreMethod != null)
+                {
+                    ConstructorInfo cInfo = pType.GetConstructor(new Type[] { pType });
+                    p = cInfo.Invoke(new object[] { p });
+                    restoreMethod.Invoke(p, new object[] { this });
+                }
+                else if (pType == typeof(AnArray) || Attribute.GetCustomAttribute(pType, typeof(APICloneOnAssignmentAttribute)) != null)
+                {
+                    ConstructorInfo cInfo = pType.GetConstructor(new Type[] { pType });
+                    p = cInfo.Invoke(new object[] { p });
+                }
             }
             Type scriptType = GetType();
 
@@ -893,7 +909,7 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
 
-                    mi.Invoke(this, param);
+                    mi.Invoke(this, realparams);
                 }
                 catch (ChangeStateException)
                 {
