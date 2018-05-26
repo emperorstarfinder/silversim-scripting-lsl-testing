@@ -155,7 +155,7 @@ namespace SilverSim.Scripting.Lsl.ScriptStates.Formats
                     foreach (IScriptEvent ev in state.EventData)
                     {
                         Type evType = ev.GetType();
-                        ScriptState.EventParams eventParams = null;
+                        EventParams eventParams = null;
                         if (evType == typeof(MessageObjectEvent))
                         {
                             if (state.UseMessageObjectEvent)
