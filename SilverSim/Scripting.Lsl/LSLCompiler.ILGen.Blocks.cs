@@ -542,9 +542,10 @@ namespace SilverSim.Scripting.Lsl
 
                         {
                             Label looplabel = compileState.ILGen.DefineLabel();
+                            Label continuelabel = compileState.ILGen.DefineLabel();
                             var bcLabel = new BreakContinueLabel
                             {
-                                ContinueTargetLabel = looplabel,
+                                ContinueTargetLabel = continuelabel,
                                 BreakTargetLabel = compileState.ILGen.DefineLabel(),
                                 HaveContinueTarget = true,
                                 HaveBreakTarget = true
@@ -605,6 +606,7 @@ namespace SilverSim.Scripting.Lsl
                                 throw new CompilerException(functionLine.Line[functionLine.Line.Count - 1].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidWhileEncountered", "Invalid 'while' encountered"));
                             }
 
+                            compileState.ILGen.MarkLabel(continuelabel);
                             ProcessExpression(
                                 compileState,
                                 typeof(bool),
