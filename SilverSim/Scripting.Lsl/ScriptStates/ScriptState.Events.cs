@@ -276,8 +276,8 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             var ep = new EventParams { EventName = "control" };
             var ev = (ControlEvent)iev;
             ep.Params.Add(ev.AgentID);
-            ep.Params.Add(ev.Level);
-            ep.Params.Add(ev.Flags);
+            ep.Params.Add((int)ev.Level);
+            ep.Params.Add((int)ev.Flags);
             return ep;
         }
 
