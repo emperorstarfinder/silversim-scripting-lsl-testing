@@ -226,6 +226,13 @@ namespace SilverSim.Scripting.Lsl
                     script_ilgen.Emit(OpCodes.Stfld, typeof(Script).GetField("m_UsesSinglePrecision", BindingFlags.Instance | BindingFlags.NonPublic));
                 }
 
+                if(compileState.LanguageExtensions.UseMessageObjectEvent)
+                {
+                    script_ilgen.Emit(OpCodes.Ldarg_0);
+                    script_ilgen.Emit(OpCodes.Ldc_I4_1);
+                    script_ilgen.Emit(OpCodes.Stfld, typeof(Script).GetField("UseMessageObjectEvent", BindingFlags.Instance | BindingFlags.NonPublic));
+                }
+
                 MethodBuilder reset_func = scriptTypeBuilder.DefineMethod("ResetVariables", MethodAttributes.Public | MethodAttributes.Virtual, typeof(void), Type.EmptyTypes);
                 ILGenerator reset_ilgen = reset_func.GetILGenerator();
                 #endregion

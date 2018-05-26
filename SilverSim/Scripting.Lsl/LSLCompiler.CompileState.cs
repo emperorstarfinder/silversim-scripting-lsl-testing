@@ -188,6 +188,9 @@ namespace SilverSim.Scripting.Lsl
 
                 [APILevel(APIFlags.OSSL)]
                 public bool EnableMultipleLoopActions;
+
+                [APILevel(APIFlags.ASSL)]
+                public bool UseMessageObjectEvent;
 #pragma warning restore CS0649
             }
 

@@ -45,7 +45,6 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using System.Xml;
-using System.Xml.Serialization;
 
 namespace SilverSim.Scripting.Lsl
 {
@@ -198,7 +197,7 @@ namespace SilverSim.Scripting.Lsl
                 ItemID = Item.ID,
                 MinEventDelay = MinEventDelay,
                 CurrentState = "default",
-                UseMessageObjectEvent = UseMessageObjectEvent,
+                UseMessageObjectEvent = UseMessageObjectEvent, /* make script state know about that */
                 PermsGranter = Item.PermsGranter
             };
             foreach (KeyValuePair<string, ILSLState> kvp in m_States)
