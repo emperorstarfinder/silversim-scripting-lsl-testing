@@ -22,6 +22,7 @@
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Event;
 using SilverSim.Types;
+using SilverSim.Types.Agent;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
@@ -86,6 +87,7 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             EventDeserializers.Add("object_message", ObjectMessageDeserializer);
             EventSerializers.Add(typeof(MessageObjectEvent), ObjectMessageSerializer);
             EventDeserializers.Add("http_response", HttpResponseDeserializer);
+            EventDeserializers.Add("http_binary_response", HttpBinaryResponseDeserializer);
             EventSerializers.Add(typeof(HttpResponseEvent), HttpResponseSerializer);
             EventDeserializers.Add("listen", ListenDeserializer);
             EventSerializers.Add(typeof(ListenEvent), ListenSerializer);
@@ -264,8 +266,8 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
                 return new ControlEvent
                 {
                     AgentID = new UUID(ep.Params[0].ToString()),
-                    Level = (int)ep.Params[1],
-                    Flags = (int)ep.Params[2]
+                    Level = (ControlFlags)ep.Params[1],
+                    Edge = (ControlFlags)ep.Params[2]
                 };
             }
             return null;
@@ -277,7 +279,7 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             var ev = (ControlEvent)iev;
             ep.Params.Add(ev.AgentID);
             ep.Params.Add((int)ev.Level);
-            ep.Params.Add((int)ev.Flags);
+            ep.Params.Add((int)ev.Edge);
             return ep;
         }
 
@@ -466,13 +468,28 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
         {
             if (ep.Params.Count >= 4)
             {
-                bool isByteArray = ep.Params.Count > 4 && ep.Params[4].ToString() == "ByteArray";
                 return new HttpResponseEvent
                 {
                     RequestID = new UUID(ep.Params[0].ToString()),
                     Status = (int)ep.Params[1],
                     Metadata = (AnArray)ep.Params[2],
-                    Body = isByteArray ? Convert.FromBase64String(ep.Params[3].ToString()) : ep.Params[3].ToString().ToUTF8Bytes()
+                    Body = ep.Params[3].ToString().ToUTF8Bytes()
+                };
+            }
+            return null;
+        }
+
+        private static IScriptEvent HttpBinaryResponseDeserializer(EventParams ep)
+        {
+            if (ep.Params.Count >= 4)
+            {
+                return new HttpResponseEvent
+                {
+                    RequestID = new UUID(ep.Params[0].ToString()),
+                    Status = (int)ep.Params[1],
+                    Metadata = (AnArray)ep.Params[2],
+                    UsesByteArray = true,
+                    Body = Convert.FromBase64String(ep.Params[3].ToString())
                 };
             }
             return null;
@@ -480,15 +497,14 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
 
         private static EventParams HttpResponseSerializer(IScriptEvent iev)
         {
-            var ep = new EventParams { EventName = "http_response" };
             var ev = (HttpResponseEvent)iev;
+            var ep = new EventParams { EventName = ev.UsesByteArray ? "http_binary_response" : "http_response" };
             ep.Params.Add(ev.RequestID);
             ep.Params.Add(ev.Status);
             ep.Params.Add(ev.Metadata);
             if(ev.UsesByteArray)
             {
                 ep.Params.Add(Convert.ToBase64String(ev.Body));
-                ep.Params.Add("ByteArray");
             }
             else
             {
