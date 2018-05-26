@@ -860,11 +860,16 @@ namespace SilverSim.Scripting.Lsl
                 {
                     /* lockout foreign callers */
                     ObjectPart otherPart = null;
-                    if(!(Part?.ObjectGroup?.Scene?.Primitives.TryGetValue(RpcRemoteKey.AsUUID, out otherPart) ?? false))
+                    if (!(Part?.ObjectGroup?.Scene?.Primitives.TryGetValue(RpcRemoteKey.AsUUID, out otherPart) ?? false))
                     {
                         return;
                     }
-                    if((!otherPart?.Owner.EqualsGrid(Part.Owner)) ?? true)
+                    if (mi.GetCustomAttribute(typeof(RpcLinksetExternalCallSameGroupAttribute)) != null &&
+                        otherPart.Group.Equals(Part.Group))
+                    {
+                        /* same group is allowed */
+                    }
+                    else if (!otherPart.Owner.EqualsGrid(Part.Owner))
                     {
                         return;
                     }

@@ -649,6 +649,7 @@ namespace SilverSim.Scripting.Lsl
                         int functionStart = 3;
                         bool isRpcAccessibleFromOtherLinkset = false;
                         bool isRpcAccessibleByEveryone = false;
+                        bool isRpcAccessibleByGroup = false;
                         string functionPrefix = "fn_";
 
                         if (functionDeclaration[0] == "extern" && compileState.LanguageExtensions.EnableExtern)
@@ -688,9 +689,16 @@ namespace SilverSim.Scripting.Lsl
 
                                             case "everyone":
                                                 isRpcAccessibleByEveryone = true;
+                                                isRpcAccessibleByGroup = false;
                                                 break;
 
                                             case "owner":
+                                                isRpcAccessibleByEveryone = false;
+                                                isRpcAccessibleByGroup = false;
+                                                break;
+
+                                            case "group":
+                                                isRpcAccessibleByGroup = true;
                                                 isRpcAccessibleByEveryone = false;
                                                 break;
 
@@ -751,6 +759,11 @@ namespace SilverSim.Scripting.Lsl
                         if (isRpcAccessibleByEveryone)
                         {
                             CustomAttributeBuilder attrBuilder = new CustomAttributeBuilder(typeof(RpcLinksetExternalCallEveryoneAttribute).GetConstructor(Type.EmptyTypes), new object[0]);
+                            method.SetCustomAttribute(attrBuilder);
+                        }
+                        if(isRpcAccessibleByGroup)
+                        {
+                            CustomAttributeBuilder attrBuilder = new CustomAttributeBuilder(typeof(RpcLinksetExternalCallSameGroupAttribute).GetConstructor(Type.EmptyTypes), new object[0]);
                             method.SetCustomAttribute(attrBuilder);
                         }
                         var paramSignature = new KeyValuePair<string, Type>[paramTypes.Count];

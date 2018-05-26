@@ -74,6 +74,12 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method)]
+    public sealed class RpcLinksetExternalCallSameGroupAttribute : Attribute
+    {
+    }
+
+    [Serializable]
+    [AttributeUsage(AttributeTargets.Method)]
     public sealed class RpcLinksetExternalCallEveryoneAttribute : Attribute
     {
     }
