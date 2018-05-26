@@ -296,8 +296,8 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
                 return new ControlEvent
                 {
                     AgentID = new UUID(ep.Params[0].ToString()),
-                    Level = (ControlFlags)ep.Params[1],
-                    Edge = (ControlFlags)ep.Params[2]
+                    Level = (ControlFlags)(int)ep.Params[1],
+                    Edge = (ControlFlags)(int)ep.Params[2]
                 };
             }
             return null;
