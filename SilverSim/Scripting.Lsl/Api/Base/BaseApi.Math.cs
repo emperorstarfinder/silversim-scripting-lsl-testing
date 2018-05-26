@@ -298,6 +298,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             typeof(double),
             (ilgen) =>
             {
+                LocalBuilder lb = ilgen.DeclareLocal(typeof(Vector3));
+                ilgen.Emit(OpCodes.Stloc, lb);
+                ilgen.Emit(OpCodes.Ldloca, lb);
                 ilgen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
             })
         {
