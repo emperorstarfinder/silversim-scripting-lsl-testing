@@ -1486,7 +1486,7 @@ namespace SilverSim.Scripting.Lsl
             StateEventHandlers.Add(typeof(AtRotTargetEvent), (Script script, IScriptEvent ev) =>
             {
                 var e = (AtRotTargetEvent)ev;
-                script.InvokeStateEvent("at_rot_target", e.TargetRotation, e.OurRotation);
+                script.InvokeStateEvent("at_rot_target", e.Handle, e.TargetRotation, e.OurRotation);
             });
 
             StateEventHandlers.Add(typeof(AttachEvent), (Script script, IScriptEvent ev) =>
