@@ -25,7 +25,6 @@ using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
 using System.Collections.Generic;
-using System.Xml;
 
 namespace SilverSim.Scripting.Lsl.ScriptStates
 {
