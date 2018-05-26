@@ -1154,6 +1154,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     ilgen.Emit(OpCodes.Box, paramTypes[i]);
                 }
+                else if(paramTypes[i] == typeof(AnArray) || Attribute.GetCustomAttribute(paramTypes[i], typeof(APICloneOnAssignmentAttribute)) != null)
+                {
+                    ilgen.Emit(OpCodes.Newobj, paramTypes[i].GetConstructor(new Type[] { paramTypes[i] }));
+                }
                 ilgen.Emit(OpCodes.Stelem_Ref);
             }
             ilgen.Emit(OpCodes.Stfld, typeof(RpcScriptEvent).GetField("Parameters"));
