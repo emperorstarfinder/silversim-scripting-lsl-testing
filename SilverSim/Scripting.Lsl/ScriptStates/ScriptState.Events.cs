@@ -115,6 +115,8 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             EventDeserializers.Add("collision_end", (ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.End, Detected = ep.Detected });
             EventDeserializers.Add("not_at_target", (ep) => new NotAtTargetEvent());
             EventSerializers.Add(typeof(NotAtTargetEvent), (ev) => new EventParams { EventName = "not_at_target" });
+            EventDeserializers.Add("not_at_rot_target", (ep) => new NotAtRotTargetEvent());
+            EventSerializers.Add(typeof(NotAtRotTargetEvent), (ev) => new EventParams { EventName = "not_at_rot_target" });
             EventDeserializers.Add("moving_start", (ep) => new MovingStartEvent());
             EventSerializers.Add(typeof(MovingStartEvent), (ev) => new EventParams { EventName = "moving_start" });
             EventDeserializers.Add("moving_end", (ep) => new MovingEndEvent());
