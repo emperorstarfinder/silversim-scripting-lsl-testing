@@ -97,7 +97,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             using (XmlTextReader reader = ms.CreateXmlReader())
                             {
-                                m_Script.LoadScriptState(ScriptStates.ScriptState.FromXML(reader, item));
+                                m_Script.LoadScriptState(ScriptStates.Formats.All.Deserialize(reader));
                             }
                         }
                     }

@@ -31,16 +31,27 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
 {
     public partial class ScriptState
     {
-        private static readonly Dictionary<Type, Action<IScriptEvent, XmlTextWriter>> EventSerializers = new Dictionary<Type, Action<IScriptEvent, XmlTextWriter>>();
+        private static readonly Dictionary<Type, Func<IScriptEvent, EventParams>> EventSerializers = new Dictionary<Type, Func<IScriptEvent, EventParams>>();
         private static readonly Dictionary<string, Func<EventParams, IScriptEvent>> EventDeserializers = new Dictionary<string, Func<EventParams, IScriptEvent>>();
 
-        private static bool TryTranslateEventParams(EventParams ep, out IScriptEvent res)
+        public static bool TryTranslateEventParams(EventParams ep, out IScriptEvent res)
         {
             res = null;
             Func<EventParams, IScriptEvent> deserializer;
             if (EventDeserializers.TryGetValue(ep.EventName, out deserializer))
             {
                 res = deserializer(ep);
+            }
+            return res != null;
+        }
+
+        public static bool TryTranslateEvent(IScriptEvent ev, out EventParams res)
+        {
+            res = null;
+            Func<IScriptEvent, EventParams> serializer;
+            if(EventSerializers.TryGetValue(ev.GetType(), out serializer))
+            {
+                res = serializer(ev);
             }
             return res != null;
         }
@@ -80,13 +91,9 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             EventDeserializers.Add("listen", ListenDeserializer);
             EventSerializers.Add(typeof(ListenEvent), ListenSerializer);
             EventDeserializers.Add("sensor", (ep) => new SensorEvent { Detected = ep.Detected });
-            EventSerializers.Add(typeof(SensorEvent), (iev, writer) =>
-            {
-                var ev = (SensorEvent)iev;
-                DetectedSerializer(ev.Detected, "sensor", writer);
-            });
+            EventSerializers.Add(typeof(SensorEvent), (iev) => DetectedSerializer(((SensorEvent)iev).Detected, "sensor"));
             EventDeserializers.Add("on_rez", OnRezDeserializer);
-            EventSerializers.Add(typeof(OnRezEvent), (ev, writer) => NoParamSerializer("on_rez", writer));
+            EventSerializers.Add(typeof(OnRezEvent), (ev) => new EventParams { EventName = "on_rez" });
             EventDeserializers.Add("attach", AttachDeserializer);
             EventSerializers.Add(typeof(AttachEvent), AttachSerializer);
             EventDeserializers.Add("changed", ChangedDeserializer);
@@ -94,9 +101,9 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             EventDeserializers.Add("money", MoneyDeserializer);
             EventSerializers.Add(typeof(MoneyEvent), MoneySerializer);
             EventDeserializers.Add("no_sensor", (ep) => new NoSensorEvent());
-            EventSerializers.Add(typeof(NoSensorEvent), (ev, writer) => NoParamSerializer("no_sensor", writer));
+            EventSerializers.Add(typeof(NoSensorEvent), (ev) => new EventParams { EventName = "no_sensor" });
             EventDeserializers.Add("timer", (ep) => new TimerEvent());
-            EventSerializers.Add(typeof(TimerEvent), (ev, writer) => NoParamSerializer("timer", writer));
+            EventSerializers.Add(typeof(TimerEvent), (ev) => new EventParams { EventName = "timer" });
             EventDeserializers.Add("touch_start", (ep) => new TouchEvent { Type = TouchEvent.TouchType.Start, Detected = ep.Detected });
             EventSerializers.Add(typeof(TouchEvent), TouchSerializer);
             EventDeserializers.Add("touch", (ep) => new TouchEvent { Type = TouchEvent.TouchType.Continuous, Detected = ep.Detected });
@@ -106,35 +113,26 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             EventDeserializers.Add("collision", (ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.Continuous, Detected = ep.Detected });
             EventDeserializers.Add("collision_end", (ep) => new CollisionEvent { Type = CollisionEvent.CollisionType.End, Detected = ep.Detected });
             EventDeserializers.Add("not_at_target", (ep) => new NotAtTargetEvent());
-            EventSerializers.Add(typeof(NotAtTargetEvent), (ev, writer) => NoParamSerializer("not_at_target", writer));
+            EventSerializers.Add(typeof(NotAtTargetEvent), (ev) => new EventParams { EventName = "not_at_target" });
             EventDeserializers.Add("moving_start", (ep) => new MovingStartEvent());
-            EventSerializers.Add(typeof(MovingStartEvent), (ev, writer) => NoParamSerializer("moving_start", writer));
+            EventSerializers.Add(typeof(MovingStartEvent), (ev) => new EventParams { EventName = "moving_start" });
             EventDeserializers.Add("moving_end", (ep) => new MovingEndEvent());
-            EventSerializers.Add(typeof(MovingEndEvent), (ev, writer) => NoParamSerializer("moving_end", writer));
+            EventSerializers.Add(typeof(MovingEndEvent), (ev) => new EventParams { EventName = "moving_end" });
         }
 
         #region RPC
 
-        private static void RpcSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams RpcSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "rpc" };
             var ev = (RpcScriptEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "rpc");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.FunctionName);
-                writer.WriteTypedValue("Param", ev.SenderKey);
-                writer.WriteTypedValue("Param", ev.SenderLinkNumber);
-                writer.WriteTypedValue("Param", ev.SenderScriptName);
-                writer.WriteTypedValue("Param", ev.SenderScriptKey);
-                foreach (object o in ev.Parameters)
-                {
-                    writer.WriteTypedValue("Param", o);
-                }
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.FunctionName);
+            ep.Params.Add(ev.SenderKey);
+            ep.Params.Add(ev.SenderLinkNumber);
+            ep.Params.Add(ev.SenderScriptName);
+            ep.Params.Add(ev.SenderScriptKey);
+            ep.Params.AddRange(ev.Parameters);
+            return ep;
         }
 
         private static IScriptEvent RpcDeserializer(EventParams ep)
@@ -162,93 +160,51 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
         #endregion
 
 
-        private static void NoParamSerializer(string name, XmlTextWriter writer)
-        {
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", name);
-                writer.WriteStartElement("Params");
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
+        private static EventParams NoParamSerializer(string name) => new EventParams { EventName = name };
 
         #region Detected
 
-        private static void DetectedSerializer(List<DetectInfo> di, string name, XmlTextWriter writer)
+        private static EventParams DetectedSerializer(List<DetectInfo> di, string name)
         {
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", name);
-                writer.WriteStartElement("Params");
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                foreach (DetectInfo d in di)
-                {
-                    writer.WriteStartElement("Object");
-                    writer.WriteAttributeString("pos", d.GrabOffset.ToString());
-                    writer.WriteAttributeString("linkNum", d.LinkNumber.ToString());
-                    writer.WriteAttributeString("group", d.Group.ToString());
-                    writer.WriteAttributeString("name", d.Name);
-                    writer.WriteAttributeString("owner", d.Owner.ToString());
-                    writer.WriteAttributeString("position", d.Position.ToString());
-                    writer.WriteAttributeString("rotation", d.Rotation.ToString());
-                    writer.WriteAttributeString("type", ((int)d.ObjType).ToString());
-                    writer.WriteAttributeString("velocity", d.Velocity.ToString());
-
-                    /* for whatever reason, OpenSim does not serialize the following */
-                    writer.WriteAttributeString("touchst", d.TouchST.ToString());
-                    writer.WriteAttributeString("touchuv", d.TouchUV.ToString());
-                    writer.WriteAttributeString("touchbinormal", d.TouchBinormal.ToString());
-                    writer.WriteAttributeString("touchpos", d.TouchPosition.ToString());
-                    writer.WriteAttributeString("touchface", d.TouchFace.ToString());
-                    writer.WriteEndElement();
-                }
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            var ep = new EventParams { EventName = name };
+            ep.Detected.AddRange(di);
+            return ep;
         }
         #endregion
 
         #region Collision
 
-        private static void CollisionSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams CollisionSerializer(IScriptEvent iev)
         {
             var ev = (CollisionEvent)iev;
             switch (ev.Type)
             {
                 case CollisionEvent.CollisionType.Start:
-                    DetectedSerializer(ev.Detected, "collision_start", writer);
-                    break;
+                    return DetectedSerializer(ev.Detected, "collision_start");
                 case CollisionEvent.CollisionType.Continuous:
-                    DetectedSerializer(ev.Detected, "collision", writer);
-                    break;
+                    return DetectedSerializer(ev.Detected, "collision");
                 case CollisionEvent.CollisionType.End:
-                    DetectedSerializer(ev.Detected, "collision_end", writer);
-                    break;
+                    return DetectedSerializer(ev.Detected, "collision_end");
             }
+            return null;
         }
         #endregion
 
         #region Touch
 
-        private static void TouchSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams TouchSerializer(IScriptEvent iev)
         {
             var ev = (TouchEvent)iev;
             switch (ev.Type)
             {
                 case TouchEvent.TouchType.Start:
-                    DetectedSerializer(ev.Detected, "touch_start", writer);
-                    break;
+                    return DetectedSerializer(ev.Detected, "touch_start");
                 case TouchEvent.TouchType.Continuous:
-                    DetectedSerializer(ev.Detected, "touch", writer);
-                    break;
+                    return DetectedSerializer(ev.Detected, "touch");
                 case TouchEvent.TouchType.End:
-                    DetectedSerializer(ev.Detected, "touch_end", writer);
-                    break;
+                    return DetectedSerializer(ev.Detected, "touch_end");
             }
+            return null;
         }
         #endregion
 
@@ -267,21 +223,14 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void AtRotTargetSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams AtRotTargetSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "at_rot_target" };
             var ev = (AtRotTargetEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "at_rot_target");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Handle);
-                writer.WriteTypedValue("Param", ev.TargetRotation);
-                writer.WriteTypedValue("Param", ev.OurRotation);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.Handle);
+            ep.Params.Add(ev.TargetRotation);
+            ep.Params.Add(ev.OurRotation);
+            return ep;
         }
         #endregion
 
@@ -300,21 +249,14 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void AtTargetSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams AtTargetSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "at_target" };
             var ev = (AtTargetEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "at_target");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Handle);
-                writer.WriteTypedValue("Param", ev.TargetPosition);
-                writer.WriteTypedValue("Param", ev.OurPosition);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.Handle);
+            ep.Params.Add(ev.TargetPosition);
+            ep.Params.Add(ev.OurPosition);
+            return ep;
         }
         #endregion
 
@@ -333,21 +275,14 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void ControlSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams ControlSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "control" };
             var ev = (ControlEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "control");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.AgentID);
-                writer.WriteTypedValue("Param", ev.Level);
-                writer.WriteTypedValue("Param", ev.Flags);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.AgentID);
+            ep.Params.Add(ev.Level);
+            ep.Params.Add(ev.Flags);
+            return ep;
         }
 
         #endregion
@@ -367,32 +302,21 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void LandCollisionSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams LandCollisionSerializer(IScriptEvent iev)
         {
             var ev = (LandCollisionEvent)iev;
-            writer.WriteStartElement("Item");
+            switch (ev.Type)
             {
-                switch (ev.Type)
-                {
-                    case LandCollisionEvent.CollisionType.Start:
-                        writer.WriteAttributeString("event", "land_collision_start");
-                        break;
-                    case LandCollisionEvent.CollisionType.Continuous:
-                        writer.WriteAttributeString("event", "land_collision");
-                        break;
-                    case LandCollisionEvent.CollisionType.End:
-                        writer.WriteAttributeString("event", "land_collision_end");
-                        break;
-                    default:
-                        break;
-                }
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Position);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
+                case LandCollisionEvent.CollisionType.Start:
+                    return new EventParams { EventName = "land_collision_start" };
+                case LandCollisionEvent.CollisionType.Continuous:
+                    return new EventParams { EventName = "land_collision" };
+                case LandCollisionEvent.CollisionType.End:
+                    return new EventParams { EventName = "land_collision_end" };
+                default:
+                    break;
             }
-            writer.WriteEndElement();
+            return null;
         }
 
         private static IScriptEvent LandCollisionDeserializer(EventParams ep)
@@ -436,20 +360,13 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void MoneySerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams MoneySerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "money" };
             var ev = (MoneyEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "money");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ID);
-                writer.WriteTypedValue("Param", ev.Amount);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.ID);
+            ep.Params.Add(ev.Amount);
+            return ep;
         }
         #endregion
 
@@ -466,19 +383,12 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void ChangedSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams ChangedSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "changed" };
             var ev = (ChangedEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "changed");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", (int)ev.Flags);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add((int)ev.Flags);
+            return ep;
         }
         #endregion
 
@@ -495,19 +405,12 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void AttachSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams AttachSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "attach" };
             var ev = (AttachEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "attach");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ObjectID);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.ObjectID);
+            return ep;
         }
         #endregion
 
@@ -542,22 +445,15 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void ListenSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams ListenSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "listen" };
             var ev = (ListenEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "listen");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Channel);
-                writer.WriteTypedValue("Param", ev.Name);
-                writer.WriteTypedValue("Param", ev.ID);
-                writer.WriteTypedValue("Param", ev.Message);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.Channel);
+            ep.Params.Add(ev.Name);
+            ep.Params.Add(ev.ID);
+            ep.Params.Add(ev.Message);
+            return ep;
         }
         #endregion
 
@@ -579,30 +475,23 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void HttpResponseSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams HttpResponseSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "http_response" };
             var ev = (HttpResponseEvent)iev;
-            writer.WriteStartElement("Item");
+            ep.Params.Add(ev.RequestID);
+            ep.Params.Add(ev.Status);
+            ep.Params.Add(ev.Metadata);
+            if(ev.UsesByteArray)
             {
-                writer.WriteAttributeString("event", "http_response");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.RequestID);
-                writer.WriteTypedValue("Param", ev.Status);
-                writer.WriteTypedValue("Param", ev.Metadata);
-                if (ev.UsesByteArray)
-                {
-                    writer.WriteTypedValue("Param", Convert.ToBase64String(ev.Body));
-                    writer.WriteTypedValue("Param", "ByteArray");
-                }
-                else
-                {
-                    writer.WriteTypedValue("Param", ev.Body.FromUTF8Bytes());
-                }
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
+                ep.Params.Add(Convert.ToBase64String(ev.Body));
+                ep.Params.Add("ByteArray");
             }
-            writer.WriteEndElement();
+            else
+            {
+                ep.Params.Add(ev.Body.FromUTF8Bytes());
+            }
+            return ep;
         }
         #endregion
 
@@ -621,20 +510,13 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void DataserverSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams DataserverSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "dataserver" };
             var ev = (DataserverEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "dataserver");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.QueryID);
-                writer.WriteTypedValue("Param", ev.Data);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.QueryID);
+            ep.Params.Add(ev.Data);
+            return ep;
         }
         #endregion
 
@@ -653,36 +535,20 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void ObjectMessageSerializer(IScriptEvent iev, XmlTextWriter writer)
+        internal static EventParams ObjectMessageSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "object_message" };
             var ev = (MessageObjectEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "object_message");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ObjectID);
-                writer.WriteTypedValue("Param", ev.Data);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.ObjectID);
+            ep.Params.Add(ev.Data);
+            return ep;
         }
 
-        private static void ObjectMessageDataserverSerializer(IScriptEvent iev, XmlTextWriter writer)
+        internal static EventParams ObjectMessageDataserverSerializer(IScriptEvent iev)
         {
-            var ev = (MessageObjectEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "dataserver");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ObjectID);
-                writer.WriteTypedValue("Param", ev.Data);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            EventParams ep = ObjectMessageSerializer(iev);
+            ep.EventName = "dataserver";
+            return ep;
         }
         #endregion
 
@@ -702,21 +568,14 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void TransactionResultSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams TransactionResultSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "transaction_result" };
             var ev = (TransactionResultEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "transaction_result");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.TransactionID);
-                writer.WriteTypedValue("Param", ev.Success);
-                writer.WriteTypedValue("Param", ev.ReplyData);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.TransactionID);
+            ep.Params.Add(ev.Success);
+            ep.Params.Add(ev.ReplyData);
+            return ep;
         }
         #endregion
 
@@ -739,24 +598,17 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void RemoteDataSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams RemoteDataSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "remote_data" };
             var ev = (RemoteDataEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "remote_data");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Type);
-                writer.WriteTypedValue("Param", ev.Channel);
-                writer.WriteTypedValue("Param", ev.MessageID);
-                writer.WriteTypedValue("Param", ev.Sender);
-                writer.WriteTypedValue("Param", ev.IData);
-                writer.WriteTypedValue("Param", ev.SData);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.Type);
+            ep.Params.Add(ev.Channel);
+            ep.Params.Add(ev.MessageID);
+            ep.Params.Add(ev.Sender);
+            ep.Params.Add(ev.IData);
+            ep.Params.Add(ev.SData);
+            return ep;
         }
         #endregion
 
@@ -776,22 +628,15 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void LinkMessageSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams LinkMessageSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "link_message" };
             var ev = (LinkMessageEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "link_message");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.SenderNumber);
-                writer.WriteTypedValue("Param", ev.Number);
-                writer.WriteTypedValue("Param", ev.Data);
-                writer.WriteTypedValue("Param", ev.Id);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.SenderNumber);
+            ep.Params.Add(ev.Number);
+            ep.Params.Add(ev.Data);
+            ep.Params.Add(ev.Id);
+            return ep;
         }
         #endregion
 
@@ -814,20 +659,13 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void RuntimePermissionsSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams RuntimePermissionsSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "run_time_permissions" };
             var ev = (RuntimePermissionsEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "run_time_permissions");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", (int)ev.Permissions);
-                writer.WriteTypedValue("Param", ev.PermissionsKey.ID);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add((int)ev.Permissions);
+            ep.Params.Add(ev.PermissionsKey.ID);
+            return ep;
         }
         #endregion
 
@@ -848,23 +686,16 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void EmailSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams EmailSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "email" };
             var ev = (EmailEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "email");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.Time);
-                writer.WriteTypedValue("Param", ev.Address);
-                writer.WriteTypedValue("Param", ev.Subject);
-                writer.WriteTypedValue("Param", ev.Message);
-                writer.WriteTypedValue("Param", ev.NumberLeft);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.Time);
+            ep.Params.Add(ev.Address);
+            ep.Params.Add(ev.Subject);
+            ep.Params.Add(ev.Message);
+            ep.Params.Add(ev.NumberLeft);
+            return ep;
         }
         #endregion
 
@@ -881,19 +712,12 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             return null;
         }
 
-        private static void ObjectRezSerializer(IScriptEvent iev, XmlTextWriter writer)
+        private static EventParams ObjectRezSerializer(IScriptEvent iev)
         {
+            var ep = new EventParams { EventName = "object_rez" };
             var ev = (ObjectRezEvent)iev;
-            writer.WriteStartElement("Item");
-            {
-                writer.WriteAttributeString("event", "object_rez");
-                writer.WriteStartElement("Params");
-                writer.WriteTypedValue("Param", ev.ObjectID);
-                writer.WriteEndElement();
-                writer.WriteStartElement("Detected");
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
+            ep.Params.Add(ev.ObjectID);
+            return ep;
         }
         #endregion
     }

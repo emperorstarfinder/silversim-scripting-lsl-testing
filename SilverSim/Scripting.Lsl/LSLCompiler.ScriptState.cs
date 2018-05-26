@@ -29,6 +29,6 @@ namespace SilverSim.Scripting.Lsl
     public partial class LSLCompiler
     {
         public IScriptState StateFromXml(XmlTextReader reader, Dictionary<string, string> attrs, ObjectPartInventoryItem item) =>
-            ScriptStates.ScriptState.FromXML(reader, attrs, item);
+            ScriptStates.Formats.All.Deserialize(reader, attrs);
     }
 }
