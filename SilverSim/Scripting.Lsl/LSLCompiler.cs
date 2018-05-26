@@ -1472,6 +1472,7 @@ namespace SilverSim.Scripting.Lsl
                         #endregion
 
                         #region Deserialization
+                        if(evt.GetConstructor(Type.EmptyTypes) != null)
                         {
                             var dynMethod = new DynamicMethod("Deserialize_" + eventAttr.EventName,
                                 typeof(IScriptEvent),
