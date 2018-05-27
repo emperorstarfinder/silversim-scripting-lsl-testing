@@ -198,7 +198,8 @@ namespace SilverSim.Scripting.Lsl
                 MinEventDelay = MinEventDelay,
                 CurrentState = "default",
                 UseMessageObjectEvent = UseMessageObjectEvent, /* make script state know about that */
-                PermsGranter = Item.PermsGranter
+                PermsGranter = Item.PermsGranter,
+                IsRunning = IsRunning
             };
             foreach (KeyValuePair<string, ILSLState> kvp in m_States)
             {
