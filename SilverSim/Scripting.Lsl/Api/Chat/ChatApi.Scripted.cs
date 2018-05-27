@@ -167,7 +167,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 /* LSL matches on repeating llListen with the already created listen */
                 foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
                 {
-                    if (kvp.Value.IsMatching(name, id.AsUUID, msg, 0))
+                    if (kvp.Value.IsMatching(name, id.AsUUID, msg, 0) && kvp.Value.Channel == channel)
                     {
                         return kvp.Key;
                     }
@@ -248,7 +248,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 /* LSL matches on repeating llListen with the already created listen */
                 foreach (KeyValuePair<int, ChatServiceInterface.Listener> kvp in script.m_Listeners)
                 {
-                    if (kvp.Value.IsMatching(name, id.AsUUID, msg, regexBitfield))
+                    if (kvp.Value.IsMatching(name, id.AsUUID, msg, regexBitfield) && kvp.Value.Channel == channel)
                     {
                         return kvp.Key;
                     }
