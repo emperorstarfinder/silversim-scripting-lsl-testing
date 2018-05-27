@@ -1177,6 +1177,8 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        public static List<object> CreateEventParamsList(int capacity) => new List<object>(capacity);
+
         private void CollectApiEventTranslations(IScriptApi api)
         {
             foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
@@ -1391,12 +1393,10 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
                             ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("EventName"));
 
-                            /* create List<object>y */
+                            /* create List<object> */
                             ilgen.Emit(OpCodes.Ldc_I4, paramcount);
-                            Type listType = typeof(List<>);
-                            Type listOfObjectType = listType.MakeGenericType(typeof(object));
-                            LocalBuilder lb = ilgen.DeclareLocal(listOfObjectType);
-                            ilgen.Emit(OpCodes.Newobj, listOfObjectType.GetConstructor(new Type[] { typeof(int) }));
+                            LocalBuilder lb = ilgen.DeclareLocal(typeof(List<object>));
+                            ilgen.Emit(OpCodes.Newobj, typeof(LSLCompiler).GetMethod("CreateEventParamsList", new Type[] { typeof(int) }));
                             ilgen.Emit(OpCodes.Stloc, lb);
 
                             /* collect parameters into List<object> */
