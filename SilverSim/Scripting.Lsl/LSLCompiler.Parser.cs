@@ -841,7 +841,15 @@ namespace SilverSim.Scripting.Lsl
             if(compileState.EmitDebugSymbols)
             {
                 Directory.CreateDirectory("../data/dumps");
-                debugSourceWriter = new StreamWriter($"../data/dumps/{assetid}.lsl");
+                try
+                {
+                    debugSourceWriter = new StreamWriter($"../data/dumps/{assetid}.lsl");
+                }
+                catch
+                {
+                    debugSourceWriter = null;
+                    /* ignore this kind of error instead of failing */
+                }
             }
 
             var p = new Parser(cultureInfo);
