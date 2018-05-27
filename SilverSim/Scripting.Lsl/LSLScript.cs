@@ -247,17 +247,7 @@ namespace SilverSim.Scripting.Lsl
             m_TransactionedState.ToXml(writer);
         }
 
-        public byte[] ToDbSerializedState()
-        {
-            using (var ms = new MemoryStream())
-            {
-                using (var writer = ms.UTF8XmlTextWriter())
-                {
-                    ToXml(writer);
-                }
-                return ms.ToArray();
-            }
-        }
+        public byte[] ToDbSerializedState() => m_TransactionedState.ToDbSerializedState();
 
         protected Script(ObjectPart part, ObjectPartInventoryItem item, bool forcedSleepDefault)
         {
