@@ -1179,10 +1179,6 @@ namespace SilverSim.Scripting.Lsl
                         InvokeStateEvent("state_exit");
                     }
                 }
-                catch(ScriptAbortException)
-                {
-                    return;
-                }
                 catch (ResetScriptException)
                 {
                     executeScriptReset = true;
@@ -1241,10 +1237,6 @@ namespace SilverSim.Scripting.Lsl
 
                         InvokeStateEvent("state_entry");
                     }
-                }
-                catch (ScriptAbortException)
-                {
-                    return;
                 }
                 catch (ResetScriptException e)
                 {
@@ -1325,10 +1317,6 @@ namespace SilverSim.Scripting.Lsl
                             evtDelegate(this, ev);
                         }
                     }
-                }
-                catch (ScriptAbortException)
-                {
-                    return;
                 }
                 catch (ResetScriptException)
                 {
