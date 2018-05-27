@@ -492,7 +492,18 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public override bool IsRunning { get; set; }
+        public override bool IsRunning
+        {
+            get
+            {
+                return m_TransactionedState.IsRunning;
+            }
+
+            set
+            {
+                m_TransactionedState.IsRunning = value;
+            }
+        }
 
         public override void Remove()
         {

@@ -60,7 +60,7 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
         public Dictionary<string, object> Variables { get; } = new Dictionary<string, object>();
         public List<object> PluginData { get; set; } = new List<object>();
         public IScriptEvent[] EventData { get; set; } = new IScriptEvent[0];
-        public bool IsRunning { get; set; }
+        public bool IsRunning { get; set; } = true;
         public string CurrentState { get; set; } = "default";
         public double MinEventDelay { get; set; }
         public int StartParameter { get; set; }
