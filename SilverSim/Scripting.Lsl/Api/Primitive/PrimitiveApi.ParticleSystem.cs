@@ -379,19 +379,27 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         break;
 
                     case PSYS_SRC_TEXTURE:
-                        try
+                        string textureName = value.ToString();
+                        if (string.IsNullOrEmpty(textureName))
                         {
-                            ps.Texture = instance.GetTextureAssetID(value.ToString());
+                            ps.Texture = UUID.Zero;
                         }
-                        catch(InvalidOperationException)
+                        else
                         {
-                            instance.ShoutError(new LocalizedScriptMessage(this, "ParameterFor0AtIndex1MustBeReferingATexture", "PSYS_SRC_TEXTURE", i + 1));
-                            return;
-                        }
-                        catch (InvalidCastException)
-                        {
-                            instance.ShoutError(new LocalizedScriptMessage(this, "ParameterFor0AtIndex1MustBeReferingATexture", "PSYS_SRC_TEXTURE", i + 1));
-                            return;
+                            try
+                            {
+                                ps.Texture = instance.GetTextureAssetID(textureName);
+                            }
+                            catch (InvalidOperationException)
+                            {
+                                instance.ShoutError(new LocalizedScriptMessage(this, "ParameterFor0AtIndex1MustBeReferingATexture", "PSYS_SRC_TEXTURE", i + 1));
+                                return;
+                            }
+                            catch (InvalidCastException)
+                            {
+                                instance.ShoutError(new LocalizedScriptMessage(this, "ParameterFor0AtIndex1MustBeReferingATexture", "PSYS_SRC_TEXTURE", i + 1));
+                                return;
+                            }
                         }
                         break;
 
