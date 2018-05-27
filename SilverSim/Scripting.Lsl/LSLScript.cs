@@ -1179,7 +1179,8 @@ namespace SilverSim.Scripting.Lsl
                     {
                         m_ExecutionTime = 0f;
                     }
-                    SetCurrentState(m_States["default"]);
+                    newState = m_States["default"];
+                    SetCurrentState(newState);
                     StartParameter = 0;
                     ResetVariables();
                     lock (this) /* prevent aborting inside UpdateScriptState() */
