@@ -115,7 +115,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             return (aabbMax - aabbMin) / 2;
         }
 
-        [APILevel(APIFlags.ASSL, "asLinkRezObjectAsync")]
+        [APIExtension(APIExtension.RezAsync, "asLinkRezObjectAsync")]
         [ThreatLevelRequired(ThreatLevel.Severe, "asRezObjectAsync")]
         public void LinkRezObjectAsync(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             LinkRezObject(instance, link, inventory, pos, vel, rot, param, true);
@@ -165,7 +165,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        [APILevel(APIFlags.ASSL, "asRezObjectAsync")]
+        [APIExtension(APIExtension.RezAsync, "asRezObjectAsync")]
         [ThreatLevelRequired(ThreatLevel.Severe, "asRezObjectAsync")]
         public void RezObjectAsync(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             RezObject(instance, inventory, pos, vel, rot, param, true);
@@ -215,7 +215,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        [APILevel(APIFlags.ASSL, "asLinkRezAtRootAsync")]
+        [APIExtension(APIExtension.RezAsync, "asLinkRezAtRootAsync")]
         [ThreatLevelRequired(ThreatLevel.Severe, "asRezObjectAsync")]
         public void LinkRezAtRootAsync(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             LinkRezAtRoot(instance, link, inventory, pos, vel, rot, param, true);
@@ -264,7 +264,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
-        [APILevel(APIFlags.ASSL, "asRezAtRootAsync")]
+        [APIExtension(APIExtension.RezAsync, "asRezAtRootAsync")]
         [ThreatLevelRequired(ThreatLevel.Severe, "asRezObjectAsync")]
         public void RezAtRootAsync(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             RezAtRoot(instance, inventory, pos, vel, rot, param, true);

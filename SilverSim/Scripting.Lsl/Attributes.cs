@@ -183,6 +183,7 @@ namespace SilverSim.Scripting.Lsl
         public const string Structs = "Structs";
         public const string CharacterType = "char";
         public const string Extern = "extern";
+        public const string RezAsync = "RezAsync";
     }
 
     [Serializable]
