@@ -56,7 +56,7 @@ namespace SilverSim.Scripting.Lsl
         internal List<DetectInfo> m_Detected = new List<DetectInfo>();
         private readonly Dictionary<string, ILSLState> m_States = new Dictionary<string, ILSLState>();
         private ILSLState m_CurrentState;
-        public int StartParameter;
+        public override int StartParameter { get; set; }
         internal RwLockedDictionary<int, ChatServiceInterface.Listener> m_Listeners = new RwLockedDictionary<int, ChatServiceInterface.Listener>();
         private double m_ExecutionTime;
         protected bool UseMessageObjectEvent;
