@@ -311,13 +311,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 ChatServiceInterface chatservice = instance.Part.ObjectGroup.Scene.GetService<ChatServiceInterface>();
                 int lstart = 0;
                 int argsCount = args.Count;
-                while(lstart < argsCount)
+                while(lstart + 6 <= argsCount)
                 {
-                    if(lstart < 6)
-                    {
-                        break;
-                    }
-
                     var isActive = (bool)args[lstart++];
                     var handle = (int)args[lstart++];
                     var channel = (int)args[lstart++];
