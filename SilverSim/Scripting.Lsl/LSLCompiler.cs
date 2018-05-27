@@ -1391,10 +1391,12 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
                             ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("EventName"));
 
-                            /* create object[] array */
-                            LocalBuilder lb = ilgen.DeclareLocal(typeof(List<object>));
+                            /* create List<object>y */
                             ilgen.Emit(OpCodes.Ldc_I4, paramcount);
-                            ilgen.Emit(OpCodes.Newobj, typeof(List<object>).GetConstructor(new Type[] { typeof(int) }));
+                            Type listType = typeof(List<>);
+                            Type listOfObjectType = listType.MakeGenericType(typeof(object));
+                            LocalBuilder lb = ilgen.DeclareLocal(listOfObjectType);
+                            ilgen.Emit(OpCodes.Newobj, listOfObjectType.GetConstructor(new Type[] { typeof(int) }));
                             ilgen.Emit(OpCodes.Stloc, lb);
 
                             /* collect parameters into List<object> */
