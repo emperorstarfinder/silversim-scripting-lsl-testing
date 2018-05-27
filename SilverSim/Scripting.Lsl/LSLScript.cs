@@ -1147,6 +1147,10 @@ namespace SilverSim.Scripting.Lsl
             {
                 m_HaveQueuedTimerEvent = false;
             }
+            else if(evgot is ResetScriptEvent)
+            {
+                executeScriptReset = true;
+            }
 
             do
             {
