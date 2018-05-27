@@ -241,6 +241,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 sog.GlobalRotation *= rotOff;
                 sog.GlobalPosition = pos;
                 sog.GlobalPosition += (sog.CoalescedRestoreOffset - coalesced) * rotOff;
+                sog.Owner = rezzingowner;
                 if(!scene.CanRez(rezzingowner, sog.GlobalPosition))
                 {
                     return false;
@@ -280,6 +281,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             {
                 sog.IsDieAtEdge = true; /* as per definition of llRezObject and llRezAtRoot */
                 scene.Add(sog);
+                scene.RezScriptsForObject(sog);
                 rezzingpart.PostEvent(new ObjectRezEvent
                 {
                     ObjectID = sog.ID
