@@ -930,7 +930,6 @@ namespace SilverSim.Scripting.Lsl.Api.Hashtable
         {
             lock (instance)
             {
-                Script script = (Script)instance;
                 IValue val;
                 if (!table.TryGetValue(key, out val))
                 {
