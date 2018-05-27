@@ -126,7 +126,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 UUID sceneid = scene.ID;
                 bool removeinventory;
                 if (IsRezDistanceLimitEnforced(sceneid) &&
-                    (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
+                    (instance.Part.GlobalPosition - pos).Length > GetRezDistanceMeterLimit(sceneid))
                 {
                     /* silent fail as per definition */
                     return;
@@ -216,7 +216,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 UUID sceneid = scene.ID;
                 bool removeinventory;
                 if (IsRezDistanceLimitEnforced(sceneid) &&
-                    (instance.Part.GlobalPosition - vel).Length > GetRezDistanceMeterLimit(sceneid))
+                    (instance.Part.GlobalPosition - pos).Length > GetRezDistanceMeterLimit(sceneid))
                 {
                     /* silent fail as per definition */
                     return;
