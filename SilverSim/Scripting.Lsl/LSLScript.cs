@@ -208,7 +208,8 @@ namespace SilverSim.Scripting.Lsl
                     state.CurrentState = kvp.Key;
                 }
             }
-            foreach (FieldInfo fi in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            FieldInfo[] fieldInfos = GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+            foreach (FieldInfo fi in fieldInfos)
             {
                 if (!fi.Name.StartsWith("var_"))
                 {
@@ -1173,6 +1174,7 @@ namespace SilverSim.Scripting.Lsl
                     SetCurrentState(m_States["default"]);
                     StartParameter = 0;
                     ResetVariables();
+                    UpdateScriptState();
                     startticks = TimeSource.TickCount;
                 }
                 #endregion
