@@ -526,7 +526,14 @@ namespace SilverSim.Scripting.Lsl
                 /* call remove delegates */
                 foreach(Action<ScriptInstance> del in ScriptRemoveDelegates)
                 {
-                    del(this);
+                    try
+                    {
+                        del(this);
+                    }
+                    catch(Exception e)
+                    {
+                        m_Log.Debug("Exception at Remove()", e);
+                    }
                 }
             }
             IsRunning = false;
