@@ -35,6 +35,24 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             public string EventName = string.Empty;
             public List<object> Params = new List<object>();
             public List<DetectInfo> Detected = new List<DetectInfo>();
+
+            public EventParams()
+            {
+
+            }
+
+            public EventParams(int numparams)
+            {
+                Params = new List<object>(numparams);
+            }
+
+            public EventParams(string name, object[] param)
+            {
+                EventName = name;
+                Params = new List<object>(param);
+            }
+
+            public object[] ParamsArray => Params.ToArray();
         }
 
         public UUID ItemID { get; set; }

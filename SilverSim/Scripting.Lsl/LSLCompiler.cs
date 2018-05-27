@@ -1177,8 +1177,6 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public static List<object> CreateEventParamsList(int capacity) => new List<object>(capacity);
-
         private void CollectApiEventTranslations(IScriptApi api)
         {
             foreach (FieldInfo f in api.GetType().GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
@@ -1385,39 +1383,33 @@ namespace SilverSim.Scripting.Lsl
                             LocalBuilder eventlb = ilgen.DeclareLocal(evt);
                             ilgen.Emit(OpCodes.Stloc, eventlb);
 
-                            /* create EventParams */
-                            ilgen.Emit(OpCodes.Newobj, typeof(ScriptStates.ScriptState.EventParams).GetConstructor(Type.EmptyTypes));
-                            LocalBuilder epLb = ilgen.DeclareLocal(typeof(ScriptStates.ScriptState.EventParams));
-                            ilgen.Emit(OpCodes.Dup);
-                            ilgen.Emit(OpCodes.Stloc, epLb);
+                            /* create EventParams constructor params */
                             ilgen.Emit(OpCodes.Ldstr, eventAttr.EventName);
-                            ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("EventName"));
-
-                            /* create List<object> */
                             ilgen.Emit(OpCodes.Ldc_I4, paramcount);
-                            LocalBuilder lb = ilgen.DeclareLocal(typeof(List<object>));
-                            ilgen.Emit(OpCodes.Newobj, typeof(LSLCompiler).GetMethod("CreateEventParamsList", new Type[] { typeof(int) }));
-                            ilgen.Emit(OpCodes.Stloc, lb);
+                            ilgen.Emit(OpCodes.Newarr, typeof(object));
 
                             /* collect parameters into List<object> */
                             foreach (KeyValuePair<int, object> kvp in parameters)
                             {
-                                ilgen.Emit(OpCodes.Ldloc, lb);
-                                ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
                                 Type retType = null;
                                 FieldInfo fi;
                                 PropertyInfo pi;
+                                MethodInfo mi;
 
                                 if ((fi = kvp.Value as FieldInfo) != null)
                                 {
+                                    ilgen.Emit(OpCodes.Dup);
+                                    ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
                                     ilgen.Emit(OpCodes.Ldloc, eventlb);
                                     ilgen.Emit(OpCodes.Ldfld, fi);
                                     retType = fi.FieldType;
                                 }
-                                else if ((pi = kvp.Value as PropertyInfo) != null)
+                                else if ((pi = kvp.Value as PropertyInfo) != null && (mi = pi.GetGetMethod()) != null)
                                 {
+                                    ilgen.Emit(OpCodes.Dup);
+                                    ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
                                     ilgen.Emit(OpCodes.Ldloc, eventlb);
-                                    ilgen.Emit(OpCodes.Call, pi.GetGetMethod());
+                                    ilgen.Emit(mi.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, mi);
                                     retType = pi.PropertyType;
                                 }
                                 else
@@ -1429,44 +1421,27 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     ilgen.Emit(OpCodes.Box, retType);
                                 }
-                                ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("Item", new Type[] { typeof(int) }).GetSetMethod());
+                                ilgen.Emit(OpCodes.Stelem_Ref);
                             }
 
-                            ilgen.Emit(OpCodes.Ldloc, epLb);
-                            ilgen.Emit(OpCodes.Ldloc, lb);
-                            ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Params"));
+                            ilgen.Emit(OpCodes.Newobj, typeof(ScriptStates.ScriptState.EventParams).GetConstructor(new Type[] { typeof(string), typeof(object[]) }));
 
-                            if(detectedInfoField != null)
+                            if (detectedInfoField != null)
                             {
-                                ilgen.Emit(OpCodes.Ldloc, epLb);
-                                if (!evt.IsByRef)
-                                {
-                                    ilgen.Emit(OpCodes.Ldloca, eventlb);
-                                }
-                                else
-                                {
-                                    ilgen.Emit(OpCodes.Ldloc, eventlb);
-                                }
+                                ilgen.Emit(OpCodes.Dup);
+                                ilgen.Emit(evt.IsByRef ? OpCodes.Ldloc : OpCodes.Ldloca, eventlb);
                                 ilgen.Emit(OpCodes.Ldfld, detectedInfoField);
-                                ilgen.Emit(OpCodes.Stloc, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
+                                ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
                             }
                             else if(detectedInfoProperty != null)
                             {
-                                ilgen.Emit(OpCodes.Ldloc, epLb);
-                                if (!evt.IsByRef)
-                                {
-                                    ilgen.Emit(OpCodes.Ldloca, eventlb);
-                                }
-                                else
-                                {
-                                    ilgen.Emit(OpCodes.Ldloc, eventlb);
-                                }
+                                ilgen.Emit(OpCodes.Dup);
+                                ilgen.Emit(evt.IsByRef ? OpCodes.Ldloc : OpCodes.Ldloca, eventlb);
                                 MethodInfo mi = detectedInfoProperty.GetGetMethod();
                                 ilgen.Emit(mi.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, mi);
-                                ilgen.Emit(OpCodes.Stloc, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
+                                ilgen.Emit(OpCodes.Stfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Detected"));
                             }
 
-                            ilgen.Emit(OpCodes.Ldloc, epLb);
                             ilgen.Emit(OpCodes.Ret);
 
                             ScriptStates.ScriptState.EventSerializers.Add(evt, dynMethod.CreateDelegate(typeof(Func<IScriptEvent, ScriptStates.ScriptState.EventParams>)) as Func<IScriptEvent, ScriptStates.ScriptState.EventParams>);
@@ -1487,14 +1462,14 @@ namespace SilverSim.Scripting.Lsl
                             ilgen.Emit(OpCodes.Stloc, retLb);
 
                             /* fetch params */
-                            LocalBuilder paramLb = ilgen.DeclareLocal(typeof(List<object>));
+                            LocalBuilder paramLb = ilgen.DeclareLocal(typeof(object[]));
                             ilgen.Emit(OpCodes.Ldarg_0);
-                            ilgen.Emit(OpCodes.Ldfld, typeof(ScriptStates.ScriptState.EventParams).GetField("Params"));
+                            ilgen.Emit(OpCodes.Call, typeof(ScriptStates.ScriptState.EventParams).GetProperty("ParamsArray").GetGetMethod());
 
                             /* store array in local and fetch param count */
                             ilgen.Emit(OpCodes.Dup);
                             ilgen.Emit(OpCodes.Stloc, paramLb);
-                            ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("Count").GetGetMethod());
+                            ilgen.Emit(OpCodes.Call, typeof(object[]).GetProperty("Length").GetGetMethod());
                             ilgen.Emit(OpCodes.Ldc_I4, paramcount);
 
                             /* skip if not enough parameters */
@@ -1515,7 +1490,7 @@ namespace SilverSim.Scripting.Lsl
                                     ilgen.Emit(OpCodes.Ldloc, retLb);
                                     ilgen.Emit(OpCodes.Ldloc, paramLb);
                                     ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
-                                    ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("Item", new Type[] { typeof(int) }).GetGetMethod());
+                                    ilgen.Emit(OpCodes.Ldelem_Ref);
                                     if (fi.FieldType.IsValueType)
                                     {
                                         ilgen.Emit(OpCodes.Unbox_Any, fi.FieldType);
@@ -1534,7 +1509,7 @@ namespace SilverSim.Scripting.Lsl
                                         ilgen.Emit(OpCodes.Ldloc, retLb);
                                         ilgen.Emit(OpCodes.Ldloc, paramLb);
                                         ilgen.Emit(OpCodes.Ldc_I4, kvp.Key);
-                                        ilgen.Emit(OpCodes.Call, typeof(List<object>).GetProperty("this", new Type[] { typeof(int) }).GetGetMethod());
+                                        ilgen.Emit(OpCodes.Ldelem_Ref);
                                         if (pi.PropertyType.IsValueType)
                                         {
                                             ilgen.Emit(OpCodes.Unbox_Any, pi.PropertyType);
