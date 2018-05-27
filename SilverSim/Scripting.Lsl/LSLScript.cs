@@ -760,6 +760,7 @@ namespace SilverSim.Scripting.Lsl
                     else if(innerType == typeof(HitSandboxLimitException))
                     {
                         ShoutError(new LocalizedScriptMessage(this, "HitSandboxLimit", "Hit Sandbox Limit"));
+                        return;
                     }
                     else if (innerType == typeof(ScriptAbortException) ||
                         innerType == typeof(ChangeStateException) ||
