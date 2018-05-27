@@ -186,9 +186,9 @@ namespace SilverSim.Scripting.Lsl
             set { m_MinEventDelay = (value < 0) ? 0 : value; }
         }
 
-        private readonly ScriptStates.ScriptState m_TransactionedState = new ScriptStates.ScriptState();
+        private ScriptStates.ScriptState m_TransactionedState = new ScriptStates.ScriptState();
 
-        private void UpdateScriptState()
+        protected void UpdateScriptState()
         {
             var state = new ScriptStates.ScriptState
             {
@@ -238,10 +238,14 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
 
-            foreach (Action<ScriptInstance, List<object>> serializer in SerializationDelegates)
+            if (SerializationDelegates != null)
             {
-                serializer(this, state.PluginData);
+                foreach (Action<ScriptInstance, List<object>> serializer in SerializationDelegates)
+                {
+                    serializer(this, state.PluginData);
+                }
             }
+            m_TransactionedState = state;
         }
 
         public void ToXml(XmlTextWriter writer)
@@ -1174,7 +1178,10 @@ namespace SilverSim.Scripting.Lsl
                     SetCurrentState(m_States["default"]);
                     StartParameter = 0;
                     ResetVariables();
-                    UpdateScriptState();
+                    lock (this) /* prevent aborting inside UpdateScriptState() */
+                    {
+                        UpdateScriptState();
+                    }
                     startticks = TimeSource.TickCount;
                 }
                 #endregion

@@ -999,6 +999,8 @@ namespace SilverSim.Scripting.Lsl
                 }
                 #endregion
 
+                script_ilgen.Emit(OpCodes.Ldarg_0);
+                script_ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("UpdateScriptState", BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null));
                 script_ilgen.Emit(OpCodes.Ret);
 
                 #region Call type initializer
