@@ -393,7 +393,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             typeof(string),
             (ilgen) =>
             {
-                ilgen.Emit(OpCodes.Call, typeof(String).GetMethod("Replace", new Type[] { typeof(string), typeof(string) }));
+                ilgen.Emit(OpCodes.Call, typeof(string).GetMethod("Replace", new Type[] { typeof(string), typeof(string) }));
             })
         {
             IsPure = true
@@ -411,7 +411,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             typeof(string),
             (ilgen) =>
             {
-                ilgen.Emit(OpCodes.Call, typeof(String).GetMethod("Replace", new Type[] { typeof(char), typeof(char) }));
+                ilgen.Emit(OpCodes.Call, typeof(string).GetMethod("Replace", new Type[] { typeof(char), typeof(char) }));
             })
         {
             IsPure = true
