@@ -363,7 +363,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osReplaceString")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Replace")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "RegexReplace")]
         [Pure]
         public string OsReplaceString(string src, string pattern, string replace, int count, int start)
         {
@@ -380,6 +380,42 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             var matcher = new Regex(pattern);
             return matcher.Replace(src, replace, count, start);
         }
+
+        [APILevel(APIFlags.ASSL, "asReplaceString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Replace")]
+        public static readonly LSLCompiler.InlineApiMethodInfo AsReplaceString1 = new LSLCompiler.InlineApiMethodInfo("asReplaceString",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "src", typeof(string)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "oldValue", typeof(string)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "newValue", typeof(string))
+            },
+            typeof(string),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(String).GetMethod("Replace", new Type[] { typeof(string), typeof(string) }));
+            })
+        {
+            IsPure = true
+        };
+
+        [APILevel(APIFlags.ASSL, "asReplaceString")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Replace")]
+        public static readonly LSLCompiler.InlineApiMethodInfo AsReplaceString2 = new LSLCompiler.InlineApiMethodInfo("asReplaceString",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "src", typeof(string)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "oldValue", typeof(char)),
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "newValue", typeof(char))
+            },
+            typeof(string),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(String).GetMethod("Replace", new Type[] { typeof(char), typeof(char) }));
+            })
+        {
+            IsPure = true
+        };
 
         [APILevel(APIFlags.OSSL, "osFormatString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Format")]
