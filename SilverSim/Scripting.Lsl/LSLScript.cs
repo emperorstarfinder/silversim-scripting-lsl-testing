@@ -1179,6 +1179,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (executeStateExit)
                     {
+                        m_Events.Clear();
                         executeStateExit = false;
                         startticks = TimeSource.TickCount;
                         InvokeStateEvent("state_exit");
@@ -1310,7 +1311,7 @@ namespace SilverSim.Scripting.Lsl
                         ev = null;
                     }
 
-                    Type evType = ev.GetType();
+                    Type evType = ev?.GetType();
                     if (evType == typeof(TimerEvent))
                     {
                         m_HaveQueuedTimerEvent = false;
