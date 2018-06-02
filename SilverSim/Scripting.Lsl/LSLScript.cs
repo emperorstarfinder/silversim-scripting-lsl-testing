@@ -1128,29 +1128,11 @@ namespace SilverSim.Scripting.Lsl
 
         public override void ProcessEvent()
         {
-            IScriptEvent evgot;
-            try
-            {
-                evgot = m_Events.Dequeue();
-            }
-            catch
-            {
-                return;
-            }
             long startticks = TimeSource.TickCount;
             bool executeStateEntry = false;
             bool executeStateExit = false;
             bool executeScriptReset = false;
             ILSLState newState = m_CurrentState;
-
-            if(evgot is TimerEvent)
-            {
-                m_HaveQueuedTimerEvent = false;
-            }
-            else if(evgot is ResetScriptEvent)
-            {
-                executeScriptReset = true;
-            }
 
             do
             {
@@ -1248,10 +1230,6 @@ namespace SilverSim.Scripting.Lsl
                         executeStateEntry = false;
                         SetCurrentState(newState);
                         startticks = TimeSource.TickCount;
-                        if (evgot != null && evgot.GetType() == typeof(ResetScriptEvent))
-                        {
-                            evgot = null;
-                        }
                         lock (this)
                         {
                             /* lock(this) needed here to prevent aborting in wrong place */
@@ -1322,8 +1300,27 @@ namespace SilverSim.Scripting.Lsl
                 bool eventExecuted = false;
                 try
                 {
-                    IScriptEvent ev = evgot;
-                    evgot = null;
+                    IScriptEvent ev;
+                    if (m_Events.Count > 0)
+                    {
+                        ev = m_Events.Dequeue();
+                    }
+                    else
+                    {
+                        ev = null;
+                    }
+
+                    Type evType = ev.GetType();
+                    if (evType == typeof(TimerEvent))
+                    {
+                        m_HaveQueuedTimerEvent = false;
+                    }
+                    else if (evType == typeof(ResetScriptEvent))
+                    {
+                        executeScriptReset = true;
+                        ev = null;
+                    }
+
                     if (ev != null)
                     {
                         eventExecuted = true;
