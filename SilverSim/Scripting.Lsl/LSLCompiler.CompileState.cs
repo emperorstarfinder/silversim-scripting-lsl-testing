@@ -191,6 +191,9 @@ namespace SilverSim.Scripting.Lsl
 
                 [APILevel(APIFlags.ASSL)]
                 public bool UseMessageObjectEvent;
+
+                [APIExtension(APIExtension.InheritEvents)]
+                public bool InheritEventsOnStateChange;
 #pragma warning restore CS0649
             }
 

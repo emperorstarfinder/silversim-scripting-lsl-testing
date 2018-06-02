@@ -60,6 +60,7 @@ namespace SilverSim.Scripting.Lsl
         internal RwLockedDictionary<int, ChatServiceInterface.Listener> m_Listeners = new RwLockedDictionary<int, ChatServiceInterface.Listener>();
         private double m_ExecutionTime;
         protected bool UseMessageObjectEvent;
+        protected bool InheritEventsOnStateChange;
         internal RwLockedList<UUID> m_RequestedURLs = new RwLockedList<UUID>();
 
         public readonly System.Timers.Timer Timer = new System.Timers.Timer();
@@ -1179,7 +1180,10 @@ namespace SilverSim.Scripting.Lsl
                 {
                     if (executeStateExit)
                     {
-                        m_Events.Clear();
+                        if (!InheritEventsOnStateChange)
+                        {
+                            m_Events.Clear();
+                        }
                         executeStateExit = false;
                         startticks = TimeSource.TickCount;
                         InvokeStateEvent("state_exit");
@@ -1266,7 +1270,6 @@ namespace SilverSim.Scripting.Lsl
                         {
                             UpdateScriptState();
                         }
-                        continue;
                     }
                 }
                 catch (LocalizedScriptErrorException e)
@@ -1298,85 +1301,93 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region Event Logic
-                bool eventExecuted = false;
-                try
+                int eventsCount = m_Events.Count;
+                if(!InheritEventsOnStateChange && executeStateEntry && eventsCount > 1)
                 {
-                    IScriptEvent ev;
-                    if (m_Events.Count > 0)
+                    eventsCount = 1;
+                }
+                while (eventsCount-- > 0)
+                {
+                    bool eventExecuted = false;
+                    try
                     {
-                        ev = m_Events.Dequeue();
-                    }
-                    else
-                    {
-                        ev = null;
-                    }
+                        IScriptEvent ev;
+                        try
+                        {
+                            ev = m_Events.Dequeue();
+                        }
+                        catch
+                        {
+                            ev = null;
+                        }
 
-                    Type evType = ev?.GetType();
-                    if (evType == typeof(TimerEvent))
-                    {
-                        m_HaveQueuedTimerEvent = false;
+                        Type evType = ev?.GetType();
+                        if (evType == typeof(TimerEvent))
+                        {
+                            m_HaveQueuedTimerEvent = false;
+                        }
+                        else if (evType == typeof(ResetScriptEvent))
+                        {
+                            executeScriptReset = true;
+                            ev = null;
+                        }
+
+                        if (ev != null)
+                        {
+                            eventExecuted = true;
+                            startticks = Environment.TickCount;
+                            Type evt = ev.GetType();
+                            Action<Script, IScriptEvent> evtDelegate;
+                            if (StateEventHandlers.TryGetValue(evt, out evtDelegate))
+                            {
+                                var detectedEv = ev as IScriptDetectedEvent;
+                                if (detectedEv != null)
+                                {
+                                    m_Detected = detectedEv.Detected;
+                                }
+                                evtDelegate(this, ev);
+                            }
+                        }
                     }
-                    else if (evType == typeof(ResetScriptEvent))
+                    catch (ResetScriptException)
                     {
                         executeScriptReset = true;
-                        ev = null;
+                        continue;
                     }
-
-                    if (ev != null)
+                    catch (ChangeStateException e)
                     {
-                        eventExecuted = true;
-                        startticks = Environment.TickCount;
-                        Type evt = ev.GetType();
-                        Action<Script, IScriptEvent> evtDelegate;
-                        if (StateEventHandlers.TryGetValue(evt, out evtDelegate))
+                        if (m_CurrentState != m_States[e.NewState])
                         {
-                            var detectedEv = ev as IScriptDetectedEvent;
-                            if(detectedEv != null)
+                            /* if state is equal, it simply aborts the event execution */
+                            newState = m_States[e.NewState];
+                            executeStateExit = true;
+                            executeStateEntry = true;
+                        }
+                    }
+                    catch (LocalizedScriptErrorException e)
+                    {
+                        ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
+                    }
+                    catch (DivideByZeroException)
+                    {
+                        ShoutError(new LocalizedScriptMessage(this, "DivisionByZeroEncountered", "Division by zero encountered"));
+                    }
+                    finally
+                    {
+                        if (eventExecuted)
+                        {
+                            lock (m_Lock)
                             {
-                                m_Detected = detectedEv.Detected;
+                                m_ExecutionTime += TimeSource.TicksToSecs(TimeSource.TicksElapsed(TimeSource.TickCount, startticks));
                             }
-                            evtDelegate(this, ev);
                         }
                     }
-                }
-                catch (ResetScriptException)
-                {
-                    executeScriptReset = true;
-                    continue;
-                }
-                catch (ChangeStateException e)
-                {
-                    if (m_CurrentState != m_States[e.NewState])
-                    {
-                        /* if state is equal, it simply aborts the event execution */
-                        newState = m_States[e.NewState];
-                        executeStateExit = true;
-                        executeStateEntry = true;
-                    }
-                }
-                catch (LocalizedScriptErrorException e)
-                {
-                    ShoutError(new LocalizedScriptMessage(e.NlsRefObject, e.NlsId, e.NlsDefMsg, e.NlsParams));
-                }
-                catch (DivideByZeroException)
-                {
-                    ShoutError(new LocalizedScriptMessage(this, "DivisionByZeroEncountered", "Division by zero encountered"));
-                }
-                finally
-                {
-                    if (eventExecuted)
-                    {
-                        lock (m_Lock)
-                        {
-                            m_ExecutionTime += TimeSource.TicksToSecs(TimeSource.TicksElapsed(TimeSource.TickCount, startticks));
-                        }
-                    }
-                }
-                #endregion
+                    #endregion
 
-                lock (this) /* really needed to prevent aborting here */
-                {
-                    UpdateScriptState();
+                    lock (this) /* really needed to prevent aborting here */
+                    {
+                        UpdateScriptState();
+                    }
                 }
             } while (executeStateEntry || executeStateExit || executeScriptReset);
         }

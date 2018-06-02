@@ -184,6 +184,7 @@ namespace SilverSim.Scripting.Lsl
         public const string CharacterType = "char";
         public const string Extern = "extern";
         public const string RezAsync = "RezAsync";
+        public const string InheritEvents = "InheritEvents";
     }
 
     [Serializable]
