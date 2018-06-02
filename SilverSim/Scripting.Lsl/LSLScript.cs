@@ -1270,6 +1270,10 @@ namespace SilverSim.Scripting.Lsl
                         {
                             UpdateScriptState();
                         }
+                        if (!InheritEventsOnStateChange)
+                        {
+                            continue;
+                        }
                     }
                 }
                 catch (LocalizedScriptErrorException e)
