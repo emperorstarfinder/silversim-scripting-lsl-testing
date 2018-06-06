@@ -383,6 +383,9 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     int regexBitfield = (lstart == argsCount || args[lstart] is bool) ?
                         0 :
                         (int)args[lstart++];
+                    int listenFilterFlags = (lstart == argsCount || args[lstart] is bool) ?
+                        0 :
+                        (int)args[lstart++];
 
                     if(!script.m_Listeners.ContainsKey(handle))
                     {
@@ -409,6 +412,14 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                                 () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                                 script.OnListen);
                         l.IsActive = isActive;
+                        if((listenFilterFlags & LISTEN_FLAG_LIMIT_TO_SAME_GROUP) != 0)
+                        {
+                            l.LimitToSameGroup = true;
+                        }
+                        if((listenFilterFlags & LISTEN_FLAG_LIMIT_TO_SAME_OWNER) != 0)
+                        {
+                            l.LimitToSameOwner = true;
+                        }
 
                         script.m_Listeners.Add(handle, l);
                     }
