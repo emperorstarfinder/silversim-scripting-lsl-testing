@@ -194,6 +194,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                             id,
                             msg,
                             () => instance.Part.ID,
+                            () => instance.Part.Group,
                             () => instance.Part.GlobalPosition,
                             () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                             script.OnListen);
@@ -325,6 +326,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                             msg,
                             regexBitfield,
                             () => instance.Part.ID,
+                            () => instance.Part.Group,
                             () => instance.Part.GlobalPosition,
                             () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                             script.OnListen);
@@ -391,6 +393,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                                 key,
                                 message,
                                 () => instance.Part.ID,
+                                () => instance.Part.Group,
                                 () => instance.Part.GlobalPosition,
                                 () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                                 script.OnListen) :
@@ -401,6 +404,7 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                                 message,
                                 regexBitfield,
                                 () => instance.Part.ID,
+                                () => instance.Part.Group,
                                 () => instance.Part.GlobalPosition,
                                 () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                                 script.OnListen);
