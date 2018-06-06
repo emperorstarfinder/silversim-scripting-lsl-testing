@@ -47,7 +47,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Shout,
                 Message = message,
                 SourceType = ListenEvent.ChatSourceType.Object,
-                OwnerID = GetOwner(instance)
+                OwnerID = GetOwner(instance),
+                Group = GetGroup(instance)
             };
             SendChat(instance, ev);
         }
@@ -66,7 +67,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Say,
                 Message = message,
                 SourceType = ListenEvent.ChatSourceType.Object,
-                OwnerID = GetOwner(instance)
+                OwnerID = GetOwner(instance),
+                Group = GetGroup(instance)
             };
             SendChat(instance, ev);
         }
@@ -85,7 +87,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 Type = channel == DEBUG_CHANNEL ? ListenEvent.ChatType.DebugChannel : ListenEvent.ChatType.Whisper,
                 Message = message,
                 SourceType = ListenEvent.ChatSourceType.Object,
-                OwnerID = GetOwner(instance)
+                OwnerID = GetOwner(instance),
+                Group = GetGroup(instance)
             };
             SendChat(instance, ev);
         }
@@ -107,7 +110,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     Message = message,
                     TargetID = instance.Part.ObjectGroup.Owner.ID,
                     SourceType = ListenEvent.ChatSourceType.Object,
-                    OwnerID = GetOwner(instance)
+                    OwnerID = GetOwner(instance),
+                    Group = GetGroup(instance)
                 };
                 SendChat(instance, ev);
             }
@@ -125,7 +129,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     Channel = channel,
                     Message = message,
                     OwnerID = GetOwner(instance),
-                    SourceType = ListenEvent.ChatSourceType.Object
+                    SourceType = ListenEvent.ChatSourceType.Object,
+                    Group = GetGroup(instance)
                 };
                 SendChat(instance, ev);
             }
@@ -142,7 +147,8 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 Message = message,
                 TargetID = target,
                 OwnerID = GetOwner(instance),
-                SourceType = ListenEvent.ChatSourceType.Object
+                SourceType = ListenEvent.ChatSourceType.Object,
+                Group = GetGroup(instance)
             };
             SendChat(instance, ev);
         }
@@ -152,7 +158,11 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
         public void RegionSayTo(ScriptInstance instance, LSLKey target, string message) => RegionSayTo(instance, target, PUBLIC_CHANNEL, message);
 
         [APILevel(APIFlags.LSL, "llListen")]
-        public int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg)
+        public int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg) =>
+            Listen(instance, channel, name, id, msg, LISTEN_FLAG_ENABLE);
+
+        [APILevel(APIFlags.ASSL, "asListen")]
+        public int Listen(ScriptInstance instance, int channel, string name, LSLKey id, string msg, int flags)
         {
             var script = (Script)instance;
             lock (script)
@@ -187,6 +197,22 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                             () => instance.Part.GlobalPosition,
                             () => instance.Part.ObjectGroup.IsAttached ? instance.Part.ID : UUID.Zero,
                             script.OnListen);
+                        if((flags & LISTEN_FLAG_ENABLE) != 0)
+                        {
+                            l.IsActive = true;
+                        }
+                        else
+                        {
+                            l.IsActive = false;
+                        }
+                        if((flags & LISTEN_FLAG_LIMIT_TO_SAME_OWNER) != 0)
+                        {
+                            l.LimitToSameOwner = true;
+                        }
+                        if((flags & LISTEN_FLAG_LIMIT_TO_SAME_GROUP) != 0)
+                        {
+                            l.LimitToSameGroup = true;
+                        }
                         try
                         {
                             script.m_Listeners.Add(newhandle, l);
@@ -227,6 +253,39 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 if (script.m_Listeners.TryGetValue(handle, out l))
                 {
                     l.IsActive = active != 0;
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL)]
+        public const int LISTEN_FLAG_ENABLE = 1;
+        [APILevel(APIFlags.ASSL)]
+        public const int LISTEN_FLAG_LIMIT_TO_SAME_OWNER = 2;
+        [APILevel(APIFlags.ASSL)]
+        public const int LISTEN_FLAG_LIMIT_TO_SAME_GROUP = 4;
+
+        [APILevel(APIFlags.ASSL, "asListenControl")]
+        public void ListenControl(ScriptInstance instance, int handle, int enableflags, int disableflags)
+        {
+            var script = (Script)instance;
+            ChatServiceInterface.Listener l;
+            int changeflags = enableflags | disableflags;
+            lock (script)
+            {
+                if (script.m_Listeners.TryGetValue(handle, out l))
+                {
+                    if ((changeflags & LISTEN_FLAG_ENABLE) != 0)
+                    {
+                        l.IsActive = (disableflags & LISTEN_FLAG_ENABLE) == 0;
+                    }
+                    if((changeflags & LISTEN_FLAG_LIMIT_TO_SAME_OWNER) != 0)
+                    {
+                        l.LimitToSameOwner = (disableflags & LISTEN_FLAG_LIMIT_TO_SAME_OWNER) == 0;
+                    }
+                    if((changeflags & LISTEN_FLAG_LIMIT_TO_SAME_GROUP) != 0)
+                    {
+                        l.LimitToSameGroup = (disableflags & LISTEN_FLAG_LIMIT_TO_SAME_GROUP) == 0;
+                    }
                 }
             }
         }

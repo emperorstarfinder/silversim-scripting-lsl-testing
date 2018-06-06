@@ -53,6 +53,14 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             }
         }
 
+        private UGI GetGroup(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Group;
+            }
+        }
+
         private void SendChat(ScriptInstance instance, ListenEvent ev)
         {
             lock (instance)
