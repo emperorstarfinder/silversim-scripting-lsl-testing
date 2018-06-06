@@ -83,7 +83,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        static public void InvokeStateEvent(Script script, string name, object[] param)
+        public static void InvokeStateEvent(Script script, string name, object[] param)
         {
             script.InvokeStateEventReal(name, param);
         }
