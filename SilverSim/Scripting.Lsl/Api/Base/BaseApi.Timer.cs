@@ -101,12 +101,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             var script = (Script)instance;
             lock (script)
             {
-                for (int paramPos = 0; paramPos + 2 < param.Count; paramPos += 3)
+                for (int paramPos = 0; paramPos + 3 < param.Count; paramPos += 4)
                 {
                     var interval = (long)param[paramPos + 1] / 10000000.0;
                     var elapsed = (long)param[paramPos + 2] / 10000000.0;
                     elapsed %= interval;
-                    script.SetTimerEvent(param[paramPos + 0].ToString(), interval, elapsed);
+                    script.SetTimerEvent(param[paramPos + 0].ToString(), interval, elapsed, (bool)param[paramPos + 3]);
                 }
             }
         }
@@ -132,6 +132,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             long timeElapsed = Script.TimeSource.TicksElapsed(Script.TimeSource.TickCount, Interlocked.Read(ref script.LastTimerEventTick));
                             long timeToElapse = (interval - timeElapsed) * 100000000 / Script.TimeSource.Frequency;
                             res.Add(timeToElapse);
+                            res.Add(ti.IsAutoStop);
                         }
                     }
                     res[1] = new Integer(res.Count - 2);

@@ -30,6 +30,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APIDisplayName("intervaltimer")]
         [APIAccessibleMembers(
             "Interval",
+            "IsAutoStop",
             "IsInEvent")]
         [APIIsVariableType]
         public sealed class TimerControl
@@ -59,6 +60,47 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
 
+            public int IsAutoStop
+            {
+                get
+                {
+                    bool result = true;
+                    if(string.IsNullOrEmpty(TimerName))
+                    {
+                        result = false;
+                    }
+                    else
+                    {
+                        ScriptInstance instance;
+                        if (WeakInstance.TryGetTarget(out instance))
+                        {
+                            var script = (Script)instance;
+                            lock (script)
+                            {
+                                bool autostop;
+                                result = !script.TryGetAutoStop(TimerName, out autostop) || autostop;
+                            }
+                        }
+                    }
+                    return result.ToLSLBoolean();
+                }
+
+                set
+                {
+                    if (!string.IsNullOrEmpty(TimerName))
+                    {
+                        ScriptInstance instance;
+                        if (WeakInstance.TryGetTarget(out instance))
+                        {
+                            var script = (Script)instance;
+                            lock (script)
+                            {
+                                script.SetTimerAutoStop(TimerName, value != 0);
+                            }
+                        }
+                    }
+                }
+            }
 
             public bool IsInEvent
             {
