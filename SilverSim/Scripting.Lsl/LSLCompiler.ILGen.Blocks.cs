@@ -1203,7 +1203,21 @@ namespace SilverSim.Scripting.Lsl
                     functionStart = externPos + 1;
                 }
             }
-            else if(!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
+            else if (compileState.LanguageExtensions.EnableNamedTimers && functionDeclaration[0] == "timer")
+            {
+                returnType = typeof(void);
+                if (functionDeclaration[1] == "(")
+                {
+                    /* parse flags */
+                    int externPos = 1;
+                    while (functionDeclaration[externPos++] != ")")
+                    {
+                        ++externPos;
+                    }
+                    functionStart = externPos + 1;
+                }
+            }
+            else if (!compileState.ApiInfo.Types.TryGetValue(functionDeclaration[0], out returnType))
             {
                 functionStart = 1;
                 returnType = typeof(void);

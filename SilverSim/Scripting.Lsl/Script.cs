@@ -61,11 +61,8 @@ namespace SilverSim.Scripting.Lsl
         protected bool InheritEventsOnStateChange;
         internal RwLockedList<UUID> m_RequestedURLs = new RwLockedList<UUID>();
 
-        public readonly System.Timers.Timer Timer = new System.Timers.Timer();
-        public long LastTimerEventTick;
         public bool UseForcedSleep = true;
         public double ForcedSleepFactor = 1;
-        public double CurrentTimerInterval;
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
         internal List<Action<ScriptInstance, List<object>>> SerializationDelegates;
         internal Dictionary<string, Action<ScriptInstance, List<object>>> DeserializationDelegates;
@@ -113,39 +110,6 @@ namespace SilverSim.Scripting.Lsl
 
         public override bool HasTouchEvent => m_HasTouchEvent;
         public override bool HasMoneyEvent => m_HasMoneyEvent;
-
-        private void OnTimerEvent(object sender, ElapsedEventArgs e)
-        {
-            lock (m_Lock)
-            {
-                if (!m_HaveQueuedTimerEvent)
-                {
-                    PostEvent(new TimerEvent());
-                }
-                Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
-                Timer.Interval = CurrentTimerInterval * 1000;
-            }
-        }
-
-        public void SetTimerEvent(double interval, double elapsed = 0f)
-        {
-            lock (m_Lock)
-            {
-                CurrentTimerInterval = interval;
-                if (interval < 0.01)
-                {
-                    Timer.Enabled = false;
-                }
-                else
-                {
-                    Timer.Enabled = false;
-                    Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
-                    Timer.Interval = (interval - elapsed) * 1000;
-                    CurrentTimerInterval = interval;
-                    Timer.Enabled = true;
-                }
-            }
-        }
 
         public override double ExecutionTime
         {
@@ -514,6 +478,7 @@ namespace SilverSim.Scripting.Lsl
         {
             Timer.Stop();
             Timer.Elapsed -= OnTimerEvent;
+            StopAllNamedTimers();
             try
             {
                 m_Part.OnUpdate -= OnPrimUpdate;

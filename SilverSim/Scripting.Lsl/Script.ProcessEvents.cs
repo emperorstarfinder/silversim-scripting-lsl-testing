@@ -437,6 +437,115 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
+        internal void InvokeNamedTimerEventReal(string name)
+        {
+            Type scriptType = GetType();
+
+            MethodInfo mi = scriptType.GetMethod("timerfn_" + name, Type.EmptyTypes);
+
+            if (mi != null)
+            {
+                IncrementScriptEventCounter();
+                try
+                {
+                    mi.Invoke(this, new object[0]);
+                }
+                catch (ChangeStateException)
+                {
+                    throw;
+                }
+                catch (ResetScriptException)
+                {
+                    throw;
+                }
+                catch (TargetInvocationException e)
+                {
+                    Type innerType = e.InnerException.GetType();
+                    if (innerType == typeof(NotImplementedException))
+                    {
+                        ShoutUnimplementedException(e.InnerException as NotImplementedException);
+                        return;
+                    }
+                    else if (innerType == typeof(DeprecatedFunctionCalledException))
+                    {
+                        ShoutDeprecatedException(e.InnerException as DeprecatedFunctionCalledException);
+                        return;
+                    }
+                    else if (innerType == typeof(HitSandboxLimitException))
+                    {
+                        ShoutError(new LocalizedScriptMessage(this, "HitSandboxLimit", "Hit Sandbox Limit"));
+                    }
+                    else if (innerType == typeof(ChangeStateException) ||
+                        innerType == typeof(ResetScriptException) ||
+                        innerType == typeof(LocalizedScriptErrorException) ||
+                        innerType == typeof(DivideByZeroException) ||
+                        innerType == typeof(ThreadAbortException))
+                    {
+                        throw e.InnerException;
+                    }
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (NotImplementedException e)
+                {
+                    ShoutUnimplementedException(e);
+                }
+                catch (DeprecatedFunctionCalledException e)
+                {
+                    ShoutDeprecatedException(e);
+                }
+                catch (InvalidProgramException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (HitSandboxLimitException)
+                {
+                    ShoutError(new LocalizedScriptMessage(this, "HitSandboxLimit", "Hit Sandbox Limit"));
+                }
+                catch (CallDepthLimitViolationException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(new LocalizedScriptMessage(this, "FunctionCallDepthLimitViolation", "Function call depth limit violation"));
+                }
+                catch (TargetParameterCountException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (TargetException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (NullReferenceException e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+                catch (ArgumentException e)
+                {
+#if DEBUG
+                    LogInvokeException(name, e);
+#endif
+                    ShoutError(e.Message);
+                }
+                catch (ScriptWorkerInterruptionException)
+                {
+                    throw;
+                }
+                catch (ThreadAbortException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    LogInvokeException(name, e);
+                    ShoutError(e.Message);
+                }
+            }
+        }
+
         private static string MapTypeToString(Type t)
         {
             if (typeof(string) == t)
@@ -958,7 +1067,8 @@ namespace SilverSim.Scripting.Lsl
             StateEventHandlers.Add(typeof(ExperiencePermissionsEvent), HandleExperiencePermissions);
             StateEventHandlers.Add(typeof(ExperiencePermissionsDeniedEvent), HandleExperiencePermissionsDenied);
             StateEventHandlers.Add(typeof(TouchEvent), HandleTouch);
-            StateEventHandlers.Add(typeof(TimerEvent), (script, ev) => script.InvokeStateEvent("timer"));
+            StateEventHandlers.Add(typeof(TimerEvent), HandleTimerEvent);
+            StateEventHandlers.Add(typeof(NamedTimerEvent), HandleNamedTimerEvent);
             StateEventHandlers.Add(typeof(RpcScriptEvent), HandleRpcScriptEvent);
             StateEventHandlers.Add(typeof(ControlEvent), (script, ev) =>
             {
@@ -971,6 +1081,29 @@ namespace SilverSim.Scripting.Lsl
                 script.InvokeStateEvent("transaction_result", new LSLKey(e.TransactionID), e.Success.ToLSLBoolean(), e.ReplyData);
             });
             #endregion
+        }
+
+        private static void HandleNamedTimerEvent(Script script, IScriptEvent ev)
+        {
+            var nev = (NamedTimerEvent)ev;
+            TimerInfo ti;
+            if(script.m_Timers.TryGetValue(nev.TimerName, out ti))
+            {
+                ti.AckTimer();
+                script.ActiveNamedTimer = nev.TimerName;
+                script.IsInTimerEvent = true;
+                script.InvokeNamedTimerEventReal(nev.TimerName);
+                script.IsInTimerEvent = false;
+                script.ActiveNamedTimer = string.Empty;
+            }
+        }
+
+        private static void HandleTimerEvent(Script script, IScriptEvent ev)
+        {
+            script.m_HaveQueuedTimerEvent = false;
+            script.IsInTimerEvent = true;
+            script.InvokeStateEvent("timer");
+            script.IsInTimerEvent = false;
         }
 
         private static void HandleCollision(Script script, IScriptEvent ev)

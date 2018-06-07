@@ -334,3 +334,5 @@ Type0IsNotEnumerableByForeach=Typ '{0}' unterstützt 'foreach' nicht
 InventoryItem0IsNotASoundUnknownLink1=Inventar '{0}' ist kein Sound da der Link {1} ungültig ist.
 RpcCallParameterTypeMustBeSerializable=RPC-Aufrufparametertyp muss serialisierbar sein.
 ShoutErrorAtRegion0LinkName1Num2Script3Line4=In Region {0}:\nLink: {1} ({2})\nSkriptposition: {3}:{4}:
+TimerName0IsNotValid=Timer-Name '{0}' ist nicht gültig.
+DuplicateTimer0Encountered=Timer '{0}' ist doppelt angegeben.

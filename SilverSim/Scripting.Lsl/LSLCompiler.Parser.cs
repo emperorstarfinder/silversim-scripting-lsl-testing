@@ -888,15 +888,24 @@ namespace SilverSim.Scripting.Lsl
                 {
                     /* ignore this one, just a nop */
                 }
-                else if(args[0] == "extern" && compileState.LanguageExtensions.EnableExtern)
+                else if((args[0] == "extern" && compileState.LanguageExtensions.EnableExtern) ||
+                    (args[0] == "timer" && compileState.LanguageExtensions.EnableNamedTimers))
                 {
                     if(compileState.ContainsValidVarType(args[1]))
                     {
+                        if (args[0] == "timer")
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                        }
                         /* variable ref */
                         throw new NotImplementedException("extern vars");
                     }
                     else if(args[args.Count - 1] == ";")
                     {
+                        if(args[0] == "timer")
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                        }
                         int funcStart = 2;
                         if(args.Count < 3 || args[1] != "(")
                         {
@@ -994,6 +1003,10 @@ namespace SilverSim.Scripting.Lsl
                                 {
                                     throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                                 }
+                                else if(args[0] == "timer")
+                                {
+                                    throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                }
                                 if (++funcStart >= args.Count)
                                 {
                                     throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
@@ -1003,6 +1016,20 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                             }
+
+                            if(args[0] == "timer")
+                            {
+                                CheckValidName(compileState, p, "Timer", args[2]);
+                                if(compileState.m_NamedTimers.Contains(args[2]))
+                                {
+                                    throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "DuplicateTimer0Encountered", "Duplicate timer '{0}' encountered"), args[2]));
+                                }
+                                compileState.m_NamedTimers.Add(args[2]);
+                            }
+                        }
+                        else if(args[0] == "timer")
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
                         }
 
                         CheckUsedName(compileState, p, "Function", args[funcStart]);
@@ -1011,6 +1038,10 @@ namespace SilverSim.Scripting.Lsl
                             throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InternalParserError", "Internal parser error"));
                         }
                         funcparam = CheckFunctionParameters(compileState, p, args.GetRange(funcStart + 2, args.Count - funcStart - 3));
+                        if(funcparam.Count != 0 && args[0] == "timer")
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                        }
                         funcList.Add(new LineInfo(args));
                         ParseBlock(compileState, p, funcList, false);
                         if (!compileState.m_Functions.ContainsKey(args[funcStart]))

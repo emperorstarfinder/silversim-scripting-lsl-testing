@@ -64,7 +64,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             var script = (Script)instance;
             lock(script)
             {
-                if (script.Timer.Enabled)
+                if (script.IsTimerEnabled)
                 {
                     res.Add("timer");
                     res.Add(2);

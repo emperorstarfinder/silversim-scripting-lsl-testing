@@ -110,6 +110,7 @@ namespace SilverSim.Scripting.Lsl
             public Dictionary<string, Type> m_StructTypes = new Dictionary<string, Type>();
             public Dictionary<string, FieldBuilder> m_ApiFieldInfo = new Dictionary<string, FieldBuilder>();
             public List<BreakContinueLabel> m_BreakContinueLabels = new List<BreakContinueLabel>();
+            public List<string> m_NamedTimers = new List<string>();
 
             public TypeBuilder ScriptTypeBuilder;
             public TypeBuilder StateTypeBuilder;
@@ -126,7 +127,8 @@ namespace SilverSim.Scripting.Lsl
                                 (LanguageExtensions.EnableSwitchBlock && (entry == "switch" || entry == "case" || entry == "break")) ||
                                 (LanguageExtensions.EnableBreakContinueStatement && (entry == "break" || entry == "continue")) ||
                                 (LanguageExtensions.EnableForeach && (entry == "foreach")) ||
-                                (LanguageExtensions.EnableExtern && (entry == "extern"));
+                                (LanguageExtensions.EnableExtern && (entry == "extern")) ||
+                                (LanguageExtensions.EnableNamedTimers && (entry == "timer"));
             }
             public class LanguageExtensionsData
             {
@@ -139,6 +141,9 @@ namespace SilverSim.Scripting.Lsl
 
                 [APIExtension(APIExtension.Extern)]
                 public bool EnableExtern;
+
+                [APILevel(APIFlags.ASSL)]
+                public bool EnableNamedTimers;
 
                 [APIExtension(APIExtension.StateVariables)]
                 public bool EnableStateVariables;

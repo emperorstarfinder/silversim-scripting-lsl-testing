@@ -240,6 +240,13 @@ namespace SilverSim.Scripting.Lsl
                     script_ilgen.Emit(OpCodes.Stfld, typeof(Script).GetField("InheritEventsOnStateChange", BindingFlags.Instance | BindingFlags.NonPublic));
                 }
 
+                foreach(string name in compileState.m_NamedTimers)
+                {
+                    script_ilgen.Emit(OpCodes.Ldarg_0);
+                    script_ilgen.Emit(OpCodes.Ldstr, name);
+                    script_ilgen.Emit(OpCodes.Call, typeof(Script).GetMethod("RegisterNamedTimer", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(string) }, null));
+                }
+
                 MethodBuilder reset_func = scriptTypeBuilder.DefineMethod("ResetVariables", MethodAttributes.Public | MethodAttributes.Virtual, typeof(void), Type.EmptyTypes);
                 ILGenerator reset_ilgen = reset_func.GetILGenerator();
                 #endregion
@@ -666,7 +673,22 @@ namespace SilverSim.Scripting.Lsl
                         bool isRpcAccessibleByGroup = false;
                         string functionPrefix = "fn_";
 
-                        if (functionDeclaration[0] == "extern" && compileState.LanguageExtensions.EnableExtern)
+                        if(functionDeclaration[0] == "timer" && compileState.LanguageExtensions.EnableNamedTimers)
+                        {
+                            if (functionDeclaration[1] == "(")
+                            {
+                                if(functionDeclaration[3] != ")")
+                                {
+                                    throw new CompilerException(functionDeclaration[3].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                }
+                                functionName = functionDeclaration[2];
+                                functionStart = 6;
+                            }
+
+                            functionPrefix = "timerfn_";
+                            returnType = typeof(void);
+                        }
+                        else if (functionDeclaration[0] == "extern" && compileState.LanguageExtensions.EnableExtern)
                         {
                             if (functionDeclaration[functionDeclaration.Count - 1] == ";")
                             {
@@ -806,7 +828,21 @@ namespace SilverSim.Scripting.Lsl
                         bool requiresSerializable = functionDeclaration[0] == "extern";
                         string aliasedFunctionName = string.Empty;
 
-                        if(requiresSerializable && compileState.LanguageExtensions.EnableExtern)
+                        if (functionDeclaration[0] == "timer" && compileState.LanguageExtensions.EnableNamedTimers)
+                        {
+                            if (functionDeclaration[1] == "(")
+                            {
+                                if (functionDeclaration[3] != ")")
+                                {
+                                    throw new CompilerException(functionDeclaration[3].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidFunctionDeclaration", "Invalid function declaration"));
+                                }
+                                functionName = functionDeclaration[2];
+                                functionStart = 6;
+                            }
+
+                            returnType = typeof(void);
+                        }
+                        else if (requiresSerializable && compileState.LanguageExtensions.EnableExtern)
                         {
                             returnType = typeof(void);
                             isExternCall = functionDeclaration[functionDeclaration.Count - 1] == ";";
