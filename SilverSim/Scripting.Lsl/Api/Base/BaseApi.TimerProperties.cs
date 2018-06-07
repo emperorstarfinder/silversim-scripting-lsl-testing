@@ -29,6 +29,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APIExtension(APIExtension.Properties, "intervaltimer")]
         [APIDisplayName("intervaltimer")]
         [APIAccessibleMembers(
+            "Active",
             "Interval",
             "IsOneshot",
             "IsInEvent")]
@@ -42,6 +43,23 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 TimerName = name;
                 WeakInstance = new WeakReference<ScriptInstance>(instance);
+            }
+
+            public TimerControl Active
+            {
+                get
+                {
+                    ScriptInstance instance;
+                    string timerName = string.Empty;
+                    if (WeakInstance.TryGetTarget(out instance))
+                    {
+                        lock (instance)
+                        {
+                            timerName = ((Script)instance).ActiveNamedTimer;
+                        }
+                    }
+                    return this[timerName];
+                }
             }
 
             public TimerControl this[string name]
