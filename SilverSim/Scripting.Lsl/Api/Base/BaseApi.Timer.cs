@@ -20,6 +20,7 @@
 // exception statement from your version.
 
 using SilverSim.Scene.Types.Script;
+using SilverSim.Types;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -38,6 +39,23 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             lock (script)
             {
                 script.SetTimerEvent(sec);
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asSetTimerEvent")]
+        public void SetTimerEvent(ScriptInstance instance, string name, double sec)
+        {
+            var script = (Script)instance;
+            lock(script)
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    script.SetTimerEvent(sec);
+                }
+                else
+                {
+                    script.SetTimerEvent(name, sec);
+                }
             }
         }
 
@@ -77,14 +95,47 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
-        [ExecutedOnStateChange]
-        [ExecutedOnScriptRemove]
-        public static void StopTimer(ScriptInstance instance)
+        [ExecutedOnDeserialization("namedtimer")]
+        public void DeserializeNamed(ScriptInstance instance, List<object> param)
         {
             var script = (Script)instance;
             lock (script)
             {
-                script.SetTimerEvent(0);
+                for (int paramPos = 0; paramPos + 2 < param.Count; paramPos += 3)
+                {
+                    var interval = (long)param[paramPos + 1] / 10000000.0;
+                    var elapsed = (long)param[paramPos + 2] / 10000000.0;
+                    elapsed %= interval;
+                    script.SetTimerEvent(param[paramPos + 0].ToString(), interval, elapsed);
+                }
+            }
+        }
+
+        [ExecutedOnSerialization("namedtimer")]
+        public void SerializeNamed(ScriptInstance instance, List<object> res)
+        {
+            var script = (Script)instance;
+            lock (script)
+            {
+                Script.TimerInfo[] timers = script.NamedTimers;
+                if (timers.Length > 0)
+                {
+                    res.Add("namedtimer");
+                    res.Add(0);
+                    foreach(Script.TimerInfo ti in timers)
+                    {
+                        if (ti.IsActive)
+                        {
+                            res.Add(ti.Name);
+                            var interval = (long)(script.CurrentTimerInterval * Script.TimeSource.Frequency);
+                            res.Add(interval);
+                            long timeElapsed = Script.TimeSource.TicksElapsed(Script.TimeSource.TickCount, Interlocked.Read(ref script.LastTimerEventTick));
+                            long timeToElapse = (interval - timeElapsed) * 100000000 / Script.TimeSource.Frequency;
+                            res.Add(timeToElapse);
+                        }
+                    }
+                    res[1] = new Integer(res.Count - 2);
+                }
             }
         }
     }

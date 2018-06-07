@@ -29,15 +29,78 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APIExtension(APIExtension.Properties, "intervaltimer")]
         [APIDisplayName("intervaltimer")]
         [APIAccessibleMembers(
-            "Interval")]
+            "Interval",
+            "IsInEvent")]
         [APIIsVariableType]
         public sealed class TimerControl
         {
             private readonly WeakReference<ScriptInstance> WeakInstance;
+            public string TimerName;
 
-            public TimerControl(ScriptInstance instance)
+            public TimerControl(ScriptInstance instance, string name = "")
             {
+                TimerName = name;
                 WeakInstance = new WeakReference<ScriptInstance>(instance);
+            }
+
+            public TimerControl this[string name]
+            {
+                get
+                {
+                    ScriptInstance instance;
+                    if (WeakInstance.TryGetTarget(out instance))
+                    {
+                        return new TimerControl(instance, name);
+                    }
+                    else
+                    {
+                        return new TimerControl(null);
+                    }
+                }
+            }
+
+
+            public bool IsInEvent
+            {
+                get
+                {
+                    bool inevent = false;
+                    ScriptInstance instance;
+                    if (WeakInstance.TryGetTarget(out instance))
+                    {
+                        var script = (Script)instance;
+                        lock (script)
+                        {
+                            inevent = script.IsInTimerEvent &&
+                                script.ActiveNamedTimer == TimerName;
+                        }
+                    }
+                    return inevent;
+                }
+            }
+
+            public static implicit operator bool(TimerControl control) => control.IsValid();
+
+            public bool IsValid()
+            {
+                bool found = false;
+                if (string.IsNullOrEmpty(TimerName))
+                {
+                    found = true;
+                }
+                else
+                {
+                    ScriptInstance instance;
+                    if (WeakInstance.TryGetTarget(out instance))
+                    {
+                        var script = (Script)instance;
+                        lock (script)
+                        {
+                            found = script.HaveTimer(TimerName);
+                        }
+                    }
+                }
+                return found;
             }
 
             public double Interval
@@ -50,7 +113,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         var script = (Script)instance;
                         lock (script)
                         {
-                            return script.CurrentTimerInterval;
+                            double interval;
+                            if(string.IsNullOrEmpty(TimerName))
+                            {
+                                return script.CurrentTimerInterval;
+                            }
+                            else if(script.TryGetTimerInterval(TimerName, out interval))
+                            {
+                                return interval;
+                            }
                         }
                     }
                     return 0;
@@ -63,7 +134,14 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         var script = (Script)instance;
                         lock (script)
                         {
-                            script.SetTimerEvent(value);
+                            if (string.IsNullOrEmpty(TimerName))
+                            {
+                                script.SetTimerEvent(value);
+                            }
+                            else
+                            {
+                                script.SetTimerEvent(TimerName, value);
+                            }
                         }
                     }
                 }
@@ -83,6 +161,26 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public void StopTimer(TimerControl control)
         {
             control.Interval = 0;
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "IsInTimerEvent")]
+        public int IsInTimerEvent(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                var script = (Script)instance;
+                return script.IsInTimerEvent.ToLSLBoolean();
+            }
+        }
+
+        [APIExtension(APIExtension.Properties, APIUseAsEnum.Getter, "ActiveTimerName")]
+        public string ActiveTimerName(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                var script = (Script)instance;
+                return script.ActiveNamedTimer;
+            }
         }
     }
 }

@@ -21,6 +21,7 @@
 
 using SilverSim.Scripting.Lsl.Event;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Timers;
 
@@ -30,7 +31,7 @@ namespace SilverSim.Scripting.Lsl
     {
         public string ActiveNamedTimer { get; private set; }
 
-        public class TimerInfo
+        public sealed class TimerInfo
         {
             public readonly string Name;
             public bool IsPending;
@@ -96,6 +97,8 @@ namespace SilverSim.Scripting.Lsl
         }
 
         private readonly Dictionary<string, TimerInfo> m_Timers = new Dictionary<string, TimerInfo>();
+
+        public TimerInfo[] NamedTimers => m_Timers.Values.ToArray();
 
         public void StopAllNamedTimers()
         {
