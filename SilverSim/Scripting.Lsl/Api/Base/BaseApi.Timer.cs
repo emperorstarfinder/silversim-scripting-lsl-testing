@@ -157,7 +157,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             res.Add(ti.IsOneshot);
                         }
                     }
-                    res[1] = new Integer(res.Count - 2);
+                    res[1] = res.Count - 2;
                 }
             }
         }
