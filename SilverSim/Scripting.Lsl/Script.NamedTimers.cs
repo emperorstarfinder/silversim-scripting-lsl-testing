@@ -107,13 +107,29 @@ namespace SilverSim.Scripting.Lsl
 
         protected void RegisterNamedTimer(string name) => m_Timers.Add(name, new TimerInfo(name, this));
 
-        public void SetTimerEvent(string name, double interval, double elapsed = 0f)
+        public bool SetTimerEvent(string name, double interval, double elapsed = 0f)
         {
             TimerInfo ti;
             if(m_Timers.TryGetValue(name, out ti))
             {
                 ti.SetTimerEvent(interval, elapsed);
+                return true;
             }
+            return false;
         }
+
+        public bool TryGetTimerInterval(string name, out double interval)
+        {
+            TimerInfo ti;
+            if(m_Timers.TryGetValue(name, out ti))
+            {
+                interval = ti.CurrentTimerInterval;
+                return true;
+            }
+            interval = 0;
+            return false;
+        }
+
+        public bool HaveTimer(string name) => m_Timers.ContainsKey(name);
     }
 }
