@@ -30,7 +30,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APIDisplayName("intervaltimer")]
         [APIAccessibleMembers(
             "Interval",
-            "IsAutoStop",
+            "IsOneshot",
             "IsInEvent")]
         [APIIsVariableType]
         public sealed class TimerControl
@@ -60,12 +60,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
 
-            public int IsAutoStop
+            public int IsOneshot
             {
                 get
                 {
                     bool result = true;
-                    if(string.IsNullOrEmpty(TimerName))
+                    if (string.IsNullOrEmpty(TimerName))
                     {
                         result = false;
                     }
@@ -77,8 +77,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             var script = (Script)instance;
                             lock (script)
                             {
-                                bool autostop;
-                                result = !script.TryGetAutoStop(TimerName, out autostop) || autostop;
+                                bool oneshot;
+                                result = !script.TryGetIsOneshot(TimerName, out oneshot) || oneshot;
                             }
                         }
                     }
@@ -87,15 +87,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 set
                 {
-                    if (!string.IsNullOrEmpty(TimerName))
+                    ScriptInstance instance;
+                    if (WeakInstance.TryGetTarget(out instance))
                     {
-                        ScriptInstance instance;
-                        if (WeakInstance.TryGetTarget(out instance))
+                        var script = (Script)instance;
+                        lock (script)
                         {
-                            var script = (Script)instance;
-                            lock (script)
+                            if (string.IsNullOrEmpty(TimerName))
                             {
-                                script.SetTimerAutoStop(TimerName, value != 0);
+                                script.IsTimerOneshot = value != 0;
+                            }
+                            else
+                            {
+                                script.SetTimerOneshot(TimerName, value != 0);
                             }
                         }
                     }
@@ -178,11 +182,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         {
                             if (string.IsNullOrEmpty(TimerName))
                             {
-                                script.SetTimerEvent(value);
+                                script.SetTimerEvent(value, 0, script.IsTimerOneshot);
                             }
                             else
                             {
-                                script.SetTimerEvent(TimerName, value);
+                                bool oneshot;
+                                script.TryGetIsOneshot(TimerName, out oneshot);
+                                script.SetTimerEvent(TimerName, value, 0, oneshot);
                             }
                         }
                     }

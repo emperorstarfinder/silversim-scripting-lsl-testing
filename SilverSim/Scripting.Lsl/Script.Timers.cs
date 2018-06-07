@@ -31,6 +31,7 @@ namespace SilverSim.Scripting.Lsl
         public long LastTimerEventTick;
         public double CurrentTimerInterval;
         public bool IsTimerEnabled => Timer.Enabled;
+        public bool IsTimerOneshot { get; set; }
         public bool IsInTimerEvent { get; private set; }
 
         private void OnTimerEvent(object sender, ElapsedEventArgs e)
@@ -42,11 +43,18 @@ namespace SilverSim.Scripting.Lsl
                     PostEvent(new TimerEvent());
                 }
                 Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
-                Timer.Interval = CurrentTimerInterval * 1000;
+                if (IsTimerOneshot)
+                {
+                    Timer.Enabled = false;
+                }
+                else
+                {
+                    Timer.Interval = CurrentTimerInterval * 1000;
+                }
             }
         }
 
-        public void SetTimerEvent(double interval, double elapsed = 0f)
+        public void SetTimerEvent(double interval, double elapsed = 0f, bool oneshot = false)
         {
             lock (m_Lock)
             {
@@ -61,6 +69,7 @@ namespace SilverSim.Scripting.Lsl
                     Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
                     Timer.Interval = (interval - elapsed) * 1000;
                     CurrentTimerInterval = interval;
+                    IsTimerOneshot = oneshot;
                     Timer.Enabled = true;
                 }
             }

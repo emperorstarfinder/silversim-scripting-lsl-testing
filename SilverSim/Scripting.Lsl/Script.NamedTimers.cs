@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl
         {
             public readonly string Name;
             public bool IsPending;
-            public bool IsAutoStop;
+            public bool IsOneshot;
             public bool IsActive => Timer.Enabled;
             public long LastTimerEventTick;
             public double CurrentTimerInterval;
@@ -59,7 +59,7 @@ namespace SilverSim.Scripting.Lsl
                         m_Script.PostEvent(new NamedTimerEvent { TimerName = Name });
                     }
                     Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
-                    if (!IsAutoStop)
+                    if (!IsOneshot)
                     {
                         Timer.Interval = CurrentTimerInterval * 1000;
                     }
@@ -83,7 +83,7 @@ namespace SilverSim.Scripting.Lsl
                 Timer.Elapsed -= OnTimerEvent;
             }
 
-            public void SetTimerEvent(double interval, double elapsed = 0f, bool autostop = false)
+            public void SetTimerEvent(double interval, double elapsed = 0f, bool oneshot = false)
             {
                 lock (m_Lock)
                 {
@@ -94,7 +94,7 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        IsAutoStop = autostop;
+                        IsOneshot = oneshot;
                         Timer.Enabled = false;
                         Interlocked.Exchange(ref LastTimerEventTick, TimeSource.TickCount);
                         Timer.Interval = (interval - elapsed) * 1000;
@@ -119,23 +119,28 @@ namespace SilverSim.Scripting.Lsl
 
         protected void RegisterNamedTimer(string name) => m_Timers.Add(name, new TimerInfo(name, this));
 
-        public bool SetTimerEvent(string name, double interval, double elapsed = 0f, bool autostop = false)
+        public bool SetTimerEvent(string name, double interval, double elapsed = 0f, bool oneshot = false)
         {
             TimerInfo ti;
+            if(string.IsNullOrEmpty(name))
+            {
+                SetTimerEvent(interval, elapsed, oneshot);
+                return true;
+            }
             if(m_Timers.TryGetValue(name, out ti))
             {
-                ti.SetTimerEvent(interval, elapsed, autostop);
+                ti.SetTimerEvent(interval, elapsed, oneshot);
                 return true;
             }
             return false;
         }
 
-        public bool SetTimerAutoStop(string name,bool autostop)
+        public bool SetTimerOneshot(string name,bool oneshot)
         {
             TimerInfo ti;
             if (m_Timers.TryGetValue(name, out ti))
             {
-                ti.IsAutoStop = autostop;
+                ti.IsOneshot = oneshot;
                 return true;
             }
             return false;
@@ -153,15 +158,15 @@ namespace SilverSim.Scripting.Lsl
             return false;
         }
 
-        public bool TryGetAutoStop(string name, out bool autostop)
+        public bool TryGetIsOneshot(string name, out bool oneshot)
         {
             TimerInfo ti;
             if (m_Timers.TryGetValue(name, out ti))
             {
-                autostop = ti.IsAutoStop;
+                oneshot = ti.IsOneshot;
                 return true;
             }
-            autostop = false;
+            oneshot = false;
             return false;
         }
 

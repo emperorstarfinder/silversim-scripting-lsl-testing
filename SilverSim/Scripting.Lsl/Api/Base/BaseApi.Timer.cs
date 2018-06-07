@@ -59,6 +59,23 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APILevel(APIFlags.ASSL, "asSetTimerEvent")]
+        public void SetTimerEvent(ScriptInstance instance, string name, double sec, int autostop)
+        {
+            var script = (Script)instance;
+            lock (script)
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    script.SetTimerEvent(sec, 0, autostop != 0);
+                }
+                else
+                {
+                    script.SetTimerEvent(name, sec, 0, autostop != 0);
+                }
+            }
+        }
+
         [ExecutedOnDeserialization("timer")]
         public void Deserialize(ScriptInstance instance, List<object> param)
         {
@@ -72,7 +89,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 var interval = (long)param[0] / 10000000.0;
                 var elapsed = (long)param[1] / 10000000.0;
                 elapsed %= interval;
-                script.SetTimerEvent(interval, elapsed);
+                script.SetTimerEvent(interval, elapsed, param.Count > 2 && (bool)param[2]);
             }
         }
 
@@ -84,13 +101,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             {
                 if (script.IsTimerEnabled)
                 {
+                    bool isTimerAutoStop = script.IsTimerOneshot;
                     res.Add("timer");
-                    res.Add(2);
+                    res.Add(isTimerAutoStop ? 3 : 2);
                     var interval = (long)(script.CurrentTimerInterval * Script.TimeSource.Frequency);
                     res.Add(interval);
                     long timeElapsed = Script.TimeSource.TicksElapsed(Script.TimeSource.TickCount, Interlocked.Read(ref script.LastTimerEventTick));
                     long timeToElapse = (interval - timeElapsed) * 100000000 / Script.TimeSource.Frequency;
                     res.Add(timeToElapse);
+                    if(isTimerAutoStop)
+                    {
+                        res.Add(true);
+                    }
                 }
             }
         }
@@ -132,7 +154,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                             long timeElapsed = Script.TimeSource.TicksElapsed(Script.TimeSource.TickCount, Interlocked.Read(ref script.LastTimerEventTick));
                             long timeToElapse = (interval - timeElapsed) * 100000000 / Script.TimeSource.Frequency;
                             res.Add(timeToElapse);
-                            res.Add(ti.IsAutoStop);
+                            res.Add(ti.IsOneshot);
                         }
                     }
                     res[1] = new Integer(res.Count - 2);
