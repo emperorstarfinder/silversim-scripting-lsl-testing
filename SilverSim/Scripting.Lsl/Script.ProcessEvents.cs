@@ -676,6 +676,11 @@ namespace SilverSim.Scripting.Lsl
                     executeScriptReset = false;
                     executeStateExit = false;
                     executeStateEntry = true;
+                    SetTimerEvent(0);
+                    foreach(TimerInfo ti in m_Timers.Values)
+                    {
+                        ti.SetTimerEvent(0);
+                    }
                     TriggerOnStateChange();
                     TriggerOnScriptReset();
                     m_Events.Clear();
