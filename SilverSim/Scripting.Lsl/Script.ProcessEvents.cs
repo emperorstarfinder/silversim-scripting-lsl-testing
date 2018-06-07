@@ -684,6 +684,11 @@ namespace SilverSim.Scripting.Lsl
                     TriggerOnStateChange();
                     TriggerOnScriptReset();
                     m_Events.Clear();
+                    m_HaveQueuedTimerEvent = false;
+                    foreach(TimerInfo ti in m_Timers.Values)
+                    {
+                        ti.AckTimer();
+                    }
                     lock (m_Lock)
                     {
                         m_ExecutionTime = 0f;
