@@ -1203,7 +1203,7 @@ namespace SilverSim.Scripting.Lsl
                     functionStart = externPos + 1;
                 }
             }
-            else if (compileState.LanguageExtensions.EnableNamedTimers && functionDeclaration[0] == "timer")
+            else if (compileState.LanguageExtensions.EnableNamedTimers && stateTypeBuilder == null && functionDeclaration[0] == "timer")
             {
                 returnType = typeof(void);
                 if (functionDeclaration[1] == "(")
