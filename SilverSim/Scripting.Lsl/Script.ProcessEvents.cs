@@ -839,7 +839,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     eventsCount = 1;
                 }
-                while (eventsCount-- > 0)
+                processAgain:
                 {
                     bool eventExecuted = false;
                     try
@@ -855,13 +855,10 @@ namespace SilverSim.Scripting.Lsl
                         }
 
                         Type evType = ev?.GetType();
-                        if (evType == typeof(TimerEvent))
-                        {
-                            m_HaveQueuedTimerEvent = false;
-                        }
-                        else if (evType == typeof(ResetScriptEvent))
+                        if (evType == typeof(ResetScriptEvent))
                         {
                             executeScriptReset = true;
+                            eventsCount = 0;
                             ev = null;
                         }
 
@@ -885,6 +882,7 @@ namespace SilverSim.Scripting.Lsl
                     catch (ResetScriptException)
                     {
                         executeScriptReset = true;
+                        eventsCount = 0;
                         continue;
                     }
                     catch (ChangeStateException e)
@@ -893,6 +891,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             /* if state is equal, it simply aborts the event execution */
                             newState = m_States[e.NewState];
+                            eventsCount = 0;
                             executeStateExit = true;
                             executeStateEntry = true;
                         }
@@ -921,6 +920,10 @@ namespace SilverSim.Scripting.Lsl
                     {
                         UpdateScriptState();
                     }
+                }
+                if(eventsCount-->1)
+                {
+                    goto processAgain;
                 }
             } while (executeStateEntry || executeStateExit || executeScriptReset);
         }
