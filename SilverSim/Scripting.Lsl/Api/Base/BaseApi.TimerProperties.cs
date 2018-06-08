@@ -124,7 +124,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
 
-            public bool IsInEvent
+            public int IsInEvent
             {
                 get
                 {
@@ -139,7 +139,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                                 script.ActiveNamedTimer == TimerName;
                         }
                     }
-                    return inevent;
+                    return inevent.ToLSLBoolean();
                 }
             }
 

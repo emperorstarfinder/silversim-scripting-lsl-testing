@@ -1114,6 +1114,7 @@ namespace SilverSim.Scripting.Lsl
         private static void HandleTimerEvent(Script script, IScriptEvent ev)
         {
             script.m_HaveQueuedTimerEvent = false;
+            script.ActiveNamedTimer = string.Empty;
             script.IsInTimerEvent = true;
             script.InvokeStateEvent("timer");
             script.IsInTimerEvent = false;
