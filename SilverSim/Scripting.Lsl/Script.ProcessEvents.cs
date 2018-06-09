@@ -1105,9 +1105,15 @@ namespace SilverSim.Scripting.Lsl
                 ti.AckTimer();
                 script.ActiveNamedTimer = nev.TimerName;
                 script.IsInTimerEvent = true;
-                script.InvokeNamedTimerEventReal(nev.TimerName);
-                script.IsInTimerEvent = false;
-                script.ActiveNamedTimer = string.Empty;
+                try
+                {
+                    script.InvokeNamedTimerEventReal(nev.TimerName);
+                }
+                finally
+                {
+                    script.IsInTimerEvent = false;
+                    script.ActiveNamedTimer = string.Empty;
+                }
             }
         }
 
@@ -1116,8 +1122,14 @@ namespace SilverSim.Scripting.Lsl
             script.m_HaveQueuedTimerEvent = false;
             script.ActiveNamedTimer = string.Empty;
             script.IsInTimerEvent = true;
-            script.InvokeStateEvent("timer");
-            script.IsInTimerEvent = false;
+            try
+            {
+                script.InvokeStateEvent("timer");
+            }
+            finally
+            {
+                script.IsInTimerEvent = false;
+            }
         }
 
         private static void HandleCollision(Script script, IScriptEvent ev)
