@@ -1574,6 +1574,7 @@ namespace SilverSim.Scripting.Lsl
             m_ValidTypes[typeof(LSLKey)] = "key";
             m_ValidTypes[typeof(AnArray)] = "list";
             m_ValidTypes[typeof(void)] = "void";
+            m_ValidTypes[typeof(char)] = "char";
 
             CollectApiTypecasts();
 
