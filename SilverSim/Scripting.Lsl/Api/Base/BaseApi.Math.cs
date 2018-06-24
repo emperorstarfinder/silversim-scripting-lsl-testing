@@ -27,6 +27,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
 using System.Diagnostics.Contracts;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace SilverSim.Scripting.Lsl.Api.Base
@@ -319,16 +320,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public int ModPow(int a, int b, int c) => ((int)Math.Pow(a, b)) % c;
 
         [APILevel(APIFlags.LSL, "llRot2Euler")]
-        [Pure]
-        public Vector3 Rot2Euler(Quaternion q)
+        public static readonly LSLCompiler.InlineApiMethodInfo Rot2Euler = new LSLCompiler.InlineApiMethodInfo("Rot2Euler",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "q", typeof(Quaternion))
+            },
+            typeof(Vector3),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("GetEulerAngles", Type.EmptyTypes));
+            })
         {
-            double roll;
-            double pitch;
-            double yaw;
-
-            q.GetEulerAngles(out roll, out pitch, out yaw);
-            return new Vector3(roll, pitch, yaw);
-        }
+            IsPure = true
+        };
 
         [APILevel(APIFlags.LSL, "llRot2Angle")]
         [Pure]
@@ -493,5 +497,35 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
             }
         }
+
+        [APILevel(APIFlags.ASSL, "asNautical2Rot")]
+        public static readonly LSLCompiler.InlineApiMethodInfo Nautical2Rot = new LSLCompiler.InlineApiMethodInfo("Nautical2Rot",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "nautical", typeof(Vector3))
+            },
+            typeof(Quaternion),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(TypeExtensionMethods).GetMethod("FromNauticalAngles", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(Vector3) }, null));
+            })
+        {
+            IsPure = true
+        };
+
+        [APILevel(APIFlags.ASSL, "asRot2Nautical")]
+        public static readonly LSLCompiler.InlineApiMethodInfo Rot2Nautical = new LSLCompiler.InlineApiMethodInfo("Rot2Nautical",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "rotation", typeof(Quaternion))
+            },
+            typeof(Vector3),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(TypeExtensionMethods).GetMethod("GetNauticalAngles", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(Quaternion) }, null));
+            })
+        {
+            IsPure = true
+        };
     }
 }
