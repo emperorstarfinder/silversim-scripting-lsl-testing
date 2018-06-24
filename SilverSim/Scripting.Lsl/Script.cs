@@ -538,7 +538,7 @@ namespace SilverSim.Scripting.Lsl
         public override bool IsLinkMessageReceiver => m_IsLinkMessageReceiver;
 
         private int m_RecursionCount;
-        private static int m_CallDepthLimit = 40;
+        private static int m_CallDepthLimit = 200;
         static public int CallDepthLimit
         {
             get { return m_CallDepthLimit; }

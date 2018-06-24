@@ -43,7 +43,7 @@ namespace SilverSim.Scripting.Lsl
 {
     [CompilerUsesRunAndCollectMode]
     [Description("LSL Compiler")]
-    [ServerParam("LSL.CallDepthLimit", ParameterType = typeof(uint), DefaultValue = 40, Type = ServerParamType.GlobalOnly)]
+    [ServerParam("LSL.CallDepthLimit", ParameterType = typeof(uint), DefaultValue = 200, Type = ServerParamType.GlobalOnly)]
     [ServerParam("LSL.EnableCompileDebug", ParameterType = typeof(bool), DefaultValue = false, Type = ServerParamType.GlobalOnly)]
     [ServerParam("LSL.ForceDebug", ParameterType = typeof(bool), DefaultValue = false, Type = ServerParamType.GlobalOnly)]
     [ScriptEngineName("lsl")]
@@ -122,6 +122,10 @@ namespace SilverSim.Scripting.Lsl
             if(UUID.Zero == regionID && int.TryParse(value, out val) && val > 0)
             {
                 Script.CallDepthLimit = val;
+            }
+            else if(UUID.Zero == regionID && string.IsNullOrEmpty(value))
+            {
+                Script.CallDepthLimit = 200;
             }
         }
 
