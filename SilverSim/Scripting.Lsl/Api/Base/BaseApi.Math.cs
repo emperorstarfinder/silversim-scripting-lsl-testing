@@ -321,22 +321,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llRot2Euler")]
         public Vector3 Rot2Euler(Quaternion q) => q.GetEulerAngles();
-        /*
-        public static readonly LSLCompiler.InlineApiMethodInfo Rot2Euler = new LSLCompiler.InlineApiMethodInfo("Rot2Euler",
-            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
-            {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "q", typeof(Quaternion))
-            },
-            typeof(Vector3),
-            (ilgen) =>
-            {
-                ilgen.Emit(OpCodes.Box, typeof(Quaternion));
-                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("GetEulerAngles", Type.EmptyTypes));
-            })
-        {
-            IsPure = true
-        };
-        */
 
         [APILevel(APIFlags.LSL, "llRot2Angle")]
         [Pure]
