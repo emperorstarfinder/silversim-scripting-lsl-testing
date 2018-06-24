@@ -135,8 +135,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 if (scene.IsSimConsoleAllowed(instance.Part.Owner))
                 {
                     var tty = new ConsoleCommandTTY();
-                    List<string> args = tty.GetCmdLine(cmd);
-                    m_Commands.ExecuteCommand(args, tty, scene.ID);
+                    m_Commands.ExecuteCommandString(cmd, tty, scene.ID);
                     return tty.OutputBuffer;
                 }
                 else
