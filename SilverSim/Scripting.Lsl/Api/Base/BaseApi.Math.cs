@@ -328,6 +328,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             typeof(Vector3),
             (ilgen) =>
             {
+                ilgen.Emit(OpCodes.Box, typeof(Quaternion));
                 ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("GetEulerAngles", Type.EmptyTypes));
             })
         {
