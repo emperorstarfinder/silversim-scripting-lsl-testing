@@ -50,6 +50,20 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
             protected void With<T>(Action<ObjectGroup, T> setter, T value)
             {
+                object o = value;
+                Type type = o.GetType();
+                if (type == typeof(Vector3) && ((Vector3)o).IsNaN)
+                {
+                    throw new LocalizedScriptErrorException(this, "NanEncountered", "NaN encountered.");
+                }
+                if (type == typeof(Quaternion) && ((Quaternion)o).IsNaN)
+                {
+                    throw new LocalizedScriptErrorException(this, "NanEncountered", "NaN encountered.");
+                }
+                if (type == typeof(double) && double.IsNaN(((double)o)))
+                {
+                    throw new LocalizedScriptErrorException(this, "NanEncountered", "NaN encountered.");
+                }
                 ScriptInstance instance;
                 if (WeakInstance != null && WeakInstance.TryGetTarget(out instance))
                 {

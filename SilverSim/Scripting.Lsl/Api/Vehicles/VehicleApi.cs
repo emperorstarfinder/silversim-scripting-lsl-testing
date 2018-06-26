@@ -240,6 +240,10 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleFloatParam")]
         public void SetVehicleFloatParam(ScriptInstance instance, int param, double value)
         {
+            if(double.IsNaN(value))
+            {
+                throw new LocalizedScriptErrorException(this, "NanEncountered", "NaN encountered.");
+            }
             lock (instance)
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
@@ -430,6 +434,10 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleRotationParam")]
         public void SetVehicleRotationParam(ScriptInstance instance, int param, Quaternion rot)
         {
+            if (rot.IsNaN)
+            {
+                throw new LocalizedScriptErrorException(this, "NanEncountered", "NaN encountered.");
+            }
             lock (instance)
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
@@ -495,6 +503,10 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
         [APILevel(APIFlags.LSL, "llSetVehicleVectorParam")]
         public void SetVehicleVectorParam(ScriptInstance instance, int param, Vector3 vec)
         {
+            if (vec.IsNaN)
+            {
+                throw new LocalizedScriptErrorException(this, "NanEncountered", "NaN encountered.");
+            }
             lock (instance)
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;

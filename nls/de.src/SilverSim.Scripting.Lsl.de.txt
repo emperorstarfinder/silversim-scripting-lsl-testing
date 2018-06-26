@@ -336,3 +336,4 @@ RpcCallParameterTypeMustBeSerializable=RPC-Aufrufparametertyp muss serialisierba
 ShoutErrorAtRegion0LinkName1Num2Script3Line4=In Region {0}:\nLink: {1} ({2})\nSkriptposition: {3}:{4}:
 TimerName0IsNotValid=Timer-Name '{0}' ist nicht gültig.
 DuplicateTimer0Encountered=Timer '{0}' ist doppelt angegeben.
+NanEncountered=NaN-Wert erkannt.

@@ -337,3 +337,4 @@ RpcCallParameterTypeMustBeSerializable=RPC call parameter type must be serializa
 ShoutErrorAtRegion0LinkName1Num2Script3Line4=At region {0}:\nLink: {1} ({2})\nScript location: {3}:{4}:
 TimerName0IsNotValid=Timer name '{0}' is not valid.
 DuplicateTimer0Encountered=Duplicate timer '{0}' encountered
+NanEncountered=NaN encountered.
