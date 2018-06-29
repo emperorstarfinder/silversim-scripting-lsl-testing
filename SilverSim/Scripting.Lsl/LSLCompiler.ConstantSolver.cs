@@ -67,51 +67,51 @@ namespace SilverSim.Scripting.Lsl
         private void SolveFunctionConstantOperations(CompileState cs, Tree st, Dictionary<string, List<ApiMethodInfo>> methods)
         {
             bool areAllArgumentsConstant = true;
-                List<Type> paramTypes = new List<Type>();
-                List<object> paramValues = new List<object>();
-                foreach (Tree ot in st.SubTree)
+            List<Type> paramTypes = new List<Type>();
+            List<object> paramValues = new List<object>();
+            foreach (Tree ot in st.SubTree)
+            {
+                Type oType = ot.Value.GetType();
+                if (oType == typeof(ConstantValueRotation))
                 {
-                    Type oType = ot.Value.GetType();
-                    if (oType == typeof(ConstantValueRotation))
-                    {
-                        paramTypes.Add(typeof(Quaternion));
-                        paramValues.Add(((ConstantValueRotation)ot.Value).Value);
-                    }
-                    else if (oType == typeof(ConstantValueVector))
-                    {
-                        paramTypes.Add(typeof(Vector3));
-                        paramValues.Add(((ConstantValueVector)ot.Value).Value);
-                    }
-                    else if (oType == typeof(Tree.ConstantValueChar))
-                    {
-                        paramTypes.Add(typeof(char));
-                        paramValues.Add(((Tree.ConstantValueChar)ot.Value).Value);
-                    }
-                    else if (oType == typeof(Tree.ConstantValueFloat))
-                    {
-                        paramTypes.Add(typeof(double));
-                        paramValues.Add(((Tree.ConstantValueFloat)ot.Value).Value);
-                    }
-                    else if (oType == typeof(Tree.ConstantValueInt))
-                    {
-                        paramTypes.Add(typeof(int));
-                        paramValues.Add(((Tree.ConstantValueInt)ot.Value).Value);
-                    }
-                    else if (oType == typeof(Tree.ConstantValueLong))
-                    {
-                        paramTypes.Add(typeof(long));
-                        paramValues.Add(((Tree.ConstantValueLong)ot.Value).Value);
-                    }
-                    else if (oType == typeof(Tree.ConstantValueString))
-                    {
-                        paramTypes.Add(typeof(string));
-                        paramValues.Add(((Tree.ConstantValueString)ot.Value).Value);
-                    }
-                    else
-                    {
-                        areAllArgumentsConstant = false;
-                    }
+                    paramTypes.Add(typeof(Quaternion));
+                    paramValues.Add(((ConstantValueRotation)ot.Value).Value);
                 }
+                else if (oType == typeof(ConstantValueVector))
+                {
+                    paramTypes.Add(typeof(Vector3));
+                    paramValues.Add(((ConstantValueVector)ot.Value).Value);
+                }
+                else if (oType == typeof(Tree.ConstantValueChar))
+                {
+                    paramTypes.Add(typeof(char));
+                    paramValues.Add(((Tree.ConstantValueChar)ot.Value).Value);
+                }
+                else if (oType == typeof(Tree.ConstantValueFloat))
+                {
+                    paramTypes.Add(typeof(double));
+                    paramValues.Add(((Tree.ConstantValueFloat)ot.Value).Value);
+                }
+                else if (oType == typeof(Tree.ConstantValueInt))
+                {
+                    paramTypes.Add(typeof(int));
+                    paramValues.Add(((Tree.ConstantValueInt)ot.Value).Value);
+                }
+                else if (oType == typeof(Tree.ConstantValueLong))
+                {
+                    paramTypes.Add(typeof(long));
+                    paramValues.Add(((Tree.ConstantValueLong)ot.Value).Value);
+                }
+                else if (oType == typeof(Tree.ConstantValueString))
+                {
+                    paramTypes.Add(typeof(string));
+                    paramValues.Add(((Tree.ConstantValueString)ot.Value).Value);
+                }
+                else
+                {
+                    areAllArgumentsConstant = false;
+                }
+            }
 
             if (areAllArgumentsConstant)
             {
