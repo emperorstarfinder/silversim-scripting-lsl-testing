@@ -27,8 +27,6 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.IO;
 using JsonSerializer = SilverSim.Types.StructuredData.Json.Json;
 
@@ -188,7 +186,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJsonGetValue")]
-        [Pure]
+        [IsPure]
         public string JsonGetValue(string json, AnArray specifiers)
         {
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
@@ -224,7 +222,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJsonValueType")]
-        [Pure]
+        [IsPure]
         public string JsonValueType(string json, AnArray specifiers)
         {
             using (var ms = new MemoryStream(json.ToUTF8Bytes()))
@@ -274,7 +272,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
 
         #region JSON List conversion
         [APILevel(APIFlags.LSL, "llList2Json")]
-        [Pure]
+        [IsPure]
         public string List2Json(string type, AnArray values)
         {
             if (type == JSON_ARRAY)
@@ -323,7 +321,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJson2List")]
-        [Pure]
+        [IsPure]
         public AnArray Json2List(string src)
         {
             IValue jsonData;
@@ -506,7 +504,7 @@ namespace SilverSim.Scripting.Lsl.Api.Json
         }
 
         [APILevel(APIFlags.LSL, "llJsonSetValue")]
-        [Pure]
+        [IsPure]
         public string JsonSetValue(string json, AnArray specifiers, string value)
         {
             IValue jsonData;

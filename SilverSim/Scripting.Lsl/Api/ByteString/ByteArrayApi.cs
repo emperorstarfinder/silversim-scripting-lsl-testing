@@ -29,7 +29,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection.Emit;
@@ -194,7 +193,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
 
         [APIExtension(APIExtension.ByteArray, "baSHA1")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CalcSHA1")]
-        [Pure]
+        [IsPure]
         public ByteArray CalcSHA1(ByteArray data)
         {
             using (var sha = SHA1.Create())
@@ -205,7 +204,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
 
         [APIExtension(APIExtension.ByteArray, "baMD5")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CalcMD5")]
-        [Pure]
+        [IsPure]
         public ByteArray CalcMD5(ByteArray data)
         {
             using (var md5 = MD5.Create())
@@ -215,12 +214,12 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
         }
 
         [APIExtension(APIExtension.ByteArray, "ByteArray")]
-        [Pure]
+        [IsPure]
         public ByteArray CreateByteArray(int size) => new ByteArray(new byte[size]);
 
         [APIExtension(APIExtension.ByteArray, "baResize")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Resize")]
-        [Pure]
+        [IsPure]
         public ByteArray Resize(ByteArray byteArray, int size)
         {
             var resdata = new byte[size];
@@ -245,37 +244,37 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
 
         [APIExtension(APIExtension.ByteArray, "baFromBase64")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FromBase64")]
-        [Pure]
+        [IsPure]
         public ByteArray FromBase64(string base64) => new ByteArray(Convert.FromBase64String(base64));
 
         [APIExtension(APIExtension.ByteArray, "baToBase64")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToBase64")]
-        [Pure]
+        [IsPure]
         public string ToBase64(ByteArray byteArray) => Convert.ToBase64String(byteArray.Data);
 
         [APIExtension(APIExtension.ByteArray, "baFromUTF8")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToByteArray")]
-        [Pure]
+        [IsPure]
         public ByteArray FromUTF8(string s) => new ByteArray(s.ToUTF8Bytes());
 
         [APIExtension(APIExtension.ByteArray, "baToUTF8")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToUTF8")]
-        [Pure]
+        [IsPure]
         public string ToUTF8(ByteArray byteArray) => byteArray.Data.FromUTF8Bytes();
 
         [APIExtension(APIExtension.ByteArray, "baFromHex")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FromHexToByteArray")]
-        [Pure]
+        [IsPure]
         public ByteArray FromHex(string s) => new ByteArray(s.FromHexStringToByteArray());
 
         [APIExtension(APIExtension.ByteArray, "baToHex")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToHexString")]
-        [Pure]
+        [IsPure]
         public string ToHex(ByteArray byteArray) => byteArray.Data.ToHexString();
 
         [APIExtension(APIExtension.ByteArray, "gzipDecompress")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GzipDecompress")]
-        [Pure]
+        [IsPure]
         public ByteArray GzipDecompress(ByteArray array)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -290,7 +289,7 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
 
         [APIExtension(APIExtension.ByteArray, "gzipCompress")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GzipCompress")]
-        [Pure]
+        [IsPure]
         public ByteArray GzipCompress(ByteArray array)
         {
             using (MemoryStream ms = new MemoryStream())

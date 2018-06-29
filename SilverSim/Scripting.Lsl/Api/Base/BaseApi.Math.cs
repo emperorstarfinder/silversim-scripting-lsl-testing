@@ -26,7 +26,6 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -80,7 +79,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APILevel(APIFlags.OSSL, "osRound")]
-        [Pure]
+        [IsPure]
         public double Round(double value, int ndigits) => Math.Round(value, ndigits.Clamp(0, 15), MidpointRounding.AwayFromZero);
 
         [APILevel(APIFlags.OSSL, "osVecMagSquare")]
@@ -99,9 +98,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APILevel(APIFlags.OSSL, "osVecDistSquare")]
+        [IsPure]
         public double VecDistSquare(Vector3 a, Vector3 b) => (a - b).LengthSquared;
 
         [APILevel(APIFlags.OSSL, "osAngleBetween")]
+        [IsPure]
         public double OsAngleBetween(Vector3 a, Vector3 b) => Math.Atan2(a.Cross(b).Length, a.Dot(b));
 
         [APILevel(APIFlags.LSL, "llAbs")]
@@ -287,7 +288,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APILevel(APIFlags.LSL, "llVecDist")]
-        [Pure]
+        [IsPure]
         public double VecDist(Vector3 a, Vector3 b) => (a - b).Length;
 
         [APILevel(APIFlags.LSL, "llVecMag")]
@@ -311,12 +312,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APILevel(APIFlags.LSL, "llVecNorm")]
-        [Pure]
+        [IsPure]
         public Vector3 VecNorm(Vector3 v) => (v.Length == 0.0) ? Vector3.Zero : (v / v.Length);
 
         [APILevel(APIFlags.LSL, "llModPow")]
         [ForcedSleep(1)]
-        [Pure]
+        [IsPure]
         public int ModPow(int a, int b, int c) => ((int)Math.Pow(a, b)) % c;
 
         [APILevel(APIFlags.LSL, "llRot2Euler")]
@@ -340,7 +341,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APILevel(APIFlags.LSL, "llRot2Angle")]
-        [Pure]
+        [IsPure]
         public double Rot2Angle(Quaternion r)
         {
             /* based on http://wiki.secondlife.com/wiki/LlRot2Angle */
@@ -360,7 +361,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llRot2Axis")]
-        [Pure]
+        [IsPure]
         public Vector3 Rot2Axis(Quaternion q) => VecNorm(new Vector3(q.X, q.Y, q.Z)) * Math.Sign(q.W);
 
         [APILevel(APIFlags.LSL, "llAxisAngle2Rot")]
@@ -395,7 +396,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APILevel(APIFlags.LSL, "llAngleBetween")]
-        [Pure]
+        [IsPure]
         public double AngleBetween(ScriptInstance instance, Quaternion a, Quaternion b)
         {   /* based on http://wiki.secondlife.com/wiki/LlAngleBetween */
             Quaternion r = b / a;
@@ -475,19 +476,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APILevel(APIFlags.LSL, "llRotBetween")]
-        [Pure]
+        [IsPure]
         public Quaternion RotBetween(Vector3 a, Vector3 b) => Quaternion.RotBetween(a, b);
 
         [APILevel(APIFlags.LSL, "llFloor")]
-        [Pure]
+        [IsPure]
         public int Floor(double f) => LSLCompiler.ConvToInt(Math.Floor(f));
 
         [APILevel(APIFlags.LSL, "llCeil")]
-        [Pure]
+        [IsPure]
         public int Ceil(double f) => LSLCompiler.ConvToInt(Math.Ceiling(f));
 
         [APILevel(APIFlags.LSL, "llRound")]
-        [Pure]
+        [IsPure]
         public int Round(double f) => (int)Math.Round(f, MidpointRounding.AwayFromZero);
 
         private readonly Random random = new Random();

@@ -20,7 +20,6 @@
 // exception statement from your version.
 
 using System;
-using System.Diagnostics.Contracts;
 using System.Text;
 
 #pragma warning disable IDE0018
@@ -32,7 +31,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     public partial class BaseApi
     {
         [APILevel(APIFlags.LSL, "llIntegerToBase64")]
-        [Pure]
+        [IsPure]
         public string IntegerToBase64(int number)
         {
             byte[] b = BitConverter.GetBytes(number);
@@ -44,7 +43,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToInteger")]
-        [Pure]
+        [IsPure]
         public int Base64ToInteger(string s)
         {
             if (s.Length > 8)
@@ -61,7 +60,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llStringToBase64")]
-        [Pure]
+        [IsPure]
         public string StringToBase64(string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
@@ -69,7 +68,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llBase64ToString")]
-        [Pure]
+        [IsPure]
         public string Base64ToString(string str)
         {
             byte[] b = Convert.FromBase64String(str);
@@ -78,7 +77,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llXorBase64")]
         [APILevel(APIFlags.LSL, "llXorBase64StringsCorrect")]
-        [Pure]
+        [IsPure]
         public string XorBase64(string str1, string str2)
         {
             byte[] a = Convert.FromBase64String(str1);
@@ -94,7 +93,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llXorBase64Strings")]
         [ForcedSleep(0.3)]
-        [Pure]
+        [IsPure]
         public string XorBase64Strings(string str1, string str2) =>
             XorBase64(str1, str2);
     }

@@ -29,7 +29,6 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
@@ -497,7 +496,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llDeleteSubList")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "DeleteSubList")]
         [Description("Returns a list that is a copy of src but with the slice from start to end removed.")]
-        [Pure]
+        [IsPure]
         public AnArray DeleteSubList(
             [Description("source")]
             AnArray src,
@@ -571,7 +570,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llList2ListStrided")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetStride")]
         [Description("Returns a list of all the entries in the strided list whose index is a multiple of stride in the range start to end.")]
-        [Pure]
+        [IsPure]
         public AnArray List2ListStrided(
             AnArray src,
             [Description("start index")]
@@ -584,7 +583,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.ASSL, "asList2ListStrided")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetStride")]
         [Description("Returns a list of all the entries in the strided list whose index is a multiple of stride in the range start to end and return the selected stride element.")]
-        [Pure]
+        [IsPure]
         public AnArray List2ListStrided(
             AnArray src,
             [Description("start index")]
@@ -641,7 +640,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llList2List")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Sublist")]
-        [Pure]
+        [IsPure]
         public AnArray List2List(AnArray src, int start, int end)
         {
             int srcCount = src.Count;
@@ -689,7 +688,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llList2Float")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetFloatAt")]
-        [Pure]
+        [IsPure]
         public double List2Float(AnArray src, int index)
         {
             if(index < 0)
@@ -707,7 +706,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llListInsertList")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Insert")]
-        [Pure]
+        [IsPure]
         public AnArray ListInsertList(AnArray dest, AnArray src, int index)
         {
             int destLength = dest.Count;
@@ -739,7 +738,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llListFindList")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Find")]
         [Description("Returns the integer index of the first instance of test in src.")]
-        [Pure]
+        [IsPure]
         public int ListFindList(
             [Description("what to search in (haystack)")]
             AnArray src,
@@ -780,7 +779,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APIExtension(APIExtension.LongInteger, "llList2Long")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLongAt")]
         [Description("Returns an integer that is at index in src")]
-        [Pure]
+        [IsPure]
         public long List2Long(
             [Description("List containing the element of interest")]
             AnArray src,
@@ -803,7 +802,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llList2Integer")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetIntegerAt")]
         [Description("Returns an integer that is at index in src")]
-        [Pure]
+        [IsPure]
         public int List2Integer(
             [Description("List containing the element of interest")]
             AnArray src,
@@ -826,7 +825,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llList2Key")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetKeyAt")]
         [Description("Returns a key that is at index in src")]
-        [Pure]
+        [IsPure]
         public LSLKey List2Key(ScriptInstance instance,
             [Description("List containing the element of interest")]
             AnArray src,
@@ -850,7 +849,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llList2Rot")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetRotAt")]
         [Description("Returns a rotation that is at index in src")]
-        [Pure]
+        [IsPure]
         public Quaternion List2Rot(
             [Description("List containing the element of interest")]
             AnArray src,
@@ -873,7 +872,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llList2String")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetStringAt")]
         [Description("Returns a string that is at index in src")]
-        [Pure]
+        [IsPure]
         public string List2String(ScriptInstance instance,
             [Description("List containing the element of interest")]
             AnArray src,
@@ -897,7 +896,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llList2Vector")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetVectorAt")]
         [Description("Returns a vector that is at index in src")]
-        [Pure]
+        [IsPure]
         public Vector3 List2Vector(
             [Description("List containing the element of interest")]
             AnArray src,
@@ -920,7 +919,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llDumpList2String")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToString")]
         [Description("Returns a string that is the list src converted to a string with separator between the entries.")]
-        [Pure]
+        [IsPure]
         public string DumpList2String(ScriptInstance instance, AnArray src, string separator)
         {
             var script = (Script)instance;
@@ -962,7 +961,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llList2CSV")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToCSV")]
         [Description("Returns a string of comma separated values taken in order from src.")]
-        [Pure]
+        [IsPure]
         public string List2CSV(ScriptInstance instance, AnArray src) => DumpList2String(instance, src, ", ");
 
         [APILevel(APIFlags.LSL)]
@@ -987,7 +986,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llGetListEntryType")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetEntryTypeAt")]
         [Description("Returns the type (an integer) of the entry at index in src.")]
-        [Pure]
+        [IsPure]
         public int GetListEntryType(
             [Description("List containing the element of interest")]
             AnArray src,
@@ -1121,7 +1120,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llParseString2List")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToList")]
         [Description("Returns a list that is src broken into a list of strings, discarding separators, keeping spacers, discards any null (empty string) values generated.")]
-        [Pure]
+        [IsPure]
         public AnArray ParseString2List(
             [Description("source string")]
             string src,
@@ -1133,7 +1132,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToListKeepNulls")]
         [Description("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
-        [Pure]
+        [IsPure]
         public AnArray ParseStringKeepNulls(
             [Description("source string")]
             string src,
@@ -1145,7 +1144,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llCSV2List")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CSV2List")]
         [Description("This function takes a string of values separated by commas, and turns it into a list.")]
-        [Pure]
+        [IsPure]
         public AnArray CSV2List(string src)
         {
             bool wsconsume = true;
@@ -1203,7 +1202,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llListReplaceList")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Replace")]
         [Description("This function takes a string of values separated by commas, and turns it into a list.")]
-        [Pure]
+        [IsPure]
         public AnArray ListReplaceList(AnArray dest, AnArray src, int start, int end)
         {
             int destCount = dest.Count;
@@ -1286,7 +1285,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.LSL, "llListSort")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Sort")]
         [Description("Returns a list that is src sorted by stride.")]
-        [Pure]
+        [IsPure]
         public AnArray ListSort(
             [Description("List to be sorted")]
             AnArray src,
@@ -1443,7 +1442,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public const int LIST_STAT_HARMONIC_MEAN = 100;
 
         [APILevel(APIFlags.LSL, "llListStatistics")]
-        [Pure]
+        [IsPure]
         public double ListStatistics(int operation, AnArray src)
         {
             switch(operation)
@@ -1464,7 +1463,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Index")]
-        [Pure]
+        [IsPure]
         public int Index(AnArray array, string value)
         {
             for(int idx = 0; idx < array.Count; ++idx)
@@ -1479,11 +1478,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(AnArray array, string value) => (Index(array, value) >= 0).ToLSLBoolean();
 
         [APIExtension(APIExtension.MemberFunctions, "Index")]
-        [Pure]
+        [IsPure]
         public int Index(AnArray array, int value)
         {
             for (int idx = 0; idx < array.Count; ++idx)
@@ -1498,11 +1497,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(AnArray array, int value) => (Index(array, value) >= 0).ToLSLBoolean();
 
         [APIExtension(APIExtension.MemberFunctions, "Index")]
-        [Pure]
+        [IsPure]
         public int Index(AnArray array, long value)
         {
             for (int idx = 0; idx < array.Count; ++idx)
@@ -1517,11 +1516,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(AnArray array, long value) => (Index(array, value) >= 0).ToLSLBoolean();
 
         [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
-        [Pure]
+        [IsPure]
         public int Index(AnArray array, double value)
         {
             for (int idx = 0; idx < array.Count; ++idx)
@@ -1536,11 +1535,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(AnArray array, double value) => (Index(array, value) >= 0).ToLSLBoolean();
 
         [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
-        [Pure]
+        [IsPure]
         public int Index(AnArray array, Vector3 value)
         {
             for (int idx = 0; idx < array.Count; ++idx)
@@ -1555,11 +1554,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(AnArray array, Vector3 value) => (Index(array, value) >= 0).ToLSLBoolean();
 
         [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
-        [Pure]
+        [IsPure]
         public int Index(AnArray array, Quaternion value)
         {
             for (int idx = 0; idx < array.Count; ++idx)
@@ -1574,11 +1573,11 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(AnArray array, Quaternion value) => (Index(array, value) >= 0).ToLSLBoolean();
 
         [APIExtension(APIExtension.MemberFunctions, "IndexOf")]
-        [Pure]
+        [IsPure]
         public int Index(AnArray array, LSLKey key)
         {
             for (int idx = 0; idx < array.Count; ++idx)
@@ -1593,7 +1592,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.MemberFunctions, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(AnArray array, LSLKey key) => (Index(array, key) >= 0).ToLSLBoolean();
 
         #region llListStatistics function implementation

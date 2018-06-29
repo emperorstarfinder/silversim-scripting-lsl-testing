@@ -26,7 +26,6 @@
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using System;
-using System.Diagnostics.Contracts;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
@@ -38,7 +37,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     {
         [APILevel(APIFlags.LSL, "llDeleteSubString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "DeleteSubString")]
-        [Pure]
+        [IsPure]
         public string DeleteSubString(string src, int start, int end)
         {
             int srcLength = src.Length;
@@ -159,7 +158,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llStringTrim")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Trim")]
-        [Pure]
+        [IsPure]
         public string StringTrim(string src, int type)
         {
             switch(type & STRING_TRIM)
@@ -184,7 +183,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.LSL, "llInsertString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Insert")]
-        [Pure]
+        [IsPure]
         public string InsertString(string dest, int index, string src)
         {
             /* negative indexing here is non-LSL but we keep it since it makes sense to have it similarized to calls like llGetSubString and llDeleteSubString */
@@ -242,12 +241,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         };
 
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Contains")]
-        [Pure]
+        [IsPure]
         public int Contains(string source, string pattern) => source.Contains(pattern).ToLSLBoolean();
 
         [APILevel(APIFlags.LSL, "llGetSubString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Substring")]
-        [Pure]
+        [IsPure]
         public string GetSubstring(string src, int start, int end)
         {
             int srcLength = src.Length;
@@ -293,7 +292,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llMD5String")]
-        [Pure]
+        [IsPure]
         public string MD5String(string src, int nonce)
         {
             using (var md5 = MD5.Create())
@@ -309,7 +308,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.LSL, "llSHA1String")]
-        [Pure]
+        [IsPure]
         public string SHA1String(string src)
         {
             using (var sha1 = SHA1.Create())
@@ -326,7 +325,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.OSSL, "osMatchString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Match")]
-        [Pure]
+        [IsPure]
         public AnArray OsMatchString(string src, string pattern, int start)
         {
             var result = new AnArray();
@@ -364,7 +363,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.OSSL, "osReplaceString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "RegexReplace")]
-        [Pure]
+        [IsPure]
         public string OsReplaceString(string src, string pattern, string replace, int count, int start)
         {
             if (start < 0)
@@ -419,12 +418,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.OSSL, "osFormatString")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Format")]
-        [Pure]
+        [IsPure]
         public string OsFormatString(string fmt, AnArray list) => string.Format(fmt, list.ToArray());
 
         [APILevel(APIFlags.OSSL, "osRegexIsMatch")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "MatchesRegex")]
-        [Pure]
+        [IsPure]
         public int RegexIsMatch(ScriptInstance instance, string input, string pattern)
         {
             try
@@ -443,12 +442,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.OSSL, "osStringStartsWith")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "StartsWith")]
-        [Pure]
+        [IsPure]
         public int StringStartsWith(string input, string startsWith) => input.StartsWith(startsWith).ToLSLBoolean();
 
         [APILevel(APIFlags.OSSL, "osStringEndsWith")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "EndsWith")]
-        [Pure]
+        [IsPure]
         public int StringEndsWith(string input, string endsWith) => input.EndsWith(endsWith).ToLSLBoolean();
     }
 }
