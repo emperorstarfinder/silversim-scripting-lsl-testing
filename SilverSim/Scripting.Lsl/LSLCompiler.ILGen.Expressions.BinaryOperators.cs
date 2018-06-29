@@ -237,6 +237,8 @@ namespace SilverSim.Scripting.Lsl
                 m_ProcessOrders.Add("|=", new State[] { State.RightHand });
                 m_ProcessOrders.Add("&=", new State[] { State.RightHand });
                 m_ProcessOrders.Add("^=", new State[] { State.RightHand });
+                m_ProcessOrders.Add("<<=", new State[] { State.RightHand });
+                m_ProcessOrders.Add(">>=", new State[] { State.RightHand });
             }
 
             private void BeginScope(CompileState compileState)
@@ -1316,6 +1318,8 @@ namespace SilverSim.Scripting.Lsl
                         case "|=":
                         case "&=":
                         case "^=":
+                        case "<<=":
+                        case ">>=":
                             if(compileState.LanguageExtensions.EnableLogicalModifyAssignments)
                             {
                                 goto case "+=";
@@ -1738,6 +1742,40 @@ namespace SilverSim.Scripting.Lsl
                         else
                         {
                             throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorXorEqualsNotSupportedFor0And1", "operator '^=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        }
+                        break;
+
+                    case "<<=":
+                        if ((typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType) ||
+                            (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Shl);
+                        }
+                        else if (typeof(long) == m_LeftHandType && typeof(int) == m_RightHandType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Conv_I8);
+                            compileState.ILGen.Emit(OpCodes.Shl);
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorShlEqualsNotSupportedFor0And1", "operator '<<=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                        }
+                        break;
+
+                    case ">>=":
+                        if ((typeof(int) == m_LeftHandType && typeof(int) == m_RightHandType) ||
+                            (typeof(long) == m_LeftHandType && typeof(long) == m_RightHandType))
+                        {
+                            compileState.ILGen.Emit(OpCodes.Shr);
+                        }
+                        else if (typeof(long) == m_LeftHandType && typeof(int) == m_RightHandType)
+                        {
+                            compileState.ILGen.Emit(OpCodes.Conv_I8);
+                            compileState.ILGen.Emit(OpCodes.Shr);
+                        }
+                        else
+                        {
+                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorShrEqualsNotSupportedFor0And1", "operator '>>=' not supported for '{0}' and '{1}'"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
                         }
                         break;
 
