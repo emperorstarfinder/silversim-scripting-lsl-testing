@@ -152,29 +152,67 @@ namespace SilverSim.Scripting.Lsl
             else if(functionLine.Line[startAt] == "break" &&
                 (compileState.LanguageExtensions.EnableSwitchBlock || compileState.LanguageExtensions.EnableBreakContinueStatement))
             {
-                if (compileState.m_BreakContinueLabels.Count == 0 || !compileState.m_BreakContinueLabels[0].HaveBreakTarget)
+                uint n = 1;
+                if(functionLine.Line[startAt + 1] != ";")
                 {
-                    if (compileState.LanguageExtensions.EnableSwitchBlock)
+                    n = uint.Parse(functionLine.Line[startAt + 1]);
+                }
+
+                int labelidx;
+                for(labelidx = 0; labelidx < compileState.m_BreakContinueLabels.Count; ++labelidx)
+                {
+                    if (!compileState.m_BreakContinueLabels[labelidx].HaveBreakTarget)
                     {
-                        throw new CompilerException(functionLine.Line[startAt].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "ContinueNotInForWhileDoWhileSwitchBlock", "'continue' not in 'for'/'while'/'do while'/'switch' block"));
+                        continue;
                     }
-                    else
+                    if(--n == 0)
                     {
-                        throw new CompilerException(functionLine.Line[startAt].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "ContinueNotInForWhileDoWhileBlock", "'continue' not in 'for'/'while'/'do while' block"));
+                        break;
                     }
                 }
 
-                compileState.ILGen.Emit(OpCodes.Br, compileState.m_BreakContinueLabels[0].BreakTargetLabel);
+                if (labelidx == compileState.m_BreakContinueLabels.Count)
+                {
+                    if (compileState.LanguageExtensions.EnableSwitchBlock)
+                    {
+                        throw new CompilerException(functionLine.Line[startAt].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "BreakNotInForWhileDoWhileSwitchBlock", "'break' not in 'for'/'while'/'do while'/'switch' block"));
+                    }
+                    else
+                    {
+                        throw new CompilerException(functionLine.Line[startAt].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "BreakNotInForWhileDoWhileBlock", "'break' not in 'for'/'while'/'do while' block"));
+                    }
+                }
+
+                compileState.ILGen.Emit(OpCodes.Br, compileState.m_BreakContinueLabels[labelidx].BreakTargetLabel);
             }
             else if (functionLine.Line[startAt] == "continue" &&
                 compileState.LanguageExtensions.EnableBreakContinueStatement)
             {
-                if(compileState.m_BreakContinueLabels.Count == 0 || !compileState.m_BreakContinueLabels[0].HaveContinueTarget)
+                uint n = 1;
+                if (functionLine.Line[startAt + 1] != ";")
+                {
+                    n = uint.Parse(functionLine.Line[startAt + 1]);
+                }
+
+                int labelidx;
+                for (labelidx = 0; labelidx < compileState.m_BreakContinueLabels.Count; ++labelidx)
+                {
+                    if (!compileState.m_BreakContinueLabels[labelidx].HaveContinueTarget)
+                    {
+                        continue;
+                    }
+                    if (--n == 0)
+                    {
+                        break;
+                    }
+                }
+
+                if (labelidx == compileState.m_BreakContinueLabels.Count)
                 {
                     throw new CompilerException(functionLine.Line[startAt].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "ContinueNotInForWhileDoWhileBlock", "'continue' not in 'for'/'while'/'do while' block"));
                 }
 
-                compileState.ILGen.Emit(OpCodes.Br, compileState.m_BreakContinueLabels[0].ContinueTargetLabel);
+                compileState.ILGen.Emit(OpCodes.Br, compileState.m_BreakContinueLabels[labelidx].ContinueTargetLabel);
             }
             #endregion
             #region Return from function

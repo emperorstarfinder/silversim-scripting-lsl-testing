@@ -312,7 +312,12 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if(args[0] == "continue" && compileState.LanguageExtensions.EnableBreakContinueStatement)
                 {
-                    if(args[1] != ";")
+                    uint n;
+                    if (args.Count == 3 && args[2] == ";" && uint.TryParse(args[1], out n) && n > 0)
+                    {
+                        /* continue to some outer loop */
+                    }
+                    else if (args[1] != ";")
                     {
                         throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "SemicolonHasToFollow0", "';' has to follow '{0}'"), args[0]));
                     }
@@ -323,7 +328,12 @@ namespace SilverSim.Scripting.Lsl
                     (compileState.LanguageExtensions.EnableBreakContinueStatement ||
                      compileState.LanguageExtensions.EnableSwitchBlock))
                 {
-                    if (args[1] != ";")
+                    uint n;
+                    if(args.Count == 3 && args[2] == ";" && uint.TryParse(args[1], out n) && n > 0)
+                    {
+                        /* break to some outer breakable */
+                    }
+                    else if (args[1] != ";")
                     {
                         throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "SemicolonHasToFollow0", "';' has to follow '{0}'"), args[0]));
                     }
