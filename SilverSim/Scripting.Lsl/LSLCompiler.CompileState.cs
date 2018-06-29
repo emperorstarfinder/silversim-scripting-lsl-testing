@@ -197,6 +197,9 @@ namespace SilverSim.Scripting.Lsl
                 [APILevel(APIFlags.ASSL)]
                 public bool UseMessageObjectEvent;
 
+                [APILevel(APIFlags.ASSL)]
+                public bool EnableStringJuxtaposition;
+
                 [APIExtension(APIExtension.InheritEvents)]
                 public bool InheritEventsOnStateChange;
 #pragma warning restore CS0649

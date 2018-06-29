@@ -439,10 +439,10 @@ namespace SilverSim.Scripting.Lsl
         #endregion
 
         #region Preprocessor for concatenated string constants
-        private void CollapseStringConstants(List<TokenInfo> args)
+        private void CollapseStringConstants(CompileState cs, List<TokenInfo> args)
         {
             int pos = 0;
-            while(++pos < args.Count - 2)
+            while(++pos < args.Count - 1)
             {
                 if (args[pos] == "+" && args[pos - 1].Token.StartsWith("\"") && args[pos + 1].Token.StartsWith("\""))
                 {
@@ -451,6 +451,22 @@ namespace SilverSim.Scripting.Lsl
                     args.RemoveAt(pos);
                     args.RemoveAt(pos);
                     --pos;
+                }
+            }
+
+            /* string string concatenation e.g. "a" "b" */
+            if (cs.LanguageExtensions.EnableStringJuxtaposition)
+            {
+                pos = 0;
+                while (++pos < args.Count)
+                {
+                    if (args[pos - 1].Token.StartsWith("\"") && args[pos].Token.StartsWith("\""))
+                    {
+                        TokenInfo larg = args[pos - 1];
+                        args[pos - 1].Token = larg.Token.Substring(0, larg.Token.Length - 1) + args[pos].Token.Substring(1);
+                        args.RemoveAt(pos);
+                        --pos;
+                    }
                 }
             }
         }
@@ -473,7 +489,7 @@ namespace SilverSim.Scripting.Lsl
         private void PreprocessLine(CompileState cs, List<TokenInfo> args)
         {
             CombineTypecastArguments(cs, args);
-            CollapseStringConstants(args);
+            CollapseStringConstants(cs, args);
         }
 
         #region Type validation and string representation
