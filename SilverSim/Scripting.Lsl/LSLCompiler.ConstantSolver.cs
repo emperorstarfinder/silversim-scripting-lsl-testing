@@ -153,35 +153,7 @@ namespace SilverSim.Scripting.Lsl
                             if (attr != null)
                             {
                                 object resValue = methodInfo.Invoke(amiMatch.Value.Api, paramValues.ToArray());
-                                Type resType = resValue.GetType();
-                                if (resType == typeof(Quaternion))
-                                {
-                                    st.Value = new ConstantValueRotation((Quaternion)resValue);
-                                }
-                                else if (resType == typeof(Vector3))
-                                {
-                                    st.Value = new ConstantValueVector((Vector3)resValue);
-                                }
-                                else if (resType == typeof(char))
-                                {
-                                    st.Value = new Tree.ConstantValueChar((char)resValue);
-                                }
-                                else if (resType == typeof(double))
-                                {
-                                    st.Value = new Tree.ConstantValueFloat((double)resValue);
-                                }
-                                else if (resType == typeof(int))
-                                {
-                                    st.Value = new Tree.ConstantValueInt((int)resValue);
-                                }
-                                else if (resType == typeof(long))
-                                {
-                                    st.Value = new Tree.ConstantValueLong((long)resValue);
-                                }
-                                else if (resType == typeof(string))
-                                {
-                                    st.Value = new Tree.ConstantValueString((string)resValue);
-                                }
+                                AssignResult(st, resValue);
                             }
                         }
                     }
@@ -189,7 +161,40 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private void SolveConstantOperations(CompileState cs, Tree tree, CultureInfo currentCulture, bool solveFunctions)
+        private void AssignResult(Tree st, object resValue)
+        {
+            Type resType = resValue.GetType();
+            if (resType == typeof(Quaternion))
+            {
+                st.Value = new ConstantValueRotation((Quaternion)resValue);
+            }
+            else if (resType == typeof(Vector3))
+            {
+                st.Value = new ConstantValueVector((Vector3)resValue);
+            }
+            else if (resType == typeof(char))
+            {
+                st.Value = new Tree.ConstantValueChar((char)resValue);
+            }
+            else if (resType == typeof(double))
+            {
+                st.Value = new Tree.ConstantValueFloat((double)resValue);
+            }
+            else if (resType == typeof(int))
+            {
+                st.Value = new Tree.ConstantValueInt((int)resValue);
+            }
+            else if (resType == typeof(long))
+            {
+                st.Value = new Tree.ConstantValueLong((long)resValue);
+            }
+            else if (resType == typeof(string))
+            {
+                st.Value = new Tree.ConstantValueString((string)resValue);
+            }
+        }
+
+        private void SolveConstantOperations(CompileState cs, Tree tree, CultureInfo currentCulture, bool solveMemberFunctions)
         {
             var processNodes = new List<Tree>();
             var enumeratorStack = new List<ListTreeEnumState>();
@@ -271,8 +276,18 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
+                if (st.Type == Tree.EntryType.Variable)
+                {
+                    FieldInfo fi;
+                    if(cs.ApiInfo.Constants.TryGetValue(st.Entry, out fi))
+                    {
+                        object o = fi.GetValue(null);
+                        AssignResult(st, o);
+                    }
+                }
+
                 #region Function operators
-                if(!solveFunctions)
+                if(!solveMemberFunctions)
                 {
                     /* ignore functions when not set */
                 }
@@ -297,7 +312,8 @@ namespace SilverSim.Scripting.Lsl
                         SolveFunctionConstantOperations(cs, st, cs.ApiInfo.MemberMethods);
                     }
                 }
-                else if (st.Type == Tree.EntryType.Function)
+
+                if (st.Type == Tree.EntryType.Function && (solveMemberFunctions || ! cs.LanguageExtensions.EnableMemberFunctions))
                 {
                     bool areAllArgumentsConstant = true;
                     foreach (Tree ot in st.SubTree)

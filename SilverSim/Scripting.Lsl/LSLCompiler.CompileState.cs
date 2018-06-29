@@ -203,7 +203,8 @@ namespace SilverSim.Scripting.Lsl
                 [APIExtension(APIExtension.InheritEvents)]
                 public bool InheritEventsOnStateChange;
 
-                public bool EnableFunctionConstantSolver = false;
+                [APIExtension(APIExtension.PureFunctions)]
+                public bool EnableFunctionConstantSolver;
 #pragma warning restore CS0649
             }
 

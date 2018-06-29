@@ -1528,7 +1528,7 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
             IdentifyMemberFunctions(expressionTree);
-            if (cs.LanguageExtensions.EnableFunctionConstantSolver)
+            if (cs.LanguageExtensions.EnableFunctionConstantSolver && cs.LanguageExtensions.EnableMemberFunctions)
             {
                 SolveConstantOperations(cs, expressionTree, currentCulture, true);
             }
