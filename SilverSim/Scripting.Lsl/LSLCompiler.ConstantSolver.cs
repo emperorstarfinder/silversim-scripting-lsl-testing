@@ -189,7 +189,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        private void SolveConstantOperations(CompileState cs, Tree tree, CultureInfo currentCulture)
+        private void SolveConstantOperations(CompileState cs, Tree tree, CultureInfo currentCulture, bool solveFunctions)
         {
             var processNodes = new List<Tree>();
             var enumeratorStack = new List<ListTreeEnumState>();
@@ -272,8 +272,11 @@ namespace SilverSim.Scripting.Lsl
                 }
 
                 #region Function operators
-#if NEEDS_IDENTIFY
-                if(st.Type == Tree.EntryType.MemberFunction)
+                if(!solveFunctions)
+                {
+                    /* ignore functions when not set */
+                }
+                else if(st.Type == Tree.EntryType.MemberFunction)
                 {
                     bool areAllArgumentsConstant = true;
                     foreach (Tree ot in st.SubTree)
@@ -294,9 +297,7 @@ namespace SilverSim.Scripting.Lsl
                         SolveFunctionConstantOperations(cs, st, cs.ApiInfo.MemberMethods);
                     }
                 }
-#endif
-
-                if (st.Type == Tree.EntryType.Function)
+                else if (st.Type == Tree.EntryType.Function)
                 {
                     bool areAllArgumentsConstant = true;
                     foreach (Tree ot in st.SubTree)

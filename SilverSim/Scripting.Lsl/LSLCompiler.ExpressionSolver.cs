@@ -1069,7 +1069,7 @@ namespace SilverSim.Scripting.Lsl
         private void SolveTree(CompileState cs, Tree resolvetree, CultureInfo currentCulture)
         {
             SolveMaxNegValues(resolvetree);
-            SolveConstantOperations(cs, resolvetree, currentCulture);
+            SolveConstantOperations(cs, resolvetree, currentCulture, false);
         }
 
         #region Pre-Tree identifiers
@@ -1528,6 +1528,10 @@ namespace SilverSim.Scripting.Lsl
                 }
             }
             IdentifyMemberFunctions(expressionTree);
+            if (cs.LanguageExtensions.EnableFunctionConstantSolver)
+            {
+                SolveConstantOperations(cs, expressionTree, currentCulture, true);
+            }
             return expressionTree;
         }
 
