@@ -317,9 +317,9 @@ namespace SilverSim.Scripting.Lsl
                         SolveFunctionConstantOperations(cs, st, cs.ApiInfo.Methods);
                     }
                 }
-#endregion
+                #endregion
 
-#region Binary operators
+                #region Binary operators
                 if (st.Type == Tree.EntryType.OperatorBinary)
                 {
                     foreach (Tree ot in st.SubTree)
@@ -1580,8 +1580,8 @@ namespace SilverSim.Scripting.Lsl
                             throw new CompilerException(st.LineNumber, string.Format(this.GetLanguageString(currentCulture, "CannotProcess0OperatorIsUnknown", "Cannot process '{0}': operator is unknown"), st.Entry));
                     }
                 }
-#endregion
-#region Left unary operators
+                #endregion
+                #region Left unary operators
                 else if (st.Type == Tree.EntryType.OperatorLeftUnary && (st.SubTree[0].Value != null || st.SubTree[0].Type == Tree.EntryType.Value))
                 {
                     if (st.Entry != "-" && st.SubTree[0].Type == Tree.EntryType.Value)
@@ -1836,13 +1836,13 @@ namespace SilverSim.Scripting.Lsl
                         }
                     }
                 }
-#endregion
-#region Parenthesis
+                #endregion
+                #region Parenthesis
                 else if (st.Type == Tree.EntryType.Level && st.Entry == "(" && st.SubTree.Count == 1)
                 {
                     st.Value = st.SubTree[0].Value;
                 }
-#endregion
+                #endregion
             }
         }
 
