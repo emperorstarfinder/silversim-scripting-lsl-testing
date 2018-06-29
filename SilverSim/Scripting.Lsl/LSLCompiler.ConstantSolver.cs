@@ -67,8 +67,6 @@ namespace SilverSim.Scripting.Lsl
         private void SolveFunctionConstantOperations(CompileState cs, Tree st, Dictionary<string, List<ApiMethodInfo>> methods)
         {
             bool areAllArgumentsConstant = true;
-            if (cs.LanguageExtensions.EnableFunctionConstantSolver)
-            {
                 List<Type> paramTypes = new List<Type>();
                 List<object> paramValues = new List<object>();
                 foreach (Tree ot in st.SubTree)
@@ -115,45 +113,51 @@ namespace SilverSim.Scripting.Lsl
                     }
                 }
 
-                if (areAllArgumentsConstant)
+            if (areAllArgumentsConstant)
+            {
+                List<ApiMethodInfo> methodInfos;
+                if (methods.TryGetValue(st.Entry, out methodInfos))
                 {
-                    List<ApiMethodInfo> methodInfos;
-                    if (methods.TryGetValue(st.Entry, out methodInfos))
+                    ApiMethodInfo? amiMatch = null;
+                    foreach (ApiMethodInfo ami in methodInfos)
                     {
-                        ApiMethodInfo? amiMatch = null;
-                        foreach (ApiMethodInfo ami in methodInfos)
+                        if (ami.Method.ReturnType == typeof(void))
                         {
-                            if (ami.Method.ReturnType == typeof(void))
+                            continue;
+                        }
+                        ParameterInfo[] pi = ami.Method.GetParameters();
+                        if (pi.Length == paramTypes.Count)
+                        {
+                            bool parameterMatch = true;
+                            for (int pIdx = 0; pIdx < pi.Length; ++pIdx)
                             {
-                                continue;
+                                if (pi[pIdx].ParameterType != paramTypes[pIdx])
+                                {
+                                    parameterMatch = false;
+                                }
                             }
-                            ParameterInfo[] pi = ami.Method.GetParameters();
-                            if (pi.Length == paramTypes.Count)
+                            if (parameterMatch)
                             {
-                                bool parameterMatch = true;
-                                for (int pIdx = 0; pIdx < pi.Length; ++pIdx)
-                                {
-                                    if (pi[pIdx].ParameterType != paramTypes[pIdx])
-                                    {
-                                        parameterMatch = false;
-                                    }
-                                }
-                                if (parameterMatch)
-                                {
-                                    amiMatch = ami;
-                                    break;
-                                }
+                                amiMatch = ami;
+                                break;
                             }
                         }
+                    }
 
-                        MethodInfo methodInfo = amiMatch?.Method;
-                        if (methodInfo != null)
+                    MethodInfo methodInfo = amiMatch?.Method;
+                    if (methodInfo != null)
+                    {
+                        Attribute attr = Attribute.GetCustomAttribute(methodInfo, typeof(IsPureAttribute));
+                        if (attr != null)
                         {
-                            Attribute attr = Attribute.GetCustomAttribute(methodInfo, typeof(IsPureAttribute));
-                            if (attr != null)
+                            try
                             {
                                 object resValue = methodInfo.Invoke(amiMatch.Value.Api, paramValues.ToArray());
                                 AssignResult(st, resValue);
+                            }
+                            catch
+                            {
+                                /* ignore errors should they happen here */
                             }
                         }
                     }
@@ -312,8 +316,7 @@ namespace SilverSim.Scripting.Lsl
                         SolveFunctionConstantOperations(cs, st, cs.ApiInfo.MemberMethods);
                     }
                 }
-
-                if (st.Type == Tree.EntryType.Function && (solveMemberFunctions || ! cs.LanguageExtensions.EnableMemberFunctions))
+                else if (st.Type == Tree.EntryType.Function)
                 {
                     bool areAllArgumentsConstant = true;
                     foreach (Tree ot in st.SubTree)
