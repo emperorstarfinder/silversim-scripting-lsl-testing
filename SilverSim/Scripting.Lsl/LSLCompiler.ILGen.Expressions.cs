@@ -142,6 +142,13 @@ namespace SilverSim.Scripting.Lsl
                         compileState.ILGen.Emit(OpCodes.Ldstr, ((Tree.ConstantValueString)functionTree.Value).Value);
                         innerExpressionReturn = typeof(string);
                     }
+                    else if(valueType == typeof(ConstantValueKey))
+                    {
+                        var val = (ConstantValueKey)functionTree.Value;
+                        compileState.ILGen.Emit(OpCodes.Ldstr, val.ToString());
+                        compileState.ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(new Type[] { typeof(string) }));
+                        innerExpressionReturn = typeof(LSLKey);
+                    }
                     else if (valueType == typeof(ConstantValueRotation))
                     {
                         var val = (ConstantValueRotation)functionTree.Value;

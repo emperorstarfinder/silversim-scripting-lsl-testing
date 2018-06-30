@@ -27,9 +27,7 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 
 namespace SilverSim.Scripting.Lsl
@@ -64,171 +62,25 @@ namespace SilverSim.Scripting.Lsl
 
             public override Tree.ValueBase Negate() => new ConstantValueRotation(-Value);
         }
+
+        private sealed class ConstantValueKey : Tree.ConstantValue
+        {
+            public LSLKey Value;
+
+            public ConstantValueKey(LSLKey v)
+            {
+                Value = v;
+            }
+
+            public override string ToString() => Value.ToString();
+
+            public override Tree.ValueBase Negate()
+            {
+                throw new NotSupportedException("key cannot be negated");
+            }
+        }
         #endregion
 
-        private object CallInlineFunction(InlineApiMethodInfo inlineApiMethod, List<Type> paramTypes, List<object> paramValues)
-        {
-            if(inlineApiMethod.CompiledDynamicMethod == null)
-            {
-                DynamicMethod dynMethod = new DynamicMethod(
-                    "dyn_pure_" + inlineApiMethod.FunctionName,
-                    inlineApiMethod.ReturnType,
-                    paramTypes.ToArray());
-                ILGenDumpProxy ilgen = new ILGenDumpProxy(dynMethod.GetILGenerator(), null, null);
-                for(int i = 0; i < paramValues.Count; ++i)
-                {
-                    ilgen.Emit(OpCodes.Ldarg, i);
-                }
-                inlineApiMethod.Generate(ilgen);
-                ilgen.Emit(OpCodes.Ret);
-                inlineApiMethod.CompiledDynamicMethod = dynMethod;
-                List<Type> genArgs = new List<Type>(paramTypes);
-                genArgs.Add(inlineApiMethod.ReturnType);
-                Type delegateType = null;
-                switch (paramValues.Count)
-                {
-                    case 0:
-                        delegateType = typeof(Func<>).GetGenericTypeDefinition().MakeGenericType(genArgs.ToArray());
-                        break;
-                    case 1:
-                        delegateType = typeof(Func<,>).GetGenericTypeDefinition().MakeGenericType(genArgs.ToArray());
-                        break;
-                    case 2:
-                        delegateType = typeof(Func<,,>).GetGenericTypeDefinition().MakeGenericType(genArgs.ToArray());
-                        break;
-                    case 3:
-                        delegateType = typeof(Func<,,,>).GetGenericTypeDefinition().MakeGenericType(genArgs.ToArray());
-                        break;
-                    case 4:
-                        delegateType = typeof(Func<,,,,>).GetGenericTypeDefinition().MakeGenericType(genArgs.ToArray());
-                        break;
-                    case 5:
-                        delegateType = typeof(Func<,,,,,>).GetGenericTypeDefinition().MakeGenericType(genArgs.ToArray());
-                        break;
-                }
-                if(delegateType == null)
-                {
-                    return null;
-                }
-                inlineApiMethod.CompiledDynamicDelegate = dynMethod.CreateDelegate(delegateType);
-            }
-
-            return inlineApiMethod.CompiledDynamicDelegate.DynamicInvoke(paramValues.ToArray());
-        }
-
-        private void SolveFunctionConstantOperations(CompileState cs, Tree st, Dictionary<string, List<ApiMethodInfo>> methods, Dictionary<string, List<InlineApiMethodInfo>> inlineMethods)
-        {
-            bool areAllArgumentsConstant = true;
-            List<Type> paramTypes = new List<Type>();
-            List<object> paramValues = new List<object>();
-            foreach (Tree ot in st.SubTree)
-            {
-                Type oType = ot.Value.GetType();
-                if (oType == typeof(ConstantValueRotation))
-                {
-                    paramTypes.Add(typeof(Quaternion));
-                    paramValues.Add(((ConstantValueRotation)ot.Value).Value);
-                }
-                else if (oType == typeof(ConstantValueVector))
-                {
-                    paramTypes.Add(typeof(Vector3));
-                    paramValues.Add(((ConstantValueVector)ot.Value).Value);
-                }
-                else if (oType == typeof(Tree.ConstantValueChar))
-                {
-                    paramTypes.Add(typeof(char));
-                    paramValues.Add(((Tree.ConstantValueChar)ot.Value).Value);
-                }
-                else if (oType == typeof(Tree.ConstantValueFloat))
-                {
-                    paramTypes.Add(typeof(double));
-                    paramValues.Add(((Tree.ConstantValueFloat)ot.Value).Value);
-                }
-                else if (oType == typeof(Tree.ConstantValueInt))
-                {
-                    paramTypes.Add(typeof(int));
-                    paramValues.Add(((Tree.ConstantValueInt)ot.Value).Value);
-                }
-                else if (oType == typeof(Tree.ConstantValueLong))
-                {
-                    paramTypes.Add(typeof(long));
-                    paramValues.Add(((Tree.ConstantValueLong)ot.Value).Value);
-                }
-                else if (oType == typeof(Tree.ConstantValueString))
-                {
-                    paramTypes.Add(typeof(string));
-                    paramValues.Add(((Tree.ConstantValueString)ot.Value).Value);
-                }
-                else
-                {
-                    areAllArgumentsConstant = false;
-                }
-            }
-
-            if (areAllArgumentsConstant)
-            {
-                List<InlineApiMethodInfo> inlineMethodInfos;
-                List<object> selectedFunctions = new List<object>();
-                if (inlineMethods.TryGetValue(st.Entry, out inlineMethodInfos))
-                {
-                    foreach (InlineApiMethodInfo ami in inlineMethodInfos)
-                    {
-                        if (ami.ReturnType == typeof(void))
-                        {
-                            continue;
-                        }
-                        InlineApiMethodInfo.ParameterInfo[] pi = ami.Parameters;
-                        if (pi.Length == paramTypes.Count && ami.IsPure &&
-                            IsConstantFunctionIdenticalMatch(ami, paramTypes))
-                        {
-                            selectedFunctions.Add(ami);
-                        }
-                    }
-                }
-
-                List<ApiMethodInfo> methodInfos;
-                if (methods.TryGetValue(st.Entry, out methodInfos))
-                {
-                    foreach (ApiMethodInfo ami in methodInfos)
-                    {
-                        if (ami.Method.ReturnType == typeof(void))
-                        {
-                            continue;
-                        }
-                        ParameterInfo[] pi = ami.Method.GetParameters();
-                        if (pi.Length == paramTypes.Count && Attribute.GetCustomAttribute(ami.Method, typeof(IsPureAttribute)) != null &&
-                             IsConstantFunctionIdenticalMatch(ami, paramTypes))
-                        {
-                            selectedFunctions.Add(ami);
-                        }
-                    }
-                }
-
-
-                object o = SelectConstantFunctionCall(cs, selectedFunctions, paramTypes);
-                if (o != null)
-                {
-                    object resValue;
-                    try
-                    {
-                        if (o is InlineApiMethodInfo)
-                        {
-                            resValue = CallInlineFunction((InlineApiMethodInfo)o, paramTypes, paramValues);
-                        }
-                        else
-                        {
-                            ApiMethodInfo ami = (ApiMethodInfo)o;
-                            resValue = ami.Method.Invoke(ami.Api, paramValues.ToArray());
-                        }
-                        AssignResult(st, resValue);
-                    }
-                    catch
-                    {
-                        /* ignore exceptions here */
-                    }
-                }
-            }
-        }
 
         private void AssignResult(Tree st, object resValue)
         {
@@ -261,127 +113,12 @@ namespace SilverSim.Scripting.Lsl
             {
                 st.Value = new Tree.ConstantValueString((string)resValue);
             }
+            else if(resType == typeof(LSLKey))
+            {
+                st.Value = new ConstantValueKey((LSLKey)resValue);
+            }
         }
 
-        private bool IsConstantFunctionIdenticalMatch(object o, List<Type> parameters)
-        {
-            Type t = o.GetType();
-            if (t == typeof(ApiMethodInfo))
-            {
-                var methodInfo = (ApiMethodInfo)o;
-                ParameterInfo[] pi = methodInfo.Method.GetParameters();
-                for (int i = 0; i < parameters.Count; ++i)
-                {
-                    Type sourceType = parameters[i];
-                    Type destType = pi[i].ParameterType;
-                    if (sourceType != destType)
-                    {
-                        return false;
-                    }
-                }
-            }
-            else if (t == typeof(InlineApiMethodInfo))
-            {
-                var methodInfo = (InlineApiMethodInfo)o;
-                InlineApiMethodInfo.ParameterInfo[] pi = methodInfo.Parameters;
-                for (int i = 0; i < parameters.Count; ++i)
-                {
-                    Type sourceType = parameters[i];
-                    Type destType = pi[i].ParameterType;
-                    if (sourceType != destType)
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool IsConstantImplicitCastedMatch(CompileState compileState, object o, List<Type> parameters, out int matchedCount)
-        {
-            matchedCount = 0;
-            Type t = o.GetType();
-            if (t == typeof(ApiMethodInfo))
-            {
-                var methodInfo = (ApiMethodInfo)o;
-                var attr = Attribute.GetCustomAttribute(methodInfo.Method, typeof(AllowExplicitTypecastsBeImplicitToStringAttribute)) as AllowExplicitTypecastsBeImplicitToStringAttribute;
-                ParameterInfo[] pi = methodInfo.Method.GetParameters();
-                for (int i = 0; i < parameters.Count; ++i)
-                {
-                    Type sourceType = parameters[i];
-                    Type destType = pi[i].ParameterType;
-                    if (sourceType != destType)
-                    {
-                        if (compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
-                        {
-                            /* is castable by attribute */
-                        }
-                        else if (!IsImplicitlyCastable(compileState, destType, sourceType))
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        ++matchedCount;
-                    }
-                }
-            }
-            else if (t == typeof(InlineApiMethodInfo))
-            {
-                var methodInfo = (InlineApiMethodInfo)o;
-                InlineApiMethodInfo.ParameterInfo[] pi = methodInfo.Parameters;
-                for (int i = 0; i < parameters.Count; ++i)
-                {
-                    Type sourceType = parameters[i];
-                    Type destType = pi[i].ParameterType;
-                    if (sourceType != destType)
-                    {
-                        if (!IsImplicitlyCastable(compileState, destType, sourceType))
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        ++matchedCount;
-                    }
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private object SelectConstantFunctionCall(CompileState compileState, List<object> selectedFunctions, List<Type> parameterTypes)
-        {
-            /* search the identical match or closest match */
-            object closeMatch = null;
-            int closeMatchCountHighest = -1;
-            foreach (object o in selectedFunctions)
-            {
-                if (IsConstantFunctionIdenticalMatch(o, parameterTypes))
-                {
-                    return o;
-                }
-                int closeMatchCount;
-                if (IsConstantImplicitCastedMatch(compileState, o, parameterTypes, out closeMatchCount) && closeMatchCount > closeMatchCountHighest)
-                {
-                    closeMatch = o;
-                    closeMatchCountHighest = closeMatchCount;
-                }
-            }
-
-            return closeMatch;
-        }
 
         private void SolveConstantOperations(CompileState cs, Tree tree, CultureInfo currentCulture, bool solveMemberFunctions)
         {
@@ -1857,6 +1594,13 @@ namespace SilverSim.Scripting.Lsl
                         Type type = st.SubTree[0].ValueType;
                         switch (st.Entry)
                         {
+                            case "(key)":
+                                if(type == typeof(Tree.ConstantValueString))
+                                {
+                                    st.Value = new ConstantValueKey(new LSLKey(((Tree.ConstantValueString)st.SubTree[0].Value).Value));
+                                }
+                                break;
+
                             case "(string)":
                                 if (type == typeof(ConstantValueRotation))
                                 {
@@ -1890,6 +1634,10 @@ namespace SilverSim.Scripting.Lsl
                                 else if (type == typeof(Tree.ConstantValueString))
                                 {
                                     st.Value = st.SubTree[0].Value;
+                                }
+                                else if(type == typeof(ConstantValueKey))
+                                {
+                                    st.Value = new Tree.ConstantValueString(st.SubTree[0].ToString());
                                 }
                                 else if (type == typeof(Tree.ConstantValueString))
                                 {
