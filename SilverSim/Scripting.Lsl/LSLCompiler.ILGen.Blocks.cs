@@ -49,6 +49,7 @@ namespace SilverSim.Scripting.Lsl
             }
 
             Label? eoif_label = null;
+            Type targetType;
             do
             {
             processnext:
@@ -946,7 +947,6 @@ namespace SilverSim.Scripting.Lsl
                     #endregion
 
                     default:
-                        Type targetType;
                         if (compileState.TryGetValidVarType(functionLine.Line[0], out targetType))
                         {
                             #region Variable declaration
