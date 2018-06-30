@@ -42,6 +42,12 @@ namespace SilverSim.Scripting.Lsl
             Dictionary<string, ILLabelInfo> labels,
             bool isImplicit = false)
         {
+            Dictionary<string, ILLabelInfo> outerlabels = labels;
+            if (!isImplicit)
+            {
+                labels = new Dictionary<string, ILLabelInfo>(labels);
+            }
+
             Label? eoif_label = null;
             do
             {
@@ -78,20 +84,22 @@ namespace SilverSim.Scripting.Lsl
                         else
                         {
                             string labelName = functionLine.Line[1];
-                            if (!labels.ContainsKey(labelName))
+                            ILLabelInfo labelInfo;
+                            if (!labels.TryGetValue(labelName, out labelInfo))
                             {
                                 Label label = compileState.ILGen.DefineLabel();
-                                labels[functionLine.Line[1]] = new ILLabelInfo(label, true);
+                                labelInfo = new ILLabelInfo(label, true);
+                                labels[functionLine.Line[1]] = labelInfo;
                             }
-                            else if (labels[labelName].IsDefined)
+                            else if (labelInfo.IsDefined)
                             {
                                 throw new CompilerException(functionLine.Line[1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Label0AlreadyDefined", "label '{0}' already defined"), labelName));
                             }
                             else
                             {
-                                labels[labelName].IsDefined = true;
+                                labelInfo.IsDefined = true;
                             }
-                            compileState.ILGen.MarkLabel(labels[labelName].Label);
+                            compileState.ILGen.MarkLabel(labelInfo.Label);
                         }
                         break;
                     #endregion
@@ -289,12 +297,24 @@ namespace SilverSim.Scripting.Lsl
                             if (functionLine.Line[functionLine.Line.Count - 1] == "{")
                             {
                                 /* block */
+                                var innerlabels = new Dictionary<string, ILLabelInfo>(labels);
                                 compileState.ILGen.BeginScope();
                                 ProcessBlock(
                                     compileState,
                                     returnType,
                                     newLocalVars,
                                     labels);
+                                foreach(KeyValuePair<string, ILLabelInfo> kvp in innerlabels)
+                                {
+                                    if(labels.ContainsKey(kvp.Key))
+                                    {
+                                        continue;
+                                    }
+                                    else if(!kvp.Value.IsDefined)
+                                    {
+
+                                    }
+                                }
                                 compileState.ILGen.EndScope();
                             }
                             else
@@ -921,13 +941,7 @@ namespace SilverSim.Scripting.Lsl
 
                     #region End of unconditional/conditional block
                     case "}": /* end unconditional/conditional block or do while */
-                        if (eoif_label.HasValue)
-                        {
-                            compileState.ILGen.MarkLabel(eoif_label.Value);
-                            eoif_label = null;
-                        }
-
-                        return;
+                        goto leaveprocess;
 
                     #endregion
 
@@ -1037,6 +1051,19 @@ namespace SilverSim.Scripting.Lsl
                         break;
                 }
             } while (!isImplicit);
+
+            leaveprocess:
+            if (!isImplicit)
+            {
+                foreach (KeyValuePair<string, ILLabelInfo> kvp in labels)
+                {
+                    if (!kvp.Value.IsDefined && !outerlabels.ContainsKey(kvp.Key))
+                    {
+                        outerlabels.Add(kvp.Key, kvp.Value);
+                    }
+                }
+            }
+
             if (eoif_label.HasValue)
             {
                 compileState.ILGen.MarkLabel(eoif_label.Value);
@@ -1310,7 +1337,7 @@ namespace SilverSim.Scripting.Lsl
                 {
                     foreach (int i in kvp.Value.UsedInLines)
                     {
-                        labelsUndefined.Add(i, string.Format(this.GetLanguageString(compileState.CurrentCulture, "UndefinedLabel0Used", "Undefined label '{0}' used"), kvp.Key));
+                        labelsUndefined[i] = string.Format(this.GetLanguageString(compileState.CurrentCulture, "UndefinedLabel0Used", "Undefined label '{0}' used"), kvp.Key);
                     }
                 }
             }
