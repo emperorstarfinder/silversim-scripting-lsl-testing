@@ -97,6 +97,7 @@ namespace SilverSim.Scripting.Lsl
             public bool ForcedSleepDefault = true;
             public bool EmitDebugSymbols;
             public Dictionary<string, Type> m_VariableDeclarations = new Dictionary<string, Type>();
+            public Dictionary<string, bool> m_VariableConstantDeclarations = new Dictionary<string, bool>();
             public Dictionary<string, Dictionary<string, Type>> m_StateVariableDeclarations = new Dictionary<string, Dictionary<string, Type>>();
             public Dictionary<string, FieldBuilder> m_VariableFieldInfo = new Dictionary<string, FieldBuilder>();
             public Dictionary<string, Dictionary<string, FieldBuilder>> m_StateVariableFieldInfo = new Dictionary<string, Dictionary<string, FieldBuilder>>();
@@ -128,7 +129,8 @@ namespace SilverSim.Scripting.Lsl
                                 (LanguageExtensions.EnableBreakContinueStatement && (entry == "break" || entry == "continue")) ||
                                 (LanguageExtensions.EnableForeach && (entry == "foreach")) ||
                                 (LanguageExtensions.EnableExtern && (entry == "extern")) ||
-                                (LanguageExtensions.EnableNamedTimers && (entry == "timer"));
+                                (LanguageExtensions.EnableNamedTimers && (entry == "timer")) ||
+                                (LanguageExtensions.EnableConst && (entry == "const"));
             }
             public class LanguageExtensionsData
             {
@@ -205,6 +207,9 @@ namespace SilverSim.Scripting.Lsl
 
                 [APIExtension(APIExtension.PureFunctions)]
                 public bool EnableFunctionConstantSolver;
+
+                [APIExtension(APIExtension.Const)]
+                public bool EnableConst;
 #pragma warning restore CS0649
             }
 

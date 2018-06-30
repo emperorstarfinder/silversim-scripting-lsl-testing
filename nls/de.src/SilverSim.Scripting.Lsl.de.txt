@@ -341,3 +341,4 @@ OperatorShlEqualsNotSupportedFor0And1=Operator '<<=' ist für '{0}' und '{1}' nic
 OperatorShrEqualsNotSupportedFor0And1=Operator '>>=' ist für '{0}' und '{1}' nicht unterstützt
 BreakNotInForWhileDoWhileSwitchBlock='break' ist nicht in einem 'for'/'while'/'do while'/'switch'-Block
 BreakNotInForWhileDoWhileBlock='break' ist nicht in einem 'for'/'while'/'do while'-Block
+InvalidConstantDefinitionMissingEqual=Ungültige Konstantendefinition. Ein Ausdruck mit '=' erwartet.

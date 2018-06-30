@@ -1383,7 +1383,7 @@ namespace SilverSim.Scripting.Lsl
             fb = v as FieldBuilder;
             if (fb != null)
             {
-                if ((fb.Attributes & FieldAttributes.Static) != 0)
+                if ((fb.Attributes & FieldAttributes.Static) != 0 || (fb.Attributes & FieldAttributes.InitOnly) != 0)
                 {
                     throw new CompilerException(lineNumber, compileState.GetLanguageString(compileState.CurrentCulture, "SettingConstantsIsNotAllowed", "Setting constants is not allowed"));
                 }

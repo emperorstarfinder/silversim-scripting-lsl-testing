@@ -174,7 +174,7 @@ namespace SilverSim.Scripting.Lsl
             FieldInfo[] fieldInfos = GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
             foreach (FieldInfo fi in fieldInfos)
             {
-                if (!fi.Name.StartsWith("var_"))
+                if (!fi.Name.StartsWith("var_") || fi.IsInitOnly)
                 {
                     continue;
                 }

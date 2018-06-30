@@ -718,7 +718,8 @@ namespace SilverSim.Scripting.Lsl
             APIExtension.ByteArray.ToLower(),
             APIExtension.SwitchBlock.ToLower(),
             APIExtension.ExtendedTypecasts.ToLower(),
-            APIExtension.StateVariables.ToLower()
+            APIExtension.StateVariables.ToLower(),
+            APIExtension.Const.ToLower()
         };
 
         private readonly string[] OsslEnabledExtensions = new string[]
@@ -1064,22 +1065,35 @@ namespace SilverSim.Scripting.Lsl
                 else if (args[args.Count - 1] == ";")
                 {
                     /* variable definition */
-                    if (args.Count < 3 || (args[2] != "=" && args[2] != ";"))
+                    int pos = 0;
+                    if (compileState.LanguageExtensions.EnableConst && args[0] == "const")
+                    {
+                        pos = 1;
+                    }
+                    if (args.Count < pos + 3 || (args[pos + 2] != "=" && args[pos + 2] != ";"))
                     {
                         throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidVariableDefinitionEitherSemicolonOrEqual", "Invalid variable definition. Either ';' or an expression preceeded by '='"));
                     }
                     Type varType;
-                    if (compileState.TryGetValidVarType(args[0], out varType))
+                    if (compileState.TryGetValidVarType(args[pos], out varType))
                     {
                         if(!BaseTypes.Contains(varType) && Attribute.GetCustomAttribute(varType, typeof(SerializableAttribute)) == null)
                         {
-                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForGlobalVariable", "Type '{0}' is not suitable for global variable."), args[0]));
+                            throw ParserException(p, string.Format(this.GetLanguageString(compileState.CurrentCulture, "Type0IsNotSuitableForGlobalVariable", "Type '{0}' is not suitable for global variable."), args[pos]));
                         }
-                        CheckUsedName(compileState, p, "Variable", args[1]);
-                        compileState.m_VariableDeclarations[args[1]] = varType;
-                        if (args[2] == "=")
+                        CheckUsedName(compileState, p, "Variable", args[pos + 1]);
+                        compileState.m_VariableDeclarations[args[pos + 1]] = varType;
+                        if(pos > 0)
                         {
-                            compileState.m_VariableInitValues[args[1]] = new LineInfo(args.GetRange(3, args.Count - 4));
+                            compileState.m_VariableConstantDeclarations[args[pos + 1]] = true;
+                        }
+                        if (args[pos + 2] == "=")
+                        {
+                            compileState.m_VariableInitValues[args[pos + 1]] = new LineInfo(args.GetRange(pos + 3, args.Count - pos - 4));
+                        }
+                        else if(args[0] == "const" && compileState.LanguageExtensions.EnableConst)
+                        {
+                            throw ParserException(p, this.GetLanguageString(compileState.CurrentCulture, "InvalidConstantDefinitionMissingEqual", "Invalid constant definition. Requires an expression preceeded by '='"));
                         }
                     }
                     else

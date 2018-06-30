@@ -192,6 +192,7 @@ namespace SilverSim.Scripting.Lsl
         public const string RezAsync = "RezAsync";
         public const string InheritEvents = "InheritEvents";
         public const string PureFunctions = "PureFunctions";
+        public const string Const = "Const";
     }
 
     [Serializable]

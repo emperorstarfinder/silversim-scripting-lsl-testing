@@ -376,9 +376,15 @@ namespace SilverSim.Scripting.Lsl
                         dumpILGen.WriteLine("********************************************************************************");
                         dumpILGen.WriteLine("DefineField(\"{0}\", typeof({1}))", variableKvp.Key, variableKvp.Value.FullName);
                     }
+                    FieldAttributes fieldAttr = FieldAttributes.Public;
+                    if(compileState.m_VariableConstantDeclarations.ContainsKey(variableKvp.Key))
+                    {
+                        fieldAttr |= FieldAttributes.InitOnly;
+                    }
+
                     FieldBuilder fb = compileState.LanguageExtensions.EnableStateVariables ?
-                        scriptTypeBuilder.DefineField("var_glob_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public) :
-                        scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, FieldAttributes.Public);
+                        scriptTypeBuilder.DefineField("var_glob_" + variableKvp.Key, variableKvp.Value, fieldAttr) :
+                        scriptTypeBuilder.DefineField("var_" + variableKvp.Key, variableKvp.Value, fieldAttr);
                     compileState.m_VariableFieldInfo[variableKvp.Key] = fb;
                     typeLocalsInited[variableKvp.Key] = fb;
                 }
@@ -624,24 +630,26 @@ namespace SilverSim.Scripting.Lsl
                             }
                             compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
-                            compileState.ILGen = reset_ILGen;
-                            compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                            modified = ProcessExpression(
-                                compileState,
-                                fb.FieldType,
-                                expressionTree,
-                                typeLocals);
-                            if (modified == ResultIsModifiedEnum.Yes)
+                            if(!fb.IsInitOnly)
                             {
-                                /* skip operation as it is modified */
+                                compileState.ILGen = reset_ILGen;
+                                compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                                modified = ProcessExpression(
+                                    compileState,
+                                    fb.FieldType,
+                                    expressionTree,
+                                    typeLocals);
+                                if (modified == ResultIsModifiedEnum.Yes)
+                                {
+                                    /* skip operation as it is modified */
+                                }
+                                else if (fb.FieldType == typeof(AnArray) || compileState.IsCloneOnAssignment(fb.FieldType))
+                                {
+                                    /* keep LSL semantics valid */
+                                    compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(fb.FieldType));
+                                }
+                                compileState.ILGen.Emit(OpCodes.Stfld, fb);
                             }
-                            else if (fb.FieldType == typeof(AnArray) || compileState.IsCloneOnAssignment(fb.FieldType))
-                            {
-                                /* keep LSL semantics valid */
-                                compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(fb.FieldType));
-                            }
-                            compileState.ILGen.Emit(OpCodes.Stfld, fb);
-
                             varIsInited.Add(varName);
                         }
                         else
