@@ -235,7 +235,7 @@ namespace SilverSim.Scripting.Lsl
 
                     if (areAllArgumentsConstant && cs.LanguageExtensions.EnableFunctionConstantSolver)
                     {
-                        SolveFunctionConstantOperations(cs, st, cs.ApiInfo.MemberMethods, cs.ApiInfo.InlineMemberMethods);
+                        SolveFunctionConstantOperations(cs, st, cs.ApiInfo.MemberMethods, cs.ApiInfo.InlineMemberMethods, true);
                     }
                 }
                 else if (st.Type == Tree.EntryType.Function)
@@ -256,7 +256,7 @@ namespace SilverSim.Scripting.Lsl
 
                     if (areAllArgumentsConstant && cs.LanguageExtensions.EnableFunctionConstantSolver)
                     {
-                        SolveFunctionConstantOperations(cs, st, cs.ApiInfo.Methods, cs.ApiInfo.InlineMethods);
+                        SolveFunctionConstantOperations(cs, st, cs.ApiInfo.Methods, cs.ApiInfo.InlineMethods, false);
                     }
                 }
                 #endregion

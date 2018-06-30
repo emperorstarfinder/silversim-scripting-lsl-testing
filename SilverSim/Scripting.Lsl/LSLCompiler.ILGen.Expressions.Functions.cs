@@ -56,6 +56,7 @@ namespace SilverSim.Scripting.Lsl
             private readonly List<object> m_SelectedFunctions = new List<object>();
 
             private readonly string m_FunctionName;
+            private readonly bool m_FirstMustMatch;
             private readonly int m_LineNumber;
 
             private void GenIncCallDepthCount(CompileState compileState)
@@ -101,6 +102,7 @@ namespace SilverSim.Scripting.Lsl
                 m_LineNumber = lineNumber;
 
                 m_FunctionName = functionTree.Entry;
+                m_FirstMustMatch = functionTree.Type == Tree.EntryType.MemberFunction;
 
                 for (int i = 0; i < functionTree.SubTree.Count; ++i)
                 {
@@ -408,7 +410,11 @@ namespace SilverSim.Scripting.Lsl
                             Type destType = pi[i + 1].ParameterType;
                             if (sourceType != destType)
                             {
-                                if(compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
+                                if (i == 0 && m_FirstMustMatch)
+                                {
+                                    return false;
+                                }
+                                else if (compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
                                 {
                                     /* is castable by attribute */
                                 }
@@ -431,7 +437,11 @@ namespace SilverSim.Scripting.Lsl
                             Type destType = pi[i].ParameterType;
                             if (sourceType != destType)
                             {
-                                if (compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
+                                if (i == 0 && m_FirstMustMatch)
+                                {
+                                    return false;
+                                }
+                                else if (compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
                                 {
                                     /* is castable by attribute */
                                 }

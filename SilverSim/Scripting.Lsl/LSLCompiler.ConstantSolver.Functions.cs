@@ -118,7 +118,7 @@ namespace SilverSim.Scripting.Lsl
             return inlineApiMethod.CompiledDynamicDelegate.DynamicInvoke(paramValues.ToArray());
         }
 
-        private void SolveFunctionConstantOperations(CompileState cs, Tree st, Dictionary<string, List<ApiMethodInfo>> methods, Dictionary<string, List<InlineApiMethodInfo>> inlineMethods)
+        private void SolveFunctionConstantOperations(CompileState cs, Tree st, Dictionary<string, List<ApiMethodInfo>> methods, Dictionary<string, List<InlineApiMethodInfo>> inlineMethods, bool firstMustMatch)
         {
             bool areAllArgumentsConstant = true;
             List<Type> paramTypes = new List<Type>();
@@ -205,7 +205,7 @@ namespace SilverSim.Scripting.Lsl
                 }
 
 
-                object o = SelectConstantFunctionCall(cs, selectedFunctions, paramTypes);
+                object o = SelectConstantFunctionCall(cs, selectedFunctions, paramTypes, firstMustMatch);
                 if (o != null)
                 {
                     object resValue;
@@ -405,7 +405,7 @@ namespace SilverSim.Scripting.Lsl
             return false;
         }
 
-        private bool IsConstantImplicitCastedMatch(CompileState compileState, object o, List<Type> parameters, out int matchedCount)
+        private bool IsConstantImplicitCastedMatch(CompileState compileState, object o, List<Type> parameters, bool firstMustMatch, out int matchedCount)
         {
             matchedCount = 0;
             Type t = o.GetType();
@@ -420,7 +420,11 @@ namespace SilverSim.Scripting.Lsl
                     Type destType = pi[i].ParameterType;
                     if (sourceType != destType)
                     {
-                        if (compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
+                        if(i == 0 && firstMustMatch)
+                        {
+                            return false;
+                        }
+                        else if (compileState.LanguageExtensions.EnableAllowImplicitCastToString && attr != null && attr.ParameterNumbers.Contains(i + 1) && IsExplicitlyCastableToString(compileState, sourceType))
                         {
                             /* is castable by attribute */
                         }
@@ -445,7 +449,11 @@ namespace SilverSim.Scripting.Lsl
                     Type destType = pi[i].ParameterType;
                     if (sourceType != destType)
                     {
-                        if (!IsImplicitlyCastable(compileState, destType, sourceType))
+                        if (i == 0 && firstMustMatch)
+                        {
+                            return false;
+                        }
+                        else if (!IsImplicitlyCastable(compileState, destType, sourceType))
                         {
                             return false;
                         }
@@ -464,7 +472,7 @@ namespace SilverSim.Scripting.Lsl
             return true;
         }
 
-        private object SelectConstantFunctionCall(CompileState compileState, List<object> selectedFunctions, List<Type> parameterTypes)
+        private object SelectConstantFunctionCall(CompileState compileState, List<object> selectedFunctions, List<Type> parameterTypes, bool firstMustMatch)
         {
             /* search the identical match or closest match */
             object closeMatch = null;
@@ -476,7 +484,7 @@ namespace SilverSim.Scripting.Lsl
                     return o;
                 }
                 int closeMatchCount;
-                if (IsConstantImplicitCastedMatch(compileState, o, parameterTypes, out closeMatchCount) && closeMatchCount > closeMatchCountHighest)
+                if (IsConstantImplicitCastedMatch(compileState, o, parameterTypes, firstMustMatch, out closeMatchCount) && closeMatchCount > closeMatchCountHighest)
                 {
                     closeMatch = o;
                     closeMatchCountHighest = closeMatchCount;
