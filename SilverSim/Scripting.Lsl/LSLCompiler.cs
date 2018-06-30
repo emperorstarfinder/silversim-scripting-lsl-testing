@@ -85,6 +85,8 @@ namespace SilverSim.Scripting.Lsl
             public readonly Type ReturnType;
             public readonly Action<ILGenDumpProxy> Generate;
             public bool IsPure;
+            public DynamicMethod CompiledDynamicMethod;
+            public Delegate CompiledDynamicDelegate;
 
             public InlineApiMethodInfo(string functionName, ParameterInfo[] parameters, Type returnType, Action<ILGenDumpProxy> generator)
             {
@@ -112,6 +114,7 @@ namespace SilverSim.Scripting.Lsl
                 Parameters = src.Parameters;
                 ReturnType = src.ReturnType;
                 Generate = src.Generate;
+                IsPure = src.IsPure;
             }
         }
 
