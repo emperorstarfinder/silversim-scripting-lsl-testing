@@ -377,6 +377,27 @@ namespace SilverSim.Scripting.Lsl
                                     ((Tree.ConstantValueString)(st.SubTree[0].Value)).Value +
                                     ((Tree.ConstantValueString)(st.SubTree[1].Value)).Value);
                             }
+                            else if (leftType == typeof(Tree.ConstantValueString) && rightType == typeof(ConstantValueKey) &&
+                                cs.LanguageExtensions.EnableKeyAndStringConcat)
+                            {
+                                st.Value = new Tree.ConstantValueString(
+                                    ((Tree.ConstantValueString)(st.SubTree[0].Value)).Value +
+                                    ((ConstantValueKey)(st.SubTree[1].Value)).ToString());
+                            }
+                            else if (leftType == typeof(ConstantValueKey) && rightType == typeof(Tree.ConstantValueString) &&
+                                cs.LanguageExtensions.EnableKeyAndStringConcat)
+                            {
+                                st.Value = new Tree.ConstantValueString(
+                                    ((ConstantValueKey)(st.SubTree[0].Value)).ToString() +
+                                    ((Tree.ConstantValueString)(st.SubTree[1].Value)).Value);
+                            }
+                            else if (leftType == typeof(ConstantValueKey) && rightType == typeof(ConstantValueKey) &&
+                                cs.LanguageExtensions.EnableKeyAndStringConcat)
+                            {
+                                st.Value = new Tree.ConstantValueString(
+                                    ((ConstantValueKey)(st.SubTree[0].Value)).ToString() +
+                                    ((ConstantValueKey)(st.SubTree[1].Value)).ToString());
+                            }
                             else if (leftType == typeof(ConstantValueRotation) && rightType == typeof(ConstantValueRotation))
                             {
                                 st.Value = new ConstantValueRotation(
