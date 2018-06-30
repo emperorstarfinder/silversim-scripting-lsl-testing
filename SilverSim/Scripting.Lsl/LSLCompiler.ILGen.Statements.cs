@@ -133,7 +133,7 @@ namespace SilverSim.Scripting.Lsl
             #region Jump to label
             else if (functionLine.Line[startAt] == "jump")
             {
-                if (functionLine.Line.Count <= startAt + 2)
+                if (functionLine.Line.Count != startAt + 3)
                 {
                     throw new CompilerException(functionLine.Line[startAt].LineNumber, this.GetLanguageString(compileState.CurrentCulture, "InvalidJumpStatement", "Invalid jump statement"));
                 }
