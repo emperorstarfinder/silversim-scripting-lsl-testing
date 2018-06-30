@@ -249,9 +249,11 @@ namespace SilverSim.Scripting.Lsl.Api.Xml
         }
 
         [APIExtension(XmlExtensionName, "xmlEscape")]
+        [IsPure]
         public string XmlEscape(string input) => System.Security.SecurityElement.Escape(input);
 
         [APIExtension(XmlExtensionName, "xmlUnescape")]
+        [IsPure]
         public string XmlUnescape(string input) => HttpUtility.HtmlDecode(input);
     }
 }
