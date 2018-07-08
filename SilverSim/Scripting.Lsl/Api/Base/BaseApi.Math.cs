@@ -105,6 +105,22 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [IsPure]
         public double OsAngleBetween(Vector3 a, Vector3 b) => Math.Atan2(a.Cross(b).Length, a.Dot(b));
 
+        [APILevel(APIFlags.ASSL, "asRot2AngularDisplacement")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetAngularDisplacement")]
+        public static readonly LSLCompiler.InlineApiMethodInfo Abs = new LSLCompiler.InlineApiMethodInfo("Rot2AngularDisplacement",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "rot", typeof(Quaternion))
+            },
+            typeof(Vector3),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("GetAngularDisplacement", Type.EmptyTypes));
+            })
+        {
+            IsPure = true
+        };
+
         [APILevel(APIFlags.LSL, "llAbs")]
         public static readonly LSLCompiler.InlineApiMethodInfo Abs = new LSLCompiler.InlineApiMethodInfo("Abs",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
