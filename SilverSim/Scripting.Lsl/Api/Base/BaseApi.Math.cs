@@ -107,7 +107,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.ASSL, "asRot2AngularDisplacement")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetAngularDisplacement")]
-        public static readonly LSLCompiler.InlineApiMethodInfo Abs = new LSLCompiler.InlineApiMethodInfo("Rot2AngularDisplacement",
+        public static readonly LSLCompiler.InlineApiMethodInfo Rot2AngularDisplacement = new LSLCompiler.InlineApiMethodInfo("Rot2AngularDisplacement",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
                 new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "rot", typeof(Quaternion))
