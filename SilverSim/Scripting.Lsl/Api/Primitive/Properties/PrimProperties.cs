@@ -588,10 +588,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive.Properties
             }
 
             [XmlIgnore]
-            public int IsTempOnRez
+            public int IsTemporary
             {
-                get { return WithPart((p) => p.ObjectGroup.IsTempOnRez.ToLSLBoolean()); }
-                set { WithPart((p, v) => p.ObjectGroup.IsTempOnRez = v, value != 0); }
+                get { return WithPart((p) => p.ObjectGroup.IsTemporary.ToLSLBoolean()); }
+                set { WithPart((p, v) => p.ObjectGroup.IsTemporary = v, value != 0); }
             }
 
             [XmlIgnore]
