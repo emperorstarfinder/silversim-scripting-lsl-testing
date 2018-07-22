@@ -67,6 +67,8 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         //osSetParcelDetails
         [APILevel(APIFlags.OSSL)]
         public const int PARCEL_DETAILS_CLAIMDATE = 10;
+        [APILevel(APIFlags.OSSL)]
+        public const int PARCEL_DETAILS_ALLOW_PUBLISH = 11;
 
         [APILevel(APIFlags.LSL, "llOverMyLand")]
         public int OverMyLand(ScriptInstance instance, LSLKey id)
@@ -623,6 +625,10 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
 
                             case PARCEL_DETAILS_SEE_AVATARS:
                                 pInfo.SeeAvatars = rules[idx++].AsBoolean;
+                                break;
+
+                            case PARCEL_DETAILS_ALLOW_PUBLISH:
+                                pInfo.ModifyFlags(ParcelFlags.AllowPublish, rules[idx++].AsBoolean ? ParcelFlags.AllowPublish : ParcelFlags.None);
                                 break;
 
                             default:
