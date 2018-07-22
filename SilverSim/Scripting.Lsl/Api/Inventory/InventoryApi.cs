@@ -44,6 +44,8 @@ using SilverSim.Viewer.Messages.Inventory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using SoundAsset = SilverSim.Types.Asset.Format.Sound;
+using AnimationAsset = SilverSim.Types.Asset.Format.Animation;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
@@ -598,6 +600,52 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     {
                         QueryID = UUID.Random,
                         Data = landmark.LocalPos.ToString()
+                    };
+                    instance.PostEvent(e);
+                    return e.QueryID;
+                }
+                else if(item.AssetType == AssetType.Animation)
+                {
+                    AssetData data;
+                    AnimationAsset anim;
+                    try
+                    {
+                        data = instance.Part.ObjectGroup.AssetService[item.AssetID];
+                        anim = new AnimationAsset(data);
+                    }
+                    catch
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "AnimationDataFor0NotFoundOrInvalid", "Animation data for '{0}' not found or invalid", name));
+                        return UUID.Zero;
+                    }
+
+                    var e = new DataserverEvent
+                    {
+                        QueryID = UUID.Random,
+                        Data = anim.Duration.ToString()
+                    };
+                    instance.PostEvent(e);
+                    return e.QueryID;
+                }
+                else if(item.AssetType == AssetType.Sound)
+                {
+                    AssetData data;
+                    SoundAsset sound;
+                    try
+                    {
+                        data = instance.Part.ObjectGroup.AssetService[item.AssetID];
+                        sound = new SoundAsset(data);
+                    }
+                    catch
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "SoundDataFor0NotFoundOrInvalid", "Sound data for '{0}' not found or invalid", name));
+                        return UUID.Zero;
+                    }
+
+                    var e = new DataserverEvent
+                    {
+                        QueryID = UUID.Random,
+                        Data = sound.Duration.ToString()
                     };
                     instance.PostEvent(e);
                     return e.QueryID;
