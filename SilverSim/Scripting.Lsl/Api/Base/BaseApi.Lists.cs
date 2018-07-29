@@ -1035,7 +1035,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APILevel(APIFlags.ASSL)]
         public const int PARSE_FLAG_KEEP_NULLS = 1;
         [APILevel(APIFlags.ASSL)]
-        public const int PARSE_FLAG_AUTOCAST = 2;
+        public const int PARSE_FLAG_AUTO_CAST = 2;
         [APILevel(APIFlags.ASSL)]
         public const int PARSE_FLAG_TRIM_STRINGS = 4;
         [APILevel(APIFlags.ASSL)]
