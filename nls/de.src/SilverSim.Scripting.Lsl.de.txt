@@ -344,3 +344,4 @@ BreakNotInForWhileDoWhileBlock='break' ist nicht in einem 'for'/'while'/'do whil
 InvalidConstantDefinitionMissingEqual=Ungültige Konstantendefinition. Ein Ausdruck mit '=' erwartet.
 AnimationDataFor0NotFoundOrInvalid=Animationsdaten für '{0}' nicht gefunden oder fehlerhaft
 SoundDataFor0NotFoundOrInvalid=Sounddaten für '{0}' nicht gefunden oder fehlerhaft
+Function0PinCannotBeZero={0}: Pin kann nicht 0 sein.

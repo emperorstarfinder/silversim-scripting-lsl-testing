@@ -345,3 +345,4 @@ BreakNotInForWhileDoWhileBlock='break' not in 'for'/'while'/'do while' block
 InvalidConstantDefinitionMissingEqual=Invalid constant definition. Requires an expression preceeded by '='
 AnimationDataFor0NotFoundOrInvalid=Animation data for '{0}' not found or invalid
 SoundDataFor0NotFoundOrInvalid=Sound data for '{0}' not found or invalid
+Function0PinCannotBeZero={0}: Pin cannot be zero

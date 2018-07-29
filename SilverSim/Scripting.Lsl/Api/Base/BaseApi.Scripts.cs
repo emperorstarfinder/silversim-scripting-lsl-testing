@@ -185,9 +185,41 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             }
         }
 
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_SUCCESS = 0;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_BAD_PIN = -1;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_NO_PIN = -2;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_NOT_A_SCRIPT = -3;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_ITEM_DOES_NOT_EXIST = -4;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_TARGET_DOES_NOT_EXIST = -5;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_ASSET_MISSING = -6;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_SAME_PRIM = -7;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_TRANSFER_REQUIRED = -8;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_NO_TARGET_PERMISSIONS = -9;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_COPY_REQUIRED = -10;
+        [APILevel(APIFlags.ASSL)]
+        public const int REMOTE_LOAD_SCRIPT_ERROR = -11;
+
         [APILevel(APIFlags.LSL, "llRemoteLoadScriptPin")]
         [ForcedSleep(3)]
-        public void RemoteLoadScriptPin(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param)
+        public void RemoteLoadScriptPin(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param) =>
+            RemoteLoadScriptPin(instance, target, name, pin, running, start_param, true);
+
+        [APILevel(APIFlags.ASSL, "asRemoteLoadScriptPin")]
+        public int RemoteLoadScriptPinWithReturn(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param) =>
+            RemoteLoadScriptPin(instance, target, name, pin, running, start_param, false);
+
+        public int RemoteLoadScriptPin(ScriptInstance instance, LSLKey target, string name, int pin, int running, int start_param, bool doShout)
         {
             lock(instance)
             {
@@ -198,14 +230,20 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 AssetData asset;
                 if(!thisGroup.Scene.Primitives.TryGetValue(target, out destpart))
                 {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0DestinationPrimDoesNotExist", "{0}: destination prim does not exist", "llRemoteLoadScriptPin"));
-                    return;
+                    if (doShout)
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0DestinationPrimDoesNotExist", "{0}: destination prim does not exist", "llRemoteLoadScriptPin"));
+                    }
+                    return REMOTE_LOAD_TARGET_DOES_NOT_EXIST;
                 }
 
                 if(!thisPart.Inventory.TryGetValue(name, out scriptitem))
                 {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Script1DoesNotExist", "{0}: Script '{1}' does not exist", "llRemoteLoadScriptPin", name));
-                    return;
+                    if (doShout)
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0Script1DoesNotExist", "{0}: Script '{1}' does not exist", "llRemoteLoadScriptPin", name));
+                    }
+                    return REMOTE_LOAD_ITEM_DOES_NOT_EXIST;
                 }
 
                 try
@@ -214,50 +252,84 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
                 catch
                 {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0FailedToFindAssetForScript1", "{0}: Failed to find asset for script '{1}'", "llRemoteLoadScriptPin", name));
-                    return;
+                    if (doShout)
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0FailedToFindAssetForScript1", "{0}: Failed to find asset for script '{1}'", "llRemoteLoadScriptPin", name));
+                    }
+                    return REMOTE_LOAD_ASSET_MISSING;
                 }
 
                 if (destpart.ID == thisPart.ID)
                 {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0UnableToAddItem", "{0}: Unable to add item", "llRemoteLoadScriptPin"));
-                    return;
+                    if (doShout)
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0UnableToAddItem", "{0}: Unable to add item", "llRemoteLoadScriptPin"));
+                    }
+                    return REMOTE_LOAD_SAME_PRIM;
                 }
 
-                if(scriptitem.InventoryType != InventoryType.LSL || scriptitem.AssetType != AssetType.LSLText)
+                if(scriptitem.InventoryType != InventoryType.LSL || scriptitem.AssetType != AssetType.LSLText || asset.Type != AssetType.LSLText)
                 {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item '{1}' is not a script", "llRemoteLoadScriptPin", name));
-                    return;
+                    if (doShout)
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0Inventoryitem1IsNotAScript", "{0}: Inventory item '{1}' is not a script", "llRemoteLoadScriptPin", name));
+                    }
+                    return REMOTE_LOAD_NOT_A_SCRIPT;
                 }
 
                 if (destpart.Owner != thisPart.Owner)
                 {
-                    if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Transfer) == 0)
+                    if(pin == 0)
                     {
-                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1DoesNotHaveTransferPermission", "{0}: Item {1} does not have transfer permission", "llRemoteLoadScriptPin", scriptitem.Name));
-                        return;
+                        if (doShout)
+                        {
+                            instance.ShoutError(new LocalizedScriptMessage(this, "Function0PinCannotBeZero", "{0}: Pin cannot be zero", "llRemoteLoadScriptPin", scriptitem.Name));
+                        }
+                        return REMOTE_LOAD_NO_PIN;
+                    }
+                    else if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Transfer) == 0)
+                    {
+                        if (doShout)
+                        {
+                            instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1DoesNotHaveTransferPermission", "{0}: Item {1} does not have transfer permission", "llRemoteLoadScriptPin", scriptitem.Name));
+                        }
+                        return REMOTE_LOAD_TRANSFER_REQUIRED;
                     }
                     else if (destpart.CheckPermissions(thisPart.Owner, thisGroup.Group, InventoryPermissionsMask.Modify))
                     {
-                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0DestPrim1DoesNotHaveModifyPermisions", "{0}: Destination prim {1} does not have modify permission", "llRemoteLoadScriptPin", destpart.Name));
-                        return;
+                        if (doShout)
+                        {
+                            instance.ShoutError(new LocalizedScriptMessage(this, "Function0DestPrim1DoesNotHaveModifyPermisions", "{0}: Destination prim {1} does not have modify permission", "llRemoteLoadScriptPin", destpart.Name));
+                        }
+                        return REMOTE_LOAD_NO_TARGET_PERMISSIONS;
                     }
                 }
                 if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Copy) == 0)
                 {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1DoesNotHaveCopyPermission", "{0}: Item {1} does not have copy permission", "llRemoteLoadScriptPin", scriptitem.Name));
-                    return;
+                    if (doShout)
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1DoesNotHaveCopyPermission", "{0}: Item {1} does not have copy permission", "llRemoteLoadScriptPin", scriptitem.Name));
+                    }
+                    return REMOTE_LOAD_COPY_REQUIRED;
                 }
 
                 if(destpart.ObjectGroup.AttachPoint != AttachmentPoint.NotAttached)
                 {
-                    return;
+                    return REMOTE_LOAD_NO_TARGET_PERMISSIONS;
                 }
 
                 if(destpart.ScriptAccessPin != pin)
                 {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1TryingToLoadScriptOntoPrim2WithoutCorrectAccessPin", "{0}: Item {1} trying to load script onto prim {2} without correct access pin", "llRemoteLoadScriptPin", thisPart.Name, destpart.Name));
-                    return;
+                    if (doShout)
+                    {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1TryingToLoadScriptOntoPrim2WithoutCorrectAccessPin", "{0}: Item {1} trying to load script onto prim {2} without correct access pin", "llRemoteLoadScriptPin", thisPart.Name, destpart.Name));
+                    }
+                    else
+                    {
+                        /* prevent PIN poking */
+                        instance.Sleep(3);
+                    }
+                    return REMOTE_LOAD_BAD_PIN;
                 }
 
                 var newitem = new ObjectPartInventoryItem(scriptitem);
@@ -268,7 +340,15 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     newitem.ScriptState = oldInstance.ScriptState;
                 }
-                ScriptInstance newInstance = ScriptLoader.Load(destpart, newitem, newitem.Owner, asset, null);
+                ScriptInstance newInstance;
+                try
+                {
+                    newInstance = ScriptLoader.Load(destpart, newitem, newitem.Owner, asset, null);
+                }
+                catch
+                {
+                    return REMOTE_LOAD_SCRIPT_ERROR;
+                }
                 if(oldInstance != null)
                 {
                     newInstance.IsRunning = running != 0;
@@ -277,6 +357,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     newInstance.Start(start_param);
                 }
+
+                return REMOTE_LOAD_SUCCESS;
             }
         }
     }
