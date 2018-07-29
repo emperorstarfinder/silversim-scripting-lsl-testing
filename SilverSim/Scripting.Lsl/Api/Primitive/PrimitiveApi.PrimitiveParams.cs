@@ -21,6 +21,7 @@
 
 #pragma warning disable IDE0018, RCS1029
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Object.Parameters;
 using SilverSim.Scene.Types.Scene;
@@ -159,7 +160,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                return instance.Part.ObjectGroup.Position;
+                return instance.Part.ObjectGroup.GlobalPosition;
             }
         }
 
@@ -168,6 +169,17 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                if (grp.IsAttached)
+                {
+                    IAgent agent;
+                    if(grp.Scene.Agents.TryGetValue(grp.Owner.ID, out agent))
+                    {
+                        return agent.IsInMouselook ?
+                            agent.CameraRotation :
+                             agent.GlobalRotation;
+                    }
+                }
                 return instance.Part.ObjectGroup.RootPart.GlobalRotation;
             }
         }

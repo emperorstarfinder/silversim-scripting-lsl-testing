@@ -22,9 +22,7 @@
 #pragma warning disable IDE0018, RCS1029
 
 using SilverSim.Main.Common;
-using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Primitive
