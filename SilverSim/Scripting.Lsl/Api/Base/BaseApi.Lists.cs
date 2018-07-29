@@ -1022,7 +1022,26 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             IsPure = true
         };
 
-        private AnArray ParseString2List(string src, AnArray separators_raw, AnArray spacers_raw, bool keepNulls)
+        [Flags]
+        private enum ParseString2ListFlags
+        {
+            None = 0,
+            KeepNulls = 1,
+            AutoCast = 2,
+            TrimStrings = 4,
+            MaxSplitNoAppend = 8
+        }
+
+        [APILevel(APIFlags.ASSL)]
+        public const int PARSE_FLAG_KEEP_NULLS = 1;
+        [APILevel(APIFlags.ASSL)]
+        public const int PARSE_FLAG_AUTOCAST = 2;
+        [APILevel(APIFlags.ASSL)]
+        public const int PARSE_FLAG_TRIM_STRINGS = 4;
+        [APILevel(APIFlags.ASSL)]
+        public const int PARSE_FLAG_MAX_SPLIT_NO_APPEND = 8;
+
+        private AnArray ParseString2List(string src, AnArray separators_raw, AnArray spacers_raw, ParseString2ListFlags flags, int maxsplits = 0)
         {
             var spacers = new List<string>(from spacer in spacers_raw where spacer.LSL_Type == LSLValueType.String && spacer.ToString().Length != 0 select spacer.ToString());
             var separators = new List<string>(from separator in separators_raw where separator.LSL_Type == LSLValueType.String && separator.ToString().Length != 0 select separator.ToString());
@@ -1100,22 +1119,125 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     spc = null;
                 }
 
-                if (keepNulls || lowestIndex > position)
+                if ((flags & ParseString2ListFlags.KeepNulls) != 0 || lowestIndex > position)
                 {
-                    string val = src.Substring(position, lowestIndex - position);
-                    res.Add(val);
+                    string val;
+                    if (maxsplits > 0 && res.Count + 1 >= maxsplits)
+                    {
+                        val = (flags & ParseString2ListFlags.MaxSplitNoAppend) != 0 ?
+                            src.Substring(position, lowestIndex - position) :
+                            src.Substring(position);
+                        spc = null;
+                        position = src.Length;
+                    }
+                    else
+                    { 
+                        val = src.Substring(position, lowestIndex - position);
+                    }
+
+                    if ((flags & ParseString2ListFlags.AutoCast) != 0)
+                    {
+                        string tval = val.Trim();
+                        double dval;
+                        int ival;
+                        long lval;
+                        /* Auto-cast is based upon http://wiki.secondlife.com/wiki/List_cast */
+                        if (tval.StartsWith("<") && tval.EndsWith(">"))
+                        {
+                            Quaternion q;
+                            Vector3 v;
+                            if (Quaternion.TryParse(tval, out q))
+                            {
+                                res.Add(q);
+                            }
+                            else if (Vector3.TryParse(tval, out v))
+                            {
+                                res.Add(v);
+                            }
+                            else
+                            {
+                                res.Add(val);
+                            }
+                        }
+                        else if (int.TryParse(tval, out ival))
+                        {
+                            res.Add(ival);
+                        }
+                        else if (long.TryParse(tval, out lval))
+                        {
+                            res.Add(new LongInteger(lval));
+                        }
+                        else if (LSLCompiler.TryParseStringToDouble(tval, out dval))
+                        {
+                            res.Add(dval);
+                        }
+                        else if((flags & ParseString2ListFlags.TrimStrings) != 0)
+                        {
+                            res.Add(tval);
+                        }
+                        else
+                        {
+                            res.Add(val);
+                        }
+                    }
+                    else if((flags & ParseString2ListFlags.TrimStrings) != 0)
+                    {
+                        res.Add(val.Trim());
+                    }
+                    else
+                    {
+                        res.Add(val);
+                    }
                 }
 
                 position = lowestIndex + selectedLength;
 
                 if (spc != null)
                 {
+                    if(maxsplits > 0 && maxsplits + 1 >= res.Count)
+                    {
+                        if ((flags & ParseString2ListFlags.MaxSplitNoAppend) == 0)
+                        {
+                            spc += src.Substring(position);
+                        }
+                        position = src.Length;
+                    }
                     res.Add(spc);
                 }
             }
 
             return res;
         }
+
+        [APILevel(APIFlags.ASSL, "asParseString2List")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToList")]
+        [Description("Returns a list that is src broken into a list of data, discarding separators, keeping spacers, discards any null (empty string) values generated.")]
+        [IsPure]
+        public AnArray ParseString2List(
+            [Description("source string")]
+            string src,
+            [Description("separators to be discarded")]
+            AnArray separators,
+            [Description("spacers to be kept")]
+            AnArray spacers,
+            [Description("flags")]
+            int flags) => ParseString2List(src, separators, spacers, (ParseString2ListFlags)flags);
+
+        [APILevel(APIFlags.ASSL, "asParseString2List")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToList")]
+        [Description("Returns a list that is src broken into a list of data (capped at maxsplit elements), discarding separators, keeping spacers, discards any null (empty string) values generated.")]
+        [IsPure]
+        public AnArray ParseString2List(
+            [Description("source string")]
+            string src,
+            [Description("separators to be discarded")]
+            AnArray separators,
+            [Description("spacers to be kept")]
+            AnArray spacers,
+            [Description("flags")]
+            int flags,
+            [Description("max number of elements in list (0 = ignored)")]
+            int maxsplit) => ParseString2List(src, separators, spacers, (ParseString2ListFlags)flags, maxsplit);
 
         [APILevel(APIFlags.LSL, "llParseString2List")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToList")]
@@ -1127,9 +1249,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("separators to be discarded")]
             AnArray separators,
             [Description("spacers to be kept")]
-            AnArray spacers) => ParseString2List(src, separators, spacers, false);
+            AnArray spacers) => ParseString2List(src, separators, spacers, ParseString2ListFlags.None);
 
-        [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
+        [APILevel(APIFlags.ASSL, "asParseStringKeepNulls")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToListKeepNulls")]
         [Description("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
         [IsPure]
@@ -1139,7 +1261,21 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             [Description("separators to be discarded")]
             AnArray separators,
             [Description("spacers to be kept")]
-            AnArray spacers) => ParseString2List(src, separators, spacers, true);
+            AnArray spacers) => ParseString2List(src, separators, spacers, ParseString2ListFlags.KeepNulls);
+
+        [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToListKeepNulls")]
+        [Description("Returns a list that is src broken into a list (capped at maxsplit elements), discarding separators, keeping spacers, keeping any null values generated.")]
+        [IsPure]
+        public AnArray ParseStringKeepNulls(
+            [Description("source string")]
+            string src,
+            [Description("separators to be discarded")]
+            AnArray separators,
+            [Description("spacers to be kept")]
+            AnArray spacers,
+            [Description("max number of elements in list (0 = ignored)")]
+            int maxsplit) => ParseString2List(src, separators, spacers, ParseString2ListFlags.KeepNulls, maxsplit);
 
         [APILevel(APIFlags.LSL, "llCSV2List")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CSV2List")]
@@ -1251,7 +1387,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             if (left.GetType() != right.GetType())
             {
                 /* as per LSL behaviour, unequal types are considered equal */
-                return 0;
+                        return 0;
             }
 
             if(leftType == typeof(LSLKey) || leftType == typeof(AString))
