@@ -1253,18 +1253,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.ASSL, "asParseStringKeepNulls")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToListKeepNulls")]
-        [Description("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
-        [IsPure]
-        public AnArray ParseStringKeepNulls(
-            [Description("source string")]
-            string src,
-            [Description("separators to be discarded")]
-            AnArray separators,
-            [Description("spacers to be kept")]
-            AnArray spacers) => ParseString2List(src, separators, spacers, ParseString2ListFlags.KeepNulls);
-
-        [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
-        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToListKeepNulls")]
         [Description("Returns a list that is src broken into a list (capped at maxsplit elements), discarding separators, keeping spacers, keeping any null values generated.")]
         [IsPure]
         public AnArray ParseStringKeepNulls(
@@ -1276,6 +1264,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             AnArray spacers,
             [Description("max number of elements in list (0 = ignored)")]
             int maxsplit) => ParseString2List(src, separators, spacers, ParseString2ListFlags.KeepNulls, maxsplit);
+
+        [APILevel(APIFlags.LSL, "llParseStringKeepNulls")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ParseToListKeepNulls")]
+        [Description("Returns a list that is src broken into a list, discarding separators, keeping spacers, keeping any null values generated.")]
+        [IsPure]
+        public AnArray ParseStringKeepNulls(
+            [Description("source string")]
+            string src,
+            [Description("separators to be discarded")]
+            AnArray separators,
+            [Description("spacers to be kept")]
+            AnArray spacers) => ParseString2List(src, separators, spacers, ParseString2ListFlags.KeepNulls);
 
         [APILevel(APIFlags.LSL, "llCSV2List")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "CSV2List")]
