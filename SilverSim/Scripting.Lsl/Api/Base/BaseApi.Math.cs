@@ -549,5 +549,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         {
             IsPure = true
         };
+
+        [APILevel(APIFlags.ASSL, "asNormalize")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Normalize")]
+        [IsPure]
+        public Quaternion NormalizeRotation(Quaternion q) => q.Normalize();
     }
 }
