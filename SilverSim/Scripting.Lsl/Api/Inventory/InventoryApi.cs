@@ -599,7 +599,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     var e = new DataserverEvent
                     {
                         QueryID = UUID.Random,
-                        Data = landmark.LocalPos.ToString()
+                        Data = (landmark.Location - instance.Part.ObjectGroup.Scene.GetRegionInfo().Location).ToString()
                     };
                     instance.PostEvent(e);
                     return e.QueryID;
