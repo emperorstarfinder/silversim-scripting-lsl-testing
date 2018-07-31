@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using AnimationState = SilverSim.Scene.Types.Agent.AgentAnimationController.AnimationState;
 
 namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 {
@@ -40,31 +41,38 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
     [Description("LSL/OSSL AnimationOverride API")]
     public class AnimationOverrideApi : IScriptApi, IPlugin
     {
-        private static readonly Dictionary<string, string> m_DefaultAnimationTranslate = new Dictionary<string, string>();
+        private static readonly Dictionary<string, AnimationState> m_DefaultAnimationTranslate = new Dictionary<string, AnimationState>();
         static AnimationOverrideApi()
         {
-            m_DefaultAnimationTranslate["crouching"] = "Crouching";
-            m_DefaultAnimationTranslate["crouchwalking"] = "CrouchWalking";
-            m_DefaultAnimationTranslate["falling down"] = "Falling Down";
-            m_DefaultAnimationTranslate["flying"] = "Flying";
-            m_DefaultAnimationTranslate["flyingslow"] = "FlyingSlow";
-            m_DefaultAnimationTranslate["hovering"] = "Hovering";
-            m_DefaultAnimationTranslate["hovering down"] = "Hovering Down";
-            m_DefaultAnimationTranslate["hovering up"] = "Hovering Up";
-            m_DefaultAnimationTranslate["jumping"] = "Jumping";
-            m_DefaultAnimationTranslate["landing"] = "Landing";
-            m_DefaultAnimationTranslate["prejumping"] = "PreJumping";
-            m_DefaultAnimationTranslate["running"] = "Running";
-            m_DefaultAnimationTranslate["sitting"] = "Sitting";
-            m_DefaultAnimationTranslate["sitting on ground"] = "Sitting on Ground";
-            m_DefaultAnimationTranslate["standing"] = "Standing";
-            m_DefaultAnimationTranslate["standing up"] = "Standing Up";
-            m_DefaultAnimationTranslate["striding"] = "Striding";
-            m_DefaultAnimationTranslate["soft landing"] = "Soft Landing";
-            m_DefaultAnimationTranslate["taking off"] = "Taking Off";
-            m_DefaultAnimationTranslate["turning left"] = "Turning Left";
-            m_DefaultAnimationTranslate["turning right"] = "Turning Right";
-            m_DefaultAnimationTranslate["walking"] = "Walking";
+            m_DefaultAnimationTranslate["Crouching"] = AnimationState.Crouching;
+            m_DefaultAnimationTranslate["CrouchWalking"] = AnimationState.CrouchWalking;
+            m_DefaultAnimationTranslate["Falling Down"] = AnimationState.FallingDown;
+            m_DefaultAnimationTranslate["Flying"] = AnimationState.Flying;
+            m_DefaultAnimationTranslate["FlyingSlow"] = AnimationState.FlyingSlow;
+            m_DefaultAnimationTranslate["Hovering"] = AnimationState.Hovering;
+            m_DefaultAnimationTranslate["Hovering Down"] = AnimationState.HoveringDown;
+            m_DefaultAnimationTranslate["Hovering Up"] = AnimationState.HoveringUp;
+            m_DefaultAnimationTranslate["Jumping"] = AnimationState.Jumping;
+            m_DefaultAnimationTranslate["Landing"] = AnimationState.Landing;
+            m_DefaultAnimationTranslate["PreJumping"] = AnimationState.Prejumping;
+            m_DefaultAnimationTranslate["Running"] = AnimationState.Running;
+            m_DefaultAnimationTranslate["Sitting"] = AnimationState.Sitting;
+            m_DefaultAnimationTranslate["Sitting on Ground"] = AnimationState.SittingOnGround;
+            m_DefaultAnimationTranslate["Standing"] = AnimationState.Standing;
+            m_DefaultAnimationTranslate["Standing Up"] = AnimationState.StandingUp;
+            m_DefaultAnimationTranslate["Striding"] = AnimationState.Striding;
+            m_DefaultAnimationTranslate["Soft Landing"] = AnimationState.SoftLanding;
+            m_DefaultAnimationTranslate["Taking Off"] = AnimationState.TakingOff;
+            m_DefaultAnimationTranslate["Turning Left"] = AnimationState.TurningLeft;
+            m_DefaultAnimationTranslate["Turning Right"] = AnimationState.TurningRight;
+            m_DefaultAnimationTranslate["Walking"] = AnimationState.Walking;
+
+            /* extensions */
+            m_DefaultAnimationTranslate["Floating"] = AnimationState.Floating;
+            m_DefaultAnimationTranslate["Swimming"] = AnimationState.Swimming;
+            m_DefaultAnimationTranslate["SwimmingSlow"] = AnimationState.SwimmingSlow;
+            m_DefaultAnimationTranslate["Swimming Down"] = AnimationState.SwimmingDown;
+            m_DefaultAnimationTranslate["Swimming Up"] = AnimationState.SwimmingSlow;
         }
 
         public void Startup(ConfigurationLoader loader)
@@ -82,20 +90,16 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                 {
                     return string.Empty;
                 }
-                string defaultanim = agent.GetDefaultAnimation();
-                if (defaultanim.Length > 0)
+                AnimationState defaultanim = agent.GetDefaultAnimation();
+                foreach(KeyValuePair<string, AnimationState> kvp in m_DefaultAnimationTranslate)
                 {
-                    string res;
-                    if(m_DefaultAnimationTranslate.TryGetValue(defaultanim, out res))
+                    if(kvp.Value == defaultanim)
                     {
-                        return res;
+                        return kvp.Key;
                     }
-                    return char.ToUpper(defaultanim[0]).ToString() + defaultanim.Substring(1);
                 }
-                else
-                {
-                    return string.Empty;
-                }
+                string n = defaultanim.ToString();
+                return char.ToUpper(n[0]).ToString() + n.Substring(1);
             }
         }
 
@@ -113,7 +117,8 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return;
                 }
 
-                if(!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
+                AnimationState selState;
+                if(!m_DefaultAnimationTranslate.TryGetValue(anim_state, out selState))
                 {
                     return;
                 }
@@ -130,7 +135,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
 
                 try
                 {
-                    agent.SetAnimationOverride(anim_state, anim);
+                    agent.SetAnimationOverride(selState, anim);
                 }
                 catch (Exception e)
                 {
@@ -153,7 +158,8 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return string.Empty;
                 }
 
-                if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
+                AnimationState selState;
+                if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out selState))
                 {
                     return string.Empty;
                 }
@@ -168,7 +174,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return string.Empty;
                 }
 
-                return agent.GetAnimationOverride(anim_state);
+                return agent.GetAnimationOverride(selState);
             }
         }
 
@@ -194,7 +200,15 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return;
                 }
 
-                agent.ResetAnimationOverride(anim_state);
+                AnimationState selState;
+                if (anim_state == "ALL")
+                {
+                    agent.ResetAnimationOverride();
+                }
+                else if(m_DefaultAnimationTranslate.TryGetValue(anim_state, out selState))
+                {
+                    agent.ResetAnimationOverride(selState);
+                }
             }
         }
 
@@ -257,7 +271,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     }
 
                     var list = new List<KeyValuePair<string, string>>();
-                    foreach(KeyValuePair<string, string> kvp in m_DefaultAnimationTranslate)
+                    foreach(KeyValuePair<string, AnimationState> kvp in m_DefaultAnimationTranslate)
                     {
                         list.Add(new KeyValuePair<string, string>(kvp.Key, agent.GetAnimationOverride(kvp.Value)));
                     }
@@ -280,7 +294,8 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                             return string.Empty;
                         }
 
-                        if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
+                        AnimationState selState;
+                        if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out selState))
                         {
                             return string.Empty;
                         }
@@ -295,7 +310,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                             return string.Empty;
                         }
 
-                        return agent.GetAnimationOverride(anim_state);
+                        return agent.GetAnimationOverride(selState);
                     }
                 }
                 set
@@ -311,7 +326,8 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                             return;
                         }
 
-                        if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out anim_state))
+                        AnimationState selState;
+                        if (!m_DefaultAnimationTranslate.TryGetValue(anim_state, out selState))
                         {
                             return;
                         }
@@ -330,11 +346,11 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                         {
                             if (string.IsNullOrEmpty(value))
                             {
-                                agent.ResetAnimationOverride(anim_state);
+                                agent.ResetAnimationOverride(selState);
                             }
                             else
                             {
-                                agent.SetAnimationOverride(anim_state, value);
+                                agent.SetAnimationOverride(selState, value);
                             }
                         }
                         catch (Exception e)
