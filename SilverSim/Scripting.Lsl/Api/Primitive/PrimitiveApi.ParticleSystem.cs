@@ -23,6 +23,7 @@
 
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scripting.Lsl.Api.Primitive.Properties;
 using SilverSim.Types;
 using SilverSim.Types.Primitive;
 using System;
@@ -136,6 +137,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             return (float)value.Clamp(0f, 4f);
         }
+
+        [APIExtension(APIExtension.Properties, "llLinkParticleSystem")]
+        public void LinkParticleSystem(ScriptInstance instance, int link, ParticleProperties.ParticleSystemData data) =>
+            LinkParticleSystem(instance, link, (AnArray)data);
 
         [APILevel(APIFlags.LSL, "llLinkParticleSystem")]
         public void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
@@ -537,6 +542,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
         }
+
+        [APIExtension(APIExtension.Properties, "llParticleSystem")]
+        public void ParticleSystem(ScriptInstance instance, ParticleProperties.ParticleSystemData data) =>
+            ParticleSystem(instance, (AnArray)data);
 
         [APILevel(APIFlags.LSL, "llParticleSystem")]
         public void ParticleSystem(ScriptInstance instance, AnArray rules)
