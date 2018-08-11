@@ -801,7 +801,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             var result = new AnArray();
             int srcCount = src.Count;
 
-            if(cmp.Count != 1 || srcCount == 0)
+            if(srcCount == 0)
             {
                 return -1;
             }
@@ -824,7 +824,19 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
             for (int i = start + strideoffset; i <= end; i += stride)
             {
-                if(CompareListElement(src[i], cmp[0]))
+                if(end - i + 1 < cmp.Count)
+                {
+                    return -1;
+                }
+                int j;
+                for (j = 0; j < cmp.Count; ++j)
+                {
+                    if (!CompareListElement(src[i + j], cmp[j]))
+                    {
+                        break;
+                    }
+                }
+                if(j == cmp.Count)
                 {
                     return i;
                 }
