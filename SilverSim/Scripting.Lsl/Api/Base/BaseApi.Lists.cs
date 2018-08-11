@@ -776,6 +776,63 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             return index;
         }
 
+        [APILevel(APIFlags.ASSL, "asListFindListStrided")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FindStrided")]
+        [Description("Returns the integer index of the first instance found in the strided list whose index is a multiple of stride in the range start to end.")]
+        [IsPure]
+        public int ListFindListStrided(
+            AnArray src,
+            AnArray cmp,
+            [Description("number of entries per stride, if less than 1 it is assumed to be 1")]
+            int stride) => ListFindListStrided(src, cmp, stride, 0);
+
+        [APILevel(APIFlags.ASSL, "asListFindListStrided")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FindStrided")]
+        [Description("Returns the integer index of the first instance found in the strided list whose index is a multiple of stride in the range start to end and return the selected stride element.")]
+        [IsPure]
+        public int ListFindListStrided(
+            AnArray src,
+            AnArray cmp,
+            [Description("number of entries per stride, if less than 1 it is assumed to be 1")]
+            int stride,
+            [Description("stride element index")]
+            int strideoffset)
+        {
+            var result = new AnArray();
+            int srcCount = src.Count;
+
+            if(cmp.Count != 1 || srcCount == 0)
+            {
+                return -1;
+            }
+
+            int start = 0;
+            int end = srcCount - 1;
+
+            if (stride <= 1)
+            {
+                return ListFindList(src, cmp);
+            }
+
+            strideoffset = Math.Min(strideoffset, stride - 1);
+
+            int offset = start % stride;
+            if (offset != 0)
+            {
+                start = start + stride - offset;
+            }
+
+            for (int i = start + strideoffset; i <= end; i += stride)
+            {
+                if(CompareListElement(src[i], cmp[0]))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         [APIExtension(APIExtension.LongInteger, "llList2Long")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "GetLongAt")]
         [Description("Returns an integer that is at index in src")]
