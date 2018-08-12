@@ -243,7 +243,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock (instance)
             {
                 ObjectPart obj;
-                if (!instance.Part.ObjectGroup.Scene.Primitives.TryGetValue(key.AsUUID, out obj))
+                if (instance.Part.ObjectGroup.Scene.Primitives.TryGetValue(key.AsUUID, out obj))
                 {
                     ObjectGroup grp = obj.ObjectGroup;
                     if(grp != null)
