@@ -71,6 +71,7 @@ namespace SilverSim.Scripting.Lsl
                 public string Name;
                 public Type ParameterType;
                 public string Tooltip;
+                public bool ByAddress;
 
                 public ParameterInfo(string name, Type type, string tooltip = "")
                 {

@@ -86,7 +86,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public static readonly LSLCompiler.InlineApiMethodInfo VecMagSquare = new LSLCompiler.InlineApiMethodInfo("VecMagSquare",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "v", typeof(Vector3))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "v", typeof(Vector3)) { ByAddress = true }
             },
             typeof(double),
             (ilgen) =>
@@ -110,7 +110,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public static readonly LSLCompiler.InlineApiMethodInfo Rot2AngularDisplacement = new LSLCompiler.InlineApiMethodInfo("Rot2AngularDisplacement",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "rot", typeof(Quaternion))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "rot", typeof(Quaternion)) { ByAddress = true }
             },
             typeof(Vector3),
             (ilgen) =>
@@ -311,17 +311,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public static readonly LSLCompiler.InlineApiMethodInfo VecMag = new LSLCompiler.InlineApiMethodInfo("VecMag",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "v", typeof(Vector3))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "v", typeof(Vector3)) { ByAddress = true }
             },
             typeof(double),
             (ilgen) =>
             {
-                ilgen.BeginScope();
-                LocalBuilder lb = ilgen.DeclareLocal(typeof(Vector3));
-                ilgen.Emit(OpCodes.Stloc, lb);
-                ilgen.Emit(OpCodes.Ldloca, lb);
                 ilgen.Emit(OpCodes.Call, typeof(Vector3).GetProperty("Length").GetGetMethod());
-                ilgen.EndScope();
             })
         {
             IsPure = true
@@ -340,17 +335,12 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public static readonly LSLCompiler.InlineApiMethodInfo Rot2Euler = new LSLCompiler.InlineApiMethodInfo("Rot2Euler",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "q", typeof(Quaternion))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "q", typeof(Quaternion)) { ByAddress = true }
             },
             typeof(Vector3),
             (ilgen) =>
             {
-                ilgen.BeginScope();
-                LocalBuilder lb = ilgen.DeclareLocal(typeof(Quaternion));
-                ilgen.Emit(OpCodes.Stloc, lb);
-                ilgen.Emit(OpCodes.Ldloca, lb);
                 ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("GetEulerAngles", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null));
-                ilgen.EndScope();
             })
         {
             IsPure = true
@@ -450,7 +440,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public static readonly LSLCompiler.InlineApiMethodInfo Rot2Fwd = new LSLCompiler.InlineApiMethodInfo("Rot2Fwd",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion)) { ByAddress = true }
             },
             typeof(Vector3),
             (ilgen) =>
@@ -465,7 +455,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public static readonly LSLCompiler.InlineApiMethodInfo Rot2Left = new LSLCompiler.InlineApiMethodInfo("Rot2Left",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion)) { ByAddress = true }
             },
             typeof(Vector3),
             (ilgen) =>
@@ -480,7 +470,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public static readonly LSLCompiler.InlineApiMethodInfo Rot2Up = new LSLCompiler.InlineApiMethodInfo("Rot2Up",
             new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
             {
-                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion))
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo( "r", typeof(Quaternion)) { ByAddress = true }
             },
             typeof(Vector3),
             (ilgen) =>
@@ -552,7 +542,18 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APILevel(APIFlags.ASSL, "asNormalize")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "Normalize")]
-        [IsPure]
-        public Quaternion NormalizeRotation(Quaternion q) => q.Normalize();
+        public static readonly LSLCompiler.InlineApiMethodInfo NormalizeRotation = new LSLCompiler.InlineApiMethodInfo("NormalizeRotation",
+            new LSLCompiler.InlineApiMethodInfo.ParameterInfo[]
+            {
+                new LSLCompiler.InlineApiMethodInfo.ParameterInfo("rotation", typeof(Quaternion)) { ByAddress = true }
+            },
+            typeof(Quaternion),
+            (ilgen) =>
+            {
+                ilgen.Emit(OpCodes.Call, typeof(Quaternion).GetMethod("Normalize", Type.EmptyTypes));
+            })
+        {
+            IsPure = true
+        };
     }
 }

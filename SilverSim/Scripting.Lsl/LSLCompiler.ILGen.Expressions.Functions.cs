@@ -531,8 +531,22 @@ namespace SilverSim.Scripting.Lsl
                     InlineApiMethodInfo.ParameterInfo[] parameters = funcInfo.Parameters;
                     for (int i = 0; i < lbs.Length; ++i)
                     {
-                        compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
-                        ProcessImplicitCasts(compileState, parameters[i].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                        if (parameters[i].ParameterType == m_Parameters[i].ParameterType && parameters[i].ByAddress)
+                        {
+                            /* if type is identical, directly refer to the local */
+                            compileState.ILGen.Emit(OpCodes.Ldloca, lbs[i]);
+                        }
+                        else
+                        {
+                            compileState.ILGen.Emit(OpCodes.Ldloc, lbs[i]);
+                            ProcessImplicitCasts(compileState, parameters[i].ParameterType, m_Parameters[i].ParameterType, m_LineNumber);
+                            if (parameters[i].ByAddress)
+                            {
+                                LocalBuilder tempLb = compileState.ILGen.DeclareLocal(parameters[i].ParameterType);
+                                compileState.ILGen.Emit(OpCodes.Stloc, tempLb);
+                                compileState.ILGen.Emit(OpCodes.Ldloca, tempLb);
+                            }
+                        }
                         if (parameters[i].ParameterType == m_Parameters[i].ParameterType &&
                             m_Parameters[i].ParameterType == typeof(AnArray) &&
                             compileState.LanguageExtensions.EnableArrayThisOperator)
