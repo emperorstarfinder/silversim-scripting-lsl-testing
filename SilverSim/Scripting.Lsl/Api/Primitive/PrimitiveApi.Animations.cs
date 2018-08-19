@@ -33,7 +33,71 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 {
     public partial class PrimitiveApi
     {
+        private void StartObjectAnimation(
+            ObjectPart part,
+            UUID animID)
+        {
+            ObjectGroup grp = part.ObjectGroup;
+            SceneInterface scene = grp.Scene;
+            AssetServiceInterface assetService = scene.AssetService;
+            AssetMetadata metadata;
+            AssetData data;
+            if (!assetService.Metadata.TryGetValue(animID, out metadata))
+            {
+                if (grp.IsAttached) /* on attachments, we have to fetch from agent eventually */
+                {
+                    IAgent owner;
+                    if (!grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out owner))
+                    {
+                        return;
+                    }
+                    if (!owner.AssetService.TryGetValue(animID, out data))
+                    {
+                        /* not found */
+                        return;
+                    }
+                    assetService.Store(data);
+                    if (data.Type != AssetType.Animation)
+                    {
+                        /* ignore wrong asset here */
+                        return;
+                    }
+                }
+                else
+                {
+                    /* ignore missing asset here */
+                    return;
+                }
+            }
+            else if (metadata.Type != AssetType.Animation)
+            {
+                /* ignore wrong asset here */
+                return;
+            }
+
+            part.AnimationController.PlayAnimation(animID);
+        }
+
+        [APILevel(APIFlags.ASSL, "asStartLinkObjectAnimation")]
+        public void StartObjectAnimation(
+            ScriptInstance instance,
+            [Description("link to be affected")]
+            int link,
+            [Description("animation to be played")]
+            string animation)
+        {
+            lock(instance)
+            {
+                ObjectPart part;
+                if(instance.TryGetLink(link, out part))
+                {
+                    StartObjectAnimation(part, instance.GetAnimationAssetID(animation));
+                }
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llStartObjectAnimation")]
+        [APILevel(APIFlags.ASSL, "asStartObjectAnimation")]
         public void StartObjectAnimation(
             ScriptInstance instance,
             [Description("animation to be played")]
@@ -41,51 +105,30 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                UUID animID = instance.GetAnimationAssetID(animation);
+                StartObjectAnimation(instance.Part, instance.GetAnimationAssetID(animation));
+            }
+        }
 
-                ObjectGroup grp = instance.Part.ObjectGroup;
-                SceneInterface scene = grp.Scene;
-                AssetServiceInterface assetService = scene.AssetService;
-                AssetMetadata metadata;
-                AssetData data;
-                if (!assetService.Metadata.TryGetValue(animID, out metadata))
+        [APILevel(APIFlags.ASSL, "asStopLinkObjectAnimation")]
+        public void StopObjectAnimation(
+           ScriptInstance instance,
+           [Description("link to be affected")]
+           int link,
+           [Description("animation to be stopped")]
+           string animation)
+        {
+            lock(instance)
+            {
+                ObjectPart part;
+                if(instance.TryGetLink(link, out part))
                 {
-                    if (grp.IsAttached) /* on attachments, we have to fetch from agent eventually */
-                    {
-                        IAgent owner;
-                        if (!grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out owner))
-                        {
-                            return;
-                        }
-                        if (!owner.AssetService.TryGetValue(animID, out data))
-                        {
-                            /* not found */
-                            return;
-                        }
-                        assetService.Store(data);
-                        if (data.Type != AssetType.Animation)
-                        {
-                            /* ignore wrong asset here */
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        /* ignore missing asset here */
-                        return;
-                    }
+                    part.AnimationController.StopAnimation(instance.GetAnimationAssetID(animation));
                 }
-                else if (metadata.Type != AssetType.Animation)
-                {
-                    /* ignore wrong asset here */
-                    return;
-                }
-
-                instance.Part.AnimationController.PlayAnimation(animID);
             }
         }
 
         [APILevel(APIFlags.LSL, "llStopObjectAnimation")]
+        [APILevel(APIFlags.ASSL, "asStopObjectAnimation")]
         public void StopObjectAnimation(
             ScriptInstance instance,
             [Description("animation to be stopped")]
@@ -93,36 +136,32 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                UUID animID = instance.GetAnimationAssetID(animation);
-                instance.Part.AnimationController.StopAnimation(animID);
+                instance.Part.AnimationController.StopAnimation(instance.GetAnimationAssetID(animation));
             }
         }
 
-        [APILevel(APIFlags.LSL, "llGetObjectAnimationNames")]
-        public AnArray GetObjectAnimationNames(
-            ScriptInstance instance)
+        private AnArray GetObjectAnimationNames(
+            ObjectPart part)
         {
             var anims = new List<UUID>();
             var animinvs = new Dictionary<UUID, ObjectPartInventoryItem>();
-            lock(instance)
+
+            anims = part.AnimationController.GetPlayingAnimations();
+            foreach (ObjectPartInventoryItem item in part.Inventory.Values)
             {
-                anims = instance.Part.AnimationController.GetPlayingAnimations();
-                foreach(ObjectPartInventoryItem item in instance.Part.Inventory.Values)
+                if (item.AssetType == Types.Asset.AssetType.Animation &&
+                    !animinvs.ContainsKey(item.AssetID))
                 {
-                    if(item.AssetType == Types.Asset.AssetType.Animation &&
-                        !animinvs.ContainsKey(item.AssetID))
-                    {
-                        animinvs.Add(item.AssetID, item);
-                    }
+                    animinvs.Add(item.AssetID, item);
                 }
             }
 
             /* no need to do the following in the lock */
             var res = new AnArray();
-            foreach(UUID animid in anims)
+            foreach (UUID animid in anims)
             {
                 ObjectPartInventoryItem item;
-                if(animinvs.TryGetValue(animid, out item))
+                if (animinvs.TryGetValue(animid, out item))
                 {
                     res.Add(item.Name);
                 }
@@ -132,6 +171,36 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
             }
             return res;
+        }
+
+        [APILevel(APIFlags.LSL, "llGetObjectAnimationNames")]
+        [APILevel(APIFlags.ASSL, "asGetObjectAnimationNames")]
+        public AnArray GetObjectAnimationNames(
+            ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return GetObjectAnimationNames(instance.Part);
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkObjectAnimationNames")]
+        public AnArray GetObjectAnimationNames(
+            ScriptInstance instance,
+            int link)
+        {
+            lock (instance)
+            {
+                ObjectPart part;
+                if (instance.TryGetLink(link, out part))
+                {
+                    return GetObjectAnimationNames(part);
+                }
+                else
+                {
+                    return new AnArray();
+                }
+            }
         }
     }
 }
