@@ -541,7 +541,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 else
                 {
-                    return string.Empty;
+                    return UUID.Zero.ToString();
                 }
             }
         }
