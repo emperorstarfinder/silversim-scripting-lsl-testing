@@ -306,23 +306,20 @@ namespace SilverSim.Scripting.Lsl
             {
                 bool checkViewerBuiltin = true;
                 /* must be an inventory item */
-                lock (instance)
+                ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Animation", item);
+                ObjectPartInventoryItem i;
+                if (!part.Inventory.TryGetValue(item, out i))
                 {
-                    ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Animation", item);
-                    ObjectPartInventoryItem i;
-                    if (!part.Inventory.TryGetValue(item, out i))
-                    {
-                        /* intentionally left empty */
-                    }
-                    else if (i.InventoryType != InventoryType.Animation)
-                    {
-                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotAnAnimation", "Inventory item {0} is not an animation", item);
-                    }
-                    else
-                    {
-                        assetID = i.AssetID;
-                        checkViewerBuiltin = false;
-                    }
+                    /* intentionally left empty */
+                }
+                else if (i.InventoryType != InventoryType.Animation)
+                {
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotAnAnimation", "Inventory item {0} is not an animation", item);
+                }
+                else
+                {
+                    assetID = i.AssetID;
+                    checkViewerBuiltin = false;
                 }
 
                 if (checkViewerBuiltin && !m_InternalAnimations.TryGetValue(item, out assetID))
@@ -335,51 +332,40 @@ namespace SilverSim.Scripting.Lsl
 
         public static UUID GetLandmarkAssetID(this ScriptInstance instance, string item, int inventorylink = PrimitiveApi.LINK_THIS)
         {
-            UUID assetID;
             /* must be an inventory item */
-            lock (instance)
+            ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Landmark", item);
+            ObjectPartInventoryItem i;
+            if (part.Inventory.TryGetValue(item, out i))
             {
-                ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Landmark", item);
-                ObjectPartInventoryItem i;
-                if (part.Inventory.TryGetValue(item, out i))
+                if (i.InventoryType != InventoryType.Landmark)
                 {
-                    if (i.InventoryType != InventoryType.Landmark)
-                    {
-                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotALandmark", "Inventory item {0} is not a landmark", item);
-                    }
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotALandmark", "Inventory item {0} is not a landmark", item);
                 }
-                else
-                {
-                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
-                }
-                assetID = i.AssetID;
             }
-            return assetID;
+            else
+            {
+                throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
+            }
+            return i.AssetID;
         }
 
         public static UUID GetNotecardAssetID(this ScriptInstance instance, string item, int inventorylink = PrimitiveApi.LINK_THIS)
         {
-            UUID assetID;
             /* must be an inventory item */
-            lock (instance)
+            ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Notecard", item);
+            ObjectPartInventoryItem i;
+            if (part.Inventory.TryGetValue(item, out i))
             {
-                ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Notecard", item);
-                ObjectPartInventoryItem i;
-                if (part.Inventory.TryGetValue(item, out i))
+                if (i.InventoryType != InventoryType.Notecard)
                 {
-                    if (i.InventoryType != InventoryType.Notecard)
-                    {
-                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotANotecard", "Inventory item {0} is not a notecard", item);
-                    }
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotANotecard", "Inventory item {0} is not a notecard", item);
                 }
-                else
-                {
-                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
-                }
-                assetID = i.AssetID;
-
             }
-            return assetID;
+            else
+            {
+                throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
+            }
+            return i.AssetID;
         }
 
         public static UUID GetSoundAssetID(this ScriptInstance instance, string item, int inventorylink = PrimitiveApi.LINK_THIS)
@@ -388,23 +374,20 @@ namespace SilverSim.Scripting.Lsl
             if (!UUID.TryParse(item, out assetID))
             {
                 /* must be an inventory item */
-                lock (instance)
+                ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Sound", item);
+                ObjectPartInventoryItem i;
+                if (part.Inventory.TryGetValue(item, out i))
                 {
-                    ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Sound", item);
-                    ObjectPartInventoryItem i;
-                    if (part.Inventory.TryGetValue(item, out i))
+                    if (i.InventoryType != InventoryType.Sound)
                     {
-                        if (i.InventoryType != InventoryType.Sound)
-                        {
-                            throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotASound", "Inventory item {0} is not a sound", item);
-                        }
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotASound", "Inventory item {0} is not a sound", item);
                     }
-                    else
-                    {
-                        throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
-                    }
-                    assetID = i.AssetID;
                 }
+                else
+                {
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
+                }
+                assetID = i.AssetID;
             }
             return assetID;
         }
@@ -415,40 +398,34 @@ namespace SilverSim.Scripting.Lsl
             if (!UUID.TryParse(item, out assetID))
             {
                 /* must be an inventory item */
-                lock (instance)
+                ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Texture", item);
+                ObjectPartInventoryItem i;
+                if (part.Inventory.TryGetValue(item, out i))
                 {
-                    ObjectPart part = GetInventoryLinkPart(instance, inventorylink, "Texture", item);
-                    ObjectPartInventoryItem i;
-                    if (part.Inventory.TryGetValue(item, out i))
+                    if (i.InventoryType != InventoryType.Texture)
                     {
-                        if (i.InventoryType != InventoryType.Texture)
-                        {
-                            throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotATexture", "Inventory item {0} is not a texture", item);
-                        }
-                        assetID = i.AssetID;
+                        throw new LocalizedScriptErrorException(instance, "InventoryItem0IsNotATexture", "Inventory item {0} is not a texture", item);
                     }
-                    else
-                    {
-                        throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
-                    }
+                    assetID = i.AssetID;
+                }
+                else
+                {
+                    throw new LocalizedScriptErrorException(instance, "InventoryItem0NotFound", "Inventory item {0} not found", item);
                 }
             }
             else
             {
-                lock (instance)
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                if (grp.IsAttached && !scene.AssetService.Exists(assetID))
                 {
-                    ObjectGroup grp = instance.Part.ObjectGroup;
-                    SceneInterface scene = grp.Scene;
-                    if (grp.IsAttached && !scene.AssetService.Exists(assetID))
+                    IAgent agent;
+                    if (scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
                     {
-                        IAgent agent;
-                        if (scene.RootAgents.TryGetValue(grp.Owner.ID, out agent))
+                        AssetData data;
+                        if (agent.AssetService.TryGetValue(assetID, out data))
                         {
-                            AssetData data;
-                            if (agent.AssetService.TryGetValue(assetID, out data))
-                            {
-                                scene.AssetService.Store(data);
-                            }
+                            scene.AssetService.Store(data);
                         }
                     }
                 }

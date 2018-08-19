@@ -272,10 +272,13 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 else if(modifyRenderer != null)
                 {
                     AssetData updatedata;
-                    if(!instance.Part.ObjectGroup.AssetService.TryGetValue(instance.GetTextureAssetID(dynamicID), out updatedata) ||
-                        updatedata.Type != AssetType.Texture)
+                    lock (instance)
                     {
-                        return UUID.Zero;
+                        if (!instance.Part.ObjectGroup.AssetService.TryGetValue(instance.GetTextureAssetID(dynamicID), out updatedata) ||
+                            updatedata.Type != AssetType.Texture)
+                        {
+                            return UUID.Zero;
+                        }
                     }
 
                     using (Stream js2k = updatedata.InputStream)

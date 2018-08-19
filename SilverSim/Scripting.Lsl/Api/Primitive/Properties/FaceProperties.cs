@@ -423,7 +423,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive.Properties
                     ScriptInstance actInstance;
                     if (WeakInstance != null && WeakInstance.TryGetTarget(out actInstance))
                     {
-                        textureID = actInstance.GetTextureAssetID(value.ToString());
+                        lock (actInstance)
+                        {
+                            textureID = actInstance.GetTextureAssetID(value.ToString());
+                        }
                     }
                     With((instance, f, texture) => f.TextureID = texture, textureID);
                 }
@@ -591,7 +594,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive.Properties
                     ScriptInstance actInstance;
                     if (WeakInstance != null && WeakInstance.TryGetTarget(out actInstance))
                     {
-                        textureID = actInstance.GetTextureAssetID(value.Texture.ToString());
+                        lock (actInstance)
+                        {
+                            textureID = actInstance.GetTextureAssetID(value.Texture.ToString());
+                        }
                     }
 
                     With((mat, m) =>
@@ -630,7 +636,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive.Properties
                     ScriptInstance actInstance;
                     if (WeakInstance != null && WeakInstance.TryGetTarget(out actInstance))
                     {
-                        textureID = actInstance.GetTextureAssetID(value.Texture.ToString());
+                        lock (actInstance)
+                        {
+                            textureID = actInstance.GetTextureAssetID(value.Texture.ToString());
+                        }
                     }
                     value.Offset *= Material.MATERIALS_MULTIPLIER;
                     value.Repeats *= Material.MATERIALS_MULTIPLIER;
