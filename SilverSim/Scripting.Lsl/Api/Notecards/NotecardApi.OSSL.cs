@@ -129,7 +129,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock (instance)
             {
-                UUID assetID = instance.GetNotecardAssetID(link, name);
+                UUID assetID = instance.GetNotecardAssetID(name, link);
                 Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
                 return nc.Text;
             }
@@ -172,7 +172,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock (instance)
             {
-                UUID assetID = instance.GetNotecardAssetID(link, name);
+                UUID assetID = instance.GetNotecardAssetID(name, link);
                 Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
                 string[] lines = nc.Text.Split('\n');
                 if (line >= lines.Length || line < 0)
@@ -211,7 +211,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock (instance)
             {
-                UUID assetID = instance.GetNotecardAssetID(link, name);
+                UUID assetID = instance.GetNotecardAssetID(name, link);
                 Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
                 return nc.Text.Split('\n').Length;
             }

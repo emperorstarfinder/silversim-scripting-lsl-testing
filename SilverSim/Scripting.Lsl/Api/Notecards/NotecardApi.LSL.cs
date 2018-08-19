@@ -99,7 +99,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock(instance)
             {
-                UUID assetID = instance.GetNotecardAssetID(link, name);
+                UUID assetID = instance.GetNotecardAssetID(name, link);
                 UUID query = UUID.Random;
                 GetNotecardLineAsyncInvoke(instance, query, assetID, line);
                 return query;
@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
         {
             lock (instance)
             {
-                UUID assetID = instance.GetNotecardAssetID(link, name);
+                UUID assetID = instance.GetNotecardAssetID(name, link);
                 UUID query = UUID.Random;
                 GetNumberOfNotecardLinesAsyncInvoke(instance, query, assetID);
                 return query;
