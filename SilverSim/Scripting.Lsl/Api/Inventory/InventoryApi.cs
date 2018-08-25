@@ -601,7 +601,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         QueryID = UUID.Random,
                         Data = (landmark.Location + landmark.LocalPos - instance.Part.ObjectGroup.Scene.GetRegionInfo().Location).ToString()
                     };
-                    instance.PostEvent(e);
+                    instance.Part.PostEvent(e);
                     return e.QueryID;
                 }
                 else if(item.AssetType == AssetType.Animation)
@@ -624,7 +624,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         QueryID = UUID.Random,
                         Data = anim.Duration.ToString()
                     };
-                    instance.PostEvent(e);
+                    instance.Part.PostEvent(e);
                     return e.QueryID;
                 }
                 else if(item.AssetType == AssetType.Sound)
@@ -647,7 +647,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         QueryID = UUID.Random,
                         Data = sound.Duration.ToString()
                     };
-                    instance.PostEvent(e);
+                    instance.Part.PostEvent(e);
                     return e.QueryID;
                 }
                 else

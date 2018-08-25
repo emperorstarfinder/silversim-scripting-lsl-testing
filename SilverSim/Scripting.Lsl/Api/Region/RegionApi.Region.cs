@@ -475,7 +475,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             if (DATA_SIM_RELEASE == data)
             {
                 UUID queryID = UUID.Random;
-                instance.PostEvent(new DataserverEvent
+                instance.Part.PostEvent(new DataserverEvent
                 {
                     Data = VersionInfo.SimulatorVersion,
                     QueryID = queryID
@@ -498,12 +498,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     {
                         case DATA_SIM_POS:
                             e.Data = new Vector3(scene.GridPosition).ToString();
-                            instance.PostEvent(e);
+                            instance.Part.PostEvent(e);
                             return queryID;
 
                         case DATA_SIM_STATUS:
                             e.Data = "up"; /* no information yet available */
-                            instance.PostEvent(e);
+                            instance.Part.PostEvent(e);
                             return queryID;
 
                         case DATA_SIM_RATING:
@@ -525,7 +525,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                                     e.Data = "UNKNOWN";
                                     break;
                             }
-                            instance.PostEvent(e);
+                            instance.Part.PostEvent(e);
                             return queryID;
 
                         default:
@@ -546,12 +546,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                         {
                             case DATA_SIM_POS:
                                 e.Data = new Vector3(ri.Location).ToString();
-                                instance.PostEvent(e);
+                                instance.Part.PostEvent(e);
                                 return queryID;
 
                             case DATA_SIM_STATUS:
                                 e.Data = (ri.Flags & RegionFlags.RegionOnline) != 0 ? "up" : "down";
-                                instance.PostEvent(e);
+                                instance.Part.PostEvent(e);
                                 return queryID;
 
                             case DATA_SIM_RATING:
@@ -573,7 +573,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                                         e.Data = "UNKNOWN";
                                         break;
                                 }
-                                instance.PostEvent(e);
+                                instance.Part.PostEvent(e);
                                 return queryID;
 
                             default:

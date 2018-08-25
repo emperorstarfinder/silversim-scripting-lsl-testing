@@ -140,8 +140,26 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     parts = new string[] { parts[0], "" };
                 }
 
+
                 UGUIWithName uui;
-                return (instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(parts[0], parts[1], out uui)) ? uui.ID : UUID.Zero;
+                UUID queryid = UUID.Random;
+                if (instance.Part.ObjectGroup.Scene.AvatarNameService.TryGetValue(parts[0], parts[1], out uui))
+                {
+                    instance.Part.PostEvent(new DataserverEvent
+                    {
+                        QueryID = queryid,
+                        Data = uui.ID.ToString()
+                    });
+                }
+                else
+                {
+                    instance.Part.PostEvent(new DataserverEvent
+                    {
+                        QueryID = queryid,
+                        Data = UUID.Zero.ToString()
+                    });
+                }
+                return queryid;
             }
         }
 
@@ -290,7 +308,6 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             {
                 IAgent agent;
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                DataserverEvent ev;
                 UUID queryid = UUID.Random;
                 UGUIWithName uui;
 
@@ -299,21 +316,19 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     switch(data)
                     {
                         case DATA_ONLINE:
-                            ev = new DataserverEvent
+                            instance.Part.PostEvent(new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = "1"
-                            };
-                            instance.PostEvent(ev);
+                            });
                             break;
 
                         case DATA_NAME:
-                            ev = new DataserverEvent
+                            instance.Part.PostEvent(new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = agent.FirstName + " " + agent.LastName
-                            };
-                            instance.PostEvent(ev);
+                            });
                             break;
 
                         case DATA_BORN:
@@ -329,31 +344,28 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                                 {
                                     return UUID.Zero;
                                 }
-                                ev = new DataserverEvent
+                                instance.Part.PostEvent(new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
-                                };
-                                instance.PostEvent(ev);
+                                });
                             }
                             break;
 
                         case DATA_RATING:
-                            ev = new DataserverEvent
+                            instance.Part.PostEvent(new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = "[0,0,0,0,0,0]"
-                            };
-                            instance.PostEvent(ev);
+                            });
                             break;
 
                         case DATA_PAYINFO:
-                            ev = new DataserverEvent
+                            instance.Part.PostEvent(new DataserverEvent
                             {
                                 QueryID = queryid,
                                 Data = "0"
-                            };
-                            instance.PostEvent(ev);
+                            });
                             break;
 
                         default:
@@ -374,21 +386,19 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                         switch (data)
                         {
                             case DATA_ONLINE:
-                                ev = new DataserverEvent
+                                instance.Part.PostEvent(new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = uaservice.IsOnline(uui) ? "1" : "0"
-                                };
-                                instance.PostEvent(ev);
+                                });
                                 break;
 
                             case DATA_NAME:
-                                ev = new DataserverEvent
+                                instance.Part.PostEvent(new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = uui.FullName
-                                };
-                                instance.PostEvent(ev);
+                                });
                                 break;
 
                             case DATA_BORN:
@@ -401,30 +411,27 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                                 {
                                     return UUID.Zero;
                                 }
-                                ev = new DataserverEvent
+                                instance.Part.PostEvent(new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
-                                };
-                                instance.PostEvent(ev);
+                                });
                                 break;
 
                             case DATA_RATING:
-                                ev = new DataserverEvent
+                                instance.Part.PostEvent(new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = "[0,0,0,0,0,0]"
-                                };
-                                instance.PostEvent(ev);
+                                });
                                 break;
 
                             case DATA_PAYINFO:
-                                ev = new DataserverEvent
+                                instance.Part.PostEvent(new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = "0"
-                                };
-                                instance.PostEvent(ev);
+                                });
                                 break;
 
                             default:
@@ -590,7 +597,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                         displayname = agent.NamedOwner.FullName;
                     }
                     UUID queryid = UUID.Random;
-                    instance.PostEvent(new DataserverEvent
+                    instance.Part.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
                         Data = displayname
@@ -617,7 +624,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                             displayname = agentid.FullName;
                         }
                         UUID queryid = UUID.Random;
-                        instance.PostEvent(new DataserverEvent
+                        instance.Part.PostEvent(new DataserverEvent
                         {
                             QueryID = queryid,
                             Data = displayname
@@ -655,7 +662,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                 if(scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
                     UUID queryid = UUID.Random;
-                    instance.PostEvent(new DataserverEvent
+                    instance.Part.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
                         Data = agent.NamedOwner.FullName
@@ -665,7 +672,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                 else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
                 {
                     UUID queryid = UUID.Random;
-                    instance.PostEvent(new DataserverEvent
+                    instance.Part.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
                         Data = uui.FullName
