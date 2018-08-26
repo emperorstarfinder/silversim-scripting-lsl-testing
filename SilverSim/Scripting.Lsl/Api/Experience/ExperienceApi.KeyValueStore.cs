@@ -124,7 +124,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
 
                 if (!s)
                 {
-                    return SendExperienceError(instance, XP_ERROR_STORAGE_EXCEPTION);
+                    return SendExperienceError(instance, XP_ERROR_KEY_NOT_FOUND);
                 }
 
                 var e = new DataserverEvent
