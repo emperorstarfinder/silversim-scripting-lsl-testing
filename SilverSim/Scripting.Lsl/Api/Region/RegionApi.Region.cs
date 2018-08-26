@@ -497,7 +497,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     switch (data)
                     {
                         case DATA_SIM_POS:
-                            e.Data = new Vector3(scene.GridPosition).ToString();
+                            e.Data = LSLCompiler.TypecastVectorToString5Places(new Vector3(scene.GridPosition));
                             instance.Part.PostEvent(e);
                             return queryID;
 
