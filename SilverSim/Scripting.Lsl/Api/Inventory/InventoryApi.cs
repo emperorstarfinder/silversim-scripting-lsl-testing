@@ -623,7 +623,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     var e = new DataserverEvent
                     {
                         QueryID = UUID.Random,
-                        Data = anim.Duration.ToString()
+                        Data = anim.Duration.ToString(CultureInfo.InvariantCulture)
                     };
                     instance.Part.PostEvent(e);
                     return e.QueryID;
