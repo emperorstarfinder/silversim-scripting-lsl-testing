@@ -55,7 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", v)
                 };
-                instance.PostEvent(e);
+                instance.Part.PostEvent(e, instance.Item.ExperienceID);
                 return e.QueryID;
             }
         }
@@ -94,7 +94,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0},{1}", used, quota)
                 };
-                instance.PostEvent(e);
+                instance.Part.PostEvent(e, instance.Item.ExperienceID);
                 return e.QueryID;
             }
         }
@@ -132,7 +132,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = "1"
                 };
-                instance.PostEvent(e);
+                instance.Part.PostEvent(e, instance.Item.ExperienceID);
                 return e.QueryID;
             }
         }
@@ -166,7 +166,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", keys.Count)
                 };
-                instance.PostEvent(e);
+                instance.Part.PostEvent(e, instance.Item.ExperienceID);
                 return e.QueryID;
             }
         }
@@ -214,7 +214,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", string.Join(",", keys.GetRange(first, count)))
                 };
-                instance.PostEvent(e);
+                instance.Part.PostEvent(e, instance.Item.ExperienceID);
                 return e.QueryID;
             }
         }
@@ -251,7 +251,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                         QueryID = UUID.Random,
                         Data = string.Format("1,{0}", val)
                     };
-                    instance.PostEvent(e);
+                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
                     return e.QueryID;
                 }
                 else
@@ -300,7 +300,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", v)
                 };
-                instance.PostEvent(e);
+                instance.Part.PostEvent(e, instance.Item.ExperienceID);
                 return e.QueryID;
             }
         }
