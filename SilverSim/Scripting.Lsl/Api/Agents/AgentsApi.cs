@@ -130,7 +130,19 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
         {
             lock(instance)
             {
-                string[] parts = username.Split(new char[] { '.', ' ' }, 2, StringSplitOptions.None);
+                string[] parts;
+                if (username.Contains(".@"))
+                {
+                    parts = username.Split(new string[] { ".@" }, 2, StringSplitOptions.None);
+                }
+                else if(username.Contains(" "))
+                {
+                    parts = username.Split(new char[] { ' ' }, 2, StringSplitOptions.None);
+                }
+                else
+                {
+                    parts = username.Split(new char[] { '.' }, 2, StringSplitOptions.None);
+                }
                 if(parts.Length > 2)
                 {
                     return UUID.Zero;
@@ -604,33 +616,44 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     });
                     return queryid;
                 }
-                else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out agentid) && agentid.HomeURI != null)
+                else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out agentid))
                 {
-                    UserAgentServiceInterface userAgentService = null;
-                    Dictionary<string, string> heloheaders = ServicePluginHelo.HeloRequest(agentid.HomeURI.ToString());
-                    foreach(IUserAgentServicePlugin plugin in m_UserAgentServicePlugins)
+                    UUID queryid;
+                    if (agentid.HomeURI != null)
                     {
-                        if(plugin.IsProtocolSupported(agentid.HomeURI.ToString(), heloheaders))
+                        UserAgentServiceInterface userAgentService = null;
+                        Dictionary<string, string> heloheaders = ServicePluginHelo.HeloRequest(agentid.HomeURI.ToString());
+                        foreach (IUserAgentServicePlugin plugin in m_UserAgentServicePlugins)
                         {
-                            userAgentService = plugin.Instantiate(agentid.HomeURI.ToString());
-                            break;
+                            if (plugin.IsProtocolSupported(agentid.HomeURI.ToString(), heloheaders))
+                            {
+                                userAgentService = plugin.Instantiate(agentid.HomeURI.ToString());
+                                break;
+                            }
+                        }
+                        if (userAgentService != null)
+                        {
+                            string displayname;
+                            if (!userAgentService.DisplayName.TryGetValue(agentid, out displayname))
+                            {
+                                displayname = agentid.FullName;
+                            }
+                            queryid = UUID.Random;
+                            instance.Part.PostEvent(new DataserverEvent
+                            {
+                                QueryID = queryid,
+                                Data = displayname
+                            });
+                            return queryid;
                         }
                     }
-                    if(userAgentService != null)
+                    queryid = UUID.Random;
+                    instance.Part.PostEvent(new DataserverEvent
                     {
-                        string displayname;
-                        if(!userAgentService.DisplayName.TryGetValue(agentid, out displayname))
-                        {
-                            displayname = agentid.FullName;
-                        }
-                        UUID queryid = UUID.Random;
-                        instance.Part.PostEvent(new DataserverEvent
-                        {
-                            QueryID = queryid,
-                            Data = displayname
-                        });
-                        return queryid;
-                    }
+                        QueryID = queryid,
+                        Data = agentid.FirstName + " " + agentid.LastName
+                    });
+                    return queryid;
                 }
                 return UUID.Zero;
             }
@@ -665,7 +688,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     instance.Part.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
-                        Data = agent.NamedOwner.FullName
+                        Data = agent.NamedOwner.FullName.Replace(" ", ".")
                     });
                     return queryid;
                 }
@@ -675,7 +698,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                     instance.Part.PostEvent(new DataserverEvent
                     {
                         QueryID = queryid,
-                        Data = uui.FullName
+                        Data = uui.FullName.Replace(" ", ".")
                     });
                     return queryid;
                 }
