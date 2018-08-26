@@ -136,7 +136,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 QueryID = UUID.Random,
                 Data = string.Format("0,{0}", error)
             };
-            instance.PostEvent(e);
+            instance.Part.PostEvent(e, instance.Item.ExperienceID);
             return e.QueryID;
         }
 
