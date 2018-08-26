@@ -44,9 +44,8 @@ using SilverSim.Viewer.Messages.Inventory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using SoundAsset = SilverSim.Types.Asset.Format.Sound;
 using AnimationAsset = SilverSim.Types.Asset.Format.Animation;
-using System.Globalization;
+using SoundAsset = SilverSim.Types.Asset.Format.Sound;
 
 namespace SilverSim.Scripting.Lsl.Api.Inventory
 {
@@ -623,7 +622,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     var e = new DataserverEvent
                     {
                         QueryID = UUID.Random,
-                        Data = anim.Duration.ToString(CultureInfo.InvariantCulture)
+                        Data = LSLCompiler.TypecastDoubleToString(anim.Duration)
                     };
                     instance.Part.PostEvent(e);
                     return e.QueryID;
@@ -646,7 +645,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     var e = new DataserverEvent
                     {
                         QueryID = UUID.Random,
-                        Data = sound.Duration.ToString(CultureInfo.InvariantCulture)
+                        Data = LSLCompiler.TypecastDoubleToString(sound.Duration)
                     };
                     instance.Part.PostEvent(e);
                     return e.QueryID;
