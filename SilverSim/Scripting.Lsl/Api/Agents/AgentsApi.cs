@@ -313,7 +313,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
 
                 if (scene.Agents.TryGetValue(id.AsUUID, out agent))
                 {
-                    switch(data)
+                    switch (data)
                     {
                         case DATA_ONLINE:
                             instance.Part.PostEvent(new DataserverEvent
@@ -333,7 +333,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
 
                         case DATA_BORN:
                             UserAgentServiceInterface uaservice = agent.UserAgentService;
-                            if(uaservice != null)
+                            if (uaservice != null)
                             {
                                 UserAgentServiceInterface.UserInfo ui;
                                 try
@@ -374,34 +374,34 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
 
                     return queryid;
                 }
-                else if(scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
+                else if (scene.AvatarNameService.TryGetValue(id.AsUUID, out uui))
                 {
                     UserAgentServiceInterface uaservice;
-                    if(uui.HomeURI == null || !TryConnectUserAgent(uui.HomeURI.ToString(), out uaservice))
+                    switch (data)
                     {
-                        return UUID.Zero;
-                    }
-                    else
-                    {
-                        switch (data)
-                        {
-                            case DATA_ONLINE:
+                        case DATA_ONLINE:
+                            if (uui.HomeURI != null && TryConnectUserAgent(uui.HomeURI.ToString(), out uaservice))
+                            {
                                 instance.Part.PostEvent(new DataserverEvent
                                 {
                                     QueryID = queryid,
                                     Data = uaservice.IsOnline(uui) ? "1" : "0"
                                 });
-                                break;
+                                return queryid;
+                            }
+                            break;
 
-                            case DATA_NAME:
-                                instance.Part.PostEvent(new DataserverEvent
-                                {
-                                    QueryID = queryid,
-                                    Data = uui.FullName
-                                });
-                                break;
+                        case DATA_NAME:
+                            instance.Part.PostEvent(new DataserverEvent
+                            {
+                                QueryID = queryid,
+                                Data = uui.FullName
+                            });
+                            return queryid;
 
-                            case DATA_BORN:
+                        case DATA_BORN:
+                            if (uui.HomeURI != null && TryConnectUserAgent(uui.HomeURI.ToString(), out uaservice))
+                            {
                                 UserAgentServiceInterface.UserInfo ui;
                                 try
                                 {
@@ -416,28 +416,28 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                                     QueryID = queryid,
                                     Data = ui.UserCreated.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
                                 });
-                                break;
+                                return queryid;
+                            }
+                            break;
 
-                            case DATA_RATING:
-                                instance.Part.PostEvent(new DataserverEvent
-                                {
-                                    QueryID = queryid,
-                                    Data = "[0,0,0,0,0,0]"
-                                });
-                                break;
+                        case DATA_RATING:
+                            instance.Part.PostEvent(new DataserverEvent
+                            {
+                                QueryID = queryid,
+                                Data = "[0,0,0,0,0,0]"
+                            });
+                            return queryid;
 
-                            case DATA_PAYINFO:
-                                instance.Part.PostEvent(new DataserverEvent
-                                {
-                                    QueryID = queryid,
-                                    Data = "0"
-                                });
-                                break;
+                        case DATA_PAYINFO:
+                            instance.Part.PostEvent(new DataserverEvent
+                            {
+                                QueryID = queryid,
+                                Data = "0"
+                            });
+                            return queryid;
 
-                            default:
-                                break;
-                        }
-                        return queryid;
+                        default:
+                            break;
                     }
                 }
             }
