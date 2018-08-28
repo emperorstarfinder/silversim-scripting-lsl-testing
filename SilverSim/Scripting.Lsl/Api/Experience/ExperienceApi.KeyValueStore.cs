@@ -55,7 +55,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", v)
                 };
-                instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                if (((Script)instance).AllowExperienceDataServerEventsToAllScripts)
+                {
+                    instance.Part.PostEvent(e);
+                }
+                else
+                {
+                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                }
                 return e.QueryID;
             }
         }
@@ -94,7 +101,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0},{1}", used, quota)
                 };
-                instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                if (((Script)instance).AllowExperienceDataServerEventsToAllScripts)
+                {
+                    instance.Part.PostEvent(e);
+                }
+                else
+                {
+                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                }
                 return e.QueryID;
             }
         }
@@ -132,7 +146,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = "1"
                 };
-                instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                if (((Script)instance).AllowExperienceDataServerEventsToAllScripts)
+                {
+                    instance.Part.PostEvent(e);
+                }
+                else
+                {
+                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                }
                 return e.QueryID;
             }
         }
@@ -166,7 +187,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", keys.Count)
                 };
-                instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                if (((Script)instance).AllowExperienceDataServerEventsToAllScripts)
+                {
+                    instance.Part.PostEvent(e);
+                }
+                else
+                {
+                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                }
                 return e.QueryID;
             }
         }
@@ -214,7 +242,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", string.Join(",", keys.GetRange(first, count)))
                 };
-                instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                if (((Script)instance).AllowExperienceDataServerEventsToAllScripts)
+                {
+                    instance.Part.PostEvent(e);
+                }
+                else
+                {
+                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                }
                 return e.QueryID;
             }
         }
@@ -251,7 +286,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                         QueryID = UUID.Random,
                         Data = string.Format("1,{0}", val)
                     };
-                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                    if (((Script)instance).AllowExperienceDataServerEventsToAllScripts)
+                    {
+                        instance.Part.PostEvent(e);
+                    }
+                    else
+                    {
+                        instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                    }
                     return e.QueryID;
                 }
                 else
@@ -300,7 +342,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     QueryID = UUID.Random,
                     Data = string.Format("1,{0}", v)
                 };
-                instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                if (((Script)instance).AllowExperienceDataServerEventsToAllScripts)
+                {
+                    instance.Part.PostEvent(e);
+                }
+                else
+                {
+                    instance.Part.PostEvent(e, instance.Item.ExperienceID);
+                }
                 return e.QueryID;
             }
         }

@@ -59,8 +59,10 @@ namespace SilverSim.Scripting.Lsl
         private double m_ExecutionTime;
         protected bool UseMessageObjectEvent;
         protected bool InheritEventsOnStateChange;
+        protected bool m_AllowExperienceDataServerEventsToAllScripts;
         internal RwLockedList<UUID> m_RequestedURLs = new RwLockedList<UUID>();
 
+        public bool AllowExperienceDataServerEventsToAllScripts => m_AllowExperienceDataServerEventsToAllScripts;
         public bool UseForcedSleep = true;
         public double ForcedSleepFactor = 1;
         internal List<Action<ScriptInstance>> ScriptRemoveDelegates;
