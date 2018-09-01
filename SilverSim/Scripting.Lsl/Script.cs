@@ -731,10 +731,6 @@ namespace SilverSim.Scripting.Lsl
             public bool IsAllowedForEveryone;
         }
 
-        public const ThreatLevel DefaultThreatLevel = ThreatLevel.Low;
-
-        public static readonly RwLockedDictionaryAutoAdd<UUID, ThreatLevel> ThreatLevels = new RwLockedDictionaryAutoAdd<UUID, ThreatLevel>(() => DefaultThreatLevel);
-
         public static readonly RwLockedDictionaryAutoAdd<string,
             RwLockedDictionaryAutoAdd<UUID, Permissions>> OSSLPermissions = new RwLockedDictionaryAutoAdd<string, RwLockedDictionaryAutoAdd<UUID, Permissions>>(() =>
             {
@@ -930,7 +926,7 @@ namespace SilverSim.Scripting.Lsl
             }
         }
 
-        public void CheckThreatLevel(string name, ThreatLevel level)
+        public void CheckThreatLevel(string name)
         {
             Permissions perms;
             ObjectPart part = Part;
@@ -940,14 +936,6 @@ namespace SilverSim.Scripting.Lsl
             UGUI creator = rootPart.Creator;
             UGUI owner = objgroup.Owner;
             ParcelInfo pInfo;
-
-            ThreatLevel threatLevel;
-
-            if ((ThreatLevels.TryGetValue(scene.ID, out threatLevel) || ThreatLevels.TryGetValue(UUID.Zero, out threatLevel)) &&
-                (int)threatLevel >= (int)level)
-            {
-                return;
-            }
 
             if (!scene.Parcels.TryGetValue(rootPart.GlobalPosition, out pInfo))
             {

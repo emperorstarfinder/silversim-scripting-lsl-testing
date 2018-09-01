@@ -149,7 +149,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.OSSL, "osForceCreateLink")]
-        [ThreatLevelRequired(ThreatLevel.VeryLow, "osForceCreateLink")]
+        [ThreatLevelRequired("osForceCreateLink")]
         public void ForceCreateLink(ScriptInstance instance, LSLKey target, int parent)
         {
             lock (instance)
@@ -179,7 +179,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.OSSL, "osForceBreakLink")]
-        [ThreatLevelRequired(ThreatLevel.VeryLow, "osForceCreateLink")]
+        [ThreatLevelRequired("osForceCreateLink")]
         public void ForceBreakLink(ScriptInstance instance, int link)
         {
             lock(instance)
@@ -195,7 +195,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         }
 
         [APILevel(APIFlags.OSSL, "osForceBreakAllLinks")]
-        [ThreatLevelRequired(ThreatLevel.VeryLow, "osForceCreateLink")]
+        [ThreatLevelRequired("osForceCreateLink")]
         public void ForceBreakAllLinks(ScriptInstance instance)
         {
             lock(instance)

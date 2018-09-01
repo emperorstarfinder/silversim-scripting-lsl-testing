@@ -64,7 +64,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 if (UUID.Zero != prim)
                 {
-                    ((Script)instance).CheckThreatLevel("osSetProjectionParams", ThreatLevel.High);
+                    ((Script)instance).CheckThreatLevel("osSetProjectionParams");
                 }
 
                 ObjectPart part;
@@ -72,16 +72,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     part = instance.Part;
                 }
-                else
+                else if(!instance.Part.ObjectGroup.Scene.Primitives.TryGetValue(prim, out part))
                 {
-                    try
-                    {
-                        part = instance.Part.ObjectGroup.Scene.Primitives[prim];
-                    }
-                    catch
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 part.Projection = new ProjectionParam

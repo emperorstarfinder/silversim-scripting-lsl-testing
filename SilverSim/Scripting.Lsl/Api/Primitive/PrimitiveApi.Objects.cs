@@ -771,17 +771,20 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public delegate void State_object_message(LSLKey id, string data);
 
         [APILevel(APIFlags.OSSL, "osMessageObject")]
-        [ThreatLevelRequired(ThreatLevel.Low)]
+        [ThreatLevelRequired]
         public void MessageObject(ScriptInstance instance, LSLKey objectUUID, string message)
         {
             lock (instance)
             {
-                IObject obj = instance.Part.ObjectGroup.Scene.Objects[objectUUID];
-                obj.PostEvent(new MessageObjectEvent
+                IObject obj;
+                if (instance.Part.ObjectGroup.Scene.Objects.TryGetValue(objectUUID, out obj))
                 {
-                    Data = message,
-                    ObjectID = instance.Part.ObjectGroup.ID
-                });
+                    obj.PostEvent(new MessageObjectEvent
+                    {
+                        Data = message,
+                        ObjectID = instance.Part.ObjectGroup.ID
+                    });
+                }
             }
         }
 

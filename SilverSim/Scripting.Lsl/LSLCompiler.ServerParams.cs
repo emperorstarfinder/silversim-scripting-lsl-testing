@@ -54,7 +54,6 @@ namespace SilverSim.Scripting.Lsl
             get
             {
                 var resList = new Dictionary<string, ServerParamAttribute>();
-                AddServerParam(resList, new ServerParamAttribute("OSSL.ThreatLevel") { Description = "Defines threat level" });
                 foreach(IScriptApi api in m_Apis)
                 {
                     Type instanceType = api.GetType();
@@ -160,52 +159,6 @@ namespace SilverSim.Scripting.Lsl
             if (!parametername.StartsWith("OSSL."))
             {
                 /* ignore anything that is not OSSL. */
-                return;
-            }
-
-            if(parametername == "OSSL.ThreatLevel")
-            {
-                switch(value.ToLower())
-                {
-                    case "":
-                        Script.ThreatLevels[regionID] = Script.DefaultThreatLevel;
-                        break;
-
-                    case "none":
-                        Script.ThreatLevels[regionID] = ThreatLevel.None;
-                        break;
-
-                    case "nuisance":
-                        Script.ThreatLevels[regionID] = ThreatLevel.Nuisance;
-                        break;
-
-                    case "verylow":
-                        Script.ThreatLevels[regionID] = ThreatLevel.VeryLow;
-                        break;
-
-                    case "low":
-                        Script.ThreatLevels[regionID] = ThreatLevel.Low;
-                        break;
-
-                    case "moderate":
-                        Script.ThreatLevels[regionID] = ThreatLevel.Moderate;
-                        break;
-
-                    case "high":
-                        Script.ThreatLevels[regionID] = ThreatLevel.High;
-                        break;
-
-                    case "veryhigh":
-                        Script.ThreatLevels[regionID] = ThreatLevel.VeryHigh;
-                        break;
-
-                    case "severe":
-                        Script.ThreatLevels[regionID] = ThreatLevel.Severe;
-                        break;
-
-                    default:
-                        break;
-                }
                 return;
             }
 

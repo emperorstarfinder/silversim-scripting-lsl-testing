@@ -44,7 +44,7 @@ namespace SilverSim.Scripting.Lsl.Api.Attachments
     public partial  class AttachmentsApi
     {
         [APILevel(APIFlags.OSSL, "osForceAttachToOtherAvatarFromInventory")]
-        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
+        [ThreatLevelRequired]
         public void ForceAttachToOtherAvatarFromInventory(ScriptInstance instance, LSLKey destination, string item_name, int attach_point)
         {
             lock (instance)

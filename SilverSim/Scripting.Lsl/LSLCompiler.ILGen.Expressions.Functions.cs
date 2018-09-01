@@ -621,8 +621,7 @@ namespace SilverSim.Scripting.Lsl
                         {
                             compileState.ILGen.Emit(OpCodes.Ldstr, threatLevelAttr.FunctionName);
                         }
-                        compileState.ILGen.Emit(OpCodes.Ldc_I4, (int)threatLevelAttr.ThreatLevel);
-                        MethodInfo checkMethod = typeof(Script).GetMethod("CheckThreatLevel", new Type[] { typeof(string), typeof(ThreatLevel) });
+                        MethodInfo checkMethod = typeof(Script).GetMethod("CheckThreatLevel", new Type[] { typeof(string) });
                         compileState.ILGen.Emit(OpCodes.Call, checkMethod);
                     }
 
