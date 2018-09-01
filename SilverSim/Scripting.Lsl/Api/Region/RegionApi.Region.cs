@@ -862,7 +862,23 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
-                foreach(IAgent agent in scene.RootAgents)
+                foreach (IAgent agent in scene.RootAgents)
+                {
+                    agent.SendRegionNotice(grp.Owner, msg, scene.ID);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osRegionNotice")]
+        [ThreatLevelRequired(ThreatLevel.VeryHigh)]
+        public void RegionNotice(ScriptInstance instance, LSLKey agentid, string msg)
+        {
+            lock (instance)
+            {
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
+                IAgent agent;
+                if(scene.RootAgents.TryGetValue(agentid.AsUUID, out agent))
                 {
                     agent.SendRegionNotice(grp.Owner, msg, scene.ID);
                 }
