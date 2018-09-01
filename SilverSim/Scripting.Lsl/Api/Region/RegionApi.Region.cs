@@ -295,7 +295,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osGetRegionStats")]
-        [ThreatLevelRequired]
+        [CheckFunctionPermission]
         public AnArray GetRegionStats(ScriptInstance instance)
         {
             lock (instance)
@@ -330,7 +330,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osGetSimulatorMemory")]
-        [ThreatLevelRequired]
+        [CheckFunctionPermission]
         public int GetSimulatorMemory(ScriptInstance instance)
         {
             lock(instance)
@@ -345,7 +345,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osGetSimulatorMemoryKB")]
-        [ThreatLevelRequired("osGetSimulatorMemory")]
+        [CheckFunctionPermission("osGetSimulatorMemory")]
         public int GetSimulatorMemoryKB(ScriptInstance instance)
         {
             lock (instance)
@@ -855,7 +855,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osRegionNotice")]
-        [ThreatLevelRequired]
+        [CheckFunctionPermission]
         public void RegionNotice(ScriptInstance instance, string msg)
         {
             lock(instance)
@@ -870,7 +870,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         }
 
         [APILevel(APIFlags.OSSL, "osRegionNotice")]
-        [ThreatLevelRequired]
+        [CheckFunctionPermission]
         public void RegionNotice(ScriptInstance instance, LSLKey agentid, string msg)
         {
             lock (instance)

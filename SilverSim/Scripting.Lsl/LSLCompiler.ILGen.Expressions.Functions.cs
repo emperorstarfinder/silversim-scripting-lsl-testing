@@ -602,7 +602,7 @@ namespace SilverSim.Scripting.Lsl
                     MethodInfo methodInfo = apiMethod.Method;
                     var castImplicitToStringAttr = (AllowExplicitTypecastsBeImplicitToStringAttribute)Attribute.GetCustomAttribute(apiMethod.Method, typeof(AllowExplicitTypecastsBeImplicitToStringAttribute));
                     var apiAttr = (ScriptApiNameAttribute)Attribute.GetCustomAttribute(apiMethod.Api.GetType(), typeof(ScriptApiNameAttribute));
-                    var threatLevelAttr = (ThreatLevelRequiredAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(ThreatLevelRequiredAttribute));
+                    var threatLevelAttr = (CheckFunctionPermissionAttribute)Attribute.GetCustomAttribute(methodInfo, typeof(CheckFunctionPermissionAttribute));
 
                     if (threatLevelAttr != null)
                     {

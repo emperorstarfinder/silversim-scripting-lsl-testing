@@ -59,7 +59,7 @@ namespace SilverSim.Scripting.Lsl
                     Type instanceType = api.GetType();
                     foreach(MethodInfo mi in instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
                     {
-                        var threatLevelAttr = Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) as ThreatLevelRequiredAttribute;
+                        var threatLevelAttr = Attribute.GetCustomAttribute(mi, typeof(CheckFunctionPermissionAttribute)) as CheckFunctionPermissionAttribute;
                         if (threatLevelAttr != null)
                         {
                             foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))
@@ -105,7 +105,7 @@ namespace SilverSim.Scripting.Lsl
                 Type instanceType = api.GetType();
                 foreach (MethodInfo mi in instanceType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
                 {
-                    var threatLevelAttr = Attribute.GetCustomAttribute(mi, typeof(ThreatLevelRequiredAttribute)) as ThreatLevelRequiredAttribute;
+                    var threatLevelAttr = Attribute.GetCustomAttribute(mi, typeof(CheckFunctionPermissionAttribute)) as CheckFunctionPermissionAttribute;
                     if (threatLevelAttr != null)
                     {
                         foreach (APILevelAttribute attr in Attribute.GetCustomAttributes(mi, typeof(APILevelAttribute)))

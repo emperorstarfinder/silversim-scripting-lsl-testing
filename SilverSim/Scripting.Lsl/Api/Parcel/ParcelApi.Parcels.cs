@@ -571,7 +571,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
         }
 
         [APILevel(APIFlags.OSSL, "osSetParcelDetails")]
-        [ThreatLevelRequired]
+        [CheckFunctionPermission]
         public void SetParcelDetails(ScriptInstance instance, Vector3 pos, AnArray rules)
         {
             lock(instance)

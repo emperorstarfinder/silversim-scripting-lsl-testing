@@ -43,10 +43,10 @@ namespace SilverSim.Scripting.Lsl
 
     [Serializable]
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class ThreatLevelRequiredAttribute : Attribute
+    public sealed class CheckFunctionPermissionAttribute : Attribute
     {
         public string FunctionName { get; }
-        public ThreatLevelRequiredAttribute(string functionName = "")
+        public CheckFunctionPermissionAttribute(string functionName = "")
         {
             FunctionName = functionName;
         }

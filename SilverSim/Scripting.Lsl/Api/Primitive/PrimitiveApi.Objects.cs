@@ -771,7 +771,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public delegate void State_object_message(LSLKey id, string data);
 
         [APILevel(APIFlags.OSSL, "osMessageObject")]
-        [ThreatLevelRequired]
+        [CheckFunctionPermission]
         public void MessageObject(ScriptInstance instance, LSLKey objectUUID, string message)
         {
             lock (instance)
