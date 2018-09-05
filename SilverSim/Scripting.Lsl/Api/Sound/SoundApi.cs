@@ -89,10 +89,12 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llCollisionSound")]
+        [APILevel(APIFlags.OSSL, "osCollisionSound")]
         public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume) =>
             CollisionSound(instance, impact_sound, impact_volume, 20);
 
         [APILevel(APIFlags.ASSL, "asCollisionSound")]
+        [APILevel(APIFlags.OSSL, "osCollisionSound")]
         public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume, double impact_radius)
         {
             var para = new CollisionSoundParam();
