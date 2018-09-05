@@ -30,6 +30,7 @@ using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Primitive;
+using System;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.Sound
@@ -88,13 +89,18 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         }
 
         [APILevel(APIFlags.LSL, "llCollisionSound")]
-        public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume)
+        public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume) =>
+            CollisionSound(instance, impact_sound, impact_volume, 20);
+
+        [APILevel(APIFlags.ASSL, "asCollisionSound")]
+        public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume, double impact_radius)
         {
             var para = new CollisionSoundParam();
 
             lock (instance)
             {
                 para.ImpactVolume = impact_volume.Clamp(0f, 1f);
+                para.ImpactSoundRadius = Math.Max(0, impact_radius);
                 if (string.IsNullOrEmpty(impact_sound))
                 {
                     para.ImpactSound = UUID.Zero;
