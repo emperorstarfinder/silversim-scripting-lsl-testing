@@ -98,9 +98,14 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
         public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume, double impact_radius) =>
             CollisionSound(instance, impact_sound, impact_volume, 20, 0);
 
+        [APILevel(APIFlags.OSSL)]
+        public const int COLLISIONSOUND_FLAG_HITPOINT = 1;
+        [APILevel(APIFlags.OSSL)]
+        public const int COLLISIONSOUND_FLAG_USECHILDS = 1;
+
         [APILevel(APIFlags.ASSL, "asCollisionSound")]
         [APILevel(APIFlags.OSSL, "osCollisionSound")]
-        public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume, double impact_radius, int impact_usehitpoint)
+        public void CollisionSound(ScriptInstance instance, string impact_sound, double impact_volume, double impact_radius, int impact_soundflags)
         {
             var para = new CollisionSoundParam();
 
@@ -108,7 +113,8 @@ namespace SilverSim.Scripting.Lsl.Api.Sound
             {
                 para.ImpactVolume = impact_volume.Clamp(0f, 1f);
                 para.ImpactSoundRadius = Math.Max(0, impact_radius);
-                para.ImpactUseHitpoint = impact_usehitpoint != 0;
+                para.ImpactUseHitpoint = (impact_soundflags & COLLISIONSOUND_FLAG_HITPOINT) != 0;
+                para.ImpactUseChilds = (impact_soundflags & COLLISIONSOUND_FLAG_USECHILDS) != 0;
                 if (string.IsNullOrEmpty(impact_sound))
                 {
                     para.ImpactSound = UUID.Zero;
