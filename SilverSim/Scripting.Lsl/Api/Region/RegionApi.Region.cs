@@ -31,6 +31,7 @@ using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces.Grid;
+using SilverSim.Threading;
 using SilverSim.Types;
 using SilverSim.Types.Grid;
 using System;
@@ -148,10 +149,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetGridName")]
         public string GetGridName(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 GridInfoServiceInterface gridInfoService = instance.Part.ObjectGroup.Scene.GetService<GridInfoServiceInterface>();
-                if(gridInfoService == null)
+                if (gridInfoService == null)
                 {
                     return "error";
                 }
@@ -204,7 +205,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetGridGatekeeperURI")]
         public string GetGridGatekeeperURI(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return instance.Part.ObjectGroup.Scene.GatekeeperURI;
             }
@@ -244,7 +245,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetRegionSize")]
         public Vector3 GetRegionSize(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return new Vector3(
                     instance.Part.ObjectGroup.Scene.SizeX,
@@ -265,10 +266,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetRegionMapTexture")]
         public LSLKey GetMapTexture(ScriptInstance instance, string regionName)
         {
-            lock(instance)
+            lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
-                if(string.Equals(scene.Name, regionName, StringComparison.OrdinalIgnoreCase) ||
+                if (string.Equals(scene.Name, regionName, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(regionName, scene.ID.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     return GetMapTexture(instance);
@@ -276,16 +277,16 @@ namespace SilverSim.Scripting.Lsl.Api.Region
 
                 UUID regionid;
                 RegionInfo regionInfo;
-                if(UUID.TryParse(regionName, out regionid))
+                if (UUID.TryParse(regionName, out regionid))
                 {
-                    if(!scene.GridService.TryGetValue(regionid, out regionInfo))
+                    if (!scene.GridService.TryGetValue(regionid, out regionInfo))
                     {
                         return UUID.Zero;
                     }
                 }
                 else
                 {
-                    if(!scene.GridService.TryGetValue(regionName, out regionInfo))
+                    if (!scene.GridService.TryGetValue(regionName, out regionInfo))
                     {
                         return UUID.Zero;
                     }
@@ -333,10 +334,10 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [CheckFunctionPermission]
         public int GetSimulatorMemory(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 long pws = Process.GetCurrentProcess().WorkingSet64;
-                if(pws > Int32.MaxValue)
+                if (pws > Int32.MaxValue)
                 {
                     return Int32.MaxValue;
                 }
@@ -362,7 +363,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osGetCurrentSunHour")]
         public double GetCurrentSunHour(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return instance.Part.ObjectGroup.Scene.Environment.ActualSunPosition;
             }
@@ -372,46 +373,46 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         public int GetRegionFlags(ScriptInstance instance)
         {
             int flags = 0;
-            lock(instance)
+            lock (instance)
             {
                 RegionSettings settings = instance.Part.ObjectGroup.Scene.RegionSettings;
-                if(settings.AllowDamage)
+                if (settings.AllowDamage)
                 {
                     flags |= REGION_FLAG_ALLOW_DAMAGE;
                 }
-                if(settings.BlockTerraform)
+                if (settings.BlockTerraform)
                 {
                     flags |= REGION_FLAG_BLOCK_TERRAFORM;
                 }
-                if(settings.Sandbox)
+                if (settings.Sandbox)
                 {
                     flags |= REGION_FLAG_SANDBOX;
                 }
-                if(settings.DisableCollisions)
+                if (settings.DisableCollisions)
                 {
                     flags |= REGION_FLAG_DISABLE_COLLISIONS;
                 }
-                if(settings.DisablePhysics)
+                if (settings.DisablePhysics)
                 {
                     flags |= REGION_FLAG_DISABLE_PHYSICS;
                 }
-                if(settings.BlockFly)
+                if (settings.BlockFly)
                 {
                     flags |= REGION_FLAG_BLOCK_FLY;
                 }
-                if(settings.RestrictPushing)
+                if (settings.RestrictPushing)
                 {
                     flags |= REGION_FLAG_RESTRICT_PUSHOBJECT;
                 }
-                if(!settings.AllowLandResell)
+                if (!settings.AllowLandResell)
                 {
                     flags |= REGION_FLAGS_BLOCK_LAND_RESELL;
                 }
-                if(settings.DisableScripts)
+                if (settings.DisableScripts)
                 {
                     flags |= REGION_FLAGS_SKIP_SCRIPTS;
                 }
-                if(settings.AllowLandJoinDivide)
+                if (settings.AllowLandJoinDivide)
                 {
                     flags |= REGION_FLAGS_ALLOW_PARCEL_CHANGES;
                 }
@@ -423,7 +424,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetRegionTimeDilation")]
         public double GetRegionTimeDilation(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsDilationTime;
             }
@@ -433,7 +434,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [ForcedSleep(10)]
         public string GetSimulatorHostname(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 var uri = new Uri(instance.Part.ObjectGroup.Scene.ServerURI);
                 return uri.Host;
@@ -443,7 +444,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetRegionCorner")]
         public Vector3 GetRegionCorner(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return instance.Part.ObjectGroup.Scene.GridPosition;
             }
@@ -487,7 +488,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
 
-                if(string.Equals(scene.Name, region, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(scene.Name, region, StringComparison.OrdinalIgnoreCase))
                 {
                     UUID queryID = UUID.Random;
                     var e = new DataserverEvent
@@ -507,7 +508,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                             return queryID;
 
                         case DATA_SIM_RATING:
-                            switch(scene.Access)
+                            switch (scene.Access)
                             {
                                 case RegionAccess.Adult:
                                     e.Data = "ADULT";
@@ -535,7 +536,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 else
                 {
                     RegionInfo ri;
-                    if(scene.GridService.TryGetValue(scene.ScopeID, region, out ri))
+                    if (scene.GridService.TryGetValue(scene.ScopeID, region, out ri))
                     {
                         UUID queryID = UUID.Random;
                         var e = new DataserverEvent
@@ -591,12 +592,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llEdgeOfWorld")]
         public int EdgeOfWorld(ScriptInstance instance, Vector3 pos, Vector3 dir)
         {
-            lock(instance)
+            lock (instance)
             {
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 Vector3 edgeOfWorld;
 
-                if(Math.Abs(dir.X) < double.Epsilon && Math.Abs(dir.Y) < double.Epsilon)
+                if (Math.Abs(dir.X) < double.Epsilon && Math.Abs(dir.Y) < double.Epsilon)
                 {
                     return 1;
                 }
@@ -604,7 +605,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 if (Math.Abs(dir.X) < double.Epsilon)
                 {
                     /* special case: we cannot use slope-intercept formula here  */
-                    if(dir.Y >= 0)
+                    if (dir.Y >= 0)
                     {
                         edgeOfWorld = pos;
                         edgeOfWorld.Y = scene.SizeY;
@@ -640,12 +641,12 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     double magSquared = (e0 - pos).LengthSquared;
                     edgeOfWorld = e0;
                     /* we use squared length here, it makes no difference in checking for the minimum */
-                    if(magSquared > (e1 - pos).LengthSquared)
+                    if (magSquared > (e1 - pos).LengthSquared)
                     {
                         magSquared = (e1 - pos).LengthSquared;
                         edgeOfWorld = e1;
                     }
-                    if(magSquared > (e2 - pos).LengthSquared)
+                    if (magSquared > (e2 - pos).LengthSquared)
                     {
                         magSquared = (e2 - pos).LengthSquared;
                         edgeOfWorld = e2;
@@ -656,7 +657,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     }
                 }
 
-                foreach(SceneInterface.NeighborEntry neighbor in scene.Neighbors.Values)
+                foreach (SceneInterface.NeighborEntry neighbor in scene.Neighbors.Values)
                 {
                     Vector3 swCorner = neighbor.RemoteRegionData.Location;
                     Vector3 neCorner = swCorner + neighbor.RemoteRegionData.Size;
@@ -665,7 +666,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     swCorner.Y -= double.Epsilon;
                     neCorner.X += double.Epsilon;
                     neCorner.Y += double.Epsilon;
-                    if(swCorner.X <= edgeOfWorld.X &&
+                    if (swCorner.X <= edgeOfWorld.X &&
                         neCorner.X >= edgeOfWorld.X &&
                         swCorner.Y <= edgeOfWorld.Y &&
                         neCorner.Y >= edgeOfWorld.Y)
@@ -680,7 +681,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGetSunDirection")]
         public Vector3 GetSunDirection(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return instance.Part.ObjectGroup.Scene.Environment.SunDirection;
             }
@@ -695,7 +696,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGround")]
         public double Ground(ScriptInstance instance, Vector3 offset)
         {
-            lock(instance)
+            lock (instance)
             {
                 Vector3 regionPos = instance.Part.GlobalPosition + offset;
                 return instance.Part.ObjectGroup.Scene.Terrain[regionPos];
@@ -705,7 +706,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGroundContour")]
         public Vector3 GroundContour(ScriptInstance instance, Vector3 offset)
         {
-            lock(instance)
+            lock (instance)
             {
                 Vector3 regionPos = instance.Part.GlobalPosition + offset;
                 return instance.Part.ObjectGroup.Scene.Terrain.SurfaceContour(regionPos.X, regionPos.Y);
@@ -725,7 +726,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.LSL, "llGroundSlope")]
         public Vector3 GroundSlope(ScriptInstance instance, Vector3 offset)
         {
-            lock(instance)
+            lock (instance)
             {
                 Vector3 regionPos = instance.Part.GlobalPosition + offset;
                 return instance.Part.ObjectGroup.Scene.Terrain.SurfaceSlope(regionPos.X, regionPos.Y);
@@ -858,7 +859,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [CheckFunctionPermission]
         public void RegionNotice(ScriptInstance instance, string msg)
         {
-            lock(instance)
+            lock (instance)
             {
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
@@ -878,7 +879,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 ObjectGroup grp = instance.Part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 IAgent agent;
-                if(scene.RootAgents.TryGetValue(agentid.AsUUID, out agent))
+                if (scene.RootAgents.TryGetValue(agentid.AsUUID, out agent))
                 {
                     agent.SendRegionNotice(grp.Owner, msg, scene.ID);
                 }
@@ -914,9 +915,180 @@ namespace SilverSim.Scripting.Lsl.Api.Region
         [APILevel(APIFlags.OSSL, "osWindActiveModelPluginName")]
         public string GetWindActiveModelPluginName(ScriptInstance instance)
         {
-            lock(instance)
+            lock (instance)
             {
                 return instance.Part.ObjectGroup.Scene.Environment.Wind.Name;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asAddRezzingScriptToWhiteList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void AddRezzingScriptToWhiteList(ScriptInstance instance, LSLKey scriptassetid)
+        {
+            lock (instance)
+            {
+                if (scriptassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.WhiteListedRezzingScriptAssetIds.AddIfNotExists(scriptassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asRemoveRezzingScriptFromWhiteList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void RemoveRezzingScriptFromWhiteList(ScriptInstance instance, LSLKey scriptassetid)
+        {
+            lock (instance)
+            {
+                if (scriptassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.WhiteListedRezzingScriptAssetIds.AddIfNotExists(scriptassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asReplaceRezzingScriptWhiteList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void ReplaceRezzingScriptWhiteList(ScriptInstance instance, AnArray scriptassetids)
+        {
+            lock(instance)
+            {
+                List<UUID> uuids = new List<UUID>();
+                RwLockedList<UUID> whitelist = instance.Part.ObjectGroup.Scene.WhiteListedRezzingScriptAssetIds;
+                foreach (IValue k in scriptassetids)
+                {
+                    if (!uuids.Contains(k.AsUUID) && k.AsUUID != UUID.Zero)
+                    {
+                        uuids.Add(k.AsUUID);
+                    }
+                }
+
+                foreach(UUID e in new List<UUID>(whitelist))
+                {
+                    if(!uuids.Contains(e))
+                    {
+                        whitelist.Remove(e);
+                    }
+                }
+
+                foreach(UUID e in uuids)
+                {
+                    whitelist.AddIfNotExists(e);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asAddRezzableObjectToWhiteList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void AddRezzableObjectToWhiteList(ScriptInstance instance, LSLKey objectassetid)
+        {
+            lock (instance)
+            {
+                if (objectassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.WhiteListedRezzingScriptAssetIds.AddIfNotExists(objectassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asRemoveRezzableObjectFromWhiteList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void RemoveRezzableObjectFromWhiteList(ScriptInstance instance, LSLKey objectassetid)
+        {
+            lock (instance)
+            {
+                if(objectassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.WhiteListedRezzingScriptAssetIds.Remove(objectassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asReplaceRezzableObjectWhiteList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void ReplaceRezzableObjectWhiteList(ScriptInstance instance, AnArray objectassetids)
+        {
+            lock (instance)
+            {
+                List<UUID> uuids = new List<UUID>();
+                RwLockedList<UUID> whitelist = instance.Part.ObjectGroup.Scene.WhiteListedRezzableAssetIds;
+                foreach (IValue k in objectassetids)
+                {
+                    if (!uuids.Contains(k.AsUUID) && k.AsUUID != UUID.Zero)
+                    {
+                        uuids.Add(k.AsUUID);
+                    }
+                }
+
+                foreach (UUID e in new List<UUID>(whitelist))
+                {
+                    if (!uuids.Contains(e))
+                    {
+                        whitelist.Remove(e);
+                    }
+                }
+
+                foreach (UUID e in uuids)
+                {
+                    whitelist.AddIfNotExists(e);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asAddRezzableObjectToBlackList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void AddRezzableObjectToBlackList(ScriptInstance instance, LSLKey objectassetid)
+        {
+            lock (instance)
+            {
+                if (objectassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.BlackListedRezzableAssetIds.AddIfNotExists(objectassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asRemoveRezzableObjectFromBlackList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void RemoveRezzableObjectFromBlackList(ScriptInstance instance, LSLKey objectassetid)
+        {
+            lock (instance)
+            {
+                if (objectassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.BlackListedRezzableAssetIds.Remove(objectassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asReplaceRezzableObjectBlackList")]
+        [CheckFunctionPermission("RezzingControl")]
+        public void ReplaceRezzableObjectBlackList(ScriptInstance instance, AnArray objectassetids)
+        {
+            lock (instance)
+            {
+                List<UUID> uuids = new List<UUID>();
+                RwLockedList<UUID> blacklist = instance.Part.ObjectGroup.Scene.BlackListedRezzableAssetIds;
+                foreach (IValue k in objectassetids)
+                {
+                    if (!uuids.Contains(k.AsUUID) && k.AsUUID != UUID.Zero)
+                    {
+                        uuids.Add(k.AsUUID);
+                    }
+                }
+
+                foreach (UUID e in new List<UUID>(blacklist))
+                {
+                    if (!uuids.Contains(e))
+                    {
+                        blacklist.Remove(e);
+                    }
+                }
+
+                foreach (UUID e in uuids)
+                {
+                    blacklist.AddIfNotExists(e);
+                }
             }
         }
     }
