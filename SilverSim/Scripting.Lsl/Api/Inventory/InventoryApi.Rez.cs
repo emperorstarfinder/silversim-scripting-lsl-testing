@@ -323,7 +323,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 sog.GlobalPosition = pos;
                 sog.GlobalPosition += (sog.CoalescedRestoreOffset - coalesced) * rotOff;
                 sog.Owner = rezzingowner;
-                if(!scene.CanRez(rezzingowner, sog.GlobalPosition, sog.OriginalAssetID, rezzingscriptassetid))
+                if(!scene.CanRez(rezzingpart.ID, rezzingowner, sog.GlobalPosition, sog.OriginalAssetID, rezzingscriptassetid))
                 {
                     return false;
                 }
