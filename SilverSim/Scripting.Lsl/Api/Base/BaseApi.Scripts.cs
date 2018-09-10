@@ -351,7 +351,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 {
                     return REMOTE_LOAD_SCRIPT_ERROR;
                 }
-                if(oldInstance != null)
+
+                newInstance.IsRunningAllowed = thisScene.CanRunScript(instance.Item.Owner, thisGroup.GlobalPosition, instance.Item.AssetID);
+                if (oldInstance != null)
                 {
                     newInstance.IsRunning = running != 0;
                 }
