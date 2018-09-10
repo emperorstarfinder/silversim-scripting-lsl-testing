@@ -46,16 +46,17 @@ namespace SilverSim.Scripting.Lsl.Api.RezDenialMonitor
 
         private readonly RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID /* itemid */, UUID /* object id */>> m_RegisteredScripts = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, UUID>>(() => new RwLockedDictionary<UUID, UUID>());
 
-        [APIExtension("RezDenialMonitor")]
+        private const string Extension_RezDenialMonitor = "RezDenialMonitor";
+        [APIExtension(Extension_RezDenialMonitor)]
         public const int REZ_DENIAL_REASON_BLACKLISTED = 1;
-        [APIExtension("RezDenialMonitor")]
+        [APIExtension(Extension_RezDenialMonitor)]
         public const int REZ_DENIAL_REASON_PARCEL_NOT_ALLOWED = 2;
-        [APIExtension("RezDenialMonitor")]
+        [APIExtension(Extension_RezDenialMonitor)]
         public const int REZ_DENIAL_REASON_PARCEL_NOT_FOUND = 3;
 
         public ShutdownOrder ShutdownOrder => ShutdownOrder.Any;
 
-        [APIExtension("RezDenialMonitor", "rez_denied")]
+        [APIExtension(Extension_RezDenialMonitor, "rez_denied")]
         [StateEventDelegate]
         public delegate void RezDeniedDelegate(LSLKey rezzerID, LSLKey ownerID, LSLKey rezzingScriptAssetID, LSLKey rezzedObjectAssetID, int rezDenialReason, AnArray extraParams);
 
@@ -169,6 +170,37 @@ namespace SilverSim.Scripting.Lsl.Api.RezDenialMonitor
                 if (!m_WorkerThread.Join(10000))
                 {
                     m_WorkerThread.Abort();
+                }
+            }
+        }
+
+        [APIExtension("Extension_RezDenialMonitor", "asRegisterForRezDenialEvents")]
+        [CheckFunctionPermission("RezDenialMonitor")]
+        public void RegisterForDenialEvents(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                ObjectPart part = instance?.Part;
+                SceneInterface scene = part?.ObjectGroup?.Scene;
+                if (scene != null)
+                {
+                    m_RegisteredScripts[scene.ID][instance.Part.ID] = part.ID;
+                }
+            }
+        }
+
+        [APIExtension("Extension_RezDenialMonitor", "asUnregisterForRezDenialEvents")]
+        [CheckFunctionPermission("RezDenialMonitor")]
+        public void UnregisterForDenialEvents(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                ObjectPart part = instance?.Part;
+                SceneInterface scene = part?.ObjectGroup?.Scene;
+                RwLockedDictionary<UUID, UUID> dict;
+                if(scene != null && m_RegisteredScripts.TryGetValue(scene.ID, out dict))
+                {
+                    dict.Remove(instance.Item.ID);
                 }
             }
         }

@@ -24,6 +24,7 @@
 #pragma warning disable RCS1163
 
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Common;
@@ -226,9 +227,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 ObjectPartInventoryItem scriptitem;
                 ObjectPart thisPart = instance.Part;
                 ObjectGroup thisGroup = thisPart.ObjectGroup;
+                SceneInterface thisScene = thisGroup.Scene;
                 ObjectPart destpart;
                 AssetData asset;
-                if(!thisGroup.Scene.Primitives.TryGetValue(target, out destpart))
+                if(!thisScene.Primitives.TryGetValue(target, out destpart))
                 {
                     if (doShout)
                     {
@@ -248,7 +250,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
                 try
                 {
-                    asset = instance.Part.ObjectGroup.Scene.AssetService[scriptitem.AssetID];
+                    asset = thisScene.AssetService[scriptitem.AssetID];
                 }
                 catch
                 {

@@ -1091,5 +1091,62 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 }
             }
         }
+
+        [APILevel(APIFlags.ASSL, "asAddScriptAssetToRunWhiteList")]
+        [CheckFunctionPermission("ScriptRunWhiteList")]
+        public void AddScriptAssetToRunWhiteList(ScriptInstance instance, LSLKey scriptassetid)
+        {
+            lock (instance)
+            {
+                if (scriptassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.WhiteListedRunScriptAssetIds.AddIfNotExists(scriptassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asRemoveScriptAssetFromWhiteList")]
+        [CheckFunctionPermission("ScriptRunWhiteList")]
+        public void RemoveScriptAssetFromRunWhiteList(ScriptInstance instance, LSLKey scriptassetid)
+        {
+            lock (instance)
+            {
+                if (scriptassetid != UUID.Zero)
+                {
+                    instance.Part.ObjectGroup.Scene.WhiteListedRunScriptAssetIds.Remove(scriptassetid);
+                }
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asReplaceScriptAssetRunWhiteList")]
+        [CheckFunctionPermission("ScriptRunWhiteList")]
+        public void ReplaceScriptAssetRunWhiteList(ScriptInstance instance, AnArray scriptassetids)
+        {
+            lock (instance)
+            {
+                List<UUID> uuids = new List<UUID>();
+                RwLockedList<UUID> whitelist = instance.Part.ObjectGroup.Scene.WhiteListedRunScriptAssetIds;
+                foreach (IValue k in scriptassetids)
+                {
+                    if (!uuids.Contains(k.AsUUID) && k.AsUUID != UUID.Zero)
+                    {
+                        uuids.Add(k.AsUUID);
+                    }
+                }
+
+                foreach (UUID e in new List<UUID>(whitelist))
+                {
+                    if (!uuids.Contains(e))
+                    {
+                        whitelist.Remove(e);
+                    }
+                }
+
+                foreach (UUID e in uuids)
+                {
+                    whitelist.AddIfNotExists(e);
+                }
+            }
+        }
     }
 }
