@@ -112,6 +112,8 @@ namespace SilverSim.Scripting.Lsl
 
         public override bool HasTouchEvent => m_HasTouchEvent;
         public override bool HasMoneyEvent => m_HasMoneyEvent;
+        public override bool HasCollisionEvent => m_HasCollisionEvent || m_HasCollisionStartEvent || m_HasCollisionEndEvent;
+        public override bool HasLandCollisionEvent => m_HasLandCollisionEvent || m_HasLandCollisionStartEvent || m_HasLandCollisionEndEvent;
 
         public override double ExecutionTime
         {
