@@ -75,7 +75,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             }
             else if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out fval))
             {
-                m_MaxSpeedFactor[regionID] = Math.Max(fval, 0);
+                m_MaxSpeedFactor[regionID] = Math.Max(fval, 1);
             }
         }
 
