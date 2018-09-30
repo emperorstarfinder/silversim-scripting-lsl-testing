@@ -33,7 +33,9 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.ServiceInterfaces;
 using SilverSim.ServiceInterfaces.Grid;
 using SilverSim.ServiceInterfaces.Groups;
+using SilverSim.ServiceInterfaces.ServerParam;
 using SilverSim.ServiceInterfaces.UserAgents;
+using SilverSim.Threading;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
 using SilverSim.Types.Asset.Format;
@@ -51,6 +53,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
     [ScriptApiName("Agents")]
     [LSLImplementation]
     [Description("LSL/OSSL Agents API")]
+    [ServerParam("OSSL.MaxSpeedFactor", ParameterType = typeof(double), DefaultValue = 5)]
     public sealed partial class AgentsApi : IScriptApi, IPlugin
     {
         private List<IUserAgentServicePlugin> m_UserAgentServicePlugins = new List<IUserAgentServicePlugin>();
@@ -58,6 +61,32 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
         public void Startup(ConfigurationLoader loader)
         {
             m_UserAgentServicePlugins = loader.GetServicesByValue<IUserAgentServicePlugin>();
+        }
+
+        private readonly RwLockedDictionary<UUID, double> m_MaxSpeedFactor = new RwLockedDictionary<UUID, double>();
+
+        [ServerParam("OSSL.MaxSpeedFactor")]
+        public void MaxSpeedFactorUpdated(UUID regionID, string value)
+        {
+            double fval;
+            if (value.Length == 0)
+            {
+                m_MaxSpeedFactor.Remove(regionID);
+            }
+            else if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out fval))
+            {
+                m_MaxSpeedFactor[regionID] = Math.Max(fval, 0);
+            }
+        }
+
+        private double GetMaxSpeedFactor(UUID regionID)
+        {
+            double fval;
+            if(!m_MaxSpeedFactor.TryGetValue(regionID, out fval) && !m_MaxSpeedFactor.TryGetValue(UUID.Zero, out fval))
+            {
+                fval = 5;
+            }
+            return fval;
         }
 
         [APILevel(APIFlags.LSL)]
@@ -457,6 +486,25 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             return UUID.Zero;
         }
 
+        [APILevel(APIFlags.OSSL, "osSetOwnerSpeed")]
+        [CheckFunctionPermission]
+        public void SetSpeed(ScriptInstance instance, double speedfactor)
+        {
+            lock (instance)
+            {
+                IAgent agent;
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Item.Owner.ID, out agent))
+                {
+                    double maxspeedfactor = GetMaxSpeedFactor(instance.Part.ObjectGroup.Scene.ID);
+                    var agentContoller = agent.PhysicsActor as IAgentPhysicsObject;
+                    if (agentContoller != null)
+                    {
+                        agentContoller.SpeedFactor = speedfactor.Clamp(0, maxspeedfactor);
+                    }
+                }
+            }
+        }
+
         [APILevel(APIFlags.OSSL, "osSetSpeed")]
         [CheckFunctionPermission]
         public void SetSpeed(ScriptInstance instance, LSLKey id, double speedfactor)
@@ -466,10 +514,11 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                 IAgent agent;
                 if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id.AsUUID, out agent))
                 {
+                    double maxspeedfactor = GetMaxSpeedFactor(instance.Part.ObjectGroup.Scene.ID);
                     var agentContoller = agent.PhysicsActor as IAgentPhysicsObject;
                     if (agentContoller != null)
                     {
-                        agentContoller.SpeedFactor = speedfactor;
+                        agentContoller.SpeedFactor = speedfactor.Clamp(0, maxspeedfactor);
                     }
                 }
             }
