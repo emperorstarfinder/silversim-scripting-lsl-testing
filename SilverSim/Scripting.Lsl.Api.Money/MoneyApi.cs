@@ -72,6 +72,7 @@ namespace SilverSim.Scripting.Lsl.Api.Money
                     {
                         ObjectName = instance.Part.Name,
                         ObjectID = instance.Part.ID,
+                        DebitPermissionKey = instance.Item.PermsGranter.DebitPermissionKey
                     };
                     sourceservice.TransferMoney(sourceid, destinationid, transaction, amount, () => { });
                     success = true;

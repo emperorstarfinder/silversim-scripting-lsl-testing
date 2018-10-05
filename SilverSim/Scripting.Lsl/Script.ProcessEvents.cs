@@ -21,7 +21,9 @@
 
 #pragma warning disable RCS1029, IDE0018, IDE0019
 
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Api.ByteString;
@@ -1197,6 +1199,35 @@ namespace SilverSim.Scripting.Lsl
             if (script.Item.IsGroupOwned)
             {
                 e.Permissions &= ~ScriptPermissions.Debit;
+            }
+
+            ObjectPartInventoryItem.PermsGranterInfo oldInfo = script.Item.PermsGranter;
+            if(oldInfo.DebitPermissionKey != UUID.Zero)
+            {
+                /* TODO: hand off to economy handling for revocation */
+            }
+            UUID debitPermissionKey = UUID.Zero;
+            if ((e.Permissions & ScriptPermissions.Debit) != 0)
+            {
+                /* hand off to economy handling */
+                IAgent agent;
+                SceneInterface scene = script.Part.ObjectGroup.Scene;
+                if(scene.Agents.TryGetValue(e.PermissionsKey.ID, out agent))
+                {
+                    try
+                    {
+                        debitPermissionKey = agent.EconomyService.RequestScriptDebitPermission(e.PermissionsKey, scene.ID, script.Part.ID, script.Item.ID);
+                    }
+                    catch
+                    {
+                        e.Permissions &= ~ScriptPermissions.Debit;
+                    }
+                }
+                else
+                {
+                    /* agent not there */
+                    e.Permissions &= ~ScriptPermissions.Debit;
+                }
             }
 
             script.Item.PermsGranter = new ObjectPartInventoryItem.PermsGranterInfo
