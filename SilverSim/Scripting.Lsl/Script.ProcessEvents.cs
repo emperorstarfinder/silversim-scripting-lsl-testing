@@ -28,6 +28,7 @@ using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Api.ByteString;
 using SilverSim.Scripting.Lsl.Event;
+using SilverSim.ServiceInterfaces.Economy;
 using SilverSim.Types;
 using SilverSim.Types.Script;
 using System;
@@ -1216,7 +1217,16 @@ namespace SilverSim.Scripting.Lsl
                 {
                     try
                     {
-                        debitPermissionKey = agent.EconomyService.RequestScriptDebitPermission(e.PermissionsKey, scene.ID, script.Part.ID, script.Item.ID);
+                        debitPermissionKey = agent.EconomyService.RequestScriptDebitPermission(
+                            new DebitPermissionRequestData
+                            {
+                                SourceID = e.PermissionsKey,
+                                RegionID = scene.ID,
+                                ObjectID = script.Part.ID,
+                                ObjectName = script.Part.RootPart.Name,
+                                ObjectDescription = script.Part.RootPart.Description,
+                                ItemID = script.Item.ID
+                            });
                     }
                     catch
                     {
