@@ -1202,41 +1202,44 @@ namespace SilverSim.Scripting.Lsl
                 e.Permissions &= ~ScriptPermissions.Debit;
             }
 
-            ObjectPartInventoryItem.PermsGranterInfo oldInfo = script.Item.PermsGranter;
-            if(oldInfo.DebitPermissionKey != UUID.Zero)
+            lock (script) /* ensure that no script abort is happening here */
             {
-                /* TODO: hand off to economy handling for revocation */
-            }
-            UUID debitPermissionKey = UUID.Zero;
-            if ((e.Permissions & ScriptPermissions.Debit) != 0)
-            {
-                /* hand off to economy handling */
-                IAgent agent;
-                SceneInterface scene = script.Part.ObjectGroup.Scene;
-                if(scene.Agents.TryGetValue(e.PermissionsKey.ID, out agent))
+                ObjectPartInventoryItem.PermsGranterInfo oldInfo = script.Item.PermsGranter;
+                if (oldInfo.DebitPermissionKey != UUID.Zero)
                 {
-                    try
+                    /* TODO: hand off to economy handling for revocation */
+                }
+                UUID debitPermissionKey = UUID.Zero;
+                if ((e.Permissions & ScriptPermissions.Debit) != 0)
+                {
+                    /* hand off to economy handling */
+                    IAgent agent;
+                    SceneInterface scene = script.Part.ObjectGroup.Scene;
+                    if (scene.Agents.TryGetValue(e.PermissionsKey.ID, out agent))
                     {
-                        debitPermissionKey = agent.EconomyService.RequestScriptDebitPermission(
-                            new DebitPermissionRequestData
-                            {
-                                SourceID = e.PermissionsKey,
-                                RegionID = scene.ID,
-                                ObjectID = script.Part.ID,
-                                ObjectName = script.Part.RootPart.Name,
-                                ObjectDescription = script.Part.RootPart.Description,
-                                ItemID = script.Item.ID
-                            });
+                        try
+                        {
+                            debitPermissionKey = agent.EconomyService.RequestScriptDebitPermission(
+                                new DebitPermissionRequestData
+                                {
+                                    SourceID = e.PermissionsKey,
+                                    RegionID = scene.ID,
+                                    ObjectID = script.Part.ID,
+                                    ObjectName = script.Part.RootPart.Name,
+                                    ObjectDescription = script.Part.RootPart.Description,
+                                    ItemID = script.Item.ID
+                                });
+                        }
+                        catch
+                        {
+                            e.Permissions &= ~ScriptPermissions.Debit;
+                        }
                     }
-                    catch
+                    else
                     {
+                        /* agent not there */
                         e.Permissions &= ~ScriptPermissions.Debit;
                     }
-                }
-                else
-                {
-                    /* agent not there */
-                    e.Permissions &= ~ScriptPermissions.Debit;
                 }
             }
 

@@ -1155,7 +1155,7 @@ namespace SilverSim.Scripting.Lsl
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Dup);
                     compileState.ILGen.Emit(OpCodes.Ldloc, lb);
-                    compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("AddLongInt", new Type[] { typeof(long) }));
+                    compileState.ILGen.Emit(OpCodes.Call, typeof(AnArray).GetMethod("Add", new Type[] { typeof(long) }));
                     compileState.ILGen.EndScope();
                 }
                 else if (fromType == typeof(LSLKey))
