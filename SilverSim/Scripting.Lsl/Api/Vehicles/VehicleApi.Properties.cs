@@ -164,6 +164,12 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
                 set { With((g, v) => g[VehicleVectorParamId.AngularWindEfficiency] = v, value); }
             }
 
+            public Vector3 CurrentEfficiency
+            {
+                get { return With((g) => g[VehicleVectorParamId.AngularCurrentEfficiency]); }
+                set { With((g, v) => g[VehicleVectorParamId.AngularCurrentEfficiency] = v, value); }
+            }
+
             public Vector3 DeflectionEfficiency
             {
                 get { return With((g) => g[VehicleVectorParamId.AngularDeflectionEfficiency]); }
@@ -248,6 +254,12 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
             {
                 get { return With((g) => g[VehicleVectorParamId.LinearWindEfficiency]); }
                 set { With((g, v) => g[VehicleVectorParamId.LinearWindEfficiency] = v, value); }
+            }
+
+            public Vector3 CurrentEfficiency
+            {
+                get { return With((g) => g[VehicleVectorParamId.LinearCurrentEfficiency]); }
+                set { With((g, v) => g[VehicleVectorParamId.LinearCurrentEfficiency] = v, value); }
             }
 
             public Vector3 DeflectionEfficiency

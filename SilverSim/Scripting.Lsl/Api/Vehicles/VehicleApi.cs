@@ -168,6 +168,19 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_WIND_EFFICIENCY = 12001;
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_WIND_EFFICIENCY = 12002;
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_LINEAR_CURRENT_EFFICIENCY = 12003;
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
+        public const int VEHICLE_ANGULAR_CURRENT_EFFICIENCY = 12004;
+
+        [APILevel(APIFlags.ASSL)]
+        [APIExtension(APIExtension.ExtendedVehicle)]
         public const int VEHICLE_LINEAR_MOTOR_ACCEL_POS_TIMESCALE = 13000;
         [APILevel(APIFlags.ASSL)]
         [APIExtension(APIExtension.ExtendedVehicle)]
@@ -311,6 +324,22 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
                     case VEHICLE_HOVER_TIMESCALE:
                         thisGroup[VehicleFloatParamId.HoverTimescale] = value;
+                        break;
+
+                    case VEHICLE_LINEAR_WIND_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.LinearWindEfficiency] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_WIND_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.AngularWindEfficiency] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_LINEAR_CURRENT_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.LinearCurrentEfficiency] = new Vector3(value);
+                        break;
+
+                    case VEHICLE_ANGULAR_CURRENT_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.AngularCurrentEfficiency] = new Vector3(value);
                         break;
 
                     case VEHICLE_LINEAR_DEFLECTION_EFFICIENCY:
@@ -546,6 +575,22 @@ namespace SilverSim.Scripting.Lsl.Api.Vehicles
 
                     case VEHICLE_ANGULAR_MOTOR_TIMESCALE:
                         thisGroup[VehicleVectorParamId.AngularMotorTimescale] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_WIND_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.LinearWindEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_WIND_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.AngularWindEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_LINEAR_CURRENT_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.LinearCurrentEfficiency] = vec;
+                        break;
+
+                    case VEHICLE_ANGULAR_CURRENT_EFFICIENCY:
+                        thisGroup[VehicleVectorParamId.AngularCurrentEfficiency] = vec;
                         break;
 
                     case VEHICLE_LINEAR_DEFLECTION_EFFICIENCY:
