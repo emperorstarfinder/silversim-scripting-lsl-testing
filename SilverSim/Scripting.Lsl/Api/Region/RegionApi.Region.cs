@@ -536,7 +536,7 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 else
                 {
                     RegionInfo ri;
-                    if (scene.GridService.TryGetValue(scene.ScopeID, region, out ri))
+                    if (scene.GridService.TryGetValue(region, out ri))
                     {
                         UUID queryID = UUID.Random;
                         var e = new DataserverEvent
