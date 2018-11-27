@@ -41,7 +41,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 lock (instance)
                 {
                     ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                    UUID experienceId = instance.Item.ExperienceID;
+                    UEI experienceId = instance.Item.ExperienceID;
                     UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                     if (queryid != UUID.Zero)
                     {
@@ -110,9 +110,9 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     lock (m_ScriptInstance)
                     {
                         SceneInterface scene = m_ScriptInstance.Part.ObjectGroup.Scene;
-                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
+                        UEI experienceID = m_ScriptInstance.Item.ExperienceID;
                         ExperienceServiceInterface experinceService = scene.ExperienceService;
-                        if (experienceID == UUID.Zero || experinceService == null)
+                        if (experienceID == UEI.Unknown || experinceService == null)
                         {
                             return string.Empty;
                         }
@@ -130,9 +130,9 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     lock (m_ScriptInstance)
                     {
                         SceneInterface scene = m_ScriptInstance.Part.ObjectGroup.Scene;
-                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
+                        UEI experienceID = m_ScriptInstance.Item.ExperienceID;
                         ExperienceServiceInterface experinceService = scene.ExperienceService;
-                        if (experienceID == UUID.Zero || experinceService == null)
+                        if (experienceID == UEI.Unknown || experinceService == null)
                         {
                             return;
                         }
@@ -157,9 +157,9 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
 
             public KeyValueStoreAccessor KeyValueStore => new KeyValueStoreAccessor(m_ScriptInstance);
 
-            public LSLKey ID => m_ScriptInstance.Item.ExperienceID;
+            public LSLKey ID => m_ScriptInstance.Item.ExperienceID.ID;
 
-            public int Enabled => (m_ScriptInstance.Item.ExperienceID != UUID.Zero).ToLSLBoolean();
+            public int Enabled => (m_ScriptInstance.Item.ExperienceID.ID != UUID.Zero).ToLSLBoolean();
 
             public string Name
             {
@@ -168,15 +168,15 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     lock (m_ScriptInstance)
                     {
                         ExperienceServiceInterface experienceService = m_ScriptInstance.Part.ObjectGroup.Scene.ExperienceService;
-                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
-                        if (experienceService == null || experienceID == UUID.Zero)
+                        UEI experienceID = m_ScriptInstance.Item.ExperienceID;
+                        if (experienceService == null || experienceID == UEI.Unknown)
                         {
                             return string.Empty;
                         }
                         ExperienceInfo info;
                         if (experienceService.TryGetValue(experienceID, out info))
                         {
-                            return info.Name;
+                            return info.ID.ExperienceName;
                         }
                         return string.Empty;
                     }
@@ -190,8 +190,8 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     lock (m_ScriptInstance)
                     {
                         ExperienceServiceInterface experienceService = m_ScriptInstance.Part.ObjectGroup.Scene.ExperienceService;
-                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
-                        if (experienceService == null || experienceID == UUID.Zero)
+                        UEI experienceID = m_ScriptInstance.Item.ExperienceID;
+                        if (experienceService == null || experienceID == UEI.Unknown)
                         {
                             return string.Empty;
                         }
@@ -212,8 +212,8 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     lock (m_ScriptInstance)
                     {
                         ExperienceServiceInterface experienceService = m_ScriptInstance.Part.ObjectGroup.Scene.ExperienceService;
-                        UUID experienceID = m_ScriptInstance.Item.ExperienceID;
-                        if (experienceService == null || experienceID == UUID.Zero)
+                        UEI experienceID = m_ScriptInstance.Item.ExperienceID;
+                        if (experienceService == null || experienceID == UEI.Unknown)
                         {
                             return string.Empty;
                         }

@@ -117,8 +117,8 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 {
                     return 0;
                 }
-                UUID experienceid = instance.Item.ExperienceID;
-                if(experienceid == UUID.Zero)
+                UEI experienceid = instance.Item.ExperienceID;
+                if(experienceid == UEI.Unknown)
                 {
                     return 0;
                 }
@@ -140,9 +140,9 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             return e.QueryID;
         }
 
-        private static int CheckExperienceAllowed(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
+        private static int CheckExperienceAllowed(ScriptInstance instance, ExperienceServiceInterface experienceService, UEI experienceid)
         {
-            if (experienceid == UUID.Zero)
+            if (experienceid == UEI.Unknown)
             {
                 return XP_ERROR_NO_EXPERIENCE;
             }
@@ -221,7 +221,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             return XP_ERROR_NONE;
         }
 
-        private static UUID CheckExperienceStatus(ScriptInstance instance, ExperienceServiceInterface experienceService, UUID experienceid)
+        private static UUID CheckExperienceStatus(ScriptInstance instance, ExperienceServiceInterface experienceService, UEI experienceid)
         {
             int result = CheckExperienceAllowed(instance, experienceService, experienceid);
             if(result != XP_ERROR_NONE)
@@ -243,14 +243,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 {
                     return new AnArray();
                 }
-                UUID experienceid = experience_id.AsUUID;
+                UEI experienceid = new UEI(experience_id.AsUUID);
 
-                if (experienceid == UUID.Zero)
+                if (experienceid == UEI.Unknown)
                 {
                     experienceid = instance.Item.ExperienceID;
                 }
 
-                if(experienceid == UUID.Zero)
+                if(experienceid.ID == UUID.Zero)
                 {
                     return new AnArray();
                 }
@@ -259,9 +259,9 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 var res = new AnArray();
                 if(experienceService.TryGetValue(experienceid, out experienceInfo))
                 {
-                    res.Add(experienceInfo.Name);
+                    res.Add(experienceInfo.ID.ExperienceName);
                     res.Add(experienceInfo.Owner.ID);
-                    res.Add(experienceInfo.ID);
+                    res.Add(experienceInfo.ID.ID);
                     res.Add(0); /* state unclear */
                     res.Add(string.Empty); /* state message unclear */
                     res.Add(experienceInfo.Group.ID);
@@ -325,7 +325,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return;
                 }
 
-                UUID experienceid = instance.Item.ExperienceID;
+                UEI experienceid = instance.Item.ExperienceID;
                 int reason = CheckExperienceAllowed(instance, experienceService, experienceid);
                 if (reason != XP_ERROR_NONE)
                 {
@@ -347,7 +347,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                         {
                             PermissionsKey = a.Owner
                         });
-                        scene.SendExperienceLog(a, instance.Part.ObjectGroup, SceneInterface.ExperienceLogType.AutoAccept, experienceid);
+                        scene.SendExperienceLog(a, instance.Part.ObjectGroup, SceneInterface.ExperienceLogType.AutoAccept, experienceid.ID);
                     }
                     else
                     {
@@ -360,14 +360,14 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                 }
                 else
                 {
-                    perms = a.RequestPermissions(instance.Part, instance.Item.ID, perms, experienceid);
+                    perms = a.RequestPermissions(instance.Part, instance.Item.ID, perms, experienceid.ID);
                     if (perms != ScriptPermissions.None)
                     {
                         instance.PostEvent(new ExperiencePermissionsEvent
                         {
                             PermissionsKey = a.Owner
                         });
-                        scene.SendExperienceLog(a, instance.Part.ObjectGroup, SceneInterface.ExperienceLogType.AutoAccept, experienceid);
+                        scene.SendExperienceLog(a, instance.Part.ObjectGroup, SceneInterface.ExperienceLogType.AutoAccept, experienceid.ID);
                     }
                 }
             }
@@ -413,9 +413,9 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
                     return SIT_INVALID_AGENT;
                 }
                 ExperienceServiceInterface experienceService = objgrp.Scene.ExperienceService;
-                UUID experienceID = instance.Item.ExperienceID;
+                UEI experienceID = instance.Item.ExperienceID;
                 string reason;
-                if(experienceService == null || experienceID == UUID.Zero)
+                if(experienceService == null || experienceID == UEI.Unknown)
                 {
                     return SIT_NOT_EXPERIENCE;
                 }

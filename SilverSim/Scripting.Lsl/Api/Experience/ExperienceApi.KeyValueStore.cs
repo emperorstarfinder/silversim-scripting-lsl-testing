@@ -35,7 +35,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock(instance)
             {
                 ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                UUID experienceId = instance.Item.ExperienceID;
+                UEI experienceId = instance.Item.ExperienceID;
                 UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                 if(queryid != UUID.Zero)
                 {
@@ -73,7 +73,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock(instance)
             {
                 ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                UUID experienceId = instance.Item.ExperienceID;
+                UEI experienceId = instance.Item.ExperienceID;
                 UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                 if (queryid != UUID.Zero)
                 {
@@ -119,7 +119,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock (instance)
             {
                 ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                UUID experienceId = instance.Item.ExperienceID;
+                UEI experienceId = instance.Item.ExperienceID;
                 UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                 if (queryid != UUID.Zero)
                 {
@@ -164,7 +164,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock (instance)
             {
                 ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                UUID experienceId = instance.Item.ExperienceID;
+                UEI experienceId = instance.Item.ExperienceID;
                 UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                 if (queryid != UUID.Zero)
                 {
@@ -205,7 +205,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock(instance)
             {
                 ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                UUID experienceId = instance.Item.ExperienceID;
+                UEI experienceId = instance.Item.ExperienceID;
                 UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                 if (queryid != UUID.Zero)
                 {
@@ -260,7 +260,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock(instance)
             {
                 ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                UUID experienceId = instance.Item.ExperienceID;
+                UEI experienceId = instance.Item.ExperienceID;
                 UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                 if (queryid != UUID.Zero)
                 {
@@ -309,7 +309,7 @@ namespace SilverSim.Scripting.Lsl.Api.Experience
             lock (instance)
             {
                 ExperienceServiceInterface experienceService = instance.Part.ObjectGroup.Scene.ExperienceService;
-                UUID experienceId = instance.Item.ExperienceID;
+                UEI experienceId = instance.Item.ExperienceID;
                 UUID queryid = CheckExperienceStatus(instance, experienceService, experienceId);
                 if (queryid != UUID.Zero)
                 {
