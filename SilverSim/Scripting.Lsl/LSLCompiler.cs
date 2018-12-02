@@ -50,6 +50,8 @@ namespace SilverSim.Scripting.Lsl
     [PluginName("ScriptEngine")]
     public partial class LSLCompiler : IScriptCompiler, IPlugin, IPluginSubFactory, IServerParamListener
     {
+        public static readonly string ScriptEngineName = "Porthos";
+
         internal struct ApiMethodInfo
         {
             public string FunctionName;

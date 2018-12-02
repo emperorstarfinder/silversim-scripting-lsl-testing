@@ -72,7 +72,13 @@ namespace SilverSim.Scripting.Lsl
             {
                 ConstructorInfo scriptconstructor = m_ScriptType.
                     GetConstructor(new Type[3] { typeof(ObjectPart), typeof(ObjectPartInventoryItem), typeof(bool) });
-                var attachedScriptState = item.ScriptState as ScriptStates.ScriptState;
+                IScriptState scriptState;
+                ScriptStates.ScriptState attachedScriptState = null;
+
+                if (item.TryGetScriptState(ScriptEngineName, out scriptState) || item.TryGetScriptState("XEngine", out scriptState))
+                {
+                    attachedScriptState = scriptState as ScriptStates.ScriptState;
+                }
 #if DEBUG
                 m_Log.DebugFormat("Instantiate: HasState={0} HasCorrectState={1}", item.ScriptState != null, attachedScriptState != null);
 #endif

@@ -156,6 +156,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APILevel(APIFlags.OSSL, "osGetScriptEngineName")]
-        public string GetScriptEngineName(ScriptInstance instance) => "Porthos";
+        public string GetScriptEngineName() => LSLCompiler.ScriptEngineName;
     }
 }
