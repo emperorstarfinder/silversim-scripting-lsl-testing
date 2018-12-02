@@ -252,6 +252,13 @@ namespace SilverSim.Scripting.Lsl.ScriptStates.Formats
                     writer.WriteValue(val.AsInt);
                     writer.WriteEndElement();
                 }
+                else if (valtype == typeof(LongInteger))
+                {
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteAttributeString("type", "long");
+                    writer.WriteValue(val.AsInt);
+                    writer.WriteEndElement();
+                }
                 else if (valtype == typeof(Real))
                 {
                     writer.WriteStartElement("ListItem");
