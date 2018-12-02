@@ -67,7 +67,7 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
         public ObjectPartInventoryItem.PermsGranterInfo PermsGranter { get; set; } = new ObjectPartInventoryItem.PermsGranterInfo();
         public bool UseMessageObjectEvent { get; set; }
 
-        public void ToXml(XmlTextWriter writer, bool writePrimaryFormatOnly = false)
+        public void ToXml(XmlTextWriter writer, bool primaryFormatOnly = false)
         {
             Formats.XEngine.Serialize(writer, this);
         }

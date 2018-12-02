@@ -215,9 +215,9 @@ namespace SilverSim.Scripting.Lsl
             m_TransactionedState = state;
         }
 
-        public void ToXml(XmlTextWriter writer, bool writePrimaryFormatOnly = false)
+        public void ToXml(XmlTextWriter writer, bool primaryFormatOnly = false)
         {
-            m_TransactionedState.ToXml(writer, writePrimaryFormatOnly);
+            m_TransactionedState.ToXml(writer, primaryFormatOnly);
         }
 
         public byte[] ToDbSerializedState() => m_TransactionedState.ToDbSerializedState();
