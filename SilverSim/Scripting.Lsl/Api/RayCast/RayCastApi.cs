@@ -23,10 +23,12 @@
 
 using log4net;
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Types;
 using System;
 using System.ComponentModel;
@@ -77,6 +79,76 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
         [APILevel(APIFlags.LSL)]
         public const int RC_GET_LINK_NUM = 4;
 
+        [APILevel(APIFlags.ASSL, "asCastRayCollision")]
+        [Description("Cast a ray from start to end and report collision data for intersection with object and trigger collision events")]
+        public AnArray CastRayCollisions(
+            ScriptInstance instance,
+            [Description("starting location")]
+            Vector3 start,
+            [Description("ending location")]
+            Vector3 end,
+            AnArray options) => CastRay(instance, start, end, options, HandleRayCollisionResult);
+
+        private void HandleRayCollisionResult(ScriptInstance instance, RayResult result)
+        {
+            IAgent agent;
+            ObjectPart thisPart = instance.Part;
+            ObjectGroup thisGroup = thisPart?.ObjectGroup;
+            ObjectPart part;
+            SceneInterface scene = thisGroup?.Scene;
+            if (scene == null)
+            {
+            }
+            else if (scene.Primitives.TryGetValue(result.ObjectId, out part))
+            {
+                DetectInfo di = new DetectInfo
+                {
+                    Key = thisGroup.ID,
+                    Name = thisGroup.Name,
+                    Group = thisGroup.Group,
+                    ObjType = thisGroup.DetectedType,
+                    Owner = thisGroup.Owner,
+                    Position = thisGroup.GlobalPosition,
+                    Rotation = thisGroup.GlobalRotation,
+                    Velocity = thisGroup.Velocity,
+                    LinkNumber = part.LinkNumber
+                };
+                var ev = new CollisionEvent { Type = CollisionEvent.CollisionType.Start };
+                ev.Detected.Add(di);
+                part.PostEvent(ev);
+                ev = new CollisionEvent { Type = CollisionEvent.CollisionType.Continuous };
+                ev.Detected.Add(di);
+                part.PostEvent(ev);
+                ev = new CollisionEvent { Type = CollisionEvent.CollisionType.End };
+                ev.Detected.Add(di);
+                part.PostEvent(ev);
+            }
+            else if (scene.RootAgents.TryGetValue(result.ObjectId, out agent))
+            {
+                DetectInfo di = new DetectInfo
+                {
+                    Key = thisGroup.ID,
+                    Name = thisGroup.Name,
+                    Group = thisGroup.Group,
+                    ObjType = thisGroup.DetectedType,
+                    Owner = thisGroup.Owner,
+                    Position = thisGroup.GlobalPosition,
+                    Rotation = thisGroup.GlobalRotation,
+                    Velocity = thisGroup.Velocity,
+                    LinkNumber = thisPart.LinkNumber
+                };
+                var ev = new CollisionEvent { Type = CollisionEvent.CollisionType.Start };
+                ev.Detected.Add(di);
+                agent.PostEvent(ev);
+                ev = new CollisionEvent { Type = CollisionEvent.CollisionType.Continuous };
+                ev.Detected.Add(di);
+                agent.PostEvent(ev);
+                ev = new CollisionEvent { Type = CollisionEvent.CollisionType.End };
+                ev.Detected.Add(di);
+                agent.PostEvent(ev);
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llCastRay")]
         [Description("Cast a ray from start to end and report collision data for intersections with objects")]
         public AnArray CastRay(
@@ -85,7 +157,16 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             Vector3 start,
             [Description("ending location")]
             Vector3 end,
-            AnArray options)
+            AnArray options) => CastRay(instance, start, end, options, null);
+
+        private AnArray CastRay(
+            ScriptInstance instance,
+            [Description("starting location")]
+            Vector3 start,
+            [Description("ending location")]
+            Vector3 end,
+            AnArray options,
+            Action<ScriptInstance, RayResult> action)
         {
             var resArray = new AnArray();
             RayTestHitFlags hitFlags = RayTestHitFlags.Avatar | RayTestHitFlags.NonPhysical | RayTestHitFlags.Physical;
@@ -198,6 +279,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     }
                     else
                     {
+                        action?.Invoke(instance, result);
                         resArray.Add((dataFlags & RC_GET_ROOT_KEY) != 0 ? result.ObjectId : result.PartId);
                     }
                     if((dataFlags & RC_GET_LINK_NUM) != 0)
