@@ -149,7 +149,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             public string ToString(IFormatProvider provider) => m_DateTime.ToString(provider);
             public string ToString(string format) => m_DateTime.ToString(format);
             public override string ToString() => m_DateTime.ToString();
+
+            public static explicit operator string(DateTimeContainer datetime) => datetime.ToString(CultureInfo.InvariantCulture);
+            public static explicit operator DateTimeContainer(string input) => new DateTimeContainer(DateTime.Parse(input, CultureInfo.InvariantCulture));
         }
+
+        [APIExtension(APIExtension.DateTime, "Now")]
+        public DateTimeContainer DateTimeNow => UnixTimeToDateTime((long)Date.GetUnixTime());
 
         [APIExtension(APIExtension.DateTime, "dtFromUnixTime")]
         [IsPure]
@@ -279,6 +285,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
             public static bool operator >(TimeSpanContainer t1, TimeSpanContainer t2) => t1.m_TimeSpan > t2.m_TimeSpan;
             public static bool operator <=(TimeSpanContainer t1, TimeSpanContainer t2) => t1.m_TimeSpan <= t2.m_TimeSpan;
             public static bool operator >=(TimeSpanContainer t1, TimeSpanContainer t2) => t1.m_TimeSpan >= t2.m_TimeSpan;
+
+            public static explicit operator string(TimeSpanContainer datetime) => datetime.ToString();
+            public static explicit operator TimeSpanContainer(string input) => new TimeSpanContainer(TimeSpan.Parse(input, CultureInfo.InvariantCulture));
+            public static implicit operator bool(TimeSpanContainer datetime) => datetime.m_TimeSpan != TimeSpan.Zero;
         }
 
         [APIExtension(APIExtension.DateTime, "TimeSpan")]
