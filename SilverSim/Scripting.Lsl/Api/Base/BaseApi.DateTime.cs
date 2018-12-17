@@ -151,30 +151,40 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.DateTime, "dtFromUnixTime")]
+        [IsPure]
         public DateTimeContainer UnixTimeToDateTime(long input) => new DateTimeContainer(new DateTime(UnixTimeToTicks(input)));
         [APIExtension(APIExtension.DateTime, "DateTime")]
+        [IsPure]
         public DateTimeContainer ParseDateTime(string input) => new DateTimeContainer(DateTime.Parse(input, CultureInfo.InvariantCulture));
         [APIExtension(APIExtension.DateTime, "DateTime")]
+        [IsPure]
         public DateTimeContainer ParseDateTime(string input, string format) =>
             new DateTimeContainer(DateTime.ParseExact(input, format, CultureInfo.InvariantCulture));
         [APIExtension(APIExtension.DateTime, "DateTime")]
+        [IsPure]
         public DateTimeContainer CreateDateTime(long ticks) =>
             new DateTimeContainer(new DateTime(ticks));
         [APIExtension(APIExtension.DateTime, "DateTime")]
+        [IsPure]
         public DateTimeContainer CreateDateTime(int year, int month, int day) =>
             new DateTimeContainer(new DateTime(year, month, day));
         [APIExtension(APIExtension.DateTime, "DateTime")]
+        [IsPure]
         public DateTimeContainer CreateDateTime(int year, int month, int day, int hour, int minute, int second) =>
             new DateTimeContainer(new DateTime(year, month, day, hour, minute, second));
         [APIExtension(APIExtension.DateTime, "DateTime")]
+        [IsPure]
         public DateTimeContainer CreateDateTime(int year, int month, int day, int hour, int minute, int second, int millisecond) =>
             new DateTimeContainer(new DateTime(year, month, day, hour, minute, second, millisecond));
         [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction, "ToString")]
+        [IsPure]
         public string TimeSpanToString(DateTimeContainer datetime, string format) => datetime.ToString(format, CultureInfo.InvariantCulture);
 
         [APIExtension(APIExtension.DateTime, "dtDaysInMonth")]
+        [IsPure]
         public int DaysInMonth(int year, int month) => DateTime.DaysInMonth(year, month);
         [APIExtension(APIExtension.DateTime, "dtIsLeapYear")]
+        [IsPure]
         public int IsLeapYear(int year) => DateTime.IsLeapYear(year).ToLSLBoolean();
 
         [APIExtension(APIExtension.DateTime)]
@@ -245,24 +255,31 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         }
 
         [APIExtension(APIExtension.DateTime, "TimeSpan")]
+        [IsPure]
         public TimeSpanContainer ParseTimeSpan(string input) =>
             new TimeSpanContainer(TimeSpan.Parse(input, CultureInfo.InvariantCulture));
         [APIExtension(APIExtension.DateTime, "TimeSpan")]
+        [IsPure]
         public TimeSpanContainer ParseTimeSpan(string input, string format) =>
             new TimeSpanContainer(TimeSpan.ParseExact(input, format, CultureInfo.InvariantCulture));
         [APIExtension(APIExtension.DateTime, "TimeSpan")]
+        [IsPure]
         public TimeSpanContainer CreateTimeSpan(long ticks) =>
             new TimeSpanContainer(new TimeSpan(ticks));
         [APIExtension(APIExtension.DateTime, "TimeSpan")]
+        [IsPure]
         public TimeSpanContainer CreateTimeSpan(int hours, int minutes, int seconds) =>
             new TimeSpanContainer(new TimeSpan(hours, minutes, seconds));
         [APIExtension(APIExtension.DateTime, "TimeSpan")]
+        [IsPure]
         public TimeSpanContainer CreateTimeSpan(int days, int hours, int minutes, int seconds) =>
             new TimeSpanContainer(new TimeSpan(days, hours, minutes, seconds));
         [APIExtension(APIExtension.DateTime, "TimeSpan")]
+        [IsPure]
         public TimeSpanContainer CreateTimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) =>
             new TimeSpanContainer(new TimeSpan(days, hours, minutes, seconds, milliseconds));
         [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction, "ToString")]
+        [IsPure]
         public string TimeSpanToString(TimeSpanContainer timespan, string format) => timespan.ToString(format, CultureInfo.InvariantCulture);
     }
 }
