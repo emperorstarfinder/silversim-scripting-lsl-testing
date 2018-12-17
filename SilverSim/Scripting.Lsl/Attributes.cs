@@ -191,6 +191,7 @@ namespace SilverSim.Scripting.Lsl
         public const string InheritEvents = "InheritEvents";
         public const string PureFunctions = "PureFunctions";
         public const string Const = "Const";
+        public const string DateTime = "DateTime";
     }
 
     [Serializable]

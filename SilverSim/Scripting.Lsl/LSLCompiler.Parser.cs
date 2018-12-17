@@ -719,7 +719,8 @@ namespace SilverSim.Scripting.Lsl
             APIExtension.SwitchBlock.ToLower(),
             APIExtension.ExtendedTypecasts.ToLower(),
             APIExtension.StateVariables.ToLower(),
-            APIExtension.Const.ToLower()
+            APIExtension.Const.ToLower(),
+            APIExtension.DateTime.ToLower()
         };
 
         private readonly string[] OsslEnabledExtensions = new string[]
