@@ -40,6 +40,9 @@ namespace SilverSim.Scripting.Lsl.ScriptStates.Formats
                 case "XEngine":
                     return XEngine.Deserialize(reader, attrs);
 
+                case "Porthos":
+                    return Porthos.Deserialize(reader, attrs);
+
                 default:
                     throw new InvalidObjectXmlException();
             }

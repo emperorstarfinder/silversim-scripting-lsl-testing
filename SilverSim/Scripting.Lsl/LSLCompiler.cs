@@ -1601,6 +1601,7 @@ namespace SilverSim.Scripting.Lsl
 
             CompilerRegistry.ScriptCompilers["lsl"] = this;
             CompilerRegistry.ScriptCompilers["XEngine"] = this; /* we won't be supporting anything beyond LSL compatibility */
+            CompilerRegistry.ScriptCompilers["Porthos"] = this;
 
             List<IAdminWebIF> adminwebif = loader.GetServicesByValue<IAdminWebIF>();
             if(adminwebif.Count > 0)
