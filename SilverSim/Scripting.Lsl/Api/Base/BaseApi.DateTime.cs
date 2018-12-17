@@ -84,12 +84,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APIExtension(APIExtension.DateTime, "datetime")]
         [APIDisplayName("datetime")]
+        [APIIsVariableType]
         [APIAccessibleMembers]
         [Serializable]
         [APICloneOnAssignment]
         public class DateTimeContainer
         {
-            private DateTime m_DateTime;
+            private readonly DateTime m_DateTime;
 
             public DateTimeContainer()
             {
@@ -187,6 +188,31 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [IsPure]
         public int IsLeapYear(int year) => DateTime.IsLeapYear(year).ToLSLBoolean();
 
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddDays(DateTimeContainer datetime, double value) => datetime.AddDays(value);
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddHours(DateTimeContainer datetime, double value) => datetime.AddHours(value);
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddMilliseconds(DateTimeContainer datetime, double value) => datetime.AddMilliseconds(value);
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddMinutes(DateTimeContainer datetime, double value) => datetime.AddMinutes(value);
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddMonths(DateTimeContainer datetime, int months) => datetime.AddMonths(months);
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddSeconds(DateTimeContainer datetime, double value) => datetime.AddSeconds(value);
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddTicks(DateTimeContainer datetime, long value) => datetime.AddTicks(value);
+        [APIExtension(APIExtension.DateTime, APIUseAsEnum.MemberFunction)]
+        [IsPure]
+        public DateTimeContainer AddYears(DateTimeContainer datetime, int value) => datetime.AddYears(value);
+
         [APIExtension(APIExtension.DateTime)]
         public const long TICKS_PER_MILLISECOND = 10000;
         [APIExtension(APIExtension.DateTime)]
@@ -200,12 +226,13 @@ namespace SilverSim.Scripting.Lsl.Api.Base
 
         [APIExtension(APIExtension.DateTime, "timespan")]
         [APIDisplayName("timespan")]
+        [APIIsVariableType]
         [APIAccessibleMembers]
         [Serializable]
         [APICloneOnAssignment]
         public sealed class TimeSpanContainer
         {
-            internal TimeSpan m_TimeSpan;
+            internal readonly TimeSpan m_TimeSpan;
 
             public TimeSpanContainer()
             {
