@@ -431,14 +431,14 @@ namespace SilverSim.Scripting.Lsl
 
         public static int LSL_IntegerDivision(int a, int b)
         {
-            return (a == -2147483648 && b == -1) ?
-                -2147483648 :
+            return b == -1 ?
+                -a :
                 a / b;
         }
 
         public static int LSL_IntegerModulus(int a, int b)
         {
-            return (a == -2147483648 && b == -1) ?
+            return (b == 1 || b == -1) ?
                 0 :
                 a % b;
         }
