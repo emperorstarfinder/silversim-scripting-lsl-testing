@@ -250,7 +250,6 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             {
                 BoundingBox bbox;
                 instance.Part.GetBoundingBox(out bbox);
-                Vector3 relstart = start - bbox.CenterOffset;
                 UUID ourID = UUID.Zero;
                 
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
@@ -262,7 +261,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     }
                     else
                     {
-                        if (Math.Abs(relstart.X) < bbox.Size.X && Math.Abs(relstart.Y) < bbox.Size.Y && Math.Abs(relstart.Z) < bbox.Size.Z)
+                        if (bbox.IsInside(start))
                         {
                             ourID = instance.Part.ID;
                             if (maxHits != int.MaxValue)
