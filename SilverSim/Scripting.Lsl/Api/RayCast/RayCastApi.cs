@@ -248,6 +248,11 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             RayResult[] results;
             lock (instance)
             {
+                BoundingBox bbox;
+                instance.Part.GetBoundingBox(out bbox);
+                Vector3 relstart = start - bbox.CenterOffset;
+                UUID ourID = UUID.Zero;
+                
                 SceneInterface scene = instance.Part.ObjectGroup.Scene;
                 try
                 {
@@ -255,13 +260,18 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     {
                         results = new RayResult[0];
                     }
-                    else if (maxHits == 1)
-                    {
-                        results = scene.PhysicsScene.ClosestRayTest(start, end, hitFlags);
-                    }
                     else
                     {
-                        results = scene.PhysicsScene.AllHitsRayTest(start, end, hitFlags, (uint)maxHits);
+                        if (Math.Abs(relstart.X) < bbox.Size.X && Math.Abs(relstart.Y) < bbox.Size.Y && Math.Abs(relstart.Z) < bbox.Size.Z)
+                        {
+                            ourID = instance.Part.ID;
+                            if (maxHits != int.MaxValue)
+                            {
+                                ++maxHits;
+                            }
+                        }
+
+                        results = scene.PhysicsScene.RayTest(start, end, hitFlags, (uint)maxHits);
                     }
                 }
                 catch(Exception e)
@@ -276,6 +286,14 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     if (result.IsTerrain)
                     {
                         resArray.Add(UUID.Zero);
+                    }
+                    else if(ourID == result.PartId)
+                    {
+                        continue;
+                    }
+                    else if(maxHits >= resArray.Count)
+                    {
+                        break;
                     }
                     else
                     {
