@@ -119,6 +119,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                 {
                     if(!allowed)
                     {
+                        instance.ShoutError(new LocalizedScriptMessage(this, "CastRayCollisionDeniedByAcl", "CastRay collision is denied by access control list."));
                         return new AnArray
                         {
                             RCERR_UNKNOWN
@@ -127,6 +128,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                 }
                 else if(!m_CanCastCollisionDefault[sceneID])
                 {
+                    instance.ShoutError(new LocalizedScriptMessage(this, "CastRayCollisionDeniedByAcl", "CastRay collision is denied by access control list."));
                     return new AnArray
                     {
                         RCERR_UNKNOWN
