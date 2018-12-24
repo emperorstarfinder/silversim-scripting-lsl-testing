@@ -23,12 +23,14 @@
 
 using log4net;
 using SilverSim.Main.Common;
+using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Physics;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
+using SilverSim.Threading;
 using SilverSim.Types;
 using System;
 using System.ComponentModel;
@@ -38,13 +40,33 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
     [ScriptApiName("RayCast")]
     [LSLImplementation]
     [Description("LSL RayCast API")]
-    public class RayCastApi : IScriptApi, IPlugin
+    public class RayCastApi : IScriptApi, IPlugin, IPluginShutdown
     {
         private static readonly ILog m_Log = LogManager.GetLogger("LSL RAYCAST");
+        private RwLockedDictionaryAutoAdd<UUID, bool> m_CanCastCollisionDefault = new RwLockedDictionaryAutoAdd<UUID, bool>(() => true);
+        private RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, bool>> m_CanCastCollisionPerScriptAsset = new RwLockedDictionaryAutoAdd<UUID, RwLockedDictionary<UUID, bool>>(() => new RwLockedDictionary<UUID, bool>());
+        private SceneList m_Scenes;
 
         public void Startup(ConfigurationLoader loader)
         {
-            /* intentionally left empty */
+            m_Scenes = loader.Scenes;
+            m_Scenes.OnRegionRemove += OnRemoveScene;
+        }
+
+        private void OnRemoveScene(SceneInterface scene)
+        {
+            m_CanCastCollisionPerScriptAsset.Remove(scene.ID);
+            m_CanCastCollisionDefault.Remove(scene.ID);
+        }
+
+        public ShutdownOrder ShutdownOrder => ShutdownOrder.Any;
+
+        public void Shutdown()
+        {
+            if (m_Scenes != null)
+            {
+                m_Scenes.OnRegionRemove -= OnRemoveScene;
+            }
         }
 
         [APILevel(APIFlags.LSL)]
@@ -87,7 +109,32 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             Vector3 start,
             [Description("ending location")]
             Vector3 end,
-            AnArray options) => CastRay(instance, start, end, options, HandleRayCollisionResult);
+            AnArray options)
+        {
+            lock(instance)
+            {
+                bool allowed;
+                UUID sceneID = instance.Part.ObjectGroup.Scene.ID;
+                if(m_CanCastCollisionPerScriptAsset[sceneID].TryGetValue(instance.Item.AssetID, out allowed))
+                {
+                    if(!allowed)
+                    {
+                        return new AnArray
+                        {
+                            RCERR_UNKNOWN
+                        };
+                    }
+                }
+                else if(!m_CanCastCollisionDefault[sceneID])
+                {
+                    return new AnArray
+                    {
+                        RCERR_UNKNOWN
+                    };
+                }
+            }
+            return CastRay(instance, start, end, options, HandleRayCollisionResult);
+        }
 
         private void HandleRayCollisionResult(ScriptInstance instance, RayResult result)
         {

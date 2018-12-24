@@ -349,3 +349,4 @@ InvalidConstantDefinitionMissingEqual=Ungültige Konstantendefinition. Ein Ausdru
 AnimationDataFor0NotFoundOrInvalid=Animationsdaten für '{0}' nicht gefunden oder fehlerhaft
 SoundDataFor0NotFoundOrInvalid=Sounddaten für '{0}' nicht gefunden oder fehlerhaft
 Function0PinCannotBeZero={0}: Pin kann nicht 0 sein.
+CastRayCollisionDeniedByAcl=CastRay Kollision ist durch Zugriffskontrolle gesperrt.
