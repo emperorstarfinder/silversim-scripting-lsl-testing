@@ -565,11 +565,11 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
         }
 
         [APILevel(APIFlags.ASSL, "asGetPhysicsFrameNumber")]
-        public uint GetPhysicsFrameNumber(ScriptInstance instance)
+        public int GetPhysicsFrameNumber(ScriptInstance instance)
         {
             lock(instance)
             {
-                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsFrameNumber;
+                return (int)instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsFrameNumber;
             }
         }
 
