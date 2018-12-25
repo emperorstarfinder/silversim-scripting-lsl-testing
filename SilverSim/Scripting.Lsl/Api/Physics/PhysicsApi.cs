@@ -563,5 +563,59 @@ namespace SilverSim.Scripting.Lsl.Api.Physics
                 throw new NotImplementedException("osGetPhysicsEngineType()");
             }
         }
+
+        [APILevel(APIFlags.ASSL, "asGetPhysicsFrameNumber")]
+        public uint GetPhysicsFrameNumber(ScriptInstance instance)
+        {
+            lock(instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsFrameNumber;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetNominalPhysicsFPS")]
+        public double GetNominalPhysicsFPS(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.NominalPhysicsFPS;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetPhysicsFPS")]
+        public double GetPhysicsFPS(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsFPS;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetPhysicsFPSNormalized")]
+        public double GetPhysicsFPSNormalized(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsFPSNormalized;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetPhysicsDilationTime")]
+        public double GetPhysicsDilationTime(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsDilationTime;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetPhysicsExecutionTime")]
+        public double GetPhysicsExecutionTime(ScriptInstance instance)
+        {
+            lock (instance)
+            {
+                return instance.Part.ObjectGroup.Scene.PhysicsScene.PhysicsExecutionTime;
+            }
+        }
     }
 }
