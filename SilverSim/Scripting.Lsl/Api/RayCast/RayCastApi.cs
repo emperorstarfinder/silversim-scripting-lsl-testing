@@ -295,6 +295,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             }
 
             RayResult[] results;
+            int hitcount = 0;
             lock (instance)
             {
                 BoundingBox bbox;
@@ -319,7 +320,13 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                             }
                         }
 
+#if DEBUG
+                        m_Log.DebugFormat("llCastRay: from={0} to={1} flags={2} maxHits={3}", start, end, hitFlags, maxHits);
+#endif
                         results = scene.PhysicsScene.RayTest(start, end, hitFlags, (uint)maxHits);
+#if DEBUG
+                        m_Log.DebugFormat("llCastRay: Number of hits from physics: {0}", results.Length);
+#endif
                     }
                 }
                 catch(Exception e)
@@ -337,15 +344,19 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     }
                     else if(ourID == result.PartId)
                     {
+#if DEBUG
+                        m_Log.DebugFormat("Excluding own result {0}", result.PartId);
+#endif
                         continue;
                     }
-                    else if(maxHits >= resArray.Count)
+                    else if(maxHits <= hitcount)
                     {
                         break;
                     }
                     else
                     {
                         action?.Invoke(instance, result);
+                        ++hitcount;
                         resArray.Add((dataFlags & RC_GET_ROOT_KEY) != 0 ? result.ObjectId : result.PartId);
                     }
                     if((dataFlags & RC_GET_LINK_NUM) != 0)
@@ -367,7 +378,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     }
                 }
             }
-            resArray.Add(results.Length);
+            resArray.Add(hitcount);
             return resArray;
         }
     }
