@@ -106,11 +106,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                     if (parent != 0)
                     {
-                        scene.LinkObjects(new List<UUID> { thisGrp.ID, targetGrp.ID });
+                        scene.LinkObjects(new List<UUID> { thisGrp.ID, targetGrp.ID }, true);
                     }
                     else
                     {
-                        scene.LinkObjects(new List<UUID> { targetGrp.ID, thisGrp.ID });
+                        scene.LinkObjects(new List<UUID> { targetGrp.ID, thisGrp.ID }, true);
                     }
                 });
             }
