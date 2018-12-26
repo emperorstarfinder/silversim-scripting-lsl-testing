@@ -23,6 +23,7 @@
 
 using CSJ2K;
 using SilverSim.Main.Common;
+using SilverSim.Scene.Types.Object.Localization;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
 using SilverSim.Types.Asset;
@@ -83,6 +84,7 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
         public const int DISP_TEMP = 2;
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureURL")]
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureURL")]
         public LSLKey SetDynamicTextureURL(
             ScriptInstance instance,
             string dynamicID, string contentType, string data, string extraParams,
@@ -97,9 +99,29 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 false,
                 DISP_TEMP | DISP_EXPIRE,
                 255,
-                ALL_SIDES);
+                ALL_SIDES,
+                null);
+
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureURL")]
+        public LSLKey SetDynamicTextureURL(
+            ScriptInstance instance,
+            string dynamicID, string contentType, string data, string extraParams,
+                                             int timer, string languageName) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                false,
+                DISP_TEMP | DISP_EXPIRE,
+                255,
+                ALL_SIDES,
+                languageName);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureURLBlend")]
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureURLBlend")]
         public LSLKey SetDynamicTextureURLBlend(
             ScriptInstance instance,
             string dynamicID,
@@ -118,9 +140,34 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 alpha < 256,
                 DISP_TEMP | DISP_EXPIRE,
                 (byte)alpha.Clamp(0, 255),
-                ALL_SIDES);
+                ALL_SIDES,
+                null);
+
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureURLBlend")]
+        public LSLKey SetDynamicTextureURLBlend(
+            ScriptInstance instance,
+            string dynamicID,
+            string contentType,
+            string data,
+            string extraParams,
+            int timer,
+            int alpha,
+            string languageName) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                alpha < 256,
+                DISP_TEMP | DISP_EXPIRE,
+                (byte)alpha.Clamp(0, 255),
+                ALL_SIDES,
+                languageName);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureURLBlendFace")]
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureURLBlendFace")]
         public LSLKey SetDynamicTextureURLBlendFace(
             ScriptInstance instance,
             string dynamicID,
@@ -142,9 +189,37 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 blend != 0,
                 disp,
                 (byte)alpha.Clamp(0, 255),
-                face);
+                face,
+                null);
+
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureURLBlendFace")]
+        public LSLKey SetDynamicTextureURLBlendFace(
+            ScriptInstance instance,
+            string dynamicID,
+            string contentType,
+            string data,
+            string extraParams,
+            int blend,
+            int disp,
+            int timer,
+            int alpha,
+            int face,
+            string languageName) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                blend != 0,
+                disp,
+                (byte)alpha.Clamp(0, 255),
+                face,
+                languageName);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureData")]
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureData")]
         public LSLKey SetDynamicTextureData(
             ScriptInstance instance,
             string dynamicID,
@@ -162,9 +237,33 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 false,
                 DISP_TEMP | DISP_EXPIRE,
                 255,
-                ALL_SIDES);
+                ALL_SIDES,
+                null);
+
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureData")]
+        public LSLKey SetDynamicTextureData(
+            ScriptInstance instance,
+            string dynamicID,
+            string contentType,
+            string data,
+            string extraParams,
+            int timer,
+            string languageName) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                false,
+                DISP_TEMP | DISP_EXPIRE,
+                255,
+                ALL_SIDES,
+                languageName);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataFace")]
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureDataFace")]
         public LSLKey SetDynamicTextureDataFace(
             ScriptInstance instance,
             string dynamicID,
@@ -183,9 +282,34 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 false,
                 DISP_TEMP | DISP_EXPIRE,
                 255,
-                face);
+                face,
+                null);
+
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureDataFace")]
+        public LSLKey SetDynamicTextureDataFace(
+            ScriptInstance instance,
+            string dynamicID,
+            string contentType,
+            string data,
+            string extraParams,
+            int timer,
+            int face,
+            string languageName) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                false,
+                DISP_TEMP | DISP_EXPIRE,
+                255,
+                face,
+                languageName);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataBlend")]
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureDataBlend")]
         public LSLKey SetDynamicTextureDataBlend(
             ScriptInstance instance,
             string dynamicID,
@@ -204,9 +328,34 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 alpha < 256,
                 DISP_TEMP | DISP_EXPIRE,
                 (byte)alpha.Clamp(0, 255),
-                ALL_SIDES);
+                ALL_SIDES,
+                null);
+
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureDataBlend")]
+        public LSLKey SetDynamicTextureDataBlend(
+            ScriptInstance instance,
+            string dynamicID,
+            string contentType,
+            string data,
+            string extraParams,
+            int timer,
+            int alpha,
+            string languageName) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                alpha < 256,
+                DISP_TEMP | DISP_EXPIRE,
+                (byte)alpha.Clamp(0, 255),
+                ALL_SIDES,
+                languageName);
 
         [APILevel(APIFlags.OSSL, "osSetDynamicTextureDataBlendFace")]
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureDataBlendFace")]
         public LSLKey SetDynamicTextureDataBlendFace(
             ScriptInstance instance,
             string dynamicID,
@@ -228,7 +377,34 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 blend != 0,
                 disp,
                 (byte)alpha.Clamp(0, 255),
-                face);
+                face,
+                null);
+
+        [APILevel(APIFlags.ASSL, "asSetDynamicTextureDataBlendFace")]
+        public LSLKey SetDynamicTextureDataBlendFace(
+            ScriptInstance instance,
+            string dynamicID,
+            string contentType,
+            string data,
+            string extraParams,
+            int blend,
+            int disp,
+            int timer,
+            int alpha,
+            int face,
+            string languageName) =>
+            AddDynamicTextureData(
+                instance,
+                dynamicID,
+                contentType,
+                data,
+                extraParams,
+                timer,
+                blend != 0,
+                disp,
+                (byte)alpha.Clamp(0, 255),
+                face,
+                languageName);
 
         private LSLKey AddDynamicTextureData(
             ScriptInstance instance,
@@ -240,7 +416,8 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
             bool setBlending,
             int disp,
             byte AlphaValue,
-            int face)
+            int face,
+            string localizationName)
         {
             Func<string, string, Bitmap> renderer = null;
             Action<Bitmap, string, string> modifyRenderer = null;
@@ -320,23 +497,33 @@ namespace SilverSim.Scripting.Lsl.Api.DynamicTexture
                 textureAsset.Temporary = (disp & DISP_TEMP) != 0;
                 instance.Part.ObjectGroup.Scene.AssetService.Store(textureAsset);
                 textureAssetID = textureAsset.ID;
+                ObjectPartLocalizedInfo localization;
+
+                if (localizationName != null)
+                {
+                    localization = instance.Part.GetLocalization(new System.Globalization.CultureInfo(localizationName));
+                }
+                else
+                {
+                    localization = instance.Part.GetDefaultLocalization();
+                }
 
                 if (face == ALL_SIDES)
                 {
-                    TextureEntry te = instance.Part.TextureEntry;
+                    TextureEntry te = localization.TextureEntry;
                     for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
                     {
                         te[(uint)face].TextureID = textureAssetID;
                     }
-                    instance.Part.TextureEntry = te;
+                    localization.TextureEntry = te;
                 }
                 else
                 {
                     try
                     {
-                        TextureEntry te = instance.Part.TextureEntry;
+                        TextureEntry te = localization.TextureEntry;
                         te[(uint)face].TextureID = textureAssetID;
-                        instance.Part.TextureEntry = te;
+                        localization.TextureEntry = te;
                     }
                     catch
                     {
