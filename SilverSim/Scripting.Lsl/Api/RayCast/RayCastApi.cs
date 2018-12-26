@@ -135,7 +135,8 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     };
                 }
             }
-            return CastRay(instance, start, end, options, HandleRayCollisionResult);
+            return CastRay(instance, start, end, options, HandleRayCollisionResult,
+                RayTestHitFlags.Avatar | RayTestHitFlags.NonPhysical | RayTestHitFlags.Physical);
         }
 
         private void HandleRayCollisionResult(ScriptInstance instance, RayResult result)
@@ -215,10 +216,11 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             [Description("ending location")]
             Vector3 end,
             AnArray options,
-            Action<ScriptInstance, RayResult> action)
+            Action<ScriptInstance, RayResult> action,
+            RayTestHitFlags initialHitFlags = RayTestHitFlags.Avatar | RayTestHitFlags.NonPhysical | RayTestHitFlags.Physical | RayTestHitFlags.Terrain)
         {
             var resArray = new AnArray();
-            RayTestHitFlags hitFlags = RayTestHitFlags.Avatar | RayTestHitFlags.NonPhysical | RayTestHitFlags.Physical |RayTestHitFlags.Terrain;
+            RayTestHitFlags hitFlags = initialHitFlags;
             int i;
             int maxHits = 1;
             int flags;
@@ -349,8 +351,8 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                         action?.Invoke(instance, result);
                         resArray.Add((dataFlags & RC_GET_ROOT_KEY) != 0 ? result.ObjectId : result.PartId);
                     }
-                    ++hitcount;
-                    if ((dataFlags & RC_GET_LINK_NUM) != 0)
+                        ++hitcount;
+                    if((dataFlags & RC_GET_LINK_NUM) != 0)
                     {
                         ObjectPart hitPart;
                         if(scene.Primitives.TryGetValue(result.PartId, out hitPart))
