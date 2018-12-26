@@ -83,6 +83,39 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
+        [APILevel(APIFlags.ASSL, "asCreateLink")]
+        [ForcedSleep(1.0)]
+        public void CreateLinkOrdered(ScriptInstance instance, LSLKey key, int parent)
+        {
+            lock (instance)
+            {
+                CheckLinkingPerms(instance, () =>
+                {
+                    ObjectGroup thisGrp = instance.Part.ObjectGroup;
+                    SceneInterface scene = thisGrp.Scene;
+                    ObjectGroup targetGrp;
+                    if (!scene.ObjectGroups.TryGetValue(key, out targetGrp))
+                    {
+                        return;
+                    }
+
+                    if (!targetGrp.Owner.EqualsGrid(thisGrp.Owner))
+                    {
+                        return;
+                    }
+
+                    if (parent != 0)
+                    {
+                        scene.LinkObjects(new List<UUID> { thisGrp.ID, targetGrp.ID }, false);
+                    }
+                    else
+                    {
+                        scene.LinkObjects(new List<UUID> { targetGrp.ID, thisGrp.ID }, false);
+                    }
+                });
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llCreateLink")]
         [ForcedSleep(1.0)]
         public void CreateLink(ScriptInstance instance, LSLKey key, int parent)
