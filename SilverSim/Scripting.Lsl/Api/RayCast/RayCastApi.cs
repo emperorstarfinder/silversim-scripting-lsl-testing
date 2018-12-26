@@ -320,13 +320,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                             }
                         }
 
-#if DEBUG
-                        m_Log.DebugFormat("llCastRay: from={0} to={1} flags={2} maxHits={3}", start, end, hitFlags, maxHits);
-#endif
                         results = scene.PhysicsScene.RayTest(start, end, hitFlags, (uint)maxHits);
-#if DEBUG
-                        m_Log.DebugFormat("llCastRay: Number of hits from physics: {0}", results.Length);
-#endif
                     }
                 }
                 catch(Exception e)
@@ -344,9 +338,6 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     }
                     else if(ourID == result.PartId)
                     {
-#if DEBUG
-                        m_Log.DebugFormat("Excluding own result {0}", result.PartId);
-#endif
                         continue;
                     }
                     else if(maxHits <= hitcount)
