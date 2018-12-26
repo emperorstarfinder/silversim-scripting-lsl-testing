@@ -218,7 +218,7 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
             Action<ScriptInstance, RayResult> action)
         {
             var resArray = new AnArray();
-            RayTestHitFlags hitFlags = RayTestHitFlags.Avatar | RayTestHitFlags.NonPhysical | RayTestHitFlags.Physical;
+            RayTestHitFlags hitFlags = RayTestHitFlags.Avatar | RayTestHitFlags.NonPhysical | RayTestHitFlags.Physical |RayTestHitFlags.Terrain;
             int i;
             int maxHits = 1;
             int flags;
@@ -347,10 +347,10 @@ namespace SilverSim.Scripting.Lsl.Api.RayCast
                     else
                     {
                         action?.Invoke(instance, result);
-                        ++hitcount;
                         resArray.Add((dataFlags & RC_GET_ROOT_KEY) != 0 ? result.ObjectId : result.PartId);
                     }
-                    if((dataFlags & RC_GET_LINK_NUM) != 0)
+                    ++hitcount;
+                    if ((dataFlags & RC_GET_LINK_NUM) != 0)
                     {
                         ObjectPart hitPart;
                         if(scene.Primitives.TryGetValue(result.PartId, out hitPart))
