@@ -67,10 +67,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [APILevel(APIFlags.LSL, "llRemoteDataSetRegion")]
         public void RemoteDataSetRegion(ScriptInstance instance)
         {
-            lock (instance)
-            {
-                OpenRemoteDataChannel(instance);
-            }
+            OpenRemoteDataChannel(instance);
         }
 
         [ExecutedOnScriptReset]
