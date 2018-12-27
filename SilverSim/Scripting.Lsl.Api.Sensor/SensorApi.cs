@@ -581,6 +581,11 @@ namespace SilverSim.Scripting.Lsl.Api.Sensor
                 }
             }
 
+            public void ScheduleUpdate(AgentUpdateInfo agentinfo, UUID sceneID)
+            {
+                /* intentionally left empty */
+            }
+
             public void RemovedAgent(IAgent agent)
             {
                 KnownAgents.Remove(agent.ID);
