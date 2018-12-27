@@ -21,6 +21,7 @@
 
 #pragma warning disable RCS1029, IDE0018
 
+using log4net;
 using Nini.Config;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
@@ -39,6 +40,9 @@ namespace SilverSim.Scripting.Lsl.Api.Email
     [PluginName("LSL_Email_LocalOnlyService")]
     public class LocalEmailService : IEmailService, IPlugin, IPluginShutdown, ISceneListener
     {
+#if DEBUG
+        public static readonly ILog m_Log = LogManager.GetLogger("LOCAL EMAIL SERVICE");
+#endif
         public bool IgnorePhysicsLocationUpdates => true;
 
         private class Email
@@ -121,6 +125,9 @@ namespace SilverSim.Scripting.Lsl.Api.Email
         public LocalEmailService(IConfig config)
         {
             m_LocalDomain = config.GetString("LocalDomain", "lsl.local");
+#if DEBUG
+            m_Log.DebugFormat("LocalDomain={0}", m_LocalDomain);
+#endif
         }
 
         public void Startup(ConfigurationLoader loader)
