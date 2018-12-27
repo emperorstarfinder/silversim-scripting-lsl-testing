@@ -33,154 +33,13 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
     public partial class XmlRpcApi
     {
-        public class RemoteDataReplyEvent
-        {
-            public UUID ChannelID;
-            public string SData;
-            public int IData;
-
-            public RemoteDataReplyEvent(UUID channelID, string sdata, int idata)
-            {
-                ChannelID = channelID;
-                SData = sdata;
-                IData = idata;
-            }
-        }
-
-        public class ChannelInfo
-        {
-            public UUID ChannelID;
-            public UUID SceneID;
-            public UUID ObjectID;
-            public UUID ItemID;
-
-            public ChannelInfo(UUID channelID, UUID sceneID, UUID objectID, UUID itemID)
-            {
-                ChannelID = channelID;
-                SceneID = sceneID;
-                ObjectID = objectID;
-                ItemID = itemID;
-            }
-
-            public readonly RwLockedDictionary<UUID, BlockingQueue<RemoteDataReplyEvent>> ActiveRequests = new RwLockedDictionary<UUID, BlockingQueue<XmlRpcApi.RemoteDataReplyEvent>>();
-        }
-
-        private readonly RwLockedDictionary<UUID /* channelid */, ChannelInfo> m_Channels = new RwLockedDictionary<UUID, ChannelInfo>();
-        private readonly RwLockedDictionary<UUID /* itemid */, ChannelInfo> m_ScriptChannels = new RwLockedDictionary<UUID, ChannelInfo>();
-
-        private XmlRpcStructs.XmlRpcResponse RemoteDataXmlRpc(XmlRpcStructs.XmlRpcRequest req)
-        {
-            if (req.Params.Count != 1)
-            {
-                throw new XmlRpcStructs.XmlRpcFaultException(-32604, "Invalid parameters");
-            }
-
-            Map m;
-            if (!req.Params.TryGetValue(0, out m))
-            {
-                throw new XmlRpcStructs.XmlRpcFaultException(-32604, "Invalid parameters");
-            }
-
-            UUID channelid;
-            Integer intval;
-            AString strval;
-            if (!m.TryGetValue("Channel", out channelid) ||
-                !m.TryGetValue("IntValue", out intval) ||
-                !m.TryGetValue("StringValue", out strval))
-            {
-                throw new XmlRpcStructs.XmlRpcFaultException(-32604, "Invalid parameters");
-            }
-
-            ChannelInfo channel;
-            if (!m_Channels.TryGetValue(channelid, out channel))
-            {
-                throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
-            }
-
-            SceneInterface scene;
-            if (!m_Scenes.TryGetValue(channel.SceneID, out scene))
-            {
-                m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
-                throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
-            }
-
-            ObjectPart part;
-            ObjectPartInventoryItem item;
-            ScriptInstance instance;
-            if (!scene.Primitives.TryGetValue(channel.ObjectID, out part))
-            {
-                m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
-                throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
-            }
-
-            if (!part.Inventory.TryGetValue(channel.ItemID, out item))
-            {
-                m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
-                throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
-            }
-
-            instance = item.ScriptInstance;
-            if (instance == null)
-            {
-                m_Channels.Remove(channelid);
-                m_ScriptChannels.RemoveIf(channel.ItemID, (ChannelInfo ci) => ci == channel);
-                throw new XmlRpcStructs.XmlRpcFaultException(1, "Unknown channel");
-            }
-
-            var repqueue = new BlockingQueue<RemoteDataReplyEvent>();
-            UUID messageId = UUID.Random;
-            try
-            {
-                channel.ActiveRequests.Add(messageId, repqueue);
-            }
-            catch
-            {
-                throw new XmlRpcStructs.XmlRpcFaultException(2, "Unexpected error");
-            }
-
-            instance.PostEvent(new RemoteDataEvent
-            {
-                Channel = channelid,
-                IData = intval.AsInt,
-                SData = strval.ToString(),
-                Sender = string.Empty,
-                Type = REMOTE_DATA_CHANNEL,
-                MessageID = messageId
-            });
-
-            RemoteDataReplyEvent reply;
-            try
-            {
-                reply = repqueue.Dequeue(30000);
-            }
-            catch
-            {
-                channel.ActiveRequests.Remove(messageId);
-                throw new XmlRpcStructs.XmlRpcFaultException(3, "Timeout");
-            }
-            channel.ActiveRequests.Remove(messageId);
-
-            return new XmlRpcStructs.XmlRpcResponse { ReturnValue = new Map {
-                { "StringValue", reply.SData },
-                { "IntValue", reply.IData } }
-            };
-        }
-
         [APILevel(APIFlags.LSL, "llCloseRemoteDataChannel")]
         [ForcedSleep(1.0)]
         public void CloseRemoteDataChannel(ScriptInstance instance, LSLKey key)
         {
             lock (instance)
             {
-                ChannelInfo ci;
-                UUID scriptID = instance.Item.ID;
-                if (m_ScriptChannels.TryGetValue(scriptID, out ci) && ci.ChannelID == key.AsUUID)
-                {
-                    Remove(scriptID);
-                }
+                m_Server.RemoveChannel(instance.Item.ID, key.AsUUID);
             }
         }
 
@@ -188,44 +47,10 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [ForcedSleep(1.0)]
         public void OpenRemoteDataChannel(ScriptInstance instance)
         {
-            ChannelInfo ci;
             lock (instance)
             {
-                UUID scriptID = instance.Item.ID;
                 ObjectPart part = instance.Part;
-                UUID objectID = part.ID;
-                UUID sceneID = part.ObjectGroup.Scene.ID;
-                /* TODO: how to deal with persistency of channel ids here? As of now simply re-use objectid */
-                if (!m_ScriptChannels.TryGetValue(scriptID, out ci))
-                {
-                    ci = new ChannelInfo(scriptID, sceneID, objectID, scriptID);
-                    m_ScriptChannels.Add(scriptID, ci);
-                    m_Channels.Add(ci.ChannelID, ci);
-                }
-                RegisterDataChannel(ci);
-            }
-        }
-
-        private void RegisterDataChannel(ChannelInfo ci)
-        {
-            SceneInterface scene;
-            ObjectPart part;
-            ObjectPartInventoryItem item;
-
-            if (m_Scenes.TryGetValue(ci.SceneID, out scene) &&
-                scene.Primitives.TryGetValue(ci.ObjectID, out part) &&
-                part.Inventory.TryGetValue(ci.ItemID, out item))
-            {
-                ScriptInstance instance = item.ScriptInstance;
-                instance?.PostEvent(new RemoteDataEvent
-                    {
-                        Channel = ci.ChannelID,
-                        IData = 0,
-                        MessageID = UUID.Zero,
-                        SData = string.Empty,
-                        Sender = string.Empty,
-                        Type = REMOTE_DATA_REQUEST
-                    });
+                m_Server.RegisterChannel(part.ObjectGroup.Scene.ID, part.ID, instance.Item.ID);
             }
         }
 
@@ -235,32 +60,27 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         {
             lock (instance)
             {
-                ChannelInfo ci;
-                BlockingQueue<RemoteDataReplyEvent> replyqueue;
-                if (m_ScriptChannels.TryGetValue(channel.AsUUID, out ci) &&
-                    ci.ActiveRequests.TryGetValue(message_id.AsUUID, out replyqueue))
-                {
-                    replyqueue.Enqueue(new RemoteDataReplyEvent(channel.AsUUID, sdata, idata));
-                }
+                m_Server.ReplyXmlRpc(message_id.AsUUID, idata, sdata);
             }
         }
 
         [APILevel(APIFlags.LSL, "llRemoteDataSetRegion")]
         public void RemoteDataSetRegion(ScriptInstance instance)
         {
-            OpenRemoteDataChannel(instance);
+            lock (instance)
+            {
+                OpenRemoteDataChannel(instance);
+            }
         }
 
         [ExecutedOnScriptReset]
         [ExecutedOnScriptRemove]
         public void ScriptResetOrRemove(ScriptInstance instance)
         {
-            UUID itemid;
             lock (instance)
             {
-                itemid = instance.Item.ID;
+                m_Server.Remove(instance.Item.ID);
             }
-            Remove(itemid);
         }
     }
 }

@@ -21,6 +21,7 @@
 
 #pragma warning disable IDE0018, RCS1029, IDE0019
 
+using Nini.Config;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Script;
@@ -36,11 +37,18 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
     public partial class XmlRpcApi : IScriptApi, IPlugin
     {
         private SceneList m_Scenes;
+        private LSLXmlRpcServer m_Server;
+        private readonly string m_ServerName;
+
+        public XmlRpcApi(IConfig config)
+        {
+            m_ServerName = config.GetString("Server", "LSL_XMLRPCServer");
+        }
 
         public void Startup(ConfigurationLoader loader)
         {
             m_Scenes = loader.Scenes;
-            loader.XmlRpcServer.XmlRpcMethods.Add("llRemoteData", RemoteDataXmlRpc);
+            loader.GetService(m_ServerName, out m_Server);
         }
 
         [APILevel(APIFlags.LSL)]
@@ -53,14 +61,5 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         [APILevel(APIFlags.LSL, "remote_data")]
         [StateEventDelegate]
         public delegate void State_remote_data(int event_type, LSLKey channel, LSLKey message_id, string sender, int idata, string sdata);
-
-        private void Remove(UUID scriptid)
-        {
-            ChannelInfo channel;
-            if(m_ScriptChannels.TryGetValue(scriptid, out channel))
-            {
-                m_Channels.RemoveIf(channel.ChannelID, (ChannelInfo ci) => ci == channel);
-            }
-        }
     }
 }
