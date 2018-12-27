@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Main.Common.HttpServer;
 using SilverSim.Scene.Management.Scene;
@@ -33,6 +34,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Timers;
 using XmlRpcStructs = SilverSim.Types.StructuredData.XmlRpc.XmlRpc;
 
@@ -42,6 +44,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
     [PluginName("LSLXmlRpcServer")]
     public sealed class LSLXmlRpcServer : IPlugin, IPluginShutdown
     {
+        private static readonly ILog m_Log = LogManager.GetLogger("LSL XMLRPC SERVER");
         private HttpXmlRpcHandler m_XmlRpcHandler;
         private Timer m_RpcTimer;
         private SceneList m_Scenes;
@@ -88,15 +91,36 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 
         private void FaultResponse(HttpRequest req, int faultCode, string faultString)
         {
-            using (HttpResponse response = req.BeginResponse("text/xml"))
+            try
             {
-                var res = new XmlRpcStructs.XmlRpcFaultResponse
+                using (HttpResponse response = req.BeginResponse("text/xml"))
                 {
-                    FaultCode = faultCode,
-                    FaultString = faultString
-                };
-                byte[] buffer = res.Serialize();
-                response.GetOutputStream(buffer.LongLength).Write(buffer, 0, buffer.Length);
+                    var res = new XmlRpcStructs.XmlRpcFaultResponse
+                    {
+                        FaultCode = faultCode,
+                        FaultString = faultString
+                    };
+                    byte[] buffer = res.Serialize();
+                    response.GetOutputStream(buffer.LongLength).Write(buffer, 0, buffer.Length);
+                }
+            }
+            catch (SocketException)
+            {
+                /* ignore this one */
+            }
+            catch (HttpResponse.ConnectionCloseException)
+            {
+                /* ignore this one */
+            }
+            catch
+#if DEBUG
+                (Exception e)
+#endif
+            {
+                /* only filled in for debug output */
+#if DEBUG
+                m_Log.Debug("Exception in FaultResponse", e);
+#endif
             }
         }
 
@@ -135,7 +159,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         public void RegisterChannel(UUID sceneID, UUID objectID, UUID scriptID)
         {
             ChannelInfo ci;
-            /* TODO: how to deal with persistency of channel ids here? As of now simply re-use objectid */
+            /* TODO: how to deal with persistency of channel ids here? As of now simply re-use scriptID */
             if (!m_ScriptChannels.TryGetValue(scriptID, out ci))
             {
                 ci = new ChannelInfo(scriptID, sceneID, objectID, scriptID);
@@ -163,7 +187,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                     MessageID = UUID.Zero,
                     SData = string.Empty,
                     Sender = string.Empty,
-                    Type = XmlRpcApi.REMOTE_DATA_REQUEST
+                    Type = XmlRpcApi.REMOTE_DATA_CHANNEL
                 });
             }
         }
@@ -194,22 +218,43 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
         public void ReplyXmlRpc(UUID reqid, int intval, string strval)
         {
             XmlRpcInfo info;
-            if(m_ActiveRequests.Remove(reqid, out info))
+            try
             {
-                using (HttpResponse res = info.HttpRequest.BeginResponse("text/xml"))
+                if (m_ActiveRequests.Remove(reqid, out info))
                 {
-                    using (Stream s = res.GetOutputStream())
+                    using (HttpResponse res = info.HttpRequest.BeginResponse("text/xml"))
                     {
-                        new XmlRpcStructs.XmlRpcResponse
+                        using (Stream s = res.GetOutputStream())
                         {
-                            ReturnValue = new Map
+                            new XmlRpcStructs.XmlRpcResponse
+                            {
+                                ReturnValue = new Map
                             {
                                 { "StringValue", strval },
                                 { "IntValue", intval }
                             }
-                        }.Serialize(s);
+                            }.Serialize(s);
+                        }
                     }
                 }
+            }
+            catch (SocketException)
+            {
+                /* ignore this one */
+            }
+            catch (HttpResponse.ConnectionCloseException)
+            {
+                /* ignore this one */
+            }
+            catch
+#if DEBUG
+                (Exception e)
+#endif
+            {
+                /* only filled in for debug output */
+#if DEBUG
+                m_Log.Debug("Exception in ReplyXmlRpc", e);
+#endif
             }
         }
 
@@ -296,7 +341,7 @@ namespace SilverSim.Scripting.Lsl.Api.XmlRpc
                 IData = intval.AsInt,
                 SData = strval.ToString(),
                 Sender = string.Empty,
-                Type = XmlRpcApi.REMOTE_DATA_CHANNEL,
+                Type = XmlRpcApi.REMOTE_DATA_REQUEST,
                 MessageID = messageId
             });
             return null;
