@@ -335,6 +335,9 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
 
                 var newitem = new ObjectPartInventoryItem(scriptitem);
+
+                m_Log.DebugFormat("Loading script {0} to prim {1}", newitem.Name, destpart.ID);
+
                 destpart.Inventory.Replace(name, newitem);
                 ScriptInstance oldInstance = scriptitem.ScriptInstance;
                 /* duplicate script state */
@@ -353,13 +356,16 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                 }
 
                 newInstance.IsRunningAllowed = thisScene.CanRunScript(instance.Item.Owner, thisGroup.GlobalPosition, instance.Item.AssetID);
-                if (oldInstance != null)
+                newInstance.IsRunning = running != 0;
+                m_Log.DebugFormat("Script {0} in {1}: IsRunningAllowed={2} IsRunning={3}", newitem.Name, destpart.ID, newInstance.IsRunningAllowed, newInstance.IsRunning);
+                if (newInstance.IsRunning)
                 {
-                    newInstance.IsRunning = running != 0;
-                }
-                else if (running != 0)
-                {
+                    m_Log.DebugFormat("Starting script {0}", newitem.Name);
                     newInstance.Start(start_param);
+                    newInstance.PostEvent(new OnRezEvent
+                    {
+                        StartParam = start_param
+                    });
                 }
 
                 return REMOTE_LOAD_SUCCESS;

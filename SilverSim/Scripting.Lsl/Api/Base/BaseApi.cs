@@ -19,6 +19,7 @@
 // obligated to do so. If you do not wish to do so, delete this
 // exception statement from your version.
 
+using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Types;
@@ -31,6 +32,8 @@ namespace SilverSim.Scripting.Lsl.Api.Base
     [Description("LSL/OSSL Base API")]
     public partial class BaseApi : IScriptApi, IPlugin
     {
+        private static readonly ILog m_Log = LogManager.GetLogger("BASE LSL API");
+
         [APILevel(APIFlags.LSL, "attach")]
         [StateEventDelegate]
         public delegate void State_attach(LSLKey id);
