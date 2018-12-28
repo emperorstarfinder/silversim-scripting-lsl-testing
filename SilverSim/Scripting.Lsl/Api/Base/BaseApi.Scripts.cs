@@ -305,6 +305,10 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         }
                         return REMOTE_LOAD_NO_TARGET_PERMISSIONS;
                     }
+                    else if (destpart.ObjectGroup.AttachPoint != AttachmentPoint.NotAttached)
+                    {
+                        return REMOTE_LOAD_NO_TARGET_PERMISSIONS;
+                    }
                 }
                 if ((scriptitem.Permissions.Current & InventoryPermissionsMask.Copy) == 0)
                 {
@@ -313,11 +317,6 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                         instance.ShoutError(new LocalizedScriptMessage(this, "Function0Item1DoesNotHaveCopyPermission", "{0}: Item {1} does not have copy permission", "llRemoteLoadScriptPin", scriptitem.Name));
                     }
                     return REMOTE_LOAD_COPY_REQUIRED;
-                }
-
-                if(destpart.ObjectGroup.AttachPoint != AttachmentPoint.NotAttached)
-                {
-                    return REMOTE_LOAD_NO_TARGET_PERMISSIONS;
                 }
 
                 if(destpart.ScriptAccessPin != pin)
