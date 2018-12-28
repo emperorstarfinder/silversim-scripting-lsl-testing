@@ -26,7 +26,6 @@ using SilverSim.Main.Common;
 using SilverSim.Scene.Management.Scene;
 using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Types;
 using System.ComponentModel;
 
 namespace SilverSim.Scripting.Lsl.Api.XmlRpc

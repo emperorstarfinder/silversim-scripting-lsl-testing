@@ -22,12 +22,7 @@
 #pragma warning disable RCS1029, IDE0018
 
 using SilverSim.Scene.Types.Object;
-using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
-using SilverSim.Scene.Types.Script.Events;
-using SilverSim.Threading;
-using SilverSim.Types;
-using XmlRpcStructs = SilverSim.Types.StructuredData.XmlRpc.XmlRpc;
 
 namespace SilverSim.Scripting.Lsl.Api.XmlRpc
 {
