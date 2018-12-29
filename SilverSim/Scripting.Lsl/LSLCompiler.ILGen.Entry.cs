@@ -1092,10 +1092,12 @@ namespace SilverSim.Scripting.Lsl
 
         private void StateEntryInitVars(string stateName, CompileState compileState, Dictionary<string, object> typeLocalIn)
         {
+            compileState.ILGen.WriteLine("StateEntryInitVars: begin");
             Dictionary<string, FieldBuilder> stateVars;
             Dictionary<string, LineInfo> stateVarInitValues;
             if(!compileState.m_StateVariableFieldInfo.TryGetValue(stateName, out stateVars))
             {
+                compileState.ILGen.WriteLine("StateEntryInitVars: end");
                 return;
             }
             if(!compileState.m_StateVariableInitValues.TryGetValue(stateName, out stateVarInitValues))
@@ -1161,6 +1163,8 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fb.FieldType == typeof(long))
                 {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     compileState.ILGen.Emit(OpCodes.Ldc_I8, 0L);
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
@@ -1168,6 +1172,8 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fb.FieldType == typeof(int))
                 {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     compileState.ILGen.Emit(OpCodes.Ldc_I4_0);
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
@@ -1175,6 +1181,8 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fb.FieldType == typeof(double))
                 {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     compileState.ILGen.Emit(OpCodes.Ldc_R8, (double)0);
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
@@ -1182,6 +1190,8 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fb.FieldType == typeof(string))
                 {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     compileState.ILGen.Emit(OpCodes.Ldstr, string.Empty);
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
@@ -1189,20 +1199,28 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fb.FieldType == typeof(Vector3))
                 {
-                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(Vector3).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    FieldInfo sfld = typeof(Vector3).GetField("Zero");
+                    compileState.ILGen.Emit(OpCodes.Ldsfld, sfld);
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
                     varIsInited.Add(varName);
                 }
                 else if (fb.FieldType == typeof(Quaternion))
                 {
-                    compileState.ILGen.Emit(OpCodes.Newobj, typeof(Quaternion).GetConstructor(Type.EmptyTypes));
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    FieldInfo sfld = typeof(Quaternion).GetField("Identity");
+                    compileState.ILGen.Emit(OpCodes.Ldsfld, sfld);
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
                     varIsInited.Add(varName);
                 }
                 else if (fb.FieldType == typeof(AnArray))
                 {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(AnArray).GetConstructor(Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
@@ -1210,12 +1228,25 @@ namespace SilverSim.Scripting.Lsl
                 }
                 else if (fb.FieldType == typeof(LSLKey))
                 {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
                     compileState.ILGen.Emit(OpCodes.Newobj, typeof(LSLKey).GetConstructor(Type.EmptyTypes));
                     compileState.ILGen.Emit(OpCodes.Stfld, fb);
 
                     varIsInited.Add(varName);
                 }
+                else if(fb.FieldType.IsClass)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    ConstructorInfo ci = fb.FieldType.GetConstructor(Type.EmptyTypes);
+                    compileState.ILGen.Emit(OpCodes.Newobj, ci);
+                    compileState.ILGen.Emit(OpCodes.Stfld, fb);
+
+                    varIsInited.Add(varName);
+                }
             }
+            compileState.ILGen.WriteLine("StateEntryInitVars: end");
         }
 
         private bool AreAllVarReferencesSatisfied(CompileState cs, List<string> initedVars, Tree expressionTree, string varToInit, int lineNumber)
