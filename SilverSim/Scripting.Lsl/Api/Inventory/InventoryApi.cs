@@ -179,14 +179,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
-                try
+                ObjectPartInventoryItem objitem;
+                if(instance.Part.Inventory.TryGetValue(item, out objitem))
                 {
-                    return instance.Part.Inventory[item].Creator.ID;
+                    return objitem.Creator.ID;
                 }
-                catch
-                {
-                    return UUID.Zero;
-                }
+                return UUID.Zero;
             }
         }
 
@@ -213,14 +211,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
-                try
+                ObjectPartInventoryItem objitem;
+                if(instance.Part.Inventory.TryGetValue(item, out objitem))
                 {
-                    return instance.Part.Inventory[item].AssetID;
+                    return objitem.AssetID;
                 }
-                catch
-                {
-                    return UUID.Zero;
-                }
+                return UUID.Zero;
             }
         }
 
@@ -247,23 +243,23 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock(instance)
             {
-                try
+                ObjectPartInventoryItem item;
+                if (type == INVENTORY_ALL)
                 {
-                    if (type == INVENTORY_ALL)
+                    if(instance.Part.Inventory.TryGetValue((uint)number, out item))
                     {
-                        return instance.Part.Inventory[(uint)number].Name;
-                    }
-                    else if (type >= 0)
-                    {
-                        return instance.Part.Inventory[(InventoryType)type, (uint)number].Name;
+                        return item.Name;
                     }
                 }
-                catch
+                else if (type >= 0)
                 {
-                    /* no action required */
+                    if(instance.Part.Inventory.TryGetValue((AssetType)type, (uint)number, out item))
+                    {
+                        return item.Name;
+                    }
                 }
+                return string.Empty;
             }
-            return string.Empty;
         }
 
         [APILevel(APIFlags.ASSL, "asGetLinkInventoryName")]
@@ -272,6 +268,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
+                ObjectPartInventoryItem item;
                 if (type == INVENTORY_ALL)
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
@@ -279,13 +276,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         int cnt = part.Inventory.Count;
                         if (number < cnt)
                         {
-                            try
+                            if(part.Inventory.TryGetValue((uint)number, out item))
                             {
-                                return part.Inventory[(uint)number].Name;
-                            }
-                            catch
-                            {
-                                /* no action required */
+                                return item.Name;
                             }
                         }
                         number -= cnt;
@@ -299,16 +292,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
-                        int cnt = part.Inventory.CountType((InventoryType)type);
+                        int cnt = part.Inventory.CountType((AssetType)type);
                         if (number < cnt)
                         {
-                            try
+                            if(part.Inventory.TryGetValue((AssetType)type, (uint)number, out item))
                             {
-                                return part.Inventory[(InventoryType)type, (uint)number].Name;
-                            }
-                            catch
-                            {
-                                /* no action required */
+                                return item.Name;
                             }
                         }
                         number -= cnt;
@@ -331,7 +320,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 {
                     return instance.Part.Inventory.Count;
                 }
-                return instance.Part.Inventory.CountType((InventoryType)type);
+                return instance.Part.Inventory.CountType((AssetType)type);
             }
         }
 
@@ -344,7 +333,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 int cnt = 0;
                 foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
-                    cnt += (type == INVENTORY_ALL) ? part.Inventory.Count : part.Inventory.CountType((InventoryType)type);
+                    cnt += (type == INVENTORY_ALL) ? part.Inventory.Count : part.Inventory.CountType((AssetType)type);
                 }
                 return cnt;
             }
@@ -537,19 +526,12 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
-                try
+                ObjectPartInventoryItem item;
+                if(instance.Part.Inventory.TryGetValue(name, out item))
                 {
-                    return (int)instance.Part.Inventory[name].InventoryType;
+                    return (int)item.AssetType;
                 }
-                catch(KeyNotFoundException)
-                {
-                    return INVENTORY_NONE;
-                }
-                catch(Exception e)
-                {
-                    m_Log.Error("Exception", e);
-                    return INVENTORY_NONE;
-                }
+                return INVENTORY_NONE;
             }
         }
 
@@ -564,7 +546,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     ObjectPartInventoryItem item;
                     if(part.Inventory.TryGetValue(name, out item))
                     {
-                        return (int)instance.Part.Inventory[name].InventoryType;
+                        return (int)instance.Part.Inventory[name].AssetType;
                     }
                 }
                 return -1;
@@ -668,16 +650,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.OSSL, "osGetInventoryDesc")]
         public string GetInventoryDesc(ScriptInstance instance, string item)
         {
+            ObjectPartInventoryItem objitem;
             lock (instance)
             {
-                try
+                if(instance.Part.Inventory.TryGetValue(item, out objitem))
                 {
-                    return instance.Part.Inventory[item].Description;
+                    return objitem.Description;
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
