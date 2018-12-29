@@ -541,9 +541,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 {
                     return (int)instance.Part.Inventory[name].InventoryType;
                 }
-                catch
+                catch(KeyNotFoundException)
                 {
-                    return -1;
+                    return INVENTORY_NONE;
+                }
+                catch(Exception e)
+                {
+                    m_Log.Error("Exception", e);
+                    return INVENTORY_NONE;
                 }
             }
         }
