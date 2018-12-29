@@ -1031,7 +1031,7 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToCSV")]
         [Description("Returns a string of comma separated values taken in order from src.")]
         [IsPure]
-        public string List2CSV(ScriptInstance instance, AnArray src) => DumpList2String(instance, src, ", ");
+        public string List2CSV(ScriptInstance instance, AnArray src) => DumpList2String(instance, src, ",");
 
         [APILevel(APIFlags.LSL)]
         public const int TYPE_INTEGER = 1;
