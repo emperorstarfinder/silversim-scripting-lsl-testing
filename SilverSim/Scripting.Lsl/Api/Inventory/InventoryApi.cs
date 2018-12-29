@@ -22,6 +22,7 @@
 #pragma warning disable IDE0018
 #pragma warning disable RCS1029
 
+using log4net;
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
@@ -54,6 +55,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
     [Description("LSL/OSSL Inventory API")]
     public partial class InventoryApi : IScriptApi, IPlugin
     {
+        private static readonly ILog m_Log = LogManager.GetLogger("LSL INVENTORY API");
         private List<IUserAgentServicePlugin> m_UserAgentServicePlugins;
         private List<IAssetServicePlugin> m_AssetServicePlugins;
         private List<IInventoryServicePlugin> m_InventoryServicePlugins;

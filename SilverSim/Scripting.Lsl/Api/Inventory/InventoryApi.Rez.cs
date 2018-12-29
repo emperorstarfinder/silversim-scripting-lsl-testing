@@ -199,15 +199,21 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     {
                         ThreadPool.QueueUserWorkItem((o) =>
                         {
-                            RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param);
+                            if(!RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param))
+                            {
+                                m_Log.WarnFormat("Object {0} [{1}] at {2} tried to rez inventory {3} owned by {4}", rezzingpart.Name, rezzingpart.ID, rezzingpart.GlobalPosition, inventory, rezzingpart.Owner);
+                            }
                         });
                         if (removeinventory)
                         {
                             rezzingpart.Inventory.Remove(inventory);
                         }
                     }
-                    else if (RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
-                        removeinventory)
+                    else if (!RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param))
+                    {
+                        m_Log.WarnFormat("Object {0} [{1}] at {2} tried to rez inventory {3} owned by {4}", rezzingpart.Name, rezzingpart.ID, rezzingpart.GlobalPosition, inventory, rezzingpart.Owner);
+                    }
+                    else if(removeinventory)
                     {
                         rezzingpart.Inventory.Remove(inventory);
                     }
@@ -361,7 +367,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             foreach (ObjectGroup sog in groups)
             {
                 sog.IsDieAtEdge = true; /* as per definition of llRezObject and llRezAtRoot */
-                scene.RezObject(sog, rezzingowner, param);
+                scene.RezObject(sog, rezzingowner, param, rezzingpart.ID);
                 rezzingpart.PostEvent(new ObjectRezEvent
                 {
                     ObjectID = sog.ID
