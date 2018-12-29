@@ -1245,6 +1245,15 @@ namespace SilverSim.Scripting.Lsl
 
                     varIsInited.Add(varName);
                 }
+                else if (fb.FieldType.IsValueType)
+                {
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    compileState.ILGen.Emit(OpCodes.Ldflda, fb);
+                    compileState.ILGen.Emit(OpCodes.Initobj, fb.FieldType);
+
+                    varIsInited.Add(varName);
+                }
             }
             compileState.ILGen.WriteLine("StateEntryInitVars: end");
         }
