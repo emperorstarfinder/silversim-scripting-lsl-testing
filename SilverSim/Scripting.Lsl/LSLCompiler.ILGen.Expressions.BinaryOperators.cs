@@ -1927,7 +1927,7 @@ namespace SilverSim.Scripting.Lsl
                         else if((m_RightHandType == typeof(string) || m_RightHandType == typeof(LSLKey)) && compileState.LanguageExtensions.EnableImplicitTypecastToStringOnAddOperator)
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
-                            ProcessCasts(compileState, typeof(string), m_RightHandType, m_LineNumber);
+                            ProcessCasts(compileState, typeof(string), m_LeftHandType, m_LineNumber);
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
                             if (m_RightHandType == typeof(LSLKey))
                             {
