@@ -59,6 +59,12 @@ namespace SilverSim.Scripting.Lsl
 
         public bool Equals(string v) => m_Value.Equals(v);
 
+        public override bool Equals(object obj)
+        {
+            LSLKey v = obj as LSLKey;
+            return v != null && Equals(v);
+        }
+
         public override string ToString() => m_Value;
 
         public AString Substring(Int32 startIndex) => new AString(m_Value.Substring(startIndex));
