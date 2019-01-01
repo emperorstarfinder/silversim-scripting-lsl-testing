@@ -895,13 +895,21 @@ namespace SilverSim.Scripting.Lsl
                     }
                     catch (ChangeStateException e)
                     {
-                        if (m_CurrentState != m_States[e.NewState])
+                        ILSLState newTargetedState;
+                        if (m_States.TryGetValue(e.NewState, out newTargetedState))
                         {
-                            /* if state is equal, it simply aborts the event execution */
-                            newState = m_States[e.NewState];
-                            eventsCount = 0;
-                            executeStateExit = true;
-                            executeStateEntry = true;
+                            if (m_CurrentState != newTargetedState)
+                            {
+                                /* if state is equal, it simply aborts the event execution */
+                                newState = newTargetedState;
+                                eventsCount = 0;
+                                executeStateExit = true;
+                                executeStateEntry = true;
+                            }
+                        }
+                        else
+                        {
+                            m_Log.ErrorFormat("Invalid state {0} at script {1} in {2} [{3}]", e.NewState, Item.Name, Part.Name, Part.ID);
                         }
                     }
                     catch (LocalizedScriptErrorException e)
