@@ -258,8 +258,13 @@ namespace SilverSim.Scripting.Lsl
             #region State Change
             else if (functionLine.Line[startAt] == "state")
             {
+                string stateName = functionLine.Line[startAt + 1];
                 /* when same state, the state instruction compiles to nop according to wiki */
-                compileState.ILGen.Emit(OpCodes.Ldstr, functionLine.Line[startAt + 1]);
+                if(!compileState.m_States.ContainsKey(stateName))
+                {
+                    throw new CompilerException(functionLine.Line[startAt + 1].LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "StateName0IsNotValid", "State name '{0}' is not valid."), stateName));
+                }
+                compileState.ILGen.Emit(OpCodes.Ldstr, stateName);
                 MethodInfo mi = typeof(LSLCompiler).GetMethod("RequestStateChange", BindingFlags.Public | BindingFlags.Static);
                 compileState.ILGen.Emit(OpCodes.Call, mi);
             }
