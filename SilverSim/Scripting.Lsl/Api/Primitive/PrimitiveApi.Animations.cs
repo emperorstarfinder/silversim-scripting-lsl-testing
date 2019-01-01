@@ -149,7 +149,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             anims = part.AnimationController.GetPlayingAnimations();
             foreach (ObjectPartInventoryItem item in part.Inventory.Values)
             {
-                if (item.AssetType == Types.Asset.AssetType.Animation &&
+                if (item.AssetType == AssetType.Animation &&
                     !animinvs.ContainsKey(item.AssetID))
                 {
                     animinvs.Add(item.AssetID, item);
@@ -167,7 +167,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 else
                 {
-                    res.Add(animid);
+                    res.Add(new LSLKey(animid));
                 }
             }
             return res;
