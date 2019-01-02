@@ -1465,10 +1465,10 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        if (!groupedMsgs.TryGetValue(expressionTree.SubTree[i - 1].LineNumber, out groupedMsgBuilder))
+                        if (!groupedMsgs.TryGetValue(expressionTree.SubTree[i].LineNumber, out groupedMsgBuilder))
                         {
                             groupedMsgBuilder = new StringBuilder();
-                            groupedMsgs[expressionTree.SubTree[i - 1].LineNumber] = groupedMsgBuilder;
+                            groupedMsgs[expressionTree.SubTree[i].LineNumber] = groupedMsgBuilder;
                         }
                         else
                         {
