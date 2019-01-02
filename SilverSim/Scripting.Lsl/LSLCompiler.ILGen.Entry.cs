@@ -948,6 +948,10 @@ namespace SilverSim.Scripting.Lsl
                 #endregion
 
                 #region State compilation
+                if(!compileState.m_States.ContainsKey("default"))
+                {
+                    throw new CompilerException(1, this.GetLanguageString(compileState.CurrentCulture, "NoDefaultStateDefined", "No default state defined."));
+                }
                 foreach (KeyValuePair<string, Dictionary<string, List<LineInfo>>> stateKvp in compileState.m_States)
                 {
                     FieldBuilder fb;
