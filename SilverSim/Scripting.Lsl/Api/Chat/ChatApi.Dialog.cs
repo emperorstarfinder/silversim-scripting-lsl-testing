@@ -58,36 +58,37 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 {
                     throw new LocalizedScriptErrorException(this, "AtLeastOneButtonMustBeDefined", "At least one button must be defined");
                 }
-                var m = new ScriptDialog
-                {
-                    Message = message.TrimToMaxLength(256),
-                    ObjectID = thisGroup.ID,
-                    ImageID = UUID.Zero,
-                    ObjectName = thisGroup.Name,
-                    FirstName = groupOwner.FirstName,
-                    LastName = groupOwner.LastName,
-                    ChatChannel = channel
-                };
-                for (int c = 0; c < buttons.Count && c < 12; ++c )
-                {
-                    string buttontext = buttons[c].ToString();
-                    if (buttontext.Length == 0)
-                    {
-                        throw new LocalizedScriptErrorException(this, "ButtonLabelCannotBeBlank", "button label cannot be blank");
-                    }
-                    else if (buttontext.Length > 24)
-                    {
-                        buttontext = buttontext.Substring(0, 24);
-                    }
-                    m.Buttons.Add(buttontext);
-                }
-
-                m.OwnerData.Add(groupOwner.ID);
 
                 SceneInterface thisScene = thisGroup.Scene;
                 IAgent agent;
-                if(thisScene.Agents.TryGetValue(avatar, out agent))
+                if (thisScene.Agents.TryGetValue(avatar, out agent))
                 {
+                    var m = new ScriptDialog
+                    {
+                        Message = message.TrimToMaxLength(256),
+                        ObjectID = thisGroup.ID,
+                        ImageID = UUID.Zero,
+                        ObjectName = thisGroup.Name,
+                        FirstName = groupOwner.FirstName,
+                        LastName = groupOwner.LastName,
+                        ChatChannel = channel
+                    };
+                    for (int c = 0; c < buttons.Count && c < 12; ++c)
+                    {
+                        string buttontext = buttons[c].ToString();
+                        if (buttontext.Length == 0)
+                        {
+                            throw new LocalizedScriptErrorException(this, "ButtonLabelCannotBeBlank", "button label cannot be blank");
+                        }
+                        else if (buttontext.Length > 24)
+                        {
+                            buttontext = buttontext.Substring(0, 24);
+                        }
+                        m.Buttons.Add(buttontext);
+                    }
+
+                    m.OwnerData.Add(groupOwner.ID);
+
                     agent.SendMessageAlways(m, thisScene.ID);
                 }
             }
@@ -112,18 +113,17 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
             {
                 ObjectGroup thisGroup = instance.Part.ObjectGroup;
                 SceneInterface thisScene = thisGroup.Scene;
-                var m = new LoadURL
-                {
-                    ObjectName = thisGroup.Name,
-                    ObjectID = thisGroup.ID,
-                    OwnerID = thisGroup.Owner.ID,
-                    Message = message.TrimToMaxLength(256),
-                    URL = url
-                };
                 IAgent agent;
                 if(thisScene.Agents.TryGetValue(avatar, out agent))
                 {
-                    agent.SendMessageAlways(m, thisScene.ID);
+                    agent.SendMessageAlways(new LoadURL
+                    {
+                        ObjectName = thisGroup.Name,
+                        ObjectID = thisGroup.ID,
+                        OwnerID = thisGroup.Owner.ID,
+                        Message = message.TrimToMaxLength(256),
+                        URL = url
+                    }, thisScene.ID);
                 }
             }
         }
@@ -143,14 +143,13 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                     IAgent agent;
                     if (thisScene.Agents.TryGetValue(detinfo.Key, out agent))
                     {
-                        var m = new ScriptTeleportRequest
+                        agent.SendMessageAlways(new ScriptTeleportRequest
                         {
                             ObjectName = thisGroup.Name,
                             SimName = simname,
                             SimPosition = pos,
                             LookAt = look_at
-                        };
-                        agent.SendMessageAlways(m, thisScene.ID);
+                        }, thisScene.ID);
                     }
                 }
             }
