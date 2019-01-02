@@ -291,7 +291,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                return instance.Part.Name;
+                return instance.Part.Description;
             }
         }
 
