@@ -1465,25 +1465,43 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        if (!groupedMsgs.TryGetValue(expressionTree.SubTree[i].LineNumber, out groupedMsgBuilder))
-                        {
-                            groupedMsgBuilder = new StringBuilder();
-                            groupedMsgs[expressionTree.SubTree[i].LineNumber] = groupedMsgBuilder;
-                        }
-                        else
-                        {
-                            groupedMsgBuilder.Append("\n");
-                        }
                         if (cs.ContainsValidVarType(entry))
                         {
+                            if (!groupedMsgs.TryGetValue(expressionTree.SubTree[i].LineNumber, out groupedMsgBuilder))
+                            {
+                                groupedMsgBuilder = new StringBuilder();
+                                groupedMsgs[expressionTree.SubTree[i].LineNumber] = groupedMsgBuilder;
+                            }
+                            else
+                            {
+                                groupedMsgBuilder.Append("\n");
+                            }
                             groupedMsgBuilder.AppendFormat(this.GetLanguageString(currentCulture, "UsedType0InPlaceOfAVariable", "Used type '{0}' in place of a variable."), entry);
                         }
                         else if(!IsValidVarName(entry) || cs.IsReservedWord(entry))
                         {
+                            if (!groupedMsgs.TryGetValue(expressionTree.SubTree[i].LineNumber, out groupedMsgBuilder))
+                            {
+                                groupedMsgBuilder = new StringBuilder();
+                                groupedMsgs[expressionTree.SubTree[i].LineNumber] = groupedMsgBuilder;
+                            }
+                            else
+                            {
+                                groupedMsgBuilder.Append("\n");
+                            }
                             groupedMsgBuilder.AppendFormat(this.GetLanguageString(currentCulture, "Used0InPlaceOfAVariable", "Used '{0}' in place of a variable."), entry);
                         }
                         else
                         {
+                            if (!groupedMsgs.TryGetValue(expressionTree.SubTree[i].LineNumber, out groupedMsgBuilder))
+                            {
+                                groupedMsgBuilder = new StringBuilder();
+                                groupedMsgs[expressionTree.SubTree[i].LineNumber] = groupedMsgBuilder;
+                            }
+                            else
+                            {
+                                groupedMsgBuilder.Append("\n");
+                            }
                             groupedMsgBuilder.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
                         }
                     }
