@@ -1431,7 +1431,8 @@ namespace SilverSim.Scripting.Lsl
             IdentifyDeclarations(cs, expressionTree);
 
             int n = expressionTree.SubTree.Count;
-            var msg = new StringBuilder();
+            var groupedMsgs = new Dictionary<int, StringBuilder>();
+            var groupedMsgBuilder = new StringBuilder();
             for(int i = 0; i < n; ++i)
             {
                 Tree st = expressionTree.SubTree[i];
@@ -1445,11 +1446,16 @@ namespace SilverSim.Scripting.Lsl
                         expressionTree.SubTree[i + 1].Type == Tree.EntryType.Unknown &&
                         expressionTree.SubTree[i + 1].Entry == "(")
                     {
-                        if(msg.Length != 0)
+                        if(!groupedMsgs.TryGetValue(expressionTree.SubTree[i + 1].LineNumber, out groupedMsgBuilder))
                         {
-                            msg.Append("\n");
+                            groupedMsgBuilder = new StringBuilder();
+                            groupedMsgs[expressionTree.SubTree[i + 1].LineNumber] = groupedMsgBuilder;
                         }
-                        msg.AppendFormat(this.GetLanguageString(currentCulture, "NoFunction0Defined", "no function '{0}' defined"), entry);
+                        else
+                        {
+                            groupedMsgBuilder.Append("\n");
+                        }
+                        groupedMsgBuilder.AppendFormat(this.GetLanguageString(currentCulture, "NoFunction0Defined", "no function '{0}' defined"), entry);
                     }
                     else if(i > 0 &&
                         expressionTree.SubTree[i - 1].Type == Tree.EntryType.OperatorUnknown &&
@@ -1459,30 +1465,40 @@ namespace SilverSim.Scripting.Lsl
                     }
                     else
                     {
-                        if (msg.Length != 0)
+                        if (!groupedMsgs.TryGetValue(expressionTree.SubTree[i - 1].LineNumber, out groupedMsgBuilder))
                         {
-                            msg.Append("\n");
-                        }
-                        if (cs.ContainsValidVarType(entry))
-                        {
-                            msg.AppendFormat(this.GetLanguageString(currentCulture, "UsedType0InPlaceOfAVariable", "Used type '{0}' in place of a variable."), entry);
-                        }
-                        else if(!IsValidVarName(entry) || cs.IsReservedWord(entry))
-                        {
-                            msg.AppendFormat(this.GetLanguageString(currentCulture, "Used0InPlaceOfAVariable", "Used '{0}' in place of a variable."), entry);
+                            groupedMsgBuilder = new StringBuilder();
+                            groupedMsgs[expressionTree.SubTree[i - 1].LineNumber] = groupedMsgBuilder;
                         }
                         else
                         {
-                            msg.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
+                            groupedMsgBuilder.Append("\n");
+                        }
+                        if (cs.ContainsValidVarType(entry))
+                        {
+                            groupedMsgBuilder.AppendFormat(this.GetLanguageString(currentCulture, "UsedType0InPlaceOfAVariable", "Used type '{0}' in place of a variable."), entry);
+                        }
+                        else if(!IsValidVarName(entry) || cs.IsReservedWord(entry))
+                        {
+                            groupedMsgBuilder.AppendFormat(this.GetLanguageString(currentCulture, "Used0InPlaceOfAVariable", "Used '{0}' in place of a variable."), entry);
+                        }
+                        else
+                        {
+                            groupedMsgBuilder.AppendFormat(this.GetLanguageString(currentCulture, "Variable0NotDefined", "no variable '{0}' defined"), entry);
                         }
                     }
                 }
                 st.Process(cs);
             }
 
-            if(msg.Length != 0)
+            if(groupedMsgs.Count != 0)
             {
-                throw new CompilerException(expressionLine[0].LineNumber, msg.ToString());
+                var actdict = new Dictionary<int, string>();
+                foreach(KeyValuePair<int, StringBuilder> kvp in groupedMsgs)
+                {
+                    actdict.Add(kvp.Key, kvp.Value.ToString());
+                }
+                throw new CompilerException(actdict);
             }
 
             /* After OrderBrackets only deep-scanners can be used */
