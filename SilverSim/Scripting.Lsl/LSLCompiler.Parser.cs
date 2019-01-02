@@ -161,7 +161,7 @@ namespace SilverSim.Scripting.Lsl
                 var fp = new FuncParamInfo();
                 if(!cs.TryGetValidVarType(arguments[i], out fp.Type))
                 {
-                    throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, "InvalidTypeForParameter0", "Invalid type for parameter {0}"), i / 3));
+                    throw ParserException(p, string.Format(this.GetLanguageString(cs.CurrentCulture, "InvalidTypeForParameter0", "Invalid type for parameter {0}"), i / 3 + 1));
                 }
 
                 CheckUsedName(cs, p, "Parameter", arguments[i + 1]);
