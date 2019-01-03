@@ -158,7 +158,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llSetDamage")]
         public void SetDamage(ScriptInstance instance, double damage)
         {
-            throw new NotImplementedException("llSetDamage(float)");
+            lock(instance)
+            {
+                instance.Part.ObjectGroup.Damage = damage;
+            }
         }
 
         [APILevel(APIFlags.LSL, "llGetEnergy")]
