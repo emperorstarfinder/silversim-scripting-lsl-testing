@@ -524,6 +524,7 @@ namespace SilverSim.Scripting.Lsl
                         foreach (APILevelAttribute attr in apiLevelAttrs)
                         {
                             string typeName = attr.Name;
+                            string displayTypeName = apiDisplayNameAttr.DisplayName;
                             if (string.IsNullOrEmpty(typeName))
                             {
                                 typeName = apiDisplayNameAttr.DisplayName;
@@ -531,6 +532,7 @@ namespace SilverSim.Scripting.Lsl
                             if (string.IsNullOrEmpty(typeName))
                             {
                                 typeName = t.Name;
+                                displayTypeName = typeName;
                             }
                             foreach (KeyValuePair<APIFlags, ApiInfo> kvp in m_ApiInfos)
                             {
@@ -541,13 +543,14 @@ namespace SilverSim.Scripting.Lsl
                                     {
                                         kvp.Value.VariableTypes.Add(typeName);
                                     }
-                                    m_ValidTypes[t] = typeName;
+                                    m_ValidTypes[t] = displayTypeName;
                                 }
                             }
                         }
                         foreach (APIExtensionAttribute attr in apiExtensionAttrs)
                         {
                             string typeName = attr.Name;
+                            string displayTypeName = apiDisplayNameAttr.DisplayName;
                             if(string.IsNullOrEmpty(typeName))
                             {
                                 typeName = apiDisplayNameAttr.DisplayName;
@@ -555,6 +558,7 @@ namespace SilverSim.Scripting.Lsl
                             if (string.IsNullOrEmpty(typeName))
                             {
                                 typeName = t.Name;
+                                displayTypeName = typeName;
                             }
 
                             ApiInfo apiInfo;
@@ -569,7 +573,7 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 apiInfo.VariableTypes.Add(typeName);
                             }
-                            m_ValidTypes[t] = typeName;
+                            m_ValidTypes[t] = displayTypeName;
                             KnownSerializationTypes[t.FullName] = t;
                         }
                     }
