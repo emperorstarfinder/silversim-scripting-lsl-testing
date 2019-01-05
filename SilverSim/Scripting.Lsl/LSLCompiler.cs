@@ -543,7 +543,11 @@ namespace SilverSim.Scripting.Lsl
                         }
                         foreach (APIExtensionAttribute attr in apiExtensionAttrs)
                         {
-                            string typeName = apiDisplayNameAttr.DisplayName;
+                            string typeName = attr.Name;
+                            if(string.IsNullOrEmpty(typeName))
+                            {
+                                typeName = apiDisplayNameAttr.DisplayName;
+                            }
                             if (string.IsNullOrEmpty(typeName))
                             {
                                 typeName = t.Name;
