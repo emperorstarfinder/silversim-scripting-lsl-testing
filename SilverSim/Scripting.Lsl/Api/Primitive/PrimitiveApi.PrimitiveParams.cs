@@ -310,7 +310,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 }
                 using(AnArray.MarkEnumerator enumerator = rules.GetMarkEnumerator())
                 {
-                    part.SetPrimitiveParams(enumerator);
+                    part.ObjectGroup.SetPrimitiveParams(part.LinkNumber, LINK_THIS, enumerator);
                 }
             }
         }
@@ -335,7 +335,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
                 using(AnArray.Enumerator enumerator = paramList.GetEnumerator())
                 {
-                    part.GetPrimitiveParams(enumerator, res);
+                    part.ObjectGroup.GetPrimitiveParams(part.LinkNumber, LINK_THIS, enumerator, res);
                 }
                 return res;
             }
