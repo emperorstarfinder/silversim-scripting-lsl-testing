@@ -174,7 +174,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return string.Empty;
                 }
 
-                return agent.GetAnimationOverride(selState);
+                return (string)agent.GetAnimationOverride(selState);
             }
         }
 
@@ -273,7 +273,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     var list = new List<KeyValuePair<string, string>>();
                     foreach(KeyValuePair<string, AnimationState> kvp in m_DefaultAnimationTranslate)
                     {
-                        list.Add(new KeyValuePair<string, string>(kvp.Key, agent.GetAnimationOverride(kvp.Value)));
+                        list.Add(new KeyValuePair<string, string>(kvp.Key, (string)agent.GetAnimationOverride(kvp.Value)));
                     }
                     return new AnimationOverrideEnumerator(list.ToArray());
                 }
@@ -310,7 +310,7 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                             return string.Empty;
                         }
 
-                        return agent.GetAnimationOverride(selState);
+                        return (string)agent.GetAnimationOverride(selState);
                     }
                 }
                 set
