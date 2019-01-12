@@ -56,7 +56,14 @@ namespace SilverSim.Scripting.Lsl.Api.Chat
                 }
                 else if(buttons.Count == 0)
                 {
-                    throw new LocalizedScriptErrorException(this, "AtLeastOneButtonMustBeDefined", "At least one button must be defined");
+                    if (((Script)instance).AllowEmptyDialogList)
+                    {
+                        buttons = new AnArray { { "OK" } };
+                    }
+                    else
+                    {
+                        throw new LocalizedScriptErrorException(this, "AtLeastOneButtonMustBeDefined", "At least one button must be defined");
+                    }
                 }
 
                 SceneInterface thisScene = thisGroup.Scene;

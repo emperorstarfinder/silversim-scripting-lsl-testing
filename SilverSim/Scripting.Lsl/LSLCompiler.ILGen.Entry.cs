@@ -233,6 +233,13 @@ namespace SilverSim.Scripting.Lsl
                     script_ilgen.Emit(OpCodes.Stfld, typeof(Script).GetField("UseMessageObjectEvent", BindingFlags.Instance | BindingFlags.NonPublic));
                 }
 
+                if(compileState.LanguageExtensions.AllowEmptyDialogList)
+                {
+                    script_ilgen.Emit(OpCodes.Ldarg_0);
+                    script_ilgen.Emit(OpCodes.Ldc_I4_1);
+                    script_ilgen.Emit(OpCodes.Stfld, typeof(Script).GetField("m_AllowEmptyDialogList", BindingFlags.Instance | BindingFlags.NonPublic));
+                }
+
                 if(compileState.LanguageExtensions.InheritEventsOnStateChange)
                 {
                     script_ilgen.Emit(OpCodes.Ldarg_0);

@@ -199,6 +199,9 @@ namespace SilverSim.Scripting.Lsl
                 [APILevel(APIFlags.ASSL)]
                 public bool UseMessageObjectEvent;
 
+                [APILevel(APIFlags.OSSL)]
+                public bool AllowEmptyDialogList;
+
                 [APILevel(APIFlags.ASSL)]
                 public bool EnableStringJuxtaposition;
 
