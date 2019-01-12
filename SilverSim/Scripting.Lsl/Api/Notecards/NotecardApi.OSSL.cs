@@ -114,6 +114,21 @@ namespace SilverSim.Scripting.Lsl.Api.Notecards
             {
                 UUID assetID = instance.GetNotecardAssetID(name);
                 Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
+                return nc.Text + "\n";
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetNotecard")]
+        [Description("read the entire contents of a notecard directly.\nIt does not use the dataserver event.")]
+        public string GetNotecard2(
+            ScriptInstance instance,
+            [Description("name of notecard in inventory")]
+            string name)
+        {
+            lock (instance)
+            {
+                UUID assetID = instance.GetNotecardAssetID(name);
+                Notecard nc = instance.Part.ObjectGroup.Scene.GetService<NotecardCache>()[assetID];
                 return nc.Text;
             }
         }
