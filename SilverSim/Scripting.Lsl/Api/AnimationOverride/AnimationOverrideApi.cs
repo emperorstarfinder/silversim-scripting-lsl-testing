@@ -25,8 +25,11 @@
 using SilverSim.Main.Common;
 using SilverSim.Scene.Types.Agent;
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
+using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.Types;
+using SilverSim.Types.Asset;
 using SilverSim.Types.Script;
 using System;
 using System.Collections;
@@ -110,6 +113,8 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
             {
                 IAgent agent;
                 ObjectPartInventoryItem.PermsGranterInfo grantinfo = instance.Item.PermsGranter;
+                ObjectGroup grp = instance.Part.ObjectGroup;
+                SceneInterface scene = grp.Scene;
 
                 if ((grantinfo.PermsMask & ScriptPermissions.OverrideAnimations) == 0 ||
                     grantinfo.PermsGranter == UGUI.Unknown)
@@ -133,9 +138,51 @@ namespace SilverSim.Scripting.Lsl.Api.AnimationOverride
                     return;
                 }
 
+                UUID animID = instance.GetAnimationAssetID(anim);
+
+                AssetServiceInterface assetService = scene.AssetService;
+                AssetMetadata metadata;
+                AssetData data;
+                if (animID.IsInternalAnimationID())
+                {
+                    /* anim is an internal one so viewer knows it */
+                }
+                else if (!assetService.Metadata.TryGetValue(animID, out metadata))
+                {
+                    if (grp.IsAttached) /* on attachments, we have to fetch from agent eventually */
+                    {
+                        IAgent owner;
+                        if (!grp.Scene.RootAgents.TryGetValue(grp.Owner.ID, out owner))
+                        {
+                            return;
+                        }
+                        if (!owner.AssetService.TryGetValue(animID, out data))
+                        {
+                            /* not found */
+                            return;
+                        }
+                        assetService.Store(data);
+                        if (data.Type != AssetType.Animation)
+                        {
+                            /* ignore wrong asset here */
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        /* ignore missing asset here */
+                        return;
+                    }
+                }
+                else if (metadata.Type != AssetType.Animation)
+                {
+                    /* ignore wrong asset here */
+                    return;
+                }
+
                 try
                 {
-                    agent.SetAnimationOverride(selState, anim);
+                    agent.SetAnimationOverride(selState, animID);
                 }
                 catch (Exception e)
                 {
