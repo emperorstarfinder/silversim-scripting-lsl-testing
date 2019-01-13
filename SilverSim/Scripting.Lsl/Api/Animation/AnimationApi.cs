@@ -228,7 +228,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
         private static AnArray GetAnimationListInternal(ScriptInstance instance, LSLKey agentkey)
         {
-            List<UUID> playingAnimations;
+            var res = new AnArray();
             lock (instance)
             {
                 IAgent agent;
@@ -236,13 +236,11 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                 {
                     return new AnArray();
                 }
-                playingAnimations = agent.GetPlayingAnimations();
-            }
 
-            var res = new AnArray();
-            foreach (UUID id in playingAnimations)
-            {
-                res.Add(id);
+                foreach (UUID id in agent.GetPlayingAnimations())
+                {
+                    res.Add(instance.FindAnimationName(id));
+                }
             }
             return res;
         }

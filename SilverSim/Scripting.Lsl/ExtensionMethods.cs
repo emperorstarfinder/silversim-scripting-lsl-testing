@@ -274,6 +274,30 @@ namespace SilverSim.Scripting.Lsl
 
         public static bool IsInternalAnimationID(this UUID id) => m_InternalAnimations.ContainsValue(id);
 
+        public static string FindAnimationName(this ScriptInstance instance, UUID assetID)
+        {
+            if (assetID != UUID.Zero)
+            {
+                foreach(KeyValuePair<string, UUID> kvp in m_InternalAnimations)
+                {
+                    if(kvp.Value == assetID)
+                    {
+                        return kvp.Key;
+                    }
+                }
+
+                foreach (ObjectPartInventoryItem item in instance.Part.Inventory.Values)
+                {
+                    if (item.AssetType == AssetType.Animation && item.AssetID == assetID)
+                    {
+                        return item.Name;
+                    }
+                }
+            }
+
+            return assetID.ToString();
+        }
+
         private static ObjectPart GetInventoryLinkPart(this ScriptInstance instance, int inventorylink, string itemtype, string item)
         {
             ObjectPart part = instance.Part;
