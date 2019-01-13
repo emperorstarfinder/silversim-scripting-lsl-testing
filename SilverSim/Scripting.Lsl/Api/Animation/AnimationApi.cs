@@ -224,9 +224,12 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
         }
 
         [APILevel(APIFlags.LSL, "llGetAnimationList")]
-        public AnArray GetAnimationList(ScriptInstance instance, LSLKey agentkey) => GetAnimationListInternal(instance, agentkey);
+        public AnArray GetAnimationList(ScriptInstance instance, LSLKey agentkey) => GetAnimationListInternal(instance, agentkey, false);
 
-        private static AnArray GetAnimationListInternal(ScriptInstance instance, LSLKey agentkey)
+        [APILevel(APIFlags.ASSL, "asGetAnimationList")]
+        public AnArray GetAnimationList2(ScriptInstance instance, LSLKey agentkey) => GetAnimationListInternal(instance, agentkey, true);
+
+        private static AnArray GetAnimationListInternal(ScriptInstance instance, LSLKey agentkey, bool resolve)
         {
             var res = new AnArray();
             lock (instance)
@@ -239,7 +242,7 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
 
                 foreach (UUID id in agent.GetPlayingAnimations())
                 {
-                    res.Add(instance.FindAnimationName(id));
+                    res.Add(resolve ? instance.FindAnimationName(id) : new LSLKey(id));
                 }
             }
             return res;
@@ -339,9 +342,9 @@ namespace SilverSim.Scripting.Lsl.Api.Animation
                 m_Agent = agent;
             }
 
-            public static implicit operator AnArray(AnimationListDetails details) => GetAnimationListInternal(details.m_Instance, details.m_Agent);
+            public static implicit operator AnArray(AnimationListDetails details) => GetAnimationListInternal(details.m_Instance, details.m_Agent, true);
 
-            public AnimationListEnumerator GetLslForeachEnumerator() => new AnimationListEnumerator(GetAnimationListInternal(m_Instance, m_Agent));
+            public AnimationListEnumerator GetLslForeachEnumerator() => new AnimationListEnumerator(GetAnimationListInternal(m_Instance, m_Agent, true));
         }
 
         [APIExtension(APIExtension.Properties, "animationlistaccessor")]
