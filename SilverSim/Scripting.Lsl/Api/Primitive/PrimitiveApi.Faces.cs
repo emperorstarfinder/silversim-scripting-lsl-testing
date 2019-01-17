@@ -69,12 +69,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock (instance)
             {
-                try
-                {
+                if(face >= 0 && face < instance.Part.NumberOfSides)
+                { 
                     TextureEntryFace te = instance.Part.TextureEntry[(uint)face];
                     return te.TextureColor.A;
                 }
-                catch
+                else
                 {
                     return 0f;
                 }
@@ -99,19 +99,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                     instance.Part.TextureEntry = te;
                 }
-                else
+                else if(face >= 0 && face < instance.Part.NumberOfSides)
                 {
-                    try
-                    {
-                        TextureEntry te = instance.Part.TextureEntry;
-                        te[(uint)face].OffsetU = uf;
-                        te[(uint)face].OffsetV = vf;
-                        instance.Part.TextureEntry = te;
-                    }
-                    catch
-                    {
-                        /* intentionally left empty */
-                    }
+                    TextureEntry te = instance.Part.TextureEntry;
+                    te[(uint)face].OffsetU = uf;
+                    te[(uint)face].OffsetV = vf;
+                    instance.Part.TextureEntry = te;
                 }
             }
         }
@@ -134,19 +127,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                     instance.Part.TextureEntry = te;
                 }
-                else
+                else if(face >= 0 && face < instance.Part.NumberOfSides)
                 {
-                    try
-                    {
-                        TextureEntry te = instance.Part.TextureEntry;
-                        te[(uint)face].RepeatU = uf;
-                        te[(uint)face].RepeatV = vf;
-                        instance.Part.TextureEntry = te;
-                    }
-                    catch
-                    {
-                        /* intentionally left empty */
-                    }
+                    TextureEntry te = instance.Part.TextureEntry;
+                    te[(uint)face].RepeatU = uf;
+                    te[(uint)face].RepeatV = vf;
+                    instance.Part.TextureEntry = te;
                 }
             }
         }
@@ -167,18 +153,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                     }
                     instance.Part.TextureEntry = te;
                 }
-                else
+                else if(face >= 0 && face < instance.Part.NumberOfSides)
                 {
-                    try
-                    {
-                        TextureEntry te = instance.Part.TextureEntry;
-                        te[(uint)face].Rotation = anglef;
-                        instance.Part.TextureEntry = te;
-                    }
-                    catch
-                    {
-                        /* intentionally left empty */
-                    }
+                    TextureEntry te = instance.Part.TextureEntry;
+                    te[(uint)face].Rotation = anglef;
+                    instance.Part.TextureEntry = te;
                 }
             }
         }
@@ -210,21 +189,17 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         part.TextureEntry = te;
                     }
                 }
-                else
+                else if(face >= 0)
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
-                        try
+                        if(face < part.NumberOfSides)
                         {
                             TextureEntry te = part.TextureEntry;
                             ColorAlpha c = te[(uint)face].TextureColor;
                             c.A = alpha;
                             te[(uint)face].TextureColor = c;
                             part.TextureEntry = te;
-                        }
-                        catch
-                        {
-                            /* intentionally left empty */
                         }
                     }
                 }
@@ -258,19 +233,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         part.TextureEntry = te;
                     }
                 }
-                else
+                else if(face >= 0)
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
-                        try
+                        if(face < part.NumberOfSides)
                         {
                             TextureEntry te = part.TextureEntry;
                             te[(uint)face].TextureID = textureID;
                             part.TextureEntry = te;
-                        }
-                        catch
-                        {
-                            /* intentionally left empty */
                         }
                     }
                 }
@@ -405,11 +376,11 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         part.TextureEntry = te;
                     }
                 }
-                else
+                else if(face >= 0)
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
-                        try
+                        if(face < part.NumberOfSides)
                         {
                             TextureEntry te = part.TextureEntry;
                             ColorAlpha col = te[(uint)face].TextureColor;
@@ -418,10 +389,6 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             col.B = color.Z;
                             te[(uint)face].TextureColor = col;
                             part.TextureEntry = te;
-                        }
-                        catch
-                        {
-                            /* intentionally left empty */
                         }
                     }
                 }
