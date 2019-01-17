@@ -89,25 +89,26 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             var vf = (float)v.Clamp(-1, 1);
             lock(instance)
             {
+                int numberOfSides = instance.Part.NumberOfSides;
                 if (face == ALL_SIDES)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
-                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < numberOfSides; ++face)
                     {
                         TextureEntryFace texface = te[(uint)face];
                         texface.OffsetU = uf;
                         texface.OffsetV = vf;
                     }
-                    te.OptimizeDefault();
+                    te.OptimizeDefault(numberOfSides);
                     instance.Part.TextureEntry = te;
                 }
-                else if(face >= 0 && face < instance.Part.NumberOfSides)
+                else if(face >= 0 && face < numberOfSides)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
                     TextureEntryFace texface = te[(uint)face];
                     texface.OffsetU = uf;
                     texface.OffsetV = vf;
-                    te.OptimizeDefault();
+                    te.OptimizeDefault(numberOfSides);
                     instance.Part.TextureEntry = te;
                 }
             }
@@ -121,25 +122,26 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             var vf = (float)v;
             lock (instance)
             {
+                int numberOfSides = instance.Part.NumberOfSides;
                 if (face == ALL_SIDES)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
-                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < numberOfSides; ++face)
                     {
                         TextureEntryFace texface = te[(uint)face];
                         texface.RepeatU = uf;
                         texface.RepeatV = vf;
                     }
-                    te.OptimizeDefault();
+                    te.OptimizeDefault(numberOfSides);
                     instance.Part.TextureEntry = te;
                 }
-                else if(face >= 0 && face < instance.Part.NumberOfSides)
+                else if(face >= 0 && face < numberOfSides)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
                     TextureEntryFace texface = te[(uint)face];
                     texface.RepeatU = uf;
                     texface.RepeatV = vf;
-                    te.OptimizeDefault();
+                    te.OptimizeDefault(numberOfSides);
                     instance.Part.TextureEntry = te;
                 }
             }
@@ -152,21 +154,22 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             var anglef = (float)angle;
             lock (instance)
             {
+                int numberOfSides = instance.Part.NumberOfSides;
                 if (face == ALL_SIDES)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
-                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
+                    for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < numberOfSides; ++face)
                     {
                         te[(uint)face].Rotation = anglef;
                     }
-                    te.OptimizeDefault();
+                    te.OptimizeDefault(numberOfSides);
                     instance.Part.TextureEntry = te;
                 }
-                else if(face >= 0 && face < instance.Part.NumberOfSides)
+                else if(face >= 0 && face < numberOfSides)
                 {
                     TextureEntry te = instance.Part.TextureEntry;
                     te[(uint)face].Rotation = anglef;
-                    te.OptimizeDefault();
+                    te.OptimizeDefault(numberOfSides);
                     instance.Part.TextureEntry = te;
                 }
             }
@@ -189,14 +192,15 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
+                        int numberOfSides = part.NumberOfSides;
                         TextureEntry te = part.TextureEntry;
-                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
+                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < numberOfSides; ++face)
                         {
                             ColorAlpha c = te[(uint)face].TextureColor;
                             c.A = alpha;
                             te[(uint)face].TextureColor = c;
                         }
-                        te.OptimizeDefault();
+                        te.OptimizeDefault(numberOfSides);
                         part.TextureEntry = te;
                     }
                 }
@@ -204,13 +208,14 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
-                        if(face < part.NumberOfSides)
+                        int numberOfSides = part.NumberOfSides;
+                        if (face < numberOfSides)
                         {
                             TextureEntry te = part.TextureEntry;
                             ColorAlpha c = te[(uint)face].TextureColor;
                             c.A = alpha;
                             te[(uint)face].TextureColor = c;
-                            te.OptimizeDefault();
+                            te.OptimizeDefault(numberOfSides);
                             part.TextureEntry = te;
                         }
                     }
@@ -237,12 +242,13 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
+                        int numberOfSides = part.NumberOfSides;
                         TextureEntry te = part.TextureEntry;
-                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
+                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < numberOfSides; ++face)
                         {
                             te[(uint)face].TextureID = textureID;
                         }
-                        te.OptimizeDefault();
+                        te.OptimizeDefault(numberOfSides);
                         part.TextureEntry = te;
                     }
                 }
@@ -250,11 +256,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
-                        if(face < part.NumberOfSides)
+                        int numberOfSides = instance.Part.NumberOfSides;
+                        if (face < numberOfSides)
                         {
                             TextureEntry te = part.TextureEntry;
                             te[(uint)face].TextureID = textureID;
-                            te.OptimizeDefault();
+                            te.OptimizeDefault(numberOfSides);
                             part.TextureEntry = te;
                         }
                     }
@@ -378,8 +385,9 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
+                        int numberOfSides = part.NumberOfSides;
                         TextureEntry te = part.TextureEntry;
-                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < instance.Part.NumberOfSides; ++face)
+                        for (face = 0; face < TextureEntry.MAX_TEXTURE_FACES && face < numberOfSides; ++face)
                         {
                             ColorAlpha col = te[(uint)face].TextureColor;
                             col.R = color.X;
@@ -387,7 +395,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             col.B = color.Z;
                             te[(uint)face].TextureColor = col;
                         }
-                        te.OptimizeDefault();
+                        te.OptimizeDefault(numberOfSides);
                         part.TextureEntry = te;
                     }
                 }
@@ -395,7 +403,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                 {
                     foreach (ObjectPart part in instance.GetLinkTargets(link))
                     {
-                        if(face < part.NumberOfSides)
+                        int numberOfSides = part.NumberOfSides;
+                        if (face < numberOfSides)
                         {
                             TextureEntry te = part.TextureEntry;
                             ColorAlpha col = te[(uint)face].TextureColor;
@@ -403,7 +412,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                             col.G = color.Y;
                             col.B = color.Z;
                             te[(uint)face].TextureColor = col;
-                            te.OptimizeDefault();
+                            te.OptimizeDefault(numberOfSides);
                             part.TextureEntry = te;
                         }
                     }
