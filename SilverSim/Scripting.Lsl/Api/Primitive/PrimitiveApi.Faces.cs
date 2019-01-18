@@ -237,6 +237,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             lock(instance)
             {
                 UUID textureID = instance.GetTextureAssetID(texture);
+                if(!instance.Part.TryFetchTexture(textureID))
+                {
+                    return;
+                }
 
                 if (face == ALL_SIDES)
                 {
