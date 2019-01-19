@@ -178,8 +178,18 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Sound queueing [integer enable]")]
         public const int PRIM_SOUND_QUEUEING = 12008;
+        [APILevel(APIFlags.ASSL)]
         [Description("Select all languages")]
         public const int PRIM_ALL_LANGUAGES = 12009;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Reset prim param to default language [integer primparamtype]")]
+        public const int PRIM_RESET_PARAM_TO_DEFAULT_LANGUAGE = 12010;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Sit text [string sittext]")]
+        public const int PRIM_SIT_TEXT = 12011;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Touch text [string touchtext]")]
+        public const int PRIM_TOUCH_TEXT = 12011;
         #endregion
 
         #region PRIM_LOOP_SOUND
