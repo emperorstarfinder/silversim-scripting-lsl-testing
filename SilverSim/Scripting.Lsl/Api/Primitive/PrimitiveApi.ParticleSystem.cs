@@ -145,11 +145,16 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llLinkParticleSystem")]
         public void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
         {
-            var ps = new ParticleSystem();
+            ParticleSystem ps = null;
 
             float tempf = 0;
             int tmpi = 0;
             Vector3 tempv;
+
+            if(rules.Count != 0)
+            {
+                ps = new ParticleSystem();
+            }
 
             for (int i = 0; i < rules.Count; i += 2)
             {
@@ -532,7 +537,10 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         return;
                 }
             }
-            ps.CRC = 1;
+            if (ps != null)
+            {
+                ps.CRC = 1;
+            }
 
             lock (instance)
             {
@@ -556,7 +564,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.LSL, "llMakeExplosion")]
         [ForcedSleep(0.1)]
         public void MakeExplosion(ScriptInstance instance, int particles, double scale, double vel, double lifetime, double arc, string texture, Vector3 offset) =>
-            /* expect offset all are used as given in SL wiki for emulation */
+            /* except offset all are used as given in SL wiki for emulation */
             ParticleSystem(instance, new AnArray
             {
                 { PSYS_PART_FLAGS }, { PSYS_PART_INTERP_COLOR_MASK | PSYS_PART_INTERP_SCALE_MASK | PSYS_PART_EMISSIVE_MASK | PSYS_PART_WIND_MASK },
