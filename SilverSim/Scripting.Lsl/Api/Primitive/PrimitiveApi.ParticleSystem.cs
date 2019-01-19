@@ -22,6 +22,7 @@
 #pragma warning disable IDE0018, RCS1029
 
 using SilverSim.Scene.Types.Object;
+using SilverSim.Scene.Types.Object.Localization;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scripting.Lsl.Api.Primitive.Properties;
 using SilverSim.Types;
@@ -138,12 +139,42 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             return (float)value.Clamp(0f, 4f);
         }
 
+        [APILevel(APIFlags.ASSL, "asClearAllParticleSystems")]
+        public void ClearAllParticleSystems(ScriptInstance instance) =>
+            ClearAllParticleSystems(instance, LINK_THIS);
+
+        [APILevel(APIFlags.ASSL, "asLinkClearAllParticleSystems")]
+        public void ClearAllParticleSystems(ScriptInstance instance, int link)
+        {
+            lock (instance)
+            {
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
+                {
+                    foreach(ObjectPartLocalizedInfo localization in part.NamedLocalizations)
+                    {
+                        localization.ParticleSystem = null;
+                    }
+                    part.ParticleSystem = null;
+                }
+            }
+        }
+
         [APIExtension(APIExtension.Properties, "llLinkParticleSystem")]
+        [APIExtension(APIExtension.Properties, "asLinkParticleSystem")]
         public void LinkParticleSystem(ScriptInstance instance, int link, ParticleProperties.ParticleSystemData data) =>
             LinkParticleSystem(instance, link, (AnArray)data);
 
+        [APIExtension(APIExtension.Properties, "asLinkParticleSystem")]
+        public void LinkParticleSystem(ScriptInstance instance, int link, string langname, ParticleProperties.ParticleSystemData data) =>
+            LinkParticleSystem(instance, link, langname, (AnArray)data);
+
         [APILevel(APIFlags.LSL, "llLinkParticleSystem")]
-        public void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules)
+        [APILevel(APIFlags.ASSL, "asLinkParticleSystem")]
+        public void LinkParticleSystem(ScriptInstance instance, int link, AnArray rules) =>
+            LinkParticleSystem(instance, link, string.Empty, rules);
+
+        [APILevel(APIFlags.ASSL, "asLinkParticleSystem")]
+        public void LinkParticleSystem(ScriptInstance instance, int link, string langname, AnArray rules)
         {
             ParticleSystem ps = null;
 
@@ -546,19 +577,38 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             {
                 foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
-                    part.ParticleSystem = ps;
+                    if (!string.IsNullOrEmpty(langname))
+                    {
+                        part.GetOrCreateLocalization(langname).ParticleSystem = ps;
+                    }
+                    else
+                    {
+                        part.ParticleSystem = ps;
+                    }
                 }
             }
         }
 
         [APIExtension(APIExtension.Properties, "llParticleSystem")]
+        [APIExtension(APIExtension.Properties, "asParticleSystem")]
         public void ParticleSystem(ScriptInstance instance, ParticleProperties.ParticleSystemData data) =>
             ParticleSystem(instance, (AnArray)data);
 
+        [APIExtension(APIExtension.Properties, "asParticleSystem")]
+        public void ParticleSystem(ScriptInstance instance, string langname, ParticleProperties.ParticleSystemData data) =>
+            ParticleSystem(instance, langname, (AnArray)data);
+
         [APILevel(APIFlags.LSL, "llParticleSystem")]
+        [APILevel(APIFlags.ASSL, "asParticleSystem")]
         public void ParticleSystem(ScriptInstance instance, AnArray rules)
         {
             LinkParticleSystem(instance, LINK_THIS, rules);
+        }
+
+        [APILevel(APIFlags.ASSL, "asParticleSystem")]
+        public void ParticleSystem(ScriptInstance instance, string langname, AnArray rules)
+        {
+            LinkParticleSystem(instance, LINK_THIS, langname, rules);
         }
 
         [APILevel(APIFlags.LSL, "llMakeExplosion")]
