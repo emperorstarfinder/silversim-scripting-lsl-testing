@@ -178,6 +178,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Sound queueing [integer enable]")]
         public const int PRIM_SOUND_QUEUEING = 12008;
+        [Description("Select all languages")]
+        public const int PRIM_ALL_LANGUAGES = 12009;
         #endregion
 
         #region PRIM_LOOP_SOUND
