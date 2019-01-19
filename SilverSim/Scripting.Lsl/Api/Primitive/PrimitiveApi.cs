@@ -189,7 +189,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         public const int PRIM_SIT_TEXT = 12011;
         [APILevel(APIFlags.ASSL)]
         [Description("Touch text [string touchtext]")]
-        public const int PRIM_TOUCH_TEXT = 12011;
+        public const int PRIM_TOUCH_TEXT = 12012;
         #endregion
 
         #region PRIM_LOOP_SOUND
