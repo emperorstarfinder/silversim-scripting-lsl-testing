@@ -55,70 +55,101 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
 
         #region Original primitive param types
         [APILevel(APIFlags.LSL)]
+        [Description("Prim material [integer flag]")]
         public const int PRIM_MATERIAL = 2;
         [APILevel(APIFlags.LSL)]
+        [Description("Object physics status [integer boolean]")]
         public const int PRIM_PHYSICS = 3;
         [APILevel(APIFlags.LSL)]
+        [Description("Object temporary attribute [integer boolean]")]
         public const int PRIM_TEMP_ON_REZ = 4;
         [APILevel(APIFlags.LSL)]
+        [Description("Object phantom status [integer boolean]")]
         public const int PRIM_PHANTOM = 5;
         [APILevel(APIFlags.LSL)]
+        [Description("Global position [vector position]")]
         public const int PRIM_POSITION = 6;
         [APILevel(APIFlags.LSL)]
+        [Description("Prim size [vector position]")]
         public const int PRIM_SIZE = 7;
         [APILevel(APIFlags.LSL)]
+        [Description("Global rotation [rotation rot]")]
         public const int PRIM_ROTATION = 8;
         [APILevel(APIFlags.LSL)]
+        [Description("Prim shape")]
         public const int PRIM_TYPE = 9;
         [APILevel(APIFlags.LSL)]
+        [Description("Texture attributes [integer face, string texture, vector repeats, vector offsets, float rotation_in_radians]")]
         public const int PRIM_TEXTURE = 17;
         [APILevel(APIFlags.LSL)]
+        [Description("Face color [integer face, vector color, float alpha]")]
         public const int PRIM_COLOR = 18;
         [APILevel(APIFlags.LSL)]
+        [Description("Face's shiny and bump [integer face, integer shiny, integer bump]")]
         public const int PRIM_BUMP_SHINY = 19;
         [APILevel(APIFlags.LSL)]
+        [Description("Face's full bright flag [integer face, integer boolean)")]
         public const int PRIM_FULLBRIGHT = 20;
         [APILevel(APIFlags.LSL)]
+        [Description("Flexible params [integer boolean, integer softness, float gravity, float friction, float wind, float tension, vector force]")]
         public const int PRIM_FLEXIBLE = 21;
         [APILevel(APIFlags.LSL)]
+        [Description("Face's texture mode [integer face, integer type]")]
         public const int PRIM_TEXGEN = 22;
         [APILevel(APIFlags.LSL)]
+        [Description("Point light [integer boolean, vector color, float intensity, float radius, float falloff]")]
         public const int PRIM_POINT_LIGHT = 23;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_CAST_SHADOWS = 24; // Not implemented, here for completeness sake
         [APILevel(APIFlags.LSL)]
+        [Description("Face's glow attribute [integer face, float intensity]")]
         public const int PRIM_GLOW = 25;
         [APILevel(APIFlags.LSL)]
+        [Description("Floating text [string text, vector color, float alpha]")]
         public const int PRIM_TEXT = 26;
         [APILevel(APIFlags.LSL)]
+        [Description("Prim name. [string name]")]
         public const int PRIM_NAME = 27;
         [APILevel(APIFlags.LSL)]
+        [Description("Prim description. [string desc]")]
         public const int PRIM_DESC = 28;
         [APILevel(APIFlags.LSL)]
+        [Description("Local rotation [rotation rot]")]
         public const int PRIM_ROT_LOCAL = 29;
         [APILevel(APIFlags.LSL)]
+        [Description("Physics shape type [integer type]")]
         public const int PRIM_PHYSICS_SHAPE_TYPE = 30;
         [APILevel(APIFlags.LSL)]
         public const int PRIM_PHYSICS_MATERIAL = 31;
         [APILevel(APIFlags.LSL)]
+        [Description("Spin to the specified axis and rate [vector axis, float spinrate, float gain]")]
         public const int PRIM_OMEGA = 32;
         [APILevel(APIFlags.LSL)]
+        [Description("Local position [vector position]")]
         public const int PRIM_POS_LOCAL = 33;
         [APILevel(APIFlags.LSL)]
+        [Description("Link to be changed [integer link_target]")]
         public const int PRIM_LINK_TARGET = 34;
         [APILevel(APIFlags.LSL)]
+        [Description("Prim slice (a shape attribute) [vector slice]")]
         public const int PRIM_SLICE = 35;
         [APILevel(APIFlags.LSL)]
+        [Description("Specular map attributes [integer face, string texture, vector repeats, vector offsets, float rotation_in_radians, vector color, integer glossiness, integer environment]")]
         public const int PRIM_SPECULAR = 36;
         [APILevel(APIFlags.LSL)]
+        [Description("Normal map attributes [integer face, string texture, vector repeats, vector offsets, float rotaiton_in_radians]")]
         public const int PRIM_NORMAL = 37;
         [APILevel(APIFlags.LSL)]
+        [Description("Diffuse texture alpha rendering mode attributes [integer face, integer alpha_mode, integer mask_cutoff]")]
         public const int PRIM_ALPHA_MODE = 38;
         [APILevel(APIFlags.LSL)]
+        [Description("Avatars are allowed to manually stand up when seated on this prim. [integer flag]")]
         public const int PRIM_ALLOW_UNSIT = 39;
         [APILevel(APIFlags.LSL)]
+        [Description("Avatars are not permitted to manually sit on this prim [integer flag]")]
         public const int PRIM_SCRIPTED_SIT_ONLY = 40;
         [APILevel(APIFlags.LSL)]
+        [Description("Sit target [integer active, vector offset, rotation rot]")]
         public const int PRIM_SIT_TARGET = 41;
         #endregion
 
