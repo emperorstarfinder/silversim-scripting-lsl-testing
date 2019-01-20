@@ -120,6 +120,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [Description("Physics shape type [integer type]")]
         public const int PRIM_PHYSICS_SHAPE_TYPE = 30;
         [APILevel(APIFlags.LSL)]
+        [Description("Physics material [integer material_bits, float gravity_multiplier, float restitution, float friction, float density]")]
         public const int PRIM_PHYSICS_MATERIAL = 31;
         [APILevel(APIFlags.LSL)]
         [Description("Spin to the specified axis and rate [vector axis, float spinrate, float gain]")]
