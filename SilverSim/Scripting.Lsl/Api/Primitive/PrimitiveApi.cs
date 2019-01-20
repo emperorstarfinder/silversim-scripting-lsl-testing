@@ -167,7 +167,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [Description("Remove all languages")]
         public const int PRIM_REMOVE_ALL_LANGUAGES = 12004;
         [APILevel(APIFlags.ASSL)]
-        [Description("Loop Sound [string sound, float volume, integer flags]")]
+        [Description("Loop Sound [string sound, float volume, integer flags, float radius]")]
         public const int PRIM_LOOP_SOUND = 12005;
         [APILevel(APIFlags.ASSL)]
         [Description("Sound radius [float radius]")]
@@ -190,6 +190,8 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Touch text [string touchtext]")]
         public const int PRIM_TOUCH_TEXT = 12012;
+        [Description("Texture Animation [integer mode, integer face, integer sizex, integer sizey, float start, float lenght, float rate]")]
+        public const int PRIM_TEXTURE_ANIM = 12013;
         #endregion
 
         #region PRIM_LOOP_SOUND
