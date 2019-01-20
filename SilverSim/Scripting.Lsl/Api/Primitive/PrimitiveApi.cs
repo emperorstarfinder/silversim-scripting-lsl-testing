@@ -190,6 +190,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Touch text [string touchtext]")]
         public const int PRIM_TOUCH_TEXT = 12012;
+        [APILevel(APIFlags.ASSL)]
         [Description("Texture Animation [integer mode, integer face, integer sizex, integer sizey, float start, float lenght, float rate]")]
         public const int PRIM_TEXTURE_ANIM = 12013;
         #endregion
