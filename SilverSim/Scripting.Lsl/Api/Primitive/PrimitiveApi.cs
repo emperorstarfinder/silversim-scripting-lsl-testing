@@ -224,6 +224,16 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Texture Animation [integer mode, integer face, integer sizex, integer sizey, float start, float lenght, float rate]")]
         public const int PRIM_TEXTURE_ANIM = 12013;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Collision Sound [string impact_sound, float impact_volume, float impact_sound_radius, integer impact_sound_flags]")]
+        public const int PRIM_COLLISION_SOUND = 12014;
+        #endregion
+
+        #region PRIM_COLLISION_SOUND
+        [APILevel(APIFlags.ASSL)]
+        public const int PRIM_COLLISION_SOUND_USE_HITPOINT = 1;
+        [APILevel(APIFlags.ASSL)]
+        public const int PRIM_COLLISION_SOUND_USE_CHILDS = 2;
         #endregion
 
         #region PRIM_LOOP_SOUND
