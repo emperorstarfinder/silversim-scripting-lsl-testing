@@ -51,13 +51,51 @@ namespace SilverSim.Scripting.Lsl.Api.Controls
         [APILevel(APIFlags.LSL)]
         public const int CONTROL_RIGHT = 0x00000008;
         [APILevel(APIFlags.LSL)]
-        public const int CONTROL_ROT_LEFT = 0x00000100;
-        [APILevel(APIFlags.LSL)]
-        public const int CONTROL_ROT_RIGHT = 0x00000200;
-        [APILevel(APIFlags.LSL)]
         public const int CONTROL_UP = 0x00000010;
         [APILevel(APIFlags.LSL)]
         public const int CONTROL_DOWN = 0x00000020;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_ROT_UP = 0x00000040; /* same as PitchPos */
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_ROT_DOWN = 0x00000080; /* same as PitchNeg */
+        [APILevel(APIFlags.LSL)]
+        public const int CONTROL_ROT_LEFT = 0x00000100; /* same as YawPos */
+        [APILevel(APIFlags.LSL)]
+        public const int CONTROL_ROT_RIGHT = 0x00000200; /* same as YawNeg */
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_FAST_FWD_BACK = 0x00000400;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_FAST_LEFT_RIGHT = 0x00000800;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_FAST_UP_DOWN = 0x00001000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_FLY = 0x00002000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_STOP = 0x00004000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_STAND_UP = 0x00010000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_SIT_ON_GROUND = 0x00020000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_MOUSE_LOOK = 0x00040000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_NUDGE_FWD = 0x00080000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_NUDGE_BACK = 0x00100000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_NUDGE_LEFT = 0x00200000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_NUDGE_RIGHT = 0x00400000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_NUDGE_UP = 0x00800000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_NUDGE_DOWN = 0x01000000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_TURN_LEFT = 0x02000000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_TURN_RIGHT = 0x04000000;
+        [APILevel(APIFlags.ASSL)]
+        public const int CONTROL_AWAY = 0x08000000;
         [APILevel(APIFlags.LSL)]
         public const int CONTROL_LBUTTON = 0x10000000;
         [APILevel(APIFlags.LSL)]
