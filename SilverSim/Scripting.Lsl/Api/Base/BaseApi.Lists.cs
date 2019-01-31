@@ -29,7 +29,6 @@ using SilverSim.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -45,6 +44,17 @@ namespace SilverSim.Scripting.Lsl.Api.Base
         public struct Variant
         {
             public IValue Value { get; private set; }
+
+            public override int GetHashCode() => Value.GetHashCode();
+
+            public override bool Equals(object obj)
+            {
+                if(!(obj is Variant))
+                {
+                    return false;
+                }
+                return Value.Equals(((Variant)obj).Value);
+            }
 
             [APILevel(APIFlags.ASSL)]
             public static implicit operator Variant(int v) => new Variant { Value = new Integer(v) };
@@ -91,6 +101,144 @@ namespace SilverSim.Scripting.Lsl.Api.Base
                     return new ByteArrayApi.ByteArray();
                 }
             }
+
+            #region int
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Variant v1, int v2) => (int)v1 != v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Variant v1, int v2) => (int)v1 != v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(int v1, Variant v2) => v1 != (int)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(int v1, Variant v2) => v1 != (int)v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <=(Variant v1, int v2) => (int)v1 <= v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <(Variant v1, int v2) => (int)v1 < v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >=(Variant v1, int v2) => (int)v1 >= v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >(Variant v1, int v2) => (int)v1 > v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <=(int v1, Variant v2) => v1 <= (int)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <(int v1, Variant v2) => v1 < (int)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >=(int v1, Variant v2) => v1 >= (int)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >(int v1, Variant v2) => v1 > (int)v2;
+            #endregion
+
+            #region long
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Variant v1, long v2) => (long)v1 != v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Variant v1, long v2) => (long)v1 != v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(long v1, Variant v2) => v1 != (long)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(long v1, Variant v2) => v1 != (long)v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <=(Variant v1, long v2) => (long)v1 <= v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <(Variant v1, long v2) => (long)v1 < v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >=(Variant v1, long v2) => (long)v1 >= v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >(Variant v1, long v2) => (long)v1 > v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <=(long v1, Variant v2) => v1 <= (long)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <(long v1, Variant v2) => v1 < (long)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >=(long v1, Variant v2) => v1 >= (long)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >(long v1, Variant v2) => v1 > (long)v2;
+            #endregion
+
+            #region double
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Variant v1, double v2) => (double)v1 != v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Variant v1, double v2) => (double)v1 != v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(double v1, Variant v2) => v1 != (double)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(double v1, Variant v2) => v1 != (double)v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <=(Variant v1, double v2) => (double)v1 <= v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <(Variant v1, double v2) => (double)v1 < v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >=(Variant v1, double v2) => (double)v1 >= v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >(Variant v1, double v2) => (double)v1 > v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <=(double v1, Variant v2) => v1 <= (double)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator <(double v1, Variant v2) => v1 < (double)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >=(double v1, Variant v2) => v1 >= (double)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator >(double v1, Variant v2) => v1 > (double)v2;
+            #endregion
+
+            #region string
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Variant v1, string v2) => (string)v1 != v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Variant v1, string v2) => (string)v1 != v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(string v1, Variant v2) => v1 != (string)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(string v1, Variant v2) => v1 != (string)v2;
+            #endregion
+
+            #region key
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Variant v1, LSLKey v2) => (LSLKey)v1 != v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Variant v1, LSLKey v2) => (LSLKey)v1 != v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(LSLKey v1, Variant v2) => v1 != (LSLKey)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(LSLKey v1, Variant v2) => v1 != (LSLKey)v2;
+            #endregion
+
+            #region vector
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Variant v1, Vector3 v2) => (Vector3)v1 != v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Variant v1, Vector3 v2) => (Vector3)v1 != v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Vector3 v1, Variant v2) => v1 != (Vector3)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Vector3 v1, Variant v2) => v1 != (Vector3)v2;
+            #endregion
+
+            #region rotation
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Variant v1, Quaternion v2) => (Quaternion)v1 != v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Variant v1, Quaternion v2) => (Quaternion)v1 != v2;
+
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator !=(Quaternion v1, Variant v2) => v1 != (Quaternion)v2;
+            [APILevel(APIFlags.ASSL)]
+            public static bool operator ==(Quaternion v1, Variant v2) => v1 != (Quaternion)v2;
+            #endregion
 
             public int Type => (int)Value.LSL_Type;
             private static string MapVariantType(Type t)

@@ -162,6 +162,9 @@ namespace SilverSim.Scripting.Lsl
                 [APILevel(APIFlags.ASSL)]
                 public bool EnableArrayThisOperator;
 
+                [APILevel(APIFlags.ASSL)]
+                public bool EnableCustomOperators;
+
                 [APIExtension(APIExtension.MemberFunctions)]
                 [APIExtension(APIExtension.Properties)]
                 public bool EnableMemberFunctions;

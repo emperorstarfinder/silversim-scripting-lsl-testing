@@ -2376,6 +2376,17 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Ceq);
                             throw Return(compileState, typeof(int));
                         }
+                        else if (compileState.LanguageExtensions.EnableCustomOperators)
+                        {
+                            mi = m_LeftHandType.GetMethod("op_Equality", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (mi != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                throw Return(compileState, typeof(int));
+                            }
+                        }
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorEqualsEqualsNotSupportedFor0And1", "operator '==' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
 
                     case "!=":
@@ -2451,10 +2462,21 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Sub);
                             throw Return(compileState, typeof(int));
                         }
+                        else if (compileState.LanguageExtensions.EnableCustomOperators)
+                        {
+                            mi = m_LeftHandType.GetMethod("op_Inequality", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (mi != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                throw Return(compileState, typeof(int));
+                            }
+                        }
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorUnequalsNotSupportedFor0And1", "operator '!=' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
 
                     case "<=":
-                        if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
+                        if (m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
                         {
                             compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
                             ProcessImplicitCasts(compileState, typeof(double), m_LeftHandType, m_LineNumber);
@@ -2506,10 +2528,19 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_LessThanOrEqual", new Type[] { m_LeftHandType, m_LeftHandType }));
                             throw Return(compileState, typeof(int));
                         }
-                        else
+                        else if (compileState.LanguageExtensions.EnableCustomOperators)
                         {
-                            throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorLessEqualsNotSupportedFor0And1", "operator '<=' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
+                            mi = m_LeftHandType.GetMethod("op_LessThanOrEqual", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (mi != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                throw Return(compileState, typeof(int));
+                            }
                         }
+
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorLessEqualsNotSupportedFor0And1", "operator '<=' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_RightHandType)));
 
                     case "<":
                         if(m_LeftHandType == typeof(double) || m_RightHandType == typeof(double))
@@ -2561,6 +2592,17 @@ namespace SilverSim.Scripting.Lsl
                             compileState.ILGen.Emit(OpCodes.Call, m_LeftHandType.GetMethod("op_LessThan", new Type[] { m_LeftHandType, m_LeftHandType }));
 
                             throw Return(compileState, typeof(int));
+                        }
+                        else if (compileState.LanguageExtensions.EnableCustomOperators)
+                        {
+                            mi = m_LeftHandType.GetMethod("op_LessThan", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (mi != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
+                                throw Return(compileState, typeof(int));
+                            }
                         }
                         throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "OperatorLessNotSupportedFor0And1", "operator '<' not supported for {0} and {1}"), compileState.MapType(m_LeftHandType), compileState.MapType(m_LeftHandType)));
 
@@ -2615,6 +2657,17 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.ILGen.Emit(OpCodes.Call, operatorMethodInfo);
 
+                                throw Return(compileState, typeof(int));
+                            }
+                        }
+                        else if(compileState.LanguageExtensions.EnableCustomOperators)
+                        {
+                            mi = m_LeftHandType.GetMethod("op_GreaterThan", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (mi != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
                                 throw Return(compileState, typeof(int));
                             }
                         }
@@ -2678,6 +2731,17 @@ namespace SilverSim.Scripting.Lsl
                             {
                                 compileState.ILGen.Emit(OpCodes.Call, operatorMethodInfo);
 
+                                throw Return(compileState, typeof(int));
+                            }
+                        }
+                        else if (compileState.LanguageExtensions.EnableCustomOperators)
+                        {
+                            mi = m_LeftHandType.GetMethod("op_GreaterThanOrEqual", new Type[] { m_LeftHandType, m_RightHandType });
+                            if (mi != null)
+                            {
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_LeftHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Ldloc, m_RightHandLocal);
+                                compileState.ILGen.Emit(OpCodes.Call, mi);
                                 throw Return(compileState, typeof(int));
                             }
                         }
