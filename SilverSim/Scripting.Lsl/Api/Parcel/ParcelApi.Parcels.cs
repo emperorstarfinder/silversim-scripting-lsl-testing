@@ -197,7 +197,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 SceneInterface scene = thisPart.ObjectGroup.Scene;
 
                 ParcelInfo pInfo;
-                return (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) &&
+                return (scene.Parcels.TryGetValue(thisPart.ObjectGroup.GlobalPosition, out pInfo) &&
                     pInfo.MusicURI != null && (pInfo.Owner.EqualsGrid(thisPart.Owner) || !pInfo.ObscureMusic)) ?
                     pInfo.MusicURI :
                     string.Empty;
@@ -214,7 +214,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 SceneInterface scene = thisPart.ObjectGroup.Scene;
 
                 ParcelInfo pInfo;
-                if (scene.Parcels.TryGetValue(thisPart.ObjectGroup.Position, out pInfo) &&
+                if (scene.Parcels.TryGetValue(thisPart.ObjectGroup.GlobalPosition, out pInfo) &&
                     pInfo.Owner.EqualsGrid(thisPart.Owner))
                 {
                     try
@@ -435,7 +435,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
-                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
+                else if (scene.Parcels.TryGetValue(grp.GlobalPosition, out pInfo))
                 {
                     entry.RegionID = scene.ID;
                     entry.ParcelID = pInfo.ID;
@@ -467,7 +467,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
-                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo))
+                else if (scene.Parcels.TryGetValue(grp.GlobalPosition, out pInfo))
                 {
                     entry.RegionID = scene.ID;
                     entry.ParcelID = pInfo.ID;
@@ -499,7 +499,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
-                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
+                else if (scene.Parcels.TryGetValue(grp.GlobalPosition, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
                     (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageBanned))))
                 {
@@ -523,7 +523,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "FailedToFindAgentForUUID0", "Failed to find agent for UUID {0}", avatar.AsUUID));
                 }
-                else if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
+                else if (scene.Parcels.TryGetValue(grp.GlobalPosition, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
                     (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageAllowed))))
                 {
@@ -542,9 +542,9 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 ParcelInfo pInfo;
-                if (scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
+                if (scene.Parcels.TryGetValue(grp.GlobalPosition, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
-                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, Types.Groups.GroupPowers.LandManageBanned))))
+                    (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageBanned))))
                 {
                     scene.Parcels.BlackList.Remove(scene.ID, pInfo.ID);
                 }
@@ -561,7 +561,7 @@ namespace SilverSim.Scripting.Lsl.Api.Parcel
                 ObjectGroup grp = part.ObjectGroup;
                 SceneInterface scene = grp.Scene;
                 ParcelInfo pInfo;
-                if(scene.Parcels.TryGetValue(grp.Position, out pInfo) &&
+                if(scene.Parcels.TryGetValue(grp.GlobalPosition, out pInfo) &&
                     (pInfo.Owner.EqualsGrid(part.Owner) ||
                     (pInfo.Group.ID != UUID.Zero && scene.HasGroupPower(part.Owner, pInfo.Group, GroupPowers.LandManageAllowed))))
                 {
