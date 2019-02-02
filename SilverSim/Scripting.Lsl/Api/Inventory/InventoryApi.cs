@@ -400,7 +400,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 mask &= (int)InventoryPermissionsMask.Every;
                 foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
-                    if (instance.Part.Inventory.TryGetValue(name, out item))
+                    if (part.Inventory.TryGetValue(name, out item))
                     {
                         switch (category)
                         {
