@@ -393,17 +393,23 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         [APILevel(APIFlags.ASSL, "asSetLinkInventoryPermMask")]
         public void SetInventoryPermMask(ScriptInstance instance, int link, string name, int category, int mask)
         {
-            if (instance.Part.ObjectGroup.Scene.IsSimConsoleAllowed(instance.Part.Owner))
+            lock (instance)
             {
+                IAgent agent;
+                ObjectPartInventoryItem item;
+                mask &= (int)InventoryPermissionsMask.Every;
                 foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
-                    try
+                    if (instance.Part.Inventory.TryGetValue(name, out item))
                     {
-                        ObjectPartInventoryItem item = instance.Part.Inventory[name];
                         switch (category)
                         {
                             case MASK_BASE:
-                                item.Permissions.Base = (InventoryPermissionsMask)mask;
+                                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
+                                    agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                                {
+                                    item.Permissions.Base = (InventoryPermissionsMask)mask;
+                                }
                                 break;
 
                             case MASK_EVERYONE:
@@ -411,7 +417,11 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                                 break;
 
                             case MASK_GROUP:
-                                item.Permissions.Group = (InventoryPermissionsMask)mask;
+                                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
+                                    agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                                {
+                                    item.Permissions.Group = (InventoryPermissionsMask)mask;
+                                }
                                 break;
 
                             case MASK_NEXT:
@@ -427,11 +437,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                         }
                         return;
                     }
-                    catch
-                    {
-                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {0} not found", name);
-                    }
                 }
+                throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {0} not found", name);
             }
         }
 
@@ -440,9 +447,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock(instance)
             {
-                try
+                ObjectPartInventoryItem item;
+                if(instance.Part.Inventory.TryGetValue(name, out item))
                 {
-                    ObjectPartInventoryItem item = instance.Part.Inventory[name];
                     InventoryPermissionsMask mask;
                     switch(category)
                     {
@@ -472,7 +479,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     return (int)(uint)mask;
                 }
-                catch
+                else
                 {
                     throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {0} not found", name);
                 }
@@ -487,9 +494,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             {
                 foreach (ObjectPart part in instance.GetLinkTargets(link))
                 {
-                    try
+                    ObjectPartInventoryItem item;
+                    if(part.Inventory.TryGetValue(name, out item))
                     {
-                        ObjectPartInventoryItem item = instance.Part.Inventory[name];
                         InventoryPermissionsMask mask;
                         switch (category)
                         {
@@ -518,10 +525,6 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                                 break;
                         }
                         return (int)(uint)mask;
-                    }
-                    catch
-                    {
-                        /* no action required */
                     }
                 }
             }
@@ -567,11 +570,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             lock(instance)
             {
                 ObjectPartInventoryItem item;
-                try
-                {
-                    item = instance.Part.Inventory[name];
-                }
-                catch
+                if(!instance.Part.Inventory.TryGetValue(name, out item))
                 {
                     instance.ShoutError(new LocalizedScriptMessage(this, "InventoryItem0IsMissingInObjectsInventory", "Inventory item '{0}' is missing in object's inventory.", name));
                     return UUID.Zero;
