@@ -173,7 +173,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                         break;
 
                     case ESTATE_ACCESS_ALLOWED_AGENT_REMOVE:
-                        estateService.EstateAccess[estateID, uui] = true;
+                        estateService.EstateAccess[estateID, uui] = false;
                         message = string.Format("Removed agent {0} from allowed list for estate {1}", uui.FullName, estate.Name);
                         break;
 
