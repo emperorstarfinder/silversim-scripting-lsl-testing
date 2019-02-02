@@ -188,7 +188,7 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
 
                     case ESTATE_ACCESS_BANNED_AGENT_REMOVE:
                         estateService.EstateBans[estateID, uui] = false;
-                        message = string.Format("Added agent {0} from banned list for estate {1}", uui.FullName, estate.Name);
+                        message = string.Format("Removed agent {0} from banned list for estate {1}", uui.FullName, estate.Name);
                         break;
 
                     case ESTATE_ACCESS_ALLOWED_GROUP_ADD:
