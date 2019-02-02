@@ -335,7 +335,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
             }
         }
 
-        /* Private constants, exported once are in InventoryApi */
+        /* Private constants, exported ones are in InventoryApi */
         public const int MASK_BASE = 0;
         public const int MASK_OWNER = 1;
         public const int MASK_GROUP = 2;
@@ -375,33 +375,39 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         {
             lock(instance)
             {
-                if(instance.Part.ObjectGroup.Scene.IsSimConsoleAllowed(instance.Part.Owner))
+                IAgent agent;
+                switch (mask)
                 {
-                    switch(mask)
-                    {
-                        case MASK_BASE:
+                    case MASK_BASE:
+                        if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
+                            agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                        {
                             instance.Part.BaseMask = (InventoryPermissionsMask)value;
-                            break;
+                        }
+                        break;
 
-                        case MASK_OWNER:
-                            instance.Part.OwnerMask = (InventoryPermissionsMask)value;
-                            break;
+                    case MASK_OWNER:
+                        instance.Part.OwnerMask = (InventoryPermissionsMask)value;
+                        break;
 
-                        case MASK_GROUP:
+                    case MASK_GROUP:
+                        if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
+                            agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                        {
                             instance.Part.GroupMask = (InventoryPermissionsMask)value;
-                            break;
+                        }
+                        break;
 
-                        case MASK_EVERYONE:
-                            instance.Part.EveryoneMask = (InventoryPermissionsMask)value;
-                            break;
+                    case MASK_EVERYONE:
+                        instance.Part.EveryoneMask = (InventoryPermissionsMask)value;
+                        break;
 
-                        case MASK_NEXT:
-                            instance.Part.NextOwnerMask = (InventoryPermissionsMask)value;
-                            break;
+                    case MASK_NEXT:
+                        instance.Part.NextOwnerMask = (InventoryPermissionsMask)value;
+                        break;
 
-                        default:
-                            break;
-                    }
+                    default:
+                        break;
                 }
             }
         }
