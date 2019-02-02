@@ -385,7 +385,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 else
                 {
-                    throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
+                    throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {0} not found", name);
                 }
             }
         }
@@ -429,7 +429,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     }
                     catch
                     {
-                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
+                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {0} not found", name);
                     }
                 }
             }
@@ -474,7 +474,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
                 catch
                 {
-                    throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
+                    throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {0} not found", name);
                 }
             }
         }
