@@ -344,7 +344,9 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         {
             lock (instance)
             {
-                if (instance.Part.ObjectGroup.Scene.IsSimConsoleAllowed(instance.Part.Owner))
+                IAgent agent;
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
+                    agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
                 {
                     try
                     {
