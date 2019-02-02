@@ -169,12 +169,12 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                 {
                     case ESTATE_ACCESS_ALLOWED_AGENT_ADD:
                         estateService.EstateAccess[estateID, uui] = true;
-                        message = string.Format("Added agent {0} to allowed list for estate {1}", uui.FullName, estate.Name);
+                        message = string.Format("Added agent \"{0}\" to allowed list for estate \"{1}\"", uui.FullName, estate.Name);
                         break;
 
                     case ESTATE_ACCESS_ALLOWED_AGENT_REMOVE:
                         estateService.EstateAccess[estateID, uui] = false;
-                        message = string.Format("Removed agent {0} from allowed list for estate {1}", uui.FullName, estate.Name);
+                        message = string.Format("Removed agent \"{0}\" from allowed list for estate \"{1}\"", uui.FullName, estate.Name);
                         break;
 
                     case ESTATE_ACCESS_BANNED_AGENT_ADD:
@@ -183,22 +183,22 @@ namespace SilverSim.Scripting.Lsl.Api.Estate
                             return 0;
                         }
                         estateService.EstateBans[estateID, uui] = true;
-                        message = string.Format("Added agent {0} to banned list for estate {1}", uui.FullName, estate.Name);
+                        message = string.Format("Added agent \"{0}\" to banned list for estate \"{1}\"", uui.FullName, estate.Name);
                         break;
 
                     case ESTATE_ACCESS_BANNED_AGENT_REMOVE:
                         estateService.EstateBans[estateID, uui] = false;
-                        message = string.Format("Removed agent {0} from banned list for estate {1}", uui.FullName, estate.Name);
+                        message = string.Format("Removed agent \"{0}\" from banned list for estate \"{1}\"", uui.FullName, estate.Name);
                         break;
 
                     case ESTATE_ACCESS_ALLOWED_GROUP_ADD:
                         estateService.EstateGroup[estateID, ugi] = true;
-                        message = string.Format("Added group {0} to allowed list for estate {1}", ugi.FullName, estate.Name);
+                        message = string.Format("Added group \"{0}\" to allowed list for estate \"{1}\"", ugi.FullName, estate.Name);
                         break;
 
                     case ESTATE_ACCESS_ALLOWED_GROUP_REMOVE:
                         estateService.EstateGroup[estateID, ugi] = false;
-                        message = string.Format("Removed group {0} from allowed list for estate {1}", ugi.FullName, estate.Name);
+                        message = string.Format("Removed group \"{0}\" from allowed list for estate \"{1}\"", ugi.FullName, estate.Name);
                         break;
 
                     default:
