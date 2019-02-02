@@ -345,42 +345,47 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             lock (instance)
             {
                 IAgent agent;
-                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
-                    agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                ObjectPartInventoryItem item;
+                mask &= (int)InventoryPermissionsMask.Every;
+                if (instance.Part.Inventory.TryGetValue(name, out item))
                 {
-                    try
+                    switch (category)
                     {
-                        ObjectPartInventoryItem item = instance.Part.Inventory[name];
-                        switch (category)
-                        {
-                            case MASK_BASE:
+                        case MASK_BASE:
+                            if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
+                                agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                            {
                                 item.Permissions.Base = (InventoryPermissionsMask)mask;
-                                break;
+                            }
+                            break;
 
-                            case MASK_EVERYONE:
-                                item.Permissions.EveryOne = (InventoryPermissionsMask)mask;
-                                break;
+                        case MASK_EVERYONE:
+                            item.Permissions.EveryOne = (InventoryPermissionsMask)mask;
+                            break;
 
-                            case MASK_GROUP:
+                        case MASK_GROUP:
+                            if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
+                                agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                            {
                                 item.Permissions.Group = (InventoryPermissionsMask)mask;
-                                break;
+                            }
+                            break;
 
-                            case MASK_NEXT:
-                                item.Permissions.NextOwner = (InventoryPermissionsMask)mask;
-                                break;
+                        case MASK_NEXT:
+                            item.Permissions.NextOwner = (InventoryPermissionsMask)mask;
+                            break;
 
-                            case MASK_OWNER:
-                                item.Permissions.Current = (InventoryPermissionsMask)mask;
-                                break;
+                        case MASK_OWNER:
+                            item.Permissions.Current = (InventoryPermissionsMask)mask;
+                            break;
 
-                            default:
-                                break;
-                        }
+                        default:
+                            break;
                     }
-                    catch
-                    {
-                        throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
-                    }
+                }
+                else
+                {
+                    throw new LocalizedScriptErrorException(this, "InventoryItem0NotFound", "Inventory item {} not found", name);
                 }
             }
         }
