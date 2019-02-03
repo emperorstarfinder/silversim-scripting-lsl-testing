@@ -1079,9 +1079,14 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
                     var item = new InventoryItem(sellItem);
                     item.LastOwner = item.Owner;
+                    bool ownerChanged = !item.Owner.EqualsGrid(m_DestinationAgent);
                     item.Owner = m_DestinationAgent;
                     item.ParentFolderID = folderID;
                     item.IsGroupOwned = false;
+                    if (ownerChanged)
+                    {
+                        item.AdjustToNextOwner();
+                    }
                     m_InventoryService.Item.Add(item);
                     if (agent != null)
                     {

@@ -117,7 +117,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         [APIExtension(APIExtension.RezAsync, "asLinkRezObjectAsync")]
         [CheckFunctionPermission("asRezObjectAsync")]
-        public void LinkRezObjectAsync(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
+        public void LinkRezObjectAsynchronous(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             LinkRezObject(instance, link, inventory, pos, vel, rot, param, true);
 
         [APILevel(APIFlags.ASSL, "asLinkRezObject")]
@@ -134,6 +134,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
                 bool removeinventory;
+                ObjectPartInventoryItem item;
                 if (IsRezDistanceLimitEnforced(sceneid) &&
                     (instance.Part.GlobalPosition - pos).Length > GetRezDistanceMeterLimit(sceneid))
                 {
@@ -141,7 +142,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     return;
                 }
                 if (instance.TryGetLink(link, out invpart) &&
-                    instance.TryGetObjectInventory(invpart, inventory, out groups, out removeinventory))
+                    instance.TryGetObjectInventory(invpart, inventory, out groups, out removeinventory, out item))
                 {
                     pos += CalculateGeometricCenter(groups);
 
@@ -149,17 +150,17 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     {
                         ThreadPool.QueueUserWorkItem((o) =>
                         {
-                            RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param);
+                            RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item);
                         });
                         if (removeinventory)
                         {
-                            rezzingpart.Inventory.Remove(inventory);
+                            rezzingpart.Inventory.Remove(item.ID);
                         }
                     }
-                    else if (RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                    else if (RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item) &&
                             removeinventory)
                     {
-                        rezzingpart.Inventory.Remove(inventory);
+                        rezzingpart.Inventory.Remove(item.ID);
                     }
                 }
             }
@@ -167,7 +168,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         [APIExtension(APIExtension.RezAsync, "asRezObjectAsync")]
         [CheckFunctionPermission("asRezObjectAsync")]
-        public void RezObjectAsync(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
+        public void RezObjectAsynchronous(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             RezObject(instance, inventory, pos, vel, rot, param, true);
 
         [APILevel(APIFlags.LSL, "llRezObject")]
@@ -184,7 +185,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
                 bool removeinventory;
-                if(instance.TryGetObjectInventory(inventory, out groups, out removeinventory))
+                ObjectPartInventoryItem item;
+                if(instance.TryGetObjectInventory(inventory, out groups, out removeinventory, out item))
                 {
                     pos += CalculateGeometricCenter(groups);
 
@@ -199,23 +201,23 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     {
                         ThreadPool.QueueUserWorkItem((o) =>
                         {
-                            if(!RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param))
+                            if(!RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item))
                             {
                                 m_Log.WarnFormat("Object {0} [{1}] at {2} tried to rez inventory {3} owned by {4}", rezzingpart.Name, rezzingpart.ID, rezzingpart.GlobalPosition, inventory, rezzingpart.Owner);
                             }
                         });
                         if (removeinventory)
                         {
-                            rezzingpart.Inventory.Remove(inventory);
+                            rezzingpart.Inventory.Remove(item.ID);
                         }
                     }
-                    else if (!RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param))
+                    else if (!RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item))
                     {
                         m_Log.WarnFormat("Object {0} [{1}] at {2} tried to rez inventory {3} owned by {4}", rezzingpart.Name, rezzingpart.ID, rezzingpart.GlobalPosition, inventory, rezzingpart.Owner);
                     }
                     else if(removeinventory)
                     {
-                        rezzingpart.Inventory.Remove(inventory);
+                        rezzingpart.Inventory.Remove(item.ID);
                     }
                 }
             }
@@ -223,7 +225,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         [APIExtension(APIExtension.RezAsync, "asLinkRezAtRootAsync")]
         [CheckFunctionPermission("asRezObjectAsync")]
-        public void LinkRezAtRootAsync(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
+        public void LinkRezAtRootAsynchronous(ScriptInstance instance, int link, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             LinkRezAtRoot(instance, link, inventory, pos, vel, rot, param, true);
 
         [APILevel(APIFlags.ASSL, "asLinkRezAtRoot")]
@@ -237,6 +239,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 List<ObjectGroup> groups;
                 ObjectPart rezzingpart = instance.Part;
                 ObjectPart invpart;
+                ObjectPartInventoryItem item;
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
                 bool removeinventory;
@@ -248,23 +251,21 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                 }
 
                 if (instance.TryGetLink(link, out invpart) &&
-                    instance.TryGetObjectInventory(invpart, inventory, out groups, out removeinventory))
+                    instance.TryGetObjectInventory(invpart, inventory, out groups, out removeinventory, out item))
                 {
                     if(useAsync)
                     {
                         ThreadPool.QueueUserWorkItem((o) =>
-                        {
-                            RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param);
-                        });
+                            RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item));
                         if(removeinventory)
                         {
-                            invpart.Inventory.Remove(inventory);
+                            invpart.Inventory.Remove(item.ID);
                         }
                     }
-                    else if (RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                    else if (RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item) &&
                         removeinventory)
                     {
-                        invpart.Inventory.Remove(inventory);
+                        invpart.Inventory.Remove(item.ID);
                     }
                 }
             }
@@ -272,7 +273,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
 
         [APIExtension(APIExtension.RezAsync, "asRezAtRootAsync")]
         [CheckFunctionPermission("asRezObjectAsync")]
-        public void RezAtRootAsync(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
+        public void RezAtRootAsynchronous(ScriptInstance instance, string inventory, Vector3 pos, Vector3 vel, Quaternion rot, int param) =>
             RezAtRoot(instance, inventory, pos, vel, rot, param, true);
 
         [APILevel(APIFlags.LSL, "llRezAtRoot")]
@@ -286,6 +287,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             {
                 List<ObjectGroup> groups;
                 ObjectPart rezzingpart = instance.Part;
+                ObjectPartInventoryItem item;
                 SceneInterface scene = rezzingpart.ObjectGroup.Scene;
                 UUID sceneid = scene.ID;
                 bool removeinventory;
@@ -296,29 +298,27 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                     return;
                 }
 
-                if (instance.TryGetObjectInventory(inventory, out groups, out removeinventory))
+                if (instance.TryGetObjectInventory(inventory, out groups, out removeinventory, out item))
                 {
                     if(useAsync)
                     {
                         ThreadPool.QueueUserWorkItem((o) =>
-                        {
-                            RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param);
-                        });
+                            RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item));
                         if(removeinventory)
                         {
-                            rezzingpart.Inventory.Remove(inventory);
+                            rezzingpart.Inventory.Remove(item.ID);
                         }
                     }
-                    else if (RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param) &&
+                    else if (RealRezObject(scene, instance.Item.AssetID, instance.Item.Owner, rezzingpart, groups, pos, vel, rot, param, item) &&
                         removeinventory)
                     {
-                        rezzingpart.Inventory.Remove(inventory);
+                        rezzingpart.Inventory.Remove(item.ID);
                     }
                 }
             }
         }
 
-        public bool RealRezObject(SceneInterface scene, UUID rezzingscriptassetid, UGUI rezzingowner, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param)
+        public bool RealRezObject(SceneInterface scene, UUID rezzingscriptassetid, UGUI rezzingowner, ObjectPart rezzingpart, List<ObjectGroup> groups, Vector3 pos, Vector3 vel, Quaternion rot, int param, ObjectPartInventoryItem sourceItem)
         {
             Quaternion rotOff = rot / groups[0].GlobalRotation;
             Vector3 coalesced = groups[0].CoalescedRestoreOffset;
@@ -367,7 +367,7 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             foreach (ObjectGroup sog in groups)
             {
                 sog.IsDieAtEdge = true; /* as per definition of llRezObject and llRezAtRoot */
-                scene.RezObject(sog, rezzingowner, param, rezzingpart.ID);
+                scene.RezObject(sog, rezzingowner, param, rezzingpart.ID, sourceItem);
                 rezzingpart.PostEvent(new ObjectRezEvent
                 {
                     ObjectID = sog.ID

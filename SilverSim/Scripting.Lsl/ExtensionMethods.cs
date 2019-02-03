@@ -681,12 +681,11 @@ namespace SilverSim.Scripting.Lsl
             return list;
         }
 
-        public static bool TryGetObjectInventory(this ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory) =>
-            TryGetObjectInventory(instance, instance.Part, name, out groups, out removeinventory);
+        public static bool TryGetObjectInventory(this ScriptInstance instance, string name, out List<ObjectGroup> groups, out bool removeinventory, out ObjectPartInventoryItem item) =>
+            TryGetObjectInventory(instance, instance.Part, name, out groups, out removeinventory, out item);
 
-        public static bool TryGetObjectInventory(this ScriptInstance instance, ObjectPart linkpart, string name, out List<ObjectGroup> groups, out bool removeinventory)
+        public static bool TryGetObjectInventory(this ScriptInstance instance, ObjectPart linkpart, string name, out List<ObjectGroup> groups, out bool removeinventory, out ObjectPartInventoryItem item)
         {
-            ObjectPartInventoryItem item;
             AssetData data;
             ObjectPart rezzingpart = instance.Part;
             ObjectGroup rezzinggrp = rezzingpart.ObjectGroup;
