@@ -387,7 +387,7 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
                         break;
 
                     case MASK_OWNER:
-                        instance.Part.OwnerMask = (InventoryPermissionsMask)value;
+                        instance.Part.OwnerMask = (InventoryPermissionsMask)value & ~instance.Part.Inventory.CheckAffectablePerms();
                         break;
 
                     case MASK_GROUP:
