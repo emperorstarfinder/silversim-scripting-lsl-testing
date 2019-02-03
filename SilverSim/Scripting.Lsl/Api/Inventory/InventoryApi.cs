@@ -345,22 +345,33 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             lock (instance)
             {
                 IAgent agent;
+                ObjectPart part = instance.Part;
                 ObjectPartInventoryItem item;
                 mask &= (int)InventoryPermissionsMask.Every;
-                if (instance.Part.Inventory.TryGetValue(name, out item))
+                if (part.Inventory.TryGetValue(name, out item))
                 {
                     switch (category)
                     {
                         case MASK_BASE:
-                            if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(instance.Part.Owner.ID, out agent) &&
-                                agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
+                            if (part.ObjectGroup.Scene.RootAgents.TryGetValue(part.Owner.ID, out agent) &&
+                                agent.Owner.EqualsGrid(part.Owner) && agent.IsActiveGod)
                             {
                                 item.Permissions.Base = (InventoryPermissionsMask)mask;
+                                if (item.AssetType == AssetType.Object)
+                                {
+                                    item.Flags |= InventoryFlags.ObjectPermOverwriteBase;
+                                }
+                                part.Inventory.TriggerItemUpdated(item.ID);
                             }
                             break;
 
                         case MASK_EVERYONE:
                             item.Permissions.EveryOne = (InventoryPermissionsMask)mask;
+                            if (item.AssetType == AssetType.Object)
+                            {
+                                item.Flags |= InventoryFlags.ObjectPermOverwriteEveryOne;
+                            }
+                            part.Inventory.TriggerItemUpdated(item.ID);
                             break;
 
                         case MASK_GROUP:
@@ -368,15 +379,30 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                                 agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
                             {
                                 item.Permissions.Group = (InventoryPermissionsMask)mask;
+                                if (item.AssetType == AssetType.Object)
+                                {
+                                    item.Flags |= InventoryFlags.ObjectPermOverwriteGroup;
+                                }
+                                part.Inventory.TriggerItemUpdated(item.ID);
                             }
                             break;
 
                         case MASK_NEXT:
                             item.Permissions.NextOwner = (InventoryPermissionsMask)mask;
+                            if (item.AssetType == AssetType.Object)
+                            {
+                                item.Flags |= InventoryFlags.ObjectPermOverwriteNextOwner;
+                            }
+                            part.Inventory.TriggerItemUpdated(item.ID);
                             break;
 
                         case MASK_OWNER:
                             item.Permissions.Current = (InventoryPermissionsMask)mask;
+                            if (item.AssetType == AssetType.Object)
+                            {
+                                item.Flags |= InventoryFlags.ObjectPermOverwriteOwner;
+                            }
+                            part.Inventory.TriggerItemUpdated(item.ID);
                             break;
 
                         default:
@@ -409,11 +435,21 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                                     agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
                                 {
                                     item.Permissions.Base = (InventoryPermissionsMask)mask;
+                                    if(item.AssetType == AssetType.Object)
+                                    {
+                                        item.Flags |= InventoryFlags.ObjectPermOverwriteBase;
+                                    }
+                                    part.Inventory.TriggerItemUpdated(item.ID);
                                 }
                                 break;
 
                             case MASK_EVERYONE:
                                 item.Permissions.EveryOne = (InventoryPermissionsMask)mask;
+                                if (item.AssetType == AssetType.Object)
+                                {
+                                    item.Flags |= InventoryFlags.ObjectPermOverwriteEveryOne;
+                                }
+                                part.Inventory.TriggerItemUpdated(item.ID);
                                 break;
 
                             case MASK_GROUP:
@@ -421,15 +457,30 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
                                     agent.Owner.EqualsGrid(instance.Part.Owner) && agent.IsActiveGod)
                                 {
                                     item.Permissions.Group = (InventoryPermissionsMask)mask;
+                                    if (item.AssetType == AssetType.Object)
+                                    {
+                                        item.Flags |= InventoryFlags.ObjectPermOverwriteGroup;
+                                    }
+                                    part.Inventory.TriggerItemUpdated(item.ID);
                                 }
                                 break;
 
                             case MASK_NEXT:
                                 item.Permissions.NextOwner = (InventoryPermissionsMask)mask;
+                                if (item.AssetType == AssetType.Object)
+                                {
+                                    item.Flags |= InventoryFlags.ObjectPermOverwriteNextOwner;
+                                }
+                                part.Inventory.TriggerItemUpdated(item.ID);
                                 break;
 
                             case MASK_OWNER:
                                 item.Permissions.Current = (InventoryPermissionsMask)mask;
+                                if (item.AssetType == AssetType.Object)
+                                {
+                                    item.Flags |= InventoryFlags.ObjectPermOverwriteOwner;
+                                }
+                                part.Inventory.TriggerItemUpdated(item.ID);
                                 break;
 
                             default:
