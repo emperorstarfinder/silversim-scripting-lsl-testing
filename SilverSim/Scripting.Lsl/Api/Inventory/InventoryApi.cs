@@ -32,6 +32,7 @@ using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scene.Types.Transfer;
 using SilverSim.ServiceInterfaces;
 using SilverSim.ServiceInterfaces.Asset;
+using SilverSim.ServiceInterfaces.Asset.Transferer;
 using SilverSim.ServiceInterfaces.IM;
 using SilverSim.ServiceInterfaces.Inventory;
 using SilverSim.ServiceInterfaces.UserAgents;
