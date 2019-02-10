@@ -568,7 +568,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
             public const int Settings = 55;
         }
 
-        [APIExtension(APIExtension.AgentInventory, "AssetType")]
+        [APIExtension(APIExtension.AgentInventory, APIUseAsEnum.Getter, "AssetType")]
         public AgentAssetType GetAssetType() => new AgentAssetType();
 
         [APIExtension(APIExtension.AgentInventory, "agentinventorytype")]
@@ -595,7 +595,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
             public const int Settings = 25;
         }
 
-        [APIExtension(APIExtension.AgentInventory, "InventoryType")]
+        [APIExtension(APIExtension.AgentInventory, APIUseAsEnum.Getter, "InventoryType")]
         public AgentInventoryType GetInventoryType() => new AgentInventoryType();
 
         [APIExtension(APIExtension.AgentInventory, "agentinventoryitemaccessor")]
