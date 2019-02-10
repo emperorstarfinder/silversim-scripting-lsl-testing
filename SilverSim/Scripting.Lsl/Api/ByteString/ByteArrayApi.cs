@@ -242,6 +242,16 @@ namespace SilverSim.Scripting.Lsl.Api.ByteString
             IsPure = true
         };
 
+        [APIExtension(APIExtension.ByteArray, "baFromKey")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FromKey")]
+        [IsPure]
+        public ByteArray FromKey(LSLKey key) => new ByteArray(key.AsUUID.GetBytes());
+
+        [APIExtension(APIExtension.ByteArray, "baToKey")]
+        [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "ToKey")]
+        [IsPure]
+        public LSLKey ToKey(ByteArray data) => data.Length >= 16 ? new LSLKey(data.AsUUID) : new LSLKey();
+
         [APIExtension(APIExtension.ByteArray, "baFromBase64")]
         [APIExtension(APIExtension.MemberFunctions, APIUseAsEnum.MemberFunction, "FromBase64")]
         [IsPure]
