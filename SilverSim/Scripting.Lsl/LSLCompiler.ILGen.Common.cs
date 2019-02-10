@@ -1338,11 +1338,14 @@ namespace SilverSim.Scripting.Lsl
                 /* load ScriptApi reference */
                 compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
 
-                /* load ScriptInstance reference */
-                compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                if (compileState.StateTypeBuilder != null)
+                if (apiMethod.Method.GetParameters().Length != 0)
                 {
-                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    /* load ScriptInstance reference */
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    if (compileState.StateTypeBuilder != null)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    }
                 }
 
                 if(apiMethod.Method.IsVirtual)
@@ -1448,11 +1451,14 @@ namespace SilverSim.Scripting.Lsl
                 /* load ScriptApi reference */
                 compileState.ILGen.Emit(OpCodes.Ldsfld, compileState.m_ApiFieldInfo[apiAttr.Name]);
 
-                /* load ScriptInstance reference */
-                compileState.ILGen.Emit(OpCodes.Ldarg_0);
-                if (compileState.StateTypeBuilder != null)
+                if (apiMethod.Method.GetParameters().Length > 1)
                 {
-                    compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    /* load ScriptInstance reference */
+                    compileState.ILGen.Emit(OpCodes.Ldarg_0);
+                    if (compileState.StateTypeBuilder != null)
+                    {
+                        compileState.ILGen.Emit(OpCodes.Ldfld, compileState.InstanceField);
+                    }
                 }
 
                 compileState.ILGen.Emit(OpCodes.Ldloc, swapLb);
