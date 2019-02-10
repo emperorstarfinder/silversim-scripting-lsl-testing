@@ -529,74 +529,78 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         [APIAccessibleMembers]
         public class AgentAssetType
         {
-            public const int Unknown = -1;
-            public const int Texture = 0;
-            public const int Sound = 1;
-            public const int CallingCard = 2;
-            public const int Landmark = 3;
-            public const int Clothing = 5;
-            public const int Object = 6;
-            public const int Notecard = 7;
-            public const int RootFolder = 8;
-            public const int LSLText = 10;
-            public const int LSLBytecode = 11;
-            public const int TextureTGA = 12;
-            public const int Bodypart = 13;
-            public const int TrashFolder = 14;
-            public const int SnapshotFolder = 15;
-            public const int LostAndFoundFolder = 16;
-            public const int SoundWAV = 17;
-            public const int ImageTGA = 18;
-            public const int ImageJPEG = 19;
-            public const int Animation = 20;
-            public const int Gesture = 21;
-            public const int Simstate = 22;
-            public const int FavoriteFolder = 23;
-            public const int Link = 24;
-            public const int LinkFolder = 25;
-            public const int EnsembleStart = 26;
-            public const int EnsembleEnd = 45;
-            public const int CurrentOutfitFolder = 46;
-            public const int OutfitFolder = 47;
-            public const int MyOutfitsFolder = 48;
-            public const int Mesh = 49;
-            public const int Inbox = 50;
-            public const int Outbox = 51;
-            public const int BasicRoot = 52;
-            public const int MarketplaceListings = 53;
-            public const int MarketplaceStock = 54;
-            public const int Settings = 55;
+            public int Unknown => -1;
+            public int Texture => 0;
+            public int Sound => 1;
+            public int CallingCard => 2;
+            public int Landmark => 3;
+            public int Clothing => 5;
+            public int Object => 6;
+            public int Notecard => 7;
+            public int RootFolder => 8;
+            public int LSLText => 10;
+            public int LSLBytecode => 11;
+            public int TextureTGA => 12;
+            public int Bodypart => 13;
+            public int TrashFolder => 14;
+            public int SnapshotFolder => 15;
+            public int LostAndFoundFolder => 16;
+            public int SoundWAV => 17;
+            public int ImageTGA => 18;
+            public int ImageJPEG => 19;
+            public int Animation => 20;
+            public int Gesture => 21;
+            public int Simstate => 22;
+            public int FavoriteFolder => 23;
+            public int Link => 24;
+            public int LinkFolder => 25;
+            public int EnsembleStart => 26;
+            public int EnsembleEnd => 45;
+            public int CurrentOutfitFolder => 46;
+            public int OutfitFolder => 47;
+            public int MyOutfitsFolder => 48;
+            public int Mesh => 49;
+            public int Inbox => 50;
+            public int Outbox => 51;
+            public int BasicRoot => 52;
+            public int MarketplaceListings => 53;
+            public int MarketplaceStock => 54;
+            public int Settings => 55;
         }
 
+        private readonly AgentAssetType m_AssetTypeValues = new AgentAssetType();
+
         [APIExtension(APIExtension.AgentInventory, APIUseAsEnum.Getter, "AssetType")]
-        public AgentAssetType GetAssetType() => new AgentAssetType();
+        public AgentAssetType GetAssetType() => m_AssetTypeValues;
 
         [APIExtension(APIExtension.AgentInventory, "agentinventorytype")]
         [APIDisplayName("agentinventorytype")]
         [APIAccessibleMembers]
         public class AgentInventoryType
         {
-            public const int Unknown = -1;
-            public const int Texture = 0;
-            public const int Sound = 1;
-            public const int CallingCard = 2;
-            public const int Landmark = 3;
-            public const int Object = 6;
-            public const int Notecard = 7;
-            public const int Folder = 8;
-            public const int RootFolder = 9;
-            public const int LSL = 10;
-            public const int Snapshot = 15;
-            public const int Attachable = 17;
-            public const int Wearable = 18;
-            public const int Animation = 19;
-            public const int Gesture = 20;
-            public const int Mesh = 22;
-            public const int Settings = 25;
+            public int Unknown => -1;
+            public int Texture => 0;
+            public int Sound => 1;
+            public int CallingCard => 2;
+            public int Landmark => 3;
+            public int Object => 6;
+            public int Notecard => 7;
+            public int Folder => 8;
+            public int RootFolder => 9;
+            public int LSL => 10;
+            public int Snapshot => 15;
+            public int Attachable => 17;
+            public int Wearable => 18;
+            public int Animation => 19;
+            public int Gesture => 20;
+            public int Mesh => 22;
+            public int Settings => 25;
         }
 
+        private readonly AgentInventoryType m_InventoryTypeValues = new AgentInventoryType();
+
         [APIExtension(APIExtension.AgentInventory, APIUseAsEnum.Getter, "InventoryType")]
-        public AgentInventoryType GetInventoryType() => new AgentInventoryType();
+        public AgentInventoryType GetInventoryType() => m_InventoryTypeValues;
 
         [APIExtension(APIExtension.AgentInventory, "agentinventoryitemaccessor")]
         [APIDisplayName("agentinventoryitemaccessor")]
