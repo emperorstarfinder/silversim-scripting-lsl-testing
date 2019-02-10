@@ -110,6 +110,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         public const int PERM_MODIFY = 16384;
         [APILevel(APIFlags.LSL)]
         public const int PERM_COPY = 32768;
+        [APILevel(APIFlags.ASSL)]
+        public const int PERM_EXPORT = 65536;
         [APILevel(APIFlags.LSL)]
         public const int PERM_MOVE = 524288;
         [APILevel(APIFlags.LSL)]
