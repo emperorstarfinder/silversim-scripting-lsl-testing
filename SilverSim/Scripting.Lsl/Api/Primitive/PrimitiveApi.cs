@@ -228,6 +228,12 @@ namespace SilverSim.Scripting.Lsl.Api.Primitive
         [APILevel(APIFlags.ASSL)]
         [Description("Collision Sound [string impact_sound, float impact_volume, float impact_sound_radius, integer impact_sound_flags]")]
         public const int PRIM_COLLISION_SOUND = 12014;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Velocity [vector velocity]")]
+        public const int PRIM_VELOCITY = 12015;
+        [APILevel(APIFlags.ASSL)]
+        [Description("Acceleration [vector accel]")]
+        public const int PRIM_ACCELERATION = 12016;
         #endregion
 
         #region PRIM_COLLISION_SOUND
