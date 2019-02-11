@@ -626,7 +626,7 @@ namespace SilverSim.Scripting.Lsl.Api.Agents.Properties
         [APIDisplayName("agentinventory")]
         [APIIsVariableType]
         [ImplementsCustomTypecasts]
-        [APIAccessibleMembers("Owner")]
+        [APIAccessibleMembers("Owner", "Items", "Folders")]
         public class AgentInventory
         {
             private readonly ScriptInstance m_Instance;
