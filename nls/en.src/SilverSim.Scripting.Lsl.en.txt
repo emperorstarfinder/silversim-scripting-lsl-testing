@@ -352,3 +352,4 @@ SoundDataFor0NotFoundOrInvalid=Sound data for '{0}' not found or invalid
 Function0PinCannotBeZero={0}: Pin cannot be zero
 CastRayCollisionDeniedByAcl=CastRay collision is denied by access control list.
 NoDefaultStateDefined=No default state defined.
+MissingCopyConstructorOnType0=Missing copy constructor on type '{0}'

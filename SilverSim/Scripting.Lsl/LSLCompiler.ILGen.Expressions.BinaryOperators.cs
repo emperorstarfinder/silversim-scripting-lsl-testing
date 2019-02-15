@@ -1025,7 +1025,12 @@ namespace SilverSim.Scripting.Lsl
                 if(compileState.IsCloneOnAssignment(varType))
                 {
                     storeBackVar = true;
-                    compileState.ILGen.Emit(OpCodes.Newobj, compileState.GetCopyConstructor(varType));
+                    ConstructorInfo cInfo = compileState.GetCopyConstructor(varType);
+                    if(cInfo == null)
+                    {
+                        throw new CompilerException(m_LineNumber, string.Format(this.GetLanguageString(compileState.CurrentCulture, "MissingCopyConstructorOnType0", "Missing copy constructor on type '{0}'"), compileState.MapType(varType)));
+                    }
+                    compileState.ILGen.Emit(OpCodes.Newobj, cInfo);
                 }
                 else if(varType.IsValueType || varType == typeof(string))
                 {
