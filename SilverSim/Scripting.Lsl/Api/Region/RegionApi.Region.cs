@@ -36,7 +36,6 @@ using SilverSim.Types;
 using SilverSim.Types.Grid;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace SilverSim.Scripting.Lsl.Api.Region
@@ -97,33 +96,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             public override void Write(string text)
             {
                 OutputBuffer += text;
-            }
-        }
-
-        [APILevel(APIFlags.OSSL, "osSetRegionSunSettings")]
-        [Description("set new region sun settings (EM, EO or RO only)")]
-        public void SetRegionSunSettings(ScriptInstance instance,
-            [Description("set to TRUE if region uses estate sun parameters")]
-            int useEstateSun,
-            [Description("set to TRUE if sun position is fixed see sunHour")]
-            int isFixed,
-            [Description("position of sun when set to be fixed (0-24, 0 => sunrise, 6 => midday, 12 => dusk, 18 => midnight)")]
-            double sunHour)
-        {
-            lock (instance)
-            {
-                ObjectGroup thisGroup = instance.Part.ObjectGroup;
-                SceneInterface scene = thisGroup.Scene;
-                if (!scene.IsEstateManager(thisGroup.Owner) && !scene.Owner.EqualsGrid(thisGroup.Owner))
-                {
-                    instance.ShoutError(new LocalizedScriptMessage(this, "Function0ObjectOwnerMustBeAbleToManageEstate", "{0}: Object owner must manage region.", "osSetRegionSunSettings"));
-                    return;
-                }
-
-                scene.RegionSettings.IsSunFixed = isFixed != 0;
-                scene.RegionSettings.UseEstateSun = useEstateSun != 0;
-                scene.RegionSettings.SunPosition = sunHour.Clamp(0, 24) % 24f;
-                scene.TriggerRegionSettingsChanged();
             }
         }
 
@@ -357,15 +329,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                     return Int32.MaxValue;
                 }
                 return (int)pws;
-            }
-        }
-
-        [APILevel(APIFlags.OSSL, "osGetCurrentSunHour")]
-        public double GetCurrentSunHour(ScriptInstance instance)
-        {
-            lock (instance)
-            {
-                return instance.Part.ObjectGroup.Scene.Environment.ActualSunPosition;
             }
         }
 
@@ -678,80 +641,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
             return 0;
         }
 
-        [APILevel(APIFlags.LSL, "llGetSunDirection")]
-        public Vector3 GetSunDirection(ScriptInstance instance)
-        {
-            lock (instance)
-            {
-                return instance.Part.ObjectGroup.Scene.Environment.SunDirection;
-            }
-        }
-
-        [APILevel(APIFlags.LSL, "llCloud")]
-        public double Cloud(ScriptInstance instance, Vector3 offset)
-        {
-            return 0;
-        }
-
-        [APILevel(APIFlags.LSL, "llGround")]
-        public double Ground(ScriptInstance instance, Vector3 offset)
-        {
-            lock (instance)
-            {
-                Vector3 regionPos = instance.Part.GlobalPosition + offset;
-                return instance.Part.ObjectGroup.Scene.Terrain[regionPos];
-            }
-        }
-
-        [APILevel(APIFlags.LSL, "llGroundContour")]
-        public Vector3 GroundContour(ScriptInstance instance, Vector3 offset)
-        {
-            lock (instance)
-            {
-                Vector3 regionPos = instance.Part.GlobalPosition + offset;
-                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceContour(regionPos.X, regionPos.Y);
-            }
-        }
-
-        [APILevel(APIFlags.LSL, "llGroundNormal")]
-        public Vector3 GroundNormal(ScriptInstance instance, Vector3 offset)
-        {
-            lock (instance)
-            {
-                Vector3 regionPos = instance.Part.GlobalPosition + offset;
-                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceNormal(regionPos.X, regionPos.Y);
-            }
-        }
-
-        [APILevel(APIFlags.LSL, "llGroundSlope")]
-        public Vector3 GroundSlope(ScriptInstance instance, Vector3 offset)
-        {
-            lock (instance)
-            {
-                Vector3 regionPos = instance.Part.GlobalPosition + offset;
-                return instance.Part.ObjectGroup.Scene.Terrain.SurfaceSlope(regionPos.X, regionPos.Y);
-            }
-        }
-
-        [APILevel(APIFlags.LSL, "llWater")]
-        public double Water(ScriptInstance instance, Vector3 offset)
-        {
-            lock (instance)
-            {
-                return instance.Part.ObjectGroup.Scene.GetLocationInfoProvider().At(offset).WaterHeight;
-            }
-        }
-
-        [APILevel(APIFlags.LSL, "llWind")]
-        public Vector3 Wind(ScriptInstance instance, Vector3 offset)
-        {
-            lock (instance)
-            {
-                Vector3 regionPos = instance.Part.GlobalPosition + offset;
-                return instance.Part.ObjectGroup.Scene.Environment.Wind[regionPos];
-            }
-        }
-
         [APILevel(APIFlags.LSL, "llGetRegionFPS")]
         public double GetRegionFPS(ScriptInstance instance)
         {
@@ -909,15 +798,6 @@ namespace SilverSim.Scripting.Lsl.Api.Region
                 {
                     return 0;
                 }
-            }
-        }
-
-        [APILevel(APIFlags.OSSL, "osWindActiveModelPluginName")]
-        public string GetWindActiveModelPluginName(ScriptInstance instance)
-        {
-            lock (instance)
-            {
-                return instance.Part.ObjectGroup.Scene.Environment.Wind.Name;
             }
         }
 
