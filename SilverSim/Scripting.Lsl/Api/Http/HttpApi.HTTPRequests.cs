@@ -22,6 +22,7 @@
 #pragma warning disable IDE0018
 #pragma warning disable RCS1029
 
+using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
 using SilverSim.Scripting.Lsl.Api.ByteString;
@@ -274,14 +275,17 @@ namespace SilverSim.Scripting.Lsl.Api.Http
 
             lock (instance)
             {
+                SceneInterface scene = instance.Part.ObjectGroup.Scene;
+                GridVector location = scene.GetRegionInfo().Location;
                 req.Headers.Add("X-SecondLife-Object-Name", instance.Part.ObjectGroup.Name);
                 req.Headers.Add("X-SecondLife-Object-Key", (string)instance.Part.ObjectGroup.ID);
-                req.Headers.Add("X-SecondLife-Region", instance.Part.ObjectGroup.Scene.Name);
+                req.Headers.Add("X-SecondLife-Region", $"{scene} (${location.X}, ${location.Y})");
                 req.Headers.Add("X-SecondLife-Local-Position", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000})", instance.Part.ObjectGroup.GlobalPosition.X, instance.Part.ObjectGroup.GlobalPosition.Y, instance.Part.ObjectGroup.GlobalPosition.Z));
                 req.Headers.Add("X-SecondLife-Local-Velocity", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000})", instance.Part.ObjectGroup.Velocity.X, instance.Part.ObjectGroup.Velocity.Y, instance.Part.ObjectGroup.Velocity.Z));
                 req.Headers.Add("X-SecondLife-Local-Rotation", string.Format("({0:0.000000}, {1:0.000000}, {2:0.000000}, {3:0.000000})", instance.Part.ObjectGroup.GlobalRotation.X, instance.Part.ObjectGroup.GlobalRotation.Y, instance.Part.ObjectGroup.GlobalRotation.Z, instance.Part.ObjectGroup.GlobalRotation.W));
                 req.Headers.Add("X-SecondLife-Owner-Name", instance.Part.ObjectGroup.Scene.AvatarNameService.ResolveName(instance.Part.ObjectGroup.Owner).FullName);
                 req.Headers.Add("X-SecondLife-Owner-Key", (string)instance.Part.ObjectGroup.Owner.ID);
+                req.Headers.Add("X-Gatekeeper-URI", scene.GatekeeperURI);
 
                 Match authMatch = m_AuthRegex.Match(url);
                 if(authMatch.Success &&
