@@ -92,6 +92,8 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
         public const int INVENTORY_ANIMATION = 20;
         [APILevel(APIFlags.LSL)]
         public const int INVENTORY_GESTURE = 21;
+        [APILevel(APIFlags.LSL)]
+        public const int INVENTORY_SETTING = 56;
 
         [APILevel(APIFlags.LSL)]
         public const int MASK_BASE = 0;
