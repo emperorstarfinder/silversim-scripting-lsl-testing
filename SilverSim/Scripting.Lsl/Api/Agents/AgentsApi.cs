@@ -868,6 +868,33 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             }
         }
 
+        [APILevel(APIFlags.OSSL, "osGetHealRate")]
+        public double GetHealRate(ScriptInstance instance, LSLKey id)
+        {
+            lock (instance)
+            {
+                IAgent agent;
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    return agent.HealRate;
+                }
+            }
+            return 0;
+        }
+
+        [APILevel(APIFlags.OSSL, "osSetHealRate")]
+        public void SetHealRate(ScriptInstance instance, LSLKey id, double healrate)
+        {
+            lock (instance)
+            {
+                IAgent agent;
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    agent.HealRate = healrate.Clamp(0, 100);
+                }
+            }
+        }
+
         [APILevel(APIFlags.OSSL, "osCauseDamage")]
         public void CauseDamage(ScriptInstance instance, LSLKey id, double damage)
         {
