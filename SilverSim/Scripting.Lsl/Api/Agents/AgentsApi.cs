@@ -855,6 +855,19 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
             return -1;
         }
 
+        [APILevel(APIFlags.OSSL, "osSetHealth")]
+        public void SetHealth(ScriptInstance instance, LSLKey id, double health)
+        {
+            lock(instance)
+            {
+                IAgent agent;
+                if (instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id, out agent))
+                {
+                    agent.Health = health.Clamp(0, 100);
+                }
+            }
+        }
+
         [APILevel(APIFlags.OSSL, "osCauseDamage")]
         public void CauseDamage(ScriptInstance instance, LSLKey id, double damage)
         {
@@ -999,6 +1012,19 @@ namespace SilverSim.Scripting.Lsl.Api.Agents
                         agent.KickUser(alert);
                         break;
                     }
+                }
+            }
+        }
+
+        [APILevel(APIFlags.OSSL, "osKickAvatar")]
+        public void KickAvatar(ScriptInstance instance, LSLKey id, string alert)
+        {
+            lock (instance)
+            {
+                IAgent agent;
+                if(instance.Part.ObjectGroup.Scene.RootAgents.TryGetValue(id.AsUUID, out agent))
+                {
+                    agent.KickUser(alert);
                 }
             }
         }
