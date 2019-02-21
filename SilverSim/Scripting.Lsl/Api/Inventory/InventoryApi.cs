@@ -179,6 +179,38 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             }
         }
 
+        [APILevel(APIFlags.LSL, "osGetInventoryLastOwner")]
+        [APILevel(APIFlags.ASSL, "asGetInventoryLastOwner")]
+        public LSLKey GetInventoryLastOwner(ScriptInstance instance, string item)
+        {
+            lock (instance)
+            {
+                ObjectPartInventoryItem objitem;
+                if (instance.Part.Inventory.TryGetValue(item, out objitem))
+                {
+                    return objitem.LastOwner.ID;
+                }
+                return UUID.Zero;
+            }
+        }
+
+        [APILevel(APIFlags.ASSL, "asGetLinkInventoryLastOwner")]
+        public LSLKey GetInventoryLastOwner(ScriptInstance instance, int link, string name)
+        {
+            lock (instance)
+            {
+                ObjectPartInventoryItem item;
+                foreach (ObjectPart part in instance.GetLinkTargets(link))
+                {
+                    if (part.Inventory.TryGetValue(name, out item))
+                    {
+                        return item.LastOwner.ID;
+                    }
+                }
+                return UUID.Zero;
+            }
+        }
+
         [APILevel(APIFlags.LSL, "llGetInventoryCreator")]
         public LSLKey GetInventoryCreator(ScriptInstance instance, string item)
         {
