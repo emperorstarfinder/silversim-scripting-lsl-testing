@@ -977,6 +977,8 @@ namespace SilverSim.Scripting.Lsl
 
             StateEventHandlers.Add(typeof(CollisionEvent), HandleCollision);
 
+            StateEventHandlers.Add(typeof(InventoryChangedEvent), HandleInventoryChangedEvent);
+
             StateEventHandlers.Add(typeof(DataserverEvent), (Script script, IScriptEvent ev) =>
             {
                 var e = (DataserverEvent)ev;
@@ -1105,6 +1107,12 @@ namespace SilverSim.Scripting.Lsl
                 script.InvokeStateEvent("transaction_result", new LSLKey(e.TransactionID), e.Success.ToLSLBoolean(), e.ReplyData);
             });
             #endregion
+        }
+
+        private static void HandleInventoryChangedEvent(Script script, IScriptEvent ev)
+        {
+            var nev = (InventoryChangedEvent)ev;
+            script.InvokeStateEvent("inventory_changed", (int)nev.Change, nev.InventoryName);
         }
 
         private static void HandleNamedTimerEvent(Script script, IScriptEvent ev)

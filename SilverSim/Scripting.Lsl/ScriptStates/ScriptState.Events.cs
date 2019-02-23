@@ -123,7 +123,29 @@ namespace SilverSim.Scripting.Lsl.ScriptStates
             EventSerializers.Add(typeof(MovingEndEvent), (ev) => new EventParams { EventName = "moving_end" });
             EventDeserializers.Add("item_sold", ItemSoldDeserializer);
             EventSerializers.Add(typeof(ItemSoldEvent), ItemSoldSerializer);
+            EventDeserializers.Add("inventory_changed", InventoryChangedDeserializer);
+            EventSerializers.Add(typeof(InventoryChangedEvent), InventoryChangedSerializer);
         }
+
+        #region inventory_changed
+        private static EventParams InventoryChangedSerializer(IScriptEvent iev)
+        {
+            var ep = new EventParams { EventName = "inventory_changed" };
+            var ev = (InventoryChangedEvent)iev;
+            ep.Params.Add((int)ev.Change);
+            ep.Params.Add(ev.InventoryName);
+            return ep;
+        }
+
+        private static IScriptEvent InventoryChangedDeserializer(EventParams ep)
+        {
+            if(ep.Params.Count >= 2)
+            {
+                return new InventoryChangedEvent((InventoryChangedEvent.ChangeType)(int)ep.Params[0], ep.Params[1].ToString());
+            }
+            return null;
+        }
+        #endregion
 
         #region Selling
         private static EventParams ItemSoldSerializer(IScriptEvent iev)

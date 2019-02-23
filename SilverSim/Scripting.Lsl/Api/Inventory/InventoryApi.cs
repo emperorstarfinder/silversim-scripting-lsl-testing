@@ -29,7 +29,6 @@ using SilverSim.Scene.Types.Object;
 using SilverSim.Scene.Types.Scene;
 using SilverSim.Scene.Types.Script;
 using SilverSim.Scene.Types.Script.Events;
-using SilverSim.Scene.Types.Transfer;
 using SilverSim.ServiceInterfaces;
 using SilverSim.ServiceInterfaces.Asset;
 using SilverSim.ServiceInterfaces.Asset.Transferer;
@@ -67,6 +66,17 @@ namespace SilverSim.Scripting.Lsl.Api.Inventory
             m_AssetServicePlugins = loader.GetServicesByValue<IAssetServicePlugin>();
             m_InventoryServicePlugins = loader.GetServicesByValue<IInventoryServicePlugin>();
         }
+
+        [APILevel(APIFlags.ASSL)]
+        public const int INVENTORY_ACTION_REMOVED = -1;
+        [APILevel(APIFlags.ASSL)]
+        public const int INVENTORY_ACTION_CHANGED = 0;
+        [APILevel(APIFlags.ASSL)]
+        public const int INVENTORY_ACTION_ADDED = 1;
+
+        [APILevel(APIFlags.ASSL, "inventory_changed")]
+        [StateEventDelegate]
+        public delegate void InventoryChangedDelegate(int action, string itemname);
 
         [APILevel(APIFlags.LSL)]
         public const int INVENTORY_ALL = -1;
